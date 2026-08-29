@@ -19,11 +19,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quiz => 'Quiz';
 
   @override
-  String get continueAsGuest => 'Continue as guest ? Quiz';
+  String get continueAsGuest => 'Continue as guest → Quiz';
 
   @override
   String get backend => 'Backend';
 
   @override
   String get env => 'Env';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get offline => 'Offline';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get error => 'Something went wrong';
 }

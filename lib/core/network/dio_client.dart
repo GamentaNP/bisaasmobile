@@ -13,6 +13,9 @@ import '../../app/config/api_config.dart';
 import '../../app/config/env.dart';
 import '../security/token_manager.dart';
 import 'auth_interceptor.dart';
+import 'logging_interceptor.dart';
+import 'request_id_interceptor.dart';
+import 'retry_interceptor.dart';
 
 class DioClient {
   DioClient._(this.dio);
@@ -38,7 +41,10 @@ class DioClient {
     );
 
     dio.interceptors.addAll([
+      RequestIdInterceptor(),
       AuthInterceptor(tokens),
+      RetryInterceptor(),
+      AppLoggingInterceptor(),
       if (kDebugMode)
         PrettyDioLogger(
           requestHeader: true,

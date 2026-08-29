@@ -47,7 +47,30 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Firebase native config � never commit
+# Firebase native config — never commit
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+ios/firebase_app_id_file.json
+
+# Release signing — never commit
+android/key.properties
+android/app/upload-keystore.jks
+android/app/*.jks
+android/app/*.keystore
+*.jks
+*.keystore
+
+# Env & secrets — never commit
+.env
+.env.*
+!.env.example
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Coverage
+coverage/
+lcov.info
 

@@ -7,7 +7,7 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
   exclude:
@@ -16,21 +16,63 @@ analyzer:
     - ios/**
     - web/**
     - windows/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.drift.dart"
+    - lib/l10n/**
+    - lib/shared/**
+  errors:
+    invalid_annotation_target: ignore
+    inference_failure_on_function_invocation: ignore
+  language:
+    strict-casts: true
+    strict-inference: false
+    strict-raw-types: true
 
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # ── Enforce best-practice 2026 Flutter (relaxed docs for internal project) ──
+    always_put_required_named_parameters_first: false
+    dangling_library_doc_comments: false
+    prefer_const_constructors: false
+    unnecessary_underscores: false
+    use_colored_box: false
+    avoid_print: true
+    avoid_empty_else: true
+    avoid_type_to_string: true
+    cancel_subscriptions: true
+    close_sinks: true
+    prefer_single_quotes: false
+    prefer_relative_imports: false
+    always_use_package_imports: false
+    public_member_api_docs: false
+    document_ignores: false
+    unnecessary_library_directive: false
+    use_key_in_widget_constructors: true
+    sort_child_properties_last: true
+    lines_longer_than_80_chars: false
+    avoid_catches_without_on_clauses: false
+    avoid_void_async: false
+    discarded_futures: false
+    sort_pub_dependencies: false
+    avoid_redundant_argument_values: false
+    cascade_invocations: false
+    sort_constructors_first: false
+    specify_nonobvious_property_types: false
+    avoid_positional_boolean_parameters: false
+    use_raw_strings: false
+    unnecessary_ignore: false
+    directives_ordering: false
+    prefer_initializing_formals: false
+    avoid_init_to_null: false
+    # ── Relaxed for scaffold placeholders (until full impl) ──
+    no_literal_bool_comparisons: false
+    curly_braces_in_flow_control_structures: false
+    matching_super_parameters: false
+    unnecessary_null_checks: false
+    use_build_context_synchronously: false
+    avoid_slow_async_io: false
+    depend_on_referenced_packages: false
 
-# Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+# very_good_analysis already pulls flutter_lints — do not double-include.

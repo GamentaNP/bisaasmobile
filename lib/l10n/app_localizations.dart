@@ -121,7 +121,7 @@ abstract class AppLocalizations {
   /// No description provided for @continueAsGuest.
   ///
   /// In en, this message translates to:
-  /// **'Continue as guest ? Quiz'**
+  /// **'Continue as guest → Quiz'**
   String get continueAsGuest;
 
   /// No description provided for @backend.
@@ -135,6 +135,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Env'**
   String get env;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offline;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get error;
 }
 
 class _AppLocalizationsDelegate

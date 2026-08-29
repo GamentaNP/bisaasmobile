@@ -3,7 +3,13 @@
   "appTitle": "CivilCal",
   "signIn": "Sign in",
   "quiz": "Quiz",
-  "continueAsGuest": "Continue as guest ? Quiz",
+  "continueAsGuest": "Continue as guest → Quiz",
   "backend": "Backend",
-  "env": "Env"
+  "env": "Env",
+  "home": "Home",
+  "profile": "Profile",
+  "settings": "Settings",
+  "offline": "Offline",
+  "retry": "Retry",
+  "error": "Something went wrong"
 }
