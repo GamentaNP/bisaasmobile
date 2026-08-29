@@ -1,0 +1,23 @@
+# Findings: CivilCal Flutter Research
+
+## Sources Read
+- `C:\laragon\www\bisaas\docs\mobileapp\PWA_MASTER_PLAN_2026.md` — 13 lines, stub, canonical location pointer (manifest audit, SW, offline, Background Sync, Push, TWA — not expanded).
+- `C:\laragon\www\bisaas\docs\mobileapp\FLUTTER_APP_MASTER_PLAN_2026.md` — 3512 lines, 34 chapters + 3 appendices. Author Technical Co-Founder Aug 26 2026. Defines: why Flutter (#1), Clean Arch feature-first (#2), full directory tree (#3), pubspec pins (#4), design system (#5-6), go_router ShellRoute 5 tabs (#7), core infra env/ApiResponse/Failure (#8-11), features auth/onboarding/home/quiz/calc/gamification/battle/profile/notifications/offline (#12-21), UI glassmorphic/ambient glow/answer states (#22), animations flutter_animate+Lottie+Hero (#23), a11y WCAG AA (#24), l10n en/ne/hi with ARB + NotoSansDevanagari (#25), security token+c Schmidt pinning+jailbreak (#26), perf <2s cold <150MB 60fps (#27), Firebase 6 services + analytics events (#28), testing pyramid 90% domain (#29), CI Fastlane (#30), ASO (#31), 10 laws (#32), 5-phase roadmap Weeks1-12 (#33), KPIs (#34).
+- `C:\laragon\www\bisaas\docs\mobileapp\mobileapp-design-reserch-flutter.md` — 3927 lines, 148 chapters. Author ChatGPT deep research. Key: Flutter as client not duplicate (#1), feature-first `lib/app|core|features|shared` (#2-3), feature internal data/domain/presentation (#4), Riverpod 3.4.2 (#5-6), Dio 5.11.0 interceptors X-Request-Id etc (#7-8), secure_storage 11.0.0 (#9), DTO≠entity (#12-13), Drift offline (#14-18) with 4 cache policies + SyncQueue idempotency_key, go_router 18.0.0 (#20-23 deep links), 5-tab nav Home/Practice/Calculators/Courses/Profile (#24), home next-action (#25), quiz 80% screen (#26-30 combo compact pill), 60/90/120Hz (#32), engineering precision+game energy (#34), restrained palette (#35), single font + math typography (#37-38), SVG vector (#39-41), asset structure brand/icons/illustrations (#42-44), Notifications FCM 16.6.0 + local 22.3.0 (#46-48), analytics 15+ events (#49), Sentry 9.28.0 vs Crashlytics 5.3.0 (#50), offline UX banner (#53), downloadable packs 42MB (#54-56), responsive→adaptive (#57-59), a11y large text (#60-62), tokens AppColors etc (#64), components Civil* 15 + quiz 8 (#65-66), rebuild fine-grained (#68), pagination cursor (#71), search (#72), AI via Laravel gateway not direct (#73), CalculatorRegistry 232 definitions metadata-driven 80/20 (#75-77), challenge/referral server-authoritative (#81-82), share native sheet (#83), lifecycle paused→save→reconcile (#85), timer timestamp-based (#86), anti-cheat server (#87), idempotency X-Idempotency-Key (#90), laws #143-148.
+
+## Discoveries
+- `lib/` currently 37 files, theming already has AppColors (#22D3EE) + AppTypography (InstrumentSans) + AppMotion; Dio has Auth+RequestId+Retry+Refresh+Logging+Pinning; core sync/queue/manager already wired; shared widgets 11; but `features/` only auth/quiz/home/calculator skeletons — calculators list 232 not yet, battle not yet, offline packs not yet, Lottie JSONs only .gitkeep.
+- `lib/app/config/env.dart:33` dev `https://bisaas.test` matches `C:\laragon\www\bisaas\.env:APP_URL` — correct, emulator needs `http://10.0.2.2` override. ApiConfig.baseUrl always `/api/v1` per AGENTS.md.
+- `analysis_options.yaml:10` currently `very_good_analysis` strict with strict-casts/raw-types, `flutter analyze` clean.
+- `pubspec.yaml:6` pins match research #140 recommended (riverpod 3.4.2, dio 5.11.0, go_router 18.0.0, secure_storage 11.0.0, drift 2.21.0) — `flutter_markdown 0.7.7+1` is discontinued (warns), `sentry_flutter 8.14.2` behind 9.28.0.
+- Backend SSOT: `bisaas` owns grading/economy/achievements/leaderboard/fraud/subscriptions; mobile never duplicates. Calculator truth is `CalculatorRegistry` 232 endpoints — must be verified via `GET /api/v1/openapi.json` before building catalog.
+- Target device: Redmi Note 12 4-6GB 128GB Android 10+ (API 29) min, 60fps bar, dark-first `#0B0F17`, contrast 18.1:1 white on dark ✅.
+
+## Risks
+- PWA plan stub — PWA scope unclear; defer to avoid scope creep after Flutter Phase 1 per plan law.
+- Lottie assets missing real JSONs + licenses — need `assets/LICENSES.md` before store.
+- Firebase native configs gitignored (`android/app/google-services.json`, `ios/Runner/GoogleService-Info.plist`) — need console setup before battle/push test.
+- No real fonts in `assets/fonts/` yet (InstrumentSans commented in pubspec) — will block typography verify.
+
+## Decisions to Log
+- Use 21 tasks plan `docs/superpowers/plans/2026-08-29-civilcal-flutter-complete.md` covering all 34+148 chapters, TDD 5-step per task, file-level granularity — approved for subagent or inline execution.

@@ -1,0 +1,5 @@
+{
+  "ENV": "dev",
+  "API_HOST": "https://bisaas.test",
+  "API_BASE_URL": "https://bisaas.test/api/v1"
+}

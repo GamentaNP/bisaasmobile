@@ -1,0 +1,5 @@
+{
+  "ENV": "staging",
+  "API_HOST": "https://staging.bisaas.com",
+  "API_BASE_URL": "https://staging.bisaas.com/api/v1"
+}

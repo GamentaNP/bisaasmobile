@@ -1,0 +1,48 @@
+1. QuiziX – AI Quiz & Trivia Game | Laravel + Next.js Gamified Quiz Platform
+------------------------------------------------------------------------------
+https://codecanyon.net/item/quizix-ai-quiz-trivia-game-laravel-nextjs-gamified-platform/59785902
+https://codecanyon.net/item/quizix-ai-quiz-trivia-game-react-native-mobile-app-requires-quizix-platform/62735660
+https://quiz-doc.vercel.app/
+
+https://quiz.softivus.com/
+https://admin.quiz.softivus.com/admin/login 
+
+Demo Access
+==================
+Admin Login		
+Email: admin@gmail.com
+Password: 12345678
+==========================
+User Login
+Email: user@gmail.com
+Password: 12345678
+---------------
+OTP Code
+12345
+"D:\QuizDemo\QuiziX v2.1.0\local_deployment"
+"D:\QuizDemo\QuiziX v2.1.0\admin"
+
+
+2. Elite Quiz - Trivia Quiz | Quiz Game - Flutter Full App + Admin Panel
+------------------------------------------------------------------------------
+https://codecanyon.net/item/elite-quiz-trivia-quiz-quiz-game-web-version/36712217 
+https://codecanyon.net/item/elite-quiz-the-flutter-quiz-app/33570423
+
+https://wrteam-in.github.io/elite-quiz-doc/
+https://wrteam-in.github.io/elite-quiz-doc/admin/overview
+https://wrteam-in.github.io/elite-quiz-doc/web/web-setup-overview
+https://wrteam-in.github.io/elite-quiz-doc/mobile/overview
+https://wrteam-in.github.io/elite-quiz-doc/changelog/web
+
+
+https://elitequiz.wrteam.me/login
+admin@gmail.com admin123 
+
+Admin Panel:- "D:\QuizDemo\Elite Quiz v2.3.7 (App)\Elite Quiz - Admin Panel - v2.3.7"
+App Code :-    "D:\QuizDemo\Elite Quiz v2.3.7 (App)\elite_quiz_app-2.3.7"
+
+Web Code :-   "D:\QuizDemo\Elite Quiz v2.1.8 (Web)\Elite-Quiz-Web-2-1-8"
+Admin Panel:- "D:\QuizDemo\Elite Quiz v2.1.8 (Web)\AdminPanel 2.2.3" 
+
+
+

@@ -1,0 +1,19 @@
+name: Deploy Android
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.2'
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build appbundle --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json
+      # Add Play Store upload via r0adkll/upload-google-play@v1 when keystore provisioned
