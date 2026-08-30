@@ -6,7 +6,9 @@ list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   connectivity_plus
   file_selector_windows
+  firebase_auth
   firebase_core
+  firebase_database
   firebase_remote_config
   flutter_secure_storage_windows
   local_auth_windows
