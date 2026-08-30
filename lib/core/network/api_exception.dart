@@ -18,6 +18,8 @@ enum ApiErrorCode {
   idempotencyConflict('IDEMPOTENCY_CONFLICT'),
   notFound('NOT_FOUND'),
   rateLimitExceeded('RATE_LIMIT_EXCEEDED'),
+  webhookSecretNotConfigured('WEBHOOK_SECRET_NOT_CONFIGURED'),
+  webhookUnauthorized('WEBHOOK_UNAUTHORIZED'),
   internalError('INTERNAL_ERROR'),
   serviceUnavailable('SERVICE_UNAVAILABLE'),
   unknown('UNKNOWN');

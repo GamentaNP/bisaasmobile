@@ -9,32 +9,75 @@ class $QuestionsTable extends Questions
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $QuestionsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
   );
-  static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-    'title',
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _quizIdMeta = const VerificationMeta('quizId');
+  @override
+  late final GeneratedColumn<String> quizId = GeneratedColumn<String>(
+    'quiz_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _subjectSlugMeta = const VerificationMeta(
+    'subjectSlug',
+  );
+  @override
+  late final GeneratedColumn<String> subjectSlug = GeneratedColumn<String>(
+    'subject_slug',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   static const VerificationMeta _bodyMeta = const VerificationMeta('body');
   @override
   late final GeneratedColumn<String> body = GeneratedColumn<String>(
     'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _optionsJsonMeta = const VerificationMeta(
+    'optionsJson',
+  );
+  @override
+  late final GeneratedColumn<String> optionsJson = GeneratedColumn<String>(
+    'options_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _correctOptionIdMeta = const VerificationMeta(
+    'correctOptionId',
+  );
+  @override
+  late final GeneratedColumn<String> correctOptionId = GeneratedColumn<String>(
+    'correct_option_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _explanationMeta = const VerificationMeta(
+    'explanation',
+  );
+  @override
+  late final GeneratedColumn<String> explanation = GeneratedColumn<String>(
+    'explanation',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -46,6 +89,30 @@ class $QuestionsTable extends Questions
   @override
   late final GeneratedColumn<int> difficulty = GeneratedColumn<int>(
     'difficulty',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _marksPositiveMeta = const VerificationMeta(
+    'marksPositive',
+  );
+  @override
+  late final GeneratedColumn<int> marksPositive = GeneratedColumn<int>(
+    'marks_positive',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(4),
+  );
+  static const VerificationMeta _marksNegativeMeta = const VerificationMeta(
+    'marksNegative',
+  );
+  @override
+  late final GeneratedColumn<int> marksNegative = GeneratedColumn<int>(
+    'marks_negative',
     aliasedName,
     false,
     type: DriftSqlType.int,
@@ -64,7 +131,19 @@ class $QuestionsTable extends Questions
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, title, body, difficulty, cachedAt];
+  List<GeneratedColumn> get $columns => [
+    remoteId,
+    quizId,
+    subjectSlug,
+    body,
+    optionsJson,
+    correctOptionId,
+    explanation,
+    difficulty,
+    marksPositive,
+    marksNegative,
+    cachedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -77,27 +156,88 @@ class $QuestionsTable extends Questions
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('title')) {
+    if (data.containsKey('remote_id')) {
       context.handle(
-        _titleMeta,
-        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
       );
     } else if (isInserting) {
-      context.missing(_titleMeta);
+      context.missing(_remoteIdMeta);
+    }
+    if (data.containsKey('quiz_id')) {
+      context.handle(
+        _quizIdMeta,
+        quizId.isAcceptableOrUnknown(data['quiz_id']!, _quizIdMeta),
+      );
+    }
+    if (data.containsKey('subject_slug')) {
+      context.handle(
+        _subjectSlugMeta,
+        subjectSlug.isAcceptableOrUnknown(
+          data['subject_slug']!,
+          _subjectSlugMeta,
+        ),
+      );
     }
     if (data.containsKey('body')) {
       context.handle(
         _bodyMeta,
         body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
       );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('options_json')) {
+      context.handle(
+        _optionsJsonMeta,
+        optionsJson.isAcceptableOrUnknown(
+          data['options_json']!,
+          _optionsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_optionsJsonMeta);
+    }
+    if (data.containsKey('correct_option_id')) {
+      context.handle(
+        _correctOptionIdMeta,
+        correctOptionId.isAcceptableOrUnknown(
+          data['correct_option_id']!,
+          _correctOptionIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('explanation')) {
+      context.handle(
+        _explanationMeta,
+        explanation.isAcceptableOrUnknown(
+          data['explanation']!,
+          _explanationMeta,
+        ),
+      );
     }
     if (data.containsKey('difficulty')) {
       context.handle(
         _difficultyMeta,
         difficulty.isAcceptableOrUnknown(data['difficulty']!, _difficultyMeta),
+      );
+    }
+    if (data.containsKey('marks_positive')) {
+      context.handle(
+        _marksPositiveMeta,
+        marksPositive.isAcceptableOrUnknown(
+          data['marks_positive']!,
+          _marksPositiveMeta,
+        ),
+      );
+    }
+    if (data.containsKey('marks_negative')) {
+      context.handle(
+        _marksNegativeMeta,
+        marksNegative.isAcceptableOrUnknown(
+          data['marks_negative']!,
+          _marksNegativeMeta,
+        ),
       );
     }
     if (data.containsKey('cached_at')) {
@@ -110,26 +250,50 @@ class $QuestionsTable extends Questions
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {remoteId};
   @override
   Question map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Question(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      title: attachedDatabase.typeMapping.read(
+      remoteId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}title'],
+        data['${effectivePrefix}remote_id'],
+      )!,
+      quizId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}quiz_id'],
+      ),
+      subjectSlug: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}subject_slug'],
       )!,
       body: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}body'],
+      )!,
+      optionsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}options_json'],
+      )!,
+      correctOptionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}correct_option_id'],
+      ),
+      explanation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}explanation'],
       ),
       difficulty: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}difficulty'],
+      )!,
+      marksPositive: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}marks_positive'],
+      )!,
+      marksNegative: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}marks_negative'],
       )!,
       cachedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -145,27 +309,49 @@ class $QuestionsTable extends Questions
 }
 
 class Question extends DataClass implements Insertable<Question> {
-  final int id;
-  final String title;
-  final String? body;
+  final String remoteId;
+  final String? quizId;
+  final String subjectSlug;
+  final String body;
+  final String optionsJson;
+  final String? correctOptionId;
+  final String? explanation;
   final int difficulty;
+  final int marksPositive;
+  final int marksNegative;
   final DateTime? cachedAt;
   const Question({
-    required this.id,
-    required this.title,
-    this.body,
+    required this.remoteId,
+    this.quizId,
+    required this.subjectSlug,
+    required this.body,
+    required this.optionsJson,
+    this.correctOptionId,
+    this.explanation,
     required this.difficulty,
+    required this.marksPositive,
+    required this.marksNegative,
     this.cachedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['title'] = Variable<String>(title);
-    if (!nullToAbsent || body != null) {
-      map['body'] = Variable<String>(body);
+    map['remote_id'] = Variable<String>(remoteId);
+    if (!nullToAbsent || quizId != null) {
+      map['quiz_id'] = Variable<String>(quizId);
+    }
+    map['subject_slug'] = Variable<String>(subjectSlug);
+    map['body'] = Variable<String>(body);
+    map['options_json'] = Variable<String>(optionsJson);
+    if (!nullToAbsent || correctOptionId != null) {
+      map['correct_option_id'] = Variable<String>(correctOptionId);
+    }
+    if (!nullToAbsent || explanation != null) {
+      map['explanation'] = Variable<String>(explanation);
     }
     map['difficulty'] = Variable<int>(difficulty);
+    map['marks_positive'] = Variable<int>(marksPositive);
+    map['marks_negative'] = Variable<int>(marksNegative);
     if (!nullToAbsent || cachedAt != null) {
       map['cached_at'] = Variable<DateTime>(cachedAt);
     }
@@ -174,10 +360,22 @@ class Question extends DataClass implements Insertable<Question> {
 
   QuestionsCompanion toCompanion(bool nullToAbsent) {
     return QuestionsCompanion(
-      id: Value(id),
-      title: Value(title),
-      body: body == null && nullToAbsent ? const Value.absent() : Value(body),
+      remoteId: Value(remoteId),
+      quizId: quizId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(quizId),
+      subjectSlug: Value(subjectSlug),
+      body: Value(body),
+      optionsJson: Value(optionsJson),
+      correctOptionId: correctOptionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctOptionId),
+      explanation: explanation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(explanation),
       difficulty: Value(difficulty),
+      marksPositive: Value(marksPositive),
+      marksNegative: Value(marksNegative),
       cachedAt: cachedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(cachedAt),
@@ -190,10 +388,16 @@ class Question extends DataClass implements Insertable<Question> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Question(
-      id: serializer.fromJson<int>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
-      body: serializer.fromJson<String?>(json['body']),
+      remoteId: serializer.fromJson<String>(json['remoteId']),
+      quizId: serializer.fromJson<String?>(json['quizId']),
+      subjectSlug: serializer.fromJson<String>(json['subjectSlug']),
+      body: serializer.fromJson<String>(json['body']),
+      optionsJson: serializer.fromJson<String>(json['optionsJson']),
+      correctOptionId: serializer.fromJson<String?>(json['correctOptionId']),
+      explanation: serializer.fromJson<String?>(json['explanation']),
       difficulty: serializer.fromJson<int>(json['difficulty']),
+      marksPositive: serializer.fromJson<int>(json['marksPositive']),
+      marksNegative: serializer.fromJson<int>(json['marksNegative']),
       cachedAt: serializer.fromJson<DateTime?>(json['cachedAt']),
     );
   }
@@ -201,35 +405,73 @@ class Question extends DataClass implements Insertable<Question> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'title': serializer.toJson<String>(title),
-      'body': serializer.toJson<String?>(body),
+      'remoteId': serializer.toJson<String>(remoteId),
+      'quizId': serializer.toJson<String?>(quizId),
+      'subjectSlug': serializer.toJson<String>(subjectSlug),
+      'body': serializer.toJson<String>(body),
+      'optionsJson': serializer.toJson<String>(optionsJson),
+      'correctOptionId': serializer.toJson<String?>(correctOptionId),
+      'explanation': serializer.toJson<String?>(explanation),
       'difficulty': serializer.toJson<int>(difficulty),
+      'marksPositive': serializer.toJson<int>(marksPositive),
+      'marksNegative': serializer.toJson<int>(marksNegative),
       'cachedAt': serializer.toJson<DateTime?>(cachedAt),
     };
   }
 
   Question copyWith({
-    int? id,
-    String? title,
-    Value<String?> body = const Value.absent(),
+    String? remoteId,
+    Value<String?> quizId = const Value.absent(),
+    String? subjectSlug,
+    String? body,
+    String? optionsJson,
+    Value<String?> correctOptionId = const Value.absent(),
+    Value<String?> explanation = const Value.absent(),
     int? difficulty,
+    int? marksPositive,
+    int? marksNegative,
     Value<DateTime?> cachedAt = const Value.absent(),
   }) => Question(
-    id: id ?? this.id,
-    title: title ?? this.title,
-    body: body.present ? body.value : this.body,
+    remoteId: remoteId ?? this.remoteId,
+    quizId: quizId.present ? quizId.value : this.quizId,
+    subjectSlug: subjectSlug ?? this.subjectSlug,
+    body: body ?? this.body,
+    optionsJson: optionsJson ?? this.optionsJson,
+    correctOptionId: correctOptionId.present
+        ? correctOptionId.value
+        : this.correctOptionId,
+    explanation: explanation.present ? explanation.value : this.explanation,
     difficulty: difficulty ?? this.difficulty,
+    marksPositive: marksPositive ?? this.marksPositive,
+    marksNegative: marksNegative ?? this.marksNegative,
     cachedAt: cachedAt.present ? cachedAt.value : this.cachedAt,
   );
   Question copyWithCompanion(QuestionsCompanion data) {
     return Question(
-      id: data.id.present ? data.id.value : this.id,
-      title: data.title.present ? data.title.value : this.title,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      quizId: data.quizId.present ? data.quizId.value : this.quizId,
+      subjectSlug: data.subjectSlug.present
+          ? data.subjectSlug.value
+          : this.subjectSlug,
       body: data.body.present ? data.body.value : this.body,
+      optionsJson: data.optionsJson.present
+          ? data.optionsJson.value
+          : this.optionsJson,
+      correctOptionId: data.correctOptionId.present
+          ? data.correctOptionId.value
+          : this.correctOptionId,
+      explanation: data.explanation.present
+          ? data.explanation.value
+          : this.explanation,
       difficulty: data.difficulty.present
           ? data.difficulty.value
           : this.difficulty,
+      marksPositive: data.marksPositive.present
+          ? data.marksPositive.value
+          : this.marksPositive,
+      marksNegative: data.marksNegative.present
+          ? data.marksNegative.value
+          : this.marksNegative,
       cachedAt: data.cachedAt.present ? data.cachedAt.value : this.cachedAt,
     );
   }
@@ -237,97 +479,193 @@ class Question extends DataClass implements Insertable<Question> {
   @override
   String toString() {
     return (StringBuffer('Question(')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('quizId: $quizId, ')
+          ..write('subjectSlug: $subjectSlug, ')
           ..write('body: $body, ')
+          ..write('optionsJson: $optionsJson, ')
+          ..write('correctOptionId: $correctOptionId, ')
+          ..write('explanation: $explanation, ')
           ..write('difficulty: $difficulty, ')
+          ..write('marksPositive: $marksPositive, ')
+          ..write('marksNegative: $marksNegative, ')
           ..write('cachedAt: $cachedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, body, difficulty, cachedAt);
+  int get hashCode => Object.hash(
+    remoteId,
+    quizId,
+    subjectSlug,
+    body,
+    optionsJson,
+    correctOptionId,
+    explanation,
+    difficulty,
+    marksPositive,
+    marksNegative,
+    cachedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Question &&
-          other.id == this.id &&
-          other.title == this.title &&
+          other.remoteId == this.remoteId &&
+          other.quizId == this.quizId &&
+          other.subjectSlug == this.subjectSlug &&
           other.body == this.body &&
+          other.optionsJson == this.optionsJson &&
+          other.correctOptionId == this.correctOptionId &&
+          other.explanation == this.explanation &&
           other.difficulty == this.difficulty &&
+          other.marksPositive == this.marksPositive &&
+          other.marksNegative == this.marksNegative &&
           other.cachedAt == this.cachedAt);
 }
 
 class QuestionsCompanion extends UpdateCompanion<Question> {
-  final Value<int> id;
-  final Value<String> title;
-  final Value<String?> body;
+  final Value<String> remoteId;
+  final Value<String?> quizId;
+  final Value<String> subjectSlug;
+  final Value<String> body;
+  final Value<String> optionsJson;
+  final Value<String?> correctOptionId;
+  final Value<String?> explanation;
   final Value<int> difficulty;
+  final Value<int> marksPositive;
+  final Value<int> marksNegative;
   final Value<DateTime?> cachedAt;
+  final Value<int> rowid;
   const QuestionsCompanion({
-    this.id = const Value.absent(),
-    this.title = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.quizId = const Value.absent(),
+    this.subjectSlug = const Value.absent(),
     this.body = const Value.absent(),
+    this.optionsJson = const Value.absent(),
+    this.correctOptionId = const Value.absent(),
+    this.explanation = const Value.absent(),
     this.difficulty = const Value.absent(),
+    this.marksPositive = const Value.absent(),
+    this.marksNegative = const Value.absent(),
     this.cachedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   QuestionsCompanion.insert({
-    this.id = const Value.absent(),
-    required String title,
-    this.body = const Value.absent(),
+    required String remoteId,
+    this.quizId = const Value.absent(),
+    this.subjectSlug = const Value.absent(),
+    required String body,
+    required String optionsJson,
+    this.correctOptionId = const Value.absent(),
+    this.explanation = const Value.absent(),
     this.difficulty = const Value.absent(),
+    this.marksPositive = const Value.absent(),
+    this.marksNegative = const Value.absent(),
     this.cachedAt = const Value.absent(),
-  }) : title = Value(title);
+    this.rowid = const Value.absent(),
+  }) : remoteId = Value(remoteId),
+       body = Value(body),
+       optionsJson = Value(optionsJson);
   static Insertable<Question> custom({
-    Expression<int>? id,
-    Expression<String>? title,
+    Expression<String>? remoteId,
+    Expression<String>? quizId,
+    Expression<String>? subjectSlug,
     Expression<String>? body,
+    Expression<String>? optionsJson,
+    Expression<String>? correctOptionId,
+    Expression<String>? explanation,
     Expression<int>? difficulty,
+    Expression<int>? marksPositive,
+    Expression<int>? marksNegative,
     Expression<DateTime>? cachedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (title != null) 'title': title,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (quizId != null) 'quiz_id': quizId,
+      if (subjectSlug != null) 'subject_slug': subjectSlug,
       if (body != null) 'body': body,
+      if (optionsJson != null) 'options_json': optionsJson,
+      if (correctOptionId != null) 'correct_option_id': correctOptionId,
+      if (explanation != null) 'explanation': explanation,
       if (difficulty != null) 'difficulty': difficulty,
+      if (marksPositive != null) 'marks_positive': marksPositive,
+      if (marksNegative != null) 'marks_negative': marksNegative,
       if (cachedAt != null) 'cached_at': cachedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   QuestionsCompanion copyWith({
-    Value<int>? id,
-    Value<String>? title,
-    Value<String?>? body,
+    Value<String>? remoteId,
+    Value<String?>? quizId,
+    Value<String>? subjectSlug,
+    Value<String>? body,
+    Value<String>? optionsJson,
+    Value<String?>? correctOptionId,
+    Value<String?>? explanation,
     Value<int>? difficulty,
+    Value<int>? marksPositive,
+    Value<int>? marksNegative,
     Value<DateTime?>? cachedAt,
+    Value<int>? rowid,
   }) {
     return QuestionsCompanion(
-      id: id ?? this.id,
-      title: title ?? this.title,
+      remoteId: remoteId ?? this.remoteId,
+      quizId: quizId ?? this.quizId,
+      subjectSlug: subjectSlug ?? this.subjectSlug,
       body: body ?? this.body,
+      optionsJson: optionsJson ?? this.optionsJson,
+      correctOptionId: correctOptionId ?? this.correctOptionId,
+      explanation: explanation ?? this.explanation,
       difficulty: difficulty ?? this.difficulty,
+      marksPositive: marksPositive ?? this.marksPositive,
+      marksNegative: marksNegative ?? this.marksNegative,
       cachedAt: cachedAt ?? this.cachedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
     }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
+    if (quizId.present) {
+      map['quiz_id'] = Variable<String>(quizId.value);
+    }
+    if (subjectSlug.present) {
+      map['subject_slug'] = Variable<String>(subjectSlug.value);
     }
     if (body.present) {
       map['body'] = Variable<String>(body.value);
     }
+    if (optionsJson.present) {
+      map['options_json'] = Variable<String>(optionsJson.value);
+    }
+    if (correctOptionId.present) {
+      map['correct_option_id'] = Variable<String>(correctOptionId.value);
+    }
+    if (explanation.present) {
+      map['explanation'] = Variable<String>(explanation.value);
+    }
     if (difficulty.present) {
       map['difficulty'] = Variable<int>(difficulty.value);
     }
+    if (marksPositive.present) {
+      map['marks_positive'] = Variable<int>(marksPositive.value);
+    }
+    if (marksNegative.present) {
+      map['marks_negative'] = Variable<int>(marksNegative.value);
+    }
     if (cachedAt.present) {
       map['cached_at'] = Variable<DateTime>(cachedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -335,11 +673,18 @@ class QuestionsCompanion extends UpdateCompanion<Question> {
   @override
   String toString() {
     return (StringBuffer('QuestionsCompanion(')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('quizId: $quizId, ')
+          ..write('subjectSlug: $subjectSlug, ')
           ..write('body: $body, ')
+          ..write('optionsJson: $optionsJson, ')
+          ..write('correctOptionId: $correctOptionId, ')
+          ..write('explanation: $explanation, ')
           ..write('difficulty: $difficulty, ')
-          ..write('cachedAt: $cachedAt')
+          ..write('marksPositive: $marksPositive, ')
+          ..write('marksNegative: $marksNegative, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -363,26 +708,37 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  static const VerificationMeta _remoteAttemptIdMeta = const VerificationMeta(
+    'remoteAttemptId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteAttemptId = GeneratedColumn<String>(
+    'remote_attempt_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _questionIdMeta = const VerificationMeta(
     'questionId',
   );
   @override
-  late final GeneratedColumn<int> questionId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> questionId = GeneratedColumn<String>(
     'question_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _selectedOptionMeta = const VerificationMeta(
-    'selectedOption',
+  static const VerificationMeta _selectedOptionIdMeta = const VerificationMeta(
+    'selectedOptionId',
   );
   @override
-  late final GeneratedColumn<int> selectedOption = GeneratedColumn<int>(
-    'selected_option',
+  late final GeneratedColumn<String> selectedOptionId = GeneratedColumn<String>(
+    'selected_option_id',
     aliasedName,
     true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _isCorrectMeta = const VerificationMeta(
@@ -399,6 +755,42 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
       'CHECK ("is_correct" IN (0, 1))',
     ),
   );
+  static const VerificationMeta _xpEarnedMeta = const VerificationMeta(
+    'xpEarned',
+  );
+  @override
+  late final GeneratedColumn<int> xpEarned = GeneratedColumn<int>(
+    'xp_earned',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _coinsEarnedMeta = const VerificationMeta(
+    'coinsEarned',
+  );
+  @override
+  late final GeneratedColumn<int> coinsEarned = GeneratedColumn<int>(
+    'coins_earned',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _syncStatusMeta = const VerificationMeta(
+    'syncStatus',
+  );
+  @override
+  late final GeneratedColumn<int> syncStatus = GeneratedColumn<int>(
+    'sync_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _answeredAtMeta = const VerificationMeta(
     'answeredAt',
   );
@@ -414,9 +806,13 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    remoteAttemptId,
     questionId,
-    selectedOption,
+    selectedOptionId,
     isCorrect,
+    xpEarned,
+    coinsEarned,
+    syncStatus,
     answeredAt,
   ];
   @override
@@ -434,6 +830,15 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
+    if (data.containsKey('remote_attempt_id')) {
+      context.handle(
+        _remoteAttemptIdMeta,
+        remoteAttemptId.isAcceptableOrUnknown(
+          data['remote_attempt_id']!,
+          _remoteAttemptIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('question_id')) {
       context.handle(
         _questionIdMeta,
@@ -442,12 +847,12 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
     } else if (isInserting) {
       context.missing(_questionIdMeta);
     }
-    if (data.containsKey('selected_option')) {
+    if (data.containsKey('selected_option_id')) {
       context.handle(
-        _selectedOptionMeta,
-        selectedOption.isAcceptableOrUnknown(
-          data['selected_option']!,
-          _selectedOptionMeta,
+        _selectedOptionIdMeta,
+        selectedOptionId.isAcceptableOrUnknown(
+          data['selected_option_id']!,
+          _selectedOptionIdMeta,
         ),
       );
     }
@@ -455,6 +860,27 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
       context.handle(
         _isCorrectMeta,
         isCorrect.isAcceptableOrUnknown(data['is_correct']!, _isCorrectMeta),
+      );
+    }
+    if (data.containsKey('xp_earned')) {
+      context.handle(
+        _xpEarnedMeta,
+        xpEarned.isAcceptableOrUnknown(data['xp_earned']!, _xpEarnedMeta),
+      );
+    }
+    if (data.containsKey('coins_earned')) {
+      context.handle(
+        _coinsEarnedMeta,
+        coinsEarned.isAcceptableOrUnknown(
+          data['coins_earned']!,
+          _coinsEarnedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sync_status')) {
+      context.handle(
+        _syncStatusMeta,
+        syncStatus.isAcceptableOrUnknown(data['sync_status']!, _syncStatusMeta),
       );
     }
     if (data.containsKey('answered_at')) {
@@ -476,18 +902,34 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      remoteAttemptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_attempt_id'],
+      ),
       questionId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}question_id'],
       )!,
-      selectedOption: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}selected_option'],
+      selectedOptionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selected_option_id'],
       ),
       isCorrect: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_correct'],
       ),
+      xpEarned: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}xp_earned'],
+      )!,
+      coinsEarned: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}coins_earned'],
+      )!,
+      syncStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sync_status'],
+      )!,
       answeredAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}answered_at'],
@@ -503,28 +945,42 @@ class $AttemptsTable extends Attempts with TableInfo<$AttemptsTable, Attempt> {
 
 class Attempt extends DataClass implements Insertable<Attempt> {
   final int id;
-  final int questionId;
-  final int? selectedOption;
+  final String? remoteAttemptId;
+  final String questionId;
+  final String? selectedOptionId;
   final bool? isCorrect;
+  final int xpEarned;
+  final int coinsEarned;
+  final int syncStatus;
   final DateTime answeredAt;
   const Attempt({
     required this.id,
+    this.remoteAttemptId,
     required this.questionId,
-    this.selectedOption,
+    this.selectedOptionId,
     this.isCorrect,
+    required this.xpEarned,
+    required this.coinsEarned,
+    required this.syncStatus,
     required this.answeredAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['question_id'] = Variable<int>(questionId);
-    if (!nullToAbsent || selectedOption != null) {
-      map['selected_option'] = Variable<int>(selectedOption);
+    if (!nullToAbsent || remoteAttemptId != null) {
+      map['remote_attempt_id'] = Variable<String>(remoteAttemptId);
+    }
+    map['question_id'] = Variable<String>(questionId);
+    if (!nullToAbsent || selectedOptionId != null) {
+      map['selected_option_id'] = Variable<String>(selectedOptionId);
     }
     if (!nullToAbsent || isCorrect != null) {
       map['is_correct'] = Variable<bool>(isCorrect);
     }
+    map['xp_earned'] = Variable<int>(xpEarned);
+    map['coins_earned'] = Variable<int>(coinsEarned);
+    map['sync_status'] = Variable<int>(syncStatus);
     map['answered_at'] = Variable<DateTime>(answeredAt);
     return map;
   }
@@ -532,13 +988,19 @@ class Attempt extends DataClass implements Insertable<Attempt> {
   AttemptsCompanion toCompanion(bool nullToAbsent) {
     return AttemptsCompanion(
       id: Value(id),
-      questionId: Value(questionId),
-      selectedOption: selectedOption == null && nullToAbsent
+      remoteAttemptId: remoteAttemptId == null && nullToAbsent
           ? const Value.absent()
-          : Value(selectedOption),
+          : Value(remoteAttemptId),
+      questionId: Value(questionId),
+      selectedOptionId: selectedOptionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(selectedOptionId),
       isCorrect: isCorrect == null && nullToAbsent
           ? const Value.absent()
           : Value(isCorrect),
+      xpEarned: Value(xpEarned),
+      coinsEarned: Value(coinsEarned),
+      syncStatus: Value(syncStatus),
       answeredAt: Value(answeredAt),
     );
   }
@@ -550,9 +1012,13 @@ class Attempt extends DataClass implements Insertable<Attempt> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Attempt(
       id: serializer.fromJson<int>(json['id']),
-      questionId: serializer.fromJson<int>(json['questionId']),
-      selectedOption: serializer.fromJson<int?>(json['selectedOption']),
+      remoteAttemptId: serializer.fromJson<String?>(json['remoteAttemptId']),
+      questionId: serializer.fromJson<String>(json['questionId']),
+      selectedOptionId: serializer.fromJson<String?>(json['selectedOptionId']),
       isCorrect: serializer.fromJson<bool?>(json['isCorrect']),
+      xpEarned: serializer.fromJson<int>(json['xpEarned']),
+      coinsEarned: serializer.fromJson<int>(json['coinsEarned']),
+      syncStatus: serializer.fromJson<int>(json['syncStatus']),
       answeredAt: serializer.fromJson<DateTime>(json['answeredAt']),
     );
   }
@@ -561,38 +1027,62 @@ class Attempt extends DataClass implements Insertable<Attempt> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'questionId': serializer.toJson<int>(questionId),
-      'selectedOption': serializer.toJson<int?>(selectedOption),
+      'remoteAttemptId': serializer.toJson<String?>(remoteAttemptId),
+      'questionId': serializer.toJson<String>(questionId),
+      'selectedOptionId': serializer.toJson<String?>(selectedOptionId),
       'isCorrect': serializer.toJson<bool?>(isCorrect),
+      'xpEarned': serializer.toJson<int>(xpEarned),
+      'coinsEarned': serializer.toJson<int>(coinsEarned),
+      'syncStatus': serializer.toJson<int>(syncStatus),
       'answeredAt': serializer.toJson<DateTime>(answeredAt),
     };
   }
 
   Attempt copyWith({
     int? id,
-    int? questionId,
-    Value<int?> selectedOption = const Value.absent(),
+    Value<String?> remoteAttemptId = const Value.absent(),
+    String? questionId,
+    Value<String?> selectedOptionId = const Value.absent(),
     Value<bool?> isCorrect = const Value.absent(),
+    int? xpEarned,
+    int? coinsEarned,
+    int? syncStatus,
     DateTime? answeredAt,
   }) => Attempt(
     id: id ?? this.id,
+    remoteAttemptId: remoteAttemptId.present
+        ? remoteAttemptId.value
+        : this.remoteAttemptId,
     questionId: questionId ?? this.questionId,
-    selectedOption: selectedOption.present
-        ? selectedOption.value
-        : this.selectedOption,
+    selectedOptionId: selectedOptionId.present
+        ? selectedOptionId.value
+        : this.selectedOptionId,
     isCorrect: isCorrect.present ? isCorrect.value : this.isCorrect,
+    xpEarned: xpEarned ?? this.xpEarned,
+    coinsEarned: coinsEarned ?? this.coinsEarned,
+    syncStatus: syncStatus ?? this.syncStatus,
     answeredAt: answeredAt ?? this.answeredAt,
   );
   Attempt copyWithCompanion(AttemptsCompanion data) {
     return Attempt(
       id: data.id.present ? data.id.value : this.id,
+      remoteAttemptId: data.remoteAttemptId.present
+          ? data.remoteAttemptId.value
+          : this.remoteAttemptId,
       questionId: data.questionId.present
           ? data.questionId.value
           : this.questionId,
-      selectedOption: data.selectedOption.present
-          ? data.selectedOption.value
-          : this.selectedOption,
+      selectedOptionId: data.selectedOptionId.present
+          ? data.selectedOptionId.value
+          : this.selectedOptionId,
       isCorrect: data.isCorrect.present ? data.isCorrect.value : this.isCorrect,
+      xpEarned: data.xpEarned.present ? data.xpEarned.value : this.xpEarned,
+      coinsEarned: data.coinsEarned.present
+          ? data.coinsEarned.value
+          : this.coinsEarned,
+      syncStatus: data.syncStatus.present
+          ? data.syncStatus.value
+          : this.syncStatus,
       answeredAt: data.answeredAt.present
           ? data.answeredAt.value
           : this.answeredAt,
@@ -603,76 +1093,121 @@ class Attempt extends DataClass implements Insertable<Attempt> {
   String toString() {
     return (StringBuffer('Attempt(')
           ..write('id: $id, ')
+          ..write('remoteAttemptId: $remoteAttemptId, ')
           ..write('questionId: $questionId, ')
-          ..write('selectedOption: $selectedOption, ')
+          ..write('selectedOptionId: $selectedOptionId, ')
           ..write('isCorrect: $isCorrect, ')
+          ..write('xpEarned: $xpEarned, ')
+          ..write('coinsEarned: $coinsEarned, ')
+          ..write('syncStatus: $syncStatus, ')
           ..write('answeredAt: $answeredAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, questionId, selectedOption, isCorrect, answeredAt);
+  int get hashCode => Object.hash(
+    id,
+    remoteAttemptId,
+    questionId,
+    selectedOptionId,
+    isCorrect,
+    xpEarned,
+    coinsEarned,
+    syncStatus,
+    answeredAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Attempt &&
           other.id == this.id &&
+          other.remoteAttemptId == this.remoteAttemptId &&
           other.questionId == this.questionId &&
-          other.selectedOption == this.selectedOption &&
+          other.selectedOptionId == this.selectedOptionId &&
           other.isCorrect == this.isCorrect &&
+          other.xpEarned == this.xpEarned &&
+          other.coinsEarned == this.coinsEarned &&
+          other.syncStatus == this.syncStatus &&
           other.answeredAt == this.answeredAt);
 }
 
 class AttemptsCompanion extends UpdateCompanion<Attempt> {
   final Value<int> id;
-  final Value<int> questionId;
-  final Value<int?> selectedOption;
+  final Value<String?> remoteAttemptId;
+  final Value<String> questionId;
+  final Value<String?> selectedOptionId;
   final Value<bool?> isCorrect;
+  final Value<int> xpEarned;
+  final Value<int> coinsEarned;
+  final Value<int> syncStatus;
   final Value<DateTime> answeredAt;
   const AttemptsCompanion({
     this.id = const Value.absent(),
+    this.remoteAttemptId = const Value.absent(),
     this.questionId = const Value.absent(),
-    this.selectedOption = const Value.absent(),
+    this.selectedOptionId = const Value.absent(),
     this.isCorrect = const Value.absent(),
+    this.xpEarned = const Value.absent(),
+    this.coinsEarned = const Value.absent(),
+    this.syncStatus = const Value.absent(),
     this.answeredAt = const Value.absent(),
   });
   AttemptsCompanion.insert({
     this.id = const Value.absent(),
-    required int questionId,
-    this.selectedOption = const Value.absent(),
+    this.remoteAttemptId = const Value.absent(),
+    required String questionId,
+    this.selectedOptionId = const Value.absent(),
     this.isCorrect = const Value.absent(),
+    this.xpEarned = const Value.absent(),
+    this.coinsEarned = const Value.absent(),
+    this.syncStatus = const Value.absent(),
     this.answeredAt = const Value.absent(),
   }) : questionId = Value(questionId);
   static Insertable<Attempt> custom({
     Expression<int>? id,
-    Expression<int>? questionId,
-    Expression<int>? selectedOption,
+    Expression<String>? remoteAttemptId,
+    Expression<String>? questionId,
+    Expression<String>? selectedOptionId,
     Expression<bool>? isCorrect,
+    Expression<int>? xpEarned,
+    Expression<int>? coinsEarned,
+    Expression<int>? syncStatus,
     Expression<DateTime>? answeredAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (remoteAttemptId != null) 'remote_attempt_id': remoteAttemptId,
       if (questionId != null) 'question_id': questionId,
-      if (selectedOption != null) 'selected_option': selectedOption,
+      if (selectedOptionId != null) 'selected_option_id': selectedOptionId,
       if (isCorrect != null) 'is_correct': isCorrect,
+      if (xpEarned != null) 'xp_earned': xpEarned,
+      if (coinsEarned != null) 'coins_earned': coinsEarned,
+      if (syncStatus != null) 'sync_status': syncStatus,
       if (answeredAt != null) 'answered_at': answeredAt,
     });
   }
 
   AttemptsCompanion copyWith({
     Value<int>? id,
-    Value<int>? questionId,
-    Value<int?>? selectedOption,
+    Value<String?>? remoteAttemptId,
+    Value<String>? questionId,
+    Value<String?>? selectedOptionId,
     Value<bool?>? isCorrect,
+    Value<int>? xpEarned,
+    Value<int>? coinsEarned,
+    Value<int>? syncStatus,
     Value<DateTime>? answeredAt,
   }) {
     return AttemptsCompanion(
       id: id ?? this.id,
+      remoteAttemptId: remoteAttemptId ?? this.remoteAttemptId,
       questionId: questionId ?? this.questionId,
-      selectedOption: selectedOption ?? this.selectedOption,
+      selectedOptionId: selectedOptionId ?? this.selectedOptionId,
       isCorrect: isCorrect ?? this.isCorrect,
+      xpEarned: xpEarned ?? this.xpEarned,
+      coinsEarned: coinsEarned ?? this.coinsEarned,
+      syncStatus: syncStatus ?? this.syncStatus,
       answeredAt: answeredAt ?? this.answeredAt,
     );
   }
@@ -683,14 +1218,26 @@ class AttemptsCompanion extends UpdateCompanion<Attempt> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (questionId.present) {
-      map['question_id'] = Variable<int>(questionId.value);
+    if (remoteAttemptId.present) {
+      map['remote_attempt_id'] = Variable<String>(remoteAttemptId.value);
     }
-    if (selectedOption.present) {
-      map['selected_option'] = Variable<int>(selectedOption.value);
+    if (questionId.present) {
+      map['question_id'] = Variable<String>(questionId.value);
+    }
+    if (selectedOptionId.present) {
+      map['selected_option_id'] = Variable<String>(selectedOptionId.value);
     }
     if (isCorrect.present) {
       map['is_correct'] = Variable<bool>(isCorrect.value);
+    }
+    if (xpEarned.present) {
+      map['xp_earned'] = Variable<int>(xpEarned.value);
+    }
+    if (coinsEarned.present) {
+      map['coins_earned'] = Variable<int>(coinsEarned.value);
+    }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<int>(syncStatus.value);
     }
     if (answeredAt.present) {
       map['answered_at'] = Variable<DateTime>(answeredAt.value);
@@ -702,9 +1249,13 @@ class AttemptsCompanion extends UpdateCompanion<Attempt> {
   String toString() {
     return (StringBuffer('AttemptsCompanion(')
           ..write('id: $id, ')
+          ..write('remoteAttemptId: $remoteAttemptId, ')
           ..write('questionId: $questionId, ')
-          ..write('selectedOption: $selectedOption, ')
+          ..write('selectedOptionId: $selectedOptionId, ')
           ..write('isCorrect: $isCorrect, ')
+          ..write('xpEarned: $xpEarned, ')
+          ..write('coinsEarned: $coinsEarned, ')
+          ..write('syncStatus: $syncStatus, ')
           ..write('answeredAt: $answeredAt')
           ..write(')'))
         .toString();
@@ -1941,18 +2492,32 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 }
 
 typedef $$QuestionsTableCreateCompanionBuilder = QuestionsCompanion Function({
-  Value<int> id,
-  required String title,
-  Value<String?> body,
+  required String remoteId,
+  Value<String?> quizId,
+  Value<String> subjectSlug,
+  required String body,
+  required String optionsJson,
+  Value<String?> correctOptionId,
+  Value<String?> explanation,
   Value<int> difficulty,
+  Value<int> marksPositive,
+  Value<int> marksNegative,
   Value<DateTime?> cachedAt,
+  Value<int> rowid,
 });
 typedef $$QuestionsTableUpdateCompanionBuilder = QuestionsCompanion Function({
-  Value<int> id,
-  Value<String> title,
-  Value<String?> body,
+  Value<String> remoteId,
+  Value<String?> quizId,
+  Value<String> subjectSlug,
+  Value<String> body,
+  Value<String> optionsJson,
+  Value<String?> correctOptionId,
+  Value<String?> explanation,
   Value<int> difficulty,
+  Value<int> marksPositive,
+  Value<int> marksNegative,
   Value<DateTime?> cachedAt,
+  Value<int> rowid,
 });
 
 class $$QuestionsTableFilterComposer
@@ -1964,13 +2529,18 @@ class $$QuestionsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get title => $composableBuilder(
-    column: $table.title,
+  ColumnFilters<String> get quizId => $composableBuilder(
+    column: $table.quizId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get subjectSlug => $composableBuilder(
+    column: $table.subjectSlug,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1979,8 +2549,33 @@ class $$QuestionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get optionsJson => $composableBuilder(
+    column: $table.optionsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get correctOptionId => $composableBuilder(
+    column: $table.correctOptionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get difficulty => $composableBuilder(
     column: $table.difficulty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get marksPositive => $composableBuilder(
+    column: $table.marksPositive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get marksNegative => $composableBuilder(
+    column: $table.marksNegative,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1999,13 +2594,18 @@ class $$QuestionsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get title => $composableBuilder(
-    column: $table.title,
+  ColumnOrderings<String> get quizId => $composableBuilder(
+    column: $table.quizId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get subjectSlug => $composableBuilder(
+    column: $table.subjectSlug,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2014,8 +2614,33 @@ class $$QuestionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get optionsJson => $composableBuilder(
+    column: $table.optionsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get correctOptionId => $composableBuilder(
+    column: $table.correctOptionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get difficulty => $composableBuilder(
     column: $table.difficulty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get marksPositive => $composableBuilder(
+    column: $table.marksPositive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get marksNegative => $composableBuilder(
+    column: $table.marksNegative,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2034,17 +2659,47 @@ class $$QuestionsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
 
-  GeneratedColumn<String> get title =>
-      $composableBuilder(column: $table.title, builder: (column) => column);
+  GeneratedColumn<String> get quizId =>
+      $composableBuilder(column: $table.quizId, builder: (column) => column);
+
+  GeneratedColumn<String> get subjectSlug => $composableBuilder(
+    column: $table.subjectSlug,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get body =>
       $composableBuilder(column: $table.body, builder: (column) => column);
 
+  GeneratedColumn<String> get optionsJson => $composableBuilder(
+    column: $table.optionsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get correctOptionId => $composableBuilder(
+    column: $table.correctOptionId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get difficulty => $composableBuilder(
     column: $table.difficulty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get marksPositive => $composableBuilder(
+    column: $table.marksPositive,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get marksNegative => $composableBuilder(
+    column: $table.marksNegative,
     builder: (column) => column,
   );
 
@@ -2080,31 +2735,59 @@ class $$QuestionsTableTableManager
               $$QuestionsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<String> title = const Value.absent(),
-                Value<String?> body = const Value.absent(),
+                Value<String> remoteId = const Value.absent(),
+                Value<String?> quizId = const Value.absent(),
+                Value<String> subjectSlug = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<String> optionsJson = const Value.absent(),
+                Value<String?> correctOptionId = const Value.absent(),
+                Value<String?> explanation = const Value.absent(),
                 Value<int> difficulty = const Value.absent(),
+                Value<int> marksPositive = const Value.absent(),
+                Value<int> marksNegative = const Value.absent(),
                 Value<DateTime?> cachedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => QuestionsCompanion(
-                id: id,
-                title: title,
+                remoteId: remoteId,
+                quizId: quizId,
+                subjectSlug: subjectSlug,
                 body: body,
+                optionsJson: optionsJson,
+                correctOptionId: correctOptionId,
+                explanation: explanation,
                 difficulty: difficulty,
+                marksPositive: marksPositive,
+                marksNegative: marksNegative,
                 cachedAt: cachedAt,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                required String title,
-                Value<String?> body = const Value.absent(),
+                required String remoteId,
+                Value<String?> quizId = const Value.absent(),
+                Value<String> subjectSlug = const Value.absent(),
+                required String body,
+                required String optionsJson,
+                Value<String?> correctOptionId = const Value.absent(),
+                Value<String?> explanation = const Value.absent(),
                 Value<int> difficulty = const Value.absent(),
+                Value<int> marksPositive = const Value.absent(),
+                Value<int> marksNegative = const Value.absent(),
                 Value<DateTime?> cachedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => QuestionsCompanion.insert(
-                id: id,
-                title: title,
+                remoteId: remoteId,
+                quizId: quizId,
+                subjectSlug: subjectSlug,
                 body: body,
+                optionsJson: optionsJson,
+                correctOptionId: correctOptionId,
+                explanation: explanation,
                 difficulty: difficulty,
+                marksPositive: marksPositive,
+                marksNegative: marksNegative,
                 cachedAt: cachedAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -2130,16 +2813,24 @@ typedef $$QuestionsTableProcessedTableManager =
     >;
 typedef $$AttemptsTableCreateCompanionBuilder = AttemptsCompanion Function({
   Value<int> id,
-  required int questionId,
-  Value<int?> selectedOption,
+  Value<String?> remoteAttemptId,
+  required String questionId,
+  Value<String?> selectedOptionId,
   Value<bool?> isCorrect,
+  Value<int> xpEarned,
+  Value<int> coinsEarned,
+  Value<int> syncStatus,
   Value<DateTime> answeredAt,
 });
 typedef $$AttemptsTableUpdateCompanionBuilder = AttemptsCompanion Function({
   Value<int> id,
-  Value<int> questionId,
-  Value<int?> selectedOption,
+  Value<String?> remoteAttemptId,
+  Value<String> questionId,
+  Value<String?> selectedOptionId,
   Value<bool?> isCorrect,
+  Value<int> xpEarned,
+  Value<int> coinsEarned,
+  Value<int> syncStatus,
   Value<DateTime> answeredAt,
 });
 
@@ -2157,18 +2848,38 @@ class $$AttemptsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get questionId => $composableBuilder(
+  ColumnFilters<String> get remoteAttemptId => $composableBuilder(
+    column: $table.remoteAttemptId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get questionId => $composableBuilder(
     column: $table.questionId,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get selectedOption => $composableBuilder(
-    column: $table.selectedOption,
+  ColumnFilters<String> get selectedOptionId => $composableBuilder(
+    column: $table.selectedOptionId,
     builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<bool> get isCorrect => $composableBuilder(
     column: $table.isCorrect,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get xpEarned => $composableBuilder(
+    column: $table.xpEarned,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get coinsEarned => $composableBuilder(
+    column: $table.coinsEarned,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2192,18 +2903,38 @@ class $$AttemptsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get questionId => $composableBuilder(
+  ColumnOrderings<String> get remoteAttemptId => $composableBuilder(
+    column: $table.remoteAttemptId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get questionId => $composableBuilder(
     column: $table.questionId,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get selectedOption => $composableBuilder(
-    column: $table.selectedOption,
+  ColumnOrderings<String> get selectedOptionId => $composableBuilder(
+    column: $table.selectedOptionId,
     builder: (column) => ColumnOrderings(column),
   );
 
   ColumnOrderings<bool> get isCorrect => $composableBuilder(
     column: $table.isCorrect,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get xpEarned => $composableBuilder(
+    column: $table.xpEarned,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get coinsEarned => $composableBuilder(
+    column: $table.coinsEarned,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2225,18 +2956,36 @@ class $$AttemptsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get questionId => $composableBuilder(
+  GeneratedColumn<String> get remoteAttemptId => $composableBuilder(
+    column: $table.remoteAttemptId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get questionId => $composableBuilder(
     column: $table.questionId,
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get selectedOption => $composableBuilder(
-    column: $table.selectedOption,
+  GeneratedColumn<String> get selectedOptionId => $composableBuilder(
+    column: $table.selectedOptionId,
     builder: (column) => column,
   );
 
   GeneratedColumn<bool> get isCorrect =>
       $composableBuilder(column: $table.isCorrect, builder: (column) => column);
+
+  GeneratedColumn<int> get xpEarned =>
+      $composableBuilder(column: $table.xpEarned, builder: (column) => column);
+
+  GeneratedColumn<int> get coinsEarned => $composableBuilder(
+    column: $table.coinsEarned,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get answeredAt => $composableBuilder(
     column: $table.answeredAt,
@@ -2273,29 +3022,45 @@ class $$AttemptsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> questionId = const Value.absent(),
-                Value<int?> selectedOption = const Value.absent(),
+                Value<String?> remoteAttemptId = const Value.absent(),
+                Value<String> questionId = const Value.absent(),
+                Value<String?> selectedOptionId = const Value.absent(),
                 Value<bool?> isCorrect = const Value.absent(),
+                Value<int> xpEarned = const Value.absent(),
+                Value<int> coinsEarned = const Value.absent(),
+                Value<int> syncStatus = const Value.absent(),
                 Value<DateTime> answeredAt = const Value.absent(),
               }) => AttemptsCompanion(
                 id: id,
+                remoteAttemptId: remoteAttemptId,
                 questionId: questionId,
-                selectedOption: selectedOption,
+                selectedOptionId: selectedOptionId,
                 isCorrect: isCorrect,
+                xpEarned: xpEarned,
+                coinsEarned: coinsEarned,
+                syncStatus: syncStatus,
                 answeredAt: answeredAt,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int questionId,
-                Value<int?> selectedOption = const Value.absent(),
+                Value<String?> remoteAttemptId = const Value.absent(),
+                required String questionId,
+                Value<String?> selectedOptionId = const Value.absent(),
                 Value<bool?> isCorrect = const Value.absent(),
+                Value<int> xpEarned = const Value.absent(),
+                Value<int> coinsEarned = const Value.absent(),
+                Value<int> syncStatus = const Value.absent(),
                 Value<DateTime> answeredAt = const Value.absent(),
               }) => AttemptsCompanion.insert(
                 id: id,
+                remoteAttemptId: remoteAttemptId,
                 questionId: questionId,
-                selectedOption: selectedOption,
+                selectedOptionId: selectedOptionId,
                 isCorrect: isCorrect,
+                xpEarned: xpEarned,
+                coinsEarned: coinsEarned,
+                syncStatus: syncStatus,
                 answeredAt: answeredAt,
               ),
           withReferenceMapper: (p0) => p0

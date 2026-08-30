@@ -6,15 +6,28 @@ class SyncQueueDao {
   SyncQueueDao(this.db);
   final AppDatabase db;
 
-  Future<List<SyncQueueData>> pending() =>
-      (db.select(db.syncQueue)..where((t) => t.attempts.isSmallerThanValue(5))).get();
+  /// Items worth attempting now: under the retry cap and past their backoff.
+  Future<List<SyncQueueData>> pending() {
+    final now = DateTime.now();
+    return (db.select(db.syncQueue)
+          ..where(
+            (t) =>
+                t.attempts.isSmallerThanValue(5) &
+                (t.nextAttemptAt.isNull() |
+                    t.nextAttemptAt.isSmallerOrEqualValue(now)),
+          ))
+        .get();
+  }
 
   Future<int> enqueue(SyncQueueCompanion c) => db.into(db.syncQueue).insert(c);
 
   Future<int> remove(int id) =>
       (db.delete(db.syncQueue)..where((t) => t.id.equals(id))).go();
 
-  Future<int> bump(int id, DateTime next) => (db.update(db.syncQueue)
-        ..where((t) => t.id.equals(id)))
-      .write(SyncQueueCompanion(attempts: const Value(1), nextAttemptAt: Value(next)));
+  /// Records a failed attempt by incrementing the counter (never resetting it)
+  /// and schedules the next attempt after [next].
+  Future<void> bump(int id, DateTime next) => db.customUpdate(
+        'UPDATE sync_queue SET attempts = attempts + 1, next_attempt_at = ? WHERE id = ?',
+        variables: [Variable(next), Variable(id)],
+      );
 }

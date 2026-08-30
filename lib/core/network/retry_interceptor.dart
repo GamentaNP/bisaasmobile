@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -9,13 +8,20 @@ import '../logging/app_logger.dart';
 /// Honors `Retry-After` on 429 and `X-RateLimit-*` backoff.
 /// Uses exponential backoff with jitter for 5xx / network errors.
 ///
-/// Contract: never retry non-idempotent POSTs that already sent Idempotency-Key
-/// unless the error is 429 (server explicitly asks to retry after).
+/// Contract (`MOBILE_API_INTEGRATION_GUIDE.md`): never retry non-idempotent
+/// POSTs unless the server explicitly asks (429 Retry-After — rate-limited
+/// calls never reached execution) or the call carries an `Idempotency-Key`
+/// (server dedupes replays).
 class RetryInterceptor extends Interceptor {
   RetryInterceptor({
+    required this.dio,
     this.maxRetries = 3,
     this.baseDelay = const Duration(milliseconds: 500),
   });
+
+  /// The live client — retries reuse the original interceptors, TLS policy and
+  /// baseUrl instead of a stripped-down clone.
+  final Dio dio;
 
   final int maxRetries;
   final Duration baseDelay;
@@ -31,9 +37,7 @@ class RetryInterceptor extends Interceptor {
     }
 
     final status = err.response?.statusCode;
-    final shouldRetry = _shouldRetry(err, status);
-
-    if (!shouldRetry) {
+    if (!_shouldRetry(err, status)) {
       handler.next(err);
       return;
     }
@@ -52,10 +56,7 @@ class RetryInterceptor extends Interceptor {
     );
 
     try {
-      // Re-use the same interceptors stack except this one to avoid loop.
-      // Instead, directly fetch via the original Dio instance if available.
-      // Fallback: clone request via fetch.
-      final response = await _fetchWithOriginalDio(err, newOpts);
+      final response = await dio.fetch<dynamic>(newOpts);
       handler.resolve(response);
     } on DioException catch (e) {
       handler.next(e);
@@ -63,23 +64,29 @@ class RetryInterceptor extends Interceptor {
   }
 
   bool _shouldRetry(DioException err, int? status) {
+    final opts = err.requestOptions;
+    final method = opts.method.toUpperCase();
+    final replaySafe = method == 'GET' ||
+        method == 'HEAD' ||
+        method == 'OPTIONS' ||
+        opts.headers.containsKey('Idempotency-Key');
+
     // Always retry 429 (rate limit) — server says when via Retry-After.
     if (status == 429) return true;
-    // Retry 5xx and network timeouts.
-    if (status != null && status >= 500 && status < 600) return true;
+    // Retry 5xx and network timeouts only when the server can dedupe replays.
+    if (status != null && status >= 500 && status < 600) return replaySafe;
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.connectionError) {
-      return true;
+      return replaySafe;
     }
     return false;
   }
 
   Duration _computeDelay(DioException err, int attempt) {
     // Honor Retry-After header (seconds or http-date).
-    final retryAfter = err.response?.headers.value('retry-after') ??
-        err.response?.headers.value('Retry-After');
+    final retryAfter = err.response?.headers.value('retry-after');
     if (retryAfter != null) {
       final seconds = int.tryParse(retryAfter);
       if (seconds != null) return Duration(seconds: seconds);
@@ -88,12 +95,13 @@ class RetryInterceptor extends Interceptor {
         final date = HttpDate.parse(retryAfter);
         final diff = date.difference(DateTime.now());
         if (!diff.isNegative) return diff;
-      } catch (_) {}
+      } catch (_) {
+        // Malformed http-date — fall through to backoff.
+      }
     }
 
     // Honor X-RateLimit-Reset if present.
-    final reset = err.response?.headers.value('x-ratelimit-reset') ??
-        err.response?.headers.value('X-RateLimit-Reset');
+    final reset = err.response?.headers.value('x-ratelimit-reset');
     if (reset != null) {
       final epoch = int.tryParse(reset);
       if (epoch != null) {
@@ -107,18 +115,5 @@ class RetryInterceptor extends Interceptor {
     final exp = baseDelay * (1 << attempt);
     final jitter = Duration(milliseconds: Random().nextInt(250));
     return exp + jitter;
-  }
-
-  Future<Response<dynamic>> _fetchWithOriginalDio(
-    DioException err,
-    RequestOptions newOpts,
-  ) async {
-    // The original Dio is not directly accessible here; we reconstruct via
-    // err.requestOptions copy and use a fresh Dio that respects same baseUrl.
-    // In practice, DioClient passes this interceptor; retries will go through
-    // the same interceptor chain again — so we manually call fetch.
-    final dioForRetry = Dio();
-    // Preserve original extra + headers.
-    return dioForRetry.fetch<dynamic>(newOpts);
   }
 }

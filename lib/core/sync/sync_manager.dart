@@ -23,12 +23,15 @@ class SyncManager {
   bool _syncing = false;
 
   void start() {
-    _sub = _conn.onOnlineChanged.listen((online) {
+    _sub ??= _conn.onOnlineChanged.listen((online) {
       if (online) unawaited(syncNow());
     });
   }
 
-  Future<void> dispose() async => _sub?.cancel();
+  Future<void> dispose() async {
+    await _sub?.cancel();
+    _sub = null;
+  }
 
   Future<void> syncNow() async {
     if (_syncing) return;
@@ -53,6 +56,8 @@ class SyncManager {
           AppLogger.i('Synced ${item.endpoint} id=${item.id}');
         } catch (e) {
           AppLogger.w('Sync failed ${item.endpoint}: $e');
+          // Backoff so a dead endpoint cannot spin the queue forever.
+          await _queue.bump(item.id, item.attempts);
         }
       }
     } finally {

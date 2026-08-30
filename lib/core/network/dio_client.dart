@@ -13,7 +13,9 @@ import '../../app/config/api_config.dart';
 import '../../app/config/env.dart';
 import '../security/token_manager.dart';
 import 'auth_interceptor.dart';
+import 'certificate_pinning.dart';
 import 'logging_interceptor.dart';
+import 'refresh_interceptor.dart';
 import 'request_id_interceptor.dart';
 import 'retry_interceptor.dart';
 
@@ -43,7 +45,11 @@ class DioClient {
     dio.interceptors.addAll([
       RequestIdInterceptor(),
       AuthInterceptor(tokens),
-      RetryInterceptor(),
+      // Order matters: onError runs in reverse, so a 401 reaches
+      // RefreshInterceptor (refresh + replay) before RetryInterceptor sees it,
+      // and AuthInterceptor maps the final error to ApiException last.
+      RetryInterceptor(dio: dio),
+      RefreshInterceptor(tokens, dio),
       AppLoggingInterceptor(),
       if (kDebugMode)
         PrettyDioLogger(
@@ -55,18 +61,23 @@ class DioClient {
         ),
     ]);
 
-    // Laragon dev cert is self-signed → allow for dev flavor on native only (web uses browser trust).
-    if (!kIsWeb && currentEnv().isDev) {
+    // TLS policy — native only (web uses browser trust).
+    if (!kIsWeb) {
       final adapter = dio.httpClientAdapter as IOHttpClientAdapter;
-      adapter.createHttpClient = () {
-        final c = HttpClient();
-        c.badCertificateCallback = (cert, host, port) =>
-            host.contains('bisaas.test') || host.contains('10.0.2.2') || host == 'localhost';
-        return c;
-      };
+      if (currentEnv().isDev) {
+        // Laragon dev cert is self-signed → allow for dev flavor only.
+        // Physical device needs LAN IP (192.168.x.x) via adb reverse / Wi-Fi.
+        adapter.createHttpClient = () {
+          final c = HttpClient();
+          c.badCertificateCallback = (cert, host, port) => true;
+          return c;
+        };
+      } else {
+        // Prod/staging: pin when pins are configured; no pins → standard validation.
+        CertificatePinning.apply(adapter, host: Uri.parse(ApiConfig.baseUrl).host);
+      }
     }
 
-    // Propagate locale header reactively — caller can call `DioClient.setLocale('ne')`
     _instance = DioClient._(dio);
     return _instance!;
   }
@@ -74,14 +85,5 @@ class DioClient {
   /// Update Accept-Language without recreating Dio.
   void setLocale(String locale) {
     dio.options.headers['Accept-Language'] = locale;
-  }
-
-  /// Update Idempotency-Key for the next mutating request (caller generates UUID).
-  void setIdempotencyKey(String key) {
-    dio.options.headers['Idempotency-Key'] = key;
-  }
-
-  void clearIdempotencyKey() {
-    dio.options.headers.remove('Idempotency-Key');
   }
 }

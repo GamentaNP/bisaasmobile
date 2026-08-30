@@ -21,18 +21,21 @@ class RefreshInterceptor extends Interceptor {
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     final status = err.response?.statusCode;
+    final opts = err.requestOptions;
     final isAuth = status == 401;
-    final isRefreshCall = err.requestOptions.path.contains('/auth/refresh') ||
-        err.requestOptions.path.contains('/auth/login');
+    final isRefreshCall = opts.path.contains('/auth/refresh') ||
+        opts.path.contains('/auth/login');
+    // Replays already carry the freshly rotated token — never re-refresh them.
+    final isReplay = opts.extra['skipAuthRefresh'] == true;
 
-    if (!isAuth || isRefreshCall) {
+    if (!isAuth || isRefreshCall || isReplay) {
       handler.next(err);
       return;
     }
 
     // Queue while another refresh is in-flight.
     if (_isRefreshing) {
-      _queue.add((opts: err.requestOptions, handler: handler));
+      _queue.add((opts: opts, handler: handler));
       return;
     }
 
@@ -55,18 +58,20 @@ class RefreshInterceptor extends Interceptor {
       if (token == null || token.isEmpty) throw StateError('empty refresh token');
 
       await _tokens.persist(token: token, expiresAt: expiresAt);
-      AppLogger.i('Token refreshed; retrying ${err.requestOptions.path}');
+      AppLogger.i('Token refreshed; retrying ${opts.path}');
 
-      // Retry original
-      final opts = err.requestOptions;
-      opts.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.fetch<dynamic>(opts);
+      // Retry original — marked so a second 401 cannot loop the refresh.
+      final replayOpts = opts
+        ..headers['Authorization'] = 'Bearer $token'
+        ..extra['skipAuthRefresh'] = true;
+      final response = await _dio.fetch<dynamic>(replayOpts);
       handler.resolve(response);
 
-      // Drain queue
+      // Drain queue — same replays share the rotated token.
       for (final q in _queue) {
-        final queuedOpts = q.opts;
-        queuedOpts.headers['Authorization'] = 'Bearer $token';
+        final queuedOpts = q.opts
+          ..headers['Authorization'] = 'Bearer $token'
+          ..extra['skipAuthRefresh'] = true;
         try {
           final r = await _dio.fetch<dynamic>(queuedOpts);
           q.handler.resolve(r);
