@@ -2019,6 +2019,7 @@ class $SyncQueueTable extends SyncQueue
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _attemptsMeta = const VerificationMeta(
     'attempts',
@@ -2470,6 +2471,2024 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   }
 }
 
+class $QuizAttemptsTable extends QuizAttempts
+    with TableInfo<$QuizAttemptsTable, QuizAttempt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuizAttemptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _serverAttemptIdMeta = const VerificationMeta(
+    'serverAttemptId',
+  );
+  @override
+  late final GeneratedColumn<String> serverAttemptId = GeneratedColumn<String>(
+    'server_attempt_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _quizIdMeta = const VerificationMeta('quizId');
+  @override
+  late final GeneratedColumn<String> quizId = GeneratedColumn<String>(
+    'quiz_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _questionIdsJsonMeta = const VerificationMeta(
+    'questionIdsJson',
+  );
+  @override
+  late final GeneratedColumn<String> questionIdsJson = GeneratedColumn<String>(
+    'question_ids_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _serverStartedAtMeta = const VerificationMeta(
+    'serverStartedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> serverStartedAt =
+      GeneratedColumn<DateTime>(
+        'server_started_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _allowedDurationSecMeta =
+      const VerificationMeta('allowedDurationSec');
+  @override
+  late final GeneratedColumn<int> allowedDurationSec = GeneratedColumn<int>(
+    'allowed_duration_sec',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1200),
+  );
+  static const VerificationMeta _deadlineAtMeta = const VerificationMeta(
+    'deadlineAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deadlineAt = GeneratedColumn<DateTime>(
+    'deadline_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('in_progress'),
+  );
+  static const VerificationMeta _isOfflineMeta = const VerificationMeta(
+    'isOffline',
+  );
+  @override
+  late final GeneratedColumn<bool> isOffline = GeneratedColumn<bool>(
+    'is_offline',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_offline" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _provisionalScoreMeta = const VerificationMeta(
+    'provisionalScore',
+  );
+  @override
+  late final GeneratedColumn<int> provisionalScore = GeneratedColumn<int>(
+    'provisional_score',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _officialScoreMeta = const VerificationMeta(
+    'officialScore',
+  );
+  @override
+  late final GeneratedColumn<int> officialScore = GeneratedColumn<int>(
+    'official_score',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncErrorMeta = const VerificationMeta(
+    'syncError',
+  );
+  @override
+  late final GeneratedColumn<String> syncError = GeneratedColumn<String>(
+    'sync_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    serverAttemptId,
+    quizId,
+    questionIdsJson,
+    startedAt,
+    serverStartedAt,
+    allowedDurationSec,
+    deadlineAt,
+    status,
+    isOffline,
+    idempotencyKey,
+    provisionalScore,
+    officialScore,
+    syncError,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'quiz_attempts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<QuizAttempt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('server_attempt_id')) {
+      context.handle(
+        _serverAttemptIdMeta,
+        serverAttemptId.isAcceptableOrUnknown(
+          data['server_attempt_id']!,
+          _serverAttemptIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quiz_id')) {
+      context.handle(
+        _quizIdMeta,
+        quizId.isAcceptableOrUnknown(data['quiz_id']!, _quizIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quizIdMeta);
+    }
+    if (data.containsKey('question_ids_json')) {
+      context.handle(
+        _questionIdsJsonMeta,
+        questionIdsJson.isAcceptableOrUnknown(
+          data['question_ids_json']!,
+          _questionIdsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('server_started_at')) {
+      context.handle(
+        _serverStartedAtMeta,
+        serverStartedAt.isAcceptableOrUnknown(
+          data['server_started_at']!,
+          _serverStartedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('allowed_duration_sec')) {
+      context.handle(
+        _allowedDurationSecMeta,
+        allowedDurationSec.isAcceptableOrUnknown(
+          data['allowed_duration_sec']!,
+          _allowedDurationSecMeta,
+        ),
+      );
+    }
+    if (data.containsKey('deadline_at')) {
+      context.handle(
+        _deadlineAtMeta,
+        deadlineAt.isAcceptableOrUnknown(data['deadline_at']!, _deadlineAtMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('is_offline')) {
+      context.handle(
+        _isOfflineMeta,
+        isOffline.isAcceptableOrUnknown(data['is_offline']!, _isOfflineMeta),
+      );
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('provisional_score')) {
+      context.handle(
+        _provisionalScoreMeta,
+        provisionalScore.isAcceptableOrUnknown(
+          data['provisional_score']!,
+          _provisionalScoreMeta,
+        ),
+      );
+    }
+    if (data.containsKey('official_score')) {
+      context.handle(
+        _officialScoreMeta,
+        officialScore.isAcceptableOrUnknown(
+          data['official_score']!,
+          _officialScoreMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sync_error')) {
+      context.handle(
+        _syncErrorMeta,
+        syncError.isAcceptableOrUnknown(data['sync_error']!, _syncErrorMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuizAttempt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuizAttempt(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      serverAttemptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_attempt_id'],
+      ),
+      quizId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}quiz_id'],
+      )!,
+      questionIdsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}question_ids_json'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      serverStartedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}server_started_at'],
+      ),
+      allowedDurationSec: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}allowed_duration_sec'],
+      )!,
+      deadlineAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deadline_at'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      isOffline: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_offline'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      provisionalScore: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}provisional_score'],
+      ),
+      officialScore: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}official_score'],
+      ),
+      syncError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_error'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $QuizAttemptsTable createAlias(String alias) {
+    return $QuizAttemptsTable(attachedDatabase, alias);
+  }
+}
+
+class QuizAttempt extends DataClass implements Insertable<QuizAttempt> {
+  final int id;
+  final String? serverAttemptId;
+  final String quizId;
+  final String questionIdsJson;
+  final DateTime startedAt;
+  final DateTime? serverStartedAt;
+  final int allowedDurationSec;
+  final DateTime? deadlineAt;
+  final String status;
+  final bool isOffline;
+  final String idempotencyKey;
+  final int? provisionalScore;
+  final int? officialScore;
+  final String? syncError;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const QuizAttempt({
+    required this.id,
+    this.serverAttemptId,
+    required this.quizId,
+    required this.questionIdsJson,
+    required this.startedAt,
+    this.serverStartedAt,
+    required this.allowedDurationSec,
+    this.deadlineAt,
+    required this.status,
+    required this.isOffline,
+    required this.idempotencyKey,
+    this.provisionalScore,
+    this.officialScore,
+    this.syncError,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || serverAttemptId != null) {
+      map['server_attempt_id'] = Variable<String>(serverAttemptId);
+    }
+    map['quiz_id'] = Variable<String>(quizId);
+    map['question_ids_json'] = Variable<String>(questionIdsJson);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    if (!nullToAbsent || serverStartedAt != null) {
+      map['server_started_at'] = Variable<DateTime>(serverStartedAt);
+    }
+    map['allowed_duration_sec'] = Variable<int>(allowedDurationSec);
+    if (!nullToAbsent || deadlineAt != null) {
+      map['deadline_at'] = Variable<DateTime>(deadlineAt);
+    }
+    map['status'] = Variable<String>(status);
+    map['is_offline'] = Variable<bool>(isOffline);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    if (!nullToAbsent || provisionalScore != null) {
+      map['provisional_score'] = Variable<int>(provisionalScore);
+    }
+    if (!nullToAbsent || officialScore != null) {
+      map['official_score'] = Variable<int>(officialScore);
+    }
+    if (!nullToAbsent || syncError != null) {
+      map['sync_error'] = Variable<String>(syncError);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  QuizAttemptsCompanion toCompanion(bool nullToAbsent) {
+    return QuizAttemptsCompanion(
+      id: Value(id),
+      serverAttemptId: serverAttemptId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverAttemptId),
+      quizId: Value(quizId),
+      questionIdsJson: Value(questionIdsJson),
+      startedAt: Value(startedAt),
+      serverStartedAt: serverStartedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverStartedAt),
+      allowedDurationSec: Value(allowedDurationSec),
+      deadlineAt: deadlineAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deadlineAt),
+      status: Value(status),
+      isOffline: Value(isOffline),
+      idempotencyKey: Value(idempotencyKey),
+      provisionalScore: provisionalScore == null && nullToAbsent
+          ? const Value.absent()
+          : Value(provisionalScore),
+      officialScore: officialScore == null && nullToAbsent
+          ? const Value.absent()
+          : Value(officialScore),
+      syncError: syncError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncError),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory QuizAttempt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuizAttempt(
+      id: serializer.fromJson<int>(json['id']),
+      serverAttemptId: serializer.fromJson<String?>(json['serverAttemptId']),
+      quizId: serializer.fromJson<String>(json['quizId']),
+      questionIdsJson: serializer.fromJson<String>(json['questionIdsJson']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      serverStartedAt: serializer.fromJson<DateTime?>(json['serverStartedAt']),
+      allowedDurationSec: serializer.fromJson<int>(json['allowedDurationSec']),
+      deadlineAt: serializer.fromJson<DateTime?>(json['deadlineAt']),
+      status: serializer.fromJson<String>(json['status']),
+      isOffline: serializer.fromJson<bool>(json['isOffline']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      provisionalScore: serializer.fromJson<int?>(json['provisionalScore']),
+      officialScore: serializer.fromJson<int?>(json['officialScore']),
+      syncError: serializer.fromJson<String?>(json['syncError']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'serverAttemptId': serializer.toJson<String?>(serverAttemptId),
+      'quizId': serializer.toJson<String>(quizId),
+      'questionIdsJson': serializer.toJson<String>(questionIdsJson),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'serverStartedAt': serializer.toJson<DateTime?>(serverStartedAt),
+      'allowedDurationSec': serializer.toJson<int>(allowedDurationSec),
+      'deadlineAt': serializer.toJson<DateTime?>(deadlineAt),
+      'status': serializer.toJson<String>(status),
+      'isOffline': serializer.toJson<bool>(isOffline),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'provisionalScore': serializer.toJson<int?>(provisionalScore),
+      'officialScore': serializer.toJson<int?>(officialScore),
+      'syncError': serializer.toJson<String?>(syncError),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  QuizAttempt copyWith({
+    int? id,
+    Value<String?> serverAttemptId = const Value.absent(),
+    String? quizId,
+    String? questionIdsJson,
+    DateTime? startedAt,
+    Value<DateTime?> serverStartedAt = const Value.absent(),
+    int? allowedDurationSec,
+    Value<DateTime?> deadlineAt = const Value.absent(),
+    String? status,
+    bool? isOffline,
+    String? idempotencyKey,
+    Value<int?> provisionalScore = const Value.absent(),
+    Value<int?> officialScore = const Value.absent(),
+    Value<String?> syncError = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => QuizAttempt(
+    id: id ?? this.id,
+    serverAttemptId: serverAttemptId.present
+        ? serverAttemptId.value
+        : this.serverAttemptId,
+    quizId: quizId ?? this.quizId,
+    questionIdsJson: questionIdsJson ?? this.questionIdsJson,
+    startedAt: startedAt ?? this.startedAt,
+    serverStartedAt: serverStartedAt.present
+        ? serverStartedAt.value
+        : this.serverStartedAt,
+    allowedDurationSec: allowedDurationSec ?? this.allowedDurationSec,
+    deadlineAt: deadlineAt.present ? deadlineAt.value : this.deadlineAt,
+    status: status ?? this.status,
+    isOffline: isOffline ?? this.isOffline,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    provisionalScore: provisionalScore.present
+        ? provisionalScore.value
+        : this.provisionalScore,
+    officialScore: officialScore.present
+        ? officialScore.value
+        : this.officialScore,
+    syncError: syncError.present ? syncError.value : this.syncError,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  QuizAttempt copyWithCompanion(QuizAttemptsCompanion data) {
+    return QuizAttempt(
+      id: data.id.present ? data.id.value : this.id,
+      serverAttemptId: data.serverAttemptId.present
+          ? data.serverAttemptId.value
+          : this.serverAttemptId,
+      quizId: data.quizId.present ? data.quizId.value : this.quizId,
+      questionIdsJson: data.questionIdsJson.present
+          ? data.questionIdsJson.value
+          : this.questionIdsJson,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      serverStartedAt: data.serverStartedAt.present
+          ? data.serverStartedAt.value
+          : this.serverStartedAt,
+      allowedDurationSec: data.allowedDurationSec.present
+          ? data.allowedDurationSec.value
+          : this.allowedDurationSec,
+      deadlineAt: data.deadlineAt.present
+          ? data.deadlineAt.value
+          : this.deadlineAt,
+      status: data.status.present ? data.status.value : this.status,
+      isOffline: data.isOffline.present ? data.isOffline.value : this.isOffline,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      provisionalScore: data.provisionalScore.present
+          ? data.provisionalScore.value
+          : this.provisionalScore,
+      officialScore: data.officialScore.present
+          ? data.officialScore.value
+          : this.officialScore,
+      syncError: data.syncError.present ? data.syncError.value : this.syncError,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuizAttempt(')
+          ..write('id: $id, ')
+          ..write('serverAttemptId: $serverAttemptId, ')
+          ..write('quizId: $quizId, ')
+          ..write('questionIdsJson: $questionIdsJson, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('serverStartedAt: $serverStartedAt, ')
+          ..write('allowedDurationSec: $allowedDurationSec, ')
+          ..write('deadlineAt: $deadlineAt, ')
+          ..write('status: $status, ')
+          ..write('isOffline: $isOffline, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('provisionalScore: $provisionalScore, ')
+          ..write('officialScore: $officialScore, ')
+          ..write('syncError: $syncError, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    serverAttemptId,
+    quizId,
+    questionIdsJson,
+    startedAt,
+    serverStartedAt,
+    allowedDurationSec,
+    deadlineAt,
+    status,
+    isOffline,
+    idempotencyKey,
+    provisionalScore,
+    officialScore,
+    syncError,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuizAttempt &&
+          other.id == this.id &&
+          other.serverAttemptId == this.serverAttemptId &&
+          other.quizId == this.quizId &&
+          other.questionIdsJson == this.questionIdsJson &&
+          other.startedAt == this.startedAt &&
+          other.serverStartedAt == this.serverStartedAt &&
+          other.allowedDurationSec == this.allowedDurationSec &&
+          other.deadlineAt == this.deadlineAt &&
+          other.status == this.status &&
+          other.isOffline == this.isOffline &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.provisionalScore == this.provisionalScore &&
+          other.officialScore == this.officialScore &&
+          other.syncError == this.syncError &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class QuizAttemptsCompanion extends UpdateCompanion<QuizAttempt> {
+  final Value<int> id;
+  final Value<String?> serverAttemptId;
+  final Value<String> quizId;
+  final Value<String> questionIdsJson;
+  final Value<DateTime> startedAt;
+  final Value<DateTime?> serverStartedAt;
+  final Value<int> allowedDurationSec;
+  final Value<DateTime?> deadlineAt;
+  final Value<String> status;
+  final Value<bool> isOffline;
+  final Value<String> idempotencyKey;
+  final Value<int?> provisionalScore;
+  final Value<int?> officialScore;
+  final Value<String?> syncError;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const QuizAttemptsCompanion({
+    this.id = const Value.absent(),
+    this.serverAttemptId = const Value.absent(),
+    this.quizId = const Value.absent(),
+    this.questionIdsJson = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.serverStartedAt = const Value.absent(),
+    this.allowedDurationSec = const Value.absent(),
+    this.deadlineAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.isOffline = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.provisionalScore = const Value.absent(),
+    this.officialScore = const Value.absent(),
+    this.syncError = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  QuizAttemptsCompanion.insert({
+    this.id = const Value.absent(),
+    this.serverAttemptId = const Value.absent(),
+    required String quizId,
+    this.questionIdsJson = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.serverStartedAt = const Value.absent(),
+    this.allowedDurationSec = const Value.absent(),
+    this.deadlineAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.isOffline = const Value.absent(),
+    required String idempotencyKey,
+    this.provisionalScore = const Value.absent(),
+    this.officialScore = const Value.absent(),
+    this.syncError = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : quizId = Value(quizId),
+       idempotencyKey = Value(idempotencyKey);
+  static Insertable<QuizAttempt> custom({
+    Expression<int>? id,
+    Expression<String>? serverAttemptId,
+    Expression<String>? quizId,
+    Expression<String>? questionIdsJson,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? serverStartedAt,
+    Expression<int>? allowedDurationSec,
+    Expression<DateTime>? deadlineAt,
+    Expression<String>? status,
+    Expression<bool>? isOffline,
+    Expression<String>? idempotencyKey,
+    Expression<int>? provisionalScore,
+    Expression<int>? officialScore,
+    Expression<String>? syncError,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (serverAttemptId != null) 'server_attempt_id': serverAttemptId,
+      if (quizId != null) 'quiz_id': quizId,
+      if (questionIdsJson != null) 'question_ids_json': questionIdsJson,
+      if (startedAt != null) 'started_at': startedAt,
+      if (serverStartedAt != null) 'server_started_at': serverStartedAt,
+      if (allowedDurationSec != null)
+        'allowed_duration_sec': allowedDurationSec,
+      if (deadlineAt != null) 'deadline_at': deadlineAt,
+      if (status != null) 'status': status,
+      if (isOffline != null) 'is_offline': isOffline,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (provisionalScore != null) 'provisional_score': provisionalScore,
+      if (officialScore != null) 'official_score': officialScore,
+      if (syncError != null) 'sync_error': syncError,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  QuizAttemptsCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? serverAttemptId,
+    Value<String>? quizId,
+    Value<String>? questionIdsJson,
+    Value<DateTime>? startedAt,
+    Value<DateTime?>? serverStartedAt,
+    Value<int>? allowedDurationSec,
+    Value<DateTime?>? deadlineAt,
+    Value<String>? status,
+    Value<bool>? isOffline,
+    Value<String>? idempotencyKey,
+    Value<int?>? provisionalScore,
+    Value<int?>? officialScore,
+    Value<String?>? syncError,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return QuizAttemptsCompanion(
+      id: id ?? this.id,
+      serverAttemptId: serverAttemptId ?? this.serverAttemptId,
+      quizId: quizId ?? this.quizId,
+      questionIdsJson: questionIdsJson ?? this.questionIdsJson,
+      startedAt: startedAt ?? this.startedAt,
+      serverStartedAt: serverStartedAt ?? this.serverStartedAt,
+      allowedDurationSec: allowedDurationSec ?? this.allowedDurationSec,
+      deadlineAt: deadlineAt ?? this.deadlineAt,
+      status: status ?? this.status,
+      isOffline: isOffline ?? this.isOffline,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      provisionalScore: provisionalScore ?? this.provisionalScore,
+      officialScore: officialScore ?? this.officialScore,
+      syncError: syncError ?? this.syncError,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (serverAttemptId.present) {
+      map['server_attempt_id'] = Variable<String>(serverAttemptId.value);
+    }
+    if (quizId.present) {
+      map['quiz_id'] = Variable<String>(quizId.value);
+    }
+    if (questionIdsJson.present) {
+      map['question_ids_json'] = Variable<String>(questionIdsJson.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (serverStartedAt.present) {
+      map['server_started_at'] = Variable<DateTime>(serverStartedAt.value);
+    }
+    if (allowedDurationSec.present) {
+      map['allowed_duration_sec'] = Variable<int>(allowedDurationSec.value);
+    }
+    if (deadlineAt.present) {
+      map['deadline_at'] = Variable<DateTime>(deadlineAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (isOffline.present) {
+      map['is_offline'] = Variable<bool>(isOffline.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (provisionalScore.present) {
+      map['provisional_score'] = Variable<int>(provisionalScore.value);
+    }
+    if (officialScore.present) {
+      map['official_score'] = Variable<int>(officialScore.value);
+    }
+    if (syncError.present) {
+      map['sync_error'] = Variable<String>(syncError.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuizAttemptsCompanion(')
+          ..write('id: $id, ')
+          ..write('serverAttemptId: $serverAttemptId, ')
+          ..write('quizId: $quizId, ')
+          ..write('questionIdsJson: $questionIdsJson, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('serverStartedAt: $serverStartedAt, ')
+          ..write('allowedDurationSec: $allowedDurationSec, ')
+          ..write('deadlineAt: $deadlineAt, ')
+          ..write('status: $status, ')
+          ..write('isOffline: $isOffline, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('provisionalScore: $provisionalScore, ')
+          ..write('officialScore: $officialScore, ')
+          ..write('syncError: $syncError, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DownloadsTable extends Downloads
+    with TableInfo<$DownloadsTable, Download> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DownloadsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _packIdMeta = const VerificationMeta('packId');
+  @override
+  late final GeneratedColumn<String> packId = GeneratedColumn<String>(
+    'pack_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _packTypeMeta = const VerificationMeta(
+    'packType',
+  );
+  @override
+  late final GeneratedColumn<String> packType = GeneratedColumn<String>(
+    'pack_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('questions'),
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<String> version = GeneratedColumn<String>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('1'),
+  );
+  static const VerificationMeta _totalBytesMeta = const VerificationMeta(
+    'totalBytes',
+  );
+  @override
+  late final GeneratedColumn<int> totalBytes = GeneratedColumn<int>(
+    'total_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _downloadedBytesMeta = const VerificationMeta(
+    'downloadedBytes',
+  );
+  @override
+  late final GeneratedColumn<int> downloadedBytes = GeneratedColumn<int>(
+    'downloaded_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _localPathMeta = const VerificationMeta(
+    'localPath',
+  );
+  @override
+  late final GeneratedColumn<String> localPath = GeneratedColumn<String>(
+    'local_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _checksumMeta = const VerificationMeta(
+    'checksum',
+  );
+  @override
+  late final GeneratedColumn<String> checksum = GeneratedColumn<String>(
+    'checksum',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
+    'expires_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    packId,
+    packType,
+    version,
+    totalBytes,
+    downloadedBytes,
+    status,
+    localPath,
+    checksum,
+    createdAt,
+    updatedAt,
+    expiresAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'downloads';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Download> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('pack_id')) {
+      context.handle(
+        _packIdMeta,
+        packId.isAcceptableOrUnknown(data['pack_id']!, _packIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_packIdMeta);
+    }
+    if (data.containsKey('pack_type')) {
+      context.handle(
+        _packTypeMeta,
+        packType.isAcceptableOrUnknown(data['pack_type']!, _packTypeMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('total_bytes')) {
+      context.handle(
+        _totalBytesMeta,
+        totalBytes.isAcceptableOrUnknown(data['total_bytes']!, _totalBytesMeta),
+      );
+    }
+    if (data.containsKey('downloaded_bytes')) {
+      context.handle(
+        _downloadedBytesMeta,
+        downloadedBytes.isAcceptableOrUnknown(
+          data['downloaded_bytes']!,
+          _downloadedBytesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('local_path')) {
+      context.handle(
+        _localPathMeta,
+        localPath.isAcceptableOrUnknown(data['local_path']!, _localPathMeta),
+      );
+    }
+    if (data.containsKey('checksum')) {
+      context.handle(
+        _checksumMeta,
+        checksum.isAcceptableOrUnknown(data['checksum']!, _checksumMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Download map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Download(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      packId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_id'],
+      )!,
+      packType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pack_type'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}version'],
+      )!,
+      totalBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_bytes'],
+      )!,
+      downloadedBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}downloaded_bytes'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      localPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_path'],
+      ),
+      checksum: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}checksum'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires_at'],
+      ),
+    );
+  }
+
+  @override
+  $DownloadsTable createAlias(String alias) {
+    return $DownloadsTable(attachedDatabase, alias);
+  }
+}
+
+class Download extends DataClass implements Insertable<Download> {
+  final int id;
+  final String packId;
+  final String packType;
+  final String version;
+  final int totalBytes;
+  final int downloadedBytes;
+  final String status;
+  final String? localPath;
+  final String? checksum;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? expiresAt;
+  const Download({
+    required this.id,
+    required this.packId,
+    required this.packType,
+    required this.version,
+    required this.totalBytes,
+    required this.downloadedBytes,
+    required this.status,
+    this.localPath,
+    this.checksum,
+    required this.createdAt,
+    required this.updatedAt,
+    this.expiresAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['pack_id'] = Variable<String>(packId);
+    map['pack_type'] = Variable<String>(packType);
+    map['version'] = Variable<String>(version);
+    map['total_bytes'] = Variable<int>(totalBytes);
+    map['downloaded_bytes'] = Variable<int>(downloadedBytes);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || localPath != null) {
+      map['local_path'] = Variable<String>(localPath);
+    }
+    if (!nullToAbsent || checksum != null) {
+      map['checksum'] = Variable<String>(checksum);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || expiresAt != null) {
+      map['expires_at'] = Variable<DateTime>(expiresAt);
+    }
+    return map;
+  }
+
+  DownloadsCompanion toCompanion(bool nullToAbsent) {
+    return DownloadsCompanion(
+      id: Value(id),
+      packId: Value(packId),
+      packType: Value(packType),
+      version: Value(version),
+      totalBytes: Value(totalBytes),
+      downloadedBytes: Value(downloadedBytes),
+      status: Value(status),
+      localPath: localPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localPath),
+      checksum: checksum == null && nullToAbsent
+          ? const Value.absent()
+          : Value(checksum),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      expiresAt: expiresAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expiresAt),
+    );
+  }
+
+  factory Download.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Download(
+      id: serializer.fromJson<int>(json['id']),
+      packId: serializer.fromJson<String>(json['packId']),
+      packType: serializer.fromJson<String>(json['packType']),
+      version: serializer.fromJson<String>(json['version']),
+      totalBytes: serializer.fromJson<int>(json['totalBytes']),
+      downloadedBytes: serializer.fromJson<int>(json['downloadedBytes']),
+      status: serializer.fromJson<String>(json['status']),
+      localPath: serializer.fromJson<String?>(json['localPath']),
+      checksum: serializer.fromJson<String?>(json['checksum']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      expiresAt: serializer.fromJson<DateTime?>(json['expiresAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'packId': serializer.toJson<String>(packId),
+      'packType': serializer.toJson<String>(packType),
+      'version': serializer.toJson<String>(version),
+      'totalBytes': serializer.toJson<int>(totalBytes),
+      'downloadedBytes': serializer.toJson<int>(downloadedBytes),
+      'status': serializer.toJson<String>(status),
+      'localPath': serializer.toJson<String?>(localPath),
+      'checksum': serializer.toJson<String?>(checksum),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'expiresAt': serializer.toJson<DateTime?>(expiresAt),
+    };
+  }
+
+  Download copyWith({
+    int? id,
+    String? packId,
+    String? packType,
+    String? version,
+    int? totalBytes,
+    int? downloadedBytes,
+    String? status,
+    Value<String?> localPath = const Value.absent(),
+    Value<String?> checksum = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> expiresAt = const Value.absent(),
+  }) => Download(
+    id: id ?? this.id,
+    packId: packId ?? this.packId,
+    packType: packType ?? this.packType,
+    version: version ?? this.version,
+    totalBytes: totalBytes ?? this.totalBytes,
+    downloadedBytes: downloadedBytes ?? this.downloadedBytes,
+    status: status ?? this.status,
+    localPath: localPath.present ? localPath.value : this.localPath,
+    checksum: checksum.present ? checksum.value : this.checksum,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    expiresAt: expiresAt.present ? expiresAt.value : this.expiresAt,
+  );
+  Download copyWithCompanion(DownloadsCompanion data) {
+    return Download(
+      id: data.id.present ? data.id.value : this.id,
+      packId: data.packId.present ? data.packId.value : this.packId,
+      packType: data.packType.present ? data.packType.value : this.packType,
+      version: data.version.present ? data.version.value : this.version,
+      totalBytes: data.totalBytes.present
+          ? data.totalBytes.value
+          : this.totalBytes,
+      downloadedBytes: data.downloadedBytes.present
+          ? data.downloadedBytes.value
+          : this.downloadedBytes,
+      status: data.status.present ? data.status.value : this.status,
+      localPath: data.localPath.present ? data.localPath.value : this.localPath,
+      checksum: data.checksum.present ? data.checksum.value : this.checksum,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Download(')
+          ..write('id: $id, ')
+          ..write('packId: $packId, ')
+          ..write('packType: $packType, ')
+          ..write('version: $version, ')
+          ..write('totalBytes: $totalBytes, ')
+          ..write('downloadedBytes: $downloadedBytes, ')
+          ..write('status: $status, ')
+          ..write('localPath: $localPath, ')
+          ..write('checksum: $checksum, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('expiresAt: $expiresAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    packId,
+    packType,
+    version,
+    totalBytes,
+    downloadedBytes,
+    status,
+    localPath,
+    checksum,
+    createdAt,
+    updatedAt,
+    expiresAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Download &&
+          other.id == this.id &&
+          other.packId == this.packId &&
+          other.packType == this.packType &&
+          other.version == this.version &&
+          other.totalBytes == this.totalBytes &&
+          other.downloadedBytes == this.downloadedBytes &&
+          other.status == this.status &&
+          other.localPath == this.localPath &&
+          other.checksum == this.checksum &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.expiresAt == this.expiresAt);
+}
+
+class DownloadsCompanion extends UpdateCompanion<Download> {
+  final Value<int> id;
+  final Value<String> packId;
+  final Value<String> packType;
+  final Value<String> version;
+  final Value<int> totalBytes;
+  final Value<int> downloadedBytes;
+  final Value<String> status;
+  final Value<String?> localPath;
+  final Value<String?> checksum;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> expiresAt;
+  const DownloadsCompanion({
+    this.id = const Value.absent(),
+    this.packId = const Value.absent(),
+    this.packType = const Value.absent(),
+    this.version = const Value.absent(),
+    this.totalBytes = const Value.absent(),
+    this.downloadedBytes = const Value.absent(),
+    this.status = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.checksum = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+  });
+  DownloadsCompanion.insert({
+    this.id = const Value.absent(),
+    required String packId,
+    this.packType = const Value.absent(),
+    this.version = const Value.absent(),
+    this.totalBytes = const Value.absent(),
+    this.downloadedBytes = const Value.absent(),
+    this.status = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.checksum = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+  }) : packId = Value(packId);
+  static Insertable<Download> custom({
+    Expression<int>? id,
+    Expression<String>? packId,
+    Expression<String>? packType,
+    Expression<String>? version,
+    Expression<int>? totalBytes,
+    Expression<int>? downloadedBytes,
+    Expression<String>? status,
+    Expression<String>? localPath,
+    Expression<String>? checksum,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? expiresAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (packId != null) 'pack_id': packId,
+      if (packType != null) 'pack_type': packType,
+      if (version != null) 'version': version,
+      if (totalBytes != null) 'total_bytes': totalBytes,
+      if (downloadedBytes != null) 'downloaded_bytes': downloadedBytes,
+      if (status != null) 'status': status,
+      if (localPath != null) 'local_path': localPath,
+      if (checksum != null) 'checksum': checksum,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (expiresAt != null) 'expires_at': expiresAt,
+    });
+  }
+
+  DownloadsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? packId,
+    Value<String>? packType,
+    Value<String>? version,
+    Value<int>? totalBytes,
+    Value<int>? downloadedBytes,
+    Value<String>? status,
+    Value<String?>? localPath,
+    Value<String?>? checksum,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? expiresAt,
+  }) {
+    return DownloadsCompanion(
+      id: id ?? this.id,
+      packId: packId ?? this.packId,
+      packType: packType ?? this.packType,
+      version: version ?? this.version,
+      totalBytes: totalBytes ?? this.totalBytes,
+      downloadedBytes: downloadedBytes ?? this.downloadedBytes,
+      status: status ?? this.status,
+      localPath: localPath ?? this.localPath,
+      checksum: checksum ?? this.checksum,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      expiresAt: expiresAt ?? this.expiresAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (packId.present) {
+      map['pack_id'] = Variable<String>(packId.value);
+    }
+    if (packType.present) {
+      map['pack_type'] = Variable<String>(packType.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<String>(version.value);
+    }
+    if (totalBytes.present) {
+      map['total_bytes'] = Variable<int>(totalBytes.value);
+    }
+    if (downloadedBytes.present) {
+      map['downloaded_bytes'] = Variable<int>(downloadedBytes.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (localPath.present) {
+      map['local_path'] = Variable<String>(localPath.value);
+    }
+    if (checksum.present) {
+      map['checksum'] = Variable<String>(checksum.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<DateTime>(expiresAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DownloadsCompanion(')
+          ..write('id: $id, ')
+          ..write('packId: $packId, ')
+          ..write('packType: $packType, ')
+          ..write('version: $version, ')
+          ..write('totalBytes: $totalBytes, ')
+          ..write('downloadedBytes: $downloadedBytes, ')
+          ..write('status: $status, ')
+          ..write('localPath: $localPath, ')
+          ..write('checksum: $checksum, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('expiresAt: $expiresAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CachedResponsesTable extends CachedResponses
+    with TableInfo<$CachedResponsesTable, CachedResponse> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CachedResponsesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cacheKeyMeta = const VerificationMeta(
+    'cacheKey',
+  );
+  @override
+  late final GeneratedColumn<String> cacheKey = GeneratedColumn<String>(
+    'cache_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _etagMeta = const VerificationMeta('etag');
+  @override
+  late final GeneratedColumn<String> etag = GeneratedColumn<String>(
+    'etag',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cachedAtMeta = const VerificationMeta(
+    'cachedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cachedAt = GeneratedColumn<DateTime>(
+    'cached_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
+    'expires_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    cacheKey,
+    etag,
+    body,
+    url,
+    cachedAt,
+    expiresAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cached_responses';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CachedResponse> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('cache_key')) {
+      context.handle(
+        _cacheKeyMeta,
+        cacheKey.isAcceptableOrUnknown(data['cache_key']!, _cacheKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cacheKeyMeta);
+    }
+    if (data.containsKey('etag')) {
+      context.handle(
+        _etagMeta,
+        etag.isAcceptableOrUnknown(data['etag']!, _etagMeta),
+      );
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+        _urlMeta,
+        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
+      );
+    }
+    if (data.containsKey('cached_at')) {
+      context.handle(
+        _cachedAtMeta,
+        cachedAt.isAcceptableOrUnknown(data['cached_at']!, _cachedAtMeta),
+      );
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cacheKey};
+  @override
+  CachedResponse map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CachedResponse(
+      cacheKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cache_key'],
+      )!,
+      etag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}etag'],
+      ),
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      ),
+      cachedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cached_at'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires_at'],
+      ),
+    );
+  }
+
+  @override
+  $CachedResponsesTable createAlias(String alias) {
+    return $CachedResponsesTable(attachedDatabase, alias);
+  }
+}
+
+class CachedResponse extends DataClass implements Insertable<CachedResponse> {
+  final String cacheKey;
+  final String? etag;
+  final String body;
+  final String? url;
+  final DateTime cachedAt;
+  final DateTime? expiresAt;
+  const CachedResponse({
+    required this.cacheKey,
+    this.etag,
+    required this.body,
+    this.url,
+    required this.cachedAt,
+    this.expiresAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['cache_key'] = Variable<String>(cacheKey);
+    if (!nullToAbsent || etag != null) {
+      map['etag'] = Variable<String>(etag);
+    }
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || url != null) {
+      map['url'] = Variable<String>(url);
+    }
+    map['cached_at'] = Variable<DateTime>(cachedAt);
+    if (!nullToAbsent || expiresAt != null) {
+      map['expires_at'] = Variable<DateTime>(expiresAt);
+    }
+    return map;
+  }
+
+  CachedResponsesCompanion toCompanion(bool nullToAbsent) {
+    return CachedResponsesCompanion(
+      cacheKey: Value(cacheKey),
+      etag: etag == null && nullToAbsent ? const Value.absent() : Value(etag),
+      body: Value(body),
+      url: url == null && nullToAbsent ? const Value.absent() : Value(url),
+      cachedAt: Value(cachedAt),
+      expiresAt: expiresAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expiresAt),
+    );
+  }
+
+  factory CachedResponse.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CachedResponse(
+      cacheKey: serializer.fromJson<String>(json['cacheKey']),
+      etag: serializer.fromJson<String?>(json['etag']),
+      body: serializer.fromJson<String>(json['body']),
+      url: serializer.fromJson<String?>(json['url']),
+      cachedAt: serializer.fromJson<DateTime>(json['cachedAt']),
+      expiresAt: serializer.fromJson<DateTime?>(json['expiresAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'cacheKey': serializer.toJson<String>(cacheKey),
+      'etag': serializer.toJson<String?>(etag),
+      'body': serializer.toJson<String>(body),
+      'url': serializer.toJson<String?>(url),
+      'cachedAt': serializer.toJson<DateTime>(cachedAt),
+      'expiresAt': serializer.toJson<DateTime?>(expiresAt),
+    };
+  }
+
+  CachedResponse copyWith({
+    String? cacheKey,
+    Value<String?> etag = const Value.absent(),
+    String? body,
+    Value<String?> url = const Value.absent(),
+    DateTime? cachedAt,
+    Value<DateTime?> expiresAt = const Value.absent(),
+  }) => CachedResponse(
+    cacheKey: cacheKey ?? this.cacheKey,
+    etag: etag.present ? etag.value : this.etag,
+    body: body ?? this.body,
+    url: url.present ? url.value : this.url,
+    cachedAt: cachedAt ?? this.cachedAt,
+    expiresAt: expiresAt.present ? expiresAt.value : this.expiresAt,
+  );
+  CachedResponse copyWithCompanion(CachedResponsesCompanion data) {
+    return CachedResponse(
+      cacheKey: data.cacheKey.present ? data.cacheKey.value : this.cacheKey,
+      etag: data.etag.present ? data.etag.value : this.etag,
+      body: data.body.present ? data.body.value : this.body,
+      url: data.url.present ? data.url.value : this.url,
+      cachedAt: data.cachedAt.present ? data.cachedAt.value : this.cachedAt,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedResponse(')
+          ..write('cacheKey: $cacheKey, ')
+          ..write('etag: $etag, ')
+          ..write('body: $body, ')
+          ..write('url: $url, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('expiresAt: $expiresAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(cacheKey, etag, body, url, cachedAt, expiresAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CachedResponse &&
+          other.cacheKey == this.cacheKey &&
+          other.etag == this.etag &&
+          other.body == this.body &&
+          other.url == this.url &&
+          other.cachedAt == this.cachedAt &&
+          other.expiresAt == this.expiresAt);
+}
+
+class CachedResponsesCompanion extends UpdateCompanion<CachedResponse> {
+  final Value<String> cacheKey;
+  final Value<String?> etag;
+  final Value<String> body;
+  final Value<String?> url;
+  final Value<DateTime> cachedAt;
+  final Value<DateTime?> expiresAt;
+  final Value<int> rowid;
+  const CachedResponsesCompanion({
+    this.cacheKey = const Value.absent(),
+    this.etag = const Value.absent(),
+    this.body = const Value.absent(),
+    this.url = const Value.absent(),
+    this.cachedAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CachedResponsesCompanion.insert({
+    required String cacheKey,
+    this.etag = const Value.absent(),
+    required String body,
+    this.url = const Value.absent(),
+    this.cachedAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : cacheKey = Value(cacheKey),
+       body = Value(body);
+  static Insertable<CachedResponse> custom({
+    Expression<String>? cacheKey,
+    Expression<String>? etag,
+    Expression<String>? body,
+    Expression<String>? url,
+    Expression<DateTime>? cachedAt,
+    Expression<DateTime>? expiresAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cacheKey != null) 'cache_key': cacheKey,
+      if (etag != null) 'etag': etag,
+      if (body != null) 'body': body,
+      if (url != null) 'url': url,
+      if (cachedAt != null) 'cached_at': cachedAt,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CachedResponsesCompanion copyWith({
+    Value<String>? cacheKey,
+    Value<String?>? etag,
+    Value<String>? body,
+    Value<String?>? url,
+    Value<DateTime>? cachedAt,
+    Value<DateTime?>? expiresAt,
+    Value<int>? rowid,
+  }) {
+    return CachedResponsesCompanion(
+      cacheKey: cacheKey ?? this.cacheKey,
+      etag: etag ?? this.etag,
+      body: body ?? this.body,
+      url: url ?? this.url,
+      cachedAt: cachedAt ?? this.cachedAt,
+      expiresAt: expiresAt ?? this.expiresAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cacheKey.present) {
+      map['cache_key'] = Variable<String>(cacheKey.value);
+    }
+    if (etag.present) {
+      map['etag'] = Variable<String>(etag.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (cachedAt.present) {
+      map['cached_at'] = Variable<DateTime>(cachedAt.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<DateTime>(expiresAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedResponsesCompanion(')
+          ..write('cacheKey: $cacheKey, ')
+          ..write('etag: $etag, ')
+          ..write('body: $body, ')
+          ..write('url: $url, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2478,6 +4497,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CoursesTable courses = $CoursesTable(this);
   late final $CalculationsTable calculations = $CalculationsTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
+  late final $QuizAttemptsTable quizAttempts = $QuizAttemptsTable(this);
+  late final $DownloadsTable downloads = $DownloadsTable(this);
+  late final $CachedResponsesTable cachedResponses = $CachedResponsesTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2488,6 +4512,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     courses,
     calculations,
     syncQueue,
+    quizAttempts,
+    downloads,
+    cachedResponses,
   ];
 }
 
@@ -3720,6 +5747,973 @@ typedef $$SyncQueueTableProcessedTableManager =
       SyncQueueData,
       PrefetchHooks Function()
     >;
+typedef $$QuizAttemptsTableCreateCompanionBuilder =
+    QuizAttemptsCompanion Function({
+      Value<int> id,
+      Value<String?> serverAttemptId,
+      required String quizId,
+      Value<String> questionIdsJson,
+      Value<DateTime> startedAt,
+      Value<DateTime?> serverStartedAt,
+      Value<int> allowedDurationSec,
+      Value<DateTime?> deadlineAt,
+      Value<String> status,
+      Value<bool> isOffline,
+      required String idempotencyKey,
+      Value<int?> provisionalScore,
+      Value<int?> officialScore,
+      Value<String?> syncError,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$QuizAttemptsTableUpdateCompanionBuilder =
+    QuizAttemptsCompanion Function({
+      Value<int> id,
+      Value<String?> serverAttemptId,
+      Value<String> quizId,
+      Value<String> questionIdsJson,
+      Value<DateTime> startedAt,
+      Value<DateTime?> serverStartedAt,
+      Value<int> allowedDurationSec,
+      Value<DateTime?> deadlineAt,
+      Value<String> status,
+      Value<bool> isOffline,
+      Value<String> idempotencyKey,
+      Value<int?> provisionalScore,
+      Value<int?> officialScore,
+      Value<String?> syncError,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+class $$QuizAttemptsTableFilterComposer
+    extends Composer<_$AppDatabase, $QuizAttemptsTable> {
+  $$QuizAttemptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get serverAttemptId => $composableBuilder(
+    column: $table.serverAttemptId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get quizId => $composableBuilder(
+    column: $table.quizId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get questionIdsJson => $composableBuilder(
+    column: $table.questionIdsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get serverStartedAt => $composableBuilder(
+    column: $table.serverStartedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get allowedDurationSec => $composableBuilder(
+    column: $table.allowedDurationSec,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deadlineAt => $composableBuilder(
+    column: $table.deadlineAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isOffline => $composableBuilder(
+    column: $table.isOffline,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get provisionalScore => $composableBuilder(
+    column: $table.provisionalScore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get officialScore => $composableBuilder(
+    column: $table.officialScore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncError => $composableBuilder(
+    column: $table.syncError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$QuizAttemptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $QuizAttemptsTable> {
+  $$QuizAttemptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get serverAttemptId => $composableBuilder(
+    column: $table.serverAttemptId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get quizId => $composableBuilder(
+    column: $table.quizId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get questionIdsJson => $composableBuilder(
+    column: $table.questionIdsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get serverStartedAt => $composableBuilder(
+    column: $table.serverStartedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get allowedDurationSec => $composableBuilder(
+    column: $table.allowedDurationSec,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deadlineAt => $composableBuilder(
+    column: $table.deadlineAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isOffline => $composableBuilder(
+    column: $table.isOffline,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get provisionalScore => $composableBuilder(
+    column: $table.provisionalScore,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get officialScore => $composableBuilder(
+    column: $table.officialScore,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncError => $composableBuilder(
+    column: $table.syncError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$QuizAttemptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $QuizAttemptsTable> {
+  $$QuizAttemptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get serverAttemptId => $composableBuilder(
+    column: $table.serverAttemptId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get quizId =>
+      $composableBuilder(column: $table.quizId, builder: (column) => column);
+
+  GeneratedColumn<String> get questionIdsJson => $composableBuilder(
+    column: $table.questionIdsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get serverStartedAt => $composableBuilder(
+    column: $table.serverStartedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get allowedDurationSec => $composableBuilder(
+    column: $table.allowedDurationSec,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get deadlineAt => $composableBuilder(
+    column: $table.deadlineAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<bool> get isOffline =>
+      $composableBuilder(column: $table.isOffline, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get provisionalScore => $composableBuilder(
+    column: $table.provisionalScore,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get officialScore => $composableBuilder(
+    column: $table.officialScore,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get syncError =>
+      $composableBuilder(column: $table.syncError, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$QuizAttemptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $QuizAttemptsTable,
+          QuizAttempt,
+          $$QuizAttemptsTableFilterComposer,
+          $$QuizAttemptsTableOrderingComposer,
+          $$QuizAttemptsTableAnnotationComposer,
+          $$QuizAttemptsTableCreateCompanionBuilder,
+          $$QuizAttemptsTableUpdateCompanionBuilder,
+          (
+            QuizAttempt,
+            BaseReferences<_$AppDatabase, $QuizAttemptsTable, QuizAttempt>,
+          ),
+          QuizAttempt,
+          PrefetchHooks Function()
+        > {
+  $$QuizAttemptsTableTableManager(_$AppDatabase db, $QuizAttemptsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$QuizAttemptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$QuizAttemptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$QuizAttemptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> serverAttemptId = const Value.absent(),
+                Value<String> quizId = const Value.absent(),
+                Value<String> questionIdsJson = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> serverStartedAt = const Value.absent(),
+                Value<int> allowedDurationSec = const Value.absent(),
+                Value<DateTime?> deadlineAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<bool> isOffline = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<int?> provisionalScore = const Value.absent(),
+                Value<int?> officialScore = const Value.absent(),
+                Value<String?> syncError = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => QuizAttemptsCompanion(
+                id: id,
+                serverAttemptId: serverAttemptId,
+                quizId: quizId,
+                questionIdsJson: questionIdsJson,
+                startedAt: startedAt,
+                serverStartedAt: serverStartedAt,
+                allowedDurationSec: allowedDurationSec,
+                deadlineAt: deadlineAt,
+                status: status,
+                isOffline: isOffline,
+                idempotencyKey: idempotencyKey,
+                provisionalScore: provisionalScore,
+                officialScore: officialScore,
+                syncError: syncError,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> serverAttemptId = const Value.absent(),
+                required String quizId,
+                Value<String> questionIdsJson = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime?> serverStartedAt = const Value.absent(),
+                Value<int> allowedDurationSec = const Value.absent(),
+                Value<DateTime?> deadlineAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<bool> isOffline = const Value.absent(),
+                required String idempotencyKey,
+                Value<int?> provisionalScore = const Value.absent(),
+                Value<int?> officialScore = const Value.absent(),
+                Value<String?> syncError = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => QuizAttemptsCompanion.insert(
+                id: id,
+                serverAttemptId: serverAttemptId,
+                quizId: quizId,
+                questionIdsJson: questionIdsJson,
+                startedAt: startedAt,
+                serverStartedAt: serverStartedAt,
+                allowedDurationSec: allowedDurationSec,
+                deadlineAt: deadlineAt,
+                status: status,
+                isOffline: isOffline,
+                idempotencyKey: idempotencyKey,
+                provisionalScore: provisionalScore,
+                officialScore: officialScore,
+                syncError: syncError,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$QuizAttemptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $QuizAttemptsTable,
+      QuizAttempt,
+      $$QuizAttemptsTableFilterComposer,
+      $$QuizAttemptsTableOrderingComposer,
+      $$QuizAttemptsTableAnnotationComposer,
+      $$QuizAttemptsTableCreateCompanionBuilder,
+      $$QuizAttemptsTableUpdateCompanionBuilder,
+      (
+        QuizAttempt,
+        BaseReferences<_$AppDatabase, $QuizAttemptsTable, QuizAttempt>,
+      ),
+      QuizAttempt,
+      PrefetchHooks Function()
+    >;
+typedef $$DownloadsTableCreateCompanionBuilder = DownloadsCompanion Function({
+  Value<int> id,
+  required String packId,
+  Value<String> packType,
+  Value<String> version,
+  Value<int> totalBytes,
+  Value<int> downloadedBytes,
+  Value<String> status,
+  Value<String?> localPath,
+  Value<String?> checksum,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> expiresAt,
+});
+typedef $$DownloadsTableUpdateCompanionBuilder = DownloadsCompanion Function({
+  Value<int> id,
+  Value<String> packId,
+  Value<String> packType,
+  Value<String> version,
+  Value<int> totalBytes,
+  Value<int> downloadedBytes,
+  Value<String> status,
+  Value<String?> localPath,
+  Value<String?> checksum,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> expiresAt,
+});
+
+class $$DownloadsTableFilterComposer
+    extends Composer<_$AppDatabase, $DownloadsTable> {
+  $$DownloadsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get packId => $composableBuilder(
+    column: $table.packId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get packType => $composableBuilder(
+    column: $table.packType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get downloadedBytes => $composableBuilder(
+    column: $table.downloadedBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localPath => $composableBuilder(
+    column: $table.localPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get checksum => $composableBuilder(
+    column: $table.checksum,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DownloadsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DownloadsTable> {
+  $$DownloadsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get packId => $composableBuilder(
+    column: $table.packId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get packType => $composableBuilder(
+    column: $table.packType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get downloadedBytes => $composableBuilder(
+    column: $table.downloadedBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localPath => $composableBuilder(
+    column: $table.localPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get checksum => $composableBuilder(
+    column: $table.checksum,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DownloadsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DownloadsTable> {
+  $$DownloadsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get packId =>
+      $composableBuilder(column: $table.packId, builder: (column) => column);
+
+  GeneratedColumn<String> get packType =>
+      $composableBuilder(column: $table.packType, builder: (column) => column);
+
+  GeneratedColumn<String> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get downloadedBytes => $composableBuilder(
+    column: $table.downloadedBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get localPath =>
+      $composableBuilder(column: $table.localPath, builder: (column) => column);
+
+  GeneratedColumn<String> get checksum =>
+      $composableBuilder(column: $table.checksum, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+}
+
+class $$DownloadsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DownloadsTable,
+          Download,
+          $$DownloadsTableFilterComposer,
+          $$DownloadsTableOrderingComposer,
+          $$DownloadsTableAnnotationComposer,
+          $$DownloadsTableCreateCompanionBuilder,
+          $$DownloadsTableUpdateCompanionBuilder,
+          (Download, BaseReferences<_$AppDatabase, $DownloadsTable, Download>),
+          Download,
+          PrefetchHooks Function()
+        > {
+  $$DownloadsTableTableManager(_$AppDatabase db, $DownloadsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DownloadsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DownloadsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DownloadsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> packId = const Value.absent(),
+                Value<String> packType = const Value.absent(),
+                Value<String> version = const Value.absent(),
+                Value<int> totalBytes = const Value.absent(),
+                Value<int> downloadedBytes = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> localPath = const Value.absent(),
+                Value<String?> checksum = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> expiresAt = const Value.absent(),
+              }) => DownloadsCompanion(
+                id: id,
+                packId: packId,
+                packType: packType,
+                version: version,
+                totalBytes: totalBytes,
+                downloadedBytes: downloadedBytes,
+                status: status,
+                localPath: localPath,
+                checksum: checksum,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                expiresAt: expiresAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String packId,
+                Value<String> packType = const Value.absent(),
+                Value<String> version = const Value.absent(),
+                Value<int> totalBytes = const Value.absent(),
+                Value<int> downloadedBytes = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> localPath = const Value.absent(),
+                Value<String?> checksum = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> expiresAt = const Value.absent(),
+              }) => DownloadsCompanion.insert(
+                id: id,
+                packId: packId,
+                packType: packType,
+                version: version,
+                totalBytes: totalBytes,
+                downloadedBytes: downloadedBytes,
+                status: status,
+                localPath: localPath,
+                checksum: checksum,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                expiresAt: expiresAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DownloadsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DownloadsTable,
+      Download,
+      $$DownloadsTableFilterComposer,
+      $$DownloadsTableOrderingComposer,
+      $$DownloadsTableAnnotationComposer,
+      $$DownloadsTableCreateCompanionBuilder,
+      $$DownloadsTableUpdateCompanionBuilder,
+      (Download, BaseReferences<_$AppDatabase, $DownloadsTable, Download>),
+      Download,
+      PrefetchHooks Function()
+    >;
+typedef $$CachedResponsesTableCreateCompanionBuilder =
+    CachedResponsesCompanion Function({
+      required String cacheKey,
+      Value<String?> etag,
+      required String body,
+      Value<String?> url,
+      Value<DateTime> cachedAt,
+      Value<DateTime?> expiresAt,
+      Value<int> rowid,
+    });
+typedef $$CachedResponsesTableUpdateCompanionBuilder =
+    CachedResponsesCompanion Function({
+      Value<String> cacheKey,
+      Value<String?> etag,
+      Value<String> body,
+      Value<String?> url,
+      Value<DateTime> cachedAt,
+      Value<DateTime?> expiresAt,
+      Value<int> rowid,
+    });
+
+class $$CachedResponsesTableFilterComposer
+    extends Composer<_$AppDatabase, $CachedResponsesTable> {
+  $$CachedResponsesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cacheKey => $composableBuilder(
+    column: $table.cacheKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get etag => $composableBuilder(
+    column: $table.etag,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CachedResponsesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CachedResponsesTable> {
+  $$CachedResponsesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cacheKey => $composableBuilder(
+    column: $table.cacheKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get etag => $composableBuilder(
+    column: $table.etag,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CachedResponsesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CachedResponsesTable> {
+  $$CachedResponsesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cacheKey =>
+      $composableBuilder(column: $table.cacheKey, builder: (column) => column);
+
+  GeneratedColumn<String> get etag =>
+      $composableBuilder(column: $table.etag, builder: (column) => column);
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get cachedAt =>
+      $composableBuilder(column: $table.cachedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+}
+
+class $$CachedResponsesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CachedResponsesTable,
+          CachedResponse,
+          $$CachedResponsesTableFilterComposer,
+          $$CachedResponsesTableOrderingComposer,
+          $$CachedResponsesTableAnnotationComposer,
+          $$CachedResponsesTableCreateCompanionBuilder,
+          $$CachedResponsesTableUpdateCompanionBuilder,
+          (
+            CachedResponse,
+            BaseReferences<
+              _$AppDatabase,
+              $CachedResponsesTable,
+              CachedResponse
+            >,
+          ),
+          CachedResponse,
+          PrefetchHooks Function()
+        > {
+  $$CachedResponsesTableTableManager(
+    _$AppDatabase db,
+    $CachedResponsesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CachedResponsesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CachedResponsesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CachedResponsesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> cacheKey = const Value.absent(),
+                Value<String?> etag = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<DateTime> cachedAt = const Value.absent(),
+                Value<DateTime?> expiresAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedResponsesCompanion(
+                cacheKey: cacheKey,
+                etag: etag,
+                body: body,
+                url: url,
+                cachedAt: cachedAt,
+                expiresAt: expiresAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String cacheKey,
+                Value<String?> etag = const Value.absent(),
+                required String body,
+                Value<String?> url = const Value.absent(),
+                Value<DateTime> cachedAt = const Value.absent(),
+                Value<DateTime?> expiresAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedResponsesCompanion.insert(
+                cacheKey: cacheKey,
+                etag: etag,
+                body: body,
+                url: url,
+                cachedAt: cachedAt,
+                expiresAt: expiresAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CachedResponsesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CachedResponsesTable,
+      CachedResponse,
+      $$CachedResponsesTableFilterComposer,
+      $$CachedResponsesTableOrderingComposer,
+      $$CachedResponsesTableAnnotationComposer,
+      $$CachedResponsesTableCreateCompanionBuilder,
+      $$CachedResponsesTableUpdateCompanionBuilder,
+      (
+        CachedResponse,
+        BaseReferences<_$AppDatabase, $CachedResponsesTable, CachedResponse>,
+      ),
+      CachedResponse,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3734,4 +6728,10 @@ class $AppDatabaseManager {
       $$CalculationsTableTableManager(_db, _db.calculations);
   $$SyncQueueTableTableManager get syncQueue =>
       $$SyncQueueTableTableManager(_db, _db.syncQueue);
+  $$QuizAttemptsTableTableManager get quizAttempts =>
+      $$QuizAttemptsTableTableManager(_db, _db.quizAttempts);
+  $$DownloadsTableTableManager get downloads =>
+      $$DownloadsTableTableManager(_db, _db.downloads);
+  $$CachedResponsesTableTableManager get cachedResponses =>
+      $$CachedResponsesTableTableManager(_db, _db.cachedResponses);
 }
