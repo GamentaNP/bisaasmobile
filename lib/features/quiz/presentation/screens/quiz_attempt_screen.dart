@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/quiz_controller.dart';
 import '../state/quiz_state.dart';
-import 'quiz_result_screen.dart';
+import '../widgets/difficulty_badge.dart';
+import '../widgets/lifeline_bar.dart';
+import '../widgets/question_image.dart';
 
 /// Live quiz attempt screen — full session UI with timer, question body,
 /// answer options, and server-graded feedback overlay.
@@ -44,14 +46,14 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(quizControllerProvider);
 
-    // Navigate to results when finished
+    // Navigate to results when finished (via go_router so deep links and
+    // the browser back button work correctly — never Navigator.pushReplacement).
     ref.listen(quizControllerProvider, (prev, next) {
       if (next.phase == QuizPhase.finished && mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(
-            builder: (_) => QuizResultScreen(quizState: next),
-          ),
-        );
+        final attemptId = next.attemptId ?? widget.quizId;
+        if (context.mounted) {
+          context.go('/quiz/attempt/$attemptId/result');
+        }
       }
     });
 
@@ -232,23 +234,30 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                // Subject chip
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.brand.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    question.subjectSlug.toUpperCase().replaceAll('-', ' '),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: AppColors.brand,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
+                // Subject + difficulty chips
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.brand.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        question.subjectSlug.toUpperCase().replaceAll('-', ' '),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: AppColors.brand,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    DifficultyBadge(difficulty: question.difficulty, compact: true),
+                  ],
                 ),
                 const SizedBox(height: 14),
+                QuestionImage(imageUrl: null, heroTag: 'q-${question.id}'),
                 Text(
                   question.body,
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -257,7 +266,26 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
+                if (state.phase == QuizPhase.answering)
+                  LifelineBar(
+                    onFiftyFifty: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('50/50 — coming soon (server-side)')),
+                      );
+                    },
+                    onHint: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Hint — coming soon (server-side)')),
+                      );
+                    },
+                    onSkip: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Skip — coming soon (server-side)')),
+                      );
+                    },
+                  ),
+                const SizedBox(height: 8),
 
                 // ── Answer options ────────────────────────────────────────
                 ...question.options.map((option) {

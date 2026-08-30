@@ -1,3 +1,5 @@
+// ignore_for_file: strict_raw_type
+
 import '../../domain/entities/battle.dart';
 import '../../domain/repositories/battle_repository.dart';
 import '../datasources/battle_remote_data_source.dart';
@@ -17,12 +19,38 @@ class BattleRepositoryImpl implements BattleRepository {
   }
 
   @override
-  Future<BattleMatch> findMatch() async {
-    final m = await _remote.findMatch();
+  Future<BattleMatch> findMatch({String? category}) async {
+    final m = await _remote.findMatch(category: category);
+    BattlePlayer player(Map? raw) => BattlePlayer(
+          uid: (raw?['uid'] ?? '').toString(),
+          displayName: (raw?['display_name'] ?? raw?['name'] ?? 'Player').toString(),
+          avatarUrl: (raw?['avatar_url'] ?? '').toString(),
+          score: (raw?['score'] as int?) ?? 0,
+          currentIdx: (raw?['current_idx'] as int?) ?? 0,
+          finished: (raw?['finished'] as bool?) ?? false,
+        );
+    BattleQuestion question(Map raw) => BattleQuestion(
+          id: (raw['id'] ?? '').toString(),
+          text: (raw['text'] ?? raw['body'] ?? '').toString(),
+          options: ((raw['options'] as List?) ?? const [])
+              .cast<Map>()
+              .map((o) => BattleOption(id: (o['id'] ?? '').toString(), text: (o['text'] ?? '').toString()))
+              .toList(),
+          correctOptionId: (raw['correct_option_id'] ?? '').toString(),
+          points: (raw['points'] as int?) ?? 10,
+        );
     return BattleMatch(
-      id: (m['id'] ?? m['battle_id'] ?? 'demo') as String,
+      id: (m['id'] ?? m['battle_id'] ?? m['lobby_id'] ?? 'demo') as String,
       status: (m['status'] ?? 'searching') as String,
       opponentLabel: (m['opponent'] ?? m['opponent_label'] ?? 'Searching…') as String,
+      player1: player(m['player1'] as Map?),
+      player2: player(m['player2'] as Map?),
+      questions: ((m['questions'] as List?) ?? const []).cast<Map>().map(question).toList(),
+      perQuestionSeconds: (m['per_question_seconds'] as int?) ?? 15,
+      category: (m['category'] ?? 'any') as String,
+      startedAtMs: (m['started_at'] as int?) ?? (m['started_at_ms'] as int?),
+      finishedAtMs: (m['finished_at'] as int?) ?? (m['finished_at_ms'] as int?),
+      winnerUid: m['winner'] as String?,
     );
   }
 

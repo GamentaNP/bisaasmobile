@@ -179,6 +179,25 @@ class QuizResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
+                onPressed: () {
+                  final id = quizState.attemptId;
+                  if (id != null && !id.startsWith('offline-')) {
+                    context.go('/quiz/attempt/$id/result/review');
+                  } else {
+                    context.go('/quiz');
+                  }
+                },
+                icon: const Icon(Icons.fact_check_outlined),
+                label: const Text('Review All Answers'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
                 onPressed: () => context.go('/quiz'),
                 icon: const Icon(Icons.replay_rounded),
                 label: const Text('More Practice'),

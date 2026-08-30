@@ -16,8 +16,11 @@ class BattleRemoteDataSource {
     return Map<String, dynamic>.from(data as Map);
   }
 
-  Future<Map<String, dynamic>> findMatch() async {
-    final res = await _dio.post<Map<String, dynamic>>('/quiz/battles/match');
+  Future<Map<String, dynamic>> findMatch({String? category}) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/quiz/battles/match',
+      data: category != null ? {'category': category} : null,
+    );
     final envelope = ApiResponse.fromJson(
       res.data!,
       (json) => json as Map<String, dynamic>?,
