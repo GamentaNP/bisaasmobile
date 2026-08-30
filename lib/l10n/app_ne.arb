@@ -2,12 +2,34 @@
   "@@locale": "ne",
   "appTitle": "CivilCal",
   "signIn": "साइन इन",
+  "register": "दर्ता गर्नुहोस्",
   "quiz": "क्विज",
-  "continueAsGuest": "अतिथिको रूपमा जारी राख्नुहोस् → क्विज",
+  "practice": "अभ्यास",
+  "calculators": "क्याल्कुलेटर",
+  "courses": "पाठ्यक्रमहरू",
+  "continueAsGuest": "अतिथिको रूपमा जारी राख्नुहोस्",
   "backend": "ब्याकेन्ड",
   "env": "वातावरण",
   "home": "गृह",
   "profile": "प्रोफाइल",
   "settings": "सेटिङ",
-  "offline": "अफलाइन"
+  "offline": "अफलाइन",
+  "retry": "पुन: प्रयास गर्नुहोस्",
+  "error": "केही गलत भयो",
+  "streakDays": "लगातार: {days} दिन",
+  "@streakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "coinsBalance": "{count} सिक्काहरू",
+  "@coinsBalance": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

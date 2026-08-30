@@ -2,8 +2,12 @@
   "@@locale": "en",
   "appTitle": "CivilCal",
   "signIn": "Sign in",
+  "register": "Register",
   "quiz": "Quiz",
-  "continueAsGuest": "Continue as guest → Quiz",
+  "practice": "Practice",
+  "calculators": "Calculators",
+  "courses": "Courses",
+  "continueAsGuest": "Continue as guest",
   "backend": "Backend",
   "env": "Env",
   "home": "Home",
@@ -11,5 +15,21 @@
   "settings": "Settings",
   "offline": "Offline",
   "retry": "Retry",
-  "error": "Something went wrong"
+  "error": "Something went wrong",
+  "streakDays": "Streak: {days} days",
+  "@streakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "coinsBalance": "{count} coins",
+  "@coinsBalance": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -16,10 +16,22 @@ class AppLocalizationsNe extends AppLocalizations {
   String get signIn => 'साइन इन';
 
   @override
+  String get register => 'दर्ता गर्नुहोस्';
+
+  @override
   String get quiz => 'क्विज';
 
   @override
-  String get continueAsGuest => 'अतिथिको रूपमा जारी राख्नुहोस् → क्विज';
+  String get practice => 'अभ्यास';
+
+  @override
+  String get calculators => 'क्याल्कुलेटर';
+
+  @override
+  String get courses => 'पाठ्यक्रमहरू';
+
+  @override
+  String get continueAsGuest => 'अतिथिको रूपमा जारी राख्नुहोस्';
 
   @override
   String get backend => 'ब्याकेन्ड';
@@ -40,8 +52,18 @@ class AppLocalizationsNe extends AppLocalizations {
   String get offline => 'अफलाइन';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'पुन: प्रयास गर्नुहोस्';
 
   @override
-  String get error => 'Something went wrong';
+  String get error => 'केही गलत भयो';
+
+  @override
+  String streakDays(int days) {
+    return 'लगातार: $days दिन';
+  }
+
+  @override
+  String coinsBalance(int count) {
+    return '$count सिक्काहरू';
+  }
 }

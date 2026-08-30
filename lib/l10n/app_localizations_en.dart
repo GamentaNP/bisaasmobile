@@ -16,10 +16,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in';
 
   @override
+  String get register => 'Register';
+
+  @override
   String get quiz => 'Quiz';
 
   @override
-  String get continueAsGuest => 'Continue as guest → Quiz';
+  String get practice => 'Practice';
+
+  @override
+  String get calculators => 'Calculators';
+
+  @override
+  String get courses => 'Courses';
+
+  @override
+  String get continueAsGuest => 'Continue as guest';
 
   @override
   String get backend => 'Backend';
@@ -44,4 +56,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error => 'Something went wrong';
+
+  @override
+  String streakDays(int days) {
+    return 'Streak: $days days';
+  }
+
+  @override
+  String coinsBalance(int count) {
+    return '$count coins';
+  }
 }

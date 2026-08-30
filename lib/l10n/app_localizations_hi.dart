@@ -13,19 +13,31 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appTitle => 'CivilCal';
 
   @override
-  String get signIn => 'साइन इन';
+  String get signIn => 'साइन इन करें';
+
+  @override
+  String get register => 'रजिस्टर करें';
 
   @override
   String get quiz => 'क्विज़';
 
   @override
-  String get continueAsGuest => 'अतिथि के रूप में जारी रखें → क्विज़';
+  String get practice => 'अभ्यास';
+
+  @override
+  String get calculators => 'कैलकुलेटर';
+
+  @override
+  String get courses => 'पाठ्यक्रम';
+
+  @override
+  String get continueAsGuest => 'अतिथि के रूप में जारी रखें';
 
   @override
   String get backend => 'बैकएंड';
 
   @override
-  String get env => 'एन्व';
+  String get env => 'पर्यावरण';
 
   @override
   String get home => 'होम';
@@ -40,8 +52,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get offline => 'ऑफ़लाइन';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'पुनः प्रयास करें';
 
   @override
-  String get error => 'Something went wrong';
+  String get error => 'कुछ गलत हो गया';
+
+  @override
+  String streakDays(int days) {
+    return 'लगातार: $days दिन';
+  }
+
+  @override
+  String coinsBalance(int count) {
+    return '$count सिक्के';
+  }
 }

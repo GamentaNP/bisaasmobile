@@ -112,16 +112,40 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get signIn;
 
+  /// No description provided for @register.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get register;
+
   /// No description provided for @quiz.
   ///
   /// In en, this message translates to:
   /// **'Quiz'**
   String get quiz;
 
+  /// No description provided for @practice.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get practice;
+
+  /// No description provided for @calculators.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculators'**
+  String get calculators;
+
+  /// No description provided for @courses.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get courses;
+
   /// No description provided for @continueAsGuest.
   ///
   /// In en, this message translates to:
-  /// **'Continue as guest → Quiz'**
+  /// **'Continue as guest'**
   String get continueAsGuest;
 
   /// No description provided for @backend.
@@ -171,6 +195,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get error;
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak: {days} days'**
+  String streakDays(int days);
+
+  /// No description provided for @coinsBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} coins'**
+  String coinsBalance(int count);
 }
 
 class _AppLocalizationsDelegate
