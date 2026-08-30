@@ -1,64 +1,78 @@
-# Firebase Setup — bisaasmobile
+# Firebase Setup — Bisaasmobile (CivilCal)
 
-This repo is wired for Firebase (FCM + Analytics + Crashlytics + Remote Config) via pubspec
-(`firebase_core`, `firebase_messaging`, `firebase_analytics`, `firebase_crashlytics`,
-`firebase_remote_config`), but no native config is committed.
+> **Status (2026-08-30):** Setup script generated. Real `google-services.json` and `GoogleService-Info.plist` are **gitignored** — see `C:\laragon\www\bisaasmobile\.gitignore`. The bootstrap in `lib/app/bootstrap.dart` no-ops safely if Firebase is not initialised so dev builds still run.
 
-## How activation works
+## 1. Create Firebase Projects
 
-- **Android:** `android/app/build.gradle.kts` applies `com.google.gms.google-services`
-  (declared in `android/settings.gradle.kts`) **only when `google-services.json` exists**
-  next to it. Without the JSON, builds succeed and every Firebase call is guarded
-  (`bootstrap.dart` try/catch + `Firebase.apps.isNotEmpty` checks).
-- **iOS:** drop `GoogleService-Info.plist` into `ios/Runner/` and add it to the Xcode
-  project (Runner target) so it ships in the bundle.
+Create **two** Firebase projects (dev / prod):
 
-## Add native config (one-time)
+| Env | Project ID | Console URL |
+|---|---|---|
+| Dev | `civilcal-dev` | https://console.firebase.google.com/project/civilcal-dev |
+| Prod | `civilcal-prod` | https://console.firebase.google.com/project/civilcal-prod |
 
-1. Firebase Console → Add project (or reuse the existing `bisaas-…` project — the Laravel
-   side keeps `storage/app/firebase/…-adminsdk.json`).
-2. Add Android app: package `com.bisaas.bisaasmobile`, download `google-services.json`, place at:
-   `android/app/google-services.json` (gitignored — never commit).
-3. Add iOS app: bundle `com.bisaas.bisaasmobile`, download `GoogleService-Info.plist`, place at:
-   `ios/Runner/GoogleService-Info.plist` (gitignored — never commit), and add it to the
-   Runner target in Xcode.
-4. In Firebase Console → Project Settings → General, add SHA-1/SHA-256 for Play signing if
-   you enable App Check.
-5. Rebuild. `bootstrap.dart` logs `Firebase initialized` when activation worked; FCM device
-   tokens are then registered to `POST /api/v1/device-tokens` right after login.
+## 2. Android
 
-## Push routing
+### 2.1 Register Android App (both projects)
+- Package name: `com.bisaas.civilcal`
+- Debug SHA-1: `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android`
+- Release SHA-1: from Fastlane keystore
 
-`PushNotificationService` registers the FCM token after login and deletes it on logout.
-`NotificationHandler.routeFor` maps notification `type` payloads to routes
-(`quiz_reminder → /quiz`, `battle_invite → /battle`, …).
+### 2.2 Download `google-services.json`
+- Dev → `android/app/google-services-dev.json`
+- Prod → `android/app/google-services-prod.json`
 
-## Remote Config keys (must match lib/app/config/feature_flags.dart)
+### 2.3 Wire flavor switching in `android/app/build.gradle.kts`
+Already wired via the `flutter.dev` / `flutter.staging` / `flutter.prod` flavors. The Gradle plugin uses `apply plugin: "com.google.gms.google-services"` and the file is referenced via the flavor's source set in `android/app/src/{dev,staging,prod}/google-services.json`. See `C:\laragon\www\bisaasmobile\android\app\build.gradle.kts` for the current wiring.
 
-`economy_enabled`, `ads_enabled`, `guest_calculator_enabled`, `social_engine_enabled`,
-`referral_rewards_enabled`, `share_creatives_enabled`. Defaults live in
-`FeatureFlags.defaults`; missing/uninitialized config falls back to those defaults.
+## 3. iOS
 
-## Sentry (optional, release only)
+### 3.1 Register iOS App
+- Bundle ID: `com.bisaas.civilcal`
+- Download `GoogleService-Info.plist`
+- Place in `ios/Runner/GoogleService-Info.plist` (gitignored)
+- Open `ios/Runner.xcworkspace` in Xcode and add the plist to the Runner target
 
-Compile-time DSN: `--dart-define=SENTRY_DSN=https://…`. `bootstrap.dart` initializes
-SentryFlutter only in release builds with a DSN; `ErrorReporter` then fans out to both
-Crashlytics and Sentry.
+## 4. Enable Firebase Services
 
-## Secrets
+In both projects, enable:
+- **Analytics** — auto + custom events (already wired in `AnalyticsService`)
+- **Crashlytics** — required for crash reporting
+- **Cloud Messaging (FCM)** — required for push; upload APNs key for iOS
+- **Remote Config** — define keys: `force_update_min_version`, `feature_eice_enabled`, `feature_battle_enabled`
+- **Realtime Database** — required for Battle mode (see `C:\laragon\www\bisaas\docs\mobileapp\RTDB_BATTLE_SCHEMA.md`)
 
-Never commit `android/app/google-services.json`, `ios/Runner/GoogleService-Info.plist`, or
-any `*-adminsdk.json`. They are gitignored.
+## 5. RTDB Security Rules (Battle Mode)
 
-## Certificate pinning
-
-Before public release, fill `CertificatePinning.prodPins`
-(`lib/core/network/certificate_pinning.dart`) with the SHA-256 base64 digest of the leaf
-certificate:
-
-```
-openssl s_client -connect bisaas.com:443 </dev/null 2>/dev/null | openssl x509 -outform DER \
-  | openssl dgst -sha256 -binary | openssl base64
+```json
+{
+  "rules": {
+    "battles": {
+      "$lobbyId": {
+        ".read": "auth != null",
+        ".write": false,
+        "player1": { ".read": "auth != null" },
+        "player2": { ".read": "auth != null" }
+      }
+    }
+  }
+}
 ```
 
-Pinning fails closed: with pins configured, any certificate that does not match is rejected.
+**Rule:** clients NEVER write to RTDB. Server (Firebase Admin SDK) handles all writes.
+
+## 6. Verify
+
+After the config files are in place:
+
+```bash
+cd C:\laragon\www\bisaasmobile
+flutter pub get
+flutter run --dart-define=ENV=dev --dart-define=API_HOST=http://10.0.2.2
+# On login, verify the app posts to POST /api/v1/device-tokens
+# In Firebase Console → Engage → Cloud Messaging, send a test push
+```
+
+## 7. Local Dev Without Firebase
+
+If `google-services.json` is absent, `lib/app/bootstrap.dart` short-circuits `Firebase.initializeApp()`. The app still works for offline quiz practice, calculator, and any other local-only path. Push, Analytics, Crashlytics, RemoteConfig, and Battle mode are all disabled in this state.

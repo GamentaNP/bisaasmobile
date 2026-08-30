@@ -93,3 +93,17 @@ final appLinksProvider = Provider<AppLinks>((_) => AppLinks());
 // and automatically use [dioProvider] via DioClient.instance.dio.
 // Re-exported here for app-wide discoverability and to satisfy
 // `lib/app/providers.dart` registration requirement per spec.
+
+// ── Learning feature ───────────────────────────────────────────────────────
+// Learning providers are defined in
+// `lib/features/learning/presentation/controllers/learning_controller.dart`
+// (learningRemoteDataSourceProvider, learningRepositoryProvider, learningControllerProvider,
+//  learningTracksProvider, learningGoalsProvider, todayPlanProvider, reviewsDueProvider)
+// and automatically use [dioProvider] via DioClient.instance.dio.
+
+// ── Practice feature ───────────────────────────────────────────────────────
+// Practice providers are defined in
+// `lib/features/practice/presentation/controllers/practice_controller.dart`
+// (practiceRemoteDataSourceProvider, practiceRepositoryProvider, practiceControllerProvider,
+//  practiceBookmarksProvider, practiceAttemptHistoryProvider)
+// and automatically use [dioProvider] via DioClient.instance.dio.

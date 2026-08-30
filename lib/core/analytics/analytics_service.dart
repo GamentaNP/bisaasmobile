@@ -41,6 +41,8 @@ abstract final class AnalyticsEvents {
   static const calculatorShare = 'calculator_share';
   static const battleMatchSearch = 'battle_match_search';
   static const battleMatchFound = 'battle_match_found';
+  static const battleAnswerSubmit = 'battle_answer_submit';
+  static const battleFinished = 'battle_finished';
   static const battleComplete = 'battle_complete';
   static const streakView = 'streak_view';
   static const shareOpen = 'share_open';

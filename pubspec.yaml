@@ -38,12 +38,14 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
 
-  # === FIREBASE (FCM, Analytics, Crashlytics, RemoteConfig) ===
+  # === FIREBASE (FCM, Analytics, Crashlytics, RemoteConfig, Auth, RTDB) ===
   firebase_core: ^4.14.0
   firebase_messaging: ^16.6.0
   firebase_analytics: ^12.5.0
   firebase_crashlytics: ^5.3.0
   firebase_remote_config: ^6.6.0
+  firebase_auth: ^6.6.1
+  firebase_database: ^12.0.1
 
   # === NOTIFICATIONS ===
   flutter_local_notifications: ^22.3.0
@@ -97,7 +99,9 @@ dependencies:
   google_sign_in: ^7.2.0
   collection: ^1.18.0
   uuid: ^4.5.2
-
+  google_fonts: ^6.2.1
+  workmanager: ^0.6.0
+  meta: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -112,6 +116,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   patrol: ^4.9.0
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   generate: true
@@ -120,15 +125,23 @@ flutter:
     - assets/images/
     - assets/animations/
     - assets/translations/
-  # fonts:
-  #   - family: InstrumentSans
-  #     fonts:
-  #       - asset: assets/fonts/InstrumentSans-Regular.ttf
-  #         weight: 400
-  #       - asset: assets/fonts/InstrumentSans-Medium.ttf
-  #         weight: 500
-  #       - asset: assets/fonts/InstrumentSans-SemiBold.ttf
-  #         weight: 600
-  #       - asset: assets/fonts/InstrumentSans-Bold.ttf
-  #         weight: 700
-  # TODO: uncomment when fonts added per FLUTTER_APP_MASTER_PLAN_2026.md:5.2
+  fonts:
+    - family: InstrumentSans
+      fonts:
+        - asset: assets/fonts/InstrumentSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/InstrumentSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/InstrumentSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/InstrumentSans-Bold.ttf
+          weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_icon.svg"
+  adaptive_icon_background: "#0B0F17"
+  adaptive_icon_foreground: "assets/images/logo_icon_foreground.png"
+  remove_alpha_ios: true
+  min_sdk_android: 29
