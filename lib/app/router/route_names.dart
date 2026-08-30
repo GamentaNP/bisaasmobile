@@ -2,6 +2,7 @@ abstract final class RouteNames {
   static const splash = 'splash';
   static const login = 'login';
   static const register = 'register';
+  static const forgotPassword = 'forgot-password';
   static const onboarding = 'onboarding';
   static const home = 'home';
   static const quiz = 'quiz';
@@ -14,4 +15,11 @@ abstract final class RouteNames {
   static const profile = 'profile';
   static const settings = 'settings';
   static const achievements = 'achievements';
+  static const library = 'library';
+  static const libraryDetail = 'library-detail';
+  static const tutorChat = 'tutor-chat';
+  static const tutorPlan = 'tutor-plan';
+  static const tutorOnboarding = 'tutor-onboarding';
+  static const coaching = 'coaching';
+  static const coachingDashboard = 'coaching-dashboard';
 }

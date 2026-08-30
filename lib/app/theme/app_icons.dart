@@ -9,6 +9,7 @@ abstract final class AppIcons {
   static const IconData quiz = Icons.quiz_rounded;
   static const IconData calculator = Icons.calculate_rounded;
   static const IconData library = Icons.menu_book_rounded;
+  static const IconData courses = Icons.school_rounded;
   static const IconData profile = Icons.person_rounded;
 
   // Actions
