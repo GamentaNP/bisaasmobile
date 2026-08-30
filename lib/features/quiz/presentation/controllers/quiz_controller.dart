@@ -70,9 +70,16 @@ class QuizController extends Notifier<QuizState> {
       bool isOffline = isOfflineCache;
       try {
         final idempotencyKey = _uuid.v4();
+        // Server seeds its grading rows from the ids we send — the questions
+        // fetched for this session MUST be the ones the attempt is graded on.
+        final questionIds = session.questions
+            .map((q) => int.tryParse(q.id))
+            .whereType<int>()
+            .toList();
         attemptId = await _repo.startAttempt(
           quizId: quizId,
           idempotencyKey: idempotencyKey,
+          questionIds: questionIds.isNotEmpty ? questionIds : null,
         );
       } on DioException catch (e) {
         final offline = e.type == DioExceptionType.connectionError ||

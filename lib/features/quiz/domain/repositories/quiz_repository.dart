@@ -9,8 +9,14 @@ abstract class QuizRepository {
   Future<QuizSession> getQuizSession(String quizId);
 
   /// Start an attempt on the server → POST /api/v1/quiz/attempts
-  /// Returns the server-assigned attempt UUID
-  Future<String> startAttempt({required String quizId, String? idempotencyKey});
+  /// [questionIds] must be the ids fetched for this session — the server
+  /// seeds its grading rows from them, so answering requires the same set.
+  /// Returns the server-assigned attempt id.
+  Future<String> startAttempt({
+    required String quizId,
+    String? idempotencyKey,
+    List<int>? questionIds,
+  });
 
   /// Submit a single question answer → POST /api/v1/quiz/attempts/{attemptId}/answer
   /// Server is source of truth for grading, XP, and coins

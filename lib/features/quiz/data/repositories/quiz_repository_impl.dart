@@ -40,7 +40,13 @@ class QuizRepositoryImpl implements QuizRepository {
   Future<String> startAttempt({
     required String quizId,
     String? idempotencyKey,
-  }) => _remote.startAttempt(quizId: quizId, idempotencyKey: idempotencyKey);
+    List<int>? questionIds,
+  }) =>
+      _remote.startAttempt(
+        quizId: quizId,
+        idempotencyKey: idempotencyKey,
+        questionIds: questionIds,
+      );
 
   @override
   Future<AttemptResult> submitAnswer({
