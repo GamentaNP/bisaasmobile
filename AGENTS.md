@@ -68,12 +68,29 @@ Rules:
 ```bash
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
+flutter gen-l10n                                   # after any *.arb edit (CI runs this too)
 flutter analyze
 flutter test
 flutter run -d chrome --dart-define=ENV=dev        # web against bisaas.test
 flutter run -d windows --dart-define=ENV=dev
 flutter run -d android --dart-define=ENV=dev       # needs Android SDK (see below)
 ```
+
+Wiring notes (verified in review 2026-08-30):
+
+- **Debug cleartext:** `android/app/src/debug/AndroidManifest.xml` allows plain http, so
+  `--dart-define=API_HOST=http://bisaas.test` works on the emulator. Release builds keep
+  strict TLS + optional pinning (`CertificatePinning.prodPins`).
+- **Firebase:** activates automatically once `android/app/google-services.json` exists —
+  the google-services Gradle plugin is applied conditionally (`docs/FIREBASE_SETUP.md`).
+  All Firebase consumers no-op safely while it is absent.
+- **Deep links:** `civilcal://` + `https://bisaas.com` are registered on Android
+  (intent-filters) and iOS (`CFBundleURLTypes`); runtime routing via `app_links` →
+  `DeepLinkHandler.parse` in `app.dart`. App-Link verification on bisaas.com needs
+  `/.well-known/assetlinks.json`.
+- **Token refresh:** `RefreshInterceptor` is registered on the Dio chain (401 → single-use
+  rotation → replay with `skipAuthRefresh` guard); `RetryInterceptor` never replays
+  non-idempotent POSTs unless an `Idempotency-Key` header is present.
 
 ## Android toolchain (Windows 11)
 

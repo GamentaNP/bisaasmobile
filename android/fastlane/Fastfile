@@ -1,0 +1,39 @@
+# Fastlane for BiSaaS CivilCal — Android
+# Usage: `fastlane android beta` (internal) or `fastlane android prod` (Play Store)
+# Requires: `ANDROID_KEYSTORE_BASE64`, `PLAY_SERVICE_JSON` in CI secrets; `dart_defines/production.json` for ENV=prod.
+
+default_platform(:android)
+
+platform :android do
+  desc "Build and push to Play Internal (beta)"
+  lane :beta do
+    gradle(task: "clean")
+    sh("flutter build appbundle --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json")
+    supply(
+      track: "internal",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Promote internal → production ( staged rollout 10% )"
+  lane :prod do
+    supply(
+      track: "production",
+      rollout: "0.1",
+      skip_upload_aab: true,
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    )
+  end
+
+  desc "Bump versionCode / versionName from pubspec"
+  lane :bump do
+    # version is source of truth in pubspec.yaml: `version: 1.0.0+1` → versionName 1.0.0, versionCode 1
+    # This lane only validates; bump pubspec manually per `MOBILE_API_INTEGRATION_GUIDE.md` deprecation policy.
+    sh("flutter --version")
+  end
+end

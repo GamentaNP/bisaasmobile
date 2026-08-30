@@ -74,3 +74,5 @@ Desktop.ini
 coverage/
 lcov.info
 
+.mimosa/
+.playwright-mcp/

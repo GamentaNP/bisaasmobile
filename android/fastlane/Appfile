@@ -1,0 +1,2 @@
+json_key_file("play-service.json") # CI writes PLAY_SERVICE_JSON here
+package_name("com.bisaas.civilcal")

@@ -4,4 +4,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Debug builds only: Laragon's bisaas.test may be reached over plain
+         http and Android 9+ blocks cleartext by default. Release builds keep
+         strict TLS (plus certificate pinning in DioClient). -->
+    <application android:usesCleartextTraffic="true"/>
 </manifest>
