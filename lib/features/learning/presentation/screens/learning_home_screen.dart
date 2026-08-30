@@ -85,7 +85,36 @@ class _TodayCard extends StatelessWidget {
   final dynamic plan;
   @override
   Widget build(BuildContext context) {
-    final tasks = (plan.tasks as List).cast<String>();
+    // Tolerant: plan may be DailyPlan (new) or TodayPlan (legacy) or null
+    if (plan == null) {
+      return Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
+        ),
+        child: const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+      );
+    }
+    var tasks = <String>[];
+    var title = 'Today';
+    try {
+      // Legacy TodayPlan: has tasks + title
+      if (plan.tasks is List) {
+        tasks = (plan.tasks as List).cast<String>();
+        title = (plan.title as String?) ?? 'Today';
+      } else if (plan.items is List) {
+        // DailyPlan: items are DailyPlanItem with label
+        final items = plan.items as List;
+        tasks = items.map((e) => (e.label ?? e.toString()).toString()).cast<String>().toList();
+        title = 'Plan #${plan.id}';
+      }
+    } catch (_) {
+      try {
+        title = (plan.title as String?) ?? 'Today';
+      } catch (_) {}
+    }
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -98,7 +127,7 @@ class _TodayCard extends StatelessWidget {
         children: [
           Text('Today', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
-          Text(plan.title as String, style: const TextStyle(fontWeight: FontWeight.w600)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
           if (tasks.isNotEmpty) ...[
             const SizedBox(height: 8),
             ...tasks.map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
