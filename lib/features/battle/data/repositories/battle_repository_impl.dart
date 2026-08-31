@@ -19,8 +19,8 @@ class BattleRepositoryImpl implements BattleRepository {
   }
 
   @override
-  Future<BattleMatch> findMatch({String? category}) async {
-    final m = await _remote.findMatch(category: category);
+  Future<BattleMatch> findMatch({int? categoryId, int totalQuestions = 10}) async {
+    final m = await _remote.findMatch(categoryId: categoryId, totalQuestions: totalQuestions);
     BattlePlayer player(Map? raw) => BattlePlayer(
           uid: (raw?['uid'] ?? '').toString(),
           displayName: (raw?['display_name'] ?? raw?['name'] ?? 'Player').toString(),

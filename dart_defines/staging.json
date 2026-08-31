@@ -1,5 +1,11 @@
 {
   "ENV": "staging",
   "API_HOST": "https://staging.bisaas.com",
-  "API_BASE_URL": "https://staging.bisaas.com/api/v1"
+  "API_BASE_URL": "https://staging.bisaas.com/api/v1",
+  "SIGNING_CERT_HASH": "__REPLACE_WITH_STAGING_CERT_HASH__",
+  "IOS_BUNDLE_ID": "com.bisaas.bisaasmobile",
+  "IOS_TEAM_ID": "__REPLACE_WITH_APPLE_TEAM_ID__",
+  "SECURITY_WATCHER_MAIL": "security@bisaas.com",
+  "CERT_PIN_1": "",
+  "CERT_PIN_2": ""
 }

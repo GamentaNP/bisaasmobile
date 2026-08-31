@@ -102,6 +102,8 @@ dependencies:
   google_fonts: ^6.2.1
   workmanager: ^0.6.0
   meta: any
+  freerasp: ^8.2.2
+  encrypt: ^5.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

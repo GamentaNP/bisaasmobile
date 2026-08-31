@@ -137,7 +137,7 @@ class StoreRemoteDataSource {
     try {
       final res = await _dio.post<Map<String, dynamic>>(
         '/store/wardrobe/equip',
-        data: {'slot': slot, 'asset_id': assetId, 'assetId': assetId},
+        data: {'slot': slot, 'asset_id': int.tryParse(assetId) ?? assetId},
         options: Options(headers: {'Idempotency-Key': key}),
       );
       final body = res.data;

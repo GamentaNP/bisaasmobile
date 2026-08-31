@@ -113,12 +113,12 @@ class BattleController extends Notifier<BattleState> {
     }
   }
 
-  Future<void> findMatch({String? category}) async {
+  Future<void> findMatch({int? categoryId, int totalQuestions = 10}) async {
     state = state.copyWith(phase: BattlePhase.searching, error: null);
     try {
-      try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleMatchSearch, params: {'category': category ?? 'any'}); } catch (_) {}
+      try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleMatchSearch, params: {'category': categoryId?.toString() ?? 'any'}); } catch (_) {}
       final repo = ref.read(battleRepositoryProvider);
-      final m = await repo.findMatch(category: category);
+      final m = await repo.findMatch(categoryId: categoryId, totalQuestions: totalQuestions);
       state = state.copyWith(phase: BattlePhase.inProgress, match: m, currentQuestionIndex: 0);
       try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleMatchFound, params: {'match_id': m.id}); } catch (_) {}
       _subscribeRtdb(m.id);
@@ -180,11 +180,21 @@ class BattleController extends Notifier<BattleState> {
     final m = state.match;
     if (m == null) return;
     state = state.copyWith(selectedOptionId: optionId, phase: BattlePhase.answered);
+    final q = state.currentQuestionIndex < m.questions.length ? m.questions[state.currentQuestionIndex] : null;
+    final questionId = int.tryParse(q?.id ?? '');
+    final selectedOption = int.tryParse(optionId);
+    if (questionId == null || selectedOption == null) {
+      state = state.copyWith(phase: BattlePhase.error, error: 'Cannot submit: battle question ${q?.id ?? '?'} / option $optionId not server-addressable');
+      return;
+    }
+    final timeTakenMs = ((m.perQuestionSeconds - state.secondsLeftInQuestion).clamp(0, m.perQuestionSeconds)) * 1000;
     try {
       final dio = DioClient.instance.dio;
-      await dio.put<dynamic>('/quiz/battles/${m.id}/answers', data: {
-        'question_idx': state.currentQuestionIndex,
-        'option_id': optionId,
+      await dio.post<dynamic>('/quiz/battles/${m.id}/answer', data: {
+        'question_id': questionId,
+        'question_index': state.currentQuestionIndex,
+        'selected_option': selectedOption,
+        'time_taken_ms': timeTakenMs,
       }, options: Options(headers: {'Idempotency-Key': '${m.id}:${state.currentQuestionIndex}'}));
       try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleAnswerSubmit, params: {'match_id': m.id, 'q': state.currentQuestionIndex}); } catch (_) {}
     } catch (e) {

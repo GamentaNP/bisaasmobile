@@ -101,3 +101,151 @@ class FreezeStreakDto {
   final String? message;
   final DateTime? frozenUntil;
 }
+
+
+// ── WO-6 Streak self-service DTOs ─────────────────────────────────────────
+
+/// GET /quiz/streak/repair — eligibility before showing purchase UI.
+class StreakRepairEligibilityDto {
+  const StreakRepairEligibilityDto({
+    required this.eligible,
+    this.reason,
+    this.missedDate,
+    this.expiresAt,
+    this.repairsUsedThisMonth = 0,
+  });
+
+  factory StreakRepairEligibilityDto.fromJson(Map<String, dynamic> j) =>
+      StreakRepairEligibilityDto(
+        eligible: (j['eligible'] as bool?) ?? false,
+        reason: j['reason'] as String?,
+        missedDate: _asDate(j['missedDate'] ?? j['missed_date']),
+        expiresAt: _asDate(j['expiresAt'] ?? j['expires_at']),
+        repairsUsedThisMonth: _asInt(j['repairsUsedThisMonth'] ?? j['repairs_used_this_month']) ?? 0,
+      );
+
+  final bool eligible;
+  final String? reason;
+  final DateTime? missedDate;
+  final DateTime? expiresAt;
+  final int repairsUsedThisMonth;
+}
+
+/// POST /quiz/streak/repair result.
+class StreakRepairResultDto {
+  const StreakRepairResultDto({
+    required this.repaired,
+    this.message,
+    this.currentStreak,
+    this.coinBalance,
+  });
+
+  factory StreakRepairResultDto.fromJson(Map<String, dynamic> j) {
+    final streakMap = j['streak'] as Map<String, dynamic>?;
+    return StreakRepairResultDto(
+      repaired: (j['repaired'] as bool?) ?? (j['success'] as bool?) ?? false,
+      message: j['message'] as String?,
+      currentStreak: _asInt(streakMap?['current_streak'] ?? j['current_streak']),
+      coinBalance: _asInt(j['coin_balance']),
+    );
+  }
+
+  final bool repaired;
+  final String? message;
+  final int? currentStreak;
+  final int? coinBalance;
+}
+
+/// POST /quiz/streak/insurance result.
+class StreakInsuranceResultDto {
+  const StreakInsuranceResultDto({
+    required this.purchased,
+    this.message,
+    this.activeInsuranceCount,
+    this.coinBalance,
+  });
+
+  factory StreakInsuranceResultDto.fromJson(Map<String, dynamic> j) =>
+      StreakInsuranceResultDto(
+        purchased: (j['purchased'] as bool?) ?? (j['success'] as bool?) ?? false,
+        message: j['message'] as String?,
+        activeInsuranceCount: _asInt(j['active_insurance_count']),
+        coinBalance: _asInt(j['coin_balance']),
+      );
+
+  final bool purchased;
+  final String? message;
+  final int? activeInsuranceCount;
+  final int? coinBalance;
+}
+
+/// Active wager payload (nested in GET /quiz/streak/wager).
+class StreakWagerDto {
+  const StreakWagerDto({
+    required this.status,
+    required this.coins,
+    required this.days,
+    required this.target,
+    required this.current,
+    required this.progressPercent,
+    required this.reward,
+    this.won,
+    this.lost,
+  });
+
+  factory StreakWagerDto.fromJson(Map<String, dynamic> j) => StreakWagerDto(
+        status: (j['status'] as String?) ?? 'active',
+        coins: _asInt(j['coins']) ?? 0,
+        days: _asInt(j['days']) ?? 0,
+        target: _asInt(j['target']) ?? 0,
+        current: _asInt(j['current']) ?? 0,
+        progressPercent: _asInt(j['progressPercent'] ?? j['progress_percent']) ?? 0,
+        reward: _asInt(j['reward']) ?? 0,
+        won: _asDate(j['won']),
+        lost: _asDate(j['lost']),
+      );
+
+  final String status;
+  final int coins;
+  final int days;
+  final int target;
+  final int current;
+  final int progressPercent;
+  final int reward;
+  final DateTime? won;
+  final DateTime? lost;
+}
+
+/// GET /quiz/streak/wager envelope.
+class StreakWagerStatusDto {
+  const StreakWagerStatusDto({required this.wager, required this.currentStreak});
+
+  factory StreakWagerStatusDto.fromJson(Map<String, dynamic> j) => StreakWagerStatusDto(
+        wager: j['wager'] is Map<String, dynamic>
+            ? StreakWagerDto.fromJson(j['wager'] as Map<String, dynamic>)
+            : null,
+        currentStreak: _asInt(j['currentStreak'] ?? j['current_streak']) ?? 0,
+      );
+
+  final StreakWagerDto? wager;
+  final int currentStreak;
+}
+
+/// POST /quiz/streak/wager result.
+class StreakWagerOpenedDto {
+  const StreakWagerOpenedDto({required this.opened, this.message, this.wager, this.coinBalance});
+
+  factory StreakWagerOpenedDto.fromJson(Map<String, dynamic> j) => StreakWagerOpenedDto(
+        opened: (j['opened'] as bool?) ?? (j['success'] as bool?) ?? false,
+        message: j['message'] as String?,
+        wager: j['wager'] is Map<String, dynamic>
+            ? StreakWagerDto.fromJson(j['wager'] as Map<String, dynamic>)
+            : null,
+        coinBalance: _asInt(j['coin_balance']),
+      );
+
+  final bool opened;
+  final String? message;
+  final StreakWagerDto? wager;
+  final int? coinBalance;
+}

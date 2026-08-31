@@ -91,7 +91,8 @@ Future<void> bootstrap() async {
     ErrorReporter.sentryEnabled = true;
   }
 
-  // Security audit — jailbreak/root (best-effort, no brick on false positive)
+  // Security audit � freeRASP init then best-effort warn (no brick on false positive).
+  await AppSecurity.init();
   await AppSecurity.auditOrWarn();
 
   // License for flutter_markdown etc. — no extra setup.
