@@ -11,6 +11,12 @@ final _notificationsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) 
   try {
     final res = await dio.get<Map<String, dynamic>>('/notifications');
     final body = res.data!;
+    // Live WO-8 envelope: data is a Map {items: [...], pagination...}.
+    if (body['data'] is Map) {
+      final d = body['data'] as Map;
+      if (d['items'] is List) return (d['items'] as List).cast<Map<String, dynamic>>();
+      return [];
+    }
     if (body['data'] is List) return (body['data'] as List).cast<Map<String, dynamic>>();
     final env = ApiResponse.fromJson(body, (j) => (j as List?)?.cast<Map<String, dynamic>>() ?? []);
     return env.data ?? [];
