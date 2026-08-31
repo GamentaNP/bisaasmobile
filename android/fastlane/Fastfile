@@ -8,7 +8,7 @@ platform :android do
   desc "Build and push to Play Internal (beta)"
   lane :beta do
     gradle(task: "clean")
-    sh("flutter build appbundle --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json")
+    sh("flutter build appbundle --release --dart-define=ENV=prod --dart-define-from-file=../dart_defines/production.json")
     supply(
       track: "internal",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
@@ -18,7 +18,18 @@ platform :android do
     )
   end
 
-  desc "Promote internal → production ( staged rollout 10% )"
+  desc "Upload pre-built AAB to Play Internal (skips Flutter build)"
+  lane :upload_only do
+    supply(
+      track: "internal",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Promote internal -> production ( staged rollout 10% )"
   lane :prod do
     supply(
       track: "production",
@@ -32,7 +43,7 @@ platform :android do
 
   desc "Bump versionCode / versionName from pubspec"
   lane :bump do
-    # version is source of truth in pubspec.yaml: `version: 1.0.0+1` → versionName 1.0.0, versionCode 1
+    # version is source of truth in pubspec.yaml: `version: 1.0.0+1` -> versionName 1.0.0, versionCode 1
     # This lane only validates; bump pubspec manually per `MOBILE_API_INTEGRATION_GUIDE.md` deprecation policy.
     sh("flutter --version")
   end

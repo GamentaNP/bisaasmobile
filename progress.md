@@ -189,3 +189,41 @@ RTDB battle spec frozen in `docs/mobileapp/RTDB_BATTLE_SCHEMA.md`. `/.well-known
 4. ASO screenshots (10 Play Store + 5 App Store)
 5. Signing cert SHA-256 → `dart_defines/production.json:SIGNING_CERT_HASH` + `CERT_PIN_1/2`
 6. `fastlane android beta` → Play Internal Track
+
+## Session: Phase 6 — Release Build & Cert Pins
+**Date:** 2026-09-02
+**Goal:** Populate production.json, fix corrupted google-services.json, build signed release AAB, wire fastlane upload
+
+### Completed
+- [x] Extracted SHA-256 fingerprint from upload-keystore.jks (alias: upload, CN=CivilCal Upload Key) → SIGNING_CERT_HASH
+- [x] Extracted SPKI SHA-256 pins from bisaas.com TLS chain via openssl s_client
+  - CERT_PIN_1 (leaf, Let's Encrypt YE1-issued, expires Oct 24 2026): sha256/sMXJpL2FVDZCuIHtcrJ+Z7MXFU1rD9LE+ahHgNxvbqo=
+  - CERT_PIN_2 (intermediate Let's Encrypt YE1, backup): sha256/brzvtCELCIZUo4sD/qPX0ccRtPsd3DY6RfmxpOU9oB4=
+- [x] Populated dart_defines/production.json with all real values (was all __REPLACE__ placeholders)
+- [x] Fixed android/app/google-services.json — had Firebase CLI stdout prepended (BOM + "node.exe: Downloading..." text made Gradle throw MalformedJsonException); rebuilt as clean UTF-8 no-BOM JSON
+- [x] Fixed android/fastlane/Appfile package_name: com.bisaas.civilcal → com.bisaas.bisaasmobile
+- [x] Added upload_only fastlane lane (calls supply on pre-built AAB, skips 4-min Flutter rebuild)
+- [x] Installed Ruby 3.3.12 + fastlane 2.238.0 via winget
+- [x] flutter analyze --no-pub → No issues found! (re-verified)
+- [x] flutter test --no-pub → 236/236 passed (re-verified)
+- [x] flutter build appbundle --release --dart-define-from-file=dart_defines/production.json → ✅ 111.3MB signed AAB
+- [x] Updated docs/mobileapp/STATUS_2026-08-30.md (in bisaas repo): parity 22/22, Phase 6 checklist ticked
+
+### Blocked (needs you)
+- [ ] play-service.json — Google Play API service account JSON (Play Console → Setup → API access → Create service account → download JSON)
+  - Place at: android/play-service.json
+  - Then run: cd android && fastlane android upload_only
+- [ ] IOS_TEAM_ID — Apple Developer Team ID (developer.apple.com → Membership → Team ID)
+  - Set in: dart_defines/production.json
+
+### Errors
+- google-services.json was corrupted (Firebase CLI output prepended) — fixed
+- Appfile had wrong package name — fixed
+- FastFile beta lane rebuilds from scratch (slow) — added upload_only lane
+
+### Files Modified
+- dart_defines/production.json (production cert pins + signing hash populated)
+- android/app/google-services.json (corruption fixed)
+- android/fastlane/Appfile (package_name corrected)
+- android/fastlane/Fastfile (upload_only lane added)
+- build/app/outputs/bundle/release/app-release.aab (111.3MB signed, generated)

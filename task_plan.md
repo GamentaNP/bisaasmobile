@@ -3,8 +3,8 @@
 ## Goal
 Build the market-dominating CivilCal Flutter client (Android+iOS) over bisaas Laravel `/api/v1` â€” 100% per FLUTTER_APP_MASTER_PLAN_2026.md + mobileapp-design-reserch-flutter.md, zero stubs, server-authoritative, 60fps on Redmi Note 12.
 
-## Next Step — P0/P1/P2 COMPLETE 2026-09-01. PHASE 6 (manual device) REMAINING.
-**Status: 21/22 capabilities fully playable. Internal Track is honest.** All P0/P1/P2 work orders shipped. Flutter 236/236 tests, Laravel 32/32 tests, `dart analyze` 0 issues. `v1.0.0` tagged, 111.1MB AAB built, coverage 73.6% (≥70% gate passes).
+## Next Step — PHASE 6 BUILD COMPLETE 2026-09-02. PLAY UPLOAD = ONE STEP.
+**Status: 22/22 capabilities code-complete + release-built.** Signed AAB 111.3MB ready. `production.json` fully populated. `fastlane android upload_only` ready to run — needs `play-service.json` from Play Console.
 
 **Remaining (Phase 6 — manual device validation, ~1-2 days):**
 1. `patrol` golden path `launch→login→home→start quiz→answer 20→lifeline→submit→server result→share→progress` on Redmi Note 12
