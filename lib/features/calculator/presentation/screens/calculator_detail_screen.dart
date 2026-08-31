@@ -197,6 +197,17 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
               if (config.stepsInResponse) StepByStepSolution(steps: calcState.result!.steps),
               if (config.stepsInResponse) const SizedBox(height: 12),
               _ResultCard(result: calcState.result!),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => context.push(Uri(
+                  path: '/search',
+                  queryParameters: {
+                    'query': widget.slug.replaceAll('-', ' '),
+                  },
+                ).toString()),
+                icon: const Icon(Icons.school_rounded, size: 18),
+                label: const Text('Practice related questions'),
+              ),
             ],
             const SizedBox(height: 20),
             OutlinedButton.icon(

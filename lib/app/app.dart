@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/analytics/analytics_service.dart';
 import '../core/logging/app_logger.dart';
+import '../core/sync/background_fetch.dart';
 import '../core/sync/sync_worker.dart';
 import '../features/auth/presentation/controllers/auth_controller.dart';
 import '../l10n/app_localizations.dart';
@@ -28,6 +29,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
   StreamSubscription<Uri>? _deepLinkSub;
   StreamSubscription<String?>? _pushNavSub;
   SyncWorker? _syncWorker;
+  DailyQuizPrefetcher? _prefetcher;
 
   @override
   void initState() {
@@ -46,6 +48,9 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     final worker = ref.read(syncWorkerProvider);
     _syncWorker = worker;
     worker.start();
+    final prefetcher = ref.read(dailyQuizPrefetcherProvider);
+    _prefetcher = prefetcher;
+    prefetcher.start();
   }
 
   void _listenDeepLinks() {
@@ -107,10 +112,20 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final worker = _syncWorker;
-    if (worker == null) return;
     // Foreground-only polling — background work belongs to the OS worker.
-    if (state == AppLifecycleState.paused) worker.stop();
-    if (state == AppLifecycleState.resumed) worker.start();
+    if (worker != null) {
+      if (state == AppLifecycleState.paused) worker.stop();
+      if (state == AppLifecycleState.resumed) worker.start();
+    }
+    final prefetcher = _prefetcher;
+    if (prefetcher != null) {
+      if (state == AppLifecycleState.paused) prefetcher.stop();
+      if (state == AppLifecycleState.resumed) {
+        prefetcher.start();
+        // Opportunistically top-up the cache when returning to foreground.
+        unawaited(prefetcher.prefetchOnce());
+      }
+    }
   }
 
   @override
@@ -119,6 +134,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     unawaited(_deepLinkSub?.cancel());
     unawaited(_pushNavSub?.cancel());
     _syncWorker?.stop();
+    _prefetcher?.stop();
     super.dispose();
   }
 

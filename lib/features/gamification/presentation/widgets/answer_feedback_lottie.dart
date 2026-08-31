@@ -161,3 +161,81 @@ class XpFloatAnimator extends StatelessWidget {
     );
   }
 }
+
+/// Float-up `+N Coins` chip animation. Mirrors [XpFloat] but uses the coin
+/// palette. Used on the result screen when a completion awards coins.
+class CoinFloat extends StatefulWidget {
+  const CoinFloat({required this.amount, super.key});
+  final int amount;
+
+  static OverlayEntry show(BuildContext context, {required int amount, required Offset from}) {
+    final entry = OverlayEntry(
+      builder: (ctx) => Positioned(
+        left: from.dx - 34,
+        top: from.dy - 18,
+        child: CoinFloat(amount: amount),
+      ),
+    );
+    Overlay.of(context, rootOverlay: true).insert(entry);
+    return entry;
+  }
+
+  @override
+  State<CoinFloat> createState() => _CoinFloatState();
+}
+
+class _CoinFloatState extends State<CoinFloat> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<Offset> _offset;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000));
+    _offset = Tween<Offset>(begin: Offset.zero, end: const Offset(0, -2.2)).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+    _opacity = TweenSequence<double>(<TweenSequenceItem<double>>[
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeIn)), weight: 20),
+      TweenSequenceItem(tween: ConstantTween(1.0), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeOut)), weight: 30),
+    ]).animate(_controller);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(
+        position: _offset,
+        child: IgnorePointer(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.coinYellow,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.monetization_on_rounded, color: Colors.white, size: 12),
+                Text(
+                  '+${widget.amount}',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

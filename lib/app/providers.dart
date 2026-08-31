@@ -23,6 +23,9 @@ import '../core/storage/preferences.dart';
 import '../core/sync/sync_manager.dart';
 import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
+import '../core/sync/background_fetch.dart';
+import '../features/quiz/data/datasources/quiz_local_data_source.dart';
+import '../features/quiz/data/datasources/quiz_remote_data_source.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   if (!DioClient.isInitialized) {
@@ -43,6 +46,14 @@ final connectivityProvider = Provider<ConnectivityService>(
   (_) => ConnectivityService(Connectivity()),
 );
 
+/// Live online/offline status. Seeds from a one-shot check then follows the
+/// platform stream. Used by `OfflineStateBanner`.
+final onlineStatusProvider = StreamProvider<bool>((ref) async* {
+  final svc = ref.watch(connectivityProvider);
+  yield await svc.isOnline();
+  yield* svc.onOnlineChanged;
+});
+
 final syncManagerProvider = Provider<SyncManager>(
   (ref) => SyncManager(
     queue: ref.watch(syncQueueServiceProvider),
@@ -54,6 +65,16 @@ final syncManagerProvider = Provider<SyncManager>(
 final syncWorkerProvider = Provider<SyncWorker>(
   (ref) => SyncWorker(ref.watch(syncManagerProvider)),
 );
+
+/// Midnight daily-quiz prefetcher. Warms the Drift question cache so offline
+/// practice has content. Started/stopped with the app lifecycle in app.dart.
+final dailyQuizPrefetcherProvider = Provider<DailyQuizPrefetcher>((ref) {
+  return DailyQuizPrefetcher(
+    dio: DioClient.instance.dio,
+    remote: QuizRemoteDataSource(DioClient.instance.dio),
+    local: QuizLocalDataSource(ref.watch(appDatabaseProvider)),
+  );
+});
 
 /// Null when Firebase is unavailable (dev without config) — callers no-op.
 final analyticsProvider = Provider<AnalyticsService?>(

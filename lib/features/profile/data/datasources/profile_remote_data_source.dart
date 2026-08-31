@@ -27,4 +27,14 @@ class ProfileRemoteDataSource {
     final data = envelope.data;
     return data is Map<String, dynamic> ? ((data['avatar_url'] as String?) ?? '') : '';
   }
+
+  /// `PATCH /me` — update editable profile fields (currently name). Server
+  /// validates and returns the updated user; caller refreshes auth state.
+  Future<void> updateProfile({String? name}) async {
+    final payload = <String, dynamic>{
+      if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+    };
+    if (payload.isEmpty) return;
+    await _dio.patch<Map<String, dynamic>>('/me', data: payload);
+  }
 }

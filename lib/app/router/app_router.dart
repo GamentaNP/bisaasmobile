@@ -32,6 +32,7 @@ import '../../features/practice/presentation/screens/practice_browser_screen.dar
 import '../../features/practice/presentation/screens/practice_session_screen.dart';
 import '../../features/coaching/presentation/screens/coaching_dashboard_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
+import '../../features/downloads/presentation/screens/downloads_screen.dart';
 import '../../features/psc/presentation/psc_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
 import '../../features/social/presentation/social_screen.dart';
@@ -295,8 +296,14 @@ class AppRouter {
       GoRoute(path: '/store/premium', name: RouteNames.premiumStore, builder: (context, state) => const PremiumStoreScreen()),
       GoRoute(path: '/store/wardrobe', name: RouteNames.wardrobe, builder: (context, state) => const WardrobeScreen()),
       GoRoute(path: '/store/market', name: RouteNames.market, builder: (context, state) => const PremiumStoreScreen()),
-      GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => SearchScreen(
+          initialQuery: state.uri.queryParameters['query'] ?? '',
+        ),
+      ),
       GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
+      GoRoute(path: '/downloads', name: 'downloads', builder: (context, state) => const DownloadsScreen()),
       GoRoute(
         path: '/library',
         name: RouteNames.library,

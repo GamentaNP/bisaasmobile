@@ -41,6 +41,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  Future<void> _editName(String current) async {
+    final controller = TextEditingController(text: current);
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Edit name'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            labelText: 'Display name',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (newName == null || newName.trim().isEmpty || newName.trim() == current) {
+      return;
+    }
+    setState(() => _uploading = true);
+    try {
+      await ref.read(profileRemoteDataSourceProvider).updateProfile(name: newName);
+      if (!mounted) return;
+      ref.invalidate(authControllerProvider);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Update failed: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _uploading = false);
+    }
+  }
+
   Future<void> _shareCard() async {
     try {
       final boundary = _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
@@ -99,7 +147,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(user?.name ?? 'Engineer', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      Row(children: [
+                        Flexible(
+                          child: Text(user?.name ?? 'Engineer', overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        ),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          icon: const Icon(Icons.edit_rounded, size: 16),
+                          tooltip: 'Edit name',
+                          onPressed: _uploading ? null : () => _editName(user?.name ?? ''),
+                        ),
+                      ]),
                       Text(user?.email ?? 'offline@bisaas.test', style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                       const SizedBox(height: 4),
                       Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)), child: Text('Lv ${user?.level ?? 1}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold))), const SizedBox(width: 8), CoinChip(coins: user?.coins ?? 0)]),
@@ -177,6 +237,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _Tile(icon: Icons.share_rounded, title: 'Social & Referral', subtitle: 'share + leaderboard', onTapRoute: '/social'),
           _Tile(icon: Icons.account_balance_wallet_rounded, title: 'Wallet', subtitle: 'coins via GET /me', onTapRoute: '/economy'),
           _Tile(icon: Icons.emoji_events_rounded, title: 'Achievements', subtitle: 'streak + badges', onTapRoute: '/achievements'),
+          _Tile(icon: Icons.download_for_offline_rounded, title: 'Offline content', subtitle: 'cached packs + prefetch', onTapRoute: '/downloads'),
           _Tile(icon: Icons.calculate_rounded, title: 'Calculators 232', subtitle: 'Civil formula engines', onTapRoute: '/calculators'),
           _Tile(icon: Icons.settings_rounded, title: 'Settings', subtitle: 'language • biometrics • logout', onTapRoute: '/settings'),
           const SizedBox(height: 12),

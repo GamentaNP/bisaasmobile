@@ -1,0 +1,36 @@
+# Fastlane for BiSaaS CivilCal — iOS (run on a macOS machine with Xcode 16+).
+# Usage: `fastlane ios beta` (TestFlight) or `fastlane ios prod` (App Store).
+# Requires: `MATCH_PASSWORD`, `APP_STORE_CONNECT_API_KEY_JSON` (or apple_id env),
+# `ios/Runner/GoogleService-Info.plist` present, `dart_defines/production.json`.
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Sync signing certs/profiles via Match"
+  lane :certs do
+    match(type: "appstore", readonly: true)
+  end
+
+  desc "Build and upload a TestFlight beta"
+  lane :beta do
+    certs
+    sh("flutter build ipa --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json")
+    upload_to_testflight(
+      ipa: "../build/ios/ipa/CivilCal.ipa",
+      skip_waiting_for_build_processing: true,
+      distribute_external: false
+    )
+  end
+
+  desc "Submit metadata + build to App Store Review"
+  lane :prod do
+    certs
+    sh("flutter build ipa --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json")
+    deliver(
+      ipa: "../build/ios/ipa/CivilCal.ipa",
+      force: true,
+      skip_screenshots: false,
+      skip_metadata: false
+    )
+  end
+end

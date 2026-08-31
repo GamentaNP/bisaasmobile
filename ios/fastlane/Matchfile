@@ -1,0 +1,13 @@
+# Fastlane Match — iOS code signing via a private git repo (shared with Android).
+# Usage: `fastlane match appstore --readonly` (CI) / `fastlane match develop` (local).
+# Requires: `MATCH_PASSWORD` (+ git auth env in CI).
+
+git_url("https://github.com/bisaas/civilcal-certificates.git")
+
+storage_mode("git")
+
+type("appstore")
+
+app_identifier(["com.bisaas.civilcal"])
+
+readonly(true)

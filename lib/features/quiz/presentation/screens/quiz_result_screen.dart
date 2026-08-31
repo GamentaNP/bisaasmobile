@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/logging/app_logger.dart';
+import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
+import '../../../gamification/presentation/widgets/lottie_overlay.dart';
 import '../state/quiz_state.dart';
 
 /// Results screen shown after quiz completion — summarizes server-authoritative
@@ -41,6 +45,11 @@ class QuizResultScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
+              // Celebratory confetti on first frame (server-graded only).
+              _ConfettiOnMount(
+                celebrate: !quizState.isOfflinePractice,
+                coinsEarned: quizState.totalCoinsEarned,
+              ),
               const SizedBox(height: 16),
 
               // ── Accuracy Ring ───────────────────────────────────────────
@@ -369,4 +378,55 @@ extension _MapIndexed<T> on Iterable<T> {
       yield f(i++, item);
     }
   }
+}
+
+/// Fires a one-shot confetti overlay on the first frame after the result
+/// screen mounts. Respects the platform reduce-motion setting and only
+/// celebrates server-graded completions (never offline practice). Renders
+/// nothing itself.
+class _ConfettiOnMount extends StatefulWidget {
+  const _ConfettiOnMount({required this.celebrate, this.coinsEarned = 0});
+  final bool celebrate;
+  final int coinsEarned;
+
+  @override
+  State<_ConfettiOnMount> createState() => _ConfettiOnMountState();
+}
+
+class _ConfettiOnMountState extends State<_ConfettiOnMount> {
+  bool _fired = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeFire());
+  }
+
+  void _maybeFire() {
+    if (_fired || !widget.celebrate || !mounted) return;
+    _fired = true;
+    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) return;
+    unawaited(
+      LottieOverlay.show(
+        context,
+        const LottieOverlay(
+          asset: 'assets/animations/confetti.json',
+          title: 'Quiz Complete!',
+          autoDismiss: Duration(milliseconds: 2200),
+        ),
+      ),
+    );
+    if (widget.coinsEarned > 0) {
+      final size = MediaQuery.sizeOf(context);
+      final entry = CoinFloat.show(
+        context,
+        amount: widget.coinsEarned,
+        from: Offset(size.width / 2, size.height * 0.4),
+      );
+      Future.delayed(const Duration(milliseconds: 1050), entry.remove);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

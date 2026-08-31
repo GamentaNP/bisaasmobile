@@ -17,15 +17,19 @@ final _searchProvider = FutureProvider.family<List<Map<String, dynamic>>, String
 });
 
 /// Global search — `GET /quiz/questions?search=...` (server query builder 7.3).
+/// [initialQuery] lets other features (e.g. calculator "Practice Questions")
+/// deep-link straight into a filtered result set.
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({this.initialQuery = '', super.key});
+  final String initialQuery;
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
-  final _ctrl = TextEditingController();
-  String _q = '';
+  late final TextEditingController _ctrl =
+      TextEditingController(text: widget.initialQuery);
+  late String _q = widget.initialQuery.trim();
   @override
   void dispose() { _ctrl.dispose(); super.dispose(); }
   @override

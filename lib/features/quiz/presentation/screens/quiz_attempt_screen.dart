@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/widgets/ambient_glow_background.dart';
+import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
 import '../controllers/quiz_controller.dart';
 import '../state/quiz_state.dart';
 import '../widgets/difficulty_badge.dart';
@@ -19,6 +21,8 @@ class QuizAttemptScreen extends ConsumerStatefulWidget {
 }
 
 class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
+  String? _lastAnimatedQuestionId;
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +46,28 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     return AppColors.wrongRed;
   }
 
+  /// Fires the correct/wrong Lottie + XP float once per question when the
+  /// server (or offline cache) returns a REAL graded result. Online exam-mode
+  /// answers come back as synthetic "pending" (empty correctOptionId) because
+  /// the server grades on complete — we deliberately do NOT animate those, so
+  /// the client never fakes server-authoritative feedback.
+  void _maybeCelebrate(QuizState? prev, QuizState next) {
+    if (next.phase != QuizPhase.feedback) return;
+    final result = next.lastResult;
+    if (result == null) return;
+    if (result.correctOptionId.isEmpty) return; // synthetic/pending → skip
+    if (_lastAnimatedQuestionId == result.questionId) return; // once per question
+    _lastAnimatedQuestionId = result.questionId;
+
+    final overlay = AnswerFeedbackLottie.show(context, isCorrect: result.isCorrect);
+    Future.delayed(const Duration(milliseconds: 700), overlay.remove);
+    if (result.xpEarned > 0) {
+      final xp = XpFloat.show(context, amount: result.xpEarned,
+          from: Offset(MediaQuery.sizeOf(context).width / 2, MediaQuery.sizeOf(context).height * 0.55));
+      Future.delayed(const Duration(milliseconds: 950), xp.remove);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(quizControllerProvider);
@@ -55,16 +81,19 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
           context.go('/quiz/attempt/$attemptId/result');
         }
       }
+      _maybeCelebrate(prev, next);
     });
 
     return Scaffold(
-      body: SafeArea(
-        child: switch (state.phase) {
-          QuizPhase.loading => const Center(child: CircularProgressIndicator()),
-          QuizPhase.error => _buildError(context, state),
-          QuizPhase.finished => const Center(child: CircularProgressIndicator()),
-          _ => _buildQuizBody(context, state),
-        },
+      body: AmbientGlowBackground(
+        child: SafeArea(
+          child: switch (state.phase) {
+            QuizPhase.loading => const Center(child: CircularProgressIndicator()),
+            QuizPhase.error => _buildError(context, state),
+            QuizPhase.finished => const Center(child: CircularProgressIndicator()),
+            _ => _buildQuizBody(context, state),
+          },
+        ),
       ),
     );
   }

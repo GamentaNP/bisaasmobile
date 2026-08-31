@@ -2,6 +2,12 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **RE-AUDIT 2026-08-31 (verified against live codebase):** `flutter analyze` → 0 issues. `flutter test` → **221/221 passing** (was 52). 283 Dart files, 26 features. Assets real: 4 InstrumentSans TTFs (uncommented in pubspec), 9 Lottie JSONs, 10 SVGs. `google-services.json` + `GoogleService-Info.plist` present. `firebase_database` added. Calculator is schema-driven. Battle has RTDB listeners + 3 screens. Quiz browser/intro/review + lifelines + difficulty badge + question images built. STILL MISSING: `background_fetch.dart`, downloads feature, edit-profile, account delete, coin-float + celebration wiring into quiz flow, ambient glow widget, auth-tamper/golden tests, Matchfile, store submission, any physical-device test.
+
+> **COMPLETION PASS 2026-08-31 (this agent, collab-safe):** Added account delete (`DELETE /account` + type-to-confirm), wired celebrations (confetti on result + answer-feedback Lottie/XP-float on graded answers), `background_fetch.dart` midnight prefetch (verified routes only) wired into app lifecycle, edit-profile name (`PATCH /me`) + avatar already present, calculator "Practice related questions" loop (→ `/search?query=`), `ambient_glow_background.dart` on quiz attempt screen, `auth_tamper_test.dart` (8 tests). **Now 229/229 tests, analyze 0.** AVOIDED files owned by the other agent (bootstrap, certificate_pinning, app_security, encryption, streak, l10n, pubspec, ci, dart_defines). REMAINING: downloads feature, coin-float, level-up/achievement overlay wiring (blocked on backend returning `leveled_up`/`achievements_unlocked` in complete — server currently returns counts only), golden tests, Matchfile/iOS fastlane, store submission, all physical-device verification.
+
+> **COMPLETION PASS 2 (2026-08-31, this agent):** Added `CoinFloat` + wired into result screen (coins earned), shared `OfflineStateBanner` (connectivity-driven, `onlineStatusProvider`) mounted in `AppShellScaffold`, full `DownloadsScreen` offline-content manager (reads Drift `Questions` cache, prefetch-now + clear, routed `/downloads` + profile tile), `QuizDao.count()`, fastlane `Matchfile` (android+ios) + `ios/fastlane/{Appfile,Fastfile,Matchfile}` TestFlight/AppStore lanes. New tests: `background_fetch_test.dart` (4) + `offline_state_banner_test.dart` (3). **Now 236/236 tests, analyze 0. Android `app-debug.apk` BUILDS (271 MB) — device install blocked only by MIUI "Install via USB" phone-side confirm.** REMAINING: level-up/achievement overlay wiring (backend gap), golden/pixel tests, coverage gate, actual device golden-path run + TalkBack + DevTools profiling, store screenshots/submission (needs accounts + Mac).
+
 **Goal:** Build the market-dominating CivilCal Flutter client (Android+iOS) as a server-authoritative, offline-capable, gamified learning app over the existing `bisaas` Laravel API (`/api/v1`), exactly per `FLUTTER_APP_MASTER_PLAN_2026.md` (3512 lines) + `mobileapp-design-reserch-flutter.md` (3927 lines) + `PWA_MASTER_PLAN_2026.md` stub — feature-first Clean Architecture, Riverpod+go_router+Dio+Drift+secure_storage, Material 3 dark-first, flawless quiz engine.
 
 **Architecture:** Feature-first Clean Architecture (app/core/features/shared). `features/` never import each other — Riverpod + router only. `domain/` pure Dart, `data/` owns DTO/Dio/Drift, `presentation/` owns screens/widgets/controllers. Dio with Auth+Request-Id+Retry+Refresh+Logging+CertPinning. Drift for offline queue. Firebase FCM/Analytics/Crashlytics/RemoteConfig. Single `ApiConfig.baseUrl` source, `Accept: application/json` always.
@@ -34,7 +40,7 @@
 
 ---
 
-### Task 1: Audit & Freeze API Contract
+### Task 1: Audit & Freeze API Contract ✅ COMPLETED
 
 **Files:**
 - Modify: `lib/app/config/api_config.dart:12`
@@ -46,18 +52,18 @@
 - Consumes: `GET /api/v1/openapi.json` + `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125`
 - Produces: frozen `ApiConfig.baseUrl` ending `/api/v1`, typed `ApiResponse<T>` + `ApiErrorCode` enum matching `App\Http\Support\ApiErrorCode`
 
-- [ ] **Step 1: Write failing test for unknown error code handling**
+- [x] **Step 1: Write failing test for unknown error code handling**
 ```dart
 test('unknown code maps to generic', () {
   final ex = ApiException.fromJson(500, {'error': {'code': 'TOTALLY_NEW_CODE'}}, requestId: 'x');
   expect(ex.code, ApiErrorCode.unknown);
 });
 ```
-- [ ] **Step 2: Run `flutter test` — expect fail if unknown != generic**
+- [x] **Step 2: Run `flutter test` — expect fail if unknown != generic**
 Run: `flutter test test/widget_test.dart -v`
-- [ ] **Step 3: Implement `ApiErrorCode.fromRaw` fallback already done — verify no change needed, add 2 new codes from OpenAPI if present (e.g., `QUIZ_NOT_FOUND`)**
-- [ ] **Step 4: Run `flutter test` — PASS**
-- [ ] **Step 5: Commit**
+- [x] **Step 3: Implement `ApiErrorCode.fromRaw` fallback already done — verify no change needed, add 2 new codes from OpenAPI if present (e.g., `QUIZ_NOT_FOUND`)**
+- [x] **Step 4: Run `flutter test` — PASS**
+- [x] **Step 5: Commit**
 ```bash
 git add lib/core/network/api_exception.dart test/widget_test.dart
 git commit -m "feat: freeze API error codes against bisaas OpenAPI"
@@ -65,7 +71,7 @@ git commit -m "feat: freeze API error codes against bisaas OpenAPI"
 
 ---
 
-### Task 2: Env & Dio Hardening (Request-Id, Retry, Cert Pinning)
+### Task 2: Env & Dio Hardening (Request-Id, Retry, Cert Pinning) ✅ COMPLETED
 
 **Files:**
 - Modify: `lib/core/network/dio_client.dart:26`
@@ -77,17 +83,17 @@ git commit -m "feat: freeze API error codes against bisaas OpenAPI"
 - Consumes: `ApiConfig`, `TokenManager`
 - Produces: `DioClient.instance.dio` always sends `X-Request-Id` (uuid v4), honors `Retry-After`+`X-RateLimit-Reset` exponential backoff, dev bad-cert allowlist only
 
-- [ ] **Step 1: Write failing test for Retry-After**
+- [x] **Step 1: Write failing test for Retry-After**
 ```dart
 test('RetryInterceptor respects Retry-After: 2', () async {
   // mock 429 with header Retry-After: 2 -> delay ≈2s
   // verify _computeDelay returns Duration(seconds:2)
 });
 ```
-- [ ] **Step 2: Run test — fail (no test yet)**
-- [ ] **Step 3: Verify `retry_interceptor.dart:96` parses HttpDate and header, already implemented; add test helper exposing _computeDelay via extension**
-- [ ] **Step 4: Run `flutter analyze && flutter test` — PASS**
-- [ ] **Step 5: Commit**
+- [x] **Step 2: Run test — fail (no test yet)**
+- [x] **Step 3: Verify `retry_interceptor.dart:96` parses HttpDate and header, already implemented; add test helper exposing _computeDelay via extension**
+- [x] **Step 4: Run `flutter analyze && flutter test` — PASS**
+- [x] **Step 5: Commit**
 ```bash
 git add lib/core/network/*.dart test/core/network/dio_retry_test.dart
 git commit -m "feat: harden Dio with X-Request-Id + 429 backoff"
@@ -95,7 +101,7 @@ git commit -m "feat: harden Dio with X-Request-Id + 429 backoff"
 
 ---
 
-### Task 3: Secure Auth Storage + Biometric
+### Task 3: Secure Auth Storage + Biometric ✅ COMPLETED
 
 **Files:**
 - Modify: `lib/core/security/token_manager.dart:8`
@@ -108,19 +114,19 @@ git commit -m "feat: harden Dio with X-Request-Id + 429 backoff"
 - Consumes: `flutter_secure_storage`
 - Produces: `TokenManager.shouldRefresh() <7d`, `BiometricAuth.authenticate()`, `User` entity (id,name,email,avatar,level,xp,coins)
 
-- [ ] **Step 1: Write test `shouldRefresh returns true when expires_at <7d`**
+- [x] **Step 1: Write test `shouldRefresh returns true when expires_at <7d`**
 ```dart
 final tm = TokenManager(storage: FakeStorage(expiresAt: DateTime.now().add(Duration(days: 6)).toIso8601String()));
 expect(await tm.shouldRefresh(), isTrue);
 ```
-- [ ] **Step 2: Run — fail (FakeStorage not wired)**
-- [ ] **Step 3: Implement FakeStorage via mocktail, keep token_manager.dart logic as is (already correct)**
-- [ ] **Step 4: Pass**
-- [ ] **Step 5: Commit**
+- [x] **Step 2: Run — fail (FakeStorage not wired)**
+- [x] **Step 3: Implement FakeStorage via mocktail, keep token_manager.dart logic as is (already correct)**
+- [x] **Step 4: Pass**
+- [x] **Step 5: Commit**
 
 ---
 
-### Task 4: Bootstrap + App Shell (Splash → Home)
+### Task 4: Bootstrap + App Shell (Splash → Home) ✅ COMPLETED
 
 **Files:**
 - Modify: `lib/app/bootstrap.dart:7`
@@ -133,21 +139,21 @@ expect(await tm.shouldRefresh(), isTrue);
 - Consumes: `DioClient`, `TokenManager`, `FeatureFlags`, `CrashReporting`
 - Produces: `bootstrap()` does tz init + SystemUi + Firebase guarded + Dio init + FlutterError hook; `AppRouter.router` ShellRoute 5 tabs (Home/Quiz/Calculators/Ranks/Profile)
 
-- [ ] **Step 1: Failing widget test for splash → login when no token**
+- [x] **Step 1: Failing widget test for splash → login when no token**
 ```dart
 testWidgets('no token -> /login', (t) async {
   // pump CivilCalApp with empty TokenManager override
   // expect find.text('Welcome back')
 });
 ```
-- [ ] **Step 2: Run — fail (splash not yet)**
-- [ ] **Step 3: Implement splash_screen.dart 1.5s logo animation + token check + /api/auth/me validation; wire shell_router with NavigationBar**
-- [ ] **Step 4: Pass + `flutter analyze`**
-- [ ] **Step 5: Commit**
+- [x] **Step 2: Run — fail (splash not yet)**
+- [x] **Step 3: Implement splash_screen.dart 1.5s logo animation + token check + /api/auth/me validation; wire shell_router with NavigationBar**
+- [x] **Step 4: Pass + `flutter analyze`**
+- [x] **Step 5: Commit**
 
 ---
 
-### Task 5: Auth Feature Complete (Login/Register/Google/Forgot/Biometric)
+### Task 5: Auth Feature Complete (Login/Register/Google/Forgot/Biometric) ✅ COMPLETED
 
 **Files:**
 - Create: `lib/features/auth/data/datasources/auth_remote_data_source.dart` (calls via DioClient, baseUrl auto)
@@ -160,20 +166,20 @@ testWidgets('no token -> /login', (t) async {
 - Consumes: `/auth/login` `{email,password,device_name}`, `/auth/register`, `/auth/refresh`, `TokenManager.persist`
 - Produces: `authControllerProvider` exposes `AsyncValue<AuthState>`; `POST` uses `X-Device-Name`+`Idempotency-Key`
 
-- [ ] **Step 1: Failing test `AuthController login success persists token`**
+- [x] **Step 1: Failing test `AuthController login success persists token`**
 ```dart
 final c = container.read(authControllerProvider.notifier);
 await c.login(email: 'a@b.com', password: 'secret123');
 expect(container.read(authControllerProvider).hasValue, isTrue);
 ```
-- [ ] **Step 2: fail**
-- [ ] **Step 3: Implement remote DS + repo impl + use_cases + controller (Riverpod) — no widget Dio calls directly**
-- [ ] **Step 4: Pass**
-- [ ] **Step 5: Commit**
+- [x] **Step 2: fail**
+- [x] **Step 3: Implement remote DS + repo impl + use_cases + controller (Riverpod) — no widget Dio calls directly**
+- [x] **Step 4: Pass**
+- [x] **Step 5: Commit**
 
 ---
 
-### Task 6: Design System Polish + L10n
+### Task 6: Design System Polish + L10n ✅ COMPLETED
 
 **Files:**
 - Modify: `lib/app/theme/app_colors.dart:6` (add glass, gamification, semantic, chart, rarity palettes from plan 5.2)
@@ -185,15 +191,15 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: Material 3 seed `#22D3EE`
 - Produces: `AppColors.glassDark/border`, `AppTypography.nepali` with 1.8 height
 
-- [ ] **Step 1: Failing gen-l10n `flutter gen-l10n` warns 2 untranslated (hi/ne) — add missing keys ne/hi**
-- [ ] **Step 2: Add keys, run `flutter gen-l10n` → no warnings**
-- [ ] **Step 3: Expand AppColors per spec 5.2 (glassDark 0x0DFFFFFF, glassBorder 0x1AFFFFFF, xpGold 0xFFEAB308 etc.)**
-- [ ] **Step 4: `flutter analyze` Pass**
-- [ ] **Step 5: Commit**
+- [x] **Step 1: Failing gen-l10n `flutter gen-l10n` warns 2 untranslated (hi/ne) — add missing keys ne/hi**
+- [x] **Step 2: Add keys, run `flutter gen-l10n` → no warnings**
+- [x] **Step 3: Expand AppColors per spec 5.2 (glassDark 0x0DFFFFFF, glassBorder 0x1AFFFFFF, xpGold 0xFFEAB308 etc.)**
+- [x] **Step 4: `flutter analyze` Pass**
+- [x] **Step 5: Commit**
 
 ---
 
-### Task 7: Onboarding (3 screens) + Preferences
+### Task 7: Onboarding (3 screens) + Preferences ⚠️ 75% COMPLETE
 
 **Files:**
 - Create: `lib/features/onboarding/presentation/screens/onboarding_screen.dart` (PageView + exam/time/level selectors)
@@ -204,12 +210,13 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `Preferences.setOnboardingDone`, `Auth token`
 - Produces: `POST /api/onboarding/complete {exam,daily_minutes,level}`; guard `RouteGuards.authGuard` redirects authenticated but not onboarded → `/onboarding`
 
-- [ ] **Step 1: Widget test onboard → completes**
-- [ ] **Step 2-5: Implement + commit**
+- [x] **Step 1: Widget test onboard → completes**
+- [x] **Step 2-5: Implement + commit**
+> **Note:** 3-screen flow implemented per senior review (75%). Missing: premium visual polish, marketing visuals.
 
 ---
 
-### Task 8: Home Dashboard (Real Data)
+### Task 8: Home Dashboard (Real Data) ✅ 80% COMPLETE
 
 **Files:**
 - Create: `lib/features/home/data/models/dashboard_dto.dart` (freezed)
@@ -221,12 +228,13 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `GET /api/v1/dashboard` (via `DioClient`) → `ApiResponse<DashboardDto>` → entity
 - Produces: `dashboardProvider` FutureProvider
 
-- [ ] **Step 1: Failing test `dashboardProvider loads` with mock dio**
-- [ ] **Step 2-5: Implement + shimmer loading (`shared/widgets/loading_indicator.dart: ShimmerBox`)**
+- [x] **Step 1: Failing test `dashboardProvider loads` with mock dio**
+- [x] **Step 2-5: Implement + shimmer loading (`shared/widgets/loading_indicator.dart: ShimmerBox`)**
+> **Note:** Parallel fetch, streak, XP, real data working per senior review (80%). Missing: Quick Actions 2x2 grid, "Continue where you left off" card, ambient glow background.
 
 ---
 
-### Task 9: Quiz Engine — Data Layer (Server-Authoritative)
+### Task 9: Quiz Engine — Data Layer (Server-Authoritative) ✅ 95% COMPLETE
 
 **Files:**
 - Create: `lib/features/quiz/data/models/{quiz_dto,question_dto,attempt_dto,result_dto}.dart`
@@ -238,12 +246,12 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `POST /quiz/attempts/start` `Idempotency-Key`, `POST /quiz/attempts/:id/answers`, `POST /quiz/attempts/:id/finish`
 - Produces: `QuizRepository {startAttempt, getQuestions, submitAnswer, finishAttempt, getResult}` all through `DioClient`
 
-- [ ] **Step 1: Test repo maps snake_case `question_text` → `text`**
-- [ ] **Step 2-5: Implement + `dart run build_runner build`**
+- [x] **Step 1: Test repo maps snake_case `question_text` → `text`**
+- [x] **Step 2-5: Implement + `dart run build_runner build`**
 
 ---
 
-### Task 10: Quiz Attempt Controller (State Machine + Timer Isolation)
+### Task 10: Quiz Attempt Controller (State Machine + Timer Isolation) ✅ 95% COMPLETE
 
 **Files:**
 - Create: `lib/features/quiz/presentation/controllers/quiz_attempt_controller.dart` (@riverpod class QuizAttemptController extends _$QuizAttemptController { AsyncValue<QuizAttemptState> })
@@ -254,12 +262,12 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `QuizRepository`
 - Produces: `quizAttemptProvider` stateTransitions idle→loading→ready→inProgress→completed; timer uses `server start_time + duration - now`, not `Timer.periodic` alone (spec 86)
 
-- [ ] **Step 1: Failing test state transition**
-- [ ] **Step 2-5: Implement + haptic calls isolated**
+- [x] **Step 1: Failing test state transition**
+- [x] **Step 2-5: Implement + haptic calls isolated**
 
 ---
 
-### Task 11: Quiz UI — Attempt Screen (The 80% Screen)
+### Task 11: Quiz UI — Attempt Screen (The 80% Screen) ✅ 95% COMPLETE
 
 **Files:**
 - Create: `lib/features/quiz/presentation/screens/quiz_attempt_screen.dart` (progress bar, difficulty badge, question card, AnswerOptionTile ×4, LifelineBar)
@@ -270,12 +278,12 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `quizAttemptProvider`, `quizTimerProvider`
 - Produces: 0ms haptic + cyan select → async server → green/red + check/X + floating +50 XP → 600/800ms slide next; combo pill top-right compact after 3 streak
 
-- [ ] **Step 1: Widget test `tap A -> selected border AppColors.brand`**
-- [ ] **Step 2-5: Implement with glassmorphic card, 56dp min height, semantic labels, 44dp touch target**
+- [x] **Step 1: Widget test `tap A -> selected border AppColors.brand`**
+- [x] **Step 2-5: Implement with glassmorphic card, 56dp min height, semantic labels, 44dp touch target**
 
 ---
 
-### Task 12: Quiz Result + Share + Review
+### Task 12: Quiz Result + Share + Review ✅ 90% COMPLETE
 
 **Files:**
 - Create: `lib/features/quiz/presentation/screens/quiz_result_screen.dart` (confetti overlay, animated score ring, 4 stat chips, percentile callout, missed cards, Share/PlayAgain/Review)
@@ -286,11 +294,12 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `QuizResult` server-authoritative, `share_plus` native sheet
 - Produces: `Share.share("I scored 85.7% ... https://civilcal.com/quiz/challenge/{token}")` per spec 15.7
 
-- [ ] **Step 1-5: Implement + Lottie confetti (reduceMotion guard)**
+- [x] **Step 1-5: Implement + Lottie confetti (reduceMotion guard)**
+> **Note (2026-08-31):** DONE: `quiz_result_screen.dart` + `quiz_review_screen.dart` deep-linkable go_router routes; confetti Lottie now wired via `_ConfettiOnMount` (server-graded only, reduceMotion-guarded). REMAINING: none blocking.
 
 ---
 
-### Task 13: Calculator Suite (Metadata-Driven 80/20)
+### Task 13: Calculator Suite (Metadata-Driven 80/20) ✅ 95% COMPLETE
 
 **Files:**
 - Create: `lib/features/calculator/data/datasources/calculator_remote_data_source.dart` (`GET /api/v1/calculators`, `POST /calculators/:slug/calculate` via `CalculatorRegistry` 232 endpoints)
@@ -302,11 +311,12 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: catalog metadata `{field type,label,unit,validation,precision}`
 - Produces: `calculatorProvider` runs server calculation (engine authoritative, never duplicate math except offline preview), save to `Calculations` table
 
-- [ ] **Step 1-5: Implement + `flutter_math_fork` formula, unit selector, SAFE/CHECK/FAIL colors, “Practice Questions” loop**
+- [x] **Step 1-5: Implement + `flutter_math_fork` formula, unit selector, SAFE/CHECK/FAIL colors, “Practice Questions” loop**
+> **Note (2026-08-31):** Schema-driven inputs (number+unit/select/switch), `formula_display`, `step_by_step_solution`, `status_badge`, `calculator_history_screen` all present. DONE 2026-08-31: “Practice related questions” button → `/search?query=<slug>` (SearchScreen now accepts `initialQuery`).
 
 ---
 
-### Task 14: Gamification HUD + Achievements
+### Task 14: Gamification HUD + Achievements ⚠️ 85% COMPLETE
 
 **Files:**
 - Create: `lib/features/gamification/presentation/widgets/{xp_bar,coin_chip,streak_indicator,level_badge,level_up_overlay,achievement_card}.dart`
@@ -317,9 +327,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: server payload `{level,xp,coins,streak,achievements}` — never compute locally
 - Produces: `PlayerHUD` Lv+XP bar (500ms animate + stars to coin), LevelUp 2.5s auto-dismiss, Achievement toast 4s slide-down + heavy haptic
 
+> **Note (2026-08-31):** DONE: `xp_progress_bar`, `level_badge`, `achievement_unlock_toast`, `lottie_overlay`, `answer_feedback_lottie`, `achievements_screen`, `leaderboard_screen`, 9 Lottie JSONs, `LICENSES.md`. DONE pass 1: answer-feedback Lottie + XP-float wired into `quiz_attempt_screen` (real graded results only). DONE pass 2: `CoinFloat` wired into result screen (coins earned). REMAINING: level-up/achievement overlay wiring is BLOCKED on backend — `POST /quiz/attempts/{id}/complete` returns only counts (no `leveled_up`/`achievements_unlocked`), so client must not fake it.
+
 ---
 
-### Task 15: Battle Mode (Firebase Realtime)
+### Task 15: Battle Mode (Firebase Realtime) ⚠️ 60% COMPLETE
 
 **Files:**
 - Create: `lib/features/battle/data/datasources/battle_remote_data_source.dart` (Firebase Realtime DB `/battles/{lobbyId}`)
@@ -331,9 +343,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: Firebase RTDB (<100ms), server creates lobby + validates answers
 - Produces: matchmaking spinner + 3-2-1 haptic countdown, both-device question sync
 
+> **Note (2026-08-31):** DONE: `battle_remote_data_source`, `battle_repository_impl`, `battle.dart` entity, all 3 screens (matchmaking/arena/result), RTDB listeners in `battle_controller.dart` (`_rtdb` streams), `firebase_database: ^12.0.1` in pubspec, `battle_test.dart` passing, Firebase config files present. REMAINING: never tested on two physical devices (requires Android SDK + real hardware).
+
 ---
 
-### Task 16: Social/Profile + Courses + Downloads
+### Task 16: Social/Profile + Courses + Downloads ✅ 90% COMPLETE
 
 **Files:**
 - Create: `lib/features/profile/.../{profile_screen,edit_profile_screen,widgets/profile_header,stat_grid,achievement_gallery}.dart` (radar `fl_chart`, cert horizontal scroll)
@@ -345,9 +359,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `GET /profile`, `GET /courses`, offline pack `GET /api/mobile/daily-quiz-pack`
 - Produces: share profile card via `RenderRepaintBoundary` + native share, server confirms referral `+50 coins`
 
+> **Note (2026-08-31):** DONE: `profile_screen`, `skill_radar_chart.dart` (fl_chart), `profile_skills_controller`, `glassmorphic_card`, `gradient_button`, `animated_counter`, courses feature. DONE pass 1: avatar upload (`POST /me/avatar`), edit-name (`PATCH /me` + dialog), `ambient_glow_background.dart`. DONE pass 2: `DownloadsScreen` offline-content manager (Drift `Questions` cache stats + prefetch-now + clear), route `/downloads`, profile tile, `QuizDao.count()`. REMAINING: 42MB multi-pack pause/resume UI (single daily-pack cached for now).
+
 ---
 
-### Task 17: Notifications (FCM + Local) + Analytics
+### Task 17: Notifications (FCM + Local) + Analytics ⚠️ 70% COMPLETE
 
 **Files:**
 - Modify: `lib/core/notifications/push_notification_service.dart:7` (already handles token register → `POST /device-tokens`; add payload routing per spec 20.1 via `notification_handler.dart: routeFor`)
@@ -358,9 +374,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: Firebase Messaging
 - Produces: `streak_risk` 2hrs left, `battle_invite` → `/battle/{id}`, `achievement` → `/profile/achievements`; local fallback works offline
 
+> **Note (2026-08-31):** DONE: all 4 core services (`push_notification_service`, `local_notification_service`, `notification_handler`, `notification_types`), `notifications` feature, Firebase config files present, `POST/DELETE /device-tokens` wired. REMAINING: no physical-device push test (Android SDK not installed), APNs key not uploaded.
+
 ---
 
-### Task 18: Offline Mode + Background Fetch + Crash Recovery
+### Task 18: Offline Mode + Background Fetch + Crash Recovery ✅ 90% COMPLETE
 
 **Files:**
 - Modify: `lib/core/connectivity/connectivity_service.dart:7` (already `onOnlineChanged`; add banner `OfflineStateBanner` quiet when online, ⚠ when offline, ✓ Synced)
@@ -371,9 +389,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `SyncQueue {idempotency_key,event_type,payload,attempts,next_retry_at,status}`
 - Produces: offline practice labeled provisional, server grading wins, reopen unfinished attempt queries server (spec 127)
 
+> **Note (2026-08-31):** DONE: `sync_manager`, `sync_queue`, `sync_worker` (30s poll), `migration_v1_v2_test.dart`, offline quiz practice. DONE pass 1: `background_fetch.dart` (`DailyQuizPrefetcher`) wired into `app.dart` lifecycle + provider. DONE pass 2: shared `OfflineStateBanner` (connectivity-driven, `onlineStatusProvider`) mounted in `AppShellScaffold`; `background_fetch_test.dart` (4 tests). REMAINING: true OS-background execution (workmanager/BGTaskScheduler) + dedicated `GET /mobile/daily-quiz-pack` endpoint (backend gap).
+
 ---
 
-### Task 19: Accessibility + Adaptive + Performance
+### Task 19: Accessibility + Adaptive + Performance ⚠️ 50% COMPLETE
 
 **Files:**
 - Modify: `lib/shared/widgets/*` (add `Semantics` labels per 24.1, `FittedBox` numbers, 44dp min, no hard 52dp heights, `MediaQuery.disableAnimations` guard)
@@ -384,9 +404,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `fl_chart` radar, `CachedNetworkImage` max 400px, `PaintingBinding.imageCache.maximumSizeBytes=100MB`, `RepaintBoundary` around anim
 - Produces: 60fps on Redmi Note 12, <150MB working set, <2s cold start (parallel token+Drift, cache last dashboard, defer analytics)
 
+> **Note (2026-08-31):** DONE: `question_image.dart` (CachedNetworkImage), `network_image.dart` shared widget, `safe_area_scaffold`. REMAINING: no DevTools profile-mode verification, no TalkBack audit, no physical device — all performance gates UNVERIFIED (Android SDK not installed).
+
 ---
 
-### Task 20: Testing Pyramid + Security Hardening
+### Task 20: Testing Pyramid + Security Hardening ⚠️ 75% COMPLETE
 
 **Files:**
 - Create: `test/features/quiz/quiz_attempt_test.dart` (matrix spec 99: start/correct/wrong/timeout/mark/next/jump/lifeline/combo/pause/network/finish/duplicate)
@@ -397,9 +419,11 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 - Consumes: `fpdart`? No — use `Result<T>` pattern per spec 8.3 (Either<Failure,T>)
 - Produces: 90% domain, 80% repo, 70% controller coverage; golden tests for Home/Quiz/Result/Profile
 
+> **Note (2026-08-31):** DONE: **236/236 tests passing** across 29 test files (was 52), incl. `dio_retry_test`, `retry_idempotency_test`, `refresh_interceptor_test`, `certificate_pinning_test`, `token_manager_test`, `quiz_state_test`, `battle_test`, DTO tests. DONE pass 1: `auth_tamper_test.dart` (8). DONE pass 2: `background_fetch_test.dart` (4) + `offline_state_banner_test.dart` (3 widget tests). REMAINING: golden/pixel tests, coverage % gate, `app_security.dart` freeRASP integration (owned by other agent).
+
 ---
 
-### Task 21: CI/CD + Store + ASO
+### Task 21: CI/CD + Store + ASO ⚠️ 55% COMPLETE
 
 **Files:**
 - Modify: `.github/workflows/ci.yml:1` (already flutter analyze+test+build; add format --set-exit-if-changed + patrol)
@@ -410,6 +434,8 @@ expect(container.read(authControllerProvider).hasValue, isTrue);
 **Interfaces:**
 - Consumes: `dart_defines/production.json`, Play Integrity API, TestFlight
 - Produces: staged 10% rollout, 99.5% crash-free, ≥4.5 stars, D7>40%
+
+> **Note (2026-08-31):** DONE: `.github/workflows/ci.yml` + `deploy_android.yml`, `android/fastlane/{Appfile,Fastfile}`, `assets/LICENSES.md`, `dart_defines/production.json`, Firebase config files. DONE pass 2: `android/fastlane/Matchfile` + `ios/fastlane/{Appfile,Fastfile,Matchfile}` (TestFlight `beta` + App Store `prod` lanes). REMAINING: store screenshots, Play Console/App Store Connect accounts, actual submission, `in_app_review` prompt verification, patrol E2E (Phase 6).
 
 ---
 
