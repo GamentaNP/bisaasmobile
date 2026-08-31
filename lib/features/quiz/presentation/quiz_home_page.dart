@@ -1,248 +1,239 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../core/errors/error_handler.dart';
 import 'screens/quiz_attempt_screen.dart';
 
-/// Quiz home — shows curated topic cards and a quick-start CTA.
-class QuizHomePage extends ConsumerWidget {
+/// Quiz home — server-driven course cards (no invented slugs: attempts can
+/// only be started against ids the server knows, see QuizRemoteDataSource).
+class QuizHomePage extends ConsumerStatefulWidget {
   const QuizHomePage({super.key});
 
-  static const _topics = [
-    {
-      'id': 'daily-sprint',
-      'title': 'Daily Sprint',
-      'desc': '10 calibrated questions — new every day',
-      'icon': Icons.flash_on_rounded,
-      'color': AppColors.brand,
-      'tag': 'RECOMMENDED',
-    },
-    {
-      'id': 'structural-analysis',
-      'title': 'Structural Analysis',
-      'desc': 'Bending moment, shear force, frames & trusses',
-      'icon': Icons.account_tree_rounded,
-      'color': Color(0xFF10B981),
-      'tag': null,
-    },
-    {
-      'id': 'geotechnical',
-      'title': 'Geotechnical Engineering',
-      'desc': 'Soil classification, bearing capacity, settlement',
-      'icon': Icons.landscape_rounded,
-      'color': Color(0xFFF59E0B),
-      'tag': null,
-    },
-    {
-      'id': 'surveying',
-      'title': 'Surveying & Levelling',
-      'desc': 'Traversing, contour, triangulation, curves',
-      'icon': Icons.my_location_rounded,
-      'color': Color(0xFFA855F7),
-      'tag': null,
-    },
-    {
-      'id': 'fluid-mechanics',
-      'title': 'Fluid Mechanics',
-      'desc': 'Bernoulli, pipe flow, open channels, pumps',
-      'icon': Icons.water_drop_rounded,
-      'color': Color(0xFF06B6D4),
-      'tag': null,
-    },
-    {
-      'id': 'highway',
-      'title': 'Transportation Engineering',
-      'desc': 'Highway design, pavements, traffic engineering',
-      'icon': Icons.route_rounded,
-      'color': Color(0xFFEF4444),
-      'tag': null,
-    },
-    {
-      'id': 'loksewa-mock',
-      'title': 'Loksewa Mock Exam',
-      'desc': 'Full 100-question timed Loksewa simulation',
-      'icon': Icons.assignment_rounded,
-      'color': Color(0xFFEC4899),
-      'tag': 'EXAM READY',
-    },
-  ];
+  @override
+  ConsumerState<QuizHomePage> createState() => _QuizHomePageState();
+}
 
-  void _openQuiz(BuildContext context, String quizId) {
+class _QuizHomePageState extends ConsumerState<QuizHomePage> {
+  late Future<List<_QuizTopic>> _courses;
+
+  @override
+  void initState() {
+    super.initState();
+    _courses = _loadCourses();
+  }
+
+  Future<List<_QuizTopic>> _loadCourses() async {
+    final res = await ref.read(dioProvider).get<Map<String, dynamic>>('/quiz/courses');
+    final data = res.data?['data'];
+    final items = data is List
+        ? data
+        : data is Map<String, dynamic>
+            ? (data['items'] as List? ?? [])
+            : <dynamic>[];
+    return items.cast<Map<String, dynamic>>().map(_QuizTopic.fromCourse).toList();
+  }
+
+  void _openQuiz(BuildContext context, _QuizTopic topic) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => QuizAttemptScreen(quizId: quizId),
+        builder: (_) => QuizAttemptScreen(quizId: topic.id),
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // ── App Bar ───────────────────────────────────────────────────
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Practice & Quiz',
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Server-graded MCQs — instant XP & coins',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.brand.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.brand.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.filter_list_rounded, size: 16, color: AppColors.brand),
-                          SizedBox(width: 4),
-                          Text(
-                            'Filter',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.brand,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+        child: FutureBuilder<List<_QuizTopic>>(
+          future: _courses,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              final msg = ErrorHandler.handle(snapshot.error!).message;
+              return _Scaffold(
+                child: _QuizEmpty(
+                  icon: Icons.error_outline_rounded,
+                  title: 'Could not load quiz',
+                  message: msg,
+                  actionLabel: 'Retry',
+                  onAction: () => setState(() => _courses = _loadCourses()),
                 ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // ── Topic Cards ───────────────────────────────────────────────
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final topic = _topics[index];
-                    final color = topic['color']! as Color;
-                    final tag = topic['tag'] as String?;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () => _openQuiz(context, topic['id']! as String),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  topic['icon']! as IconData,
-                                  color: color,
-                                  size: 24,
-                                ),
+              );
+            }
+            final topics = snapshot.data ?? const [];
+            if (topics.isEmpty) {
+              return const _Scaffold(
+                child: _QuizEmpty(
+                  icon: Icons.quiz_outlined,
+                  title: 'No quizzes yet',
+                  message:
+                      'Question sets for your exam are being prepared. Check back soon.',
+                ),
+              );
+            }
+            return _Scaffold(
+              child: SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final topic = topics[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => _openQuiz(context, topic),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.brand.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.assignment_rounded,
+                                    color: AppColors.brand,
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        topic.title,
+                                        style: theme.textTheme.titleSmall
+                                            ?.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                      if (topic.desc.isNotEmpty) ...[
+                                        const SizedBox(height: 4),
                                         Text(
-                                          topic['title']! as String,
-                                          style: theme.textTheme.titleSmall?.copyWith(
-                                            fontWeight: FontWeight.bold,
+                                          topic.desc,
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.onSurface
+                                                .withValues(alpha: 0.5),
                                           ),
                                         ),
-                                        if (tag != null) ...[
-                                          const SizedBox(width: 8),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 6,
-                                              vertical: 2,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: color.withValues(alpha: 0.15),
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Text(
-                                              tag,
-                                              style: TextStyle(
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.bold,
-                                                color: color,
-                                                letterSpacing: 0.5,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
                                       ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      topic['desc']! as String,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Icon(
-                                Icons.play_circle_filled_rounded,
-                                color: color,
-                                size: 32,
-                              ),
-                            ],
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.play_circle_filled_rounded,
+                                  color: AppColors.brand,
+                                  size: 32,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                  childCount: _topics.length,
+                      );
+                    },
+                    childCount: topics.length,
+                  ),
                 ),
               ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          ],
+            );
+          },
         ),
+      ),
+    );
+  }
+}
+
+class _QuizTopic {
+  const _QuizTopic({required this.id, required this.title, required this.desc});
+
+  factory _QuizTopic.fromCourse(Map<String, dynamic> c) => _QuizTopic(
+        id: (c['id'] ?? '').toString(),
+        title: (c['name'] ?? c['title'] ?? 'Quiz') as String,
+        desc: (c['description'] ?? '') as String,
+      );
+
+  final String id;
+  final String title;
+  final String desc;
+}
+
+class _Scaffold extends StatelessWidget {
+  const _Scaffold({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+            child: Text('Practice & Quiz',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+          ),
+        ),
+        SliverFillRemaining(hasScrollBody: false, child: Align(child: child)),
+      ],
+    );
+  }
+}
+
+class _QuizEmpty extends StatelessWidget {
+  const _QuizEmpty({
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final String title;
+  final String message;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 56, color: theme.colorScheme.primary),
+          const SizedBox(height: 16),
+          Text(title, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Text(message,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              )),
+          if (actionLabel != null) ...[
+            const SizedBox(height: 20),
+            FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+          ],
+        ],
       ),
     );
   }
