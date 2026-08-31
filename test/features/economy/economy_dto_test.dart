@@ -220,4 +220,44 @@ void main() {
       expect(ledger.groupedByDay['2026-08-29']!.length, 1);
     });
   });
+
+  group('LedgerEntryDto (live WO-1 shape)', () {
+    test('parses server row: balance-delta amount, deposit direction, projection label', () {
+      final dto = LedgerEntryDto.fromJson({
+        'id': 44,
+        'event_key': 'quiz_achievement:abc',
+        'coins': 5,
+        'balance_before': 10,
+        'balance_after': 15,
+        'meta': {
+          'economy_idempotency_key': 'quiz_achievement:494:first_correct',
+          'projection_source': 'bavix_wallet_transaction',
+          'projection_label': 'quiz_achievement',
+          'bavix_transaction_type': 'deposit',
+        },
+        'created_at': '2026-08-31T05:10:26+05:45',
+      });
+      expect(dto.amount, 5);
+      expect(dto.direction, 'credit');
+      expect(dto.sourceLabel, 'quiz_achievement');
+      expect(dto.id, '44');
+    });
+
+    test('debit derived from negative balance movement', () {
+      final dto = LedgerEntryDto.fromJson({
+        'id': 45,
+        'coins': 30,
+        'balance_before': 15,
+        'balance_after': -15,
+        'meta': {
+          'projection_label': 'shop_purchase',
+          'bavix_transaction_type': 'withdraw',
+        },
+        'created_at': '2026-08-31T05:12:00+05:45',
+      });
+      expect(dto.amount, 30);
+      expect(dto.direction, 'debit');
+      expect(dto.sourceLabel, 'shop_purchase');
+    });
+  });
 }

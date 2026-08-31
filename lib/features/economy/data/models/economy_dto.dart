@@ -289,30 +289,63 @@ class LedgerEntryDto {
   });
 
   factory LedgerEntryDto.fromJson(Map<String, dynamic> j) {
-    // Credits table: amount, description is source slug, metadata->source is blank per AGENTS.md:155
-    // Do NOT read metadata.source.
-    String? dirHint = j['direction'] as String?;
+    // Live WO-1 contract (GET /economy/wallet/ledger): rows are
+    // {id, event_key, coins, balance_before, balance_after, meta{...,
+    // projection_label, bavix_transaction_type}, created_at}.
+    // Direction derives from the balance movement — most robust across
+    // projections; falls back to legacy `direction`/`amount` shapes.
+    final before = (j['balance_before'] as num?)?.toInt();
+    final after = (j['balance_after'] as num?)?.toInt();
+    Map<String, dynamic>? meta =
+        (j['meta'] is Map ? (j['meta'] as Map).cast<String, dynamic>() : null);
+    // Balance movement is authoritative; bavix type normalized as fallback.
+    String? dirHint;
+    if (before != null && after != null) {
+      dirHint = after < before ? 'debit' : 'credit';
+    } else {
+      dirHint = j['direction'] as String?;
+      if (dirHint == null) {
+        final bavix = meta?['bavix_transaction_type'] as String?;
+        if (bavix != null) {
+          dirHint = (bavix == 'withdraw' || bavix == 'withdrawal') ? 'debit' : 'credit';
+        }
+      }
+    }
     if (dirHint == null) {
-      final amtRaw = j['amount'];
+      final amtRaw = j['amount'] ?? j['coins'];
       bool isNeg = false;
       if (amtRaw is num) isNeg = amtRaw < 0;
       if (amtRaw is String) isNeg = amtRaw.trim().startsWith('-');
       dirHint = isNeg ? 'debit' : 'credit';
     }
     final dirRaw = dirHint;
-    final desc = (j['description'] as String?) ?? (j['source_label'] as String?) ?? (j['reason'] as String?) ?? '';
-    final srcLabel = (j['source_label'] as String?) ?? desc;
-    final created = _asDate(j['created_at'] ?? j['occurred_at'] ?? j['timestamp']) ?? DateTime.now();
-    final amtRaw = j['amount'];
-    int amt = 0;
-    if (amtRaw is int) amt = amtRaw.abs();
-    if (amtRaw is double) amt = amtRaw.abs().toInt();
-    if (amtRaw is String) amt = (int.tryParse(amtRaw) ?? 0).abs();
-    if (amtRaw is num) amt = amtRaw.abs().toInt();
 
-    Map<String, dynamic>? meta;
-    if (j['metadata'] is Map<String, dynamic>) meta = j['metadata'] as Map<String, dynamic>;
-    if (j['metadata'] is Map) meta = (j['metadata'] as Map).cast<String, dynamic>();
+    // Amount: prefer the balance delta, then signed coins, then legacy amount.
+    final coinsRaw = j['coins'] ?? j['amount'];
+    int amt = 0;
+    if (before != null && after != null) {
+      amt = (after - before).abs();
+    } else if (coinsRaw is num) {
+      amt = coinsRaw.abs().toInt();
+    } else if (coinsRaw is String) {
+      amt = (int.tryParse(coinsRaw) ?? 0).abs();
+    }
+
+    // Label: server projection_label ("quiz_achievement") beats absent desc.
+    final projLabel = meta?['projection_label'] as String?;
+    final desc = (j['description'] as String?) ??
+        (j['source_label'] as String?) ??
+        (j['reason'] as String?) ??
+        (projLabel ?? '');
+    final srcLabel = projLabel ?? (j['source_label'] as String?) ?? desc;
+    final created = _asDate(j['created_at'] ?? j['occurred_at'] ?? j['timestamp']) ?? DateTime.now();
+
+    // Legacy `metadata` key fallback for non-WO-1 shapes.
+    meta ??= () {
+      if (j['metadata'] is Map<String, dynamic>) return j['metadata'] as Map<String, dynamic>;
+      if (j['metadata'] is Map) return (j['metadata'] as Map).cast<String, dynamic>();
+      return null;
+    }();
 
     return LedgerEntryDto(
       amount: amt,
