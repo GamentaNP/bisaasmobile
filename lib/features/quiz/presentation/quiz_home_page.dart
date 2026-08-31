@@ -34,7 +34,11 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
     return items.cast<Map<String, dynamic>>().map(_QuizTopic.fromCourse).toList();
   }
 
-  void _openQuiz(BuildContext context, _QuizTopic topic) {
+  void _reload() {
+    setState(() => _courses = _loadCourses());
+  }
+
+  void _openQuiz(_QuizTopic topic) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => QuizAttemptScreen(quizId: topic.id),
@@ -47,47 +51,50 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
     final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
-        child: FutureBuilder<List<_QuizTopic>>(
-          future: _courses,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              final msg = ErrorHandler.handle(snapshot.error!).message;
-              return _Scaffold(
-                child: _QuizEmpty(
-                  icon: Icons.error_outline_rounded,
-                  title: 'Could not load quiz',
-                  message: msg,
-                  actionLabel: 'Retry',
-                  onAction: () => setState(() => _courses = _loadCourses()),
-                ),
-              );
-            }
-            final topics = snapshot.data ?? const [];
-            if (topics.isEmpty) {
-              return const _Scaffold(
-                child: _QuizEmpty(
-                  icon: Icons.quiz_outlined,
-                  title: 'No quizzes yet',
-                  message:
-                      'Question sets for your exam are being prepared. Check back soon.',
-                ),
-              );
-            }
-            return _Scaffold(
-              child: SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Text(
+                'Practice & Quiz',
+                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder<List<_QuizTopic>>(
+                future: _courses,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return _QuizEmpty(
+                      icon: Icons.error_outline_rounded,
+                      title: 'Could not load quiz',
+                      message: ErrorHandler.handle(snapshot.error!).message,
+                      actionLabel: 'Retry',
+                      onAction: _reload,
+                    );
+                  }
+                  final topics = snapshot.data ?? const [];
+                  if (topics.isEmpty) {
+                    return const _QuizEmpty(
+                      icon: Icons.quiz_outlined,
+                      title: 'No quizzes yet',
+                      message: 'Question sets for your exam are being prepared. Check back soon.',
+                    );
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                    itemCount: topics.length,
+                    itemBuilder: (context, index) {
                       final topic = topics[index];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(16),
-                          onTap: () => _openQuiz(context, topic),
+                          onTap: () => _openQuiz(topic),
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -146,12 +153,11 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
                         ),
                       );
                     },
-                    childCount: topics.length,
-                  ),
-                ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );
@@ -172,31 +178,6 @@ class _QuizTopic {
   final String desc;
 }
 
-class _Scaffold extends StatelessWidget {
-  const _Scaffold({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-            child: Text('Practice & Quiz',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
-          ),
-        ),
-        SliverFillRemaining(hasScrollBody: false, child: Align(child: child)),
-      ],
-    );
-  }
-}
-
 class _QuizEmpty extends StatelessWidget {
   const _QuizEmpty({
     required this.icon,
@@ -215,25 +196,29 @@ class _QuizEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 56, color: theme.colorScheme.primary),
-          const SizedBox(height: 16),
-          Text(title, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          Text(message,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 56, color: theme.colorScheme.primary),
+            const SizedBox(height: 16),
+            Text(title, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(
+              message,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              )),
-          if (actionLabel != null) ...[
-            const SizedBox(height: 20),
-            FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+              ),
+            ),
+            if (actionLabel != null) ...[
+              const SizedBox(height: 20),
+              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
