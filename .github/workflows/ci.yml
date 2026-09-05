@@ -78,7 +78,7 @@ jobs:
       # Symbols are needed to decode obfuscated crash reports and must never be
       # published alongside the artifact.
       - name: Archive obfuscation symbols
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dart-symbols-${{ github.sha }}
           path: build/symbols
