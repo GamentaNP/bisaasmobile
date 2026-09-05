@@ -6,9 +6,9 @@ import 'app_colors.dart';
 import 'app_radii.dart';
 import 'app_typography.dart';
 
-/// CivilCal premium theme — SaaS-grade dark-first Material 3.
-/// Every component is themed here so screens stay consistent without
-/// per-screen styling; brand gradients + glass tokens do the heavy lifting.
+/// Duolongo theme — tactile, playful, LIGHT-first Material 3.
+/// No glassmorphism, no soft drop shadows: depth comes from solid fills
+/// with hard bottom-border extrusions (Chunky* widgets).
 abstract final class AppTheme {
   static ThemeData get dark => _build(Brightness.dark);
 
@@ -16,13 +16,21 @@ abstract final class AppTheme {
 
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brand,
+    final scheme = ColorScheme(
       brightness: brightness,
       primary: AppColors.brand,
-      secondary: AppColors.violet,
+      onPrimary: Colors.white,
+      secondary: AppColors.brandAccent,
+      onSecondary: Colors.white,
+      tertiary: AppColors.violet,
+      onTertiary: Colors.white,
+      error: AppColors.wrongRed,
+      onError: Colors.white,
       surface: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-      error: isDark ? AppColors.wrongRed : const Color(0xFFDC2626),
+      onSurface:
+          isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+      surfaceContainerHighest:
+          isDark ? AppColors.cardDark : AppColors.surfaceSecondary,
     );
 
     return ThemeData(
@@ -31,15 +39,20 @@ abstract final class AppTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor:
           isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
-      // ── AppBar: glass tint, no hard elevation ───────────────────────────
+      // ── AppBar: flat, 2px bottom rule like the sample header ───────────
       appBarTheme: AppBarTheme(
-        backgroundColor: isDark
-            ? AppColors.backgroundDark.withValues(alpha: 0.85)
-            : AppColors.backgroundLight.withValues(alpha: 0.85),
+        backgroundColor:
+            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
+        shape: Border(
+          bottom: BorderSide(
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 2,
+          ),
+        ),
         titleTextStyle: AppTypography.titleLarge.copyWith(
           color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
         ),
@@ -47,35 +60,33 @@ abstract final class AppTheme {
           color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
         ),
       ),
-      // ── Text ────────────────────────────────────────────────────────────
       textTheme: _textTheme(brightness),
-      // ── Cards: glass + border, no flat M3 elevation ─────────────────────
+      // ── Cards: flat chunky with hard border ────────────────────────────
       cardTheme: CardThemeData(
         elevation: 0,
-        color: isDark
-            ? AppColors.glassSurface
-            : Colors.white.withValues(alpha: 0.9),
+        color: isDark ? AppColors.cardDark : AppColors.surfaceLight,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadii.card,
           side: BorderSide(
-            color: isDark
-                ? AppColors.glassBorder
-                : AppColors.dividerLight,
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 2,
           ),
         ),
         margin: EdgeInsets.zero,
       ),
-      // ── Buttons ─────────────────────────────────────────────────────────
+      // ── Filled buttons: solid green face (chunky extrusion via widget) ─
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.brand,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: scheme.surfaceContainerHighest,
-          disabledForegroundColor: scheme.onSurfaceVariant,
+          disabledBackgroundColor:
+              isDark ? AppColors.cardDark : AppColors.surfaceTertiary,
+          disabledForegroundColor:
+              isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight,
           elevation: 0,
           shadowColor: Colors.transparent,
-          minimumSize: const Size(64, 48),
+          minimumSize: const Size(64, 52),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
           textStyle: AppTypography.labelLarge,
@@ -83,19 +94,19 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDark
-              ? AppColors.surfaceRaisedDark
-              : Colors.white,
+          backgroundColor:
+              isDark ? AppColors.cardDark : AppColors.surfaceLight,
           foregroundColor:
               isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
           elevation: 0,
           shadowColor: Colors.transparent,
-          minimumSize: const Size(64, 48),
+          minimumSize: const Size(64, 52),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: AppRadii.mdAll,
             side: BorderSide(
-              color: isDark ? AppColors.glassBorder : AppColors.dividerLight,
+              color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+              width: 2,
             ),
           ),
           textStyle: AppTypography.labelLarge,
@@ -104,8 +115,8 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.brand,
-          side: const BorderSide(color: AppColors.brandDark, width: 1.2),
-          minimumSize: const Size(64, 48),
+          side: const BorderSide(color: AppColors.brand, width: 2),
+          minimumSize: const Size(64, 52),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
           textStyle: AppTypography.labelLarge,
@@ -113,23 +124,23 @@ abstract final class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.brand,
-          textStyle: AppTypography.labelLarge,
+          foregroundColor: AppColors.brandAccent,
+          textStyle: AppTypography.labelLarge.copyWith(fontSize: 14),
         ),
       ),
-      // ── Inputs: filled glass with brand focus ring ──────────────────────
+      // ── Inputs: white fill, 2px border, green focus ────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark
-            ? AppColors.glassSurface
-            : AppColors.backgroundLight,
+        fillColor: isDark ? AppColors.surfaceRaisedDark : AppColors.surfaceLight,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         hintStyle: AppTypography.bodyMedium.copyWith(
           color: isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight,
         ),
         labelStyle: AppTypography.bodyMedium.copyWith(
-          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+          fontWeight: FontWeight.w700,
+          color:
+              isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
         ),
         prefixIconColor:
             isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
@@ -137,33 +148,37 @@ abstract final class AppTheme {
         border: OutlineInputBorder(
           borderRadius: AppRadii.mdAll,
           borderSide: BorderSide(
-            color: isDark ? AppColors.glassBorder : AppColors.dividerLight,
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 2,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppRadii.mdAll,
           borderSide: BorderSide(
-            color: isDark ? AppColors.glassBorder : AppColors.dividerLight,
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadii.mdAll,
-          borderSide: const BorderSide(color: AppColors.brand, width: 1.6),
+          borderSide: const BorderSide(color: AppColors.brand, width: 2.4),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadii.mdAll,
-          borderSide: BorderSide(color: AppColors.wrongRed),
+          borderSide: const BorderSide(color: AppColors.wrongRed, width: 2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppRadii.mdAll,
-          borderSide: BorderSide(color: AppColors.wrongRed, width: 1.6),
+          borderSide: const BorderSide(color: AppColors.wrongRed, width: 2.4),
         ),
       ),
-      // ── Chips: pill glass ───────────────────────────────────────────────
+      // ── Chips: pill, hard border ───────────────────────────────────────
       chipTheme: ChipThemeData(
-        backgroundColor: isDark ? AppColors.glassSurface : Colors.white,
+        backgroundColor:
+            isDark ? AppColors.cardDark : AppColors.surfaceSecondary,
         side: BorderSide(
-          color: isDark ? AppColors.glassBorder : AppColors.dividerLight,
+          color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+          width: 2,
         ),
         shape: RoundedRectangleBorder(borderRadius: AppRadii.pillAll),
         labelStyle: AppTypography.labelMedium.copyWith(
@@ -172,19 +187,16 @@ abstract final class AppTheme {
         secondaryLabelStyle: AppTypography.labelMedium.copyWith(
           color: AppColors.brand,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       ),
-      // ── Navigation bar: glass pill indicator ────────────────────────────
+      // ── Navigation bar: white slab, green active ───────────────────────
       navigationBarTheme: NavigationBarThemeData(
         height: 68,
         backgroundColor:
-            isDark ? AppColors.surfaceDark.withValues(alpha: 0.96) : Colors.white,
+            isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        indicatorColor: AppColors.brand.withValues(alpha: 0.18),
-        indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        indicatorColor: Colors.transparent,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
@@ -201,55 +213,56 @@ abstract final class AppTheme {
                 : isDark
                     ? AppColors.textTertiaryDark
                     : AppColors.textTertiaryLight,
+            fontSize: 11,
             fontWeight:
-                states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
+                states.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
           ),
         ),
       ),
-      // ── Bottom sheets: rounded glass ────────────────────────────────────
+      // ── Bottom sheets ──────────────────────────────────────────────────
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: isDark
-            ? AppColors.surfaceRaisedDark
-            : Colors.white,
+        backgroundColor:
+            isDark ? AppColors.surfaceRaisedDark : AppColors.surfaceLight,
         surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(
-          borderRadius: AppRadii.sheet,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadii.sheet),
         showDragHandle: true,
         dragHandleColor:
             isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight,
       ),
-      // ── Dialogs ─────────────────────────────────────────────────────────
       dialogTheme: DialogThemeData(
-        backgroundColor: isDark ? AppColors.surfaceRaisedDark : Colors.white,
+        backgroundColor:
+            isDark ? AppColors.surfaceRaisedDark : AppColors.surfaceLight,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: AppRadii.xlAll),
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadii.xlAll,
+          side: BorderSide(
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 2,
+          ),
+        ),
         titleTextStyle: AppTypography.titleLarge.copyWith(
           color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
         ),
         contentTextStyle: AppTypography.bodyMedium.copyWith(
-          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+          color:
+              isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
         ),
       ),
-      // ── Snackbars: elevated glass ───────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isDark ? AppColors.surfaceRaisedDark : const Color(0xFF1B2735),
+        backgroundColor: isDark ? AppColors.surfaceRaisedDark : AppColors.textPrimaryLight,
         contentTextStyle: AppTypography.bodyMedium.copyWith(
-          color: isDark ? AppColors.textPrimaryDark : Colors.white,
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
         ),
         shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
         elevation: 0,
       ),
-      // ── Progress: brand color, no spin-artifacts ────────────────────────
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.brand,
-        linearTrackColor: isDark
-            ? AppColors.glassSurface
-            : AppColors.dividerLight,
+        linearTrackColor: isDark ? AppColors.dividerDark : AppColors.dividerLight,
         circularTrackColor: Colors.transparent,
       ),
-      // ── Switches / sliders: brand ───────────────────────────────────────
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
@@ -262,38 +275,52 @@ abstract final class AppTheme {
           (states) => states.contains(WidgetState.selected)
               ? AppColors.brand
               : isDark
-                  ? AppColors.surfaceRaisedDark
+                  ? AppColors.dividerDark
                   : AppColors.dividerLight,
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.brandShadow
+              : isDark
+                  ? AppColors.dividerDark
+                  : AppColors.glassBorderStrong,
         ),
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: AppColors.brand,
-        inactiveTrackColor:
-            isDark ? AppColors.glassBorder : AppColors.dividerLight,
+        inactiveTrackColor: isDark ? AppColors.dividerDark : AppColors.dividerLight,
         thumbColor: AppColors.brand,
         overlayColor: AppColors.brand.withValues(alpha: 0.12),
-        trackHeight: 4,
+        trackHeight: 6,
       ),
       dividerTheme: DividerThemeData(
         color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
-        thickness: 1,
-        space: 1,
+        thickness: 2,
+        space: 2,
       ),
       listTileTheme: ListTileThemeData(
         iconColor:
             isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-        textColor: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        textColor:
+            isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
         titleTextStyle: AppTypography.titleSmall,
         subtitleTextStyle: AppTypography.bodySmall.copyWith(
-          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+          color:
+              isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
         ),
-        shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadii.mdAll,
+          side: BorderSide(
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+          ),
+        ),
       ),
       tabBarTheme: TabBarThemeData(
         labelColor: AppColors.brand,
         unselectedLabelColor:
             isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight,
         indicatorColor: AppColors.brand,
+        dividerColor: isDark ? AppColors.dividerDark : AppColors.dividerLight,
         labelStyle: AppTypography.labelLarge,
         unselectedLabelStyle: AppTypography.labelLarge,
       ),
@@ -304,21 +331,18 @@ abstract final class AppTheme {
         highlightElevation: 0,
         shape: RoundedRectangleBorder(borderRadius: AppRadii.mdAll),
       ),
-      // ── Default shadows: soft tinted, never hard black ──────────────────
-      shadowColor: isDark
-          ? Colors.black.withValues(alpha: 0.5)
-          : Colors.black.withValues(alpha: 0.12),
+      shadowColor: Colors.transparent,
       splashFactory: InkRipple.splashFactory,
     );
   }
 
   static TextTheme _textTheme(Brightness brightness) {
-    final primary =
-        brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final isDark = brightness == Brightness.dark;
+    final primary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
     final secondary =
-        brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
     final tertiary =
-        brightness == Brightness.dark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight;
+        isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight;
 
     TextStyle apply(TextStyle base) => base;
 

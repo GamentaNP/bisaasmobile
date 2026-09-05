@@ -54,7 +54,60 @@ class QuizResultScreen extends StatelessWidget {
               celebrate: !quizState.isOfflinePractice,
               coinsEarned: quizState.totalCoinsEarned,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
+
+            // ── Duolongo hero: gradient slab + trophy ───────────────────
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+              decoration: BoxDecoration(
+                gradient: accuracy >= 0.8
+                    ? AppColors.brandGradient
+                    : AppColors.infoGradient,
+                borderRadius: BorderRadius.circular(16),
+                border: Border(
+                  bottom: BorderSide(
+                    color: accuracy >= 0.8
+                        ? AppColors.brandShadow
+                        : AppColors.blueShadow,
+                    width: 4,
+                  ),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.22),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      accuracy >= 0.8 ? Icons.emoji_events : Icons.military_tech,
+                      size: 64,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    gradeLabel,
+                    style: AppTypography.headlineMedium
+                        .copyWith(color: Colors.white, fontSize: 34),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    session?.title ?? 'Quiz Complete',
+                    textAlign: TextAlign.center,
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
 
             // ── Accuracy Ring ───────────────────────────────────────────
             Stack(
@@ -93,17 +146,10 @@ class QuizResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              gradeLabel,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              session?.title ?? 'Quiz Complete',
-              textAlign: TextAlign.center,
+              '$correct of $totalQ correct',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondaryDark,
+                color: AppColors.textTertiaryLight,
+                fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 28),
@@ -238,20 +284,18 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isReward = color == AppColors.xpGold || color == AppColors.coinYellow;
     return GlassmorphicCard(
       padding: const EdgeInsets.all(16),
-      glow: isReward,
       color: color.withValues(alpha: 0.08),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 24),
+          Icon(icon, color: color, size: 26),
           const SizedBox(height: 6),
           Text(
             value,
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: color,
             ),
           ),
@@ -259,7 +303,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondaryDark,
+              color: AppColors.textTertiaryLight,
             ),
           ),
         ],

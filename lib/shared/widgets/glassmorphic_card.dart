@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_radii.dart';
-import '../../app/theme/app_shadows.dart';
 
-/// Glassmorphic card with adaptive tint, hairline border and optional tap
-/// feedback. `glow` adds the signature brand halo for featured content.
+/// Chunky solid card — the Duolongo replacement for the old glass card.
+/// API preserved (padding/onTap/glow/color) so every call site converts
+/// without edits; `glow` is now a no-op kept for compatibility.
 class GlassmorphicCard extends StatelessWidget {
   const GlassmorphicCard({
     super.key,
@@ -25,24 +25,17 @@ class GlassmorphicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final base = color ??
-        (isDark ? AppColors.glassSurface : Colors.white.withValues(alpha: 0.92));
+    final border =
+        isDark ? AppColors.dividerDark : AppColors.dividerLight;
 
     return Material(
-      color: base,
+      color: color ?? (isDark ? AppColors.cardDark : AppColors.surfaceLight),
       borderRadius: AppRadii.card,
       elevation: 0,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: AppRadii.card,
-          border: Border.all(
-            color: isDark ? AppColors.glassBorder : AppColors.dividerLight,
-          ),
-          boxShadow: glow
-              ? AppShadows.glowBrand
-              : isDark
-                  ? AppShadows.shadowSm
-                  : AppShadows.cardLight,
+          border: Border.all(color: border, width: 2),
         ),
         child: InkWell(
           onTap: onTap,

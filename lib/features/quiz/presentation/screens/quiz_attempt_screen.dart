@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/app_radii.dart';
-import '../../../../app/theme/app_typography.dart';
 import '../../../../core/security/sensitive_screen_guard.dart';
 import '../../../../shared/widgets/ambient_glow_background.dart';
+import '../../../../shared/widgets/chunky/chunky_button.dart';
+import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
-import '../../../../shared/widgets/gradient_button.dart';
 import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
 import '../controllers/quiz_controller.dart';
 import '../state/quiz_state.dart';
@@ -151,6 +150,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
 
   Widget _buildQuizBody(BuildContext context, QuizState state) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final session = state.session!;
     final question = state.currentQuestion!;
     final remaining = state.remainingSeconds;
@@ -180,15 +180,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                        color: AppColors.brand,
-                        minHeight: 6,
-                      ),
-                    ),
+                    ChunkyProgressBar(value: progress),
                   ],
                 ),
               ),
@@ -334,54 +326,102 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                   final inFeedback = state.phase == QuizPhase.feedback;
                   final isGrading = state.phase == QuizPhase.grading;
 
-                  Color? borderColor;
-                  Color? bgColor;
+                  Color? sideColor;
+                  Color? faceColor;
                   IconData? trailingIcon;
 
                   if (inFeedback && result != null) {
                     final isCorrectOption = option.id == result.correctOptionId;
                     if (isCorrectOption) {
-                      borderColor = AppColors.correctGreen;
-                      bgColor = AppColors.correctGreen.withValues(alpha: 0.1);
+                      sideColor = AppColors.brand;
+                      faceColor = AppColors.correctGreenBg;
                       trailingIcon = Icons.check_circle_rounded;
                     } else if (isSelected && !result.isCorrect) {
-                      borderColor = AppColors.wrongRed;
-                      bgColor = AppColors.wrongRed.withValues(alpha: 0.1);
+                      sideColor = AppColors.wrongRed;
+                      faceColor = AppColors.wrongRedBg;
                       trailingIcon = Icons.cancel_rounded;
                     }
                   } else if (isGrading && isSelected) {
-                    borderColor = AppColors.brand;
-                    bgColor = AppColors.brand.withValues(alpha: 0.08);
+                    sideColor = AppColors.brand;
+                    faceColor = AppColors.selectedGreenBg;
+                  } else if (isSelected) {
+                    sideColor = AppColors.brandAccent;
+                    faceColor = AppColors.selectedBlueBg;
                   }
 
+                  final optionIndex = question.options.indexOf(option);
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       onTap: state.phase == QuizPhase.answering
                           ? () => ref
                               .read(quizControllerProvider.notifier)
                               .selectAnswer(option.id)
                           : null,
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        padding: const EdgeInsets.all(16),
+                        duration: const Duration(milliseconds: 150),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: bgColor ?? theme.colorScheme.surface,
-                          border: Border.all(
-                            color: borderColor ??
-                                theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
-                            width: borderColor != null ? 2 : 1,
+                          color: faceColor ?? theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: sideColor ??
+                                  (isDark
+                                      ? AppColors.dividerDark
+                                      : AppColors.dividerLight),
+                              width: 3,
+                            ),
+                            top: BorderSide(
+                              color: sideColor ??
+                                  (isDark
+                                      ? AppColors.dividerDark
+                                      : AppColors.dividerLight),
+                              width: 1.5,
+                            ),
+                            left: BorderSide(
+                              color: sideColor ??
+                                  (isDark
+                                      ? AppColors.dividerDark
+                                      : AppColors.dividerLight),
+                              width: 1.5,
+                            ),
+                            right: BorderSide(
+                              color: sideColor ??
+                                  (isDark
+                                      ? AppColors.dividerDark
+                                      : AppColors.dividerLight),
+                              width: 1.5,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
                           children: [
-                            Text(
-                              String.fromCharCode(65 + question.options.indexOf(option)),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: borderColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: sideColor ??
+                                      (isDark
+                                          ? AppColors.dividerDark
+                                          : AppColors.dividerLight),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  String.fromCharCode(65 + optionIndex),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: sideColor ??
+                                        (isDark
+                                            ? AppColors.textSecondaryDark
+                                            : AppColors.textSecondaryLight),
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -389,12 +429,12 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                               child: Text(
                                 option.text,
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
                             if (trailingIcon != null)
-                              Icon(trailingIcon, color: borderColor, size: 22),
+                              Icon(trailingIcon, color: sideColor, size: 22),
                           ],
                         ),
                       ),
@@ -417,7 +457,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
         if (state.phase == QuizPhase.feedback)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: GradientButton(
+            child: ChunkyButton(
               label: state.isLastQuestion ? 'See Results' : 'Next Question',
               onPressed: () =>
                   ref.read(quizControllerProvider.notifier).nextQuestion(),
@@ -434,9 +474,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
 
     return GlassmorphicCard(
       padding: const EdgeInsets.all(16),
-      color: isCorrect
-          ? AppColors.correctGreen.withValues(alpha: 0.1)
-          : AppColors.wrongRed.withValues(alpha: 0.1),
+      color: isCorrect ? AppColors.correctGreenBg : AppColors.wrongRedBg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -444,40 +482,40 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             children: [
               Icon(
                 isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                color: isCorrect ? AppColors.correctGreen : AppColors.wrongRed,
-                size: 20,
+                color: isCorrect ? AppColors.brandShadow : AppColors.errorShadow,
+                size: 22,
               ),
               const SizedBox(width: 8),
               Text(
-                isCorrect ? 'Correct!' : 'Incorrect',
+                isCorrect ? 'Great job!' : 'Not quite',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: isCorrect ? AppColors.correctGreen : AppColors.wrongRed,
-                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: isCorrect ? AppColors.brandShadow : AppColors.errorShadow,
+                  fontSize: 17,
                 ),
               ),
               const Spacer(),
               if (result.xpEarned > 0) ...[
-                const Icon(Icons.bolt_rounded, size: 14, color: AppColors.xpGold),
+                const Icon(Icons.bolt_rounded, size: 16, color: AppColors.goldShadow),
                 Text(
                   '+${result.xpEarned} XP',
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.xpGold,
-                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.goldShadow,
+                    fontSize: 13,
                   ),
                 ),
                 const SizedBox(width: 8),
               ],
               if (state.comboCount > 1) ...[
                 const Icon(Icons.local_fire_department_rounded,
-                    size: 14, color: AppColors.comboFire),
+                    size: 16, color: AppColors.warningShadow),
                 Text(
                   '×${state.comboCount} Combo!',
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.comboFire,
-                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.warningShadow,
+                    fontSize: 13,
                   ),
                 ),
               ],
@@ -488,7 +526,8 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             Text(
               result.explanation!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondaryDark,
+                color: AppColors.textPrimaryLight,
+                fontWeight: FontWeight.w700,
                 height: 1.5,
               ),
             ),

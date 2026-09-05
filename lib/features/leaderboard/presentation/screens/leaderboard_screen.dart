@@ -126,14 +126,24 @@ class _MyRankCard extends StatelessWidget {
       margin: const EdgeInsets.all(12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF22D3EE), Color(0xFF0EA5C9)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-        borderRadius: BorderRadius.circular(14),
+        gradient: const LinearGradient(
+          colors: [AppColors.brand, AppColors.brandLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.brandShadow,
+            width: 4,
+          ),
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.22), borderRadius: BorderRadius.circular(10)),
             child: const Icon(Icons.person_rounded, color: Colors.white),
           ),
           const SizedBox(width: 12),
@@ -141,9 +151,9 @@ class _MyRankCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('My Rank', style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w600)),
-                Text(rank != null ? '#$rank in ${display.leaderboard.name}' : 'Unranked in ${display.leaderboard.name}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                if (display.score != null) Text('Score: ${display.score!.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                const Text('MY RANK', style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.8)),
+                Text(rank != null ? '#$rank in ${display.leaderboard.name}' : 'Unranked in ${display.leaderboard.name}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+                if (display.score != null) Text('Score: ${display.score!.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600)),
               ],
             ),
           ),
@@ -345,60 +355,104 @@ class _EntryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final isMe = entry.isMe || (myRank != null && entry.rank == myRank);
     final isTop = entry.rank <= 3;
+
+    // Duolongo medal row: 🥇🥈🥉 for the podium, chunky borders everywhere.
+    final medal = entry.rank == 1
+        ? '🥇'
+        : entry.rank == 2
+            ? '🥈'
+            : entry.rank == 3
+                ? '🥉'
+                : null;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isMe ? AppColors.brand.withValues(alpha: 0.08) : theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isMe ? AppColors.brand.withValues(alpha: 0.3) : theme.colorScheme.outlineVariant.withValues(alpha: 0.2), width: isMe ? 2 : 1),
+        color: isMe
+            ? AppColors.selectedGreenBg
+            : isTop && !isDark
+                ? AppColors.surfaceSecondary
+                : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border(
+          bottom: BorderSide(
+            color: isMe
+                ? AppColors.brand
+                : isDark
+                    ? AppColors.dividerDark
+                    : AppColors.dividerLight,
+            width: isMe ? 3 : 2,
+          ),
+          top: BorderSide(
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 1.5,
+          ),
+          left: BorderSide(
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 1.5,
+          ),
+          right: BorderSide(
+            color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
+            width: 1.5,
+          ),
+        ),
       ),
       child: Row(
         children: [
+          SizedBox(
+            width: 44,
+            child: Text(
+              medal ?? '#${entry.rank}',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: medal != null ? 20 : 14,
+                color: isTop ? AppColors.goldShadow : null,
+              ),
+            ),
+          ),
           Container(
-            width: 36,
-            height: 36,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: isTop
-                  ? (entry.rank == 1
-                      ? AppColors.xpGold.withValues(alpha: 0.15)
-                      : entry.rank == 2
-                          ? Colors.grey.withValues(alpha: 0.15)
-                          : const Color(0xFFB45309).withValues(alpha: 0.15))
-                  : theme.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(10),
+              color: isMe ? AppColors.selectedGreenBg : AppColors.brand.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Text('#${entry.rank}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: isTop ? (entry.rank == 1 ? AppColors.xpGold : entry.rank == 2 ? Colors.grey[700] : const Color(0xFFB45309)) : theme.colorScheme.onSurface)),
-            ),
+            child: const Icon(Icons.person_rounded, color: AppColors.brand, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(child: Text(entry.displayName ?? 'User #${entry.userId}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: isMe ? FontWeight.bold : FontWeight.w600, color: isMe ? AppColors.brand : null))),
-                    if (isMe)
-                      Container(
-                        margin: const EdgeInsets.only(left: 6),
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                        child: const Text('YOU', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.brand)),
-                      ),
-                    if (isTop) const SizedBox(width: 6),
-                    if (isTop) Icon(entry.rank == 1 ? Icons.emoji_events_rounded : Icons.military_tech_rounded, size: 16, color: entry.rank == 1 ? AppColors.xpGold : const Color(0xFFB45309)),
-                  ],
+                Text(
+                  '${entry.displayName ?? 'User #${entry.userId}'}${isMe ? '  (You)' : ''}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: isMe ? AppColors.brandShadow : null,
+                  ),
                 ),
-                const SizedBox(height: 2),
-                Text('Score ${entry.score.toStringAsFixed(0)} • ${entry.attemptsCount} attempts', style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                Text(
+                  'Score ${entry.score.toStringAsFixed(0)} • ${entry.attemptsCount} attempts',
+                  style: TextStyle(fontSize: 12, color: isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight, fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ),
-          Text(entry.score.toStringAsFixed(0), style: TextStyle(fontWeight: FontWeight.bold, color: isMe ? AppColors.brand : theme.colorScheme.onSurface)),
+          const Icon(Icons.bolt_rounded, size: 16, color: AppColors.xpGold),
+          const SizedBox(width: 4),
+          Text(
+            entry.score.toStringAsFixed(0),
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              color: isMe ? AppColors.brandShadow : AppColors.goldShadow,
+            ),
+          ),
         ],
       ),
     );

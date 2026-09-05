@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_icons.dart';
-import '../../app/theme/app_radii.dart';
+import '../../app/theme/app_typography.dart';
 
-/// Premium bottom navigation — pill indicator behind the selected icon,
-/// brand glow, safe-area aware. Five destinations matching the shell.
+/// Duolongo bottom navigation — white slab with a 2px top rule, filled
+/// green icon + w800 label for the active destination (sample tab bar).
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({super.key, required this.currentIndex, required this.onTap});
 
@@ -13,29 +14,57 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: onTap,
-      destinations: [
-        _destination(AppIcons.home, 'Home'),
-        _destination(AppIcons.quiz, 'Quiz'),
-        _destination(AppIcons.calculator, 'Tools'),
-        _destination(AppIcons.library, 'Library'),
-        _destination(AppIcons.profile, 'Profile'),
-      ],
-      indicatorColor: scheme.primary.withValues(alpha: 0.16),
-      indicatorShape: RoundedRectangleBorder(
-        borderRadius: AppRadii.mdAll,
-      ),
-    );
-  }
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final divider =
+        isDark ? AppColors.dividerDark : AppColors.dividerLight;
+    final inactive =
+        isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight;
 
-  NavigationDestination _destination(IconData icon, String label) {
-    return NavigationDestination(
-      icon: Icon(icon),
-      selectedIcon: Icon(icon, size: 24),
-      label: label,
+    Widget destination(IconData icon, String label, int index) {
+      final selected = currentIndex == index;
+      final color = selected ? AppColors.brand : inactive;
+      return Expanded(
+        child: InkWell(
+          onTap: () => onTap(index),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 26, color: color),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: AppTypography.labelSmall.copyWith(
+                  color: color,
+                  fontSize: 11,
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        border: Border(top: BorderSide(color: divider, width: 2)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 62,
+          child: Row(
+            children: [
+              destination(AppIcons.home, 'Home', 0),
+              destination(AppIcons.quiz, 'Quiz', 1),
+              destination(AppIcons.calculator, 'Tools', 2),
+              destination(AppIcons.library, 'Library', 3),
+              destination(AppIcons.profile, 'Profile', 4),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

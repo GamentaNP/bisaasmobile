@@ -67,7 +67,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppColors.auroraBackground,
+          gradient: Theme.of(context).brightness == Brightness.dark ? AppColors.auroraBackground : null, color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: Center(
           child: AnimatedBuilder(

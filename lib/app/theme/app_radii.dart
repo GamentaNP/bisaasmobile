@@ -2,9 +2,9 @@ library;
 
 import 'package:flutter/material.dart';
 
-/// Border radii — Material 3 shape scale, CivilCal uses larger radii for cards (premium feel).
+/// Border radii — Duolongo shape scale: sm 6 (badges), md 12 (inputs), lg 16 (cards/buttons), pill.
 abstract final class AppRadii {
-  static const double xs = 8;
+  static const double xs = 6;
   static const double sm = 12;
   static const double md = 16;
   static const double lg = 20;
@@ -19,7 +19,7 @@ abstract final class AppRadii {
   static const BorderRadius xlAll = BorderRadius.all(Radius.circular(xl));
   static const BorderRadius pillAll = BorderRadius.all(Radius.circular(pill));
 
-  // Card (glassmorphic) — 20dp is the signature
-  static const BorderRadius card = BorderRadius.all(Radius.circular(lg));
+  // Card — 16dp chunky (Duolongo sample radius.lg)
+  static const BorderRadius card = BorderRadius.all(Radius.circular(md));
   static const BorderRadius sheet = BorderRadius.vertical(top: Radius.circular(xl));
 }

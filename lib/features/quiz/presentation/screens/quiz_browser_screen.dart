@@ -185,6 +185,25 @@ class QuizListEntry {
 
 const _kCategories = ['PSC Civil', 'GATE', 'IOE', 'Lok Sewa', 'Structural', 'Geotechnical', 'Survey', 'Highway', 'Fluid'];
 
+/// Solid category fills + matching extrusion shadows (Duolongo style).
+const _kCategoryColors = [
+  Color(0xFF58CC02), // brand green
+  Color(0xFF1CB0F6), // blue
+  Color(0xFFCE82FF), // purple
+  Color(0xFFFF9600), // orange
+  Color(0xFFFF4B4B), // red
+  Color(0xFFFFC800), // gold
+];
+
+const _kCategoryIcons = [
+  Icons.quiz_rounded,
+  Icons.calculate_rounded,
+  Icons.architecture_rounded,
+  Icons.construction_rounded,
+  Icons.terrain_rounded,
+  Icons.water_drop_rounded,
+];
+
 class _CategoryChip extends StatelessWidget {
   const _CategoryChip({required this.label, required this.active, required this.onTap});
   final String label;
@@ -199,8 +218,17 @@ class _CategoryChip extends StatelessWidget {
         label: Text(label),
         selected: active,
         onSelected: (_) => onTap(),
-        selectedColor: AppColors.brand.withValues(alpha: 0.25),
-        labelStyle: TextStyle(color: active ? AppColors.brand : null, fontWeight: FontWeight.w600, fontSize: 12),
+        selectedColor: AppColors.brand,
+        backgroundColor:
+            Theme.of(context).brightness == Brightness.dark
+                ? AppColors.cardDark
+                : AppColors.surfaceSecondary,
+        showCheckmark: false,
+        labelStyle: TextStyle(
+          color: active ? Colors.white : AppColors.textSecondaryLight,
+          fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+          fontSize: 12,
+        ),
       ),
     );
   }
@@ -212,6 +240,8 @@ class _QuizCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tileColor = _kCategoryColors[
+        entry.category.hashCode.abs() % _kCategoryColors.length];
     return GlassmorphicCard(
       padding: const EdgeInsets.all(14),
       onTap: () => context.push('/quiz/intro/${entry.id}'),
@@ -221,21 +251,29 @@ class _QuizCard extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.brand.withValues(alpha: 0.1),
-              borderRadius: AppRadii.smAll,
+              color: tileColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  width: 3,
+                ),
+              ),
             ),
-            child: const Icon(Icons.quiz_rounded, color: AppColors.brand, size: 28),
+            child: Icon(_kCategoryIcons[
+                entry.category.hashCode.abs() % _kCategoryIcons.length],
+                color: Colors.white, size: 28),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(entry.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                Text(entry.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
                 const SizedBox(height: 4),
                 Text(
                   '${entry.questionCount} Qs · ${entry.durationMinutes} min · ${entry.category}',
-                  style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondaryDark),
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryLight),
                 ),
               ],
             ),

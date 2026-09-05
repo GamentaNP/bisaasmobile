@@ -63,7 +63,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(gradient: AppColors.auroraBackground),
+        decoration: BoxDecoration(gradient: Theme.of(context).brightness == Brightness.dark ? AppColors.auroraBackground : null, color: Theme.of(context).scaffoldBackgroundColor),
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
