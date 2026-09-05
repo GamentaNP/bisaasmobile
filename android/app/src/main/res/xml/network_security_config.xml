@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Network security config (security plan W2.6).
+
+  Cleartext HTTP is forbidden everywhere — including debug builds, which use
+  https://10.0.2.2 with the dev bad-cert shim rather than plain http. If a
+  future dev workflow genuinely needs cleartext, add a <domain-config> under a
+  separate src/debug/res copy of this file, never to the release one.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

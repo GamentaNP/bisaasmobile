@@ -66,4 +66,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String coinsBalance(int count) {
     return '$count coins';
   }
+
+  @override
+  String get appLocked => 'CivilCal is locked';
+
+  @override
+  String get unlock => 'Unlock';
+
+  @override
+  String get unlockCivilCal => 'Unlock CivilCal';
 }

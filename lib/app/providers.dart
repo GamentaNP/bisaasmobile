@@ -2,6 +2,8 @@
 /// (see e.g. auth/presentation/controllers/auth_controller.dart).
 library;
 
+import 'dart:async';
+
 import 'package:app_links/app_links.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -23,7 +25,7 @@ import '../core/storage/preferences.dart';
 import '../core/sync/sync_manager.dart';
 import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
-import '../core/sync/background_fetch.dart';
+import '../core/sync/daily_quiz_prefetcher.dart';
 import '../features/quiz/data/datasources/quiz_local_data_source.dart';
 import '../features/quiz/data/datasources/quiz_remote_data_source.dart';
 
@@ -55,11 +57,17 @@ final onlineStatusProvider = StreamProvider<bool>((ref) async* {
 });
 
 final syncManagerProvider = Provider<SyncManager>(
-  (ref) => SyncManager(
-    queue: ref.watch(syncQueueServiceProvider),
-    dio: ref.watch(dioProvider),
-    connectivity: ref.watch(connectivityProvider),
-  ),
+  (ref) {
+    final manager = SyncManager(
+      queue: ref.watch(syncQueueServiceProvider),
+      dio: ref.watch(dioProvider),
+      connectivity: ref.watch(connectivityProvider),
+    );
+    // Tear down the connectivity subscription when the provider is disposed
+    // (tests, hot restart, app shutdown) — no leaked listeners.
+    ref.onDispose(() => unawaited(manager.dispose()));
+    return manager;
+  },
 );
 
 final syncWorkerProvider = Provider<SyncWorker>(
@@ -69,9 +77,10 @@ final syncWorkerProvider = Provider<SyncWorker>(
 /// Midnight daily-quiz prefetcher. Warms the Drift question cache so offline
 /// practice has content. Started/stopped with the app lifecycle in app.dart.
 final dailyQuizPrefetcherProvider = Provider<DailyQuizPrefetcher>((ref) {
+  final dio = ref.watch(dioProvider);
   return DailyQuizPrefetcher(
-    dio: DioClient.instance.dio,
-    remote: QuizRemoteDataSource(DioClient.instance.dio),
+    dio: dio,
+    remote: QuizRemoteDataSource(dio),
     local: QuizLocalDataSource(ref.watch(appDatabaseProvider)),
   );
 });

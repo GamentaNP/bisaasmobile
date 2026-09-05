@@ -59,14 +59,15 @@ class AppLock extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   /// Biometric challenge; devices without biometrics never stay locked.
-  Future<void> challenge() async {
+  /// [reason] is shown by the OS prompt — callers localize it.
+  Future<void> challenge({String reason = 'Unlock CivilCal'}) async {
     final can = await _bio.canCheck;
     if (!can) {
       _locked = false;
       notifyListeners();
       return;
     }
-    final ok = await _bio.authenticate(reason: 'Unlock CivilCal');
+    final ok = await _bio.authenticate(reason: reason);
     _locked = !ok;
     notifyListeners();
   }

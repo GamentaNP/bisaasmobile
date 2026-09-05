@@ -122,8 +122,11 @@ class QuizController extends Notifier<QuizState> {
   /// Called the moment user taps an option.
   /// Immediately transitions to [QuizPhase.grading] (optimistic UI shows selection),
   /// fires the API call, then transitions to [QuizPhase.feedback] with server result.
-  /// Offline-practice: grades locally if cached `correctOptionId` is available,
-  /// otherwise shows not-official feedback with 0 XP.
+  /// Offline-practice: records the answer as *pending* — never graded, never
+  /// rewarded. A key only ever reaches the device inside an encrypted offline
+  /// pack (security plan W4.8); until that ships, the verdict waits for
+  /// reconnect. An empty `correctOptionId` is the established pending marker
+  /// that the attempt screen already skips feedback highlighting for.
   Future<void> selectAnswer(String optionId) async {
     if (state.phase != QuizPhase.answering) return;
     final attemptId = state.attemptId;
@@ -136,19 +139,16 @@ class QuizController extends Notifier<QuizState> {
       selectedOptionId: optionId,
     );
 
-    // Offline path — attemptId prefixed 'offline-' → local grading only.
+    // Offline path — attemptId prefixed 'offline-' → pending, never graded here.
     if (attemptId.startsWith('offline-')) {
-      final correctId = question.correctOptionId;
-      final isKnown = correctId != null && correctId.isNotEmpty;
-      final isCorrect = isKnown && optionId == correctId;
       final result = AttemptResult(
         questionId: question.id,
         selectedOptionId: optionId,
-        isCorrect: isCorrect,
+        isCorrect: false,
         xpEarned: 0,
         coinsEarned: 0,
-        correctOptionId: correctId ?? '',
-        explanation: isKnown ? question.explanation : 'Offline practice — not official. Reconnect to sync.',
+        correctOptionId: '',
+        explanation: 'Offline practice — answer saved. Reconnect to see the result.',
       );
       final updatedAnswers = Map<String, AttemptResult>.from(state.answers)
         ..[question.id] = result;
@@ -156,7 +156,8 @@ class QuizController extends Notifier<QuizState> {
         phase: QuizPhase.feedback,
         lastResult: result,
         answers: updatedAnswers,
-        comboCount: isCorrect ? state.comboCount + 1 : 0,
+        // Combos are an official-mode reward mechanic; offline never advances one.
+        comboCount: 0,
       );
       return;
     }

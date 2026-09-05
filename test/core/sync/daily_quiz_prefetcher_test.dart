@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:bisaasmobile/core/sync/background_fetch.dart';
+import 'package:bisaasmobile/core/sync/daily_quiz_prefetcher.dart';
 import 'package:bisaasmobile/features/quiz/data/datasources/quiz_local_data_source.dart';
 import 'package:bisaasmobile/features/quiz/data/datasources/quiz_remote_data_source.dart';
 import 'package:bisaasmobile/features/quiz/data/models/quiz_dto.dart';

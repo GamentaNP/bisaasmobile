@@ -8,6 +8,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_typography.dart';
+import '../../../../shared/widgets/app_bar.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/gradient_button.dart';
+import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../gamification/presentation/widgets/xp_progress_bar.dart';
 import '../controllers/profile_skills_controller.dart';
@@ -113,9 +119,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(authControllerProvider).value;
     final skillsAsync = ref.watch(profileSkillsProvider);
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
+    return SafeAreaScaffold(
+      appBar: CivilAppBar(
+        title: 'Profile',
         actions: [IconButton(icon: const Icon(Icons.share_rounded), onPressed: _shareCard, tooltip: 'Share card'), IconButton(icon: const Icon(Icons.settings_rounded), onPressed: () => context.push('/settings'))],
       ),
       body: ListView(
@@ -124,13 +130,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Shareable card boundary
           RepaintBoundary(
             key: _repaintKey,
-            child: Container(
+            child: GlassmorphicCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.25)),
-              ),
+              glow: true,
               child: Row(
                 children: [
                   Stack(
@@ -160,9 +162,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           onPressed: _uploading ? null : () => _editName(user?.name ?? ''),
                         ),
                       ]),
-                      Text(user?.email ?? 'offline@bisaas.test', style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                      Text(user?.email ?? 'offline@bisaas.test', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondaryDark)),
                       const SizedBox(height: 4),
-                      Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)), child: Text('Lv ${user?.level ?? 1}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold))), const SizedBox(width: 8), CoinChip(coins: user?.coins ?? 0)]),
+                      Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.15), borderRadius: AppRadii.smAll), child: Text('Lv ${user?.level ?? 1}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold))), const SizedBox(width: 8), CoinChip(coins: user?.coins ?? 0)]),
                     ]),
                   ),
                   IconButton(icon: const Icon(Icons.camera_alt_rounded, size: 20), onPressed: _uploading ? null : _pickAndUploadAvatar, tooltip: 'Change avatar'),
@@ -171,7 +173,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Row(children: [Expanded(child: OutlinedButton.icon(onPressed: _shareCard, icon: const Icon(Icons.share_rounded, size: 16), label: const Text('Share card'))), const SizedBox(width: 10), Expanded(child: FilledButton.icon(onPressed: _pickAndUploadAvatar, icon: const Icon(Icons.photo_rounded, size: 16), label: const Text('Edit avatar')))]),
+          Row(children: [Expanded(child: OutlinedButton.icon(onPressed: _shareCard, icon: const Icon(Icons.share_rounded, size: 16), label: const Text('Share card'))), const SizedBox(width: 10), Expanded(child: GradientButton(label: 'Edit avatar', icon: Icons.photo_rounded, onPressed: _uploading ? null : _pickAndUploadAvatar))]),
           const SizedBox(height: 16),
           // Stats grid
           Row(
@@ -192,7 +194,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             loading: () => const SizedBox(height: 160, child: Center(child: CircularProgressIndicator())),
             error: (e, _) => Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: AppRadii.smAll),
               child: Text('Skills failed: $e', style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)),
             ),
           ),
@@ -212,10 +214,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 final color = colors[i % colors.length];
                 return Opacity(
                   opacity: unlocked ? 1 : 0.45,
-                  child: Container(
-                    width: 96,
+                  child: GlassmorphicCard(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: (unlocked ? color : theme.colorScheme.outlineVariant).withValues(alpha: 0.3))),
+                    color: theme.colorScheme.surface,
                     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Icon(unlocked ? Icons.verified_rounded : Icons.lock_rounded, color: color, size: 22),
                       const SizedBox(height: 6),
@@ -258,10 +259,10 @@ class _StatChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = color ?? AppColors.brand;
     return Expanded(
-      child: Container(
+      child: GlassmorphicCard(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(color: c.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: c.withValues(alpha: 0.2))),
-        child: Row(children: [Icon(icon, size: 16, color: c), const SizedBox(width: 6), Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: c)), Text(label, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))])]),
+        color: c.withValues(alpha: 0.08),
+        child: Row(children: [Icon(icon, size: 16, color: c), const SizedBox(width: 6), Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: c)), Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryDark))])]),
       ),
     );
   }
@@ -275,13 +276,15 @@ class _Tile extends StatelessWidget {
   final String onTapRoute;
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return GlassmorphicCard(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      onTap: () => context.push(onTapRoute),
       child: ListTile(
-        leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Icon(icon, size: 18, color: AppColors.brand)),
+        contentPadding: EdgeInsets.zero,
+        leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: AppRadii.smAll), child: Icon(icon, size: 18, color: AppColors.brand)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        subtitle: Text(subtitle, style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryDark)),
         trailing: const Icon(Icons.chevron_right_rounded, size: 18),
-        onTap: () => context.push(onTapRoute),
       ),
     );
   }

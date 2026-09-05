@@ -15,5 +15,43 @@ jobs:
           flutter-version: '3.47.2'
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
-      - run: flutter build appbundle --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json
-      # Add Play Store upload via r0adkll/upload-google-play@v1 when keystore provisioned
+
+      # No debug-signing escape hatch here: a deploy artifact must be real.
+      # build.gradle.kts fails the build if key.properties is missing.
+      - name: Materialise upload keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not configured. A deploy build cannot be debug-signed."
+            exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          {
+            echo "storeFile=upload-keystore.jks"
+            echo "storePassword=$ANDROID_STORE_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > android/key.properties
+
+      - run: |
+          flutter build appbundle --release \
+            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ github.ref_name }} \
+            --dart-define-from-file=dart_defines/production.json \
+            --obfuscate --split-debug-info=build/symbols
+
+      - name: Archive obfuscation symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: dart-symbols-${{ github.ref_name }}
+          path: build/symbols
+          retention-days: 365
+
+      - name: Remove signing material
+        if: always()
+        run: rm -f android/key.properties android/app/upload-keystore.jks
+      # Add Play Store upload via r0adkll/upload-google-play@v1 once the Play
+      # service-account JSON is provisioned as PLAY_SERVICE_JSON.

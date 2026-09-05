@@ -4,7 +4,6 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
 import 'tables/attempts_table.dart';
-import 'tables/cached_responses_table.dart';
 import 'tables/calculations_table.dart';
 import 'tables/courses_table.dart';
 import 'tables/downloads_table.dart';
@@ -14,7 +13,7 @@ import 'tables/sync_queue_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Questions, Attempts, Courses, Calculations, SyncQueue, QuizAttempts, Downloads, CachedResponses])
+@DriftDatabase(tables: [Questions, Attempts, Courses, Calculations, SyncQueue, QuizAttempts, Downloads])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'bisaas_app'));
@@ -26,17 +25,16 @@ class AppDatabase extends _$AppDatabase {
   factory AppDatabase.instance() => _instance ??= AppDatabase();
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async => m.createAll(),
         onUpgrade: (m, from, to) async {
           if (from < 2) {
-            // v2 new tables (per-attempt header, offline packs, ETag cache).
+            // v2 new tables (per-attempt header, offline packs).
             await m.createTable(quizAttempts);
             await m.createTable(downloads);
-            await m.createTable(cachedResponses);
 
             // Questions changed shape entirely (v1: id PK + title/body;
             // v2: remote_id PK + options JSON). It is a disposable cache —
@@ -51,6 +49,15 @@ class AppDatabase extends _$AppDatabase {
               'CREATE UNIQUE INDEX IF NOT EXISTS sync_queue_idempotency_key_uq '
               'ON sync_queue (idempotency_key)',
             );
+          }
+
+          if (from < 3) {
+            // v3 (security plan W2.2): the plaintext response-body cache is
+            // gone. It stored full GET payloads (courses, calculators) on
+            // disk unencrypted, and nothing ever read it back — HTTP ETag
+            // replay via ApiCacheHeaders is the only cache. Devices that
+            // created it under v2 drop it here; fresh installs never had it.
+            await customStatement('DROP TABLE IF EXISTS cached_responses');
           }
         },
       );

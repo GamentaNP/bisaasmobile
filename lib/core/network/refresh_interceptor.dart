@@ -52,10 +52,19 @@ class RefreshInterceptor extends Interceptor {
           extra: {'skipAuthRefresh': true},
         ),
       );
-      final data = res.data?['data'] as Map<String, dynamic>?;
+      final body = res.data;
+      // Tolerant envelope: some deployments return {data: {token, expires_at}},
+      // others {token, expires_at} at the top level. Never crash on shape drift.
+      final data = body is Map<String, dynamic>
+          ? (body['data'] is Map<String, dynamic>
+              ? body['data'] as Map<String, dynamic>
+              : body)
+          : null;
       final token = data?['token'] as String?;
       final expiresAt = data?['expires_at'] as String?;
-      if (token == null || token.isEmpty) throw StateError('empty refresh token');
+      if (token == null || token.isEmpty) {
+        throw StateError('refresh response missing token');
+      }
 
       await _tokens.persist(token: token, expiresAt: expiresAt);
       AppLogger.i('Token refreshed; retrying ${opts.path}');

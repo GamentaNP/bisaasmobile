@@ -164,43 +164,52 @@ class EconomyRemoteDataSource {
     }
   }
 
-  Future<List<LedgerEntryDto>> getLedger({int page = 1, int perPage = 20}) async {
+  Future<LedgerPageDto> getLedger({int page = 1, int perPage = 20}) async {
     try {
       final res = await _dio.get<Map<String, dynamic>>(
         '/economy/wallet/ledger',
         queryParameters: {'page': page, 'per_page': perPage},
       );
       final body = res.data;
-      if (body == null) return [];
+      if (body == null) return const LedgerPageDto(entries: []);
       // Try cursor/offset envelope: data.items or data directly list
       final data = body['data'];
       if (data is List) {
-        return data.whereType<Map<String, dynamic>>().map(LedgerEntryDto.fromJson).toList();
+        return LedgerPageDto(
+          entries: data.whereType<Map<String, dynamic>>().map(LedgerEntryDto.fromJson).toList(),
+        );
       }
       if (data is Map<String, dynamic> && data['items'] is List) {
-        return (data['items'] as List).whereType<Map<String, dynamic>>().map((e) => LedgerEntryDto.fromJson(e as Map<String, dynamic>)).toList();
+        return LedgerPageDto(
+          entries: (data['items'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map((e) => LedgerEntryDto.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        );
       }
       final mapData = _extractMapData(body);
       if (mapData != null) {
         final items = mapData['items'] ?? mapData['ledger'] ?? mapData['entries'];
         if (items is List) {
-          return items.whereType<Map<String, dynamic>>().map(LedgerEntryDto.fromJson).toList();
+          return LedgerPageDto(
+            entries: items.whereType<Map<String, dynamic>>().map(LedgerEntryDto.fromJson).toList(),
+          );
         }
         if (mapData.containsKey('amount') || mapData.containsKey('description')) {
-          return [LedgerEntryDto.fromJson(mapData)];
+          return LedgerPageDto(entries: [LedgerEntryDto.fromJson(mapData)]);
         }
       }
-      return [];
+      return const LedgerPageDto(entries: []);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        AppLogger.w('economy getLedger: 404 — WO-1 not shipped, empty ledger');
-        return [];
+        AppLogger.w('economy getLedger: 404 — WO-1 not shipped, degraded placeholder');
+        return const LedgerPageDto(entries: [], isDegraded: true);
       }
       AppLogger.w('economy getLedger failed: ${e.response?.statusCode} ${e.message}');
-      return [];
+      return const LedgerPageDto(entries: []);
     } catch (e) {
       AppLogger.w('economy getLedger unexpected: $e');
-      return [];
+      return const LedgerPageDto(entries: []);
     }
   }
 

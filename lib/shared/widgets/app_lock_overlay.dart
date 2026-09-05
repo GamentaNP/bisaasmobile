@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/security/app_lock.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Full-screen biometric gate rendered above the app whenever [AppLock] is
 /// locked (backgrounded past the grace period with lock enabled in settings).
@@ -34,6 +35,7 @@ class _LockScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return ColoredBox(
       color: theme.colorScheme.surface,
@@ -43,12 +45,12 @@ class _LockScreen extends StatelessWidget {
           children: [
             Icon(Icons.lock_rounded, size: 56, color: theme.colorScheme.primary),
             const SizedBox(height: 16),
-            Text('CivilCal is locked', style: theme.textTheme.titleMedium),
+            Text(l10n.appLocked, style: theme.textTheme.titleMedium),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: lock.challenge,
+              onPressed: () => lock.challenge(reason: l10n.unlockCivilCal),
               icon: const Icon(Icons.fingerprint_rounded),
-              label: const Text('Unlock'),
+              label: Text(l10n.unlock),
             ),
           ],
         ),

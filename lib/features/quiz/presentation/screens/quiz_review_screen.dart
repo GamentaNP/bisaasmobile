@@ -3,7 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../shared/widgets/app_bar.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../widgets/difficulty_badge.dart';
 
 /// Post-quiz review. Calls `GET /api/v1/quiz/attempts/{id}` and renders
@@ -34,9 +39,9 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Review Answers'),
+    return SafeAreaScaffold(
+      appBar: CivilAppBar(
+        title: 'Review Answers',
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
       ),
       body: FutureBuilder<AttemptReviewDto>(
@@ -83,13 +88,9 @@ class _ReviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isCorrect ? AppColors.correctGreen : AppColors.wrongRed;
-    return Container(
+    return GlassmorphicCard(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
+      color: color.withValues(alpha: 0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -107,7 +108,7 @@ class _ReviewCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(entry.body, style: const TextStyle(fontSize: 14, height: 1.5)),
+          Text(entry.body, style: AppTypography.bodyMedium.copyWith(height: 1.5)),
           const SizedBox(height: 10),
           if (entry.userOptionId != null)
             _OptionRow(
@@ -126,14 +127,14 @@ class _ReviewCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: AppColors.brand.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppRadii.smAll,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.lightbulb_outline_rounded, color: AppColors.brand, size: 16),
                   const SizedBox(width: 6),
-                  Expanded(child: Text(entry.explanation!, style: const TextStyle(fontSize: 12, height: 1.4))),
+                  Expanded(child: Text(entry.explanation!, style: AppTypography.bodySmall.copyWith(height: 1.4))),
                 ],
               ),
             ),

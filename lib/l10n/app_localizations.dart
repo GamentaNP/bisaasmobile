@@ -207,6 +207,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} coins'**
   String coinsBalance(int count);
+
+  /// No description provided for @appLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'CivilCal is locked'**
+  String get appLocked;
+
+  /// No description provided for @unlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlock;
+
+  /// No description provided for @unlockCivilCal.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock CivilCal'**
+  String get unlockCivilCal;
 }
 
 class _AppLocalizationsDelegate

@@ -66,4 +66,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String coinsBalance(int count) {
     return '$count सिक्के';
   }
+
+  @override
+  String get appLocked => 'CivilCal लॉक है';
+
+  @override
+  String get unlock => 'अनलॉक करें';
+
+  @override
+  String get unlockCivilCal => 'CivilCal अनलॉक करें';
 }

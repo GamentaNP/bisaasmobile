@@ -379,6 +379,15 @@ class LedgerEntryDto {
 
 // ── Shop packs (WO-2) ─────────────────────────────────────────────────────────
 
+/// Paginated ledger page with an explicit degraded flag — the data source
+/// knows whether the WO-1 endpoint 404'd (degraded) vs. a legitimately empty
+/// account, so the UI never shows the beta banner for a real empty ledger.
+class LedgerPageDto {
+  const LedgerPageDto({required this.entries, this.isDegraded = false});
+  final List<LedgerEntryDto> entries;
+  final bool isDegraded;
+}
+
 class CoinPackDto {
   const CoinPackDto({
     required this.id,

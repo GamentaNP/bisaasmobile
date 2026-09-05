@@ -85,16 +85,19 @@ class RetryInterceptor extends Interceptor {
   }
 
   Duration _computeDelay(DioException err, int attempt) {
-    // Honor Retry-After header (seconds or http-date).
+    // Honor Retry-After header (seconds or http-date), capped at 60s so a
+    // distant server date (or a stuck origin) cannot stall the UI for hours.
     final retryAfter = err.response?.headers.value('retry-after');
     if (retryAfter != null) {
       final seconds = int.tryParse(retryAfter);
-      if (seconds != null) return Duration(seconds: seconds);
+      if (seconds != null) return Duration(seconds: seconds.clamp(1, 60));
       // Try http-date (e.g., Wed, 21 Oct 2015 07:28:00 GMT)
       try {
         final date = HttpDate.parse(retryAfter);
         final diff = date.difference(DateTime.now());
-        if (!diff.isNegative) return diff;
+        if (!diff.isNegative) {
+          return Duration(seconds: diff.inSeconds.clamp(1, 60));
+        }
       } catch (_) {
         // Malformed http-date — fall through to backoff.
       }

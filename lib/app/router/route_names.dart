@@ -12,6 +12,14 @@ abstract final class RouteNames {
   static const calculators = 'calculators';
   static const courses = 'courses';
   static const battle = 'battle';
+  static const battleMatchmaking = 'battle-matchmaking';
+  static const battleResult = 'battle-result';
+  static const eice = 'eice';
+  static const psc = 'psc';
+  static const social = 'social';
+  static const search = 'search';
+  static const notifications = 'notifications';
+  static const downloads = 'downloads';
   static const profile = 'profile';
   static const settings = 'settings';
   static const achievements = 'achievements';
@@ -27,11 +35,9 @@ abstract final class RouteNames {
   static const economyWallet = 'economy-wallet';
   static const economyShop = 'economy-shop';
   static const economyInventory = 'economy-inventory';
-  // Store — premium assets / wardrobe / market (WO-3 beta)
+  // Store — premium assets / wardrobe (WO-3 beta)
   static const store = 'store';
-  static const premiumStore = 'premium-store';
   static const wardrobe = 'wardrobe';
-  static const market = 'market';
   // Streak + Leaderboard + Contests + Live Events — Part 4 (WO-4)
   static const streak = 'streak';
   static const leaderboard = 'leaderboard';

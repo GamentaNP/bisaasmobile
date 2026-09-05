@@ -59,10 +59,10 @@ Future<void> bootstrap() async {
     AppLogger.w('Local notifications init failed (likely web): $e');
   }
 
-  final tokens = TokenManager();
+  final tokens = TokenManager.shared;
   final existing = await tokens.readDeviceName();
   if (existing == null) {
-    await tokens.setDeviceName('android-${DateTime.now().millisecondsSinceEpoch}');
+    await TokenManager.resolveDeviceName(tokens);
   }
   await DioClient.init(tokens: tokens);
 

@@ -31,5 +31,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "appLocked": "CivilCal लॉक है",
+  "unlock": "अनलॉक करें",
+  "unlockCivilCal": "CivilCal अनलॉक करें"
 }

@@ -14,7 +14,12 @@ platform :ios do
   desc "Build and upload a TestFlight beta"
   lane :beta do
     certs
-    sh("flutter build ipa --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json")
+    # APP_VERSION feeds the server's X-App-Version minimum-version gate (W3.6).
+    version = ENV["APP_VERSION"] || sh("grep -E '^version:' ../pubspec.yaml | awk '{print $2}' | cut -d '+' -f1").strip
+    # --obfuscate + --split-debug-info (W2.1): Dart symbol obfuscation on every
+    # release build; symbols stay in build/symbols and must never leave the
+    # build machine except as a private CI artifact.
+    sh("flutter build ipa --release --dart-define=ENV=prod --dart-define=APP_VERSION=#{version} --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=../build/symbols/ios")
     upload_to_testflight(
       ipa: "../build/ios/ipa/CivilCal.ipa",
       skip_waiting_for_build_processing: true,
@@ -25,7 +30,8 @@ platform :ios do
   desc "Submit metadata + build to App Store Review"
   lane :prod do
     certs
-    sh("flutter build ipa --release --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json")
+    version = ENV["APP_VERSION"] || sh("grep -E '^version:' ../pubspec.yaml | awk '{print $2}' | cut -d '+' -f1").strip
+    sh("flutter build ipa --release --dart-define=ENV=prod --dart-define=APP_VERSION=#{version} --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=../build/symbols/ios")
     deliver(
       ipa: "../build/ios/ipa/CivilCal.ipa",
       force: true,

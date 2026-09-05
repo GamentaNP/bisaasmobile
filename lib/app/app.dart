@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/analytics/analytics_service.dart';
 import '../core/logging/app_logger.dart';
-import '../core/sync/background_fetch.dart';
+import '../core/sync/daily_quiz_prefetcher.dart';
 import '../core/sync/sync_worker.dart';
 import '../features/auth/presentation/controllers/auth_controller.dart';
 import '../l10n/app_localizations.dart';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/security/sensitive_screen_guard.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../controllers/library_controller.dart';
 import '../../domain/entities/library.dart';
@@ -99,12 +100,8 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
     final theme = Theme.of(context);
     final file = state.selectedFile;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(file?.title ?? widget.slug.replaceAll('-', ' ')),
-      ),
-      body: Builder(
-        builder: (context) {
+    final body = Builder(
+      builder: (context) {
           if (state.isFileLoading && file == null) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -238,7 +235,19 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
             ),
           );
         },
+    );
+
+    // FLAG_SECURE on paid content only (security plan W2.7): free files stay
+    // screenshot-friendly, premium/coin-gated material does not.
+    final isPaidContent =
+        file?.visibility == 'premium_only' || file?.visibility == 'coin_gated';
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(file?.title ?? widget.slug.replaceAll('-', ' ')),
       ),
+      body: isPaidContent
+          ? SensitiveScreenGuard.guard(child: body)
+          : body,
     );
   }
 }

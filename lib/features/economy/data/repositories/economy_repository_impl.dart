@@ -38,24 +38,11 @@ class EconomyRepositoryImpl implements EconomyRepository {
 
   @override
   Future<WalletLedger> getLedger({int page = 1, int perPage = 20}) async {
-    final dtos = await _remote.getLedger(page: page, perPage: perPage);
-    final entries = dtos.map((d) => d.toDomain()).toList();
-    // Heuristic for degraded: empty but remote returned 404 internally → treat as degraded
-    final isDegraded = entries.isEmpty;
-    // Real degraded detection is inside data source; we mirror by checking length==0
-    // For precise flag, data source would return Ledger with isDegraded; shim here:
-    // If backend had data, entries would be non-empty; empty+404 is degraded.
-    // We keep isDegraded false when populated, true when empty to trigger beta banner.
-    // Caller can override via hasMore logic.
-    return WalletLedger(entries: entries, isDegraded: isDegraded && _isWoMissing(entries), hasMore: false);
-  }
-
-  bool _isWoMissing(List<LedgerEntry> entries) {
-    // Empty ledger from WO-1 missing is degraded; empty from real account with no history is not.
-    // We cannot distinguish without a flag; treat empty as degraded beta placeholder per spec.
-    // Server-authoritative: quiz attempts credit coins, so a new account CAN have zero ledger.
-    // To avoid false degraded, we treat empty as degraded only when wallet also missing.
-    return entries.isEmpty;
+    final dto = await _remote.getLedger(page: page, perPage: perPage);
+    final entries = dto.entries.map((d) => d.toDomain()).toList();
+    // Degraded comes from the data source (explicit 404 detection), never from
+    // an empty list — a new account with zero history is NOT a beta placeholder.
+    return WalletLedger(entries: entries, isDegraded: dto.isDegraded, hasMore: false);
   }
 
   @override

@@ -7,6 +7,7 @@ class SyncQueueDao {
   final AppDatabase db;
 
   /// Items worth attempting now: under the retry cap and past their backoff.
+  /// Ordered oldest-first so dependent operations flush in enqueue order.
   Future<List<SyncQueueData>> pending() {
     final now = DateTime.now();
     return (db.select(db.syncQueue)
@@ -15,7 +16,8 @@ class SyncQueueDao {
                 t.attempts.isSmallerThanValue(5) &
                 (t.nextAttemptAt.isNull() |
                     t.nextAttemptAt.isSmallerOrEqualValue(now)),
-          ))
+          )
+          ..orderBy([(t) => OrderingTerm.asc(t.createdAt), (t) => OrderingTerm.asc(t.id)]))
         .get();
   }
 

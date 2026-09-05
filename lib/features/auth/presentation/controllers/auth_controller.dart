@@ -13,7 +13,9 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 });
 
 final tokenManagerProvider = Provider<TokenManager>((ref) {
-  return TokenManager();
+  // Single app-wide instance — initialized in bootstrap.dart for the Dio
+  // chain; the provider just re-exposes it so features share the same one.
+  return TokenManager.shared;
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -39,9 +41,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final tokenManager = ref.read(tokenManagerProvider);
-      final deviceName = await tokenManager.readDeviceName() ??
-          'android-${DateTime.now().millisecondsSinceEpoch}';
-      await tokenManager.setDeviceName(deviceName);
+      final deviceName = await TokenManager.resolveDeviceName(tokenManager);
       final repo = ref.read(authRepositoryProvider);
       return repo.login(
         email: email,
@@ -67,9 +67,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final tokenManager = ref.read(tokenManagerProvider);
-      final deviceName = await tokenManager.readDeviceName() ??
-          'android-${DateTime.now().millisecondsSinceEpoch}';
-      await tokenManager.setDeviceName(deviceName);
+      final deviceName = await TokenManager.resolveDeviceName(tokenManager);
       final repo = ref.read(authRepositoryProvider);
       return repo.register(
         name: name,

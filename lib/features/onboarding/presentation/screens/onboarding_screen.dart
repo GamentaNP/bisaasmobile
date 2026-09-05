@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../core/storage/preferences.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/gradient_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -111,78 +115,78 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Step ${_currentPage + 1} of 3',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: AppColors.brand,
-                      fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.auroraBackground),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Top Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Step ${_currentPage + 1} of 3',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: AppColors.brand,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: _completeOnboarding,
-                    child: const Text('Skip'),
-                  ),
-                ],
-              ),
-            ),
-
-            // Progress Indicator
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: (_currentPage + 1) / 3,
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  color: AppColors.brand,
-                  minHeight: 6,
+                    TextButton(
+                      onPressed: _completeOnboarding,
+                      child: const Text('Skip'),
+                    ),
+                  ],
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
-
-            // PageView
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (page) => setState(() => _currentPage = page),
-                children: [
-                  _buildExamStep(theme),
-                  _buildGoalStep(theme),
-                  _buildLevelStep(theme),
-                ],
-              ),
-            ),
-
-            // Bottom Navigation CTA
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: FilledButton(
-                onPressed: _nextPage,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 54),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              // Progress Indicator
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: ClipRRect(
+                  borderRadius: AppRadii.pillAll,
+                  child: LinearProgressIndicator(
+                    value: (_currentPage + 1) / 3,
+                    backgroundColor: isDark
+                        ? AppColors.surfaceRaisedDark
+                        : theme.colorScheme.surfaceContainerHighest,
+                    color: AppColors.brand,
+                    minHeight: 6,
                   ),
                 ),
-                child: Text(
-                  _currentPage == 2 ? 'Start Learning' : 'Continue',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 16),
+
+              // PageView
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (page) => setState(() => _currentPage = page),
+                  children: [
+                    _buildExamStep(theme),
+                    _buildGoalStep(theme),
+                    _buildLevelStep(theme),
+                  ],
                 ),
               ),
-            ),
-          ],
+
+              // Bottom Navigation CTA
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: GradientButton(
+                  label: _currentPage == 2 ? 'Start Learning' : 'Continue',
+                  onPressed: _nextPage,
+                  icon: _currentPage == 2
+                      ? Icons.rocket_launch_rounded
+                      : Icons.arrow_forward_rounded,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -199,8 +203,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(height: 8),
         Text(
           'Select your primary syllabus track to personalize questions and study sprint plans.',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          style: AppTypography.bodyMedium.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
           ),
         ),
         const SizedBox(height: 20),
@@ -208,63 +214,55 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           final isSelected = _selectedExam == exam['title'];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+            child: GlassmorphicCard(
+              glow: isSelected,
               onTap: () => setState(() => _selectedExam = exam['title']! as String),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.brand.withValues(alpha: 0.1)
-                      : theme.colorScheme.surface,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.brand
-                        : theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                    width: isSelected ? 2 : 1,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: isSelected
+                          ? AppColors.brandGradient
+                          : null,
+                      color: isSelected
+                          ? null
+                          : theme.brightness == Brightness.dark
+                              ? AppColors.surfaceRaisedDark
+                              : theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: AppRadii.smAll,
+                    ),
+                    child: Icon(
+                      exam['icon']! as IconData,
+                      color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.brand
-                            : theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        exam['icon']! as IconData,
-                        color: isSelected ? Colors.black : theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            exam['title']! as String,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          exam['title']! as String,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            exam['desc']! as String,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          exam['desc']! as String,
+                          style: AppTypography.bodySmall.copyWith(
+                            color: theme.brightness == Brightness.dark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    if (isSelected)
-                      const Icon(Icons.check_circle_rounded, color: AppColors.brand),
-                  ],
-                ),
+                  ),
+                  if (isSelected)
+                    const Icon(Icons.check_circle_rounded, color: AppColors.brand),
+                ],
               ),
             ),
           );
@@ -284,8 +282,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(height: 8),
         Text(
           'How much time would you like to dedicate each day? You can change this anytime.',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          style: AppTypography.bodyMedium.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
           ),
         ),
         const SizedBox(height: 20),
@@ -293,63 +293,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           final isSelected = _dailyMinutes == goal['minutes'];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+            child: GlassmorphicCard(
+              glow: isSelected,
               onTap: () => setState(() => _dailyMinutes = goal['minutes']! as int),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.brand.withValues(alpha: 0.1)
-                      : theme.colorScheme.surface,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.brand
-                        : theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                    width: isSelected ? 2 : 1,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: isSelected ? AppColors.brandGradient : null,
+                      color: isSelected
+                          ? null
+                          : theme.brightness == Brightness.dark
+                              ? AppColors.surfaceRaisedDark
+                              : theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: AppRadii.smAll,
+                    ),
+                    child: Icon(
+                      goal['icon']! as IconData,
+                      color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.brand
-                            : theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        goal['icon']! as IconData,
-                        color: isSelected ? Colors.black : theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${goal['minutes']} mins / day — ${goal['label']}',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${goal['minutes']} mins / day — ${goal['label']}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            goal['desc']! as String,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          goal['desc']! as String,
+                          style: AppTypography.bodySmall.copyWith(
+                            color: theme.brightness == Brightness.dark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    if (isSelected)
-                      const Icon(Icons.check_circle_rounded, color: AppColors.brand),
-                  ],
-                ),
+                  ),
+                  if (isSelected)
+                    const Icon(Icons.check_circle_rounded, color: AppColors.brand),
+                ],
               ),
             ),
           );
@@ -369,8 +359,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(height: 8),
         Text(
           'Help our IRT calibration engine tailor initial question difficulty to your stage.',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          style: AppTypography.bodyMedium.copyWith(
+            color: theme.brightness == Brightness.dark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
           ),
         ),
         const SizedBox(height: 20),
@@ -378,63 +370,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           final isSelected = _experienceLevel == level['title'];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+            child: GlassmorphicCard(
+              glow: isSelected,
               onTap: () => setState(() => _experienceLevel = level['title']! as String),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.brand.withValues(alpha: 0.1)
-                      : theme.colorScheme.surface,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.brand
-                        : theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                    width: isSelected ? 2 : 1,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: isSelected ? AppColors.brandGradient : null,
+                      color: isSelected
+                          ? null
+                          : theme.brightness == Brightness.dark
+                              ? AppColors.surfaceRaisedDark
+                              : theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: AppRadii.smAll,
+                    ),
+                    child: Icon(
+                      level['icon']! as IconData,
+                      color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.brand
-                            : theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        level['icon']! as IconData,
-                        color: isSelected ? Colors.black : theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            level['title']! as String,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          level['title']! as String,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            level['desc']! as String,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          level['desc']! as String,
+                          style: AppTypography.bodySmall.copyWith(
+                            color: theme.brightness == Brightness.dark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    if (isSelected)
-                      const Icon(Icons.check_circle_rounded, color: AppColors.brand),
-                  ],
-                ),
+                  ),
+                  if (isSelected)
+                    const Icon(Icons.check_circle_rounded, color: AppColors.brand),
+                ],
               ),
             ),
           );

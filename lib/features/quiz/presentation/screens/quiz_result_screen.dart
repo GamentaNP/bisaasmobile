@@ -5,7 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../core/logging/app_logger.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/gradient_button.dart';
+import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
 import '../../../gamification/presentation/widgets/lottie_overlay.dart';
 import '../state/quiz_state.dart';
@@ -39,186 +44,178 @@ class QuizResultScreen extends StatelessWidget {
       gradeLabel = 'Keep Practicing';
     }
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              // Celebratory confetti on first frame (server-graded only).
-              _ConfettiOnMount(
-                celebrate: !quizState.isOfflinePractice,
-                coinsEarned: quizState.totalCoinsEarned,
-              ),
-              const SizedBox(height: 16),
+    return SafeAreaScaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // Celebratory confetti on first frame (server-graded only).
+            _ConfettiOnMount(
+              celebrate: !quizState.isOfflinePractice,
+              coinsEarned: quizState.totalCoinsEarned,
+            ),
+            const SizedBox(height: 16),
 
-              // ── Accuracy Ring ───────────────────────────────────────────
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 140,
-                    height: 140,
-                    child: CircularProgressIndicator(
-                      value: accuracy,
-                      strokeWidth: 12,
-                      backgroundColor:
-                          theme.colorScheme.surfaceContainerHighest,
-                      valueColor: AlwaysStoppedAnimation<Color>(gradeColor),
-                    ),
+            // ── Accuracy Ring ───────────────────────────────────────────
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 140,
+                  height: 140,
+                  child: CircularProgressIndicator(
+                    value: accuracy,
+                    strokeWidth: 12,
+                    backgroundColor:
+                        theme.colorScheme.surfaceContainerHighest,
+                    valueColor: AlwaysStoppedAnimation<Color>(gradeColor),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${(accuracy * 100).round()}%',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: gradeColor,
-                        ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${(accuracy * 100).round()}%',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: gradeColor,
                       ),
-                      Text(
-                        'Accuracy',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                gradeLabel,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                session?.title ?? 'Quiz Complete',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-              const SizedBox(height: 28),
-
-              // ── Stats Row ───────────────────────────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _StatCard(
-                    value: '$correct/$totalQ',
-                    label: 'Correct',
-                    icon: Icons.check_circle_rounded,
-                    color: AppColors.correctGreen,
-                  ),
-                  _StatCard(
-                    value: '+${quizState.totalXpEarned}',
-                    label: 'XP Earned',
-                    icon: Icons.bolt_rounded,
-                    color: AppColors.xpGold,
-                  ),
-                  _StatCard(
-                    value: '+${quizState.totalCoinsEarned}',
-                    label: 'Coins',
-                    icon: Icons.monetization_on_rounded,
-                    color: AppColors.coinYellow,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Per-question breakdown ──────────────────────────────────
-              if (quizState.answers.isNotEmpty) ...[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Answer Review',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
+                    Text(
+                      'Accuracy',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: AppColors.textSecondaryDark,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                ...quizState.session?.questions.mapIndexed(
-                      (i, q) {
-                        final result = quizState.answers[q.id];
-                        return _ReviewTile(
-                          index: i + 1,
-                          questionBody: q.body,
-                          isCorrect: result?.isCorrect,
-                          skipped: result == null,
-                        );
-                      },
-                    ) ??
-                    [],
               ],
-
-              const SizedBox(height: 24),
-
-              // ── Share (server never mints locally — share is native sheet only) ──
-              OutlinedButton.icon(
-                onPressed: () => _shareResult(context, accuracy, correct, totalQ, quizState),
-                icon: const Icon(Icons.share_rounded, size: 18),
-                label: const Text('Share Result'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              gradeLabel,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              session?.title ?? 'Quiz Complete',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondaryDark,
+              ),
+            ),
+            const SizedBox(height: 28),
 
-              const SizedBox(height: 32),
+            // ── Stats Row ───────────────────────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _StatCard(
+                  value: '$correct/$totalQ',
+                  label: 'Correct',
+                  icon: Icons.check_circle_rounded,
+                  color: AppColors.correctGreen,
+                ),
+                _StatCard(
+                  value: '+${quizState.totalXpEarned}',
+                  label: 'XP Earned',
+                  icon: Icons.bolt_rounded,
+                  color: AppColors.xpGold,
+                ),
+                _StatCard(
+                  value: '+${quizState.totalCoinsEarned}',
+                  label: 'Coins',
+                  icon: Icons.monetization_on_rounded,
+                  color: AppColors.coinYellow,
+                ),
+              ],
+            ),
 
-              // ── CTAs ─────────────────────────────────────────────────────
-              FilledButton.icon(
-                onPressed: () => context.go('/home'),
-                icon: const Icon(Icons.home_rounded),
-                label: const Text('Back to Home'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+            const SizedBox(height: 24),
+
+            // ── Per-question breakdown ──────────────────────────────────
+            if (quizState.answers.isNotEmpty) ...[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Answer Review',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () {
-                  final id = quizState.attemptId;
-                  if (id != null && !id.startsWith('offline-')) {
-                    context.go('/quiz/attempt/$id/result/review');
-                  } else {
-                    context.go('/quiz');
-                  }
-                },
-                icon: const Icon(Icons.fact_check_outlined),
-                label: const Text('Review All Answers'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => context.go('/quiz'),
-                icon: const Icon(Icons.replay_rounded),
-                label: const Text('More Practice'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
+              ...quizState.session?.questions.mapIndexed(
+                    (i, q) {
+                      final result = quizState.answers[q.id];
+                      return _ReviewTile(
+                        index: i + 1,
+                        questionBody: q.body,
+                        isCorrect: result?.isCorrect,
+                        skipped: result == null,
+                      );
+                    },
+                  ) ??
+                  [],
             ],
-          ),
+
+            const SizedBox(height: 24),
+
+            // ── Share (server never mints locally — share is native sheet only) ──
+            OutlinedButton.icon(
+              onPressed: () => _shareResult(context, accuracy, correct, totalQ, quizState),
+              icon: const Icon(Icons.share_rounded, size: 18),
+              label: const Text('Share Result'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadii.mdAll,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // ── CTAs ─────────────────────────────────────────────────────
+            GradientButton(
+              label: 'Back to Home',
+              icon: Icons.home_rounded,
+              onPressed: () => context.go('/home'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () {
+                final id = quizState.attemptId;
+                if (id != null && !id.startsWith('offline-')) {
+                  context.go('/quiz/attempt/$id/result/review');
+                } else {
+                  context.go('/quiz');
+                }
+              },
+              icon: const Icon(Icons.fact_check_outlined),
+              label: const Text('Review All Answers'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadii.mdAll,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/quiz'),
+              icon: const Icon(Icons.replay_rounded),
+              label: const Text('More Practice'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadii.mdAll,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -241,13 +238,11 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
+    final isReward = color == AppColors.xpGold || color == AppColors.coinYellow;
+    return GlassmorphicCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
+      glow: isReward,
+      color: color.withValues(alpha: 0.08),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -264,7 +259,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              color: AppColors.textSecondaryDark,
             ),
           ),
         ],

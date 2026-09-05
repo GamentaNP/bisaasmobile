@@ -36,7 +36,12 @@ class BattleRepositoryImpl implements BattleRepository {
               .cast<Map>()
               .map((o) => BattleOption(id: (o['id'] ?? '').toString(), text: (o['text'] ?? '').toString()))
               .toList(),
-          correctOptionId: (raw['correct_option_id'] ?? '').toString(),
+          // Never read an answer key from the realtime payload. Battles are
+          // graded by the server (POST /quiz/battles/{id}/answer) and the RTDB
+          // node only carries `is_correct` after the fact. Parsing a key here
+          // would put the answer on-device before the answer is given, in the
+          // one mode that has coin stakes.
+          correctOptionId: '',
           points: (raw['points'] as int?) ?? 10,
         );
     return BattleMatch(

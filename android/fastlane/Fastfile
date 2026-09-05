@@ -8,7 +8,13 @@ platform :android do
   desc "Build and push to Play Internal (beta)"
   lane :beta do
     gradle(task: "clean")
-    sh("flutter build appbundle --release --dart-define=ENV=prod --dart-define-from-file=../dart_defines/production.json")
+    # APP_VERSION feeds the server's X-App-Version minimum-version gate (W3.6);
+    # fall back to the pubspec version when CI does not pass one.
+    version = ENV["APP_VERSION"] || sh("grep -E '^version:' ../pubspec.yaml | awk '{print $2}' | cut -d '+' -f1").strip
+    # --obfuscate + --split-debug-info (W2.1): Dart symbol obfuscation on every
+    # release build; symbols stay in build/symbols and must never leave the
+    # build machine except as a private CI artifact.
+    sh("flutter build appbundle --release --dart-define=ENV=prod --dart-define=APP_VERSION=#{version} --dart-define-from-file=../dart_defines/production.json --obfuscate --split-debug-info=../build/symbols/android")
     supply(
       track: "internal",
       aab: "../build/app/outputs/bundle/release/app-release.aab",

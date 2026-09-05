@@ -66,4 +66,13 @@ class AppLocalizationsNe extends AppLocalizations {
   String coinsBalance(int count) {
     return '$count सिक्काहरू';
   }
+
+  @override
+  String get appLocked => 'CivilCal लक भएको छ';
+
+  @override
+  String get unlock => 'अनलक गर्नुहोस्';
+
+  @override
+  String get unlockCivilCal => 'CivilCal अनलक गर्नुहोस्';
 }

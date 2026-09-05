@@ -5,7 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../shared/widgets/app_bar.dart';
+import '../../../../shared/widgets/empty_state.dart';
+import '../../../../shared/widgets/error_view.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/safe_area_scaffold.dart';
 
 /// Browses the server-side quiz catalog. Calls `GET /api/v1/quiz`
 /// with `?filter[category]=&search=&sort=-created_at` and renders
@@ -63,10 +70,8 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Browse Quizzes'),
-      ),
+    return SafeAreaScaffold(
+      appBar: CivilAppBar(title: 'Browse Quizzes'),
       body: Column(
         children: [
           Padding(
@@ -86,7 +91,7 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
                           _onSearchChanged('');
                         },
                       ),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                border: OutlineInputBorder(borderRadius: AppRadii.mdAll),
                 isDense: true,
               ),
             ),
@@ -124,14 +129,18 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snap.hasError) {
-                  return _ErrorState(
+                  return ErrorView(
                     message: snap.error.toString(),
                     onRetry: () => setState(() => _future = _load()),
                   );
                 }
                 final items = snap.data ?? const [];
                 if (items.isEmpty) {
-                  return const _EmptyState();
+                  return const EmptyState(
+                    title: 'No quizzes found',
+                    subtitle: 'Try a different search or category',
+                    icon: Icons.search_off_rounded,
+                  );
                 }
                 return ListView.separated(
                   padding: const EdgeInsets.all(16),
@@ -203,88 +212,35 @@ class _QuizCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: () => context.push('/quiz/intro/${entry.id}'),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppColors.brand.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.quiz_rounded, color: AppColors.brand, size: 28),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(entry.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${entry.questionCount} Qs · ${entry.durationMinutes} min · ${entry.category}',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return GlassmorphicCard(
+      padding: const EdgeInsets.all(14),
+      onTap: () => context.push('/quiz/intro/${entry.id}'),
+      child: Row(
         children: [
-          const Icon(Icons.search_off_rounded, size: 64, color: Colors.grey),
-          const SizedBox(height: 8),
-          const Text('No quizzes found', style: TextStyle(fontWeight: FontWeight.w600)),
-          Text('Try a different search or category', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
-        ],
-      ),
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
-  final String message;
-  final VoidCallback onRetry;
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.wrongRed),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text(message, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.wrongRed)),
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.brand.withValues(alpha: 0.1),
+              borderRadius: AppRadii.smAll,
+            ),
+            child: const Icon(Icons.quiz_rounded, color: AppColors.brand, size: 28),
           ),
-          const SizedBox(height: 12),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(entry.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                const SizedBox(height: 4),
+                Text(
+                  '${entry.questionCount} Qs · ${entry.durationMinutes} min · ${entry.category}',
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondaryDark),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right_rounded),
         ],
       ),
     );

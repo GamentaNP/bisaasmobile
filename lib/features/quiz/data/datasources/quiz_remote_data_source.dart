@@ -8,14 +8,18 @@ import '../models/attempt_dto.dart';
 import '../models/quiz_dto.dart';
 
 /// Verified server routes (`php artisan route:list --path=api/v1` in C:\laragon\www\bisaas):
-/// - GET  /quiz/courses                          → list courses (public)
-/// - GET  /quiz/courses/{course}/questions       → paginated questions for course (public)
-/// - GET  /quiz/questions                        → cross-domain search (public)
+/// - GET  /quiz/courses                          → list courses (public catalog)
+/// - GET  /quiz/courses/{course}/questions       → paginated questions for course (AUTH)
+/// - GET  /quiz/questions                        → cross-domain search (AUTH)
 /// - POST /quiz/attempts/start                   → start attempt (auth, Idempotency-Key)
 /// - POST /quiz/attempts/{attempt}/answer        → submit answer (auth, {question_id:int, answer:string})
 /// - POST /quiz/attempts/{attempt}/complete      → complete + score (auth)
 /// - GET  /quiz/attempts/{attempt}/results       → results detail (auth)
 /// - GET  /quiz/attempts/history                 → offset paginated history (auth)
+///
+/// The question corpus requires a credential (server security plan W0.1) and is
+/// throttled on its own bucket: 30/min, 300/hr, 1500/day. Only the catalog is
+/// public, and it carries no question text.
 ///
 /// Dio baseUrl already ends with /api/v1 — never add prefix.
 /// All POSTs carry Idempotency-Key per-request via Options (never global).
@@ -138,8 +142,14 @@ class QuizRemoteDataSource {
           'difficulty': diff,
           'marks_positive': (j['points'] as int?) ?? 4,
           'marks_negative': 0,
-          'explanation': j['explanation'],
-          'correct_option_id': j['correct_option_id'],
+          // Answer keys and explanations are never read from a pre-answer
+          // response. The server does not send them (QuizQuestionResource
+          // exposure policy) and the client must not be built to accept them:
+          // an ingestion point here is what turns one careless API change into
+          // a published answer bank. They arrive only from the results stage,
+          // or from an encrypted offline pack (security plan W4.8).
+          'explanation': null,
+          'correct_option_id': null,
           'quiz_id': quizId,
         };
       }).toList();

@@ -9,17 +9,25 @@ class SyncQueueService {
   final SyncQueueDao _dao;
   final Uuid _uuid;
 
+  /// Enqueues one offline operation.
+  ///
+  /// [idempotencyKey] is optional: when the *same logical operation* is
+  /// retried (e.g. a user re-taps "save"), pass the same key so the unique
+  /// constraint on `sync_queue.idempotency_key` dedupes and the server can
+  /// dedupe across retries. When omitted, a fresh key is minted per enqueue
+  /// (best-effort for fire-once callers).
   Future<int> enqueue({
     required String endpoint,
     String method = 'POST',
     String? payload,
+    String? idempotencyKey,
   }) {
     return _dao.enqueue(
       SyncQueueCompanion(
         endpoint: Value(endpoint),
         method: Value(method),
         payload: Value(payload),
-        idempotencyKey: Value(_uuid.v4()),
+        idempotencyKey: Value(idempotencyKey ?? _uuid.v4()),
       ),
     );
   }

@@ -31,5 +31,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "appLocked": "CivilCal is locked",
+  "unlock": "Unlock",
+  "unlockCivilCal": "Unlock CivilCal"
 }

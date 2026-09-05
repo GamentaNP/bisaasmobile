@@ -29,7 +29,8 @@ extension AppEnvX on AppEnv {
       AppEnv.staging => 'https://staging.bisaas.com',
       // Local Laragon (Laragon auto-generates self-signed cert). Chrome/Windows can resolve bisaas.test;
       // Android emulator needs 10.0.2.2 (or 10.0.2.2:443) — set via --dart-define=API_HOST=https://10.0.2.2
-      // For raw http fallback (no cert), use --dart-define=API_HOST=http://bisaas.test
+      // Cleartext http:// is forbidden by network_security_config.xml (W2.6);
+      // a dev-only override lives in android/app/src/debug/res/xml if ever needed.
       AppEnv.dev => 'https://bisaas.test',
     };
   }

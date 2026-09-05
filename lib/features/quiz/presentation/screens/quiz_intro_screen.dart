@@ -3,7 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_shadows.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../shared/widgets/app_bar.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/gradient_button.dart';
+import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../widgets/difficulty_badge.dart';
 import 'quiz_browser_screen.dart' show QuizListEntry;
 
@@ -40,8 +47,8 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Quiz Details')),
+    return SafeAreaScaffold(
+      appBar: CivilAppBar(title: 'Quiz Details'),
       body: FutureBuilder<QuizListEntry>(
         future: _future,
         builder: (context, snap) {
@@ -65,12 +72,9 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.brand, AppColors.brandDark],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
+                    gradient: AppColors.brandGradient,
+                    borderRadius: AppRadii.xlAll,
+                    boxShadow: AppShadows.glowBrand,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,11 +102,10 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                 const SizedBox(height: 24),
                 const _InstructionsCard(),
                 const SizedBox(height: 24),
-                FilledButton.icon(
+                GradientButton(
+                  label: 'Start Quiz',
+                  icon: Icons.play_arrow_rounded,
                   onPressed: _start,
-                  icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Start Quiz'),
-                  style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
                 ),
               ],
             ),
@@ -119,13 +122,8 @@ class _StatTile extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassmorphicCard(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
-      ),
       child: Column(
         children: [
           Icon(icon, color: AppColors.brand, size: 22),
@@ -141,13 +139,8 @@ class _InstructionsCard extends StatelessWidget {
   const _InstructionsCard();
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassmorphicCard(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.brand.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.brand.withValues(alpha: 0.2)),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
@@ -174,7 +167,7 @@ class _Bullet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(padding: EdgeInsets.only(top: 6, right: 6), child: Icon(Icons.circle, size: 5, color: AppColors.brand)),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 13))),
+          Expanded(child: Text(text, style: AppTypography.bodyMedium)),
         ],
       ),
     );

@@ -10,12 +10,20 @@ abstract final class DeepLinkHandler {
     if (uri.scheme == 'civilcal') {
       if (uri.host == 'reset-password') {
         final email = uri.queryParameters['email'];
-        if (email != null) {
-          // Password reset completes via the forgot-password flow — carry
-          // the email so the user doesn't retype it.
-          return '/forgot-password?email=${Uri.encodeComponent(email)}';
-        }
-        return '/forgot-password';
+        final token = uri.queryParameters['token'];
+        // Password reset completes via the forgot-password flow — carry the
+        // email (and the one-time token when present) so the user doesn't
+        // retype them and the flow can verify the reset token.
+        final params = <String, String>{
+          'email': ?email,
+          'token': ?token,
+        };
+        if (params.isEmpty) return '/forgot-password';
+        final qs = params.entries
+            .map((e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+            .join('&');
+        return '/forgot-password?$qs';
       }
       if (uri.host == 'quiz' && uri.pathSegments.isNotEmpty) {
         return '/quiz/${uri.pathSegments.first}';

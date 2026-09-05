@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radii.dart';
+import '../../../../app/theme/app_typography.dart';
+import '../../../../core/security/sensitive_screen_guard.dart';
 import '../../../../shared/widgets/ambient_glow_background.dart';
+import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../../../shared/widgets/gradient_button.dart';
 import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
 import '../controllers/quiz_controller.dart';
 import '../state/quiz_state.dart';
@@ -84,17 +89,23 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
       _maybeCelebrate(prev, next);
     });
 
-    return Scaffold(
-      body: AmbientGlowBackground(
-        child: SafeArea(
-          child: switch (state.phase) {
-            QuizPhase.loading => const Center(child: CircularProgressIndicator()),
-            QuizPhase.error => _buildError(context, state),
-            QuizPhase.finished => const Center(child: CircularProgressIndicator()),
-            _ => _buildQuizBody(context, state),
-          },
-        ),
+    final body = AmbientGlowBackground(
+      child: SafeArea(
+        child: switch (state.phase) {
+          QuizPhase.loading => const Center(child: CircularProgressIndicator()),
+          QuizPhase.error => _buildError(context, state),
+          QuizPhase.finished => const Center(child: CircularProgressIndicator()),
+          _ => _buildQuizBody(context, state),
+        },
       ),
+    );
+
+    // FLAG_SECURE on official online attempts only (security plan W2.7):
+    // offline practice stays screenshot-friendly, graded official runs do not.
+    return Scaffold(
+      body: state.isOfflinePractice
+          ? body
+          : SensitiveScreenGuard.guard(child: body),
     );
   }
 
@@ -406,19 +417,10 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
         if (state.phase == QuizPhase.feedback)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: FilledButton(
+            child: GradientButton(
+              label: state.isLastQuestion ? 'See Results' : 'Next Question',
               onPressed: () =>
                   ref.read(quizControllerProvider.notifier).nextQuestion(),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 52),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Text(
-                state.isLastQuestion ? 'See Results' : 'Next Question',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
             ),
           ),
       ],
@@ -430,19 +432,11 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     final theme = Theme.of(context);
     final isCorrect = result.isCorrect;
 
-    return Container(
+    return GlassmorphicCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isCorrect
-            ? AppColors.correctGreen.withValues(alpha: 0.1)
-            : AppColors.wrongRed.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isCorrect
-              ? AppColors.correctGreen.withValues(alpha: 0.4)
-              : AppColors.wrongRed.withValues(alpha: 0.4),
-        ),
-      ),
+      color: isCorrect
+          ? AppColors.correctGreen.withValues(alpha: 0.1)
+          : AppColors.wrongRed.withValues(alpha: 0.1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -494,7 +488,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             Text(
               result.explanation!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                color: AppColors.textSecondaryDark,
                 height: 1.5,
               ),
             ),

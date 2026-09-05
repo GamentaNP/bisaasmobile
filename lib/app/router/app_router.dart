@@ -228,10 +228,12 @@ class AppRouter {
         routes: [
           GoRoute(
             path: 'matchmaking',
+            name: RouteNames.battleMatchmaking,
             builder: (context, state) => const BattleMatchmakingScreen(),
           ),
           GoRoute(
             path: 'result',
+            name: RouteNames.battleResult,
             builder: (context, state) => const BattleResultScreen(),
           ),
         ],
@@ -285,25 +287,24 @@ class AppRouter {
           return PracticeSessionScreen(args: args);
         },
       ),
-      GoRoute(path: '/eice', builder: (context, state) => EiceScreen(exam: state.uri.queryParameters['exam'] ?? 'psc-civil')),
-      GoRoute(path: '/psc', builder: (context, state) => const PscScreen()),
-      GoRoute(path: '/social', builder: (context, state) => const SocialScreen()),
+      GoRoute(path: '/eice', name: RouteNames.eice, builder: (context, state) => EiceScreen(exam: state.uri.queryParameters['exam'] ?? 'psc-civil')),
+      GoRoute(path: '/psc', name: RouteNames.psc, builder: (context, state) => const PscScreen()),
+      GoRoute(path: '/social', name: RouteNames.social, builder: (context, state) => const SocialScreen()),
       GoRoute(path: '/economy', name: RouteNames.economy, builder: (context, state) => const EconomyScreen()),
       GoRoute(path: '/economy/wallet', name: RouteNames.economyWallet, builder: (context, state) => const WalletScreen()),
       GoRoute(path: '/economy/shop', name: RouteNames.economyShop, builder: (context, state) => const ShopScreen()),
       GoRoute(path: '/economy/inventory', name: RouteNames.economyInventory, builder: (context, state) => const InventoryScreen()),
       GoRoute(path: '/store', name: RouteNames.store, builder: (context, state) => const PremiumStoreScreen()),
-      GoRoute(path: '/store/premium', name: RouteNames.premiumStore, builder: (context, state) => const PremiumStoreScreen()),
       GoRoute(path: '/store/wardrobe', name: RouteNames.wardrobe, builder: (context, state) => const WardrobeScreen()),
-      GoRoute(path: '/store/market', name: RouteNames.market, builder: (context, state) => const PremiumStoreScreen()),
       GoRoute(
         path: '/search',
+        name: RouteNames.search,
         builder: (context, state) => SearchScreen(
           initialQuery: state.uri.queryParameters['query'] ?? '',
         ),
       ),
-      GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
-      GoRoute(path: '/downloads', name: 'downloads', builder: (context, state) => const DownloadsScreen()),
+      GoRoute(path: '/notifications', name: RouteNames.notifications, builder: (context, state) => const NotificationsScreen()),
+      GoRoute(path: '/downloads', name: RouteNames.downloads, builder: (context, state) => const DownloadsScreen()),
       GoRoute(
         path: '/library',
         name: RouteNames.library,
