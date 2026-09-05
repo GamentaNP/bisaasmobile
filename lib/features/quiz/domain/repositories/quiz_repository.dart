@@ -30,4 +30,3 @@ abstract class QuizRepository {
   /// Finish the attempt — POST /api/v1/quiz/attempts/{attemptId}/complete
   Future<QuizResult> finishAttempt(String attemptId);
 }
-

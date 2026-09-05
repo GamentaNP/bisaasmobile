@@ -98,8 +98,8 @@ class _ChunkyButtonState extends State<ChunkyButton> {
       );
     }
 
-    final double sideWidth = _pressed ? 0 : (widget.size == ChunkySize.sm ? 3 : 4);
-    final double sink = sideWidth;
+    final sideWidth = _pressed ? 0.0 : (widget.size == ChunkySize.sm ? 3.0 : 4.0);
+    final sink = sideWidth;
 
     final faceColor = p.face;
     final sideColor = p.side;
@@ -124,7 +124,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
     final button = AnimatedContainer(
       duration: const Duration(milliseconds: 90),
       curve: Curves.easeOut,
-      height: minHeight.toDouble(),
+      height: minHeight,
       padding: padding,
       decoration: BoxDecoration(
         color: faceColor,

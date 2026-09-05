@@ -32,13 +32,3 @@ class AmbientGlowBackground extends StatelessWidget {
     );
   }
 }
-
-/// Retained export for legacy imports — the drifting glow painter is retired.
-class _GlowPainter extends CustomPainter {
-  const _GlowPainter();
-  @override
-  void paint(Canvas canvas, Size size) {}
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}

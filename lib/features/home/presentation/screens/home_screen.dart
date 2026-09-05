@@ -8,7 +8,7 @@ import '../../../../shared/widgets/chunky/chunky_path_node.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../home/domain/entities/dashboard_data.dart';
+import '../../domain/entities/dashboard_data.dart';
 import '../controllers/home_controller.dart';
 
 /// Learning Path home — the sample's zig-zag trail of chunky level nodes
@@ -232,6 +232,9 @@ class HomeScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(999),
+                  border: Border(
+                    bottom: BorderSide(color: shadow, width: 3),
+                  ),
                 ),
                 child: Icon(item['icon']! as IconData, color: color, size: 22),
               ),
@@ -340,7 +343,7 @@ class _DailyStreakCard extends StatelessWidget {
         ? 'Come back tomorrow for +XP'
         : questionCount > 0
             ? '$dailyTitle · $questionCount questions · +$xpReward XP'
-            : 'Complete today\'s quiz to grow the streak';
+            : "Complete today's quiz to grow the streak";
 
     return Material(
       color: Colors.transparent,
