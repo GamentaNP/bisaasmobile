@@ -2,6 +2,7 @@ library;
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 import 'tables/attempts_table.dart';
 import 'tables/calculations_table.dart';
@@ -16,7 +17,23 @@ part 'app_database.g.dart';
 @DriftDatabase(tables: [Questions, Attempts, Courses, Calculations, SyncQueue, QuizAttempts, Downloads])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
-      : super(executor ?? driftDatabase(name: 'bisaas_app'));
+      : super(executor ?? _openConnection());
+
+  /// drift_flutter 0.3 throws on web unless a `web:` config is supplied
+  /// ("the `web` parameter needs to be set"). Serve `sqlite3.wasm` and
+  /// `drift_worker.js` from web/ (see setup instructions in drift docs).
+  static QueryExecutor _openConnection() {
+    if (kIsWeb) {
+      return driftDatabase(
+        name: 'bisaas_app',
+        web: DriftWebOptions(
+          sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+          driftWorker: Uri.parse('drift_worker.js'),
+        ),
+      );
+    }
+    return driftDatabase(name: 'bisaas_app');
+  }
 
   static AppDatabase? _instance;
 

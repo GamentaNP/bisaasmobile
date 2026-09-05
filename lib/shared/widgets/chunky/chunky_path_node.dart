@@ -92,31 +92,30 @@ class ChunkyPathNode extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (status == PathNodeStatus.current)
-                  Transform.translate(
-                    offset: const Offset(0, 14),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.cardDark : AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border(
-                          bottom: BorderSide(color: side, width: 3),
-                          top: BorderSide(color: AppColors.brand, width: 2),
-                          left: BorderSide(color: AppColors.brand, width: 2),
-                          right: BorderSide(color: AppColors.brand, width: 2),
-                        ),
+                if (status == PathNodeStatus.current) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.cardDark : AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border(
+                        bottom: BorderSide(color: side, width: 3),
+                        top: BorderSide(color: AppColors.brand, width: 2),
+                        left: BorderSide(color: AppColors.brand, width: 2),
+                        right: BorderSide(color: AppColors.brand, width: 2),
                       ),
-                      child: Text(
-                        'START',
-                        style: AppTypography.labelSmall.copyWith(
-                          color: AppColors.brand,
-                          fontSize: 11,
-                        ),
+                    ),
+                    child: Text(
+                      'START',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.brand,
+                        fontSize: 11,
                       ),
                     ),
                   ),
+                  const SizedBox(height: 8),
+                ],
                 node,
               ],
             ),

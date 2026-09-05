@@ -34,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
-            // 1. Header — greeting + stat pills
+            // 1. Header — greeting (stats live in the ChunkyStatsBar below)
             Row(
               children: [
                 Expanded(
@@ -54,12 +54,6 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                ),
-                ChunkyStatPill(
-                  icon: Icons.monetization_on,
-                  value: '${user?.coins ?? 0}',
-                  color: AppColors.coinYellow,
-                  shadow: AppColors.goldShadow,
                 ),
               ],
             ),

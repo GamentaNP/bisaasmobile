@@ -36,7 +36,11 @@ class InstallIdentityInterceptor extends Interceptor {
 
   String? _cachedInstallId;
 
-  static String defaultAppVersion() => String.fromEnvironment('APP_VERSION');
+  /// Resolved at compile time — String.fromEnvironment is const-only and
+  /// throws at runtime on web (DDC) if invoked dynamically.
+  static const _compiledAppVersion = String.fromEnvironment('APP_VERSION');
+
+  static String defaultAppVersion() => _compiledAppVersion;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
