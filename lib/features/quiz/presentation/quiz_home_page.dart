@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/errors/error_handler.dart';
-import 'screens/quiz_attempt_screen.dart';
 
 /// Quiz home — server-driven course cards (no invented slugs: attempts can
 /// only be started against ids the server knows, see QuizRemoteDataSource).
@@ -39,11 +39,9 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
   }
 
   void _openQuiz(_QuizTopic topic) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => QuizAttemptScreen(quizId: topic.id),
-      ),
-    );
+    // go_router go, not a raw Navigator push — raw pushes inside the shell
+    // branch render nothing on web; the route is deep-linkable either way.
+    context.go('/quiz/${topic.id}');
   }
 
   @override

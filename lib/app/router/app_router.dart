@@ -136,6 +136,7 @@ class AppRouter {
                     name: 'quiz-intro',
                     builder: (context, state) => QuizIntroScreen(
                       quizId: state.pathParameters['id']!,
+                      categoryId: state.uri.queryParameters['category'],
                     ),
                   ),
                   // Attempt: /quiz/:slug  (legacy) OR  /quiz/attempt/:attemptId
@@ -144,6 +145,8 @@ class AppRouter {
                     name: RouteNames.quizAttempt,
                     builder: (context, state) => QuizAttemptScreen(
                       quizId: state.pathParameters['slug']!,
+                      categoryId:
+                          int.tryParse(state.uri.queryParameters['category'] ?? ''),
                     ),
                   ),
                   // Result + Review (deep-linkable, go_router-aware)

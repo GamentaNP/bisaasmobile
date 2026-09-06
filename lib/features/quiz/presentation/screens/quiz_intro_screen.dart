@@ -12,13 +12,19 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../widgets/difficulty_badge.dart';
-import 'quiz_browser_screen.dart' show QuizListEntry;
+import 'quiz_browser_screen.dart'
+    show QuizCourseEntry, QuizListEntry;
 
 /// Pre-quiz screen showing topic, duration, question count, difficulty.
 /// CTA → start attempt with Idempotency-Key and navigate to attempt screen.
+///
+/// Loads course metadata from `GET /quiz/courses` and the live question
+/// count from the paginated `GET /quiz/courses/{id}/questions` envelope
+/// (there is no `GET /quiz/{id}` route on the server).
 class QuizIntroScreen extends ConsumerStatefulWidget {
-  const QuizIntroScreen({required this.quizId, super.key});
+  const QuizIntroScreen({required this.quizId, this.categoryId, super.key});
   final String quizId;
+  final String? categoryId;
 
   @override
   ConsumerState<QuizIntroScreen> createState() => _QuizIntroScreenState();
@@ -35,14 +41,61 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
 
   Future<QuizListEntry> _load() async {
     final dio = DioClient.instance.dio;
-    final res = await dio.get<Map<String, dynamic>>('/quiz/${widget.quizId}');
-    return QuizListEntry.fromJson((res.data?['data'] as Map?)?.cast<String, dynamic>() ?? {});
+    // Course metadata: find the course in the active catalog.
+    final coursesRes =
+        await dio.get<Map<String, dynamic>>('/quiz/courses');
+    final courses = (coursesRes.data?['data'] as List? ?? const [])
+        .cast<Map<String, dynamic>>()
+        .map(QuizCourseEntry.fromJson)
+        .toList();
+    final course = courses.firstWhere(
+      (c) => c.id == widget.quizId,
+      orElse: () => QuizCourseEntry(
+          id: widget.quizId, title: 'Quiz', description: ''),
+    );
+
+    // Live question count (and category name when drilling into one topic).
+    final qp = <String, dynamic>{'per_page': 1};
+    final catId = int.tryParse(widget.categoryId ?? '');
+    if (catId != null) qp['category_id'] = catId;
+    final qRes = await dio.get<Map<String, dynamic>>(
+      '/quiz/courses/${widget.quizId}/questions',
+      queryParameters: qp,
+    );
+    final body = qRes.data ?? const {};
+    final pagination = body['pagination'];
+    final count = pagination is Map<String, dynamic>
+        ? (pagination['total'] as num?)?.toInt() ?? 0
+        : 0;
+    var topic = course.title;
+    if (catId != null) {
+      // Envelope: data is {items: [...]} for paginated endpoints, a bare list
+      // for plain ones.
+      final data = body['data'];
+      final items = data is Map<String, dynamic>
+          ? (data['items'] as List? ?? const [])
+          : (data is List ? data : const []);
+      final first = items.isNotEmpty ? items.first : null;
+      final cat = first is Map<String, dynamic> ? first['category'] : null;
+      if (cat is Map<String, dynamic> && cat['name'] is String) {
+        topic = cat['name'] as String;
+      }
+    }
+    return QuizListEntry(
+      id: course.id,
+      title: topic,
+      category: course.title,
+      questionCount: count,
+      // Same 90s-per-question pacing the session builder uses.
+      durationMinutes: (count * 90 / 60).round(),
+    );
   }
 
   Future<void> _start() async {
     // The attempt screen itself calls startSession, so simply navigate.
     if (!mounted) return;
-    context.go('/quiz/${widget.quizId}');
+    final cat = widget.categoryId == null ? '' : '?category=${widget.categoryId}';
+    context.go('/quiz/${widget.quizId}$cat');
   }
 
   @override
@@ -98,7 +151,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Center(child: DifficultyBadge(difficulty: q.difficulty)),
+                const Center(child: DifficultyBadge(difficulty: 2)),
                 const SizedBox(height: 24),
                 const _InstructionsCard(),
                 const SizedBox(height: 24),
