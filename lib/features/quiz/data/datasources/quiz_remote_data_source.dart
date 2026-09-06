@@ -58,13 +58,16 @@ class QuizRemoteDataSource {
 
   // ── Session: questions for a course → QuizSessionDto ───────────────────────
 
-  Future<QuizSessionDto> getQuizSession(String quizId) async {
+  Future<QuizSessionDto> getQuizSession(String quizId, {int? categoryId}) async {
     // quizId is courseId (string int) from getQuizList
     final courseId = int.tryParse(quizId);
     if (courseId != null) {
       final res = await _dio.get<Map<String, dynamic>>(
         '/quiz/courses/$courseId/questions',
-        queryParameters: {'per_page': 20},
+        queryParameters: {
+          'per_page': 20,
+          if (categoryId != null) 'category_id': categoryId,
+        },
       );
       final body = res.data;
       if (body == null) throw Exception('Quiz session data missing');
@@ -213,11 +216,15 @@ class QuizRemoteDataSource {
   }) async {
     final key = idempotencyKey ?? _uuid.v4();
     final courseId = int.tryParse(quizId);
+    // question_ids is the only seeding mode this client may use: the server
+    // grades exactly the ids sent here, so they must be the session's own
+    // questions. course_id/question_count is the degenerate fallback when the
+    // session somehow yielded none.
+    final noIds = questionIds == null || questionIds.isEmpty;
     final data = <String, dynamic>{
-      if (questionIds != null && questionIds.isNotEmpty) 'question_ids': questionIds,
-      if (questionIds == null || questionIds.isEmpty)
-        if (courseId != null) 'course_id': courseId,
-      if (questionIds == null || questionIds.isEmpty) 'question_count': questionCount,
+      if (!noIds) 'question_ids': questionIds,
+      if (noIds && courseId != null) 'course_id': courseId,
+      if (noIds) 'question_count': questionCount,
       'mode': 'standard',
     };
 
@@ -263,8 +270,11 @@ class QuizRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    // Backend answer endpoint returns {success:true, message} with no data for exam modes.
-    // Return synthetic pending result; real grading happens on complete.
+    // The API answer endpoint always answers {success:true, message} with no
+    // data — grading is computed but withheld until complete/results (server
+    // exposure policy). Empty correctOptionId is the pending marker the
+    // attempt screen renders as a neutral "submitted" state, never as
+    // right/wrong.
     if (body == null) {
       return AttemptResultDto(
         questionId: questionId,
@@ -273,7 +283,7 @@ class QuizRemoteDataSource {
         xpEarned: 0,
         coinsEarned: 0,
         correctOptionId: '',
-        explanation: null,
+        explanation: 'Answer saved — the breakdown unlocks on the results screen.',
       );
     }
     Map<String, dynamic>? d;
@@ -281,7 +291,6 @@ class QuizRemoteDataSource {
       d = body['data'] as Map<String, dynamic>;
     }
     if (d == null || d.isEmpty) {
-      // No grading data — synthetic (server will grade on complete)
       return AttemptResultDto(
         questionId: questionId,
         selectedOptionId: selectedOptionId,
@@ -289,7 +298,7 @@ class QuizRemoteDataSource {
         xpEarned: 0,
         coinsEarned: 0,
         correctOptionId: '',
-        explanation: null,
+        explanation: 'Answer saved — the breakdown unlocks on the results screen.',
       );
     }
     // If server ever returns grading payload, map it
@@ -311,7 +320,7 @@ class QuizRemoteDataSource {
         xpEarned: 0,
         coinsEarned: 0,
         correctOptionId: '',
-        explanation: null,
+        explanation: 'Answer saved — the breakdown unlocks on the results screen.',
       );
     }
   }
@@ -319,7 +328,12 @@ class QuizRemoteDataSource {
   // ── Complete attempt ───────────────────────────────────────────────────────
 
   Future<QuizResultDto> finishAttempt(String attemptId) async {
-    final res = await _dio.post<Map<String, dynamic>>('/quiz/attempts/$attemptId/complete');
+    // Idempotency-Key is mandatory on completion (server 422s without it —
+    // same middleware as start/answer).
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/quiz/attempts/$attemptId/complete',
+      options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
+    );
     final body = res.data;
     if (body == null) throw Exception('Quiz result missing');
     Map<String, dynamic>? d;

@@ -11,9 +11,10 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../widgets/difficulty_badge.dart';
 
-/// Post-quiz review. Calls `GET /api/v1/quiz/attempts/{id}` and renders
-/// all questions with the user's answer vs the correct answer and the
-/// explanation in expandable cards.
+/// Post-quiz review. Calls `GET /api/v1/quiz/attempts/{id}/results` (the
+/// bare `GET /quiz/attempts/{id}` route does not exist) and renders every
+/// server-graded answer row. The server withholds answer keys/explanations
+/// even here, so cards show the user's pick + verdict only.
 class QuizReviewScreen extends ConsumerStatefulWidget {
   const QuizReviewScreen({required this.attemptId, super.key});
   final String attemptId;
@@ -33,8 +34,10 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
 
   Future<AttemptReviewDto> _load() async {
     final dio = DioClient.instance.dio;
-    final res = await dio.get<Map<String, dynamic>>('/quiz/attempts/${widget.attemptId}');
-    return AttemptReviewDto.fromJson((res.data?['data'] as Map?)?.cast<String, dynamic>() ?? {});
+    final res =
+        await dio.get<Map<String, dynamic>>('/quiz/attempts/${widget.attemptId}/results');
+    final data = (res.data?['data'] as Map?)?.cast<String, dynamic>() ?? {};
+    return AttemptReviewDto.fromJson(data);
   }
 
   @override
@@ -69,7 +72,7 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, i) {
               final e = entries[i];
-              final isCorrect = e.userOptionId != null && e.userOptionId == e.correctOptionId;
+              final isCorrect = e.isCorrect ?? false;
               return _ReviewCard(index: i + 1, entry: e, isCorrect: isCorrect);
             },
           );
@@ -115,12 +118,21 @@ class _ReviewCard extends StatelessWidget {
               label: 'Your answer',
               text: entry.userOptionText ?? entry.userOptionId!,
               color: color,
+            )
+          else
+            const _OptionRow(
+              label: 'Your answer',
+              text: 'Not answered',
+              color: Colors.grey,
             ),
-          _OptionRow(
-            label: 'Correct',
-            text: entry.correctOptionText ?? entry.correctOptionId ?? '—',
-            color: AppColors.correctGreen,
-          ),
+          // The results endpoint withholds answer keys — show the key row
+          // only when the server actually sent one.
+          if (entry.correctOptionText != null || entry.correctOptionId != null)
+            _OptionRow(
+              label: 'Correct',
+              text: entry.correctOptionText ?? entry.correctOptionId ?? '—',
+              color: AppColors.correctGreen,
+            ),
           if (entry.explanation != null && entry.explanation!.isNotEmpty) ...[
             const SizedBox(height: 10),
             Container(
@@ -164,12 +176,14 @@ class _OptionRow extends StatelessWidget {
   }
 }
 
-/// DTO for review payload. Tolerant of multiple server field names.
+/// DTO for the results payload: data.answers[] rows shaped
+/// {question_id, question_text, given_answer, is_correct, is_skipped,
+/// score_awarded, time_taken_seconds}. Tolerant of other field names.
 class AttemptReviewDto {
   AttemptReviewDto(this.entries);
   final List<AttemptReviewEntry> entries;
   factory AttemptReviewDto.fromJson(Map<String, dynamic> j) {
-    final list = (j['entries'] ?? j['items'] ?? j['questions'] ?? const []) as List;
+    final list = (j['answers'] ?? j['entries'] ?? j['items'] ?? j['questions'] ?? const []) as List;
     return AttemptReviewDto(
       list.cast<Map<String, dynamic>>().map(AttemptReviewEntry.fromJson).toList(),
     );
@@ -185,6 +199,8 @@ class AttemptReviewEntry {
     this.correctOptionText,
     this.explanation,
     this.difficulty,
+    this.isCorrect,
+    this.isSkipped,
   });
   final String body;
   final String? userOptionId;
@@ -193,14 +209,18 @@ class AttemptReviewEntry {
   final String? correctOptionText;
   final String? explanation;
   final int? difficulty;
+  final bool? isCorrect;
+  final bool? isSkipped;
 
   factory AttemptReviewEntry.fromJson(Map<String, dynamic> j) => AttemptReviewEntry(
-        body: (j['body'] ?? j['question'] ?? '').toString(),
-        userOptionId: j['user_option_id']?.toString() ?? j['selected_option_id']?.toString(),
+        body: (j['body'] ?? j['question'] ?? j['question_text'] ?? '').toString(),
+        userOptionId: j['user_option_id']?.toString() ?? j['given_answer']?.toString() ?? j['selected_option_id']?.toString(),
         correctOptionId: j['correct_option_id']?.toString(),
         userOptionText: j['user_option_text']?.toString() ?? j['selected_option_text']?.toString(),
         correctOptionText: j['correct_option_text']?.toString(),
         explanation: j['explanation']?.toString(),
         difficulty: j['difficulty'] as int?,
+        isCorrect: j['is_correct'] as bool?,
+        isSkipped: j['is_skipped'] as bool?,
       );
 }

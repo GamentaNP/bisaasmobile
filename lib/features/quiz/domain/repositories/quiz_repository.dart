@@ -6,12 +6,15 @@ abstract class QuizRepository {
   Future<List<Map<String, dynamic>>> getQuizList({String? subjectSlug});
 
   /// Fetch questions for a course from GET /api/v1/quiz/courses/{id}/questions
-  Future<QuizSession> getQuizSession(String quizId);
+  /// [categoryId] narrows the pool to one course category.
+  Future<QuizSession> getQuizSession(String quizId, {int? categoryId});
 
   /// Start an attempt on the server — POST /api/v1/quiz/attempts/start
   /// [questionIds] must be the ids fetched for this session — the server
   /// seeds its grading rows from them, so answering requires the same set.
-  /// Returns the server-assigned attempt id.
+  /// (Never delegate to the server's category_id seeding: it draws a
+  /// different pool than the session on screen and every answer 404s.)
+  /// Returns the server attempt id.
   Future<String> startAttempt({
     required String quizId,
     String? idempotencyKey,

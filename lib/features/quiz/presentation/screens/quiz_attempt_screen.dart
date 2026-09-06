@@ -17,8 +17,9 @@ import '../widgets/question_image.dart';
 /// Live quiz attempt screen — full session UI with timer, question body,
 /// answer options, and server-graded feedback overlay.
 class QuizAttemptScreen extends ConsumerStatefulWidget {
-  const QuizAttemptScreen({required this.quizId, super.key});
+  const QuizAttemptScreen({required this.quizId, this.categoryId, super.key});
   final String quizId;
+  final int? categoryId;
 
   @override
   ConsumerState<QuizAttemptScreen> createState() => _QuizAttemptScreenState();
@@ -32,7 +33,9 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     super.initState();
     // Start session after frame — avoids setState during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(quizControllerProvider.notifier).startSession(widget.quizId);
+      ref
+          .read(quizControllerProvider.notifier)
+          .startSession(widget.quizId, categoryId: widget.categoryId);
     });
   }
 
@@ -135,7 +138,8 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () =>
-                  ref.read(quizControllerProvider.notifier).startSession(widget.quizId),
+                  ref.read(quizControllerProvider.notifier)
+                      .startSession(widget.quizId, categoryId: widget.categoryId),
               child: const Text('Retry'),
             ),
             TextButton(
@@ -325,12 +329,15 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                   final result = state.lastResult;
                   final inFeedback = state.phase == QuizPhase.feedback;
                   final isGrading = state.phase == QuizPhase.grading;
+                  // Pending verdict — the API grades on complete, so until
+                  // correctOptionId arrives there is no right/wrong to paint.
+                  final isPending = result != null && result.correctOptionId.isEmpty;
 
                   Color? sideColor;
                   Color? faceColor;
                   IconData? trailingIcon;
 
-                  if (inFeedback && result != null) {
+                  if (inFeedback && result != null && !isPending) {
                     final isCorrectOption = option.id == result.correctOptionId;
                     if (isCorrectOption) {
                       sideColor = AppColors.brand;
@@ -470,27 +477,34 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   Widget _buildFeedbackPanel(BuildContext context, QuizState state) {
     final result = state.lastResult!;
     final theme = Theme.of(context);
-    final isCorrect = result.isCorrect;
+    // The API withholds grading until complete/results — an empty
+    // correctOptionId means "saved, verdict pending", never "wrong".
+    final isPending = result.correctOptionId.isEmpty;
+    final isCorrect = !isPending && result.isCorrect;
+    final verdictColor =
+        isPending ? AppColors.brandShadow : (isCorrect ? AppColors.brandShadow : AppColors.errorShadow);
 
     return GlassmorphicCard(
       padding: const EdgeInsets.all(16),
-      color: isCorrect ? AppColors.correctGreenBg : AppColors.wrongRedBg,
+      color: isPending
+          ? AppColors.selectedBlueBg
+          : (isCorrect ? AppColors.correctGreenBg : AppColors.wrongRedBg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
-                isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                color: isCorrect ? AppColors.brandShadow : AppColors.errorShadow,
+                isPending ? Icons.check_circle_rounded : (isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded),
+                color: verdictColor,
                 size: 22,
               ),
               const SizedBox(width: 8),
               Text(
-                isCorrect ? 'Great job!' : 'Not quite',
+                isPending ? 'Answer submitted' : (isCorrect ? 'Great job!' : 'Not quite'),
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
-                  color: isCorrect ? AppColors.brandShadow : AppColors.errorShadow,
+                  color: verdictColor,
                   fontSize: 17,
                 ),
               ),

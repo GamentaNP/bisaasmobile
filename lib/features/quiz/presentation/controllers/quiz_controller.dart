@@ -57,12 +57,12 @@ class QuizController extends Notifier<QuizState> {
 
   // ── Public API ────────────────────────────────────────────────────────────
 
-  Future<void> startSession(String quizId) async {
+  Future<void> startSession(String quizId, {int? categoryId}) async {
     state = QuizState.initial();
 
     try {
       // 1. Fetch questions (remote with Drift fallback for offline)
-      final session = await _repo.getQuizSession(quizId);
+      final session = await _repo.getQuizSession(quizId, categoryId: categoryId);
       final isOfflineCache = session.title.startsWith('Offline Practice');
 
       // 2. Start attempt on server — offline if cache served or network down
@@ -72,6 +72,10 @@ class QuizController extends Notifier<QuizState> {
         final idempotencyKey = _uuid.v4();
         // Server seeds its grading rows from the ids we send — the questions
         // fetched for this session MUST be the ones the attempt is graded on.
+        // The pool is already category-scoped (getQuizSession applies the
+        // filter), so question_ids are always exact; delegating seeding to
+        // category_id would grade a DIFFERENT set than the one on screen and
+        // 404 every answer.
         final questionIds = session.questions
             .map((q) => int.tryParse(q.id))
             .whereType<int>()
@@ -178,7 +182,11 @@ class QuizController extends Notifier<QuizState> {
         phase: QuizPhase.feedback,
         lastResult: result,
         answers: updatedAnswers,
-        comboCount: result.isCorrect ? state.comboCount + 1 : 0,
+        // Pending results (empty correctOptionId — the server grades on
+        // complete) must neither advance nor reset the cosmetic combo.
+        comboCount: result.correctOptionId.isEmpty
+            ? state.comboCount
+            : (result.isCorrect ? state.comboCount + 1 : 0),
         totalXpEarned: state.totalXpEarned + result.xpEarned,
         totalCoinsEarned: state.totalCoinsEarned + result.coinsEarned,
       );

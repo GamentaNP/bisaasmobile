@@ -17,9 +17,9 @@ class QuizRepositoryImpl implements QuizRepository {
       _remote.getQuizList(subjectSlug: subjectSlug);
 
   @override
-  Future<QuizSession> getQuizSession(String quizId) async {
+  Future<QuizSession> getQuizSession(String quizId, {int? categoryId}) async {
     try {
-      final dto = await _remote.getQuizSession(quizId);
+      final dto = await _remote.getQuizSession(quizId, categoryId: categoryId);
       // Cache-then-return — keep offline fresh.
       if (_local != null) await _local.cacheSession(dto);
       return dto.toDomain();
