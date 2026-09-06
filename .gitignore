@@ -76,3 +76,6 @@ lcov.info
 
 .mimosa/
 .playwright-mcp/
+
+# Node tooling (accidental npm installs at repo root)
+node_modules/

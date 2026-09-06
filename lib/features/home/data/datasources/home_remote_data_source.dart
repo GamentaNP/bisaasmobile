@@ -68,14 +68,16 @@ class HomeRemoteDataSource {
     // so its fromJson can stay the single SSOT mapper.
     final merged = <String, dynamic>{};
 
-    // /me → {user:{level,xp,coins}, ...}
+    // /me → {user:{...}, player_hud:{xp,coins,level,streak_days}, ...}
     if (me != null) {
-      // me may be {user:{id,name,level,xp,coins}, ...} or flat
+      // me may be {user:{...}} wrapped or flat; the user row itself often
+      // lacks economy stats — those live in the sibling player_hud object.
       final user = me['user'] as Map<String, dynamic>? ?? me;
+      final hud = me['player_hud'] as Map<String, dynamic>?;
       merged['user'] = {
-        'level': user['level'] ?? me['level'],
-        'xp': user['xp'] ?? user['experience'] ?? me['xp'],
-        'coins': user['coins'] ?? user['wallet_balance'] ?? me['coins'],
+        'level': user['level'] ?? hud?['level'] ?? me['level'],
+        'xp': user['xp'] ?? user['experience'] ?? hud?['xp'] ?? me['xp'],
+        'coins': user['coins'] ?? user['wallet_balance'] ?? hud?['coins'] ?? me['coins'],
         'next_level_xp': user['next_level_xp'] ?? me['next_level_xp'],
       };
       // Preserve top-level level etc for legacy fallback paths
