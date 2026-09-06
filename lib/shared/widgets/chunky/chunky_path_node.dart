@@ -73,20 +73,24 @@ class ChunkyPathNode extends StatelessWidget {
       child: Icon(iconData, size: size * 0.42, color: iconColor),
     );
 
-    return Semantics(
-      button: status != PathNodeStatus.locked,
-      label: status == PathNodeStatus.locked
-          ? 'Locked level'
-          : 'Level ${index ?? ''}',
-      child: GestureDetector(
-        onTap: status == PathNodeStatus.locked
-            ? null
-            : () {
-                HapticFeedback.mediumImpact();
-                onTap?.call();
-              },
-        child: Transform.translate(
-          offset: Offset(zigZagOffset(index ?? 0), 0),
+    // Transform must sit OUTSIDE the GestureDetector: the hit-test box follows
+    // layout position, so wrapping the detector around the transform would
+    // leave the tappable area at the unshifted spot while the node paints
+    // zig-zagged sideways.
+    return Transform.translate(
+      offset: Offset(zigZagOffset(index ?? 0), 0),
+      child: Semantics(
+        button: status != PathNodeStatus.locked,
+        label: status == PathNodeStatus.locked
+            ? 'Locked level'
+            : 'Level ${index ?? ''}',
+        child: GestureDetector(
+          onTap: status == PathNodeStatus.locked
+              ? null
+              : () {
+                  HapticFeedback.mediumImpact();
+                  onTap?.call();
+                },
           child: Opacity(
             opacity: status == PathNodeStatus.locked ? 0.8 : 1,
             child: Column(
