@@ -129,7 +129,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                   color: AppColors.streakOrange,
                   files: state.trending,
                   isLoading: state.isTrendingLoading,
-                  onTap: (f) => context.push('/library/${f.slug}'),
+                  onTap: (f) => context.go('/library/${f.slug}'),
                 ),
               ),
 
@@ -142,7 +142,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                   color: AppColors.brand,
                   files: state.recommendations,
                   isLoading: state.isRecommendationsLoading,
-                  onTap: (f) => context.push('/library/${f.slug}'),
+                  onTap: (f) => context.go('/library/${f.slug}'),
                 ),
               ),
 
@@ -201,7 +201,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                   delegate: SliverChildBuilderDelegate(
                     (context, i) {
                       final file = state.files[i];
-                      return _FileCard(file: file, onTap: () => context.push('/library/${file.slug}'));
+                      return _FileCard(file: file, onTap: () => context.go('/library/${file.slug}'));
                     },
                     childCount: state.files.length,
                   ),

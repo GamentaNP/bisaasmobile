@@ -29,7 +29,7 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
     if (goal != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Goal created for track #$trackId'), backgroundColor: AppColors.correctGreen));
       // Navigate to goal detail
-      unawaited(context.push('/learning/goals/${goal.id}'));
+      context.go('/learning/goals/${goal.id}');
     } else {
       final err = ref.read(learningControllerProvider).createGoalError ?? 'Failed to create goal';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
@@ -49,12 +49,12 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
           IconButton(
             icon: const Icon(Icons.today_rounded),
             tooltip: 'Today plan',
-            onPressed: () => context.push('/learning/today'),
+            onPressed: () => context.go('/learning/today'),
           ),
           IconButton(
             icon: const Icon(Icons.repeat_rounded),
             tooltip: 'Reviews due',
-            onPressed: () => context.push('/learning/reviews'),
+            onPressed: () => context.go('/learning/reviews'),
           ),
         ],
       ),

@@ -21,18 +21,18 @@ class HomeRemoteDataSource {
   final Dio _dio;
 
   static const _fallback = DashboardDto(
-    streakDays: 1,
+    streakDays: 0,
     isDailyCompleted: false,
-    dailyQuizTitle: 'Daily Engineering MCQ Sprint',
-    dailyQuizQuestionsCount: 10,
-    dailyQuizXpReward: 100,
-    dailyQuizCoinsReward: 20,
+    dailyQuizTitle: 'Daily Engineering Sprint',
+    dailyQuizQuestionsCount: 0,
+    dailyQuizXpReward: 0,
+    dailyQuizCoinsReward: 0,
     level: 1,
-    currentXp: 150,
-    nextLevelXp: 500,
-    coinsBalance: 50,
-    activeCourseTitle: 'Structural Analysis & Design (RCC)',
-    activeCourseProgress: 0.35,
+    currentXp: 0,
+    nextLevelXp: 100,
+    coinsBalance: 0,
+    activeCourseTitle: null,
+    activeCourseProgress: 0.0,
   );
 
   Future<DashboardDto> getDashboard() async {
@@ -122,7 +122,7 @@ class HomeRemoteDataSource {
       if (course != null) {
         merged['active_course'] = {
           'title': course['title'] ?? course['name'],
-          'progress': course['progress'] ?? course['completion'] ?? 0.35,
+          'progress': (course['progress'] ?? course['completion'] ?? 0.0 as num).toDouble(),
         };
       }
       // If today contains plan items, pick first as daily title fallback
@@ -131,10 +131,10 @@ class HomeRemoteDataSource {
         if (plan is Map && plan['title'] != null) {
           merged['daily_quiz'] = {
             'title': plan['title'],
-            'questions_count': 10,
-            'xp_reward': 100,
-            'coins_reward': 20,
-            'completed': false,
+            'questions_count': plan['questions_count'] ?? 0,
+            'xp_reward': plan['xp_reward'] ?? 0,
+            'coins_reward': plan['coins_reward'] ?? 0,
+            'completed': plan['completed'] ?? false,
           };
         }
       }

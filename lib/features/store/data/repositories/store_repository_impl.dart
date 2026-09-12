@@ -1,7 +1,6 @@
 import '../../domain/entities/store.dart';
 import '../../domain/repositories/store_repository.dart';
 import '../datasources/store_remote_data_source.dart';
-import '../models/store_dto.dart';
 
 class StoreRepositoryImpl implements StoreRepository {
   const StoreRepositoryImpl(this._remote);
@@ -10,25 +9,13 @@ class StoreRepositoryImpl implements StoreRepository {
   @override
   Future<StoreCatalog> getAssets() async {
     final dtos = await _remote.getAssets();
-    if (dtos.isNotEmpty) {
-      return StoreCatalog(assets: dtos.map((d) => d.toDomain()).toList(), isDegraded: false);
-    }
-    // Degraded beta placeholder — local mocks with isDegraded flag
-    final mocks = StoreAssetDto.localMocks().map((d) => d.toDomain()).toList();
-    return StoreCatalog(assets: mocks, isDegraded: true);
+    return StoreCatalog(assets: dtos.map((d) => d.toDomain()).toList(), isDegraded: false);
   }
 
   @override
   Future<StoreAsset?> getAsset(String slug) async {
     final dto = await _remote.getAsset(slug);
-    if (dto != null) return dto.toDomain();
-    // Fallback to local mock lookup when WO-3 missing
-    try {
-      final mock = StoreAssetDto.localMocks().firstWhere((m) => m.slug == slug || m.id == slug);
-      return mock.toDomain();
-    } catch (_) {
-      return null;
-    }
+    return dto?.toDomain();
   }
 
   @override

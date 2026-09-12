@@ -46,7 +46,7 @@ class _TutorPlanScreenState extends ConsumerState<TutorPlanScreen> with SingleTi
       appBar: AppBar(
         title: const Text('Study Plan'),
         actions: [
-          IconButton(icon: const Icon(Icons.chat_bubble_outline_rounded), tooltip: 'Chat', onPressed: () => context.push('/tutor/chat')),
+          IconButton(icon: const Icon(Icons.chat_bubble_outline_rounded), tooltip: 'Chat', onPressed: () => context.go('/tutor/chat')),
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => ref.read(tutorPlanControllerProvider.notifier).fetchAll()),
         ],
         bottom: TabBar(
@@ -197,7 +197,7 @@ class _PlanTab extends ConsumerWidget {
                   const SizedBox(height: 6),
                   const Text('Complete tutor onboarding to generate your personalized study plan.', style: TextStyle(fontSize: 12, color: Colors.grey)),
                   const SizedBox(height: 10),
-                  FilledButton(onPressed: () => context.push('/tutor/onboarding'), child: const Text('Start onboarding')),
+                  FilledButton(onPressed: () => context.go('/tutor/onboarding'), child: const Text('Start onboarding')),
                 ]),
               ),
             ),

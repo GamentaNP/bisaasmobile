@@ -93,7 +93,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
                                 c.slug.toLowerCase().contains(_query) ||
                                 c.domain.toLowerCase().contains(_query))
                             .toList(),
-                    onTap: (c) => context.push('/calculators/${c.domain}/${c.slug}'),
+                    onTap: (c) => context.go('/calculators/${c.domain}/${c.slug}'),
                   ),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
               ],

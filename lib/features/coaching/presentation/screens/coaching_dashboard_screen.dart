@@ -52,9 +52,9 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
           ),
           PopupMenuButton<String>(
             onSelected: (v) {
-              if (v == 'tutor_chat') context.push('/tutor/chat');
-              if (v == 'tutor_plan') context.push('/tutor/plan');
-              if (v == 'tutor_onboarding') context.push('/tutor/onboarding');
+              if (v == 'tutor_chat') context.go('/tutor/chat');
+              if (v == 'tutor_plan') context.go('/tutor/plan');
+              if (v == 'tutor_onboarding') context.go('/tutor/onboarding');
             },
             itemBuilder: (c) => const [
               PopupMenuItem(value: 'tutor_chat', child: Text('Tutor chat')),
@@ -137,15 +137,15 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                     // Weekly snippet
                     if (dashboard.weeklyReport != null) _WeeklySnippet(report: dashboard.weeklyReport!),
                     // Revisions due count
-                    _RevisionsSnippet(count: dashboard.revisionsDue.length, onTap: () => context.push('/tutor/plan')),
+                    _RevisionsSnippet(count: dashboard.revisionsDue.length, onTap: () => context.go('/tutor/plan')),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        FilledButton.icon(onPressed: () => context.push('/tutor/chat'), icon: const Icon(Icons.smart_toy_rounded, size: 16), label: const Text('Ask tutor')),
-                        OutlinedButton.icon(onPressed: () => context.push('/tutor/plan'), icon: const Icon(Icons.assignment_rounded, size: 16), label: const Text('Study plan')),
-                        OutlinedButton.icon(onPressed: () => context.push('/tutor/onboarding'), icon: const Icon(Icons.auto_awesome_rounded, size: 16), label: const Text('Onboarding')),
+                        FilledButton.icon(onPressed: () => context.go('/tutor/chat'), icon: const Icon(Icons.smart_toy_rounded, size: 16), label: const Text('Ask tutor')),
+                        OutlinedButton.icon(onPressed: () => context.go('/tutor/plan'), icon: const Icon(Icons.assignment_rounded, size: 16), label: const Text('Study plan')),
+                        OutlinedButton.icon(onPressed: () => context.go('/tutor/onboarding'), icon: const Icon(Icons.auto_awesome_rounded, size: 16), label: const Text('Onboarding')),
                       ],
                     ),
                     const SizedBox(height: 12),

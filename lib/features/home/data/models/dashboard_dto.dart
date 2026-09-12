@@ -25,16 +25,16 @@ class DashboardDto {
     return DashboardDto(
       streakDays: (streak?['current_streak'] as int?) ?? (json['streak_days'] as int?) ?? 0,
       isDailyCompleted: (daily?['completed'] as bool?) ?? (json['is_daily_completed'] as bool?) ?? false,
-      dailyQuizTitle: (daily?['title'] as String?) ?? 'Civil Engineering Daily Sprint',
-      dailyQuizQuestionsCount: (daily?['questions_count'] as int?) ?? 10,
-      dailyQuizXpReward: (daily?['xp_reward'] as int?) ?? 150,
-      dailyQuizCoinsReward: (daily?['coins_reward'] as int?) ?? 25,
+      dailyQuizTitle: (daily?['title'] as String?) ?? (json['daily_quiz_title'] as String?) ?? 'Civil Engineering Daily Sprint',
+      dailyQuizQuestionsCount: (daily?['questions_count'] as int?) ?? (json['daily_quiz_questions_count'] as int?) ?? 0,
+      dailyQuizXpReward: (daily?['xp_reward'] as int?) ?? (json['daily_quiz_xp_reward'] as int?) ?? 0,
+      dailyQuizCoinsReward: (daily?['coins_reward'] as int?) ?? (json['daily_quiz_coins_reward'] as int?) ?? 0,
       level: (user?['level'] as int?) ?? (json['level'] as int?) ?? 1,
       currentXp: (user?['xp'] as int?) ?? (json['current_xp'] as int?) ?? 0,
       nextLevelXp: (user?['next_level_xp'] as int?) ?? (json['next_level_xp'] as int?) ?? 1000,
       coinsBalance: (user?['coins'] as int?) ?? (json['coins_balance'] as int?) ?? 0,
-      activeCourseTitle: (course?['title'] as String?) ?? 'Structural Analysis & Design',
-      activeCourseProgress: (course?['progress'] as num?)?.toDouble() ?? 0.35,
+      activeCourseTitle: (course?['title'] as String?) ?? (json['active_course_title'] as String?),
+      activeCourseProgress: (course?['progress'] as num?)?.toDouble() ?? (json['active_course_progress'] as num?)?.toDouble() ?? 0.0,
     );
   }
 

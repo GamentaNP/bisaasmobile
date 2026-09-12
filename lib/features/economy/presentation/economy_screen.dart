@@ -58,7 +58,7 @@ class _HubTile extends StatelessWidget {
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         trailing: const Icon(Icons.chevron_right_rounded, size: 18),
-        onTap: () => context.push(route),
+        onTap: () => context.go(route),
       ),
     );
   }

@@ -68,7 +68,7 @@ class _LiveEventsScreenState extends ConsumerState<LiveEventsScreen> {
       separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
         final e = ordered[i];
-        return _LiveEventCard(event: e, onTap: () => context.push('/live-events/${e.id}'));
+        return _LiveEventCard(event: e, onTap: () => context.go('/live-events/${e.id}'));
       },
     );
   }

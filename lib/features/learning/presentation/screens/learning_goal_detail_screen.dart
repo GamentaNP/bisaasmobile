@@ -31,7 +31,7 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
       appBar: AppBar(
         title: Text('Goal #${widget.goalId}'),
         actions: [
-          IconButton(icon: const Icon(Icons.today_rounded), tooltip: 'Today', onPressed: () => context.push('/learning/today')),
+          IconButton(icon: const Icon(Icons.today_rounded), tooltip: 'Today', onPressed: () => context.go('/learning/today')),
         ],
       ),
       body: goalAsync.when(
@@ -148,9 +148,9 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                   style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.wrongRed)),
                 ),
                 const SizedBox(height: 16),
-                FilledButton.icon(onPressed: () => context.push('/learning/today'), icon: const Icon(Icons.calendar_today_rounded), label: const Text('Open Today plan')),
+                FilledButton.icon(onPressed: () => context.go('/learning/today'), icon: const Icon(Icons.calendar_today_rounded), label: const Text('Open Today plan')),
                 const SizedBox(height: 8),
-                FilledButton.tonalIcon(onPressed: () => context.push('/learning/tracks'), icon: const Icon(Icons.track_changes_rounded), label: const Text('Back to tracks')),
+                FilledButton.tonalIcon(onPressed: () => context.go('/learning/tracks'), icon: const Icon(Icons.track_changes_rounded), label: const Text('Back to tracks')),
               ],
             ),
           );

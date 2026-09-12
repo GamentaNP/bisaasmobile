@@ -62,7 +62,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
             onSelected: (v) {
               if (v == 'clear') ref.read(tutorChatControllerProvider.notifier).clear();
               if (v == 'toggle_legacy') setState(() => _useLegacy = !_useLegacy);
-              if (v == 'plan') context.push('/tutor/plan');
+              if (v == 'plan') context.go('/tutor/plan');
             },
             itemBuilder: (context) => [
               PopupMenuItem(value: 'plan', child: Row(children: [const Icon(Icons.assignment_rounded, size: 18), const SizedBox(width: 8), const Text('Study Plan')])),
@@ -182,7 +182,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                             children: [
                               _SuggestionChip(label: 'Explain proctor compaction', onTap: () => _fillAndSend('Explain proctor compaction simply')),
                               _SuggestionChip(label: 'Weekly plan help', onTap: () => _fillAndSend('Help me plan this week')),
-                              _SuggestionChip(label: 'Weak areas?', onTap: () => context.push('/tutor/plan')),
+                              _SuggestionChip(label: 'Weak areas?', onTap: () => context.go('/tutor/plan')),
                             ],
                           ),
                         ],

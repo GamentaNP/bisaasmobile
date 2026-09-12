@@ -181,7 +181,7 @@ class _TodayPlanView extends ConsumerWidget {
             );
           }),
         const SizedBox(height: 16),
-        FilledButton.tonalIcon(onPressed: () => context.push('/learning/reviews'), icon: const Icon(Icons.repeat_rounded), label: const Text('Reviews due')),
+        FilledButton.tonalIcon(onPressed: () => context.go('/learning/reviews'), icon: const Icon(Icons.repeat_rounded), label: const Text('Reviews due')),
       ],
     );
   }

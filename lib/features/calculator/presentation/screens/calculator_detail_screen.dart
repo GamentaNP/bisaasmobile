@@ -199,7 +199,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
               _ResultCard(result: calcState.result!),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () => context.push(Uri(
+                onPressed: () => context.go(Uri(
                   path: '/search',
                   queryParameters: {
                     'query': widget.slug.replaceAll('-', ' '),
@@ -211,7 +211,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
             ],
             const SizedBox(height: 20),
             OutlinedButton.icon(
-              onPressed: () => context.push('/calculators/${widget.domain}/${widget.slug}/history'),
+              onPressed: () => context.go('/calculators/${widget.domain}/${widget.slug}/history'),
               icon: const Icon(Icons.history_rounded),
               label: const Text('View history'),
             ),

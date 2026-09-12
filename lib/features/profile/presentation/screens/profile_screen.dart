@@ -1,4 +1,4 @@
-﻿import 'dart:ui' as ui;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -15,6 +15,7 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../gamification/presentation/screens/achievements_screen.dart';
 import '../../../gamification/presentation/widgets/xp_progress_bar.dart';
 import '../controllers/profile_skills_controller.dart';
 import '../widgets/skill_radar_chart.dart';
@@ -74,22 +75,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
-    if (newName == null || newName.trim().isEmpty || newName.trim() == current) {
-      return;
-    }
+    if (newName == null || newName.trim().isEmpty || newName.trim() == current) return;
     setState(() => _uploading = true);
     try {
       await ref.read(profileRemoteDataSourceProvider).updateProfile(name: newName);
       if (!mounted) return;
       ref.invalidate(authControllerProvider);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated')));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Update failed: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update failed: $e')));
     } finally {
       if (mounted) setState(() => _uploading = false);
     }
@@ -103,7 +98,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) return;
       final bytes = byteData.buffer.asUint8List();
-      // Share via share_plus XFile from bytes
       await SharePlus.instance.share(ShareParams(
         text: 'My CivilCal profile — Level ${ref.read(authControllerProvider).value?.level ?? 1} Engineer. https://bisaas.com',
         files: [XFile.fromData(bytes, name: 'civilcal-profile.png', mimeType: 'image/png')],
@@ -118,16 +112,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider).value;
     final skillsAsync = ref.watch(profileSkillsProvider);
+    final achievementsAsync = ref.watch(achievementsDataProvider);
     final theme = Theme.of(context);
     return SafeAreaScaffold(
       appBar: CivilAppBar(
         title: 'Profile',
-        actions: [IconButton(icon: const Icon(Icons.share_rounded), onPressed: _shareCard, tooltip: 'Share card'), IconButton(icon: const Icon(Icons.settings_rounded), onPressed: () => context.push('/settings'))],
+        actions: [
+          IconButton(icon: const Icon(Icons.share_rounded), onPressed: _shareCard, tooltip: 'Share card'),
+          // go, not push — shell routes require go() on web
+          IconButton(icon: const Icon(Icons.settings_rounded), onPressed: () => context.go('/settings')),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Shareable card boundary
           RepaintBoundary(
             key: _repaintKey,
             child: GlassmorphicCard(
@@ -141,9 +139,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         radius: 36,
                         backgroundColor: AppColors.brand.withValues(alpha: 0.15),
                         backgroundImage: user?.avatarUrl != null ? NetworkImage(user!.avatarUrl!) : null,
-                        child: user?.avatarUrl == null ? Text(user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'C', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.brand)) : null,
+                        child: user?.avatarUrl == null
+                            ? Text(
+                                user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'C',
+                                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.brand),
+                              )
+                            : null,
                       ),
-                      if (_uploading) const Positioned.fill(child: Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)))),
+                      if (_uploading)
+                        const Positioned.fill(
+                          child: Center(child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))),
+                        ),
                     ],
                   ),
                   const SizedBox(width: 16),
@@ -164,7 +170,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ]),
                       Text(user?.email ?? 'offline@bisaas.test', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondaryDark)),
                       const SizedBox(height: 4),
-                      Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.15), borderRadius: AppRadii.smAll), child: Text('Lv ${user?.level ?? 1}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold))), const SizedBox(width: 8), CoinChip(coins: user?.coins ?? 0)]),
+                      Row(children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.15), borderRadius: AppRadii.smAll),
+                          child: Text('Lv ${user?.level ?? 1}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
+                        ),
+                        const SizedBox(width: 8),
+                        CoinChip(coins: user?.coins ?? 0),
+                      ]),
                     ]),
                   ),
                   IconButton(icon: const Icon(Icons.camera_alt_rounded, size: 20), onPressed: _uploading ? null : _pickAndUploadAvatar, tooltip: 'Change avatar'),
@@ -173,12 +187,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Row(children: [Expanded(child: OutlinedButton.icon(onPressed: _shareCard, icon: const Icon(Icons.share_rounded, size: 16), label: const Text('Share card'))), const SizedBox(width: 10), Expanded(child: GradientButton(label: 'Edit avatar', icon: Icons.photo_rounded, onPressed: _uploading ? null : _pickAndUploadAvatar))]),
+          Row(children: [
+            Expanded(child: OutlinedButton.icon(onPressed: _shareCard, icon: const Icon(Icons.share_rounded, size: 16), label: const Text('Share card'))),
+            const SizedBox(width: 10),
+            Expanded(child: GradientButton(label: 'Edit avatar', icon: Icons.photo_rounded, onPressed: _uploading ? null : _pickAndUploadAvatar)),
+          ]),
           const SizedBox(height: 16),
-          // Stats grid
+          // Stats grid — Streak (not quiz count), XP, Coins
           Row(
             children: [
-              _StatChip(label: 'Quizzes', value: '${user?.streakDays ?? 0}', icon: Icons.quiz_rounded),
+              _StatChip(label: 'Streak', value: '${user?.streakDays ?? 0}d', icon: Icons.local_fire_department_rounded, color: AppColors.streakOrange),
               const SizedBox(width: 8),
               _StatChip(label: 'XP', value: '${user?.xp ?? 0}', icon: Icons.bolt_rounded, color: AppColors.xpGold),
               const SizedBox(width: 8),
@@ -186,7 +204,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          // Skill radar
           Text('Skill Radar', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           skillsAsync.when(
@@ -199,34 +216,43 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          // Achievement gallery
+          // Achievement gallery — live from /economy/achievements + /me/achievements/progress
           Text('Achievements', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          SizedBox(
-            height: 96,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: 6,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, i) {
-                final unlocked = i < 3;
-                final colors = [AppColors.brand, AppColors.streakOrange, AppColors.comboPurple, AppColors.correctGreen, AppColors.coinYellow, Colors.grey];
-                final color = colors[i % colors.length];
-                return Opacity(
-                  opacity: unlocked ? 1 : 0.45,
-                  child: GlassmorphicCard(
-                    padding: const EdgeInsets.all(10),
-                    color: theme.colorScheme.surface,
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Icon(unlocked ? Icons.verified_rounded : Icons.lock_rounded, color: color, size: 22),
-                      const SizedBox(height: 6),
-                      Text('Badge ${i + 1}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                      Text(unlocked ? 'Unlocked' : 'Locked', style: TextStyle(fontSize: 10, color: unlocked ? AppColors.correctGreen : Colors.grey)),
-                    ]),
-                  ),
+          achievementsAsync.when(
+            loading: () => const SizedBox(height: 96, child: Center(child: CircularProgressIndicator())),
+            error: (_, __) => const SizedBox(height: 32),
+            data: (data) {
+              final recent = data.achievements.where((a) => a.isCompleted).take(8).toList();
+              if (recent.isEmpty) {
+                return const SizedBox(
+                  height: 64,
+                  child: Center(child: Text('No badges yet — complete quizzes to earn them!', style: TextStyle(color: Colors.grey, fontSize: 12))),
                 );
-              },
-            ),
+              }
+              return SizedBox(
+                height: 96,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: recent.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  itemBuilder: (context, i) {
+                    final a = recent[i];
+                    final color = a.rarityColor;
+                    return GlassmorphicCard(
+                      padding: const EdgeInsets.all(10),
+                      color: theme.colorScheme.surface,
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        Icon(Icons.verified_rounded, color: color, size: 22),
+                        const SizedBox(height: 6),
+                        Text(a.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        Text('Unlocked', style: TextStyle(fontSize: 9, color: AppColors.correctGreen)),
+                      ]),
+                    );
+                  },
+                ),
+              );
+            },
           ),
           const SizedBox(height: 16),
           const Divider(),
@@ -241,8 +267,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _Tile(icon: Icons.download_for_offline_rounded, title: 'Offline content', subtitle: 'cached packs + prefetch', onTapRoute: '/downloads'),
           _Tile(icon: Icons.calculate_rounded, title: 'Calculators 232', subtitle: 'Civil formula engines', onTapRoute: '/calculators'),
           _Tile(icon: Icons.settings_rounded, title: 'Settings', subtitle: 'language • biometrics • logout', onTapRoute: '/settings'),
-          const SizedBox(height: 12),
-          const Text('Library is now built via co-agent — backend `GET /library/files` ready. Offline packs (42MB) via Drift + path_provider + file_service.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -262,7 +287,14 @@ class _StatChip extends StatelessWidget {
       child: GlassmorphicCard(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         color: c.withValues(alpha: 0.08),
-        child: Row(children: [Icon(icon, size: 16, color: c), const SizedBox(width: 6), Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: c)), Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryDark))])]),
+        child: Row(children: [
+          Icon(icon, size: 16, color: c),
+          const SizedBox(width: 6),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: c)),
+            Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryDark)),
+          ]),
+        ]),
       ),
     );
   }
@@ -278,10 +310,15 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassmorphicCard(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      onTap: () => context.push(onTapRoute),
+      // go, not push — shell route navigation requires go() on web
+      onTap: () => context.go(onTapRoute),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-        leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: AppRadii.smAll), child: Icon(icon, size: 18, color: AppColors.brand)),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: AppRadii.smAll),
+          child: Icon(icon, size: 18, color: AppColors.brand),
+        ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         subtitle: Text(subtitle, style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryDark)),
         trailing: const Icon(Icons.chevron_right_rounded, size: 18),

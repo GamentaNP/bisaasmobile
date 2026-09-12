@@ -181,7 +181,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () => context.push('/forgot-password'),
+                        onPressed: () => context.go('/forgot-password'),
                         child: const Text('Forgot Password?'),
                       ),
                     ),
@@ -213,7 +213,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () => context.push('/register'),
+                          onPressed: () => context.go('/register'),
                           child: const Text('Register'),
                         ),
                       ],
