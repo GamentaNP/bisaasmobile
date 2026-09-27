@@ -9,9 +9,12 @@ import 'package:dio/dio.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../data/datasources/lifeline_remote_data_source.dart';
 import '../../data/datasources/quiz_local_data_source.dart';
 import '../../data/datasources/quiz_remote_data_source.dart';
+import '../../data/models/lifeline_dto.dart';
 import '../../data/repositories/quiz_repository_impl.dart';
 import '../../domain/entities/attempt_result.dart';
 import '../../domain/repositories/quiz_repository.dart';
@@ -34,6 +37,10 @@ final quizRepositoryProvider = Provider<QuizRepository>((ref) {
   return QuizRepositoryImpl(remote, local: local);
 });
 
+final lifelineRemoteDataSourceProvider = Provider<LifelineRemoteDataSource>((ref) {
+  return LifelineRemoteDataSource(DioClient.instance.dio);
+});
+
 final quizControllerProvider =
     NotifierProvider<QuizController, QuizState>(QuizController.new);
 
@@ -47,7 +54,12 @@ class QuizController extends Notifier<QuizState> {
   Timer? _timer;
   static const _uuid = Uuid();
 
+  /// Wall-clock instant the current question was shown, used to report
+  /// `time_taken_seconds` with the answer. Reset on every advance.
+  DateTime? _questionShownAt;
+
   QuizRepository get _repo => ref.read(quizRepositoryProvider);
+  LifelineRemoteDataSource get _lifelines => ref.read(lifelineRemoteDataSourceProvider);
 
   @override
   QuizState build() {
@@ -103,7 +115,14 @@ class QuizController extends Notifier<QuizState> {
         session: session,
         attemptId: attemptId,
         isOfflinePractice: isOffline,
+        hiddenOptionKeys: const {},
+        lifelineNotice: null,
       );
+      _questionShownAt = DateTime.now();
+
+      // Lifelines are a separate, server-owned cluster. Load them in the
+      // background so a slow or failing read never delays the first question.
+      if (!isOffline) unawaited(loadLifelines());
 
       _startTimer(session.durationSeconds);
       // analytics best-effort
@@ -173,6 +192,7 @@ class QuizController extends Notifier<QuizState> {
         questionId: question.id,
         selectedOptionId: optionId,
         idempotencyKey: idempotencyKey,
+        timeTakenSeconds: _secondsOnThisQuestion(),
       );
 
       final updatedAnswers = Map<String, AttemptResult>.from(state.answers)
@@ -224,10 +244,128 @@ class QuizController extends Notifier<QuizState> {
       currentIndex: state.currentIndex + 1,
       lastResult: null,
       selectedOptionId: null,
+      // Lifeline effects are per-question; the next question starts clean.
+      hiddenOptionKeys: const {},
+      lifelineNotice: null,
     );
+    _questionShownAt = DateTime.now();
+  }
+
+  // ── Lifelines (server-authoritative) ─────────────────────────────────────
+
+  /// `GET /quiz/attempts/{attempt}/lifelines`.
+  ///
+  /// Failure is non-fatal and non-fatal-looking: a failed read leaves the bar
+  /// hidden rather than showing lifelines whose cost or availability we could
+  /// not confirm.
+  Future<void> loadLifelines() async {
+    final attemptId = state.attemptId;
+    if (attemptId == null || attemptId.startsWith('offline-')) return;
+    try {
+      final catalogue = await _lifelines.getCatalogue(attemptId);
+      state = state.copyWith(
+        lifelinesEnabled: catalogue.enabled,
+        lifelines: catalogue.lifelines,
+        lifelineWalletBalance: catalogue.walletBalance,
+      );
+    } catch (e) {
+      AppLogger.w('lifeline catalogue failed: $e');
+      state = state.copyWith(lifelinesEnabled: false, lifelines: const []);
+    }
+  }
+
+  /// Spend a lifeline on the current question and apply the server's effect.
+  ///
+  /// Returns the effect so the UI can narrate it, or `null` when the server
+  /// refused (insufficient coins, already used, mode locked). The effect is
+  /// never computed here — `LifelineEffectService` owns that.
+  Future<LifelineEffectDto?> useLifeline(String slug) async {
+    final attemptId = state.attemptId;
+    final question = state.currentQuestion;
+    if (attemptId == null || question == null) return null;
+    if (attemptId.startsWith('offline-')) return null;
+    if (state.isLifelineBusy) return null;
+
+    final questionId = int.tryParse(question.id);
+    // The server requires an int question_id; a non-numeric id cannot be spent.
+    if (questionId == null) return null;
+
+    final offered = state.lifelines.where((l) => l.slug == slug).firstOrNull;
+    if (offered != null && !offered.isAvailable) return null;
+
+    state = state.copyWith(busyLifelineSlug: slug, lifelineNotice: null);
+    try {
+      // Prefer a banked token; otherwise buy and apply in one server call.
+      // (`use` 404s/422s without inventory, so the choice matters.)
+      final result = offered != null && offered.hasBankedUse
+          ? await _lifelines.use(attemptId: attemptId, slug: slug, questionId: questionId)
+          : await _lifelines.purchaseAndUse(
+              attemptId: attemptId,
+              slug: slug,
+              questionId: questionId,
+            );
+
+      state = state.copyWith(
+        busyLifelineSlug: null,
+        hiddenOptionKeys: result.effect.hiddenOptionKeys.toSet(),
+        lifelineNotice: _describeEffect(result.effect),
+      );
+      // Remaining uses and the wallet moved server-side; re-read them rather
+      // than decrementing a local copy.
+      await loadLifelines();
+      return result.effect;
+    } catch (e) {
+      AppLogger.w('lifeline $slug failed: $e');
+      state = state.copyWith(
+        busyLifelineSlug: null,
+        lifelineNotice: 'Could not use ${offered?.name ?? slug}. ${_lifelineError(e)}',
+      );
+      return null;
+    }
+  }
+
+  /// Player-facing text for a server-built effect. Returns `null` when the
+  /// server sent an effect the client does not yet know how to render — the
+  /// caller reports it rather than pretending nothing happened.
+  static String? _describeEffect(LifelineEffectDto effect) {
+    if (effect.hint != null && effect.hint!.isNotEmpty) return effect.hint;
+    if (effect.explanation != null && effect.explanation!.isNotEmpty) {
+      return effect.explanation;
+    }
+    if (effect.hiddenOptionKeys.isNotEmpty) {
+      return '${effect.hiddenOptionKeys.length} wrong option(s) removed.';
+    }
+    if (effect.correctAnswer != null) return 'Correct answer: ${effect.correctAnswer}';
+    if (effect.extraSeconds != null) return '+${effect.extraSeconds}s added.';
+    if (effect.freezeSeconds != null) return 'Timer frozen for ${effect.freezeSeconds}s.';
+    if (effect.shieldActive ?? false) return 'Shield active — one wrong answer forgiven.';
+    if (effect.doubleXpActive ?? false) return 'Double XP active on the next correct answer.';
+    if (effect.poll != null) return 'Audience poll coming up.';
+    if (effect.retryQuestionId != null) return 'Second chance saved for this question.';
+    return null;
+  }
+
+  static String _lifelineError(Object e) {
+    final text = e.toString();
+    if (text.contains('INSUFFICIENT_COINS')) return 'Not enough coins.';
+    if (text.contains('LIFELINE_INVALID_QUESTION')) return 'Not valid for this question.';
+    if (text.contains('LIFELINE_ALREADY_USED') || text.contains('409')) {
+      return 'Already used on this attempt.';
+    }
+    if (text.contains('403')) return 'Not available for this attempt.';
+    return 'Please try again.';
   }
 
   // ── Private ───────────────────────────────────────────────────────────────
+
+  /// Seconds the player has spent on the current question. `null` when unknown
+  /// so the field is omitted rather than sent as a fabricated 0.
+  int? _secondsOnThisQuestion() {
+    final shownAt = _questionShownAt;
+    if (shownAt == null) return null;
+    final seconds = DateTime.now().difference(shownAt).inSeconds;
+    return seconds < 0 ? 0 : seconds;
+  }
 
   void _startTimer(int totalSeconds) {
     _timer?.cancel();

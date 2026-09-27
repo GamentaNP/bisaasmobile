@@ -28,6 +28,7 @@ abstract class QuizRepository {
     required String questionId,
     required String selectedOptionId,
     String? idempotencyKey,
+    int? timeTakenSeconds,
   });
 
   /// Finish the attempt — POST /api/v1/quiz/attempts/{attemptId}/complete

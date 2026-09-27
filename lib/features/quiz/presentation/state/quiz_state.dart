@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import '../../data/models/lifeline_dto.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/attempt_result.dart';
 
@@ -34,6 +35,12 @@ class QuizState {
     this.attemptId,
     this.selectedOptionId,
     this.isOfflinePractice = false,
+    this.lifelinesEnabled = false,
+    this.lifelines = const [],
+    this.lifelineWalletBalance = 0,
+    this.hiddenOptionKeys = const {},
+    this.lifelineNotice,
+    this.busyLifelineSlug,
   });
 
   factory QuizState.initial() => const QuizState(
@@ -65,6 +72,29 @@ class QuizState {
   final String? selectedOptionId;
   /// True when session was served from Drift cache and server attempt creation failed.
   final bool isOfflinePractice;
+
+  // ── Lifelines (server-authoritative) ───────────────────────────────────
+  /// The server's kill switch for this attempt. `false` hides the bar entirely.
+  final bool lifelinesEnabled;
+
+  /// The server's catalogue for this attempt, in the server's own order.
+  final List<LifelineDto> lifelines;
+  final int lifelineWalletBalance;
+
+  /// Option keys the server told us to hide (50/50, eliminate-one, swap).
+  /// Cleared on every question advance. Never derived on-device.
+  final Set<String> hiddenOptionKeys;
+  /// Text for the effect the server just returned (hint, explanation, poll…).
+  final String? lifelineNotice;
+
+  /// Slug of the lifeline currently being spent, for a per-chip spinner.
+  final String? busyLifelineSlug;
+
+  bool get hasLifelines => lifelinesEnabled && lifelines.isNotEmpty;
+  bool get isLifelineBusy => busyLifelineSlug != null;
+
+  bool isOptionHidden(String optionKey) =>
+      hiddenOptionKeys.any((hidden) => hidden.toUpperCase() == optionKey.toUpperCase());
 
   bool get hasSession => session != null;
 
@@ -99,6 +129,12 @@ class QuizState {
     String? attemptId,
     Object? selectedOptionId = _sentinel,
     bool? isOfflinePractice,
+    bool? lifelinesEnabled,
+    List<LifelineDto>? lifelines,
+    int? lifelineWalletBalance,
+    Set<String>? hiddenOptionKeys,
+    Object? lifelineNotice = _sentinel,
+    Object? busyLifelineSlug = _sentinel,
   }) {
     return QuizState(
       phase: phase ?? this.phase,
@@ -120,6 +156,15 @@ class QuizState {
           ? this.selectedOptionId
           : selectedOptionId as String?,
       isOfflinePractice: isOfflinePractice ?? this.isOfflinePractice,
+      lifelinesEnabled: lifelinesEnabled ?? this.lifelinesEnabled,
+      lifelines: lifelines ?? this.lifelines,
+      lifelineWalletBalance: lifelineWalletBalance ?? this.lifelineWalletBalance,
+      hiddenOptionKeys: hiddenOptionKeys ?? this.hiddenOptionKeys,
+      lifelineNotice:
+          lifelineNotice == _sentinel ? this.lifelineNotice : lifelineNotice as String?,
+      busyLifelineSlug: busyLifelineSlug == _sentinel
+          ? this.busyLifelineSlug
+          : busyLifelineSlug as String?,
     );
   }
 }

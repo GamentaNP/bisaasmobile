@@ -45,6 +45,24 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     return '$m:$s';
   }
 
+  /// Spend a lifeline on the current question.
+  ///
+  /// The controller performs the server call and applies the server's effect.
+  /// This only surfaces the outcome: an effect the client cannot render is
+  /// reported as such instead of being silently dropped.
+  Future<void> _useLifeline(String slug) async {
+    final effect = await ref.read(quizControllerProvider.notifier).useLifeline(slug);
+    if (!mounted) return;
+    if (effect != null && !effect.hasVisibleOutcome) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$slug used — the server returned an effect this app cannot show yet.'),
+          backgroundColor: AppColors.warnAmber,
+        ),
+      );
+    }
+  }
+
   Color _timerColor(int remaining, int total) {
     if (total == 0) return AppColors.brand;
     final fraction = remaining / total;
@@ -303,24 +321,18 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                if (state.phase == QuizPhase.answering)
+                if (state.hasLifelines && state.phase == QuizPhase.answering)
                   LifelineBar(
-                    onFiftyFifty: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('50/50 — coming soon (server-side)')),
-                      );
-                    },
-                    onHint: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Hint — coming soon (server-side)')),
-                      );
-                    },
-                    onSkip: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Skip — coming soon (server-side)')),
-                      );
-                    },
+                    lifelines: state.lifelines,
+                    walletBalance: state.lifelineWalletBalance,
+                    enabled: state.lifelinesEnabled,
+                    busySlug: state.busyLifelineSlug,
+                    onUse: (lifeline) => _useLifeline(lifeline.slug),
                   ),
+                if (state.lifelineNotice != null) ...[
+                  const SizedBox(height: 10),
+                  _LifelineNotice(text: state.lifelineNotice!),
+                ],
                 const SizedBox(height: 8),
 
                 // ── Answer options ────────────────────────────────────────
@@ -357,6 +369,12 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                   }
 
                   final optionIndex = question.options.indexOf(option);
+                  // The server told us which option keys to suppress (50/50,
+                  // eliminate-one, question swap). Honour it verbatim — never
+                  // compute our own idea of which options are wrong.
+                  final suppressed = state.isOptionHidden(option.id) &&
+                      state.phase == QuizPhase.answering;
+                  if (suppressed) return const SizedBox.shrink();
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: InkWell(
@@ -574,5 +592,45 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     if (confirmed == true && mounted) {
       context.pop();
     }
+  }
+}
+
+/// Renders the text of a server-built lifeline effect (hint, explanation, poll,
+/// shield, extra time …). The wording comes from `LifelineEffectService`; this
+/// widget only displays it.
+class _LifelineNotice extends StatelessWidget {
+  const _LifelineNotice({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.lifelineCyan.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lifelineCyan.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.auto_awesome_rounded, size: 16, color: AppColors.lifelineCyan),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

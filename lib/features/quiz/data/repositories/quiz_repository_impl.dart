@@ -54,12 +54,14 @@ class QuizRepositoryImpl implements QuizRepository {
     required String questionId,
     required String selectedOptionId,
     String? idempotencyKey,
+    int? timeTakenSeconds,
   }) async {
     final dto = await _remote.submitAnswer(
       attemptId: attemptId,
       questionId: questionId,
       selectedOptionId: selectedOptionId,
       idempotencyKey: idempotencyKey,
+      timeTakenSeconds: timeTakenSeconds,
     );
     return dto.toDomain();
   }

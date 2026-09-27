@@ -257,15 +257,19 @@ class QuizRemoteDataSource {
     required String questionId,
     required String selectedOptionId,
     String? idempotencyKey,
+    int? timeTakenSeconds,
   }) async {
     final key = idempotencyKey ?? _uuid.v4();
     final qId = int.tryParse(questionId) ?? questionId;
-    // Backend expects {question_id:int, answer:string} per SubmitAnswerRequest:23
+    // Backend expects {question_id:int, answer:string, time_taken_seconds?:int}
+    // per SubmitAnswerRequest. The duration is the server's integrity signal, so
+    // it is measured per question on-device and sent on every answer.
     final res = await _dio.post<Map<String, dynamic>>(
       '/quiz/attempts/$attemptId/answer',
-      data: {
+      data: <String, dynamic>{
         'question_id': qId is int ? qId : int.tryParse(questionId) ?? questionId,
         'answer': selectedOptionId,
+        if (timeTakenSeconds != null) 'time_taken_seconds': timeTakenSeconds,
       },
       options: Options(headers: {'Idempotency-Key': key}),
     );
