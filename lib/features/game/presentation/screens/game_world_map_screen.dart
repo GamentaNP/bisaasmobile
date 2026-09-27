@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../game_providers.dart';
@@ -40,7 +39,6 @@ class _WorldMapBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final chapters = map.chapters;
 
     return CustomScrollView(
@@ -115,7 +113,11 @@ class _WorldMapBody extends StatelessWidget {
           delegate: SliverChildBuilderDelegate(
             (context, chapterIndex) {
               final chapter = chapters[chapterIndex];
-              return _ChapterSection(chapter: chapter, worldSlug: '');
+              return _ChapterSection(
+                chapter: chapter,
+                worldSlug: map.world.slug,
+                courseId: map.world.quizCourseId,
+              );
             },
             childCount: chapters.length,
           ),
@@ -127,13 +129,17 @@ class _WorldMapBody extends StatelessWidget {
 }
 
 class _ChapterSection extends StatelessWidget {
-  const _ChapterSection({required this.chapter, required this.worldSlug});
+  const _ChapterSection({
+    required this.chapter,
+    required this.worldSlug,
+    required this.courseId,
+  });
   final GameChapterDto chapter;
   final String worldSlug;
+  final int? courseId;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final locked = !chapter.isUnlocked;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +187,11 @@ class _ChapterSection extends StatelessWidget {
           ),
         ),
         // Level nodes in zig-zag
-        _ZigZagPath(levels: chapter.levels, chapterId: chapter.id),
+        _ZigZagPath(
+          levels: chapter.levels,
+          chapterId: chapter.id,
+          courseId: courseId,
+        ),
       ],
     );
   }
@@ -189,14 +199,18 @@ class _ChapterSection extends StatelessWidget {
 
 /// Duolingo-style zig-zag path of level nodes.
 class _ZigZagPath extends StatelessWidget {
-  const _ZigZagPath({required this.levels, required this.chapterId});
+  const _ZigZagPath({
+    required this.levels,
+    required this.chapterId,
+    required this.courseId,
+  });
   final List<GameLevelDto> levels;
   final int chapterId;
+  final int? courseId;
 
   @override
   Widget build(BuildContext context) {
     const nodeSize = 64.0;
-    const hPadding = 32.0;
     final width = MediaQuery.sizeOf(context).width;
 
     // Zig-zag: alternate between 2 columns
@@ -250,7 +264,11 @@ class _ZigZagPath extends StatelessWidget {
             Positioned(
               top: i * rowHeight,
               left: positions[i],
-              child: _LevelNode(level: levels[i], nodeSize: nodeSize),
+              child: _LevelNode(
+                level: levels[i],
+                nodeSize: nodeSize,
+                courseId: courseId,
+              ),
             ),
         ],
       ),
@@ -266,7 +284,10 @@ class _PathLinePainter extends CustomPainter {
     required this.toY,
     required this.color,
   });
-  final double fromX, toX, fromY, toY;
+  final double fromX;
+  final double toX;
+  final double fromY;
+  final double toY;
   final Color color;
 
   @override
@@ -293,9 +314,14 @@ class _PathLinePainter extends CustomPainter {
 }
 
 class _LevelNode extends StatelessWidget {
-  const _LevelNode({required this.level, required this.nodeSize});
+  const _LevelNode({
+    required this.level,
+    required this.nodeSize,
+    required this.courseId,
+  });
   final GameLevelDto level;
   final double nodeSize;
+  final int? courseId;
 
   Color get _bgColor {
     if (level.isCompleted) return AppColors.correctGreen;
@@ -368,7 +394,7 @@ class _LevelNode extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => GameLevelIntroSheet(level: level),
+      builder: (_) => GameLevelIntroSheet(level: level, courseId: courseId),
     );
   }
 }

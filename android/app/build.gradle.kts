@@ -40,10 +40,30 @@ android {
 
     defaultConfig {
         applicationId = "com.bisaas.bisaasmobile"
-        // Master plan 1.3: min Android 10 (API 29) — Redmi Note 12 profile; target 36 (Android SDK 36.0.0, build-tools 36.0.0)
-        // Security plan W2.6: restored to the intended floor. The CPH1909 (API 27)
-        // test device is no longer a supported build target; test on API 29+.
-        minSdk = 29
+        // Master plan 1.3 named Android 10 (API 29) as the floor. Security plan
+        // W2.6 then *raised* it to 29 and retired the CPH1909 (API 27) device.
+        //
+        // REVISED 2026-09-27: floor lowered back to API 28 (Android 9) on the
+        // founder's decision. Rationale — distribution, not capability:
+        //   * The Loksewa / PSC candidate base in Nepal skews hard to budget
+        //     handsets. The Redmi 6A (Android 9, API 28) is the single most
+        //     common device class in that market, and API 28 still covers the
+        //     overwhelming majority of active Android installs. API 29 buys no
+        //     capability this app uses: the runtime surface we rely on
+        //     (notification channels, scoped storage via the plugin layer,
+        //     FCM) is satisfied at 28, and Google Play accepts a 28 floor.
+        //   * Real-device QA is now possible on the connected test phone,
+        //     which is API 28. Keeping 29 meant the team's only physical
+        //     device could never install the app, so no on-device verification
+        //     could happen at all.
+        // Trade-off accepted: API 28 is out of support and receives no OS
+        // security patches. Nothing in the client depends on a 29-only API, and
+        // the app performs no local grading or key storage that the platform
+        // would harden for us — grading is server-authoritative and the PAT
+        // lives in flutter_secure_storage's EncryptedSharedPreferences.
+        // Revisit to 29 once Play Console's own target-API deadline forces it
+        // or once the QA device is retired.
+        minSdk = 28
         targetSdk = 36
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)

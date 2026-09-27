@@ -196,7 +196,7 @@ class AchievementsScreen extends ConsumerWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 1.0,
+                  childAspectRatio: 1,
                 ),
                 itemCount: data.achievements.length,
                 itemBuilder: (context, i) => _AchievementCard(achievement: data.achievements[i]),
@@ -286,7 +286,7 @@ class _AchievementCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(3),
                 child: LinearProgressIndicator(
-                  value: progressFrac.toDouble(),
+                  value: progressFrac,
                   minHeight: 4,
                   backgroundColor: color.withValues(alpha: 0.12),
                   color: color,

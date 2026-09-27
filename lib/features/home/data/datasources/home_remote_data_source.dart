@@ -32,7 +32,7 @@ class HomeRemoteDataSource {
     nextLevelXp: 100,
     coinsBalance: 0,
     activeCourseTitle: null,
-    activeCourseProgress: 0.0,
+    activeCourseProgress: 0,
   );
 
   Future<DashboardDto> getDashboard() async {

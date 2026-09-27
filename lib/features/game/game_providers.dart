@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/network/dio_client.dart';
+import '../../core/network/dio_client.dart';
 import 'data/datasources/game_remote_data_source.dart';
 import 'data/models/game_models.dart';
 
