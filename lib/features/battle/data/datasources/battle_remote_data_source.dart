@@ -2,14 +2,14 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_response.dart';
 
-/// Verified server routes (`routes/api/v1/quiz.php` â€” Firebase Multiplayer Battles):
-/// - GET  /quiz/firebase-token                â†’ custom token for RTDB auth
-/// - POST /quiz/battles                       â†’ create/find open battle ({category_id required, total_questions 5..20})
-/// - POST /quiz/battles/{id}/join             â†’ join an open battle
-/// - POST /quiz/battles/{id}/answer           â†’ {question_id, question_index, selected_option 1..4, time_taken_ms}
-/// - POST /quiz/battles/{id}/end              â†’ force-finish
-/// - GET  /quiz/battles/{id}/results          â†’ final results
-/// - GET  /quiz/battles/history               â†’ battle history
+/// Verified server routes (`routes/api/v1/quiz.php` — Firebase Multiplayer Battles):
+/// - GET  /quiz/firebase-token                → custom token for RTDB auth
+/// - POST /quiz/battles                       → create/find open battle ({category_id required, total_questions 5..20})
+/// - POST /quiz/battles/{id}/join             → join an open battle
+/// - POST /quiz/battles/{id}/answer           → {question_id, question_index, selected_option 1..4, time_taken_ms}
+/// - POST /quiz/battles/{id}/end              → force-finish
+/// - GET  /quiz/battles/{id}/results          → final results
+/// - GET  /quiz/battles/history               → battle history
 /// RTDB subscription is read-only on /battles/{lobbyId} (see docs/mobileapp/RTDB_BATTLE_SCHEMA.md).
 /// Dio baseUrl already ends with /api/v1.
 class BattleRemoteDataSource {

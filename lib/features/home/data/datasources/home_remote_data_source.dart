@@ -20,16 +20,21 @@ class HomeRemoteDataSource {
   const HomeRemoteDataSource(this._dio);
   final Dio _dio;
 
+  // Offline / unreachable fallback. Every field is an honest zero or null:
+  // no invented quiz title, no invented XP threshold. The UI renders an
+  // "offline" treatment when it sees a zero-streak, un-scheduled, zero-balance
+  // payload rather than a fake "Daily Engineering Sprint".
   static const _fallback = DashboardDto(
     streakDays: 0,
     isDailyCompleted: false,
-    dailyQuizTitle: 'Daily Engineering Sprint',
+    dailyQuizScheduled: false,
+    dailyQuizTitle: null,
     dailyQuizQuestionsCount: 0,
-    dailyQuizXpReward: 0,
-    dailyQuizCoinsReward: 0,
+    dailyQuizXpReward: null,
+    dailyQuizCoinsReward: null,
     level: 1,
     currentXp: 0,
-    nextLevelXp: 100,
+    nextLevelXp: null,
     coinsBalance: 0,
     activeCourseTitle: null,
     activeCourseProgress: 0,
@@ -99,18 +104,22 @@ class HomeRemoteDataSource {
       merged['streak_days'] = merged['streak']?['current_streak'];
     }
 
-    // /quiz/daily → {title, questions_count, xp_reward, coins_reward, completed}
+    // /quiz/daily → {schedule: {...} | null, has_completed: bool}
+    // Verified against QuizDailyApiController@today. The schedule is the raw
+    // quiz_daily_schedules row (snake_case) and carries NO xp/coin reward, so
+    // those stay absent rather than being invented. `has_completed` is the
+    // only completion flag — the old code looked for `completed`, so
+    // isDailyCompleted was permanently false.
     if (daily != null) {
-      // Some deployments nest under quiz or daily_quiz
-      final src = daily['quiz'] as Map<String, dynamic>? ??
-          daily['daily_quiz'] as Map<String, dynamic>? ??
-          daily;
+      final schedule = daily['schedule'] as Map<String, dynamic>?;
       merged['daily_quiz'] = {
-        'title': src['title'] ?? src['name'] ?? daily['title'],
-        'questions_count': src['questions_count'] ?? src['question_count'] ?? src['total_questions'],
-        'xp_reward': src['xp_reward'] ?? src['xp'],
-        'coins_reward': src['coins_reward'] ?? src['coins'],
-        'completed': src['completed'] ?? src['is_completed'] ?? false,
+        'scheduled': schedule != null,
+        'title': schedule?['title'],
+        'questions_count': schedule?['question_count'],
+        'time_limit_minutes': schedule?['time_limit_minutes'],
+        'course_id': schedule?['quiz_course_id'],
+        'category_id': schedule?['quiz_category_id'],
+        'completed': daily['has_completed'] ?? daily['completed'] ?? false,
       };
     }
 

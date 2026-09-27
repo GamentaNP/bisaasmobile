@@ -73,18 +73,13 @@ class HomeScreen extends ConsumerWidget {
               data: (data) => _DailyStreakCard(
                 streakDays: data.streakDays,
                 isDailyCompleted: data.isDailyCompleted,
+                isScheduled: data.dailyQuizScheduled,
                 dailyTitle: data.dailyQuizTitle,
                 questionCount: data.dailyQuizQuestionsCount,
                 xpReward: data.dailyQuizXpReward,
               ),
               loading: () => const _ShimmerCard(height: 120),
-              error: (_, __) => const _DailyStreakCard(
-                streakDays: 0,
-                isDailyCompleted: false,
-                dailyTitle: 'Daily Challenge',
-                questionCount: 0,
-                xpReward: 0,
-              ),
+              error: (e, _) => _OfflineStreakCard(error: '$e'),
             ),
 
             const SizedBox(height: 20),
@@ -328,10 +323,58 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+/// Shown when the dashboard request itself fails.
+///
+/// This used to render a full `_DailyStreakCard` with an invented
+/// `dailyTitle: 'Daily Challenge'`, dressing an outage up as real data. It now
+/// says what actually happened and offers a retry.
+class _OfflineStreakCard extends StatelessWidget {
+  const _OfflineStreakCard({required this.error});
+
+  final String error;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChunkyCard(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud_off_rounded, size: 26, color: AppColors.textTertiaryLight),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Could not load your dashboard',
+                  style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Nothing is shown rather than guessing. Pull to refresh, or retry below.',
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryLight),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  error,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryLight),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _DailyStreakCard extends StatelessWidget {
   const _DailyStreakCard({
     required this.streakDays,
     required this.isDailyCompleted,
+    required this.isScheduled,
     required this.dailyTitle,
     required this.questionCount,
     required this.xpReward,
@@ -339,9 +382,28 @@ class _DailyStreakCard extends StatelessWidget {
 
   final int streakDays;
   final bool isDailyCompleted;
-  final String dailyTitle;
+
+  /// The server has a daily quiz scheduled for today.
+  final bool isScheduled;
+
+  /// `null` when the server published no title.
+  final String? dailyTitle;
   final int questionCount;
-  final int xpReward;
+
+  /// `null` when the server published no reward — the card then omits the
+  /// figure rather than printing a made-up "+N XP".
+  final int? xpReward;
+
+  /// One-line summary of the scheduled quiz, built only from fields the
+  /// server actually sent. Omitted entirely when it would be empty.
+  String get _scheduleDetail {
+    final parts = <String>[
+      if (dailyTitle != null && dailyTitle!.isNotEmpty) dailyTitle!,
+      if (questionCount > 0) '$questionCount questions',
+      if (xpReward != null && xpReward! > 0) '+$xpReward XP',
+    ];
+    return parts.isEmpty ? 'Ready to play' : parts.join(' · ');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -350,21 +412,36 @@ class _DailyStreakCard extends StatelessWidget {
         : streakDays > 0
             ? AppColors.streakGradient
             : AppColors.infoGradient;
-    final tag = isDailyCompleted
-        ? 'DONE FOR TODAY'
-        : streakDays > 0
-            ? 'STREAK AT RISK'
-            : 'START YOUR STREAK';
-    final title = isDailyCompleted
-        ? 'Streak safe · $streakDays🔥'
-        : streakDays > 0
-            ? 'Keep your $streakDays-day streak alive'
-            : 'Play 1 quiz to start';
-    final desc = isDailyCompleted
-        ? 'Come back tomorrow for +XP'
-        : questionCount > 0
-            ? '$dailyTitle · $questionCount questions · +$xpReward XP'
-            : "Complete today's quiz to grow the streak";
+
+    // Copy is derived from real state only. When no daily quiz is scheduled we
+    // say so — we never imply a quiz exists.
+    final (tag, title, desc) = switch ((isDailyCompleted, isScheduled, streakDays)) {
+      (true, _, _) => (
+          'DONE FOR TODAY',
+          'Streak safe · $streakDays🔥',
+          'Come back tomorrow to keep it going',
+        ),
+      (false, true, 0) => (
+          'DAILY QUIZ READY',
+          'Play today’s daily quiz',
+          _scheduleDetail,
+        ),
+      (false, true, _) => (
+          'STREAK AT RISK',
+          'Keep your $streakDays-day streak alive',
+          _scheduleDetail,
+        ),
+      (false, false, 0) => (
+          'START YOUR STREAK',
+          'Play 1 quiz to start',
+          'No daily quiz is scheduled today — any quiz counts',
+        ),
+      (false, false, _) => (
+          'STREAK AT RISK',
+          'Keep your $streakDays-day streak alive',
+          'No daily quiz today — play any quiz to keep it',
+        ),
+    };
 
     return Material(
       color: Colors.transparent,

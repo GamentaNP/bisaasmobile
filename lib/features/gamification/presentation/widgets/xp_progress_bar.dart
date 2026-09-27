@@ -5,6 +5,12 @@ import '../../../../app/theme/app_colors.dart';
 /// XP progress bar — server-authoritative, never computes level locally.
 ///
 /// Level/XP comes from `GET /me` or `DashboardDto`; this widget only visualizes.
+///
+/// [nextLevelXp] is nullable on purpose: the server does not always publish a
+/// level threshold. When it is null the widget shows the level and current XP
+/// and omits the progress bar entirely, rather than dividing by a made-up
+/// total (the previous version hardcoded 1000 here and 100 in the home
+/// fallback, so the two screens disagreed).
 class XpProgressBar extends StatelessWidget {
   const XpProgressBar({
     required this.level,
@@ -15,14 +21,15 @@ class XpProgressBar extends StatelessWidget {
 
   final int level;
   final int currentXp;
-  final int nextLevelXp;
+  final int? nextLevelXp;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final total = nextLevelXp > 0 ? nextLevelXp : 1;
-    final progress = (currentXp / total).clamp(0.0, 1.0);
-    final remaining = (nextLevelXp - currentXp).clamp(0, nextLevelXp);
+    final threshold = nextLevelXp;
+    final hasThreshold = threshold != null && threshold > 0;
+    final progress = hasThreshold ? (currentXp / threshold).clamp(0.0, 1.0) : 0.0;
+    final remaining = hasThreshold ? (threshold - currentXp).clamp(0, threshold) : null;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -47,30 +54,33 @@ class XpProgressBar extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  '$currentXp / $nextLevelXp XP',
+                  hasThreshold ? '$currentXp / $threshold XP' : '$currentXp XP',
                   style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.bolt_rounded, size: 14, color: AppColors.xpGold),
-                  const SizedBox(width: 4),
-                  Text('$remaining to next', style: const TextStyle(fontSize: 11, color: AppColors.xpGold, fontWeight: FontWeight.w600)),
-                ],
-              ),
+              if (remaining != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.bolt_rounded, size: 14, color: AppColors.xpGold),
+                    const SizedBox(width: 4),
+                    Text('$remaining to next', style: const TextStyle(fontSize: 11, color: AppColors.xpGold, fontWeight: FontWeight.w600)),
+                  ],
+                ),
             ],
           ),
-          const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              color: AppColors.xpGold,
-              minHeight: 8,
+          if (hasThreshold) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                color: AppColors.xpGold,
+                minHeight: 8,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

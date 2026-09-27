@@ -153,7 +153,12 @@ class AchievementsScreen extends ConsumerWidget {
           dash.when(
             data: (d) => XpProgressBar(level: d.level, currentXp: d.currentXp, nextLevelXp: d.nextLevelXp),
             loading: () => const LinearProgressIndicator(),
-            error: (_, __) => XpProgressBar(level: user?.level ?? 1, currentXp: user?.xp ?? 0, nextLevelXp: 1000),
+            error: (_, __) => XpProgressBar(
+              level: user?.level ?? 1,
+              currentXp: user?.xp ?? 0,
+              // No invented threshold: the server did not publish one.
+              nextLevelXp: null,
+            ),
           ),
           const SizedBox(height: 12),
           Row(

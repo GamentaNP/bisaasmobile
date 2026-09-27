@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,10 +10,10 @@ import '../../../../shared/widgets/error_view.dart';
 import '../../data/models/game_models.dart';
 import '../../game_providers.dart';
 
-/// World picker â€” `GET /api/v1/quiz/game/worlds`.
+/// World picker — `GET /api/v1/quiz/game/worlds`.
 ///
 /// The entry point into the Duolingo spine: each world opens its chapter/level
-/// path in `GameWorldMapScreen`. Progress numbers come from the same payload â€”
+/// path in `GameWorldMapScreen`. Progress numbers come from the same payload —
 /// nothing here is derived client-side.
 class GameWorldsScreen extends ConsumerWidget {
   const GameWorldsScreen({super.key});
@@ -73,7 +73,7 @@ class _WorldCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Banner â€” server image when present, brand gradient otherwise.
+          // Banner — server image when present, brand gradient otherwise.
           SizedBox(
             height: 108,
             child: Stack(
@@ -170,7 +170,7 @@ class _WorldCard extends StatelessWidget {
   }
 }
 
-/// Why a world is locked â€” always sourced from the server's access mode.
+/// Why a world is locked — always sourced from the server's access mode.
 class _GateChip extends StatelessWidget {
   const _GateChip({required this.world, required this.muted});
 

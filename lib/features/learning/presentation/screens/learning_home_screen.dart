@@ -1,4 +1,4 @@
-﻿// ignore_for_file: avoid_dynamic_calls, body_might_complete_normally_catch_error
+// ignore_for_file: avoid_dynamic_calls, body_might_complete_normally_catch_error
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +45,7 @@ class LearningHomeScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             tracksAsync.when(
               data: (tracks) => tracks.isEmpty
-                  ? const Text('No tracks yet â€” backend will publish via GET /learning/tracks', style: TextStyle(color: Colors.grey, fontSize: 12))
+                  ? const Text('No tracks yet — backend will publish via GET /learning/tracks', style: TextStyle(color: Colors.grey, fontSize: 12))
                   : Column(
                       children: tracks
                           .map((t) => Card(
@@ -73,7 +73,7 @@ class LearningHomeScreen extends ConsumerWidget {
               label: const Text('Ask AI Tutor (non-streaming POST /learning/tutor)'),
             ),
             const SizedBox(height: 8),
-            const Text('Day-one uses non-streaming tutor per MOBILE_API_INTEGRATION_GUIDE.md:112 â€” SSE is web-only.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            const Text('Day-one uses non-streaming tutor per MOBILE_API_INTEGRATION_GUIDE.md:112 — SSE is web-only.', style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         ),
       ),
@@ -95,7 +95,7 @@ class _TodayCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
         ),
-        child: const Text('No tasks â€” check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        child: const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
       );
     }
     var tasks = <String>[];
@@ -133,7 +133,7 @@ class _TodayCard extends StatelessWidget {
             const SizedBox(height: 8),
             ...tasks.map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
           ] else
-            const Text('No tasks â€” check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
         ],
       ),
     );
