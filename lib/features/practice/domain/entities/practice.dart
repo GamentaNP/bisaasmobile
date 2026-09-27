@@ -1,6 +1,15 @@
 import 'package:meta/meta.dart';
 
 @immutable
+class PracticeOption {
+  const PracticeOption({required this.key, required this.text});
+
+  /// The server's option key — "A", "B", … (uppercase, verified live).
+  final String key;
+  final String text;
+}
+
+@immutable
 class PracticeQuestion {
   const PracticeQuestion({
     required this.id,
@@ -9,6 +18,7 @@ class PracticeQuestion {
     this.difficulty,
     this.points,
     this.categoryId,
+    this.options = const [],
   });
 
   final int id;
@@ -17,6 +27,12 @@ class PracticeQuestion {
   final int? difficulty;
   final int? points;
   final int? categoryId;
+
+  /// The real choices from the server. Empty means the server sent none —
+  /// which is a reason to say so, never a licence to render A/B/C/D.
+  final List<PracticeOption> options;
+
+  bool get hasOptions => options.isNotEmpty;
 }
 
 @immutable

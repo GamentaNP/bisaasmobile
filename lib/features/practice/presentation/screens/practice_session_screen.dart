@@ -5,11 +5,20 @@ import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/practice.dart';
 import 'practice_browser_screen.dart';
 
-/// Untimed practice session — local drilling, bookmarked sets, self-challenge.
+/// Untimed practice drill.
+///
 /// Per spec 4.6: no coin cost, no leaderboard effect, no streak risk.
-/// Shows immediate local feedback; official grading is server-side via
-/// POST /quiz/attempts/{attempt}/answer etc., but this local drill is provisional
-/// and visibly labelled.
+///
+/// **No invented content, and no invented grading.** The previous version of
+/// this screen rendered a literal `['A','B','C','D']` option list labelled
+/// "Option X — tap to select", and decided correctness with
+/// `_current.id.isEven && opt.hashCode.isEven` — i.e. it showed fake questions
+/// and reported a made-up score.
+///
+/// The server withholds answer keys until an attempt is graded
+/// (`QuizQuestionResource` exposure policy), so this drill genuinely *cannot*
+/// know whether an answer was right. It therefore records selections and says
+/// exactly that, instead of asserting a verdict the client has no basis for.
 class PracticeSessionScreen extends ConsumerStatefulWidget {
   const PracticeSessionScreen({super.key, required this.args});
   final PracticeSessionArgs args;
@@ -20,38 +29,27 @@ class PracticeSessionScreen extends ConsumerStatefulWidget {
 
 class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
   int _index = 0;
-  int _correct = 0;
-  int _wrong = 0;
+  int _answered = 0;
   int _skipped = 0;
-  String? _selectedOption;
-  bool _revealed = false;
+
+  /// index → selected option key. Absence means "not answered / skipped".
   final Map<int, String> _answers = {};
 
   PracticeQuestion get _current => widget.args.questions[_index];
   bool get _isLast => _index >= widget.args.questions.length - 1;
+  String? get _selected => _answers[_index];
 
-  void _select(String opt) {
-    if (_revealed) return;
+  void _select(String optionKey) {
     setState(() {
-      _selectedOption = opt;
-      _revealed = true;
-      // Local provisional correctness: we have no answer key offline; mark as "attempted"
-      // In real server practice, would POST /attempts/{a}/answer and await isCorrect.
-      // Here we simulate: if question id is even, treat as correct for demo; otherwise pending.
-      // This keeps the drill functional offline without fabricating server truth.
-      final isDemoCorrect = _current.id.isEven && opt.hashCode.isEven;
-      _answers[_index] = opt;
-      if (isDemoCorrect) {
-        _correct++;
-      } else {
-        // For demo, count as attempted; real app would await server grading
-        _wrong++;
-      }
+      if (_answers.containsKey(_index)) return; // already answered
+      _answers[_index] = optionKey;
+      _answered++;
     });
   }
 
   void _skip() {
     setState(() {
+      if (_answers.containsKey(_index)) return;
       _answers[_index] = '__skip__';
       _skipped++;
     });
@@ -63,24 +61,12 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
       _showResult();
       return;
     }
-    setState(() {
-      _index++;
-      _selectedOption = _answers[_index];
-      _revealed = _answers.containsKey(_index) && _answers[_index] != '__skip__';
-      if (_answers[_index] == '__skip__') {
-        _selectedOption = null;
-        _revealed = false;
-      }
-    });
+    setState(() => _index++);
   }
 
   void _prev() {
     if (_index == 0) return;
-    setState(() {
-      _index--;
-      _selectedOption = _answers[_index] == '__skip__' ? null : _answers[_index];
-      _revealed = _answers.containsKey(_index) && _answers[_index] != '__skip__';
-    });
+    setState(() => _index--);
   }
 
   void _showResult() {
@@ -88,7 +74,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
       context: context,
       barrierDismissible: false,
       builder: (c) => AlertDialog(
-        title: const Text('Practice complete'),
+        title: const Text('Drill complete'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,14 +82,19 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
-              child: const Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text('Practice result — not affecting rank', style: TextStyle(fontSize: 12, color: AppColors.brand)))]),
+              child: const Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text('Practice — does not affect rank, XP or streak', style: TextStyle(fontSize: 12, color: AppColors.brand)))]),
             ),
             const SizedBox(height: 12),
             Text('${widget.args.questions.length} questions', style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 4),
-            Text('$_correct correct • $_wrong attempted • $_skipped skipped', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text('$_answered answered • $_skipped skipped', style: const TextStyle(fontSize: 12, color: Colors.grey)),
             const SizedBox(height: 8),
-            const Text('Official scores come from POST /quiz/attempts/{attempt}/complete — this local drill is provisional and offline-capable.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            const Text(
+              'No score is shown because the server grades answers and does not '
+              'publish answer keys to the client. Run this as a graded quiz from '
+              'the Quiz tab to see a real result.',
+              style: TextStyle(fontSize: 11, color: Colors.grey),
+            ),
           ],
         ),
         actions: [
@@ -121,11 +112,12 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     if (qs.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.args.title)),
-        body: const Center(child: Text('No questions')),
+        body: const Center(child: Text('No questions in this set')),
       );
     }
 
-    final progress = (qs.isEmpty) ? 0.0 : (_index + 1) / qs.length;
+    final progress = (_index + 1) / qs.length;
+    final answered = _selected != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -148,7 +140,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                   child: Text('Q ${_index + 1}/${qs.length}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
                 ),
                 const SizedBox(width: 8),
-                Text('$_correct✓ $_wrong✗ $_skipped–', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                Text('$_answered answered • $_skipped skipped', style: const TextStyle(fontSize: 11, color: Colors.grey)),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -177,7 +169,14 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Text(_current.questionText.isEmpty ? 'Practice question #${_current.id} — content loads from GET /quiz/questions or bookmarked set.' : _current.questionText, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, height: 1.4)),
+                      Text(
+                        _current.questionText.isEmpty
+                            // An empty body is a server gap, not an invitation
+                            // to render placeholder prose.
+                            ? 'This question has no text on the server.'
+                            : _current.questionText,
+                        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, height: 1.4),
+                      ),
                       if (_current.difficulty != null) ...[
                         const SizedBox(height: 6),
                         Text('Difficulty: ${_current.difficulty}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
@@ -186,41 +185,71 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Options — placeholder A-D for drill; real questions would have server-provided options via quiz domain
-                ...['A', 'B', 'C', 'D'].map((opt) => Padding(
+                if (_current.hasOptions)
+                  ..._current.options.map(
+                    (option) => Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
-                        onTap: () => _select(opt),
+                        onTap: answered ? null : () => _select(option.key),
                         child: Container(
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: _selectedOption == opt
-                                ? (_revealed ? AppColors.brand.withValues(alpha: 0.08) : theme.colorScheme.surface)
+                            color: _selected == option.key
+                                ? AppColors.brand.withValues(alpha: 0.08)
                                 : theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _selectedOption == opt ? AppColors.brand : theme.colorScheme.outlineVariant.withValues(alpha: 0.3), width: _selectedOption == opt ? 1.5 : 1),
+                            border: Border.all(
+                              color: _selected == option.key ? AppColors.brand : theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                              width: _selected == option.key ? 1.5 : 1,
+                            ),
                           ),
                           child: Row(children: [
                             Container(
                               width: 32,
                               height: 32,
-                              decoration: BoxDecoration(color: _selectedOption == opt ? AppColors.brand : theme.colorScheme.surfaceContainerHighest, shape: BoxShape.circle),
-                              child: Center(child: Text(opt, style: TextStyle(fontWeight: FontWeight.bold, color: _selectedOption == opt ? Colors.white : theme.colorScheme.onSurface))),
+                              decoration: BoxDecoration(color: _selected == option.key ? AppColors.brand : theme.colorScheme.surfaceContainerHighest, shape: BoxShape.circle),
+                              child: Center(child: Text(option.key, style: TextStyle(fontWeight: FontWeight.bold, color: _selected == option.key ? Colors.white : theme.colorScheme.onSurface))),
                             ),
                             const SizedBox(width: 12),
-                            Expanded(child: Text('Option $opt — tap to select (local provisional feedback; server grading on submit).', style: const TextStyle(fontSize: 13))),
-                            if (_revealed && _selectedOption == opt) const Icon(Icons.check_circle_rounded, color: AppColors.brand, size: 18),
+                            Expanded(child: Text(option.text, style: const TextStyle(fontSize: 13))),
+                            if (_selected == option.key) const Icon(Icons.check_circle_rounded, color: AppColors.brand, size: 18),
                           ]),
                         ),
                       ),
-                    )),
-                if (_revealed) ...[
+                    ),
+                  )
+                else
+                  // Honest about the gap instead of inventing four choices.
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.warnAmberBg,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.warnAmber.withValues(alpha: 0.35)),
+                    ),
+                    child: const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.report_gmailerrorred_rounded, size: 18, color: AppColors.warningShadow),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'The server sent this question without answer options, so '
+                            'it cannot be drilled here. Try the graded Quiz tab, which '
+                            'loads a full session.',
+                            style: TextStyle(fontSize: 12, color: AppColors.warningShadow),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (answered) ...[
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.correctGreen.withValues(alpha: 0.2))),
-                    child: const Row(children: [Icon(Icons.lightbulb_rounded, size: 16, color: AppColors.correctGreen), SizedBox(width: 8), Expanded(child: Text('Recorded locally. Server will grade on POST /quiz/attempts/{attempt}/answer with Idempotency-Key.', style: TextStyle(fontSize: 11, color: AppColors.correctGreen)))]),
+                    decoration: BoxDecoration(color: AppColors.lifelineCyan.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.lifelineCyan.withValues(alpha: 0.25))),
+                    child: const Row(children: [Icon(Icons.schedule_rounded, size: 16, color: AppColors.lifelineCyan), SizedBox(width: 8), Expanded(child: Text('Answer recorded. The server grades it — this drill does not and will not guess a score.', style: TextStyle(fontSize: 11, color: AppColors.lifelineCyan)))]),
                   ),
                 ],
                 const SizedBox(height: 16),
@@ -228,13 +257,17 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                   children: [
                     OutlinedButton.icon(onPressed: _index == 0 ? null : _prev, icon: const Icon(Icons.arrow_back_rounded, size: 16), label: const Text('Prev')),
                     const Spacer(),
-                    TextButton.icon(onPressed: _skip, icon: const Icon(Icons.skip_next_rounded, size: 16), label: const Text('Skip')),
+                    TextButton.icon(onPressed: answered ? null : _skip, icon: const Icon(Icons.skip_next_rounded, size: 16), label: const Text('Skip')),
                     const SizedBox(width: 8),
                     FilledButton.icon(onPressed: _next, icon: Icon(_isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded, size: 16), label: Text(_isLast ? 'Finish' : 'Next')),
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Text('Practice is offline-capable with provisional local scoring. Official score replaces it on sync (see Part 6.6 reconciliation).', style: TextStyle(fontSize: 11, color: Colors.grey), textAlign: TextAlign.center),
+                const Text(
+                  'Practice is untimed and carries no score, XP, coins or streak effect.',
+                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),

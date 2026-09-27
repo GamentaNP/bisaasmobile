@@ -55,26 +55,34 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
     );
 
     // Live question count (and category name when drilling into one topic).
-    final qp = <String, dynamic>{'per_page': 1};
+    //
+    // The questions endpoint is cursor-paginated and publishes NO total
+    // (verified 2026-09-27: top-level `pagination` with `type:"cursor"`,
+    // `count`, `has_more`, `next_cursor`). The previous code read
+    // `pagination.total`, which does not exist, so this screen always showed
+    // "0 Qs" and "0 min" for every course. Read the page we actually got and
+    // mark it as a lower bound when the server says more exist.
+    final qp = <String, dynamic>{'per_page': 100};
     final catId = int.tryParse(widget.categoryId ?? '');
     if (catId != null) qp['category_id'] = catId;
     final qRes = await dio.get<Map<String, dynamic>>(
       '/quiz/courses/${widget.quizId}/questions',
       queryParameters: qp,
     );
-    final body = qRes.data ?? const {};
-    final pagination = body['pagination'];
-    final count = pagination is Map<String, dynamic>
-        ? (pagination['total'] as num?)?.toInt() ?? 0
-        : 0;
+    final body = qRes.data ?? const <String, dynamic>{};
+    final data = body['data'];
+    final items = data is Map<String, dynamic>
+        ? (data['items'] as List? ?? const [])
+        : (data is List ? data : const <dynamic>[]);
+    final pagination = body['pagination'] is Map<String, dynamic>
+        ? body['pagination'] as Map<String, dynamic>
+        : (data is Map<String, dynamic> && data['pagination'] is Map<String, dynamic>
+            ? data['pagination'] as Map<String, dynamic>
+            : null);
+    final hasMore = pagination?['has_more'] as bool? ?? false;
+    final count = items.length;
     var topic = course.title;
     if (catId != null) {
-      // Envelope: data is {items: [...]} for paginated endpoints, a bare list
-      // for plain ones.
-      final data = body['data'];
-      final items = data is Map<String, dynamic>
-          ? (data['items'] as List? ?? const [])
-          : (data is List ? data : const []);
       final first = items.isNotEmpty ? items.first : null;
       final cat = first is Map<String, dynamic> ? first['category'] : null;
       if (cat is Map<String, dynamic> && cat['name'] is String) {
@@ -86,6 +94,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
       title: topic,
       category: course.title,
       questionCount: count,
+      hasMoreQuestions: hasMore,
       // Same 90s-per-question pacing the session builder uses.
       durationMinutes: (count * 90 / 60).round(),
     );
@@ -143,11 +152,34 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    Expanded(child: _StatTile(icon: Icons.help_outline_rounded, label: '${q.questionCount} Qs')),
+                    Expanded(
+                      child: _StatTile(
+                        icon: Icons.help_outline_rounded,
+                        // "100+" when the page was truncated, never a fake total.
+                        label: q.hasMoreQuestions ? '${q.questionCount}+' : '${q.questionCount}',
+                        caption: 'Questions',
+                      ),
+                    ),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatTile(icon: Icons.timer_rounded, label: '${q.durationMinutes} min')),
+                    Expanded(
+                      child: _StatTile(
+                        icon: Icons.timer_rounded,
+                        label: '${q.durationMinutes}',
+                        caption: 'min',
+                      ),
+                    ),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatTile(icon: Icons.bolt_rounded, label: '+${q.questionCount * 10} XP')),
+                    Expanded(
+                      // Only offer an XP figure the server actually published.
+                      // Otherwise say "Graded by server" rather than invent
+                      // questionCount * 10.
+                      child: _StatTile(
+                        icon: Icons.bolt_rounded,
+                        label: (q.xpReward ?? 0) > 0 ? '+${q.xpReward}' : 'Graded',
+                        caption: (q.xpReward ?? 0) > 0 ? 'XP' : 'by server',
+                        isMuted: (q.xpReward ?? 0) <= 0,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -170,18 +202,39 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
 }
 
 class _StatTile extends StatelessWidget {
-  const _StatTile({required this.icon, required this.label});
+  const _StatTile({required this.icon, required this.label, this.caption, this.isMuted = false});
   final IconData icon;
   final String label;
+  final String? caption;
+
+  /// Dims the tile when the label is a statement of fact rather than a figure
+  /// the server published (e.g. "Server-graded" instead of a made-up XP value).
+  final bool isMuted;
+
   @override
   Widget build(BuildContext context) {
     return GlassmorphicCard(
       padding: const EdgeInsets.all(12),
       child: Column(
         children: [
-          Icon(icon, color: AppColors.brand, size: 22),
+          Icon(icon, color: isMuted ? AppColors.textTertiaryLight : AppColors.brand, size: 22),
           const SizedBox(height: 6),
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: caption == null ? 15 : 13,
+              color: isMuted ? AppColors.textSecondaryLight : null,
+            ),
+          ),
+          if (caption != null)
+            Text(
+              caption!,
+              style: const TextStyle(fontSize: 10, color: AppColors.textTertiaryLight),
+            ),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
+import '../../../tutor/presentation/controllers/tutor_controller.dart';
 import '../controllers/practice_controller.dart';
 import '../../domain/entities/practice.dart';
 
@@ -213,44 +214,123 @@ class _BookmarksTab extends ConsumerWidget {
 
 // ── Weak topic tab ────────────────────────────────────────────────────────────
 
-class _WeakTopicTab extends StatelessWidget {
+/// Weak topics, from the server's own analytics.
+///
+/// This tab previously rendered three hardcoded subjects with invented mastery
+/// percentages ("Soil Mechanics 42%", "RCC Design 38%", "Fluid Mechanics 55%")
+/// directly beneath a banner claiming the figures were "server-computed, never
+/// client-inferred". Now it reads the tutor weak-areas endpoint and shows
+/// nothing at all when the server has no analysis yet.
+class _WeakTopicTab extends ConsumerWidget {
   const _WeakTopicTab({required this.onStart});
+
+  /// The topic id is passed through so "Drill" opens that topic's questions.
   final void Function({int? topicId}) onStart;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    // Placeholder weak topics — real data would come from GET /learning/goals/{goal}/readiness or /tutor weak-areas
-    final weak = [
-      ('Soil Mechanics', 42, Icons.landscape_rounded),
-      ('RCC Design', 38, Icons.view_module_rounded),
-      ('Fluid Mechanics', 55, Icons.water_drop_rounded),
-    ];
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.2))),
-          child: const Row(children: [Icon(Icons.insights_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Expanded(child: Text('Weak topics from readiness (GET /learning/goals/{goal}/readiness) — server-computed, never client-inferred.', style: TextStyle(fontSize: 11, color: AppColors.wrongRed)))]),
-        ),
-        const SizedBox(height: 16),
-        Text('Your weak topics', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        ...weak.map((w) => Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Icon(w.$3, size: 16, color: AppColors.brand)),
-                title: Text(w.$1, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                subtitle: Text('${w.$2}% mastery', style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                trailing: FilledButton.tonal(onPressed: () => onStart(), child: const Text('Drill', style: TextStyle(fontSize: 12))),
+    final weakAsync = ref.watch(tutorWeakAreasProvider);
+
+    return weakAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.cloud_off_rounded, size: 40, color: Colors.grey),
+              const SizedBox(height: 12),
+              const Text(
+                'Could not load your weak topics',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )),
-        const SizedBox(height: 16),
-        FilledButton.icon(onPressed: () => onStart(), icon: const Icon(Icons.psychology_rounded), label: const Text('Drill weakest 10 (practice mode, untimed)')),
-        const SizedBox(height: 8),
-        const Text('Practice is untimed, no coins, no rank effect — per spec 4.6. Official grading via POST /quiz/attempts/start with mode=practice.', style: TextStyle(fontSize: 11, color: Colors.grey)),
-      ],
+              const SizedBox(height: 8),
+              const Text(
+                'These come from GET /learning/ai-tutor/weak-areas. Nothing is '
+                'shown rather than guessed.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () => ref.invalidate(tutorWeakAreasProvider),
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (weak) {
+        if (weak.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.insights_rounded, size: 40, color: Colors.grey),
+                  SizedBox(height: 12),
+                  Text(
+                    'No weak topics yet',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'The server needs graded attempts before it can spot weak '
+                    'areas. Take a quiz from the Quiz tab and check back.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.2))),
+              child: const Row(children: [Icon(Icons.insights_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Expanded(child: Text('Weak topics from GET /learning/ai-tutor/weak-areas — server-computed, never client-inferred.', style: TextStyle(fontSize: 11, color: AppColors.wrongRed)))]),
+            ),
+            const SizedBox(height: 16),
+            Text('Your weak topics', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ...weak.map((w) => Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.psychology_rounded, size: 16, color: AppColors.brand)),
+                    title: Text(w.topic, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    // Only render the accuracy the server actually sent.
+                    subtitle: Text(
+                      [
+                        if (w.accuracy != null) '${w.accuracy!.toStringAsFixed(0)}% accuracy',
+                        if (w.attempts > 0) '${w.attempts} attempt${w.attempts == 1 ? '' : 's'}',
+                      ].join(' • '),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                    trailing: FilledButton.tonal(
+                      onPressed: () => onStart(topicId: int.tryParse(w.topicId ?? '')),
+                      child: const Text('Drill', style: TextStyle(fontSize: 12)),
+                    ),
+                  ),
+                )),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => onStart(),
+              icon: const Icon(Icons.psychology_rounded),
+              label: const Text('Drill 10 questions (practice mode, untimed)'),
+            ),
+            const SizedBox(height: 8),
+            const Text('Practice is untimed, no coins, no rank effect — per spec 4.6. Official grading via POST /quiz/attempts/start with mode=practice.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+          ],
+        );
+      },
     );
   }
 }

@@ -214,28 +214,45 @@ class TutorRemoteDataSource {
 
   // ── Insights ──────────────────────────────────────────────────────────────
 
+  /// `GET /learning/ai-tutor/weak-areas`
+  ///
+  /// The real response nests the list one level deeper than this parser
+  /// previously looked (verified live 2026-09-27):
+  ///   `{data: {report: {weak_areas: [...], suggested_actions: [...]}}}`
+  /// The old code only checked `data.weak_areas` / `data.areas` / `data.items`,
+  /// so it always returned an empty list — which is why the UI had "weak
+  /// topics" hardcoded next to it. `report` is checked first, then the flatter
+  /// shapes, so both old and new envelopes work.
   Future<List<WeakAreaDto>> getWeakAreas() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/weak-areas');
     final body = res.data;
     if (body == null) return [];
-    final data = body['data'];
+
     List<Map<String, dynamic>> raw = [];
+    final data = body['data'];
+
+    List<Map<String, dynamic>>? fromMap(Map<String, dynamic> map) {
+      for (final key in const ['weak_areas', 'areas', 'items']) {
+        final value = map[key];
+        if (value is List) return value.cast<Map<String, dynamic>>();
+      }
+      // Nested report envelope.
+      final report = map['report'];
+      if (report is Map<String, dynamic>) return fromMap(report);
+      return null;
+    }
+
     if (data is List) {
       raw = data.cast<Map<String, dynamic>>();
     } else if (data is Map<String, dynamic>) {
-      if (data['weak_areas'] is List) raw = (data['weak_areas'] as List).cast<Map<String, dynamic>>();
-      if (data['areas'] is List) raw = (data['areas'] as List).cast<Map<String, dynamic>>();
-      if (data['items'] is List) raw = (data['items'] as List).cast<Map<String, dynamic>>();
+      raw = fromMap(data) ?? const [];
     }
+
     if (raw.isEmpty) {
       try {
         final env = ApiResponse.fromJson(body, (j) {
           if (j is List) return (j as List).cast<Map<String, dynamic>>();
-          if (j is Map<String, dynamic>) {
-            if (j['weak_areas'] is List) return (j['weak_areas'] as List).cast<Map<String, dynamic>>();
-            if (j['items'] is List) return (j['items'] as List).cast<Map<String, dynamic>>();
-            if (j['areas'] is List) return (j['areas'] as List).cast<Map<String, dynamic>>();
-          }
+          if (j is Map<String, dynamic>) return fromMap(j) ?? <Map<String, dynamic>>[];
           return <Map<String, dynamic>>[];
         });
         raw = env.data ?? [];

@@ -19,6 +19,18 @@ DateTime? _asDate(Object? v) {
 
 // ── PracticeQuestion / BookmarkedQuestion ────────────────────────────────────
 
+/// One answer choice as the server sent it: `{key, text}`.
+/// Deliberately carries no `isCorrect` — the server withholds the key until an
+/// attempt is graded, and the client must not infer one.
+class PracticeOptionDto {
+  const PracticeOptionDto({required this.key, required this.text});
+
+  final String key;
+  final String text;
+
+  PracticeOption toDomain() => PracticeOption(key: key, text: text);
+}
+
 class PracticeQuestionDto {
   const PracticeQuestionDto({
     required this.id,
@@ -27,9 +39,37 @@ class PracticeQuestionDto {
     this.difficulty,
     this.points,
     this.categoryId,
+    this.options = const [],
   });
 
   factory PracticeQuestionDto.fromJson(Map<String, dynamic> j) {
+    // Options arrive as [{key:"A", text:"…"}] (verified live on
+    // GET /api/v1/quiz/questions and /quiz/courses/{id}/questions). The client
+    // previously ignored them entirely and rendered a literal A/B/C/D list, so
+    // parse them properly. No answer key is read here — the server withholds it
+    // until an attempt is graded (QuizQuestionResource exposure policy), and
+    // the client must not become an ingestion point for one.
+    final rawOptions = j['options'] ?? j['answers'];
+    final options = <PracticeOptionDto>[];
+    if (rawOptions is List) {
+      for (var i = 0; i < rawOptions.length; i++) {
+        final o = rawOptions[i];
+        if (o is Map<String, dynamic>) {
+          final key = o['key'] ?? o['id'] ?? o['value'];
+          options.add(
+            PracticeOptionDto(
+              key: key?.toString() ?? String.fromCharCode(65 + i),
+              text: (o['text'] ?? o['label'] ?? '').toString(),
+            ),
+          );
+        } else if (o is String) {
+          options.add(
+            PracticeOptionDto(key: String.fromCharCode(65 + i), text: o),
+          );
+        }
+      }
+    }
+
     return PracticeQuestionDto(
       id: _asInt(j['id']) ?? 0,
       questionText: (j['question_text'] ?? j['questionText'] ?? j['body'] ?? j['title'] ?? '').toString(),
@@ -37,6 +77,7 @@ class PracticeQuestionDto {
       difficulty: _asInt(j['difficulty']),
       points: _asInt(j['points']),
       categoryId: _asInt(j['quiz_category_id'] ?? j['category_id']),
+      options: options,
     );
   }
 
@@ -46,6 +87,7 @@ class PracticeQuestionDto {
   final int? difficulty;
   final int? points;
   final int? categoryId;
+  final List<PracticeOptionDto> options;
 
   PracticeQuestion toDomain() => PracticeQuestion(
         id: id,
@@ -54,6 +96,7 @@ class PracticeQuestionDto {
         difficulty: difficulty,
         points: points,
         categoryId: categoryId,
+        options: options.map((o) => o.toDomain()).toList(),
       );
 }
 

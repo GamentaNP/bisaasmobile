@@ -14,6 +14,21 @@ import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 
+/// A question count read from a cursor-paginated endpoint.
+///
+/// The questions endpoint publishes no `total`, only `has_more`, so [rows] is
+/// what one page returned. When [isLowerBound] is true more rows exist beyond
+/// it and the UI renders "100+" instead of a false exact figure.
+@immutable
+class QuestionCount {
+  const QuestionCount({required this.rows, required this.isLowerBound});
+
+  final int rows;
+  final bool isLowerBound;
+
+  String get questionsLabel => isLowerBound ? '$rows+ questions' : '$rows questions';
+}
+
 /// Browses the server-side quiz catalog via the real endpoints:
 ///  - `GET /api/v1/quiz/courses` — active courses (public catalog)
 ///  - `GET /api/v1/quiz/courses/{course}/categories` — course topics
@@ -78,17 +93,46 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
         .toList();
   }
 
-  Future<int> _categoryQuestionCount(QuizCourseEntry course, QuizCategoryEntry cat) async {
+  /// Live question count for a category.
+  ///
+  /// The questions endpoint is **cursor** paginated and publishes **no total**
+  /// (verified 2026-09-27: `pagination: {type:"cursor", per_page, count,
+  /// has_more, next_cursor}` at the top level of the envelope). The previous
+  /// implementation read `pagination.total`, which does not exist — so every
+  /// category on every course rendered "0 questions" regardless of the real
+  /// bank size. That is a lie in the worst direction: it told candidates their
+  /// topic was empty when it was not.
+  ///
+  /// A cursor gives no total, so the only honest figure is the number of rows
+  /// on one page, flagged as a lower bound when `has_more` is true. Returns
+  /// null when we genuinely cannot tell, so the UI omits the count rather than
+  /// printing 0.
+  Future<QuestionCount?> _categoryQuestionCount(QuizCourseEntry course, QuizCategoryEntry cat) async {
     final dio = DioClient.instance.dio;
     final res = await dio.get<Map<String, dynamic>>(
       '/quiz/courses/${course.id}/questions',
-      queryParameters: {'category_id': cat.id, 'per_page': 1},
+      queryParameters: {'category_id': cat.id, 'per_page': 100},
     );
-    final pagination = res.data?['pagination'];
-    if (pagination is Map<String, dynamic>) {
-      return (pagination['total'] as num?)?.toInt() ?? 0;
-    }
-    return 0;
+    final body = res.data;
+    if (body == null) return null;
+
+    // Rows may sit under data.items or data directly depending on envelope.
+    final data = body['data'];
+    final items = data is Map<String, dynamic>
+        ? (data['items'] as List? ?? const [])
+        : (data is List ? data : const <dynamic>[]);
+
+    final pagination = body['pagination'] is Map<String, dynamic>
+        ? body['pagination'] as Map<String, dynamic>
+        : (data is Map<String, dynamic> && data['pagination'] is Map<String, dynamic>
+            ? data['pagination'] as Map<String, dynamic>
+            : null);
+    if (pagination == null) return null;
+
+    return QuestionCount(
+      rows: items.length,
+      isLowerBound: pagination['has_more'] as bool? ?? false,
+    );
   }
 
   void _openCourse(QuizCourseEntry course) {
@@ -277,12 +321,23 @@ class QuizListEntry {
     required this.category,
     required this.questionCount,
     required this.durationMinutes,
+    this.hasMoreQuestions = false,
+    this.xpReward,
   });
   final String id;
   final String title;
   final String category;
   final int questionCount;
   final int durationMinutes;
+
+  /// The questions endpoint is cursor-paginated with no total, so
+  /// [questionCount] is one page's worth and this says whether more exist.
+  final bool hasMoreQuestions;
+
+  /// XP reward **only if the server published one**. Null means "we do not
+  /// know" — the intro screen then says so instead of inventing
+  /// `questionCount * 10`, which the previous version did.
+  final int? xpReward;
 }
 
 /// Solid category fills + matching extrusion shadows (Duolongo style).
@@ -368,14 +423,14 @@ class _CategoryCard extends StatefulWidget {
   });
   final QuizCourseEntry course;
   final QuizCategoryEntry entry;
-  final Future<int> Function(QuizCourseEntry, QuizCategoryEntry) countLoader;
+  final Future<QuestionCount?> Function(QuizCourseEntry, QuizCategoryEntry) countLoader;
 
   @override
   State<_CategoryCard> createState() => _CategoryCardState();
 }
 
 class _CategoryCardState extends State<_CategoryCard> {
-  late Future<int> _count;
+  late Future<QuestionCount?> _count;
 
   @override
   void initState() {
@@ -422,13 +477,28 @@ class _CategoryCardState extends State<_CategoryCard> {
                     style:
                         const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
                 const SizedBox(height: 4),
-                FutureBuilder<int>(
+                FutureBuilder<QuestionCount?>(
                   future: _count,
-                  builder: (context, snap) => Text(
-                    snap.hasData ? '${snap.data} questions' : '…',
-                    style: AppTypography.bodySmall
-                        .copyWith(color: AppColors.textTertiaryLight),
-                  ),
+                  builder: (context, snap) {
+                    // Loading, error and "the server told us nothing" all render
+                    // as a dash or nothing — never "0 questions", which would
+                    // claim the topic is empty.
+                    if (snap.connectionState != ConnectionState.done) {
+                      return const Text('', style: TextStyle(fontSize: 12));
+                    }
+                    if (snap.hasError || !snap.hasData || snap.data == null) {
+                      return const Text(
+                        'Count unavailable',
+                        style: TextStyle(fontSize: 11, color: AppColors.textTertiaryLight),
+                      );
+                    }
+                    final count = snap.data!;
+                    return Text(
+                      count.questionsLabel,
+                      style: AppTypography.bodySmall
+                          .copyWith(color: AppColors.textTertiaryLight),
+                    );
+                  },
                 ),
               ],
             ),
