@@ -8,6 +8,13 @@
 library;
 
 /// Lightweight world entry from `GET /api/v1/quiz/game/worlds`.
+///
+/// Casing warning: this endpoint **mixes** conventions — the model columns come
+/// back snake_case (`banner_image`, `icon_slug`, `quiz_course_id`,
+/// `access_mode`, `required_stars`) while the computed aggregates are camelCase
+/// (`totalStarsEarned`, `totalMaxStars`, `completionPercent`, `currentLevelId`).
+/// The `/world/{slug}/map` payload is camelCase throughout instead. Hence the
+/// dual-key lookups below; do not "simplify" them to one casing.
 class GameWorldSummaryDto {
   const GameWorldSummaryDto({
     required this.id,
@@ -27,7 +34,9 @@ class GameWorldSummaryDto {
   final int id;
   final String name;
   final String slug;
-  final String accessMode; // 'free' | 'premium' | 'coins'
+
+  /// `open` | `stars_required` | `coin_unlock` | `plan_required`
+  final String accessMode;
   final int totalStarsEarned;
   final int totalMaxStars;
   final int completionPercent;
@@ -37,20 +46,27 @@ class GameWorldSummaryDto {
   final int? currentLevelId;
   final int requiredStars;
 
+  /// The world is playable right now (no star/coin/plan gate outstanding).
+  bool get isUnlocked => switch (accessMode) {
+        'stars_required' => requiredStars <= totalStarsEarned,
+        'plan_required' => false,
+        _ => true,
+      };
+
   factory GameWorldSummaryDto.fromJson(Map<String, dynamic> j) =>
       GameWorldSummaryDto(
-        id: (j['id'] ?? 0) as int,
+        id: (j['id'] as num?)?.toInt() ?? 0,
         name: (j['name'] ?? 'World').toString(),
         slug: (j['slug'] ?? '').toString(),
-        accessMode: (j['access_mode'] ?? 'free').toString(),
+        accessMode: (j['access_mode'] ?? j['accessMode'] ?? 'open').toString(),
         totalStarsEarned: (j['totalStarsEarned'] as num?)?.toInt() ?? 0,
         totalMaxStars: (j['totalMaxStars'] as num?)?.toInt() ?? 0,
         completionPercent: (j['completionPercent'] as num?)?.toInt() ?? 0,
-        bannerImage: j['banner_image'] as String?,
-        iconSlug: j['icon_slug'] as String?,
-        quizCourseId: j['quiz_course_id'] as int?,
-        currentLevelId: j['currentLevelId'] as int?,
-        requiredStars: (j['required_stars'] as num?)?.toInt() ?? 0,
+        bannerImage: j['banner_image'] as String? ?? j['bannerImage'] as String?,
+        iconSlug: j['icon_slug'] as String? ?? j['iconSlug'] as String?,
+        quizCourseId: (j['quiz_course_id'] ?? j['quizCourseId']) as int?,
+        currentLevelId: (j['currentLevelId'] ?? j['current_level_id']) as int?,
+        requiredStars: ((j['required_stars'] ?? j['requiredStars']) as num?)?.toInt() ?? 0,
       );
 }
 

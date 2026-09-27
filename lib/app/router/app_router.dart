@@ -22,6 +22,8 @@ import '../../features/economy/presentation/screens/inventory_screen.dart';
 import '../../features/economy/presentation/screens/shop_screen.dart';
 import '../../features/economy/presentation/screens/wallet_screen.dart';
 import '../../features/gamification/presentation/screens/achievements_screen.dart';
+import '../../features/game/presentation/screens/game_world_map_screen.dart';
+import '../../features/game/presentation/screens/game_worlds_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/learning/presentation/screens/learning_home_screen.dart';
 import '../../features/learning/presentation/screens/learning_tracks_screen.dart';
@@ -50,6 +52,7 @@ import '../../features/quiz/presentation/quiz_home_page.dart';
 import '../../features/quiz/presentation/screens/quiz_attempt_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_browser_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_intro_screen.dart';
+import '../../features/quiz/presentation/screens/quiz_result_route.dart';
 import '../../features/quiz/presentation/screens/quiz_review_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/streak/presentation/screens/streak_screen.dart';
@@ -149,11 +152,14 @@ class AppRouter {
                           int.tryParse(state.uri.queryParameters['category'] ?? ''),
                     ),
                   ),
-                  // Result + Review (deep-linkable, go_router-aware)
+                  // Result + Review (deep-linkable, go_router-aware).
+                  // `result` resolves to the live result screen when the quiz
+                  // controller still holds this finished attempt, and to the
+                  // review screen otherwise (deep link / cold start / reload).
                   GoRoute(
                     path: 'attempt/:attemptId/result',
                     name: RouteNames.quizResult,
-                    builder: (context, state) => QuizReviewScreen(
+                    builder: (context, state) => QuizResultRoute(
                       attemptId: state.pathParameters['attemptId']!,
                     ),
                     routes: [
@@ -289,6 +295,17 @@ class AppRouter {
           if (args == null) return const PracticeBrowserScreen();
           return PracticeSessionScreen(args: args);
         },
+      ),
+      GoRoute(
+        path: '/game/worlds',
+        name: RouteNames.gameWorlds,
+        builder: (context, state) => const GameWorldsScreen(),
+      ),
+      GoRoute(
+        path: '/game/world/:slug',
+        name: RouteNames.gameWorld,
+        builder: (context, state) =>
+            GameWorldMapScreen(worldSlug: state.pathParameters['slug']!),
       ),
       GoRoute(path: '/eice', name: RouteNames.eice, builder: (context, state) => EiceScreen(exam: state.uri.queryParameters['exam'] ?? 'psc-civil')),
       GoRoute(path: '/psc', name: RouteNames.psc, builder: (context, state) => const PscScreen()),

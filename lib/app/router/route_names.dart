@@ -54,4 +54,7 @@ abstract final class RouteNames {
   // Practice — Part 4
   static const practice = 'practice';
   static const practiceSession = 'practice-session';
+  // Game — Duolingo spine: worlds → chapters → level path
+  static const gameWorlds = 'game-worlds';
+  static const gameWorld = 'game-world';
 }
