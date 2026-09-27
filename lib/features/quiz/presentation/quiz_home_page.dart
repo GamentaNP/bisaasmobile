@@ -59,6 +59,12 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
                 style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
+            // The world map is the primary, gamified path (chapters, stars,
+            // bosses). The free-draft course list below is the alternative.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+              child: _WorldsBanner(onTap: () => context.go('/game/worlds')),
+            ),
             Expanded(
               child: FutureBuilder<List<_QuizTopic>>(
                 future: _courses,
@@ -156,6 +162,57 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Hero entry point to the world map — `GET /api/v1/quiz/game/worlds`.
+class _WorldsBanner extends StatelessWidget {
+  const _WorldsBanner({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.brand,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: const Border(bottom: BorderSide(color: AppColors.brandShadow, width: 4)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: const Row(
+              children: [
+                Icon(Icons.public_rounded, color: Colors.white, size: 28),
+                SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Play Worlds',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 17),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Chapters, levels and bosses — earn stars as you go',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: Colors.white, size: 26),
+              ],
+            ),
+          ),
         ),
       ),
     );

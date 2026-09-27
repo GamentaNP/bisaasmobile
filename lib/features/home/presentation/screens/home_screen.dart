@@ -197,6 +197,22 @@ class HomeScreen extends ConsumerWidget {
         'route': '/battle',
       },
       {
+        'title': 'Play Worlds',
+        'subtitle': 'Chapters, Stars & Bosses',
+        'icon': Icons.public_rounded,
+        'color': AppColors.correctGreen,
+        'shadow': AppColors.brandShadow,
+        'route': '/game/worlds',
+      },
+      {
+        'title': 'Streak',
+        'subtitle': 'Repair, Insurance & Wager',
+        'icon': Icons.local_fire_department_rounded,
+        'color': AppColors.streakOrange,
+        'shadow': AppColors.warningShadow,
+        'route': '/streak',
+      },
+      {
         'title': 'Courses',
         'subtitle': 'Full Syllabus Tracks',
         'icon': Icons.school_rounded,
@@ -213,7 +229,10 @@ class HomeScreen extends ConsumerWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.35,
+        // Room for a two-line title plus a one-line subtitle. At 1.35 the
+        // subtitle wrapped and every tile threw a "BOTTOM OVERFLOWED BY
+        // 10.0 PIXELS" banner on device.
+        childAspectRatio: 1.2,
       ),
       itemCount: actions.length,
       itemBuilder: (context, index) {
@@ -249,6 +268,8 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     item['subtitle']! as String,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTypography.bodySmall.copyWith(
                       color: AppColors.textTertiaryLight,
                     ),

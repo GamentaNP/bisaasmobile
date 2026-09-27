@@ -1,7 +1,8 @@
-// ignore_for_file: avoid_dynamic_calls, body_might_complete_normally_catch_error
+﻿// ignore_for_file: avoid_dynamic_calls, body_might_complete_normally_catch_error
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/learning_controller.dart';
@@ -35,7 +36,7 @@ class LearningHomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             reviewsAsync.when(
-              data: (list) => _ReviewsCard(count: list.length, onOpen: () {}),
+              data: (list) => _ReviewsCard(count: list.length, onOpen: () => context.go('/learning/reviews')),
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
             ),
@@ -44,7 +45,7 @@ class LearningHomeScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             tracksAsync.when(
               data: (tracks) => tracks.isEmpty
-                  ? const Text('No tracks yet — backend will publish via GET /learning/tracks', style: TextStyle(color: Colors.grey, fontSize: 12))
+                  ? const Text('No tracks yet â€” backend will publish via GET /learning/tracks', style: TextStyle(color: Colors.grey, fontSize: 12))
                   : Column(
                       children: tracks
                           .map((t) => Card(
@@ -56,8 +57,8 @@ class LearningHomeScreen extends ConsumerWidget {
                                   ),
                                   title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                                   subtitle: t.description != null ? Text(t.description!, style: const TextStyle(fontSize: 11, color: Colors.grey)) : null,
-                                  trailing: const Icon(Icons.chevron_right_rounded),
-                                  onTap: () {},
+                                   trailing: const Icon(Icons.chevron_right_rounded),
+                                   onTap: () => context.go('/learning/tracks'),
                                 ),
                               ))
                           .toList(),
@@ -67,12 +68,12 @@ class LearningHomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             FilledButton.icon(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AiTutorScreen())),
+              onPressed: () => context.go('/tutor/chat'),
               icon: const Icon(Icons.smart_toy_rounded),
               label: const Text('Ask AI Tutor (non-streaming POST /learning/tutor)'),
             ),
             const SizedBox(height: 8),
-            const Text('Day-one uses non-streaming tutor per MOBILE_API_INTEGRATION_GUIDE.md:112 — SSE is web-only.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            const Text('Day-one uses non-streaming tutor per MOBILE_API_INTEGRATION_GUIDE.md:112 â€” SSE is web-only.', style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         ),
       ),
@@ -94,7 +95,7 @@ class _TodayCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
         ),
-        child: const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        child: const Text('No tasks â€” check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
       );
     }
     var tasks = <String>[];
@@ -132,7 +133,7 @@ class _TodayCard extends StatelessWidget {
             const SizedBox(height: 8),
             ...tasks.map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
           ] else
-            const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            const Text('No tasks â€” check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
         ],
       ),
     );
@@ -170,79 +171,6 @@ class _ErrorCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
       child: Row(children: [Expanded(child: Text(msg, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: onRetry, child: const Text('Retry'))]),
-    );
-  }
-}
-
-class AiTutorScreen extends ConsumerStatefulWidget {
-  const AiTutorScreen({super.key});
-  @override
-  ConsumerState<AiTutorScreen> createState() => _AiTutorScreenState();
-}
-
-class _AiTutorScreenState extends ConsumerState<AiTutorScreen> {
-  final _ctrl = TextEditingController();
-  @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
-  @override
-  Widget build(BuildContext context) {
-    final state = ref.watch(tutorControllerProvider);
-    final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(title: const Text('AI Tutor')),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: state.messages.length,
-              itemBuilder: (context, i) {
-                final m = state.messages[i];
-                final isUser = m.role == 'user';
-                return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    padding: const EdgeInsets.all(12),
-                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
-                    decoration: BoxDecoration(
-                      color: isUser ? AppColors.brand.withValues(alpha: 0.15) : theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(m.content, style: const TextStyle(fontSize: 13, height: 1.4)),
-                  ),
-                );
-              },
-            ),
-          ),
-          if (state.loading) const LinearProgressIndicator(),
-          if (state.error != null)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              color: AppColors.wrongRed.withValues(alpha: 0.08),
-              child: Text(state.error!, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)),
-            ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _ctrl,
-                      decoration: const InputDecoration(hintText: 'Ask tutor…', border: OutlineInputBorder(), isDense: true),
-                      onSubmitted: (v) { ref.read(tutorControllerProvider.notifier).send(v); _ctrl.clear(); },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(onPressed: state.loading ? null : () { ref.read(tutorControllerProvider.notifier).send(_ctrl.text); _ctrl.clear(); }, child: const Icon(Icons.send_rounded)),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
