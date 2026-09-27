@@ -6,14 +6,19 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/streak_dto.dart';
 
-/// Verified server routes (bisaas php artisan route:list --path=api/v1/quiz/streak):
-/// - GET  /quiz/streak                  (live, via QuizDailyApiController)
+/// Verified server routes (bisaas routes/api/v1/quiz.php:264-295, monetization.php:47):
+/// - GET  /quiz/streak                  (live, QuizDailyApiController@streak)
 /// - POST /donations/freeze-streak      (live)
-/// - GET  /quiz/streak/repair           (eligibility check — live WO-6)
-/// - POST /quiz/streak/repair           (50 coins — live WO-6)
-/// - POST /quiz/streak/insurance        (200 coins — live WO-6)
-/// - GET  /quiz/streak/wager            (active wager — live WO-6)
-/// - POST /quiz/streak/wager            (open wager — live WO-6)
+/// - GET  /quiz/streak/repair           (eligibility check)
+/// - POST /quiz/streak/repair           (50 coins)
+/// - GET  /quiz/streak/insurance        (banked tokens + cost)
+/// - POST /quiz/streak/insurance        (200 coins per token, stack limit 3)
+/// - POST /quiz/streak/insurance/use    (spend a banked token)
+/// - GET  /quiz/streak/wager            (active wager)
+/// - POST /quiz/streak/wager            (open wager; 201 on create, 200 on replay)
+///
+/// All self-service mutations carry an `Idempotency-Key` (the server 422s
+/// `IDEMPOTENCY_KEY_REQUIRED` without it) and are throttled `quiz-answer`.
 class StreakRemoteDataSource {
   const StreakRemoteDataSource(this._dio);
   final Dio _dio;
@@ -108,6 +113,51 @@ class StreakRemoteDataSource {
     } catch (_) {}
     final success = body['success'] as bool? ?? false;
     return StreakInsuranceResultDto(purchased: success, message: body['message'] as String?);
+  }
+
+  /// GET /quiz/streak/insurance — banked auto-repair tokens + cost.
+  Future<StreakInsuranceStatusDto> getInsuranceStatus() async {
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/streak/insurance');
+    final body = res.data;
+    if (body == null) {
+      return const StreakInsuranceStatusDto(
+        activeCount: 0,
+        maxActive: 0,
+        costCoins: 0,
+        canPurchase: false,
+      );
+    }
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return StreakInsuranceStatusDto.fromJson(data);
+    try {
+      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
+      if (env.data != null) return StreakInsuranceStatusDto.fromJson(env.data!);
+    } catch (_) {}
+    return const StreakInsuranceStatusDto(
+      activeCount: 0,
+      maxActive: 0,
+      costCoins: 0,
+      canPurchase: false,
+    );
+  }
+
+  /// POST /quiz/streak/insurance/use — spend a banked token to bridge a missed day.
+  Future<StreakInsuranceUsedDto> useInsurance({String? idempotencyKey}) async {
+    final key = idempotencyKey ?? _uuid.v4();
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/quiz/streak/insurance/use',
+      data: {},
+      options: Options(headers: {'Idempotency-Key': key}),
+    );
+    final body = res.data;
+    if (body == null) return const StreakInsuranceUsedDto(used: false);
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return StreakInsuranceUsedDto.fromJson(data);
+    try {
+      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
+      if (env.data != null) return StreakInsuranceUsedDto.fromJson(env.data!);
+    } catch (_) {}
+    return StreakInsuranceUsedDto.fromJson(body);
   }
 
   /// GET /quiz/streak/wager — active wager status.

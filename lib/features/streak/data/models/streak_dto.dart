@@ -131,22 +131,81 @@ class StreakRepairEligibilityDto {
   final int repairsUsedThisMonth;
 }
 
+/// GET /quiz/streak/insurance — how many auto-repair tokens are banked.
+class StreakInsuranceStatusDto {
+  const StreakInsuranceStatusDto({
+    required this.activeCount,
+    required this.maxActive,
+    required this.costCoins,
+    required this.canPurchase,
+  });
+
+  factory StreakInsuranceStatusDto.fromJson(Map<String, dynamic> j) =>
+      StreakInsuranceStatusDto(
+        activeCount: _asInt(j['activeCount'] ?? j['active_count']) ?? 0,
+        maxActive: _asInt(j['maxActive'] ?? j['max_active']) ?? 0,
+        costCoins: _asInt(j['costCoins'] ?? j['cost_coins']) ?? 0,
+        canPurchase: (j['canPurchase'] as bool?) ?? false,
+      );
+
+  final int activeCount;
+  final int maxActive;
+  final int costCoins;
+  final bool canPurchase;
+}
+
+/// POST /quiz/streak/insurance/use — a banked token auto-repaired the streak.
+class StreakInsuranceUsedDto {
+  const StreakInsuranceUsedDto({
+    required this.used,
+    this.streak,
+    this.activeInsuranceCount = 0,
+  });
+
+  factory StreakInsuranceUsedDto.fromJson(Map<String, dynamic> j) {
+    final streakMap = j['streak'];
+    return StreakInsuranceUsedDto(
+      used: streakMap is Map<String, dynamic>,
+      streak: streakMap is Map<String, dynamic> ? StreakDto.fromJson(streakMap) : null,
+      activeInsuranceCount: _asInt(j['active_insurance_count'] ?? j['activeInsuranceCount']) ?? 0,
+    );
+  }
+
+  final bool used;
+  final StreakDto? streak;
+  final int activeInsuranceCount;
+}
+
 /// POST /quiz/streak/repair result.
+///
+/// The server does **not** send a boolean on success — a successful repair
+/// returns `{streak: {...}, cost_coins, coin_balance}` and a refusal is a 422
+/// with `error.details.reason`. So success is derived from the presence of the
+/// refreshed `streak` object, with an explicit `repaired`/`success` key honoured
+/// if a future version adds one. (Deriving only from an explicit flag made every
+/// successful repair look like a failure to the user.)
 class StreakRepairResultDto {
   const StreakRepairResultDto({
     required this.repaired,
     this.message,
     this.currentStreak,
     this.coinBalance,
+    this.reason,
   });
 
   factory StreakRepairResultDto.fromJson(Map<String, dynamic> j) {
-    final streakMap = j['streak'] as Map<String, dynamic>?;
+    final streakMap = j['streak'];
+    final hasStreak = streakMap is Map<String, dynamic>;
+    final explicit = j['repaired'] as bool? ?? j['success'] as bool?;
+    final details = j['error'];
     return StreakRepairResultDto(
-      repaired: (j['repaired'] as bool?) ?? (j['success'] as bool?) ?? false,
+      repaired: explicit ?? hasStreak,
       message: j['message'] as String?,
-      currentStreak: _asInt(streakMap?['current_streak'] ?? j['current_streak']),
-      coinBalance: _asInt(j['coin_balance']),
+      currentStreak: hasStreak
+          ? _asInt(streakMap['current_streak'] ?? streakMap['currentStreak'])
+          : _asInt(j['current_streak']),
+      coinBalance: _asInt(j['coin_balance'] ?? j['coinBalance']),
+      reason: details is Map<String, dynamic> ? details['reason'] as String? : null,
     );
   }
 
@@ -154,6 +213,9 @@ class StreakRepairResultDto {
   final String? message;
   final int? currentStreak;
   final int? coinBalance;
+
+  /// `error.details.reason` on a 422, e.g. `insufficient_balance`.
+  final String? reason;
 }
 
 /// POST /quiz/streak/insurance result.
@@ -232,20 +294,32 @@ class StreakWagerStatusDto {
 }
 
 /// POST /quiz/streak/wager result.
+///
+/// Like repair, the server signals success by returning the created `wager`
+/// object (201 on create, 200 on an idempotent replay) — there is no `opened`
+/// boolean, so it is derived from that object.
 class StreakWagerOpenedDto {
-  const StreakWagerOpenedDto({required this.opened, this.message, this.wager, this.coinBalance});
+  const StreakWagerOpenedDto({required this.opened, this.message, this.wager, this.coinBalance, this.reason});
 
-  factory StreakWagerOpenedDto.fromJson(Map<String, dynamic> j) => StreakWagerOpenedDto(
-        opened: (j['opened'] as bool?) ?? (j['success'] as bool?) ?? false,
-        message: j['message'] as String?,
-        wager: j['wager'] is Map<String, dynamic>
-            ? StreakWagerDto.fromJson(j['wager'] as Map<String, dynamic>)
-            : null,
-        coinBalance: _asInt(j['coin_balance']),
-      );
+  factory StreakWagerOpenedDto.fromJson(Map<String, dynamic> j) {
+    final wagerRaw = j['wager'];
+    final hasWager = wagerRaw is Map<String, dynamic>;
+    final explicit = j['opened'] as bool? ?? j['success'] as bool?;
+    final details = j['error'];
+    return StreakWagerOpenedDto(
+      opened: explicit ?? hasWager,
+      message: j['message'] as String?,
+      wager: hasWager ? StreakWagerDto.fromJson(wagerRaw) : null,
+      coinBalance: _asInt(j['coin_balance'] ?? j['coinBalance']),
+      reason: details is Map<String, dynamic> ? details['reason'] as String? : null,
+    );
+  }
 
   final bool opened;
   final String? message;
   final StreakWagerDto? wager;
   final int? coinBalance;
+
+  /// `error.details.reason` on a 422, e.g. `active_wager`, `insufficient_balance`.
+  final String? reason;
 }
