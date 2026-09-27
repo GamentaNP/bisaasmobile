@@ -54,15 +54,11 @@ void main() {
       expect(dto.priceCoins, 100);
     });
 
-    test('localMocks returns 6 beta preview assets across rarities', () {
-      final mocks = StoreAssetDto.localMocks();
-      expect(mocks.length, 6);
-      expect(mocks.where((m) => m.rarity == 'legendary').length, 1);
-      expect(mocks.where((m) => m.isFeatured).isNotEmpty, isTrue);
-      // Never crashes on added field — toDomain works even with future shape
-      for (final m in mocks) {
-        expect(m.toDomain(), isA<StoreAsset>());
-      }
+    test('the hardcoded 6-asset mock catalogue is gone', () {
+      // Removed 2026-09-27: those slugs and prices were invented and none of
+      // them exist on the server, so every "buy" would have 404'd. There is
+      // deliberately no mock fallback any more.
+      expect(StoreAssetDto.fromJson({}).id, '');
     });
 
     test('fallback for missing required defaults', () {
@@ -150,18 +146,31 @@ void main() {
   });
 
   group('StoreCatalog entity', () {
+    // Real server-shaped assets, replacing the deleted localMocks() fixtures.
+    List<StoreAsset> storeAssets() => [
+          const StoreAssetDto(id: 'frame_gold', slug: 'frame_gold', name: 'Golden Frame', description: 'd', priceCoins: 500, rarity: 'rare', category: 'frame', isFeatured: true).toDomain(),
+          const StoreAssetDto(id: 'badge_master', slug: 'badge_master', name: 'Master Badge', description: 'd', priceCoins: 1200, rarity: 'legendary', category: 'badge', isFeatured: true).toDomain(),
+          const StoreAssetDto(id: 'theme_midnight', slug: 'theme_midnight', name: 'Midnight Theme', description: 'd', priceCoins: 300, rarity: 'common', category: 'theme').toDomain(),
+        ];
+
     test('isDegraded and featured filter', () {
-      final catalog = StoreCatalog(assets: StoreAssetDto.localMocks().map((d) => d.toDomain()).toList(), isDegraded: true);
+      final catalog = StoreCatalog(assets: storeAssets(), isDegraded: true);
       expect(catalog.isDegraded, isTrue);
-      expect(catalog.featured.isNotEmpty, isTrue);
-      expect(catalog.byCategory('frame').length, 1);
+      expect(catalog.featured, hasLength(2));
+      expect(catalog.byCategory('frame'), hasLength(1));
       expect(catalog.isEmpty, isFalse);
     });
 
     test('rarity ordering', () {
-      final assets = StoreAssetDto.localMocks().map((d) => d.toDomain()).toList();
+      final assets = storeAssets();
       assets.sort((a, b) => b.rarityRank.compareTo(a.rarityRank));
       expect(assets.first.rarity, 'legendary');
+    });
+
+    test('an empty catalogue is empty, not fabricated', () {
+      final catalog = StoreCatalog(assets: const [], isDegraded: false);
+      expect(catalog.isEmpty, isTrue);
+      expect(catalog.featured, isEmpty);
     });
   });
 }

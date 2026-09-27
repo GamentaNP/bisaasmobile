@@ -33,7 +33,8 @@ class StoreRemoteDataSource {
       return [];
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        AppLogger.w('store getAssets: 404 — WO-3 not shipped, degraded placeholder');
+        // Empty, not degraded: the UI shows an honest empty state with retry.
+        AppLogger.w('store getAssets: 404 — no assets published');
         return [];
       }
       AppLogger.w('store getAssets failed: ${e.response?.statusCode} ${e.message}');
@@ -161,30 +162,17 @@ class StoreRemoteDataSource {
     }
   }
 
-  Future<List<MarketListingDto>> getMarket() async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/store/market');
-      final body = res.data;
-      if (body == null) return [];
-      final data = body['data'];
-      if (data is List) return data.whereType<Map<String, dynamic>>().map(MarketListingDto.fromJson).toList();
-      if (data is Map<String, dynamic>) {
-        final items = data['market'] ?? data['listings'] ?? data['items'];
-        if (items is List) return items.whereType<Map<String, dynamic>>().map(MarketListingDto.fromJson).toList();
-      }
-      return [];
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        AppLogger.w('store getMarket: 404 — not shipped, empty');
-        return [];
-      }
-      AppLogger.w('store getMarket failed: ${e.response?.statusCode} ${e.message}');
-      return [];
-    } catch (e) {
-      AppLogger.w('store getMarket unexpected: $e');
-      return [];
-    }
-  }
+  /// REMOVED 2026-09-27: `getMarket()` called `GET /api/v1/store/market`,
+  /// which has never existed on the server (verified against
+  /// `bisaas/routes/api/v1.php:527-553` — the store group registers only
+  /// `/store/assets`, `/store/assets/{slug}`, `/store/assets/{slug}/purchase`,
+  /// `/store/wardrobe` and the equipment routes). The call could only ever
+  /// return 404, was swallowed into an empty list, and the UI then showed
+  /// "Market coming soon" forever.
+  ///
+  /// The real coin-trading surface is the economy group, already wired on the
+  /// Economy tab: `GET /economy/shop` (resources / bundles / packs) and
+  /// `POST /economy/market/sells`. There is no community resale marketplace.
 
   Map<String, dynamic>? _extractMapData(Map<String, dynamic> body) {
     final data = body['data'];

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/store_controller.dart';
 import '../../domain/entities/store.dart';
 
-/// Premium store — assets / skins. WO-3 missing → tolerant beta placeholder (local mocks + isDegraded).
-/// Prices are never hardcoded beyond mocks; server price wins when it ships.
-/// POST /store/assets/{asset}/purchase carries Idempotency-Key (never double-charge).
+/// Premium store — assets and skins from `GET /api/v1/store/assets`.
+///
+/// The six hardcoded assets this screen used to fall back on were removed on
+/// 2026-09-27: their prices and rarities were invented and none of their slugs
+/// exist on the server, so a "buy" would have 404'd. An unavailable catalogue
+/// now renders an honest error with a retry.
+/// `POST /store/assets/{asset}/purchase` carries an Idempotency-Key (never
+/// double-charge).
 class PremiumStoreScreen extends ConsumerStatefulWidget {
   const PremiumStoreScreen({super.key});
 
@@ -24,7 +30,6 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(storeControllerProvider.notifier).fetchCatalog();
-      ref.read(storeControllerProvider.notifier).fetchMarket();
     });
   }
 
@@ -56,7 +61,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Premium Store')),
       body: RefreshIndicator(
-        onRefresh: () => Future.wait([ref.read(storeControllerProvider.notifier).fetchCatalog(), ref.read(storeControllerProvider.notifier).fetchMarket()]),
+        onRefresh: () => Future.wait([ref.read(storeControllerProvider.notifier).fetchCatalog()]),
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -116,23 +121,36 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
               ),
             ],
             const SizedBox(height: 18),
-            // ── Market preview (beta placeholder when empty) ──────────────────
-            Text('Market', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            // ── Trading ─────────────────────────────────────────────────────
+            // There is no community resale marketplace: GET /store/market has
+            // never existed on the server. Point at the real coin-trading
+            // surface (the economy shop) instead of a permanent placeholder.
+            Text('Trading', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            const Text('Peer listings when available — currently beta placeholder (never crashes on added field).', style: TextStyle(fontSize: 11, color: Colors.grey)),
-            const SizedBox(height: 8),
-            if (state.isMarketLoading) const LinearProgressIndicator(),
-            if (state.market.isEmpty && !state.isMarketLoading)
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35)), borderRadius: BorderRadius.circular(12)),
-                child: Column(children: [Icon(Icons.storefront_rounded, size: 24, color: theme.colorScheme.onSurface.withValues(alpha: 0.35)), const SizedBox(height: 8), const Text('Market coming soon', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)), const SizedBox(height: 4), const Text('Premium resales and community listings will appear here.', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey))]),
-              )
-            else
-              ...state.market.take(5).map((m) => Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(dense: true, leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.sell_rounded, size: 14, color: AppColors.brand)), title: Text(m.asset.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)), subtitle: Text('by ${m.sellerName}', style: const TextStyle(fontSize: 11, color: Colors.grey)), trailing: Text('${m.priceCoins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.coinYellow))),
-                  )),
+            const Text(
+              'Buy resources and bundles with coins, or sell what you no longer need.',
+              style: TextStyle(fontSize: 11, color: Colors.grey),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.go('/economy/shop'),
+                    icon: const Icon(Icons.storefront_rounded, size: 18),
+                    label: const Text('Coin shop'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.go('/economy/inventory'),
+                    icon: const Icon(Icons.sell_rounded, size: 18),
+                    label: const Text('Sell items'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

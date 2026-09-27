@@ -51,9 +51,28 @@ class PushNotificationService {
     _local?.taps.listen(_nav.add);
   }
 
+  /// Fetch the FCM token and register it with the server.
+  ///
+  /// Every call is guarded. A device without working Play Services (or with
+  /// Firebase Installations unreachable) makes `getToken()` throw a
+  /// `PlatformException` / `MissingPluginException` — observed live on a
+  /// Redmi 6A as an **unhandled** `PlatformDispatcher` exception
+  /// ("[firebase_messaging/unknown] java.io.IOException: FCM Registration
+  /// failed!") on every login, because nothing here caught it. That is a
+  /// legitimate device configuration, not an app error: push simply does not
+  /// work, and the rest of the app must carry on as normal.
   Future<void> registerToken() async {
-    final token = await _messaging.getToken();
-    if (token == null) return;
+    final String? token;
+    try {
+      token = await _messaging.getToken();
+    } catch (e) {
+      AppLogger.w('FCM getToken unavailable (no Play Services?): $e');
+      return;
+    }
+    if (token == null || token.isEmpty) {
+      AppLogger.w('FCM returned no token; push registration skipped');
+      return;
+    }
     await _registerWithServer(token);
   }
 
@@ -72,8 +91,15 @@ class PushNotificationService {
   }
 
   Future<void> unregisterToken() async {
-    final token = await _messaging.getToken();
-    if (token == null) return;
+    final String? token;
+    try {
+      token = await _messaging.getToken();
+    } catch (e) {
+      // Same failure mode as registerToken — nothing to unregister.
+      AppLogger.w('FCM getToken unavailable during unregister: $e');
+      return;
+    }
+    if (token == null || token.isEmpty) return;
     try {
       await _messaging.deleteToken();
       // Server expects DELETE /device-tokens/{token} per guide; fallback to body.

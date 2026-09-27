@@ -71,15 +71,14 @@ class StoreAssetDto {
         isFeatured: isFeatured,
       );
 
-  /// Local mock catalog — 6 items covering 4 rarities for beta placeholder.
-  static List<StoreAssetDto> localMocks() => const [
-        StoreAssetDto(id: 'frame_gold', slug: 'frame_gold', name: 'Golden Frame', description: 'Shine on the leaderboard', priceCoins: 500, rarity: 'rare', category: 'frame', isFeatured: true),
-        StoreAssetDto(id: 'badge_master', slug: 'badge_master', name: 'Master Badge', description: 'Awarded to top 1%', priceCoins: 1200, rarity: 'legendary', category: 'badge', isFeatured: true),
-        StoreAssetDto(id: 'theme_midnight', slug: 'theme_midnight', name: 'Midnight Theme', description: 'Dark academia for night owls', priceCoins: 300, rarity: 'common', category: 'theme'),
-        StoreAssetDto(id: 'title_sage', slug: 'title_sage', name: 'Sage Title', description: 'Display “Sage” under your name', priceCoins: 800, rarity: 'epic', category: 'title'),
-        StoreAssetDto(id: 'avatar_astronaut', slug: 'avatar_astronaut', name: 'Astronaut Avatar', description: 'For dreamers of structures', priceCoins: 450, rarity: 'rare', category: 'avatar'),
-        StoreAssetDto(id: 'effect_confetti', slug: 'effect_confetti', name: 'Confetti Effect', description: 'Celebration on achievement unlock', priceCoins: 200, rarity: 'common', category: 'effect'),
-      ];
+  /// REMOVED 2026-09-27: the six hardcoded assets ("Golden Frame" 500 coins,
+  /// "Master Badge" 1200 coins, "Midnight Theme" 300, …) that this returned
+  /// were served to users as a real catalogue whenever `GET /store/assets`
+  /// failed. Those coin prices and rarities were invented and none of the six
+  /// slugs exist on the server, so every "buy" would have 404'd.
+  ///
+  /// `GET /api/v1/store/assets` is the only asset source; when it fails the UI
+  /// shows an error with a retry rather than a fabricated shop.
 }
 
 class WardrobeSlotDto {
@@ -132,12 +131,16 @@ class WardrobeDto {
         isDegraded: isDegraded,
       );
 
-  static WardrobeDto localMockDegraded() => WardrobeDto(
+  /// REMOVED 2026-09-27: this used to pre-fill the `frame` slot with a fake
+  /// equipped asset, so a player who had equipped nothing was shown a
+  /// "Golden Frame" they did not own. Slots now start empty and are filled
+  /// only from `GET /api/v1/store/wardrobe`.
+  static WardrobeDto localMockDegraded() => const WardrobeDto(
         slots: [
-          WardrobeSlotDto(slot: 'frame', equippedAsset: StoreAssetDto.localMocks().first),
-          const WardrobeSlotDto(slot: 'badge', equippedAsset: null),
-          const WardrobeSlotDto(slot: 'theme', equippedAsset: null),
-          const WardrobeSlotDto(slot: 'title', equippedAsset: null),
+          WardrobeSlotDto(slot: 'frame'),
+          WardrobeSlotDto(slot: 'badge'),
+          WardrobeSlotDto(slot: 'theme'),
+          WardrobeSlotDto(slot: 'title'),
         ],
         isDegraded: true,
       );

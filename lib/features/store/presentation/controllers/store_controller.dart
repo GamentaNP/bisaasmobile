@@ -205,22 +205,13 @@ class StoreController extends Notifier<StoreState> {
     }
   }
 
-  Future<void> fetchMarket() async {
-    state = state.copyWith(isMarketLoading: true, marketError: null);
-    try {
-      final m = await _repo.getMarket();
-      final degraded = m.isEmpty;
-      state = state.copyWith(market: m, isMarketLoading: false, isMarketDegraded: degraded);
-      if (degraded) AppLogger.w('store fetchMarket: empty — beta placeholder');
-    } catch (e, st) {
-      AppLogger.w('store fetchMarket failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isMarketLoading: false, marketError: _msg(e), isMarketDegraded: true);
-    }
-  }
+  /// REMOVED 2026-09-27: `fetchMarket()` existed only to call
+  /// `GET /api/v1/store/market`, a route the server has never had. It could only
+  /// ever 404 into an empty list. The store screen now links to the real
+  /// trading surface (`/economy/shop` and `/economy/inventory`).
 
   Future<void> refreshAll() async {
-    await Future.wait([fetchCatalog(), fetchWardrobe(), fetchMarket()]);
+    await Future.wait([fetchCatalog(), fetchWardrobe()]);
   }
 }
 

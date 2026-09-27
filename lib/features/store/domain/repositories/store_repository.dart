@@ -6,5 +6,10 @@ abstract class StoreRepository {
   Future<StorePurchaseResult> purchaseAsset(String slug, {String? idempotencyKey});
   Future<Wardrobe> getWardrobe();
   Future<bool> equip(String slot, String assetId, {String? idempotencyKey});
-  Future<List<MarketListing>> getMarket();
+
+  /// `getMarket()` was removed 2026-09-27 — it called `GET /store/market`,
+  /// which has never existed on the server. There is no community resale
+  /// marketplace; coin trading lives in the economy group
+  /// (`GET /economy/shop`, `POST /economy/market/sells`), reached from the
+  /// Economy tab.
 }

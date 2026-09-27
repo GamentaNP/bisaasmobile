@@ -4,20 +4,21 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
-import '../../../../shared/widgets/chunky/chunky_path_node.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../game/game_providers.dart';
 import '../../domain/entities/dashboard_data.dart';
 import '../controllers/home_controller.dart';
 
-/// Learning Path home — the sample's zig-zag trail of chunky level nodes
-/// with the gamified header (streak / coins / XP) and daily-streak hero.
-/// Server-authoritative: node progress derives from the backend level.
+/// Home — player HUD (streak / coins / XP), daily-streak hero, the real world
+/// progression summary, and the explore grid.
+///
+/// Server-authoritative throughout. The old 15-node decorative trail was
+/// removed on 2026-09-27: its completion was computed on-device as
+/// `(user.level - 1) % 15` and every node opened the same screen.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
-
-  static const _nodeCount = 15;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,31 +119,16 @@ class HomeScreen extends ConsumerWidget {
 
             const SizedBox(height: 28),
 
-            // 4. Zig-zag learning path
-            Center(
-              child: Column(
-                children: [
-                  ...List.generate(_nodeCount, (i) {
-                    final current = (user?.level ?? 1) - 1;
-                    final status = i < (current % _nodeCount)
-                        ? PathNodeStatus.completed
-                        : i == (current % _nodeCount)
-                            ? PathNodeStatus.current
-                            : PathNodeStatus.locked;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: ChunkyPathNode(
-                        status: status,
-                        index: i,
-                        onTap: () => context.go('/quiz/browse'),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 8),
-                  const PathTrophyEnd(),
-                ],
-              ),
-            ),
+            // 4. Learning path.
+            //
+            // This used to render 15 decorative nodes generated with
+            // `List.generate(15)`, whose completion was derived on-device as
+            // `(user.level - 1) % 15` and whose every node navigated to the
+            // same screen. The server never computed any of it. The real
+            // progression now lives in the world map (GET /quiz/game/worlds →
+            // chapters → levels → stars), so the honest home affordance is a
+            // real summary that opens it.
+            _WorldsEntryCard(),
 
             const SizedBox(height: 24),
 
@@ -328,6 +314,108 @@ class HomeScreen extends ConsumerWidget {
 /// This used to render a full `_DailyStreakCard` with an invented
 /// `dailyTitle: 'Daily Challenge'`, dressing an outage up as real data. It now
 /// says what actually happened and offers a retry.
+/// Real progression summary — `GET /api/v1/quiz/game/worlds`.
+///
+/// Replaces the decorative 15-node trail. Everything shown here is the
+/// server's own star/completion figure; a failing read collapses the card
+/// rather than inventing a progress bar.
+class _WorldsEntryCard extends ConsumerWidget {
+  const _WorldsEntryCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final worldsAsync = ref.watch(gameWorldsProvider);
+
+    return worldsAsync.when(
+      loading: () => const _ShimmerCard(height: 96),
+      error: (_, __) => ChunkyCard(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Icon(Icons.public_off_rounded, size: 24, color: AppColors.textTertiaryLight),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Could not load your worlds',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              ),
+            ),
+            TextButton(
+              onPressed: () => ref.invalidate(gameWorldsProvider),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+      data: (worlds) {
+        if (worlds.isEmpty) {
+          return ChunkyCard(
+            padding: const EdgeInsets.all(16),
+            child: const Row(
+              children: [
+                Icon(Icons.public_rounded, size: 24, color: AppColors.textTertiaryLight),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'No worlds published yet — browse topics to keep practising.',
+                    style: TextStyle(fontSize: 13, color: AppColors.textTertiaryLight),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final totalStars = worlds.fold<int>(0, (sum, w) => sum + w.totalStarsEarned);
+        final maxStars = worlds.fold<int>(0, (sum, w) => sum + w.totalMaxStars);
+        final next = worlds.firstWhere(
+          (w) => w.isUnlocked,
+          orElse: () => worlds.first,
+        );
+        final overall = maxStars > 0 ? (totalStars / maxStars).clamp(0.0, 1.0) : 0.0;
+
+        return ChunkyCard(
+          padding: const EdgeInsets.all(16),
+          onTap: () => context.go('/game/worlds'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.public_rounded, size: 22, color: AppColors.brand),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Your worlds',
+                      style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  Text(
+                    '$totalStars / $maxStars ⭐',
+                    style: AppTypography.titleSmall.copyWith(color: AppColors.xpGold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              ChunkyProgressBar(value: overall, color: AppColors.xpGold, height: 10),
+              const SizedBox(height: 10),
+              Text(
+                'Continue: ${next.name}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.textTertiaryLight,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _OfflineStreakCard extends StatelessWidget {
   const _OfflineStreakCard({required this.error});
 

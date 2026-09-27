@@ -34,9 +34,4 @@ class StoreRepositoryImpl implements StoreRepository {
   Future<bool> equip(String slot, String assetId, {String? idempotencyKey}) =>
       _remote.equip(slot, assetId, idempotencyKey: idempotencyKey);
 
-  @override
-  Future<List<MarketListing>> getMarket() async {
-    final dtos = await _remote.getMarket();
-    return dtos.map((d) => d.toDomain()).toList();
-  }
 }
