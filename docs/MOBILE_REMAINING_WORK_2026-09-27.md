@@ -171,18 +171,32 @@ returns `{data:{report:{weak_areas:[]}}}` for a fresh account, correctly.
 
 ## 5. PRODUCTION READINESS
 
-1. **No upload keystore.** `build.gradle.kts` throws on a release build without
-   `android/key.properties` unless `-Pallow-debug-signing=true` is passed. **Every artifact
-   verified today was debug-signed and must never be published.** Materialise the key in CI from
-   the `ANDROID_KEYSTORE_BASE64` secret.
+1. ~~**No upload keystore.**~~ **RESOLVED 2026-09-28.** `android/key.properties` now
+   exists (gitignored, correctly untracked — the keystore must never be committed). Verified by
+   building a real release bundle:
+   `flutter build appbundle --release --dart-define=ENV=prod --dart-define=APP_VERSION=1.0.0`
+   → `app-release.aab` 111.5 MB, and `jarsigner -verify` reports
+   `Signed by "CN=CivilCal Upload Key, OU=Bisaas, O=Bisaas, L=Kathmandu, C=NP"` / `jar verified`.
+   This is the first genuinely upload-signed artifact; every earlier one was debug-signed.
 2. **No Play listing.** `fastlane.metadata.md` is a 686-byte stub; no `fastlane/metadata/…/en-US/`
    tree, no screenshots, no release notes, no data-safety form. `version: 1.0.0+1` has never moved.
 3. **App Links unverified.** The `https://bisaas.com` intent-filter declares `android:autoVerify="true"`
    but `/.well-known/assetlinks.json` is not published.
-4. **Bundle size.** `app-release.aab` 111.2 MB, of which ~72 MB is `BUNDLE-METADATA`
-   (`proguard.map` 47.8 MB + `debugsymbols/*.sym`) that Play consumes server-side and never
-   ships. Real per-device download is ≈ 47 MB. Drop `x86_64` from the Play build (emulator-only
-   dead weight) and investigate the 20 MB `libts.so`, which is unusually large and unidentified.
+4. **Bundle size.** `app-release.aab` **111.5 MB**, but that figure is misleading: 138.6 MB of the
+   archive is `BUNDLE-METADATA` (`proguard.map` 45.5 MB + `debugsymbols/*.sym` 34.9 MB) which
+   Play consumes server-side for de-obfuscating crash reports and never ships. Actual `base/`
+   is 142.7 MB uncompressed across 3 ABIs. Per-ABI native payload (arm64): `libflutter.so`
+   157.5 MB, **`libts.so` 20.9 MB**, `libapp.so` 15.8 MB, `libsqlite3.so` 1.7 MB.
+   - **`libts.so` is now identified** (it was previously "unidentified"): it statically links
+     **OpenSSL/BoringSSL + curl + minizip** and exports 31 `Java_androidx_security_BNatives_*`
+     JNI symbols, so it is a security/keystore native — ~21 MB repeated per ABI, ~63 MB for the
+     three packaged ABIs.
+   - No `abiFilters`/`splits` block exists, so **x86_64 (20.9 MB) is still packaged** and is
+     emulator-only. It does not affect per-device download (AAB delivers one ABI), only the
+     upload artifact and CI time. Add `ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }`
+     — **`armeabi-v7a` must be kept**: the QA Redmi 6A is 32-bit.
+   - Real lever is `libts.so`: 21 MB of statically-linked TLS for a keystore native is worth
+     asking the plugin author about, and worth a Play ABI split analysis before any size work.
 5. **Kotlin Gradle Plugin deprecation.** The build warns that `firebase_*`, `sentry_flutter`,
    `freerasp`, `in_app_review` and `workmanager` apply KGP directly; *"Future versions of Flutter
    will fail to build"*. Track plugin upgrades.
