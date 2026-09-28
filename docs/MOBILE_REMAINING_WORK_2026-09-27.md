@@ -26,6 +26,7 @@
 | `5ba7b89` | **Engineering documentation was rendering as screen copy.** Profile tiles read `GET /psc/blueprints`; the wallet told users coins are credited "via `EconomyService::debit()`". EICE was a debug screen: each card printed its own endpoint and dumped the response with `Text(data.toString())`, and had no `try/catch` at all. A developer toggle let users switch tutor API versions. |
 | `0ebb3ba` | **The force-update gate had never fired.** CI sent a non-semver `X-App-Version` which the server's `whereNumber`-style regex rejects (and deliberately passes through), the client had no `UPGRADE_REQUIRED` code, and nothing acted on a 426. All three fixed; there is now a blocking update screen with no Retry. |
 | `d8f345f` | **EICE coach and triage never matched a route.** The server constrains `{exam}` to numeric; the client sent the hardcoded slug `'psc-civil'`, so it 404'd at the routing layer and — with failures being swallowed — displayed as an empty section. Coach now takes no exam and lets the server resolve the user's own; triage uses the `exam_id` the coach returns. |
+| `295d59b` | **The offline banner asked the wrong question.** It reported `connectivity_plus` (does the radio see a network) while claiming the API was unreachable — and the QA device showed it lying in both directions. Replaced with `ApiReachability`, which reads real request outcomes and treats a 401/500 as proof the server answered. |
 
 ## 1a. SHIPPED 2026-09-27 (12 commits)
 
@@ -53,7 +54,7 @@
 | Check | Result |
 |---|---|
 | `flutter analyze` | **0 issues** (CI gate `--fatal-infos` satisfied, and now with `unnecessary_ignore: true`) |
-| `flutter test` | **392 passing** |
+| `flutter test` | **413 passing** |
 | debug / release APK / release AAB | all build (R8 clean) |
 | Physical device install + launch | ✓ (Redmi 6A, API 28) |
 | Login against the real backend from device | ✓ |
@@ -141,7 +142,7 @@ returns `{data:{report:{weak_areas:[]}}}` for a fresh account, correctly.
 | E | ~~**7 remaining error-swallow blocks.**~~ **DONE 2026-09-28.** `eice_remote_data_source.dart` — all five methods now propagate. `downloads_screen.dart` no longer reports a Drift failure as "0 questions cached", and its `FutureBuilder` future is now a field (rebuilding it inline created a new future every frame). | `eice_screen.dart`, `payload_view.dart`, `downloads_screen.dart` |
 | T | **EICE coach + triage never matched a route.** The server declares `/study-planner/{exam}` with `->whereNumber('exam')`; the client sent the hardcoded slug `'psc-civil'`, so Laravel 404'd at the routing layer and the controller was never reached. Because the data source also swallowed failures, it displayed as "Nothing to show for this section yet". **DONE 2026-09-28** — coach now calls `GET /quiz/coach` (the controller resolves the user's own active target exam), triage takes the numeric `exam_id` the coach payload returns. Verified by curl: slug → 404, numeric → 401. | `eice_remote_data_source.dart`, `app_router.dart` |
 | F | ~~**5 `error:` branches swallow failure.**~~ **DONE 2026-09-28** — learning and profile now render a real message plus Retry; calculator's title honestly shows the humanised slug; the home active-course card is suppressed on error *by design* (it would have to invent a title) and is now documented rather than silent. | as listed |
-| G | **"Offline" keys off general connectivity, not API reachability.** On the phone it read *"You're offline"* while API calls over the adb tunnel were succeeding — a captive portal or blocked `/api/v1` produces the same false state. | `lib/core/connectivity/` |
+| G | ~~**"Offline" keys off general connectivity, not API reachability.**~~ **DONE 2026-09-28.** `ApiReachability` is now fed by the Dio interceptors: any HTTP response (including 401/500) proves reachability; only transport failures mark it unreachable; cancel and decode-timeout are explicitly not. Costs no extra requests and cannot say "offline" while calls are succeeding. | `api_reachability.dart`, `offline_state_banner.dart` |
 | H | **Categories carry no question count at all** (`/quiz/courses/{id}/categories` returns only `{id,name,slug,sort_order}`), so the client fetches a page per category. Accurate but N+1 — 15 requests for one course. A count on the category row would remove it. | `quiz_browser_screen.dart` |
 | I | **Ledger/category N+1** and the "100+" lower-bound display are honest but a `total` on the questions endpoint would let both be exact. | backend ask §2.4 |
 | J | ~~**"232 Calculators".**~~ **DONE 2026-09-28** — the number was hardcoded in three places while the database holds 32 civil calculators. Home, profile and the catalogue search hint now read the server's `total_calculators` and drop the number entirely when the catalogue fails, rather than asserting a stale count. | `home_screen.dart`, `profile_screen.dart`, `calculator_browser_screen.dart` |
@@ -152,7 +153,7 @@ returns `{data:{report:{weak_areas:[]}}}` for a fresh account, correctly.
 | # | Item |
 |---|---|
 | D | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and read back only by the onboarding screen itself. `PATCH /me` validates only `name`/`username`/`email` — there is no server field for them, so this is a **backend ask**, not a client bug: without a place to persist them, wiring them would mean inventing a route. The copy has been corrected to stop promising IRT calibration and personalisation that does not happen (`dailyGoalMinutes` had no getter at all). | `onboarding_screen.dart`, backend ask §2 |
-| S | **Donor identity.** `leaderboard_dto` used to invent `"Generous Supporter"` when the server sent no donor name; now `"Anonymous"`, matching `economy_dto`. Worth confirming the server actually populates it rather than always defaulting. |
+| S | **Donor identity is fabricated by the *server*, not the client.** `DonorGamificationService.php:80` returns `'donorName' => $badge->user?->name ?? 'Generous Supporter'`, so an anonymous donor is rendered as a person called "Generous Supporter". The client's own fallback was changed to `'Anonymous'` (matching `economy_dto`) but is now unreachable — the server always supplies a value. **The real fix is server-side**: use `'Anonymous'`, or have the client treat a deleted user as anonymous. Outside the Flutter boundary, so not actioned here. | backend `DonorGamificationService.php:80` |
 
 ### P3 — hygiene
 
