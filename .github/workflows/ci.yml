@@ -22,6 +22,10 @@ jobs:
       # Gate is a floor to stop regressions; the committed roadmap target is 70%.
       - run: dart scripts/coverage_check.dart --min=40
       - run: flutter gen-l10n
+      # A locale that is not 100% translated ships a mixed-language UI, and
+      # generated l10n classes fall back to English silently, so nothing else
+      # catches it. Non-zero exit fails the build.
+      - run: dart run tool/arb_coverage.dart
 
   build-android:
     needs: analyze-test

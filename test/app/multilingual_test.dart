@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/app/localization/app_languages.dart';
 import 'package:bisaasmobile/app/theme/app_theme.dart';
 import 'package:bisaasmobile/app/theme/script_fonts.dart';
 import 'package:flutter/material.dart';
@@ -228,6 +229,140 @@ void main() {
       expect(directionForLanguage('he'), TextDirection.rtl);
       expect(directionForLanguage('ne'), TextDirection.ltr);
       expect(directionForLanguage('en'), TextDirection.ltr);
+    });
+  });
+
+  group('the language registry can come from the server', () {
+    // Adding a language worldwide must be a server change, not a client
+    // release. `GET /api/v1/languages` does not exist yet (spec gap G4), so the
+    // seeded list is the fallback and this proves the swap is a drop-in.
+    tearDown(AppLanguages.reset);
+
+    test('parses a server row', () {
+      final l = AppLanguage.fromServer(const {
+        'code': 'ZH',
+        'label_en': 'Chinese',
+        'native_name': '中文',
+        'direction': 'ltr',
+        'is_ui_locale': true,
+      });
+      expect(l, isNotNull);
+      expect(l!.code, 'zh');
+      expect(l.labelEn, 'Chinese');
+      expect(l.nativeName, '中文');
+    });
+
+    test('derives direction from the script, not from the server field', () {
+      // A server that wrongly reports Arabic as ltr must not be able to lay
+      // Arabic out left-to-right.
+      final wrong = AppLanguage.fromServer(const {
+        'code': 'ar',
+        'label_en': 'Arabic',
+        'native_name': 'العربية',
+        'direction': 'ltr',
+      });
+      expect(wrong!.direction, TextDirection.rtl);
+
+      final right = AppLanguage.fromServer(const {
+        'code': 'he',
+        'label_en': 'Hebrew',
+        'native_name': 'עברית',
+        'direction': 'ltr',
+      });
+      expect(right!.direction, TextDirection.rtl);
+    });
+
+    test('renders a language the client has never heard of', () {
+      final swahili = AppLanguage.fromServer(const {
+        'code': 'sw',
+        'label_en': 'Swahili',
+        'native_name': 'Kiswahili',
+      });
+      expect(swahili, isNotNull);
+      expect(ScriptFonts.forText(const TextStyle(), 'Kiswahili').fontFamilyFallback,
+          contains('sans-serif'));
+    });
+
+    test('skips malformed rows rather than throwing', () {
+      expect(AppLanguage.fromServer(const {'label_en': 'No code'}), isNull);
+      expect(AppLanguage.fromServer(const {'code': '  '}), isNull);
+      expect(AppLanguage.fromServer(const {'code': 'xx'}), isNull);
+      expect(AppLanguage.fromServer(const {}), isNull);
+    });
+
+    test('an adopted registry replaces the seeded list', () {
+      AppLanguages.adopt(const [
+        AppLanguage(code: 'en', labelEn: 'English', nativeName: 'English'),
+        AppLanguage(code: 'sw', labelEn: 'Swahili', nativeName: 'Kiswahili'),
+      ]);
+      expect(AppLanguages.byCode('sw'), isNotNull);
+      expect(AppLanguages.byCode('ne'), isNull, reason: 'seeded rows are replaced');
+    });
+
+    test('English is always retained, because it is the canonical fallback', () {
+      // A server that omits English must not be able to leave the app with no
+      // language at all.
+      AppLanguages.adopt(const [
+        AppLanguage(code: 'sw', labelEn: 'Swahili', nativeName: 'Kiswahili'),
+      ]);
+      expect(AppLanguages.byCode('en'), isNotNull);
+      expect(AppLanguages.fallback.code, 'en');
+    });
+
+    test('an empty registry leaves the app usable', () {
+      AppLanguages.adopt(const []);
+      expect(AppLanguages.all, isNotEmpty);
+      expect(AppLanguages.fallback.code, 'en');
+      expect(AppLanguages.supportedLocales, isNotEmpty);
+    });
+
+    test('normalises codes and drops duplicates', () {
+      AppLanguages.adopt(const [
+        AppLanguage(code: 'NE', labelEn: 'Nepali', nativeName: 'नेपाली'),
+        AppLanguage(code: 'ne', labelEn: 'Duplicate', nativeName: 'x'),
+        AppLanguage(code: '  ', labelEn: 'Blank', nativeName: 'x'),
+      ]);
+      final ne = AppLanguages.byCode('ne')!;
+      expect(ne.code, 'ne');
+      expect(ne.labelEn, 'Nepali', reason: 'first wins');
+      expect(AppLanguages.byCode('NE'), isNotNull, reason: 'lookup is case-insensitive');
+    });
+
+    test('English sorts first so it is the default', () {
+      AppLanguages.adopt(const [
+        AppLanguage(code: 'ne', labelEn: 'Nepali', nativeName: 'नेपाली'),
+        AppLanguage(code: 'en', labelEn: 'English', nativeName: 'English'),
+        AppLanguage(code: 'ar', labelEn: 'Arabic', nativeName: 'العربية'),
+      ]);
+      expect(AppLanguages.all.first.code, 'en');
+    });
+
+    test('supportedLocales tracks the adopted registry', () {
+      AppLanguages.adopt(const [
+        AppLanguage(code: 'en', labelEn: 'English', nativeName: 'English'),
+        AppLanguage(code: 'km', labelEn: 'Khmer', nativeName: 'ខ្មែរ'),
+      ]);
+      expect(
+        AppLanguages.supportedLocales.map((l) => l.languageCode),
+        containsAll(<String>['en', 'km']),
+      );
+      expect(AppLanguages.supportedLocales, isNot(contains(Locale('ne'))));
+    });
+
+    test('an unknown device locale resolves to English, not to nothing', () {
+      expect(AppLanguages.resolve(const Locale('is')).code, 'en');
+      expect(AppLanguages.resolve(const Locale('km')).code, 'en');
+    });
+
+    test('every seeded language renders a font chain', () {
+      for (final l in AppLanguages.all) {
+        expect(l.displayLabel, isNotEmpty, reason: '${l.code} needs a picker label');
+        expect(
+          ScriptFonts.forScript(l.script),
+          isNotEmpty,
+          reason: '${l.code} (${l.script.name}) needs a font chain',
+        );
+      }
     });
   });
 
