@@ -1,9 +1,9 @@
 # Mobile client — build log and current state
 
 > **Last updated:** 2026-09-28
-> **HEAD at time of writing:** `39c308f`
-> **Gates:** `flutter analyze` 0 issues · `flutter test` 717 passing · debug APK builds ·
-> release AAB 112.1 MB, signed `CN=CivilCal Upload Key`
+> **HEAD at time of writing:** `58f59b4`
+> **Gates:** `flutter analyze` 0 issues · `flutter test` 825 passing · debug APK builds ·
+> release AAB 112.3 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green
 
 This replaces the older ad-hoc "remaining work" notes. It records what is built,
 what is deliberately not built, and the server-side work the client is blocked
@@ -43,7 +43,22 @@ looks broken rather than minimal.
 | **Cookie consent** | 1 | local consent state gating all analytics |
 | **Multilingual rendering** | — | per-glyph font resolution for all scripts |
 
-Feature count went from 29 to 36 modules; tests from 567 to **717**.
+Feature count went from 29 to 36 modules; tests from 567 to **825**.
+
+### Bugs the tests found
+
+Writing controller and screen tests after the features were built turned up four
+real defects that the DTO tests could not reach. Each is fixed and now pinned:
+
+| Bug | Symptom | Fix |
+|---|---|---|
+| Syllabus controllers started in an empty, not-loading state | First frame rendered "No syllabus has been published yet" before the request was made | Start in the loading state |
+| Their re-entrancy guard read `state.isLoading` | Once loading started in `build()`, the initial load refused to run — the screen would have spun forever | Private `_inFlight` flag, released in `finally` |
+| `ConsentController.build()` is async | A `decide` issued before it landed was overwritten when it did | `decide`/`revoke` await the in-progress build |
+| `_report` reached for `DioClient.instance` unguarded | Null dereference before bootstrap | Check `DioClient.isInitialized` |
+
+The last two were latent: the app happened to avoid them because the consent sheet
+awaits `consentProvider.future` first. Safety by coincidence is not safety.
 
 ---
 
@@ -132,10 +147,11 @@ the backend stabilises.
 | ARB catalogue: 21 keys vs ~266 English files | **Not machine-written on purpose** — fabricated translations. The CI gate (`tool/arb_coverage.dart`) now fails the build on a partial locale, so this cannot regress silently. Use the server's `LocalizationStudio` (AI batch translate + CSV/JSON import/export) — that is the intended path. |
 | Bundle actual OFL Noto fonts | The chain names Noto families and falls through to the platform's own Noto faces, so text renders. Bundling would make it deterministic across OEM skins. |
 | Device smoke test | Blocked on `INSTALL_FAILED_USER_RESTRICTED`; needs a human to approve installs. |
-| Release AAB at current HEAD | **Done 2026-09-28.** 112.1 MB, verified signed `CN=CivilCal Upload Key, OU=Bisaas, O=Bisaas, L=Kathmandu, C=NP`. `android/key.properties` and the keystore are gitignored. Not yet uploaded to Play. |
+| Release AAB at current HEAD | **Done 2026-09-28.** 112.3 MB, verified signed `CN=CivilCal Upload Key, OU=Bisaas, O=Bisaas, L=Kathmandu, C=NP`. `android/key.properties` and the keystore are gitignored. Not yet uploaded to Play. |
 | Play listing, `assetlinks.json` | Not published. |
 | Per-level world map | Backend has no attempt-question retrieval. |
 | AAB size | 112 MB, dominated by the ~21 MB `libts.so` in each ABI. Legal, but worth a look before a real upload. |
+| Widget tests for the remaining ~60 screens | The new features have controller and screen tests; the pre-existing screens (quiz attempt, economy, library, tutor) still have none. Lower value than the state logic was, but it is the largest remaining gap. |
 
 ### Content, not code
 
