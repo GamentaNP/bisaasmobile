@@ -2,20 +2,24 @@
 
 /// Midnight daily-quiz prefetch.
 ///
-/// Warms the Drift `Questions` cache with today's daily quiz so that offline
-/// practice has content ready before the user opens the quiz tab. Uses ONLY
-/// verified `/api/v1` routes (`GET /quiz/daily` → `GET /quiz/courses/{id}/questions`)
-/// and the existing [QuizLocalDataSource.cacheSession] path — it never invents
-/// a route and never grades or mints anything locally (server stays
-/// authoritative per AGENTS.md boundary rule).
+/// Warms the Drift `Questions` cache with today's daily quiz so offline practice
+/// has content ready before the user opens the quiz tab.
+///
+/// Uses `GET /api/v1/mobile/daily-quiz-pack` (`Mobile\DailyQuizPackController`),
+/// which returns exactly the published daily questions — id, body, options,
+/// image URL — in one call. It deliberately carries **no answer key**, so nothing
+/// is ever graded or minted on-device; offline attempts reconcile through the
+/// server (AGENTS.md boundary rule).
+///
+/// This replaced a two-step `GET /quiz/daily` + `GET /quiz/courses/{id}/questions`
+/// that guessed a course id from four possible keys and then cached an entire
+/// course session — a different question set from the daily quiz. An earlier
+/// docblock here claimed the pack endpoint "does not yet exist"; that was stale.
 ///
 /// Scheduling model: an in-app [Timer] that fires at the next local midnight
 /// and reschedules itself. True OS-background execution (workmanager /
-/// BGTaskScheduler) is intentionally deferred — those native plugins are
-/// excluded from the appbundle build (see docs/GOLDEN_PATH_RUNBOOK.md), and a
-/// dedicated `GET /api/v1/mobile/daily-quiz-pack` endpoint does not yet exist
-/// on the backend (see FLUTTER_SENIOR_REVIEW §6.2 Gap 1). When that endpoint
-/// ships, swap `_resolveCourseId` + `_fetchAndCache` to hit it directly.
+/// BGTaskScheduler) is still deferred — those native plugins are excluded from
+/// the appbundle build (see docs/GOLDEN_PATH_RUNBOOK.md).
 library;
 
 import 'dart:async';
@@ -23,27 +27,23 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 import '../../features/quiz/data/datasources/quiz_local_data_source.dart';
-import '../../features/quiz/data/datasources/quiz_remote_data_source.dart';
 import '../logging/app_logger.dart';
 
 /// Prefetches and caches the daily quiz pack into Drift.
 class DailyQuizPrefetcher {
   DailyQuizPrefetcher({
     required Dio dio,
-    required QuizRemoteDataSource remote,
     required QuizLocalDataSource local,
     int hourOfDay = 0,
     int minuteOfHour = 0,
     Timer Function(Duration, void Function())? timerFactory,
-  })  : _remote = remote,
-        _local = local,
+  })  : _local = local,
         _dio = dio,
         _hourOfDay = hourOfDay,
         _minuteOfHour = minuteOfHour,
         _timerFactory = timerFactory ?? Timer.new;
 
   final Dio _dio;
-  final QuizRemoteDataSource _remote;
   final QuizLocalDataSource _local;
   final int _hourOfDay;
   final int _minuteOfHour;
@@ -89,19 +89,44 @@ class DailyQuizPrefetcher {
   /// Runs one prefetch cycle. Safe to call manually (e.g. right after login).
   /// No-ops when already prefetched for today's date or when offline.
   Future<bool> prefetchOnce() async {
-    final today = DateTime.now();
-    final key = '${today.year}-${today.month}-${today.day}';
+    final now = DateTime.now();
+    // Zero-padded because this string is now SENT to the server, which
+    // validates `date` with `date_format:Y-m-d`. `${now.month}` yields e.g. 9,
+    // producing "2026-9-28" and a 422. It was harmless when the key was only
+    // compared in memory.
+    final key =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
     if (_lastPrefetchedDate == key) {
       AppLogger.d('DailyQuizPrefetch: already cached for $key');
       return false;
     }
     try {
-      final courseId = await _resolveCourseId();
-      if (courseId == null) {
-        AppLogger.w('DailyQuizPrefetch: no resolvable course id in /quiz/daily');
+      // One call, no guessing. The pack endpoint exists — the previous code
+      // read `GET /quiz/daily`, guessed a course id from four possible keys
+      // (`quiz_id` / `course_id` / `quiz_course_id` / `id`) and then fetched a
+      // whole course session, which is not the same question set as the daily
+      // quiz. A docblock here claimed the endpoint "does not yet exist"; that was
+      // stale — `Mobile\DailyQuizPackController` ships it.
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/mobile/daily-quiz-pack',
+        queryParameters: {'date': key},
+      );
+      final data = _packData(res.data);
+      if (data == null) {
+        AppLogger.w('DailyQuizPrefetch: unparseable pack payload');
         return false;
       }
-      await _fetchAndCache(courseId);
+      final quizId = data['quiz_id'];
+      final questions = data['questions'];
+      if (quizId == null || questions is! List || questions.isEmpty) {
+        // No schedule published for that date — a legitimate state, not a fault.
+        AppLogger.i('DailyQuizPrefetch: no daily pack published for $key');
+        return false;
+      }
+      await _local.cacheDailyPack(
+        quizId: quizId.toString(),
+        questions: questions.whereType<Map<String, dynamic>>().toList(),
+      );
       _lastPrefetchedDate = key;
       return true;
     } on DioException catch (e) {
@@ -114,30 +139,18 @@ class DailyQuizPrefetcher {
     }
   }
 
-  /// Reads `GET /quiz/daily` and tolerantly extracts a course id from the
-  /// schedule payload (deployments vary: schedule.quiz_id / course_id / id).
-  Future<String?> _resolveCourseId() async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/daily');
-    final body = res.data;
+  /// Unwraps `{success, data:{quiz_id, valid_for_date, already_completed,
+  /// questions, question_image_urls}}`, tolerating a bare `data`.
+  Map<String, dynamic>? _packData(Map<String, dynamic>? body) {
     if (body == null) return null;
-    final data = body['data'] is Map<String, dynamic>
-        ? body['data'] as Map<String, dynamic>
-        : body;
-    final schedule = data['schedule'] is Map<String, dynamic>
-        ? data['schedule'] as Map<String, dynamic>
-        : data;
-    for (final k in const ['quiz_id', 'course_id', 'quiz_course_id', 'id']) {
-      final v = schedule[k];
-      if (v != null && int.tryParse('$v') != null) return '$v';
-    }
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return data;
     return null;
   }
 
-  /// Fetches the session for [courseId] and persists questions to Drift.
-  Future<void> _fetchAndCache(String courseId) async {
-    final dto = await _remote.getQuizSession(courseId);
-    await _local.cacheSession(dto);
-    AppLogger.i('DailyQuizPrefetch: cached ${dto.questions.length} questions '
-        'for course $courseId');
-  }
+  // `_resolveCourseId` and `_fetchAndCache` were removed on 2026-09-28. They
+  // read `GET /quiz/daily`, guessed a course id from four possible keys and then
+  // pulled an entire course session — which is not the daily quiz's question set.
+  // `GET /api/v1/mobile/daily-quiz-pack` (Mobile\DailyQuizPackController) returns
+  // exactly today's questions, with no answer key, in one call.
 }

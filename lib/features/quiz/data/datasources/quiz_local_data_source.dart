@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 
 import '../../../../core/logging/app_logger.dart';
@@ -37,6 +39,46 @@ class QuizLocalDataSource {
       AppLogger.i('QuizLocal: cached ${dto.questions.length} Qs for ${dto.id}');
     } catch (e, st) {
       AppLogger.w('QuizLocal cacheSession failed: $e');
+      AppLogger.d(st);
+    }
+  }
+
+  /// Caches the daily offline pack from `GET /api/v1/mobile/daily-quiz-pack`.
+  ///
+  /// The pack is built server-side and deliberately **carries no answer key**
+  /// (`DailyQuizService::buildOfflinePack` returns only id/body/options/image_url),
+  /// so `correctOptionId` is always written as null. Offline play can therefore
+  /// never grade locally — it reconciles through the server, which is the whole
+  /// point of the boundary rule.
+  Future<void> cacheDailyPack({
+    required String quizId,
+    required List<Map<String, dynamic>> questions,
+    String subjectSlug = 'daily',
+  }) async {
+    if (questions.isEmpty) return;
+    try {
+      for (final raw in questions) {
+        final id = raw['id'];
+        if (id == null) continue;
+        final options = raw['options'];
+        await _dao.upsert(
+          QuestionsCompanion(
+            remoteId: Value(id.toString()),
+            quizId: Value(quizId),
+            subjectSlug: Value(subjectSlug),
+            body: Value((raw['body'] ?? '').toString()),
+            // Server sends [{key, text}]; store the same shape the session
+            // cache uses so the offline reader can parse one format.
+            optionsJson: Value(jsonEncode(options is List ? options : const [])),
+            // Never populated from the pack — grading is server-side.
+            correctOptionId: const Value.absent(),
+            cachedAt: Value(DateTime.now()),
+          ),
+        );
+      }
+      AppLogger.i('QuizLocal: cached daily pack ${questions.length} Qs for $quizId');
+    } catch (e, st) {
+      AppLogger.w('QuizLocal cacheDailyPack failed: $e');
       AppLogger.d(st);
     }
   }

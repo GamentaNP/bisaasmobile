@@ -29,7 +29,6 @@ import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
 import '../features/quiz/data/datasources/quiz_local_data_source.dart';
-import '../features/quiz/data/datasources/quiz_remote_data_source.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   if (!DioClient.isInitialized) {
@@ -141,7 +140,6 @@ final dailyQuizPrefetcherProvider = Provider<DailyQuizPrefetcher>((ref) {
   final dio = ref.watch(dioProvider);
   return DailyQuizPrefetcher(
     dio: dio,
-    remote: QuizRemoteDataSource(dio),
     local: QuizLocalDataSource(ref.watch(appDatabaseProvider)),
   );
 });
