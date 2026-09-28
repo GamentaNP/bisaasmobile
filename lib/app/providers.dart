@@ -17,6 +17,7 @@ import '../core/analytics/analytics_service.dart';
 import '../core/connectivity/api_reachability.dart';
 import '../core/connectivity/connectivity_service.dart';
 import '../core/network/dio_client.dart';
+import 'config/app_config.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../core/security/app_lock.dart';
 import '../core/security/biometric_auth.dart';
@@ -35,6 +36,42 @@ final dioProvider = Provider<Dio>((ref) {
     throw StateError('DioClient not init — see bootstrap.dart');
   }
   return DioClient.instance.dio;
+});
+
+/// Operator configuration from `GET /app/config`.
+///
+/// Starts `null` (not yet loaded) so nothing is gated on a value we do not
+/// have. A failure leaves it `null` rather than substituting hardcoded
+/// defaults: `feature_flags.dart` used to default `economy_enabled` to true
+/// while the server said false, which is how an operator's kill-switch came to
+/// be ignored.
+final appConfigProvider = FutureProvider<AppConfig?>((ref) async {
+  // Reuse the boot fetch rather than issuing a second identical request.
+  final cached = AppConfigCache.value;
+  if (cached != null) return cached;
+
+  try {
+    final config = await AppConfigDataSource(ref.watch(dioProvider)).fetch();
+    AppConfigCache.value = config;
+    return config;
+  } on Object {
+    // A config outage must not brick the app. `null` means "unknown", and every
+    // consumer treats unknown as "not enforced" rather than guessing.
+    return null;
+  }
+});
+
+/// Synchronous view of the config, for widgets that would otherwise need a
+/// nested AsyncValue. `null` until loaded or if unavailable.
+final appConfigValueProvider = Provider<AppConfig?>((ref) {
+  return ref.watch(appConfigProvider).value;
+});
+
+/// True only when the operator has explicitly put the app into maintenance.
+/// Unknown config does NOT block: refusing to launch on a failed fetch would
+/// turn a transient outage into a total outage.
+final maintenanceProvider = Provider<bool>((ref) {
+  return ref.watch(appConfigValueProvider)?.maintenance ?? false;
 });
 
 final preferencesProvider = Provider<Preferences>((_) => Preferences.instance);
