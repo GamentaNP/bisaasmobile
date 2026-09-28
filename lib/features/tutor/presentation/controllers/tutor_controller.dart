@@ -7,7 +7,7 @@ import '../../data/datasources/tutor_remote_data_source.dart';
 import '../../data/repositories/tutor_repository_impl.dart';
 import '../../domain/entities/tutor.dart';
 import '../../domain/repositories/tutor_repository.dart';
-import '../../../../app/providers.dart';
+import '../../../../core/consent/consent_gate.dart';
 
 // ── Providers ───────────────────────────────────────────────────────────────
 
@@ -125,7 +125,7 @@ class TutorChatController extends Notifier<TutorChatState> {
           isSending: false,
         );
         try {
-          await ref.read(analyticsProvider)?.log('tutor_message_sent', params: {'legacy': '1'});
+          await ref.read(analyticsProvider).log('tutor_message_sent', params: {'legacy': '1'});
         } catch (_) {}
         return;
       }
@@ -146,7 +146,7 @@ class TutorChatController extends Notifier<TutorChatState> {
         sentinel: result.sentinel,
       );
       try {
-        await ref.read(analyticsProvider)?.log('tutor_message_sent', params: {
+        await ref.read(analyticsProvider).log('tutor_message_sent', params: {
           if (result.degraded) 'degraded': '1',
           if (result.sentinel != null) 'sentinel': result.sentinel!,
         });
@@ -258,7 +258,7 @@ class TutorPlanController extends Notifier<TutorPlanState> {
       // Refresh today + plan
       await fetchAll();
       try {
-        await ref.read(analyticsProvider)?.log('tutor_complete_day');
+        await ref.read(analyticsProvider).log('tutor_complete_day');
       } catch (_) {}
       return true;
     } catch (e, st) {
@@ -342,7 +342,7 @@ class TutorOnboardingController extends Notifier<TutorOnboardingState> {
       final session = await _repo.startOnboarding(payload: payload);
       state = state.copyWith(session: session, isStarting: false);
       try {
-        await ref.read(analyticsProvider)?.log('tutor_onboarding_start');
+        await ref.read(analyticsProvider).log('tutor_onboarding_start');
       } catch (_) {}
     } catch (e, st) {
       AppLogger.w('tutor onboarding start failed: $e');
@@ -362,7 +362,7 @@ class TutorOnboardingController extends Notifier<TutorOnboardingState> {
       await _repo.completeOnboarding(sessionId, payload: payload);
       state = state.copyWith(isCompleting: false, isCompleted: true);
       try {
-        await ref.read(analyticsProvider)?.log('tutor_onboarding_complete');
+        await ref.read(analyticsProvider).log('tutor_onboarding_complete');
       } catch (_) {}
       return true;
     } catch (e, st) {

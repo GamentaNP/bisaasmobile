@@ -60,6 +60,8 @@ abstract final class RouteNames {
   static const gameWorld = 'game-world';
   static const gameMissions = 'game-missions';
   static const rewards = 'rewards';
+  // Privacy / GDPR consent management.
+  static const privacy = 'privacy';
   // Syllabus Engine — public catalog reads plus the learner's own plans.
   static const syllabus = 'syllabus';
   static const syllabusTree = 'syllabus-tree';

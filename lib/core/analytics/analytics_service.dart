@@ -17,6 +17,8 @@ class AnalyticsService {
   Future<void> log(String name, {Map<String, Object>? params}) =>
       _fa.logEvent(name: name, parameters: params);
 
+  /// Identifies the user. Callers should go through `ConsentGatedAnalytics`
+  /// rather than this class directly, because this is the most identifying call.
   Future<void> setUser(int? userId) async {
     await _fa.setUserId(id: userId?.toString());
   }

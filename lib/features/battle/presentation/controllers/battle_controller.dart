@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/providers.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/battle_remote_data_source.dart';
@@ -102,7 +102,7 @@ class BattleController extends Notifier<BattleState> {
       final t = await repo.getFirebaseToken();
       if (t.token.isEmpty) throw Exception('Empty Firebase custom token — check backend Firebase config');
       state = state.copyWith(phase: BattlePhase.idle, token: t);
-      try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleMatchSearch, params: {'step': 'token_fetched'}); } catch (_) {}
+      try { await ref.read(analyticsProvider).log(AnalyticsEvents.battleMatchSearch, params: {'step': 'token_fetched'}); } catch (_) {}
     } catch (e) {
       state = state.copyWith(phase: BattlePhase.error, error: e.toString());
     }
@@ -124,11 +124,11 @@ class BattleController extends Notifier<BattleState> {
   Future<void> findMatch({int? categoryId, int totalQuestions = 10}) async {
     state = state.copyWith(phase: BattlePhase.searching, error: null);
     try {
-      try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleMatchSearch, params: {'category': categoryId?.toString() ?? 'any'}); } catch (_) {}
+      try { await ref.read(analyticsProvider).log(AnalyticsEvents.battleMatchSearch, params: {'category': categoryId?.toString() ?? 'any'}); } catch (_) {}
       final repo = ref.read(battleRepositoryProvider);
       final m = await repo.findMatch(categoryId: categoryId, totalQuestions: totalQuestions);
       state = state.copyWith(phase: BattlePhase.inProgress, match: m, currentQuestionIndex: 0);
-      try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleMatchFound, params: {'match_id': m.id}); } catch (_) {}
+      try { await ref.read(analyticsProvider).log(AnalyticsEvents.battleMatchFound, params: {'match_id': m.id}); } catch (_) {}
       _subscribeRtdb(m.id);
     } catch (e) {
       state = state.copyWith(phase: BattlePhase.error, error: e.toString());
@@ -206,7 +206,7 @@ class BattleController extends Notifier<BattleState> {
         'selected_option': selectedOption,
         'time_taken_ms': timeTakenMs,
       }, options: Options(headers: {'Idempotency-Key': '${m.id}:${state.currentQuestionIndex}'}));
-      try { await ref.read(analyticsProvider)?.log(AnalyticsEvents.battleAnswerSubmit, params: {'match_id': m.id, 'q': state.currentQuestionIndex}); } catch (_) {}
+      try { await ref.read(analyticsProvider).log(AnalyticsEvents.battleAnswerSubmit, params: {'match_id': m.id, 'q': state.currentQuestionIndex}); } catch (_) {}
     } catch (e) {
       state = state.copyWith(phase: BattlePhase.error, error: 'Answer failed: $e');
     }

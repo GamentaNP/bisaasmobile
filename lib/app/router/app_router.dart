@@ -48,6 +48,7 @@ import '../../features/tutor/presentation/screens/tutor_chat_screen.dart';
 import '../../features/tutor/presentation/screens/tutor_onboarding_screen.dart';
 import '../../features/tutor/presentation/screens/tutor_plan_screen.dart';
 import '../../features/library/presentation/screens/library_browser_screen.dart';
+import '../../core/consent/consent_screens.dart';
 import '../../features/library/presentation/screens/library_detail_screen.dart';
 import '../../features/syllabus/presentation/screens/syllabus_tree_screen.dart';
 import '../../features/syllabus/presentation/screens/syllabus_versions_screen.dart';
@@ -370,6 +371,11 @@ class AppRouter {
         path: '/library/:slug',
         name: RouteNames.libraryDetail,
         builder: (context, state) => LibraryDetailScreen(slug: state.pathParameters['slug']!),
+      ),
+      GoRoute(
+        path: '/privacy',
+        name: RouteNames.privacy,
+        builder: (context, state) => const PrivacySettingsScreen(),
       ),
       // Syllabus Engine — 22 verified routes under /syllabi/* and /me/syllabi/*.
       // The catalog group is public server-side (`withoutMiddleware('auth:sanctum')`),

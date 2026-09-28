@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show TargetPlatform, debugPrint, defaul
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../analytics/analytics_service.dart';
+import '../consent/consent_gate.dart';
 import '../logging/app_logger.dart';
 import 'local_notification_service.dart';
 import 'notification_handler.dart';
@@ -21,13 +22,13 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class PushNotificationService {
-  PushNotificationService(this._messaging, this._dio, {FlutterLocalNotificationsPlugin? localPlugin, AnalyticsService? analytics})
+  PushNotificationService(this._messaging, this._dio, {FlutterLocalNotificationsPlugin? localPlugin, ConsentGatedAnalytics? analytics})
       : _local = localPlugin != null ? LocalNotificationService(localPlugin) : null,
         _analytics = analytics;
   final FirebaseMessaging _messaging;
   final Dio _dio;
   final LocalNotificationService? _local;
-  final AnalyticsService? _analytics;
+  final ConsentGatedAnalytics? _analytics;
 
   /// Emits the navigation target whenever the user opens a push (background
   /// tap, terminated-state tap, or foreground local-notification tap).

@@ -204,6 +204,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onChanged: (v) => unawaited(_toggleAppLock(v)),
           ),
           const Divider(height: 1),
+          const _SectionHeader('Privacy'),
+          ListTile(
+            leading: const Icon(Icons.privacy_tip_outlined),
+            title: const Text('Privacy choices'),
+            subtitle: const Text('Analytics, functional and marketing consent'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () => context.push('/privacy'),
+          ),
+          const Divider(height: 1),
           const _SectionHeader('Account'),
           ListTile(
             leading: const Icon(Icons.logout_rounded),

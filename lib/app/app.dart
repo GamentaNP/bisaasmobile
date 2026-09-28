@@ -15,6 +15,9 @@ import '../shared/widgets/app_lock_overlay.dart';
 import 'localization/app_languages.dart';
 import 'localization/locale_controller.dart';
 import 'providers.dart';
+import 'package:bisaasmobile/core/consent/consent_controller.dart';
+import 'package:bisaasmobile/core/consent/consent_gate.dart';
+import 'package:bisaasmobile/core/consent/consent_screens.dart';
 import 'force_update_screen.dart';
 import 'maintenance_screen.dart';
 import 'router/app_router.dart';
@@ -43,6 +46,21 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     _listenDeepLinks();
     _listenPushNavigation();
     _listenAuthForPushAndAnalytics();
+    _askForConsentOnce();
+  }
+
+  /// Asks for consent the first time the app is opened, before any non-essential
+  /// collection has happened.
+  ///
+  /// Non-essential collection is already blocked before this runs: the analytics
+  /// gate reads an undecided state as "not granted". This only makes the choice
+  /// available, which is the other half of the obligation. The sheet is not
+  /// dismissible because there has to be a decision on record.
+  Future<void> _askForConsentOnce() async {
+    final consent = await ref.read(consentProvider.future);
+    if (consent.decided) return;
+    if (!mounted) return;
+    await ConsentSheet.show(context);
   }
 
   void _startSync() {
@@ -101,12 +119,12 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
       final analytics = ref.read(analyticsProvider);
       final push = ref.read(pushServiceProvider);
       if (isIn) {
-        unawaited(analytics?.log(AnalyticsEvents.login));
+        unawaited(analytics.log(AnalyticsEvents.login));
         if (push != null) {
           unawaited(push.init().then((_) => push.registerToken()));
         }
       } else {
-        unawaited(analytics?.log(AnalyticsEvents.logout));
+        unawaited(analytics.log(AnalyticsEvents.logout));
         if (push != null) unawaited(push.unregisterToken());
       }
     });

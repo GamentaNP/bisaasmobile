@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../app/providers.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
@@ -129,9 +130,9 @@ class QuizController extends Notifier<QuizState> {
       try {
         final a = ref.read(analyticsProvider);
         if (isOffline) {
-          await a?.log(AnalyticsEvents.quizStart, params: {'mode': 'offline', 'quiz_id': quizId});
+          await a.log(AnalyticsEvents.quizStart, params: {'mode': 'offline', 'quiz_id': quizId});
         } else {
-          await a?.log(AnalyticsEvents.quizStart, params: {'quiz_id': quizId});
+          await a.log(AnalyticsEvents.quizStart, params: {'quiz_id': quizId});
         }
       } catch (_) {}
     } catch (e) {
@@ -211,7 +212,7 @@ class QuizController extends Notifier<QuizState> {
         totalCoinsEarned: state.totalCoinsEarned + result.coinsEarned,
       );
       try {
-        await ref.read(analyticsProvider)?.log(AnalyticsEvents.quizAnswer, params: {'is_correct': result.isCorrect ? 1 : 0});
+        await ref.read(analyticsProvider).log(AnalyticsEvents.quizAnswer, params: {'is_correct': result.isCorrect ? 1 : 0});
       } catch (_) {}
     } catch (e) {
       // On network failure: still advance but mark as unsynced
@@ -393,7 +394,7 @@ class QuizController extends Notifier<QuizState> {
 
     state = state.copyWith(phase: QuizPhase.finished);
     try {
-      await ref.read(analyticsProvider)?.log(AnalyticsEvents.quizComplete, params: {
+      await ref.read(analyticsProvider).log(AnalyticsEvents.quizComplete, params: {
         'correct': state.answers.values.where((r) => r.isCorrect).length,
         'total': state.session?.totalQuestions ?? state.answers.length,
         'xp': state.totalXpEarned,

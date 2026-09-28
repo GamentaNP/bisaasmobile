@@ -25,6 +25,7 @@ import '../core/security/biometric_auth.dart';
 import '../core/storage/database/app_database.dart';
 import '../core/storage/database/daos/sync_queue_dao.dart';
 import '../core/storage/preferences.dart';
+import '../core/consent/consent_gate.dart';
 import '../core/sync/sync_manager.dart';
 import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
@@ -145,10 +146,11 @@ final dailyQuizPrefetcherProvider = Provider<DailyQuizPrefetcher>((ref) {
   );
 });
 
-/// Null when Firebase is unavailable (dev without config) — callers no-op.
-final analyticsProvider = Provider<AnalyticsService?>(
-  (_) => AnalyticsService.tryCreate(),
-);
+/// Analytics, gated on the user's consent choice.
+///
+/// Defined in `core/consent/consent_gate.dart` rather than here because the gate
+/// and the provider have to live together: exporting a bare [AnalyticsService]
+/// from this file is exactly how the ungated callsites came to exist.
 
 /// Local notifications plugin — always available (even without Firebase).
 final localNotificationsPluginProvider = Provider<FlutterLocalNotificationsPlugin>((_) => FlutterLocalNotificationsPlugin());
@@ -169,8 +171,7 @@ final pushServiceProvider = Provider<PushNotificationService?>((ref) {
     FirebaseMessaging.instance,
     ref.watch(dioProvider),
     localPlugin: ref.watch(localNotificationsPluginProvider),
-    analytics: ref.watch(analyticsProvider),
-  );
+    analytics: ref.watch(analyticsProvider),  );
 });
 
 final appLockProvider = Provider<AppLock>((ref) {

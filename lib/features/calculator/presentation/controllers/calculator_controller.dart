@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/dio_client.dart';
-import '../../../../app/providers.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../data/datasources/calculator_remote_data_source.dart';
 import '../../data/repositories/calculator_repository_impl.dart';
 import '../../domain/entities/calculator.dart';
@@ -96,7 +96,7 @@ class CalculatorController extends Notifier<CalcState> {
         history: [newEntry, ...state.history],
       );
       try {
-        await ref.read(analyticsProvider)?.log(AnalyticsEvents.calculatorCalculate, params: {'domain': domain, 'slug': slug});
+        await ref.read(analyticsProvider).log(AnalyticsEvents.calculatorCalculate, params: {'domain': domain, 'slug': slug});
       } catch (_) {}
     } on DioException catch (e) {
       final apiErr = e.error;

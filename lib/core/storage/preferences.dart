@@ -32,4 +32,9 @@ class Preferences {
 
   bool get appLockEnabled => _p.getBool('app_lock_enabled') ?? false;
   Future<void> setAppLockEnabled(bool v) => _p.setBool('app_lock_enabled', v);
+
+  /// Opaque JSON blob, used by ConsentController. Not typed here because the
+  /// shape is owned by the consent domain, not by storage.
+  String? getString(String key) => _p.getString(key);
+  Future<void> setString(String key, String value) => _p.setString(key, value);
 }
