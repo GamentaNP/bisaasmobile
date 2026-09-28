@@ -22,8 +22,10 @@ import '../../features/economy/presentation/screens/inventory_screen.dart';
 import '../../features/economy/presentation/screens/shop_screen.dart';
 import '../../features/economy/presentation/screens/wallet_screen.dart';
 import '../../features/gamification/presentation/screens/achievements_screen.dart';
+import '../../features/gamification/presentation/screens/rewards_screen.dart';
 import '../../features/game/presentation/screens/game_world_map_screen.dart';
 import '../../features/game/presentation/screens/game_worlds_screen.dart';
+import '../../features/game/presentation/screens/missions_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/learning/presentation/screens/learning_home_screen.dart';
 import '../../features/learning/presentation/screens/learning_tracks_screen.dart';
@@ -297,6 +299,11 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/game/missions',
+        name: RouteNames.gameMissions,
+        builder: (context, state) => const MissionsScreen(),
+      ),
+      GoRoute(
         path: '/game/worlds',
         name: RouteNames.gameWorlds,
         builder: (context, state) => const GameWorldsScreen(),
@@ -309,6 +316,7 @@ class AppRouter {
       ),
       GoRoute(path: '/eice', name: RouteNames.eice, builder: (context, state) => EiceScreen(exam: state.uri.queryParameters['exam'] ?? 'psc-civil')),
       GoRoute(path: '/psc', name: RouteNames.psc, builder: (context, state) => const PscScreen()),
+      GoRoute(path: '/rewards', name: RouteNames.rewards, builder: (context, state) => const RewardsScreen()),
       GoRoute(path: '/social', name: RouteNames.social, builder: (context, state) => const SocialScreen()),
       GoRoute(path: '/economy', name: RouteNames.economy, builder: (context, state) => const EconomyScreen()),
       GoRoute(path: '/economy/wallet', name: RouteNames.economyWallet, builder: (context, state) => const WalletScreen()),

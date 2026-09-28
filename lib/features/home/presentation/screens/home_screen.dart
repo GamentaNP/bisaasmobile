@@ -8,6 +8,7 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../game/game_providers.dart';
+import '../../../gamification/presentation/screens/rewards_screen.dart';
 import '../../domain/entities/dashboard_data.dart';
 import '../controllers/home_controller.dart';
 
@@ -129,6 +130,16 @@ class HomeScreen extends ConsumerWidget {
             // chapters → levels → stars), so the honest home affordance is a
             // real summary that opens it.
             _WorldsEntryCard(),
+
+            const SizedBox(height: 16),
+
+            // Missions — 49 live on the server, previously surfaced nowhere.
+            _MissionsEntryCard(),
+
+            const SizedBox(height: 16),
+
+            // Rewards — daily check-in + spin wheel, both live server-side.
+            _RewardsEntryCard(),
 
             const SizedBox(height: 24),
 
@@ -319,6 +330,105 @@ class HomeScreen extends ConsumerWidget {
 /// Replaces the decorative 15-node trail. Everything shown here is the
 /// server's own star/completion figure; a failing read collapses the card
 /// rather than inventing a progress bar.
+/// Rewards summary — daily check-in + spin wheel.
+///
+/// Both have been live server-side all along; neither had a UI.
+class _RewardsEntryCard extends ConsumerWidget {
+  const _RewardsEntryCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final checkIn = ref.watch(checkInStatusProvider);
+
+    return ChunkyCard(
+      padding: const EdgeInsets.all(14),
+      onTap: () => context.go('/rewards'),
+      child: Row(
+        children: [
+          const Icon(Icons.card_giftcard_rounded, size: 20, color: AppColors.streakOrange),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              checkIn.maybeWhen(
+                // Only promise a reward when the server says one is waiting.
+                data: (d) => d.canClaim
+                    ? 'Check in for ${d.todayReward} coins'
+                    : 'Rewards — spin the wheel',
+                orElse: () => 'Rewards — spin the wheel',
+              ),
+              style: AppTypography.titleSmall.copyWith(
+                fontWeight: FontWeight.w700,
+                color: checkIn.maybeWhen(data: (d) => d.canClaim ? AppColors.correctGreen : null, orElse: () => null),
+              ),
+            ),
+          ),
+          const Icon(Icons.chevron_right_rounded, size: 20),
+        ],
+      ),
+    );
+  }
+}
+
+/// Missions summary — `GET /api/v1/quiz/game/missions/dashboard`.
+///
+/// 49 missions are live server-side and were previously surfaced nowhere in the
+/// app. Shows how many are ready to claim, straight from the server's flags.
+class _MissionsEntryCard extends ConsumerWidget {
+  const _MissionsEntryCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final missionsAsync = ref.watch(gameMissionsProvider);
+
+    return missionsAsync.when(
+      loading: () => const _ShimmerCard(height: 64),
+      error: (_, __) => ChunkyCard(
+        padding: const EdgeInsets.all(14),
+        onTap: () => context.go('/game/missions'),
+        child: const Row(
+          children: [
+            Icon(Icons.flag_outlined, size: 20, color: AppColors.textTertiaryLight),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text('Missions unavailable', style: TextStyle(fontSize: 13)),
+            ),
+            Icon(Icons.chevron_right_rounded, size: 20),
+          ],
+        ),
+      ),
+      data: (missions) {
+        final claimable = missions.where((m) => m.isClaimable).length;
+        return ChunkyCard(
+          padding: const EdgeInsets.all(14),
+          onTap: () => context.go('/game/missions'),
+          child: Row(
+            children: [
+              Icon(
+                claimable > 0 ? Icons.card_giftcard_rounded : Icons.flag_outlined,
+                size: 20,
+                color: claimable > 0 ? AppColors.correctGreen : AppColors.textTertiaryLight,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  claimable > 0
+                      ? '$claimable mission${claimable == 1 ? '' : 's'} ready to claim'
+                      : 'Missions — ${missions.length} active',
+                  style: AppTypography.titleSmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: claimable > 0 ? AppColors.correctGreen : null,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, size: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _WorldsEntryCard extends ConsumerWidget {
   const _WorldsEntryCard();
 

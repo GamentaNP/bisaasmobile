@@ -57,4 +57,6 @@ abstract final class RouteNames {
   // Game — Duolingo spine: worlds → chapters → level path
   static const gameWorlds = 'game-worlds';
   static const gameWorld = 'game-world';
+  static const gameMissions = 'game-missions';
+  static const rewards = 'rewards';
 }

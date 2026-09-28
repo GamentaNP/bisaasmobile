@@ -103,8 +103,17 @@ class ChunkyStatsBar extends StatelessWidget {
   }
 }
 
-/// Bordered card with chunky bottom extrusion — replaces glass cards on
-/// light surfaces. [face] paints the body; [side] paints the extrusion.
+/// Bordered card with a chunky bottom extrusion — the signature Duolingo look.
+///
+/// [side] paints the extrusion, [face] the card body.
+///
+/// **Implementation note (fixed 2026-09-27):** the extrusion used to be a
+/// `BoxDecoration` with `border: Border(bottom: wide, top/left/right: thin)`
+/// plus a `borderRadius`. Flutter rejects that combination outright —
+/// "A borderRadius can only be given on borders with uniform colors" — so the
+/// decoration silently failed to paint and the Duolingo 3D effect was invisible
+/// on every `ChunkyCard` in the app. The extrusion is now a real second layer
+/// behind the card, which is what the design intends and what actually renders.
 class ChunkyCard extends StatelessWidget {
   const ChunkyCard({
     super.key,
@@ -128,37 +137,33 @@ class ChunkyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: face ??
-          (isDark ? AppColors.cardDark : AppColors.surfaceLight),
-      borderRadius: borderRadius ?? BorderRadius.circular(16),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: borderRadius ?? BorderRadius.circular(16),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: borderRadius ?? BorderRadius.circular(16),
-            border: Border(
-              bottom: BorderSide(
-                color: side ??
-                    (isDark ? AppColors.dividerDark : AppColors.dividerLight),
-                width: sideWidth,
-              ),
-              top: BorderSide(
-                color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
-                width: 1,
-              ),
-              left: BorderSide(
-                color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
-                width: 1,
-              ),
-              right: BorderSide(
-                color: isDark ? AppColors.dividerDark : AppColors.dividerLight,
-                width: 1,
-              ),
+    final radius = borderRadius ?? BorderRadius.circular(16);
+    final faceColor = face ?? (isDark ? AppColors.cardDark : AppColors.surfaceLight);
+    final sideColor = side ?? (isDark ? AppColors.dividerDark : AppColors.dividerLight);
+
+    // The extrusion: the same rounded shape, sitting `sideWidth` lower, painted
+    // first so the card face covers everything but the bottom lip.
+    return Container(
+      decoration: BoxDecoration(
+        color: sideColor,
+        borderRadius: radius,
+      ),
+      padding: EdgeInsets.only(bottom: sideWidth),
+      child: Material(
+        color: faceColor,
+        borderRadius: radius,
+        child: InkWell(
+          borderRadius: radius,
+          onTap: onTap,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              // Uniform outline only — a per-side width cannot coexist with a
+              // borderRadius, and the lip is the layered box behind instead.
+              border: Border.all(color: sideColor.withValues(alpha: 0.35), width: 1),
             ),
+            child: Padding(padding: padding, child: child),
           ),
-          child: Padding(padding: padding, child: child),
         ),
       ),
     );

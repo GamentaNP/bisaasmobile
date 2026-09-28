@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/network/dio_client.dart';
 import 'data/datasources/game_remote_data_source.dart';
 import 'data/models/game_models.dart';
+import 'data/models/mission_dto.dart';
 
 // ── Providers ──────────────────────────────────────────────────────────────
 
@@ -25,8 +26,12 @@ final gameWorldMapProvider =
 });
 
 /// Missions dashboard.
-final gameMissionsDashboardProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>?>((ref) async {
+///
+/// `GET /api/v1/quiz/game/missions/dashboard` returns a **bare JSON array** in
+/// `data` (49 missions for the QA account on 2026-09-27), so the parse lives
+/// in the data source rather than in the envelope mapper.
+final gameMissionsProvider =
+    FutureProvider.autoDispose<List<MissionDto>>((ref) async {
   final remote = ref.watch(gameRemoteDataSourceProvider);
-  return remote.getMissionsDashboard();
+  return remote.getMissions();
 });

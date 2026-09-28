@@ -1,9 +1,11 @@
 // ignore_for_file: cast_nullable_to_non_nullable
 
 import 'package:dio/dio.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
 import '../models/game_models.dart';
+import '../models/mission_dto.dart';
 
 /// Remote data source for the Duolingo-style game world engine.
 ///
@@ -11,6 +13,7 @@ import '../models/game_models.dart';
 class GameRemoteDataSource {
   const GameRemoteDataSource(this._dio);
   final Dio _dio;
+  static const _uuid = Uuid();
 
   // ── Worlds ──────────────────────────────────────────────────────────────────
 
@@ -44,6 +47,72 @@ class GameRemoteDataSource {
       }
     }
     return [];
+  }
+
+  // ── Missions ────────────────────────────────────────────────────────────────
+
+  /// `GET /quiz/game/missions/dashboard`
+  ///
+  /// The `data` here is a **bare JSON array**, not `{items: [...]}` — verified
+  /// 2026-09-27, 49 missions returned. Optional `cadence` filter is one of
+  /// daily | weekly | campaign.
+  Future<List<MissionDto>> getMissions({String? cadence}) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/quiz/game/missions/dashboard',
+      queryParameters: cadence == null ? null : {'cadence': cadence},
+    );
+    final body = res.data;
+    if (body == null) return const [];
+
+    List<dynamic>? rows;
+    final data = body['data'];
+    if (data is List) {
+      rows = data;
+    } else if (data is Map<String, dynamic>) {
+      final items = data['items'] ?? data['missions'];
+      if (items is List) rows = items;
+    }
+    if (rows == null) {
+      try {
+        final env = ApiResponse.fromJson(body, (json) => json);
+        final d = env.data;
+        if (d is List) rows = d;
+      } catch (_) {}
+    }
+    if (rows == null) return const [];
+    return rows.whereType<Map<String, dynamic>>().map(MissionDto.fromJson).toList();
+  }
+
+  /// `PUT /quiz/game/missions/{mission}/claim`
+  ///
+  /// The `POST` alias is also registered by the server. Idempotency-Key is
+  /// required — without it the API answers 422 `IDEMPOTENCY_KEY_REQUIRED`, so
+  /// a retry can never double-credit a reward.
+  Future<MissionClaimDto> claimMission(int missionId, {String? idempotencyKey}) async {
+    final key = idempotencyKey ?? _uuid.v4();
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/game/missions/$missionId/claim',
+      options: Options(headers: {'Idempotency-Key': key}),
+    );
+    return MissionClaimDto.fromJson(_dataOrEmpty(res.data));
+  }
+
+  /// `POST /quiz/game/missions/claims` — claim everything claimable in one call.
+  Future<MissionBulkClaimDto> claimAllMissions({String? idempotencyKey}) async {
+    final key = idempotencyKey ?? _uuid.v4();
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/quiz/game/missions/claims',
+      data: const {},
+      options: Options(headers: {'Idempotency-Key': key}),
+    );
+    return MissionBulkClaimDto.fromJson(_dataOrEmpty(res.data));
+  }
+
+  Map<String, dynamic> _dataOrEmpty(Map<String, dynamic>? body) {
+    if (body == null) return const {};
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return data;
+    return body;
   }
 
   // ── World Map ───────────────────────────────────────────────────────────────
@@ -84,11 +153,5 @@ class GameRemoteDataSource {
       return body['data'] as Map<String, dynamic>?;
     }
     return null;
-  }
-
-  /// `POST /api/v1/quiz/game/missions/{missionId}/claim`
-  Future<Map<String, dynamic>> claimMission(int missionId) async {
-    final res = await _dio.post<Map<String, dynamic>>('/quiz/game/missions/$missionId/claim');
-    return res.data ?? {};
   }
 }
