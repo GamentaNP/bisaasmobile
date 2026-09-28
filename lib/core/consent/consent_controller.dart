@@ -37,11 +37,17 @@ class ConsentController extends AsyncNotifier<ConsentState> {
   /// Order matters: persistence first so a network failure cannot lose the
   /// decision the user just made, and the banner does not reappear on next
   /// launch.
+  ///
+  /// The in-progress build is awaited first. `build()` is async, so a decision
+  /// recorded before it lands would be overwritten when it does — the local
+  /// write and the report would both be for a choice the user had already
+  /// moved on from.
   Future<void> decide({
     required bool functional,
     required bool analytics,
     required bool marketing,
   }) async {
+    await _awaitBuild();
     final next = ConsentState(
       decided: true,
       functional: functional,
@@ -56,6 +62,7 @@ class ConsentController extends AsyncNotifier<ConsentState> {
   /// Revokes a single category without disturbing the others.
   Future<void> revoke(ConsentCategory category) async {
     if (category == ConsentCategory.necessary) return;
+    await _awaitBuild();
     final current = state.value ?? const ConsentState.unknown();
     final next = current.copyWith(
       functional: category != ConsentCategory.functional && current.functional,
@@ -67,16 +74,30 @@ class ConsentController extends AsyncNotifier<ConsentState> {
     await _report(next);
   }
 
+  /// Waits for `build()` to finish if it is still in flight, without deadlocking
+  /// when it is not.
+  Future<void> _awaitBuild() async {
+    if (state.isLoading) {
+      await future;
+    }
+  }
+
   Future<void> _report(ConsentState consent) async {
+    // The report is best-effort. Recording the choice locally is what actually
+    // gates collection; the server copy is an audit artefact, so a failure here
+    // is logged and dropped rather than surfaced as an error the user cannot act
+    // on. It is also skipped entirely before bootstrap has built the client,
+    // which is the case in tests and in any early-boot caller.
+    if (!DioClient.isInitialized) {
+      AppLogger.w('cookie-consent not reported: the network layer is not up yet');
+      return;
+    }
     try {
       await DioClient.instance.dio.put<Map<String, dynamic>>(
         '/public/cookie-consent',
         data: consent.toRequestBody(),
       );
     } on ApiException catch (e) {
-      // Recorded locally, which is what actually gates collection. The server
-      // copy is an audit artefact, so a failure here is logged and dropped
-      // rather than surfaced as an error the user cannot act on.
       AppLogger.w('cookie-consent report failed: ${e.message}');
     } catch (e) {
       AppLogger.w('cookie-consent report failed: $e');
