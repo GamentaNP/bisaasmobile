@@ -417,23 +417,23 @@ void main() {
             'name': 'General',
             'marks': 60.0,
             'question_count': 30,
-            'rules': [
-              <String, dynamic>{
-                'quiz_syllabus_node_id': 5,
-                'node_code': '1.1',
-                'node_title': 'Limit Analysis',
-                'marks_each': 2.0,
-                'question_count': 30,
-                'weight': 0.6,
-              },
-            ],
           },
           <String, dynamic>{
             'section_code': 'S2',
             'name': 'Structural',
             'marks': 40.0,
             'question_count': 20,
-            'rules': <dynamic>[],
+          },
+        ],
+        // Paper-level, as the server actually sends it.
+        'rules': [
+          <String, dynamic>{
+            'quiz_syllabus_node_id': 5,
+            'node_code': '1.1',
+            'node_title': 'Limit Analysis',
+            'marks_each': 2.0,
+            'question_count': 30,
+            'weight': 0.6,
           },
         ],
       },
@@ -447,11 +447,139 @@ void main() {
       expect(b.single.sections.length, 2);
     });
 
-    test('parses section rules with the node they draw from', () {
-      final rule = SyllabusBlueprintDto.fromList(list).items.single.sections.first.rules.single;
+    test('parses paper-level rules with the node they draw from', () {
+      // `rules` is a sibling of `sections`, not a child. Verified against the live
+      // API on 2026-09-28: one paper carried 13 rules and no section had any.
+      final rule = SyllabusBlueprintDto.fromList(list).items.single.rules.single;
       expect(rule.nodeCode, '1.1');
+      expect(rule.nodeTitle, 'Limit Analysis');
       expect(rule.marksEach, 2.0);
       expect(rule.weight, 0.6);
+    });
+
+    test('a section with a null section_code is kept, not dropped', () {
+      // The live blueprint returns a null section_code for the unnamed trailing
+      // "Part II". Requiring a non-null code would silently lose a third of the
+      // paper's marks.
+      final b = SyllabusBlueprintDto.fromList(<dynamic>[
+        <String, dynamic>{
+          'paper_code': 'I',
+          'name': 'Paper I',
+          'total_marks': 100,
+          'total_questions': 50,
+          'sections': [
+            <String, dynamic>{
+              'section_code': 'A',
+              'name': 'Section (A)',
+              'marks': 30,
+              'question_count': 15,
+            },
+            <String, dynamic>{
+              'section_code': null,
+              'name': 'Part II',
+              'marks': 50,
+              'question_count': 25,
+            },
+          ],
+        },
+      ]).items.single;
+      expect(b.sections.length, 2);
+      expect(b.sections[1].sectionCode, isNull);
+      expect(b.sections[1].name, 'Part II');
+      expect(b.sections[1].marks, 50);
+    });
+
+    test('a section with no name at all is still dropped', () {
+      final b = SyllabusBlueprintDto.fromList(<dynamic>[
+        <String, dynamic>{
+          'paper_code': 'I',
+          'name': 'Paper I',
+          'total_marks': 100,
+          'total_questions': 50,
+          'sections': [
+            <String, dynamic>{'section_code': 'A', 'marks': 100},
+          ],
+        },
+      ]).items.single;
+      expect(b.sections, isEmpty);
+    });
+
+    test('a paper with no rules key is valid, not an error', () {
+      final b = SyllabusBlueprintDto.fromList(<dynamic>[
+        <String, dynamic>{
+          'paper_code': 'I',
+          'name': 'Paper I',
+          'total_marks': 100,
+          'total_questions': 50,
+        },
+      ]).items.single;
+      expect(b.rules, isEmpty);
+    });
+
+    test('a malformed rule is skipped without losing the paper', () {
+      final b = SyllabusBlueprintDto.fromList(<dynamic>[
+        <String, dynamic>{
+          'paper_code': 'I',
+          'name': 'Paper I',
+          'total_marks': 100,
+          'total_questions': 50,
+          'rules': [
+            'not a map',
+            <String, dynamic>{'marks_each': 2},
+          ],
+        },
+      ]).items.single;
+      expect(b.rules.length, 1, reason: 'a rule with no ids still maps');
+      expect(b.totalMarks, 100);
+    });
+
+    test('a live-shaped blueprint reconciles', () {
+      // The real payload: sections 30 + 20 + 50 = 100, matching total_marks.
+      final b = SyllabusBlueprintDto.fromList(<dynamic>[
+        <String, dynamic>{
+          'paper_code': 'I',
+          'part_code': null,
+          'name': 'lok-sewa-sub-engineer-2026 - Paper I',
+          'total_marks': 100,
+          'total_questions': 50,
+          'negative_marking_mode': 'none',
+          'unattempted_marks': 0,
+          'sections': [
+            <String, dynamic>{
+              'section_code': 'A',
+              'name': 'Section (A)',
+              'marks': 30,
+              'question_count': 15,
+            },
+            <String, dynamic>{
+              'section_code': 'B',
+              'name': 'Section (B)',
+              'marks': 20,
+              'question_count': 10,
+            },
+            <String, dynamic>{
+              'section_code': null,
+              'name': 'Part II',
+              'marks': 50,
+              'question_count': 25,
+            },
+          ],
+          'rules': [
+            <String, dynamic>{
+              'quiz_syllabus_node_id': 10740,
+              'node_code': '1',
+              'node_title': 'Surveying',
+              'marks_each': 2,
+              'question_count': 2,
+              'weight': 0,
+            },
+          ],
+        },
+      ]).items.single;
+      expect(b.marksReconcile, isTrue);
+      expect(b.sections.length, 3);
+      expect(b.sections.fold<double>(0, (a, s) => a + s.marks), 100);
+      expect(b.rules.single.nodeTitle, 'Surveying');
     });
 
     test('marksReconcile detects a section/total mismatch', () {

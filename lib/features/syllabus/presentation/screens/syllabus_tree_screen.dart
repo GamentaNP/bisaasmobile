@@ -89,6 +89,7 @@ class _SyllabusTreeScreenState extends ConsumerState<SyllabusTreeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
         _Summary(tree: tree),
+        if (state.blueprints.isNotEmpty) _BlueprintPanel(blueprints: state.blueprints),
         const Divider(height: 1),
         for (final node in tree.nodes)
           _NodeRow(
@@ -155,6 +156,97 @@ class _Stat extends StatelessWidget {
     );
   }
 }
+
+/// Paper blueprints: how the marks are actually distributed.
+///
+/// This is the authority on marks, which is why `marks_hint` on a node is
+/// advisory. Two things this renders honestly rather than smoothing over: a
+/// section with no letter (the unnamed trailing "Part II") keeps its name instead
+/// of rendering a blank chip, and a paper whose sections do not sum to its
+/// declared total says so.
+class _BlueprintPanel extends StatelessWidget {
+  const _BlueprintPanel({required this.blueprints});
+
+  final List<SyllabusBlueprint> blueprints;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ExpansionTile(
+      title: Text('Paper blueprint', style: theme.textTheme.titleSmall),
+      subtitle: Text(
+        blueprints.length == 1
+            ? blueprints.first.name
+            : '${blueprints.length} papers',
+        style: theme.textTheme.labelSmall,
+      ),
+      children: [
+        for (final paper in blueprints)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: _PaperBody(paper: paper),
+          ),
+      ],
+    );
+  }
+}
+
+class _PaperBody extends StatelessWidget {
+  const _PaperBody({required this.paper});
+
+  final SyllabusBlueprint paper;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${_num(paper.totalMarks)} marks · ${paper.totalQuestions} questions',
+          style: theme.textTheme.bodyMedium,
+        ),
+        if (paper.negativeMarkingMode != null && paper.negativeMarkingMode != 'none')
+          Text('Negative marking: ${paper.negativeMarkingMode}', style: theme.textTheme.labelSmall),
+        const SizedBox(height: 8),
+        for (final s in paper.sections)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              children: [
+                // A null section_code is the unnamed trailing part, so the name
+                // leads rather than rendering as an empty " · Part II".
+                Expanded(
+                  child: Text(
+                    s.sectionCode == null ? s.name : '${s.sectionCode} · ${s.name}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ),
+                Text('${_num(s.marks)} marks', style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+        if (!paper.marksReconcile)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              'The section marks do not add up to the paper total. Treat this '
+              'blueprint as unverified.',
+              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error),
+            ),
+          ),
+        if (paper.rules.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text('Covers ${paper.rules.length} syllabus topics', style: theme.textTheme.labelSmall),
+        ],
+      ],
+    );
+  }
+}
+
+/// Whole numbers lose the trailing `.0` that Dart prints for a double.
+String _num(double v) =>
+    v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
 
 class _NodeRow extends StatelessWidget {
   const _NodeRow({

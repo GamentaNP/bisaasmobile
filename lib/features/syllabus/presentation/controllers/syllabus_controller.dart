@@ -51,10 +51,21 @@ class SyllabusVersionsState {
 
 /// State for one version's tree.
 class SyllabusTreeState {
-  const SyllabusTreeState({this.isLoading = false, this.tree, this.error, this.depth = 2});
+  const SyllabusTreeState({
+    this.isLoading = false,
+    this.tree,
+    this.blueprints = const [],
+    this.error,
+    this.depth = 2,
+  });
 
   final bool isLoading;
   final SyllabusTree? tree;
+
+  /// Paper blueprints for this version. Loaded alongside the tree because the
+  /// two answer different questions about the same version: the tree is what to
+  /// study, the blueprint is how the paper is marked.
+  final List<SyllabusBlueprint> blueprints;
   final String? error;
 
   /// Depth currently loaded, so "show more levels" widens the request instead of
@@ -66,6 +77,7 @@ class SyllabusTreeState {
   SyllabusTreeState copyWith({
     bool? isLoading,
     SyllabusTree? tree,
+    List<SyllabusBlueprint>? blueprints,
     String? error,
     bool clearError = false,
     int? depth,
@@ -73,6 +85,7 @@ class SyllabusTreeState {
     return SyllabusTreeState(
       isLoading: isLoading ?? this.isLoading,
       tree: tree ?? this.tree,
+      blueprints: blueprints ?? this.blueprints,
       error: clearError ? null : (error ?? this.error),
       depth: depth ?? this.depth,
     );
@@ -162,6 +175,16 @@ class SyllabusTreeController extends Notifier<SyllabusTreeState> {
       final tree = await _repo.getTree(publicId, depth: depth);
       _loadedFor = publicId;
       state = state.copyWith(isLoading: false, tree: tree);
+      // Blueprints are supplementary: a failure here must not blank the tree the
+      // user came for.
+      try {
+        final blueprints = await _repo.getBlueprints(publicId);
+        if (_loadedFor == publicId) {
+          state = state.copyWith(blueprints: blueprints);
+        }
+      } catch (e) {
+        AppLogger.w('syllabus blueprints unavailable for $publicId: $e');
+      }
     } catch (e, st) {
       AppLogger.w('syllabus tree failed for $publicId: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);

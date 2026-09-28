@@ -220,6 +220,7 @@ class SyllabusBlueprint {
     required this.totalMarks,
     required this.totalQuestions,
     required this.sections,
+    this.rules = const [],
     this.partCode,
     this.negativeMarkingMode,
     this.unattemptedMarks = 0,
@@ -234,6 +235,14 @@ class SyllabusBlueprint {
   final double unattemptedMarks;
   final List<SyllabusBlueprintSection> sections;
 
+  /// Which syllabus nodes this paper draws from, with their weight.
+  ///
+  /// **Paper-level, not per section.** The controller emits one `rules` array per
+  /// blueprint; sections carry only `section_code`, `name`, `marks` and
+  /// `question_count`. Verified against the live API on 2026-09-28, where a paper
+  /// returned 13 rules and no section had any.
+  final List<SyllabusBlueprintRule> rules;
+
   /// Sums the section marks and compares them with the declared total, so a
   /// mismatch is visible instead of being shown as if it were correct.
   bool get marksReconcile {
@@ -244,20 +253,23 @@ class SyllabusBlueprint {
 
 class SyllabusBlueprintSection {
   const SyllabusBlueprintSection({
-    required this.sectionCode,
+    this.sectionCode,
     required this.name,
     required this.marks,
     required this.questionCount,
-    this.rules = const [],
   });
 
-  final String sectionCode;
+  /// Null for a part that has no letter, e.g. "Part II".
+  ///
+  /// Verified against the live API on 2026-09-28: `/syllabi/{v}/blueprint` returns
+  /// a `section_code` of `null` for the unnamed trailing part, so a parser that
+  /// required a non-null code would silently drop a third of the paper's marks.
+  final String? sectionCode;
   final String name;
+
+  /// Precomputed by the server as `marks_per_question * question_count`.
   final double marks;
   final int questionCount;
-
-  /// Which syllabus nodes this section draws from, with their weight.
-  final List<SyllabusBlueprintRule> rules;
 }
 
 class SyllabusBlueprintRule {

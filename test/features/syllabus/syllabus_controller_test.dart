@@ -208,6 +208,57 @@ void main() {
     });
   });
 
+  group('blueprints', () {
+    const id = 'V1';
+
+    test('are loaded alongside the tree', () async {
+      final c = containerWith();
+      when(() => remote.getBlueprints(any())).thenAnswer((_) async => const [
+            SyllabusBlueprint(
+              paperCode: 'I',
+              name: 'Paper I',
+              totalMarks: 100,
+              totalQuestions: 50,
+              sections: [
+                SyllabusBlueprintSection(
+                  sectionCode: 'A',
+                  name: 'Section (A)',
+                  marks: 100,
+                  questionCount: 50,
+                ),
+              ],
+            ),
+          ]);
+      c.read(syllabusTreeControllerProvider(id));
+      await settle(c);
+      final s = c.read(syllabusTreeControllerProvider(id));
+      expect(s.blueprints.length, 1);
+      expect(s.blueprints.single.paperCode, 'I');
+    });
+
+    test('a blueprint failure does not blank the tree', () async {
+      // The user came for the tree. A missing blueprint panel is a smaller problem
+      // than an error screen.
+      final c = containerWith();
+      when(() => remote.getBlueprints(any())).thenThrow(StateError('boom'));
+      c.read(syllabusTreeControllerProvider(id));
+      await settle(c);
+      final s = c.read(syllabusTreeControllerProvider(id));
+      expect(s.tree, isNotNull);
+      expect(s.error, isNull);
+      expect(s.blueprints, isEmpty);
+    });
+
+    test('a version with no blueprint simply has none', () async {
+      final c = containerWith();
+      when(() => remote.getBlueprints(any())).thenAnswer((_) async => const []);
+      c.read(syllabusTreeControllerProvider(id));
+      await settle(c);
+      expect(c.read(syllabusTreeControllerProvider(id)).blueprints, isEmpty);
+      expect(c.read(syllabusTreeControllerProvider(id)).tree, isNotNull);
+    });
+  });
+
   group('repository transparency', () {
     test('a null version is not substituted with a fabricated one', () async {
       when(() => remote.getVersion(any())).thenAnswer((_) async => null);

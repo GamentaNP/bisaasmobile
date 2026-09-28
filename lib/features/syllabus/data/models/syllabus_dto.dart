@@ -207,27 +207,20 @@ class SyllabusBlueprintSectionDto {
   const SyllabusBlueprintSectionDto(this.section);
   final SyllabusBlueprintSection section;
 
+  /// `section_code` is **nullable** in the real payload — the live API returns
+  /// `null` for the unnamed trailing "Part II" — so a missing code must not
+  /// cause the section to be dropped. Only the name is required, and the server
+  /// always sends it.
   static SyllabusBlueprintSectionDto? fromJson(Map<String, dynamic> json) {
-    final code = _toStrOrNull(json['section_code']);
     final name = _toStrOrNull(json['name']);
-    if (code == null || name == null) return null;
-    final rules = <SyllabusBlueprintRule>[];
-    final rulesJson = json['rules'];
-    if (rulesJson is List) {
-      for (final r in rulesJson) {
-        if (r is! Map) continue;
-        final parsed = SyllabusBlueprintRuleDto.fromJson(r.cast<String, dynamic>());
-        if (parsed != null) rules.add(parsed.rule);
-      }
-    }
+    if (name == null) return null;
     return SyllabusBlueprintSectionDto(SyllabusBlueprintSection(
-      sectionCode: code,
+      sectionCode: _toStrOrNull(json['section_code']),
       name: name,
       // The server sends a precomputed `marks`; question_count * marks_each is
       // only derivable when the rules carry it, so the server value wins.
       marks: _toDoubleOrNull(json['marks']) ?? 0,
       questionCount: _toInt(json['question_count']),
-      rules: rules,
     ));
   }
 }
@@ -256,6 +249,17 @@ class SyllabusBlueprintDto {
           if (parsed != null) sections.add(parsed.section);
         }
       }
+      // `rules` sits on the paper, not on each section. Verified live on
+      // 2026-09-28: one paper returned 13 rules and no section had any.
+      final rules = <SyllabusBlueprintRule>[];
+      final rulesJson = map['rules'];
+      if (rulesJson is List) {
+        for (final r in rulesJson) {
+          if (r is! Map) continue;
+          final parsed = SyllabusBlueprintRuleDto.fromJson(r.cast<String, dynamic>());
+          if (parsed != null) rules.add(parsed.rule);
+        }
+      }
       out.add(SyllabusBlueprint(
         paperCode: code,
         partCode: _toStrOrNull(map['part_code']),
@@ -265,6 +269,7 @@ class SyllabusBlueprintDto {
         negativeMarkingMode: _toStrOrNull(map['negative_marking_mode']),
         unattemptedMarks: _toDoubleOrNull(map['unattempted_marks']) ?? 0,
         sections: sections,
+        rules: rules,
       ));
     }
     return SyllabusBlueprintDto(out);
