@@ -20,7 +20,6 @@ class TutorChatScreen extends ConsumerStatefulWidget {
 class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
   final _controller = TextEditingController();
   final _scroll = ScrollController();
-  bool _useLegacy = false;
 
   @override
   void dispose() {
@@ -45,7 +44,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
     _controller.clear();
-    await ref.read(tutorChatControllerProvider.notifier).send(text, useLegacy: _useLegacy);
+    await ref.read(tutorChatControllerProvider.notifier).send(text);
     _scrollToBottom();
   }
 
@@ -61,19 +60,10 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
           PopupMenuButton<String>(
             onSelected: (v) {
               if (v == 'clear') ref.read(tutorChatControllerProvider.notifier).clear();
-              if (v == 'toggle_legacy') setState(() => _useLegacy = !_useLegacy);
               if (v == 'plan') context.go('/tutor/plan');
             },
             itemBuilder: (context) => [
               PopupMenuItem(value: 'plan', child: Row(children: [const Icon(Icons.assignment_rounded, size: 18), const SizedBox(width: 8), const Text('Study Plan')])),
-              PopupMenuItem(
-                value: 'toggle_legacy',
-                child: Row(children: [
-                  Icon(_useLegacy ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded, size: 18),
-                  const SizedBox(width: 8),
-                  Text(_useLegacy ? 'Using legacy POST /learning/tutor' : 'Use legacy tutor'),
-                ]),
-              ),
               const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 18), SizedBox(width: 8), Text('Clear chat')])),
             ],
           ),
@@ -142,14 +132,14 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                 ],
               ),
             ),
-          // Legacy toggle note
-          if (_useLegacy)
+          // Pending indicator, independent of the removed legacy-endpoint toggle.
+          if (state.isSending)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
               child: const Text(
-                'Using non-streaming POST /learning/tutor (day-one, per MOBILE_API_INTEGRATION_GUIDE).',
+                'The tutor is writing its reply. It can take a moment on longer questions.',
                 style: TextStyle(fontSize: 11, color: Colors.grey),
               ),
             ),
@@ -217,7 +207,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
-                        hintText: _useLegacy ? 'Ask tutor (legacy)…' : 'Ask tutor…',
+                        hintText: 'Ask tutor…',
                         hintStyle: const TextStyle(fontSize: 13),
                         filled: true,
                         fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),

@@ -91,7 +91,7 @@ Windows desktop (optional): install Visual Studio 2022 with **Desktop developmen
 
 ```bash
 flutter pub get
-dart run build_runner build --delete-conflicting-outputs   # after freezed/json/drift changes
+dart run build_runner build --delete-conflicting-outputs   # only after changing the Drift schema
 flutter analyze && flutter test
 
 flutter run -d chrome  --dart-define=ENV=dev               # web vs bisaas.test

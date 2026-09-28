@@ -394,7 +394,7 @@ class _ActionRow extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         const Text(
-          'Unlock uses Idempotency-Key and is server-charged. Download requires unlock (403 FILE_NOT_UNLOCKED otherwise). Coins are server-authoritative.',
+          'Unlocking is charged to your coin balance once, even if the tap does not register the first time. You need to unlock a file before you can download it.',
           style: TextStyle(fontSize: 11, color: Colors.grey),
         ),
       ],

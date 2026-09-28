@@ -1,35 +1,47 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../data/eice_remote_data_source.dart';
+import 'widgets/payload_view.dart';
 
-final eiceRemoteProvider = Provider<EiceRemoteDataSource>((ref) => EiceRemoteDataSource(DioClient.instance.dio));
+final eiceRemoteProvider =
+    Provider<EiceRemoteDataSource>((ref) => EiceRemoteDataSource(DioClient.instance.dio));
 
 class EiceScreen extends ConsumerWidget {
-  const EiceScreen({super.key, this.exam = 'psc-civil'});
+  const EiceScreen({super.key, required this.exam});
   final String exam;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final src = ref.read(eiceRemoteProvider);
     return Scaffold(
       appBar: AppBar(title: Text('Exam Intelligence — $exam')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('Server-authoritative EICE: coach, triage, sprint (SM-2), weekly, calibration. Offline is read-only.',
-              style: TextStyle(fontSize: 12, color: Colors.grey)),
+          const Text(
+            'Everything here is worked out on our servers from your real answer '
+            'history, so nothing is shown unless it is true.',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
           const SizedBox(height: 12),
           _Card(
-            title: 'Coach (mode-aware plan)',
-            endpoint: 'GET /quiz/study-planner/$exam/coach',
-            fetcher: () => ref.read(eiceRemoteProvider).getCoach(exam),
+            title: 'Coach — your plan',
+            fetcher: () => src.getCoach(exam),
           ),
-          _Card(title: 'Triage (cover vs skip)', endpoint: 'GET /quiz/study-planner/$exam/triage', fetcher: () => ref.read(eiceRemoteProvider).getTriage(exam)),
-          _CardList(title: 'Sprint — 7-day recall queue', endpoint: 'GET /quiz/sprint', fetcher: () => ref.read(eiceRemoteProvider).getSprint()),
-          _Card(title: 'Weekly Report', endpoint: 'GET /quiz/reports/weekly', fetcher: () => ref.read(eiceRemoteProvider).getWeekly()),
+          _Card(
+            title: 'Triage — cover or skip',
+            fetcher: () => src.getTriage(exam),
+          ),
+          _CardList(
+            title: 'Sprint — 7-day recall queue',
+            fetcher: src.getSprint,
+          ),
+          _Card(
+            title: 'Weekly report',
+            fetcher: src.getWeekly,
+          ),
         ],
       ),
     );
@@ -37,10 +49,10 @@ class EiceScreen extends ConsumerWidget {
 }
 
 class _Card extends StatefulWidget {
-  const _Card({required this.title, required this.endpoint, required this.fetcher});
+  const _Card({required this.title, required this.fetcher});
   final String title;
-  final String endpoint;
   final Future<Map<String, dynamic>?> Function() fetcher;
+
   @override
   State<_Card> createState() => _CardState();
 }
@@ -49,46 +61,90 @@ class _CardState extends State<_Card> {
   Map<String, dynamic>? data;
   bool loading = false;
   String? err;
+
   Future<void> _load() async {
-    setState(() { loading = true; err = null; });
-    final res = await widget.fetcher();
-    if (!mounted) return;
-    setState(() { data = res; loading = false; if (res == null) err = 'No data (backend 404 or offline)'; });
+    setState(() {
+      loading = true;
+      err = null;
+    });
+    try {
+      final res = await widget.fetcher();
+      if (!mounted) return;
+      setState(() {
+        data = res;
+        loading = false;
+        // The data source now propagates failures rather than returning null,
+        // so a null here means the server genuinely sent no payload.
+        if (res == null) err = 'Nothing to show for this section yet.';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        data = null;
+        loading = false;
+        err = 'Could not load this section. $e';
+      });
+    }
   }
+
   @override
-  void initState() { super.initState(); WidgetsBinding.instance.addPostFrameCallback((_) => _load()); }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(14),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(widget.endpoint, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-          const SizedBox(height: 8),
-          if (loading) const LinearProgressIndicator(),
-          if (err != null) Text(err!, style: const TextStyle(color: Colors.red, fontSize: 12)),
-          if (data != null) ...[
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(8)),
-              child: Text(data.toString(), style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            if (loading) const LinearProgressIndicator(),
+            if (err != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    err!,
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                  const SizedBox(height: 6),
+                  OutlinedButton.icon(
+                    onPressed: _load,
+                    icon: const Icon(Icons.refresh_rounded, size: 16),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              ),
+            if (!loading && err == null && data != null)
+              PayloadView(data: data),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: loading ? null : _load,
+                child: const Text('Refresh'),
+              ),
             ),
           ],
-          Align(alignment: Alignment.centerRight, child: TextButton(onPressed: _load, child: const Text('Refresh'))),
-        ]),
+        ),
       ),
     );
   }
 }
 
 class _CardList extends StatefulWidget {
-  const _CardList({required this.title, required this.endpoint, required this.fetcher});
+  const _CardList({required this.title, required this.fetcher});
   final String title;
-  final String endpoint;
   final Future<List<Map<String, dynamic>>> Function() fetcher;
+
   @override
   State<_CardList> createState() => _CardListState();
 }
@@ -96,23 +152,79 @@ class _CardList extends StatefulWidget {
 class _CardListState extends State<_CardList> {
   List<Map<String, dynamic>> items = [];
   bool loading = false;
-  Future<void> _load() async { setState(() => loading = true); final res = await widget.fetcher(); if (!mounted) return; setState(() { items = res; loading = false; }); }
+  String? err;
+
+  Future<void> _load() async {
+    setState(() {
+      loading = true;
+      err = null;
+    });
+    try {
+      final res = await widget.fetcher();
+      if (!mounted) return;
+      setState(() {
+        items = res;
+        loading = false;
+        if (res.isEmpty) err = 'No items in your recall queue yet.';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        items = [];
+        loading = false;
+        err = 'Could not load your recall queue. $e';
+      });
+    }
+  }
+
   @override
-  void initState() { super.initState(); WidgetsBinding.instance.addPostFrameCallback((_) => _load()); }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(14),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(widget.endpoint, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-          const SizedBox(height: 8),
-          if (loading) const LinearProgressIndicator(),
-          if (items.isEmpty && !loading) const Text('No items', style: TextStyle(fontSize: 12, color: Colors.grey)),
-          ...items.take(3).map((m) => Padding(padding: const EdgeInsets.only(bottom: 6), child: Row(children: [const Icon(Icons.quiz_rounded, size: 14), const SizedBox(width: 6), Expanded(child: Text((m['question_id'] ?? m['id']?.toString() ?? m.toString()).toString(), style: const TextStyle(fontSize: 12)))]))),
-          Align(alignment: Alignment.centerRight, child: TextButton(onPressed: _load, child: const Text('Refresh'))),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            if (loading) const LinearProgressIndicator(),
+            if (err != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    err!,
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                  const SizedBox(height: 6),
+                  OutlinedButton.icon(
+                    onPressed: _load,
+                    icon: const Icon(Icons.refresh_rounded, size: 16),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              ),
+            if (err == null && !loading && items.isNotEmpty)
+              PayloadView(data: items),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: loading ? null : _load,
+                child: const Text('Refresh'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

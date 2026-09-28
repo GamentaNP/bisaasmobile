@@ -77,7 +77,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                     child: Text(
-                      '$total calculators • ${catalog.domains.length} domains • server-authoritative',
+                      '$total calculators • ${catalog.domains.length} domains',
                       style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                     ),
                   ),

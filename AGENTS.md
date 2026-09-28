@@ -37,7 +37,11 @@ Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` a
 
 ## Flutter stack pins (keep in sync with pubspec.yaml)
 
-Dart ^3.13.2 / Flutter >=3.27.0 / Riverpod + go_router + Dio + Drift + flutter_secure_storage. Run `flutter pub get` after any pubspec edit; run `dart run build_runner build --delete-conflicting-outputs` when touching `freezed`/`json_serializable`/`riverpod_generator`/`drift`.
+Dart ^3.13.2 / Flutter >=3.27.0 / Riverpod + go_router + Dio + Drift + flutter_secure_storage. Run `flutter pub get` after any pubspec edit.
+
+**Codegen:** the *only* generated file is `lib/core/storage/database/app_database.g.dart` (Drift). Run `dart run build_runner build --delete-conflicting-outputs` when touching the Drift schema in `app_database.dart`, and nothing else. The `freezed` / `json_serializable` / `riverpod_generator` chain was removed on 2026-09-28 as dead weight — there are zero `@freezed`, `@JsonSerializable` and `@riverpod` annotations in the tree, every DTO hand-writes `fromJson`, and every provider is hand-written. Do not reintroduce it without a real reason; if you do add codegen, also add the matching `pubspec` deps and a `build.yaml`.
+
+**Entry points:** `lib/main.dart` is the only entry point. Environment is selected with `--dart-define=ENV=dev|staging|prod`, not by separate `main_*.dart` files (the byte-identical `main_dev`/`main_prod`/`main_staging` copies were deleted as misleading on 2026-09-28).
 
 ## Architecture (from `FLUTTER_APP_MASTER_PLAN_2026.md:140`)
 

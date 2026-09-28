@@ -182,7 +182,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
           ),
           const SizedBox(height: 12),
           const Text(
-            'POST /learning/ai-tutor/onboarding/start & /complete — idempotent with Idempotency-Key. Token-bound, no user_id.',
+            'Saved to your account. Safe to retry if the connection drops.',
             style: TextStyle(fontSize: 11, color: Colors.grey),
             textAlign: TextAlign.center,
           ),

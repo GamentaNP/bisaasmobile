@@ -126,7 +126,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             // ── Donations (live) ──────────────────────────────────────────────
             Text('Donations', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            const Text('Live via GET /donations/leaderboard + /feed. Coins can freeze a donor streak.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            const Text('Live leaderboard and feed. Coins can freeze a donor streak.', style: TextStyle(fontSize: 11, color: Colors.grey)),
             const SizedBox(height: 12),
             Row(
               children: [

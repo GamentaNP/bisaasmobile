@@ -20,7 +20,7 @@ class PscScreen extends ConsumerWidget {
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
           final list = snap.data ?? [];
-          if (list.isEmpty) return const Center(child: Text('No blueprints — GET /psc/blueprints empty or offline', textAlign: TextAlign.center));
+          if (list.isEmpty) return const Center(child: Text('No blueprints yet, or you are offline. Pull down to retry.', textAlign: TextAlign.center));
           return ListView.separated(
             padding: const EdgeInsets.all(12),
             itemCount: list.length,

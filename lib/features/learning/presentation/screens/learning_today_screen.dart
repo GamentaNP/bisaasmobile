@@ -45,7 +45,7 @@ class _LearningTodayScreenState extends ConsumerState<LearningTodayScreen> {
                 children: [
                   const EmptyState(
                     title: 'No active goal',
-                    subtitle: 'Create a learning goal from Tracks to get a Today plan. Server returns {data: null} when none exists.',
+                    subtitle: 'Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.',
                     icon: Icons.flag_outlined,
                   ),
                   const SizedBox(height: 16),

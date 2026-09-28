@@ -138,7 +138,7 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                             ],
                           ),
                         const SizedBox(height: 6),
-                        const Text('Grading uses Idempotency-Key — retries are safe. Next interval computed server-side (1/3/7/15/21-day ladder).', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        const Text('Grading is recorded safely, and your next review date is worked out for you. Double-tapping cannot lose your progress.', style: TextStyle(fontSize: 10, color: Colors.grey)),
                       ],
                     ),
                   ),

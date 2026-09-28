@@ -149,7 +149,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text('Coaching aggregates GET /learning/goals/{goal}/readiness, /learning/today, /learning/tracks + tutor insights. Tolerant to missing surfaces.', style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)),
+                    Text('Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.', style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)),
                   ],
                   if (state.isRefreshing) const Padding(padding: EdgeInsets.only(top: 12), child: LinearProgressIndicator()),
                 ],

@@ -133,7 +133,7 @@ class _BookmarksTab extends ConsumerWidget {
       return RefreshIndicator(
         onRefresh: () => ref.read(practiceControllerProvider.notifier).fetchBookmarks(),
         child: ListView(padding: const EdgeInsets.all(24), children: [
-          const EmptyState(title: 'No bookmarks', subtitle: 'Bookmark questions during quiz to drill them later. GET /quiz/bookmarks (cursor).', icon: Icons.bookmark_border_rounded),
+          const EmptyState(title: 'No bookmarks', subtitle: 'Bookmark questions while you take a quiz and they will show up here for drilling later.', icon: Icons.bookmark_border_rounded),
           const SizedBox(height: 16),
           FilledButton.tonalIcon(onPressed: () => context.go('/quiz'), icon: const Icon(Icons.quiz_rounded), label: const Text('Browse quizzes')),
         ]),
@@ -249,8 +249,8 @@ class _WeakTopicTab extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                'These come from GET /learning/ai-tutor/weak-areas. Nothing is '
-                'shown rather than guessed.',
+                'These are worked out from your own answer history. Nothing is '
+                'shown unless it is real.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
@@ -296,7 +296,7 @@ class _WeakTopicTab extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.2))),
-              child: const Row(children: [Icon(Icons.insights_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Expanded(child: Text('Weak topics from GET /learning/ai-tutor/weak-areas — server-computed, never client-inferred.', style: TextStyle(fontSize: 11, color: AppColors.wrongRed)))]),
+              child: const Row(children: [Icon(Icons.insights_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Expanded(child: Text('Weak topics are worked out on our servers from your answer history, so nothing here is guessed.', style: TextStyle(fontSize: 11, color: AppColors.wrongRed)))]),
             ),
             const SizedBox(height: 16),
             Text('Your weak topics', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
@@ -327,7 +327,7 @@ class _WeakTopicTab extends ConsumerWidget {
               label: const Text('Drill 10 questions (practice mode, untimed)'),
             ),
             const SizedBox(height: 8),
-            const Text('Practice is untimed, no coins, no rank effect — per spec 4.6. Official grading via POST /quiz/attempts/start with mode=practice.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            const Text('Practice is untimed and does not affect your rank or coin balance.', style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         );
       },
@@ -384,7 +384,7 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
           return Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Text(err, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)));
         }),
         const SizedBox(height: 16),
-        const Text('Uses Idempotency-Key on POST /quiz/attempts/start — double-tap cannot double-create. Results are labelled “Practice — not affecting rank”.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+        const Text('Results are labelled as practice, so they never count towards your rank.', style: TextStyle(fontSize: 11, color: Colors.grey)),
       ],
     );
   }
@@ -406,7 +406,7 @@ class _HistoryTab extends ConsumerWidget {
     if (state.history.isEmpty) {
       return RefreshIndicator(
         onRefresh: () => ref.read(practiceControllerProvider.notifier).fetchHistory(),
-        child: ListView(padding: const EdgeInsets.all(24), children: const [EmptyState(title: 'No history', subtitle: 'Practice attempts will appear here (GET /quiz/attempts/history, offset paginated).', icon: Icons.history_rounded)]),
+        child: ListView(padding: const EdgeInsets.all(24), children: const [EmptyState(title: 'No history', subtitle: 'Your completed practice sessions will appear here.', icon: Icons.history_rounded)]),
       );
     }
 

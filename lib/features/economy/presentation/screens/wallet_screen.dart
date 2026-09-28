@@ -90,7 +90,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
             if (isDegraded) ...[
               const SizedBox(height: 10),
-              _BetaBanner(message: 'Could not load your coin history. Balances and totals above are still server-authoritative.'),
+              _BetaBanner(message: 'Could not load your coin history. The balance above is still correct.'),
             ],
             const SizedBox(height: 18),
             Row(
@@ -145,7 +145,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: 8),
             const Text('How you earn', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             const SizedBox(height: 6),
-            const Text('Coins are credited server-authoritatively via EconomyService::debit() and quiz attempt rewards. Flutter never mints locally — do not decrement balance optimistically; invalidate wallet after POST /quiz/attempts/*/finish.', style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+            const Text('Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.', style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
           ],
         ),
       ),
@@ -212,8 +212,8 @@ class _EmptyLedger extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             isDegraded
-                ? 'Your coins are safe — they credit on the server after each graded quiz. History appears when GET /economy/wallet/ledger ships (WO-1).'
-                : 'Complete a quiz to earn coins. Every credit is server-authoritative.',
+                ? 'Your coins are safe — they credit on the server after each graded quiz. Transaction history is not available yet.'
+                : 'Complete a quiz to earn coins. Every credit is recorded on our servers.',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
           ),

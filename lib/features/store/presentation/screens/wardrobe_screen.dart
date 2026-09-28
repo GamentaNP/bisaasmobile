@@ -81,7 +81,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               const SizedBox(height: 8),
               Text('Available to equip', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              const Text('Tap Equip to preview — server equip is Idempotency-Key guarded.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+              const Text('Tap Equip to try it on. If you tap twice you are never equipped twice.', style: TextStyle(fontSize: 11, color: Colors.grey)),
               const SizedBox(height: 10),
               if (catalog == null || catalog.assets.isEmpty)
                 const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Center(child: Text('No assets yet — visit Premium Store.', style: TextStyle(fontSize: 11, color: Colors.grey))))

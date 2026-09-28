@@ -50,7 +50,7 @@ class LearningHomeScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             tracksAsync.when(
               data: (tracks) => tracks.isEmpty
-                  ? const Text('No tracks yet — backend will publish via GET /learning/tracks', style: TextStyle(color: Colors.grey, fontSize: 12))
+                  ? const Text('No tracks yet — they are published by our team as they finish', style: TextStyle(color: Colors.grey, fontSize: 12))
                   : Column(
                       children: tracks
                           .map((t) => Card(
@@ -75,10 +75,10 @@ class LearningHomeScreen extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => context.go('/tutor/chat'),
               icon: const Icon(Icons.smart_toy_rounded),
-              label: const Text('Ask AI Tutor (non-streaming POST /learning/tutor)'),
+              label: const Text('Ask AI Tutor'),
             ),
             const SizedBox(height: 8),
-            const Text('Day-one uses non-streaming tutor per MOBILE_API_INTEGRATION_GUIDE.md:112 — SSE is web-only.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            const Text('Answers come back a little at a time rather than all at once, so you can start reading straight away.', style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         ),
       ),

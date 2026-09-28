@@ -141,7 +141,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               ),
             ],
             const SizedBox(height: 18),
-            const Text('Purchases use Idempotency-Key — retries reuse the same key so you are never double-charged. Server is source of truth for balance.', style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+            const Text('If a purchase does not go through, retrying is safe — you are never charged twice.', style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
           ],
         ),
       ),

@@ -71,7 +71,7 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
               return ListView(
                 padding: const EdgeInsets.all(24),
                 children: const [
-                  EmptyState(title: 'No tracks yet', subtitle: 'Tracks will appear here once published via GET /learning/tracks', icon: Icons.school_rounded),
+                  EmptyState(title: 'No tracks yet', subtitle: 'Tracks will appear here as they are published. Check back soon.', icon: Icons.school_rounded),
                 ],
               );
             }
