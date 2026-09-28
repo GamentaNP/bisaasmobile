@@ -99,6 +99,44 @@ class AuthNotifier extends AsyncNotifier<User?> {
     final repo = ref.read(authRepositoryProvider);
     await repo.forgotPassword(email: email);
   }
+
+  /// Completes a password reset. The server revokes every token on success, so
+  /// the local session is cleared defensively even though the user tapping the
+  /// link is, by definition, not signed in on this device yet.
+  Future<void> resetPassword({
+    required String token,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final repo = ref.read(authRepositoryProvider);
+    try {
+      await repo.resetPassword(
+        token: token,
+        email: email,
+        password: password,
+        passwordConfirmation: passwordConfirmation,
+      );
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final repo = ref.read(authRepositoryProvider);
+    await repo.changePassword(
+      currentPassword: currentPassword,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+    );
+    // Other devices were revoked; refresh the user so the UI reflects the new
+    // state without forcing a re-login on this one.
+    state = AsyncData(await repo.getCurrentUser());
+  }
 }
 
 final authControllerProvider =

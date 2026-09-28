@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/security/token_manager.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
+import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/battle/presentation/screens/battle_arena_screen.dart';
@@ -85,7 +86,18 @@ class AppRouter {
       GoRoute(
         path: '/login',
         name: RouteNames.login,
-        builder: (context, state) => const LoginPage(),
+        builder: (context, state) => LoginPage(
+          // After a reset the server has revoked every session, so the user must
+          // sign in again. Accept the message from either `extra` (in-app
+          // navigation) or `?reset=1` (a re-opened link) so the confirmation is
+          // never silently dropped.
+          notice: switch (state.extra) {
+            final String s => s,
+            _ when state.uri.queryParameters['reset'] == '1' =>
+              'Password updated. Sign in with your new password.',
+            _ => null,
+          },
+        ),
       ),
       GoRoute(
         path: '/register',
@@ -98,6 +110,20 @@ class AppRouter {
         builder: (context, state) => ForgotPasswordScreen(
           // Deep links: civilcal://reset-password?email=...
           initialEmail: state.uri.queryParameters['email'],
+        ),
+      ),
+      GoRoute(
+        // Reached from civilcal://reset-password?token=...&email=... and from
+        // the emailed https://bisaas.com/reset-password?token=... link.
+        //
+        // This route did not exist, so the deep-link handler pointed the token
+        // at /forgot-password, which has no token parameter — the token was
+        // discarded and the user was asked to request another email, forever.
+        path: '/reset-password',
+        name: RouteNames.resetPassword,
+        builder: (context, state) => ResetPasswordScreen(
+          token: state.uri.queryParameters['token'],
+          email: state.uri.queryParameters['email'],
         ),
       ),
       GoRoute(
