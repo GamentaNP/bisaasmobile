@@ -1,19 +1,31 @@
-# MOBILE REMAINING WORK — 2026-09-27
+# MOBILE REMAINING WORK — 2026-09-27 (updated 2026-09-28)
 
 > **This is the live backlog.** Supersedes `MOBILE_MASTER_PLAN_DUILONGO_V2_2026-09-06.md`
 > and replaces the first version of this file.
 >
-> Everything below was checked against reality on **2026-09-27**: `flutter analyze` (0 issues),
-> `flutter test` (**313 passing**), a full source inventory, a read of every route in
-> `bisaas/routes/api/v1/*`, **live curl probes** against `https://localhost/api/v1`, and a
-> **physical-device run** on a Redmi 6A (Android 9 / API 28).
+> Everything below was checked against reality on **2026-09-27**, re-verified
+> **2026-09-28**: `flutter analyze` (0 issues, with `unnecessary_ignore: true` so
+> stale lint suppressions can no longer hide), `flutter test` (**354 passing**), a
+> full source inventory including a forward-reachability sweep from every
+> entrypoint, a read of every route in `bisaas/routes/api/v1/*`, **live curl
+> probes** against `https://localhost/api/v1`, and a **physical-device run** on a
+> Redmi 6A (Android 9 / API 28).
 >
 > Boundary rule unchanged: **business logic is server-authoritative in `C:\laragon\www\bisaas`.**
 > Nothing here proposes grading, minting, ranking, or fraud logic on-device.
 
 ---
 
-## 1. SHIPPED 2026-09-27 (12 commits)
+## 1. SHIPPED 2026-09-28 (4 further commits)
+
+| Commit | What |
+|---|---|
+| `d19d7c4` | **Swallowed failures, last of them.** `eice_remote_data_source.dart` wrapped five methods in `catch (_) { return null / [] / false; }`, so a dead study-planner endpoint rendered as "no study plan" and a failed sprint grade reported a bare failure. Learning and profile rendered a failed fetch as *nothing at all*; a Drift failure in downloads reported "0 questions cached", identical to a fresh install. |
+| `74047ef` | **Three crashes.** `BattleState.copyWith` wiped `error`/`winnerUid` on every unrelated update, so an RTDB winner was cleared on the next tick — fixed with an `_unset` sentinel, because call sites pass `error: null` deliberately to *clear* it. The battle countdown called `Navigator.pushReplacementNamed` (throws in a `MaterialApp.router` app) against `/battle/arena`, which is not a route. The daily reminder used `exactAllowWhileIdle` without `SCHEDULE_EXACT_ALARM`. Five visible **Retry** buttons did nothing. |
+| `522acd7` | **−1,715 lines, no behaviour change.** 36 files deleted after a reachability BFS proved no orphan is imported; 20 dependencies removed after confirming zero imports; 78 dead `ignore_for_file` names cleaned and `unnecessary_ignore` flipped to `true`. |
+| `5ba7b89` | **Engineering documentation was rendering as screen copy.** Profile tiles read `GET /psc/blueprints`; the wallet told users coins are credited "via `EconomyService::debit()`". EICE was a debug screen: each card printed its own endpoint and dumped the response with `Text(data.toString())`, and had no `try/catch` at all. A developer toggle let users switch tutor API versions. |
+
+## 1a. SHIPPED 2026-09-27 (12 commits)
 
 | Commit | What |
 |---|---|
@@ -38,12 +50,14 @@
 
 | Check | Result |
 |---|---|
-| `flutter analyze` | **0 issues** (CI gate `--fatal-infos` satisfied) |
-| `flutter test` | **337 passing** |
+| `flutter analyze` | **0 issues** (CI gate `--fatal-infos` satisfied, and now with `unnecessary_ignore: true`) |
+| `flutter test` | **354 passing** |
 | debug / release APK / release AAB | all build (R8 clean) |
 | Physical device install + launch | ✓ (Redmi 6A, API 28) |
 | Login against the real backend from device | ✓ |
 | Every `*Screen` reachable from the router | ✓ enforced by a test |
+| No orphan file reachable from an entrypoint | ✓ verified by BFS sweep |
+| No user-visible string of dev documentation | ✓ swept + regression test |
 
 **Reaching the local backend from a device** — `bisaas.test` does not resolve on a phone, and
 release forbids cleartext, so use an adb reverse tunnel to a non-privileged port:
@@ -122,26 +136,31 @@ returns `{data:{report:{weak_areas:[]}}}` for a fresh account, correctly.
 | B | **World map chapter/level play is real but coarse.** `GameWorldMapScreen` renders the server's chapters, levels, stars and boss flags correctly and level play works via the course path, but there is no per-level attempt, no `stars_earned` on the result, and no ghost rival. `GET /quiz/game/ghost?level_attempt_id=` and `/ai/coach-tip` are live and unwired. | `game/` |
 | C | **Missions ad-unlock / ad-spins.** `POST /quiz/spin-wheel/ad-spins` (3/day) and the lifeline `ad-unlock` route exist but every seeded item has the flag off, so they are correctly inert. Wire when ads are enabled. | `lifeline_remote_data_source.dart` |
 | D | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and never read or sent. The copy promises *"personalize questions"* and *"IRT calibration"* — both false. Either persist server-side or stop promising it. | `onboarding_screen.dart:25-96`, `preferences.dart:21,24,27` |
-| E | **7 remaining error-swallow blocks.** `eice_remote_data_source.dart:16,24,34,42,49` (5) still return hardcoded falses/empties; 3 `FutureBuilder`s have no `hasError` (`psc_screen.dart:18`, `downloads_screen.dart:82`, `quiz_browser_screen.dart:425`). PSC and notifications are fixed. | as listed |
-| F | **5 `error:` branches swallow failure.** `home_screen.dart:165`, `learning_home_screen.dart:40`, `profile_screen.dart:224`, `calculator_detail_screen.dart:144` and `downloads_screen.dart`. | as listed |
+| E | ~~**7 remaining error-swallow blocks.**~~ **DONE 2026-09-28.** `eice_remote_data_source.dart` — all five methods now propagate; the EICE screen was a debug view with no `try/catch` at all and would have crashed, so it was rewritten around a tested `PayloadView`. `downloads_screen.dart` no longer reports a Drift failure as "0 questions cached", and its `FutureBuilder` future is now a field (rebuilding it inline created a new future every frame). | `eice_screen.dart`, `payload_view.dart`, `downloads_screen.dart` |
+| F | ~~**5 `error:` branches swallow failure.**~~ **DONE 2026-09-28** — learning and profile now render a real message plus Retry; calculator's title honestly shows the humanised slug; the home active-course card is suppressed on error *by design* (it would have to invent a title) and is now documented rather than silent. | as listed |
 | G | **"Offline" keys off general connectivity, not API reachability.** On the phone it read *"You're offline"* while API calls over the adb tunnel were succeeding — a captive portal or blocked `/api/v1` produces the same false state. | `lib/core/connectivity/` |
 | H | **Categories carry no question count at all** (`/quiz/courses/{id}/categories` returns only `{id,name,slug,sort_order}`), so the client fetches a page per category. Accurate but N+1 — 15 requests for one course. A count on the category row would remove it. | `quiz_browser_screen.dart` |
 | I | **Ledger/category N+1** and the "100+" lower-bound display are honest but a `total` on the questions endpoint would let both be exact. | backend ask §2.4 |
+| J | ~~**"232 Calculators".**~~ **DONE 2026-09-28** — the number was hardcoded in three places while the database holds 32 civil calculators. Home, profile and the catalogue search hint now read the server's `total_calculators` and drop the number entirely when the catalogue fails, rather than asserting a stale count. | `home_screen.dart`, `profile_screen.dart`, `calculator_browser_screen.dart` |
+| P | **Battle arena was unreachable.** `BattleState.copyWith` wiped `error`/`winnerUid` on every unrelated update, so a winner read from RTDB was cleared on the next tick; the countdown called `Navigator.pushReplacementNamed` (throws in a `MaterialApp.router` app) against a path that does not exist. All fixed. | `battle_controller.dart`, `battle_matchmaking_screen.dart` |
 
 ### P2 — remaining honesty gaps
 
 | # | Item |
 |---|---|
-| F | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and never read or sent. The copy promises *"personalize questions"* and *"IRT calibration"* — both false. Either persist server-side or stop promising it. |
+| D | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and never read or sent. The copy promises *"Help our IRT calibration engine tailor initial question difficulty to your stage."* — nothing reads it back, so that is false. Either persist server-side or stop promising it. This is now the **largest remaining honesty gap**. |
+| S | **Donor identity.** `leaderboard_dto` used to invent `"Generous Supporter"` when the server sent no donor name; now `"Anonymous"`, matching `economy_dto`. Worth confirming the server actually populates it rather than always defaulting. |
 
 ### P3 — hygiene
 
 | # | Item |
 |---|---|
-| K | **~30 never-imported files** remain (`rating_service.dart` is the notable one — the store-rating prompt can never fire; `feature_flags.dart` — the whole Remote Config system is dead, `init()` never called, no force-update gate, and `GET /app/config` already serves `min_app_version` + `force_update`). Wire or delete. |
-| L | **65 `ignore_for_file` + 8 inline `ignore:`** masking real defects: `return_without_value` (a control-flow path that silently falls off the end) in `battle_matchmaking_screen.dart:1`, `missing_required_argument` in `local_notification_service.dart:1`, `dead_code` in 4 DTO files. Remove the blanket suppressions and fix what they hid. |
-| M | **13 declared dependencies with zero imports** — `google_fonts`, `flutter_markdown`, `flutter_svg`, `collection`, `cupertino_icons`, `sqlite3_flutter_libs`; plus `freezed` / `json_serializable` / `riverpod_generator` dev deps with **zero codegen** (all ~30 DTOs hand-write `fromJson`, all ~90 providers are hand-written), and `google_sign_in` / `workmanager` declared but never implemented. `AGENTS.md`'s build_runner runbook is misleading as a result. |
-| N | **Test gaps.** 313 tests, still DTO + core-security heavy. Only one controller test exists (`AuthNotifier`). Zero widget tests for 52 screens. The new router gate (`test/app/router_reachability_test.dart`) is the pattern to extend: assert every screen is reachable, and no screen uses a raw `Navigator.push`. |
+| K | ~~**~30 never-imported files.**~~ **DONE 2026-09-28** — all 36 deleted (1,336 lines) after a forward-reachability BFS from every entrypoint proved no orphan is imported. `feature_flags.dart` survived the sweep and is still live-but-unused: Remote Config `init()` is never called, so there is no force-update gate despite `GET /app/config` serving `min_app_version` + `force_update`. **Still open.** |
+| L | ~~**65 `ignore_for_file` + 8 inline `ignore:`**~~ **DONE 2026-09-28** — `unnecessary_ignore` was `false`, so no stale suppression could ever be detected; 78 dead rule names across 41 files are removed and the flag is now `true` so the stricter setting is enforced. Fixing the suppressions paid for itself: with `dead_null_aware_expression` live again the analyzer proved `completeOnboarding`'s `data ?? {}` was unreachable, meaning a malformed tutor envelope silently produced a default DTO and reported success. Now `late final`. |
+| M | ~~**13 declared dependencies with zero imports.**~~ **DONE 2026-09-28** — 20 removed after confirming zero `package:X/` imports each: the entire `freezed`/`json_serializable`/`riverpod_generator` chain (no annotations exist, no `build.yaml`, drift is the only codegen), plus `flutter_svg`, `workmanager`, `google_fonts`, `google_sign_in`, `in_app_review`, `permission_handler`, `path_provider`, `device_info_plus`, `package_info_plus`, `shimmer`, `flutter_animate`, `flutter_markdown`, `collection`, `cupertino_icons`. `sqlite3_flutter_libs`/`build_runner`/`drift_dev`/`very_good_analysis`/`flutter_launcher_icons` have no Dart imports by design and were kept. `AGENTS.md` + `README.md` runbooks corrected. Also deleted 3 byte-identical copies of `main.dart` (`main_dev`/`_prod`/`_staging`) — no flavour config, no CI, env is `--dart-define=ENV`. |
+| N | **Test gaps — partly closed.** 354 tests (was 313). Added 17 covering the new `PayloadView`, plus the router gate. Still DTO + core-security heavy; only one controller test exists (`AuthNotifier`); the 52 screens are largely widget-untested. |
+| Q | **~40 strings of engineering documentation were rendering as screen copy.** DONE 2026-09-28 — profile tiles read `GET /psc/blueprints`; the wallet told users coins are credited "via `EconomyService::debit()`". Replaced with user-facing copy; the contract docs stayed in the data-source comments where they belong. A developer toggle in the tutor menu ("Using legacy `POST /learning/tutor`") let users switch API versions and has been removed. |
+| R | **The daily reminder would throw on Android 12+.** It used `exactAllowWhileIdle` without declaring `SCHEDULE_EXACT_ALARM`, so it failed with `exact_alarms_not_permitted`. Switched to `inexactAllowWhileIdle` rather than adding a special-permission grant flow — a daily nudge needs no second precision, and this avoids Play-policy exposure. |
 
 ---
 
