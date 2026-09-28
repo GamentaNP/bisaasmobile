@@ -49,6 +49,8 @@ import '../../features/tutor/presentation/screens/tutor_onboarding_screen.dart';
 import '../../features/tutor/presentation/screens/tutor_plan_screen.dart';
 import '../../features/library/presentation/screens/library_browser_screen.dart';
 import '../../core/consent/consent_screens.dart';
+import '../../features/book/presentation/screens/book_reader_screen.dart';
+import '../../features/book/presentation/screens/book_screens.dart';
 import '../../features/library/presentation/screens/library_detail_screen.dart';
 import '../../features/syllabus/presentation/screens/syllabus_tree_screen.dart';
 import '../../features/syllabus/presentation/screens/syllabus_versions_screen.dart';
@@ -376,6 +378,31 @@ class AppRouter {
         path: '/privacy',
         name: RouteNames.privacy,
         builder: (context, state) => const PrivacySettingsScreen(),
+      ),
+      // Book Engine — 25 verified routes under /books/* (public) and /book/*
+      // (authenticated). The catalog is outside auth:sanctum server-side.
+      GoRoute(
+        path: '/books',
+        name: RouteNames.books,
+        builder: (context, state) => const BookCatalogScreen(),
+      ),
+      GoRoute(
+        path: '/books/:slug',
+        name: RouteNames.bookDetail,
+        builder: (context, state) => BookDetailScreen(slug: state.pathParameters['slug']!),
+      ),
+      GoRoute(
+        path: '/books/:slug/read',
+        name: RouteNames.bookReader,
+        builder: (context, state) {
+          final q = state.uri.queryParameters;
+          return BookReaderScreen(
+            slug: state.pathParameters['slug']!,
+            bookId: int.tryParse(q['book'] ?? '') ?? 0,
+            topicId: int.tryParse(q['topic'] ?? '') ?? 0,
+            startPage: int.tryParse(q['page'] ?? '') ?? 1,
+          );
+        },
       ),
       // Syllabus Engine — 22 verified routes under /syllabi/* and /me/syllabi/*.
       // The catalog group is public server-side (`withoutMiddleware('auth:sanctum')`),

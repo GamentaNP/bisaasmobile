@@ -62,6 +62,10 @@ abstract final class RouteNames {
   static const rewards = 'rewards';
   // Privacy / GDPR consent management.
   static const privacy = 'privacy';
+  // Book Engine — public catalog plus the reader.
+  static const books = 'books';
+  static const bookDetail = 'book-detail';
+  static const bookReader = 'book-reader';
   // Syllabus Engine — public catalog reads plus the learner's own plans.
   static const syllabus = 'syllabus';
   static const syllabusTree = 'syllabus-tree';
