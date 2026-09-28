@@ -82,19 +82,30 @@ class SyllabusTreeState {
 class SyllabusVersionsController extends Notifier<SyllabusVersionsState> {
   @override
   SyllabusVersionsState build() {
-    // Kick the first load off once the notifier exists, so the screen does not
-    // have to remember to call it from initState.
+    // Starts in the loading state rather than an empty one. The screen branches
+    // on `isEmpty`, which is `!isLoading && error == null && versions.isEmpty`,
+    // so starting empty-but-not-loading made the first frame render "No syllabus
+    // has been published yet" before the request had even been made. The load is
+    // still kicked off here so the screen does not have to remember to call it.
     Future.microtask(load);
-    return const SyllabusVersionsState();
+    return const SyllabusVersionsState(isLoading: true);
   }
 
   SyllabusRepository get _repo => ref.read(syllabusRepositoryProvider);
 
   String _msg(Object e) => e is ApiException ? e.message : 'Could not load syllabus versions';
 
+  /// True while a request is genuinely in flight.
+  ///
+  /// This cannot be read from `state.isLoading`, because `build()` starts in the
+  /// loading state to avoid an empty first frame — so the flag would read true
+  /// before any request had been made and the initial load would refuse to run.
+  bool _inFlight = false;
+
   Future<void> load({bool force = false}) async {
-    if (state.isLoading) return;
+    if (_inFlight) return;
     if (state.versions.isNotEmpty && !force) return;
+    _inFlight = true;
     state = state.copyWith(isLoading: true, clearError: true);
     try {
       final versions = await _repo.getVersions();
@@ -103,6 +114,10 @@ class SyllabusVersionsController extends Notifier<SyllabusVersionsState> {
       AppLogger.w('syllabus versions failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
       state = state.copyWith(isLoading: false, error: _msg(e));
+    } finally {
+      // Released in `finally` so a thrown error cannot wedge the controller into
+      // a permanently-loading state with no way to retry.
+      _inFlight = false;
     }
   }
 
@@ -119,8 +134,11 @@ class SyllabusTreeController extends Notifier<SyllabusTreeState> {
 
   @override
   SyllabusTreeState build() {
+    // Starts loading rather than empty, for the same reason as the version list:
+    // an empty-but-not-loading first frame renders "This syllabus has no
+    // published nodes yet" before the request has been made.
     Future.microtask(() => load(publicId));
-    return const SyllabusTreeState();
+    return const SyllabusTreeState(isLoading: true);
   }
 
   SyllabusRepository get _repo => ref.read(syllabusRepositoryProvider);
@@ -130,9 +148,15 @@ class SyllabusTreeController extends Notifier<SyllabusTreeState> {
   /// The `_loadedFor` guard matters: the server caches this payload for 24h
   /// keyed on `structure_hash` and it is large, so re-entering the screen must
   /// not refetch what is already held. A different [publicId] does refetch.
+  /// True while a request is genuinely in flight. See the note on the version
+  /// list controller: it cannot be read from `state.isLoading`, because `build()`
+  /// starts loading and the guard would then block the initial load itself.
+  bool _inFlight = false;
+
   Future<void> load(String publicId, {int? depth, bool force = false}) async {
-    if (state.isLoading) return;
+    if (_inFlight) return;
     if (!force && _loadedFor == publicId && state.tree != null) return;
+    _inFlight = true;
     state = state.copyWith(isLoading: true, clearError: true, depth: depth ?? state.depth);
     try {
       final tree = await _repo.getTree(publicId, depth: depth);
@@ -142,6 +166,8 @@ class SyllabusTreeController extends Notifier<SyllabusTreeState> {
       AppLogger.w('syllabus tree failed for $publicId: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
       state = state.copyWith(isLoading: false, error: 'Could not load the syllabus');
+    } finally {
+      _inFlight = false;
     }
   }
 
