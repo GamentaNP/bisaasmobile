@@ -1,4 +1,4 @@
-// ignore_for_file: unused_element, unnecessary_parenthesis, cast_nullable_to_non_nullable, strict_raw_type
+// ignore_for_file: unused_element, unnecessary_parenthesis, cast_nullable_to_non_nullable
 
 import 'dart:async';
 

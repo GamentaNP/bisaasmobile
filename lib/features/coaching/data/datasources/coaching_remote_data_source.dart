@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, cast_nullable_to_non_nullable
+// ignore_for_file: cast_nullable_to_non_nullable
 
 import 'package:dio/dio.dart';
 

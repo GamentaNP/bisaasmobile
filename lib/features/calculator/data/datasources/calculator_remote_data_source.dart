@@ -48,7 +48,6 @@ class CalculatorRemoteDataSource {
         (json) => json as Map<String, dynamic>?,
       );
       final raw = envelope.data ?? body['data'] ?? body;
-      // ignore: unnecessary_type_check — raw may be Map or primitive
       final map = raw is Map<String, dynamic> ? raw : {'result': raw};
       return CalculationResult(
         inputs: Map<String, dynamic>.from(inputs),

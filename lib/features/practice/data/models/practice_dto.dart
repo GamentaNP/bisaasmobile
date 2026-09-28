@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, omit_local_variable_types
+
 import '../../domain/entities/practice.dart';
 
 int? _asInt(Object? v) {

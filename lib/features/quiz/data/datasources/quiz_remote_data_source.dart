@@ -1,4 +1,4 @@
-// ignore_for_file: omit_local_variable_types, unnecessary_lambdas, unnecessary_non_null_assertion, use_null_aware_elements, avoid_dynamic_calls
+// ignore_for_file: omit_local_variable_types, unnecessary_lambdas, unnecessary_non_null_assertion, use_null_aware_elements
 
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';

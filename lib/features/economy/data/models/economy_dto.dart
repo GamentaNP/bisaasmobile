@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, omit_local_variable_types, unnecessary_cast, dead_code, unnecessary_type_check, prefer_final_locals, prefer_constructors_over_static_methods
+// ignore_for_file: omit_local_variable_types, prefer_final_locals, prefer_constructors_over_static_methods
 import '../../domain/entities/economy.dart';
 
 /// Tolerant DTOs — additive parsing, never throws on missing/extra fields.

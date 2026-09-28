@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, cast_nullable_to_non_nullable, omit_local_variable_types, unnecessary_cast
+// ignore_for_file: omit_local_variable_types, unnecessary_cast
 
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';

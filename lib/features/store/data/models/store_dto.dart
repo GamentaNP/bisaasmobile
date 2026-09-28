@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, omit_local_variable_types, unnecessary_cast, prefer_constructors_over_static_methods
+// ignore_for_file: omit_local_variable_types, prefer_constructors_over_static_methods
 import '../../domain/entities/store.dart';
 
 int? _asInt(Object? v) {

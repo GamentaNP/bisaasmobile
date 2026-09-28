@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, omit_local_variable_types, unnecessary_cast, dead_code, noop_primitive_operations, unnecessary_type_check
+// ignore_for_file: omit_local_variable_types, noop_primitive_operations
 import '../../domain/entities/learning.dart';
 
 // ── helpers ───────────────────────────────────────────────────────────────────

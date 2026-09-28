@@ -1,6 +1,4 @@
-﻿// ignore_for_file: avoid_dynamic_calls, cast_nullable_to_non_nullable
-
-import 'package:dio/dio.dart';
+﻿import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';

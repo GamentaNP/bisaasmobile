@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, omit_local_variable_types
+
 
 import '../../domain/entities/streak.dart';
 
@@ -101,7 +101,6 @@ class FreezeStreakDto {
   final String? message;
   final DateTime? frozenUntil;
 }
-
 
 // ── WO-6 Streak self-service DTOs ─────────────────────────────────────────
 

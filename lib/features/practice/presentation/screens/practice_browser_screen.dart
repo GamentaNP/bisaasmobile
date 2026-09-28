@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, avoid_bool_literals_in_conditional_expressions, use_is_even_rather_than_modulo, unnecessary_lambdas, unnecessary_string_interpolations, prefer_is_empty, unnecessary_brace_in_string_interps, omit_local_variable_types
+// ignore_for_file: unnecessary_lambdas, unnecessary_string_interpolations
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

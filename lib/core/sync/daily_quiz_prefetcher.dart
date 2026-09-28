@@ -1,4 +1,4 @@
-// ignore_for_file: unawaited_futures
+
 
 /// Midnight daily-quiz prefetch.
 ///

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, use_null_aware_elements
+// ignore_for_file: use_null_aware_elements
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 

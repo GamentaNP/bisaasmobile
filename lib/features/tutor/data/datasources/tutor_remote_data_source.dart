@@ -1,4 +1,4 @@
-// ignore_for_file: cast_nullable_to_non_nullable, avoid_dynamic_calls, use_null_aware_elements, dead_code, dead_null_aware_expression, unnecessary_cast, omit_local_variable_types
+// ignore_for_file: use_null_aware_elements, unnecessary_cast, omit_local_variable_types
 
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
@@ -72,18 +72,22 @@ class TutorRemoteDataSource {
     );
     final body = res.data;
     if (body == null) return const TutorOnboardingCompleteDto();
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
+    final raw = body['data'];
+    // `late final` (not `?`) because every branch assigns; the compiler proves
+    // it. The previous `data ?? {}` was dead code that turned a malformed
+    // envelope into a default DTO -- a silent success for a failed parse.
+    late final Map<String, dynamic> resolved;
+    if (raw is Map<String, dynamic>) {
+      resolved = raw;
     } else {
       try {
         final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-        data = env.data ?? body;
+        resolved = env.data ?? Map<String, dynamic>.from(body as Map);
       } catch (_) {
-        data = body;
+        resolved = Map<String, dynamic>.from(body as Map);
       }
     }
-    return TutorOnboardingCompleteDto.fromJson(data ?? {});
+    return TutorOnboardingCompleteDto.fromJson(resolved);
   }
 
   // ── Chat ──────────────────────────────────────────────────────────────────

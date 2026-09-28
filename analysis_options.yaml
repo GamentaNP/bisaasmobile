@@ -60,7 +60,10 @@ linter:
     specify_nonobvious_property_types: false
     avoid_positional_boolean_parameters: false
     use_raw_strings: false
-    unnecessary_ignore: false
+    # Was false, which hid every stale // ignore_for_file in the repo - a
+    # suppression nobody can detect is a suppression nobody revalidates.
+    # Now true, so removing a real issue is itself caught.
+    unnecessary_ignore: true
     directives_ordering: false
     prefer_initializing_formals: false
     avoid_init_to_null: false

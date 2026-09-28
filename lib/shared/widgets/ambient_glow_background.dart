@@ -19,7 +19,6 @@ class AmbientGlowBackground extends StatelessWidget {
   final Color? baseColor;
 
   /// Kept for API compatibility; noise speckle is disabled in the flat style.
-  // ignore: avoid_positional_boolean_parameters
   final bool showNoise;
 
   @override
