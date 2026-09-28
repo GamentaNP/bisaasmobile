@@ -10,8 +10,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 
+import '../../../../app/localization/app_languages.dart';
 import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/providers.dart';
+import '../../../../app/theme/script_fonts.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/security/biometric_auth.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
@@ -110,23 +112,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final selected = await showModalBottomSheet<Locale?>(
       context: context,
       showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final option in _localeOptions)
-              ListTile(
-                title: Text(option.label),
-                trailing:
-                    option.locale?.languageCode == current?.languageCode ||
-                            (option.locale == null && current == null)
-                        ? const Icon(Icons.check_rounded)
-                        : null,
-                onTap: () => Navigator.of(context).pop(option.locale),
-              ),
-          ],
+        builder: (context) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _pickerRows(context, current),
+          ),
         ),
-      ),
     );
       if (selected == null && current == null) return;
       await ref.read(localeProvider.notifier).setLocale(selected);
@@ -150,18 +141,40 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     }
 
-  static const _localeOptions = <_LocaleOption>[
-    _LocaleOption(null, 'System default'),
-    _LocaleOption(Locale('en'), 'English'),
-    _LocaleOption(Locale('ne'), 'नेपाली'),
-    _LocaleOption(Locale('hi'), 'हिन्दी'),
-  ];
+  /// Language names come from the registry in their own script, so a user who
+  /// cannot read English can still find their language. The previous list was
+  /// four hardcoded strings (and two of those labels were mojibake in source).
+  static List<Widget> _pickerRows(BuildContext context, Locale? current) {
+    return [
+      ListTile(
+        title: const Text('System default'),
+        trailing: current == null ? const Icon(Icons.check_rounded) : null,
+        onTap: () => Navigator.of(context).pop<Locale?>(null),
+      ),
+      for (final lang in AppLanguages.all)
+        ListTile(
+          title: Text(
+            lang.displayLabel,
+            // The list is being read in that language, so it has to render in
+            // that language's font.
+            style: withScriptFallback(
+              Theme.of(context).textTheme.bodyLarge!,
+              lang.script,
+            ),
+          ),
+          trailing: current?.languageCode == lang.code
+              ? const Icon(Icons.check_rounded)
+              : null,
+          onTap: () => Navigator.of(context).pop<Locale?>(Locale(lang.code)),
+        ),
+    ];
+  }
 
   String _localeLabel(Locale? locale) {
-    for (final option in _localeOptions) {
-      if (option.locale?.languageCode == locale?.languageCode) return option.label;
-    }
-    return locale?.languageCode ?? 'System default';
+    if (locale == null) return 'System default';
+    final lang = AppLanguages.byCode(locale.languageCode);
+    if (lang == null) return locale.languageCode;
+    return lang.displayLabel;
   }
 
   @override
@@ -220,12 +233,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
     );
   }
-}
-
-class _LocaleOption {
-  const _LocaleOption(this.locale, this.label);
-  final Locale? locale;
-  final String label;
 }
 
 /// Type-to-confirm dialog for irreversible account deletion.

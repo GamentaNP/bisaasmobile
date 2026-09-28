@@ -5,11 +5,44 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_radii.dart';
 import 'app_typography.dart';
+import 'script_fonts.dart';
 
 /// Duolongo theme — tactile, playful, LIGHT-first Material 3.
 /// No glassmorphism, no soft drop shadows: depth comes from solid fills
 /// with hard bottom-border extrusions (Chunky* widgets).
 abstract final class AppTheme {
+  /// Theme for [brightness] with text styles resolved for [languageCode].
+  ///
+  /// The script parameter exists because the base family is Latin-only. Without
+  /// it a Nepali or Chinese string has no glyph source and renders as tofu, so
+  /// the "multilingual" claim only held for English. Each style is mapped
+  /// through [withScriptFallback] so it carries a real fallback chain, and the
+  /// negative display tracking is dropped for non-Latin text because it breaks
+  /// Devanagari and Arabic joining.
+  static ThemeData forLocale(Brightness brightness, {String? languageCode}) {
+    final script = ScriptFonts.forLanguage(languageCode);
+    final t = _build(brightness);
+    return t.copyWith(
+      textTheme: TextTheme(
+        displayLarge: withScriptFallback(t.textTheme.displayLarge!, script),
+        displayMedium: withScriptFallback(t.textTheme.displayMedium!, script),
+        displaySmall: withScriptFallback(t.textTheme.displaySmall!, script),
+        headlineLarge: withScriptFallback(t.textTheme.headlineLarge!, script),
+        headlineMedium: withScriptFallback(t.textTheme.headlineMedium!, script),
+        headlineSmall: withScriptFallback(t.textTheme.headlineSmall!, script),
+        titleLarge: withScriptFallback(t.textTheme.titleLarge!, script),
+        titleMedium: withScriptFallback(t.textTheme.titleMedium!, script),
+        titleSmall: withScriptFallback(t.textTheme.titleSmall!, script),
+        bodyLarge: withScriptFallback(t.textTheme.bodyLarge!, script),
+        bodyMedium: withScriptFallback(t.textTheme.bodyMedium!, script),
+        bodySmall: withScriptFallback(t.textTheme.bodySmall!, script),
+        labelLarge: withScriptFallback(t.textTheme.labelLarge!, script),
+        labelMedium: withScriptFallback(t.textTheme.labelMedium!, script),
+        labelSmall: withScriptFallback(t.textTheme.labelSmall!, script),
+      ),
+    );
+  }
+
   static ThemeData get dark => _build(Brightness.dark);
 
   static ThemeData get light => _build(Brightness.light);

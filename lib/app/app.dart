@@ -12,6 +12,7 @@ import '../core/sync/sync_worker.dart';
 import '../features/auth/presentation/controllers/auth_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../shared/widgets/app_lock_overlay.dart';
+import 'localization/app_languages.dart';
 import 'localization/locale_controller.dart';
 import 'providers.dart';
 import 'force_update_screen.dart';
@@ -142,17 +143,28 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
 
   @override
   Widget build(BuildContext context) {
+    // The base font family is Latin-only, so the theme is rebuilt for the active
+    // script. Switching language therefore re-themes the whole app rather than
+    // only changing translated strings — otherwise Nepali/Chinese/Arabic text
+    // renders as tofu because the styles still ask for InstrumentSans.
+    final locale = ref.watch(localeProvider);
+    final light = AppTheme.forLocale(Brightness.light, languageCode: locale?.languageCode);
+    final dark = AppTheme.forLocale(Brightness.dark, languageCode: locale?.languageCode);
+
     return MaterialApp.router(
       title: 'CivilCal',
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      theme: light,
+      darkTheme: dark,
       themeMode: ThemeMode.system,
       routerConfig: _appRouter.router,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      // Driven by the language registry rather than a hand-maintained list, so
+      // adding a language there is enough for Material's own strings (date
+      // pickers, semantics) to localise too.
+      supportedLocales: AppLanguages.supportedLocales,
       // Null → follow the system locale (falls back through supportedLocales).
-      locale: ref.watch(localeProvider),
+      locale: locale,
       builder: (context, child) => AppLockOverlay(
         lock: ref.watch(appLockProvider),
         // Outside the lock. Force-update is the more specific condition — an
