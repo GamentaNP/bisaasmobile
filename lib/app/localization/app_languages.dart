@@ -28,9 +28,9 @@ class AppLanguage {
 
   final bool isUiLocale;
 
-  AppScript get script => ScriptFonts.forLanguage(code);
+  AppScript get script => scriptForLanguage(code);
 
-  TextDirection get direction => ScriptFonts.directionFor(script);
+  TextDirection get direction => directionForLanguage(code);
 
   /// What the picker shows. The native name leads because the list is being read
   /// by someone looking for their own language; the English name is the

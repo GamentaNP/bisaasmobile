@@ -1,142 +1,299 @@
 import 'package:flutter/widgets.dart';
 
-/// Which writing system a piece of text is written in.
+/// Writing system of a piece of text, detected from Unicode codepoints.
 ///
-/// This exists because the app's base family (InstrumentSans) is Latin-only.
-/// Before this, 14 of 15 text styles set `fontFamily: 'InstrumentSans'` with
-/// no fallback, so a Nepali or Chinese string had no glyph source at all and
-/// rendered as tofu boxes — the "multilingual" claim was true only for English.
+/// Detecting from the **text** rather than the locale is the point. A Nepali
+/// student reading an English interface still types Nepali notes, and a
+/// question bank can be mixed. Resolving the font from `locale` therefore fails
+/// exactly the case that matters; resolving it from the characters does not.
+///
+/// The ranges are deliberately properties of Unicode, not a language list, so a
+/// script nobody thought about here (Khmer, Sinhala, Georgian, Thaana…) is
+/// still classified correctly and still gets a font.
 enum AppScript {
-  /// Latin, Greek, Cyrillic — covered by the bundled InstrumentSans.
   latin,
-
-  /// नेपाली / हिन्दी
   devanagari,
-
-  /// 中文
   han,
-
-  /// العربية
+  kana,
+  hangul,
   arabic,
-
-  /// বাংলা
+  hebrew,
   bengali,
-
-  /// தமிழ்
   tamil,
-
-  /// తెలుగు
   telugu,
+  gurmukhi,
+  gujarati,
+  oriya,
+  kannada,
+  malayalam,
+  tibetan,
+  thai,
+  lao,
+  khmer,
+  myanmar,
+  georgian,
+  armenian,
+  sinhala,
+  tifinagh,
+  ethiopic,
+  canadianAboriginal,
+  unknown;
 
-  /// An unknown script: fall back to whatever the platform provides.
-  unknown,
+  bool get isRtl => this == AppScript.arabic || this == AppScript.hebrew;
+
+  /// Latin is the only script where the app's display tracking is safe.
+  bool get supportsTightTracking =>
+      this == AppScript.latin || this == AppScript.unknown;
 }
 
-/// Maps a language code (or a BCP-47 script subtag) to the font family that
-/// can actually draw it, and to the writing direction.
+/// Classifies a string by its dominant script.
+abstract final class TextScript {
+  const TextScript._();
+
+  /// Script of [text], or [AppScript.unknown] when there is nothing to judge.
+  ///
+  /// Ignores whitespace, digits, and common punctuation so a sentence like
+  /// "3.5 kN" or "Beam (2026)" is not misread as "unknown".
+  static AppScript detect(String text) {
+    if (text.isEmpty) return AppScript.unknown;
+
+    final counts = <AppScript, int>{};
+    for (final rune in text.runes) {
+      final script = _scriptOfRune(rune);
+      if (script == null) continue;
+      counts[script] = (counts[script] ?? 0) + 1;
+    }
+    if (counts.isEmpty) return AppScript.unknown;
+
+    // Dominant script wins, with a stable tie-break by enum order so the result
+    // is deterministic for mixed text.
+    var best = AppScript.unknown;
+    var bestCount = 0;
+    for (final entry in counts.entries) {
+      if (entry.value > bestCount) {
+        best = entry.key;
+        bestCount = entry.value;
+      }
+    }
+    return best;
+  }
+
+  static bool isRtlText(String text) => detect(text).isRtl;
+
+  /// Null for runes that carry no script signal.
+  static AppScript? _scriptOfRune(int r) {
+    // Basic Latin + Latin-1 supplement + Latin Extended-A/B.
+    if ((r >= 0x0041 && r <= 0x005A) ||
+        (r >= 0x0061 && r <= 0x007A) ||
+        (r >= 0x00C0 && r <= 0x024F)) {
+      return AppScript.latin;
+    }
+    if (r >= 0x0370 && r <= 0x03FF) return AppScript.latin; // Greek
+    if (r >= 0x0400 && r <= 0x04FF) return AppScript.latin; // Cyrillic
+    if (r >= 0x0530 && r <= 0x058F) return AppScript.armenian;
+    if (r >= 0x0590 && r <= 0x05FF) return AppScript.hebrew;
+    if (r >= 0x0600 && r <= 0x06FF) return AppScript.arabic;
+    if (r >= 0x0700 && r <= 0x074F) return AppScript.arabic; // Syriac
+    if (r >= 0x0780 && r <= 0x07BF) return AppScript.arabic; // Thaana is
+    // handled by the platform font; it is not in the registry.
+    if (r >= 0x0900 && r <= 0x097F) return AppScript.devanagari;
+    if (r >= 0x0980 && r <= 0x09FF) return AppScript.bengali;
+    if (r >= 0x0A00 && r <= 0x0A7F) return AppScript.gurmukhi;
+    if (r >= 0x0A80 && r <= 0x0AFF) return AppScript.gujarati;
+    if (r >= 0x0B00 && r <= 0x0B7F) return AppScript.oriya;
+    if (r >= 0x0B80 && r <= 0x0BFF) return AppScript.tamil;
+    if (r >= 0x0C00 && r <= 0x0C7F) return AppScript.telugu;
+    if (r >= 0x0C80 && r <= 0x0CFF) return AppScript.kannada;
+    if (r >= 0x0D00 && r <= 0x0D7F) return AppScript.malayalam;
+    if (r >= 0x0D80 && r <= 0x0DFF) return AppScript.sinhala;
+    if (r >= 0x0E00 && r <= 0x0E7F) return AppScript.thai;
+    if (r >= 0x0E80 && r <= 0x0EFF) return AppScript.lao;
+    if (r >= 0x0F00 && r <= 0x0FFF) return AppScript.tibetan;
+    if (r >= 0x1000 && r <= 0x109F) return AppScript.myanmar;
+    if (r >= 0x10A0 && r <= 0x10FF) return AppScript.georgian;
+    if (r >= 0x1200 && r <= 0x137F) return AppScript.ethiopic;
+    if (r >= 0x13A0 && r <= 0x13FF) return AppScript.canadianAboriginal;
+    if (r >= 0x1780 && r <= 0x17FF) return AppScript.khmer;
+    if (r >= 0x2D00 && r <= 0x2D2F) return AppScript.tifinagh;
+    if (r >= 0x3040 && r <= 0x309F) return AppScript.kana; // Hiragana
+    if (r >= 0x30A0 && r <= 0x30FF) return AppScript.kana; // Katakana
+    if (r >= 0x3400 && r <= 0x4DBF) return AppScript.han; // Ext A
+    if (r >= 0x4E00 && r <= 0x9FFF) return AppScript.han; // URO
+    if (r >= 0xAC00 && r <= 0xD7AF) return AppScript.hangul;
+    if (r >= 0xF900 && r <= 0xFAFF) return AppScript.han; // Compatibility
+    // Fullwidth punctuation, CJK symbols.
+    if (r >= 0xFF01 && r <= 0xFF60) return AppScript.han;
+    return null;
+  }
+}
+
+/// Universal font resolution.
 ///
-/// Family names match Google Fonts so they resolve through `google_fonts`
-/// (runtime fetch + cache) and fall back to the platform's own Noto faces when
-/// that is unavailable or the device is offline.
+/// The previous design forced one family per locale, which meant any language
+/// not in the hand-written map had no glyph source. This inverts it: the branded
+/// Latin face stays primary and everything else is a **per-glyph fallback**.
+/// Flutter resolves a fallback when the current family lacks a glyph, so the
+/// chain is a *quality preference* layered on top of a baseline that always
+/// works — Android's own Noto faces are the final backstop via `sans-serif`.
+/// Languages nobody enumerated still render.
 abstract final class ScriptFonts {
   const ScriptFonts._();
 
-  /// Bundled family. Latin only — fine for English, useless for the rest.
+  /// The app's bundled brand face. Latin (plus Greek/Cyrillic) only.
   static const latinFamily = 'InstrumentSans';
 
-  /// Ordered so the first family that has the glyph wins. Flutter walks this
-  /// list per character, so a mixed string (e.g. "Beam Beam Moment") keeps the
-  /// branded Latin face while the Devanagari run renders correctly.
-  static const Map<AppScript, List<String>> families = {
-    AppScript.latin: [latinFamily],
-    AppScript.devanagari: ['NotoSansDevanagari', 'NotoSansDevanagariUI', 'Nirmala UI', 'sans-serif'],
-    AppScript.han: ['NotoSansSC', 'NotoSansCJKsc', 'SourceHanSansSC', 'sans-serif'],
-    AppScript.arabic: ['NotoNaskhArabic', 'NotoSansArabic', 'Geeza Pro', 'sans-serif'],
-    AppScript.bengali: ['NotoSansBengali', 'NotoSansBengaliUI', 'Shonar Bangla', 'sans-serif'],
-    AppScript.tamil: ['NotoSansTamil', 'NotoSansTamilUI', 'Latha', 'sans-serif'],
-    AppScript.telugu: ['NotoSansTelugu', 'NotoSansTeluguUI', 'Gautami', 'sans-serif'],
-    AppScript.unknown: [latinFamily, 'sans-serif'],
-  };
-
-  static List<String> forScript(AppScript script) =>
-      families[script] ?? families[AppScript.unknown]!;
-
-  /// Resolves the script for a BCP-47 language code.
+  /// Ordered broad-coverage chain. Order matters: the branded face is first so
+  /// English and numerals keep the chunky look, then Noto faces by script.
   ///
-  /// Falls back to the *script* subtag when present (`zh-Hans`, `zh-Hant`) so
-  /// simplified and traditional Chinese can be distinguished, then to the
-  /// language, then to [AppScript.unknown].
-  static AppScript forLanguage(String? languageCode) {
-    if (languageCode == null || languageCode.isEmpty) return AppScript.unknown;
-    final lower = languageCode.toLowerCase();
+  /// Not exhaustive *by design* — anything missing falls through to the
+  /// platform font instead of rendering as tofu.
+  static const List<String> universalChain = [
+    latinFamily,
+    'NotoSansDevanagari',
+    'NotoSansSC',
+    'NotoSansTC',
+    'NotoNaskhArabic',
+    'NotoSansHebrew',
+    'NotoSansBengali',
+    'NotoSansTamil',
+    'NotoSansTelugu',
+    'NotoSansGurmukhi',
+    'NotoSansGujarati',
+    'NotoSansOriya',
+    'NotoSansKannada',
+    'NotoSansMalayalam',
+    'NotoSansSinhala',
+    'NotoSansThai',
+    'NotoSansLao',
+    'NotoSansKhmer',
+    'NotoSansMyanmar',
+    'NotoSansGeorgian',
+    'NotoSansArmenian',
+    'NotoSansEthiopic',
+    'NotoSansTibetan',
+    'NotoSansJP',
+    'NotoSansKR',
+    'sans-serif',
+  ];
 
-    // BCP-47 script subtags are 4 letters (Hans, Hant, Arab, Beng, Deva...).
-    final parts = lower.split(RegExp('[-_]'));
-    if (parts.length > 1 && parts[1].length == 4) {
-      final byScript = _byScriptSubtag[parts[1]];
-      if (byScript != null) return byScript;
-    }
+  /// Families best suited to a script, used when a caller wants to lead with a
+  /// specific face (e.g. rendering a standalone content block).
+  static List<String> forScript(AppScript script) => switch (script) {
+        AppScript.latin => [latinFamily, 'sans-serif'],
+        AppScript.devanagari => ['NotoSansDevanagari', latinFamily, 'sans-serif'],
+        AppScript.han => ['NotoSansSC', 'NotoSansTC', 'sans-serif'],
+        AppScript.kana => ['NotoSansJP', 'NotoSansSC', 'sans-serif'],
+        AppScript.hangul => ['NotoSansKR', 'sans-serif'],
+        AppScript.arabic => ['NotoNaskhArabic', 'NotoSansArabic', 'sans-serif'],
+        AppScript.hebrew => ['NotoSansHebrew', 'sans-serif'],
+        AppScript.bengali => ['NotoSansBengali', 'sans-serif'],
+        AppScript.gurmukhi => ['NotoSansGurmukhi', 'sans-serif'],
+        AppScript.gujarati => ['NotoSansGujarati', 'sans-serif'],
+        AppScript.oriya => ['NotoSansOriya', 'sans-serif'],
+        AppScript.kannada => ['NotoSansKannada', 'sans-serif'],
+        AppScript.malayalam => ['NotoSansMalayalam', 'sans-serif'],
+        AppScript.tibetan => ['NotoSansTibetan', 'sans-serif'],
+        AppScript.tamil => ['NotoSansTamil', 'sans-serif'],
+        AppScript.telugu => ['NotoSansTelugu', 'sans-serif'],
+        AppScript.thai => ['NotoSansThai', 'sans-serif'],
+        AppScript.lao => ['NotoSansLao', 'sans-serif'],
+        AppScript.khmer => ['NotoSansKhmer', 'sans-serif'],
+        AppScript.myanmar => ['NotoSansMyanmar', 'sans-serif'],
+        AppScript.georgian => ['NotoSansGeorgian', 'sans-serif'],
+        AppScript.armenian => ['NotoSansArmenian', 'sans-serif'],
+        AppScript.sinhala => ['NotoSansSinhala', 'sans-serif'],
+        AppScript.tifinagh => ['sans-serif'],
+        AppScript.ethiopic => ['NotoSansEthiopic', 'sans-serif'],
+        AppScript.canadianAboriginal => ['sans-serif'],
+        AppScript.unknown => [latinFamily, 'sans-serif'],
+      };
 
-    return _byLanguage[parts.first] ?? AppScript.unknown;
+  /// Applies the universal chain to a style.
+  ///
+  /// This is the default every text style should get. It needs no knowledge of
+  /// the active locale, which is what makes it work for every language.
+  static TextStyle apply(TextStyle style) => style.copyWith(
+        fontFamily: latinFamily,
+        fontFamilyFallback: universalChain.sublist(1),
+      );
+
+  /// Applies the chain and additionally corrects tracking for [text]'s script.
+  ///
+  /// Negative tracking is safe only for Latin. Devanagari, Arabic, Khmer and
+  /// friends join across letter boundaries, so the same tracking pulls joined
+  /// glyphs apart and can break shaping.
+  static TextStyle forText(TextStyle style, String text) {
+    final base = apply(style);
+    return base.copyWith(
+      letterSpacing: TextScript.detect(text).supportsTightTracking
+          ? style.letterSpacing
+          : 0,
+    );
   }
-
-  static const Map<String, AppScript> _byScriptSubtag = {
-    'latn': AppScript.latin,
-    'deva': AppScript.devanagari,
-    'hans': AppScript.han,
-    'hant': AppScript.han,
-    'arab': AppScript.arabic,
-    'beng': AppScript.bengali,
-    'taml': AppScript.tamil,
-    'telu': AppScript.telugu,
-  };
-
-  static const Map<String, AppScript> _byLanguage = {
-    'en': AppScript.latin,
-    'es': AppScript.latin,
-    'fr': AppScript.latin,
-    'de': AppScript.latin,
-    'pt': AppScript.latin,
-    'ne': AppScript.devanagari,
-    'hi': AppScript.devanagari,
-    'mr': AppScript.devanagari,
-    'sa': AppScript.devanagari,
-    'zh': AppScript.han,
-    'yue': AppScript.han,
-    'ar': AppScript.arabic,
-    'fa': AppScript.arabic,
-    'ur': AppScript.arabic,
-    'bn': AppScript.bengali,
-    'ta': AppScript.tamil,
-    'te': AppScript.telugu,
-  };
-
-  /// Writing direction, matching the server's `languages.direction` column.
-  static TextDirection directionFor(AppScript script) =>
-      script == AppScript.arabic ? TextDirection.rtl : TextDirection.ltr;
 }
 
-/// Applies the right font family, fallback chain and tracking to a text style.
-///
-/// Two things this fixes that a plain `fontFamily` swap does not:
-///
-/// * **Negative letter spacing is destructive for non-Latin scripts.** The
-///   display styles use `letterSpacing: -0.25` to tighten the big Latin numbers.
-///   Devanagari and Arabic join across letter boundaries (conjuncts, cursive
-///   joining), so the same tracking visually pulls joined glyphs apart and can
-///   break the shaping. Tracking is therefore only kept for Latin.
-/// * **A single `fontFamily` cannot render mixed runs.** Flutter picks one
-///   family per run unless a `fontFamilyFallback` chain is given, so the base
-///   family has to be the *first* candidate and the script face a fallback —
-///   not the other way round.
-TextStyle withScriptFallback(TextStyle style, AppScript script) {
-  final families = ScriptFonts.forScript(script);
-  final isLatin = script == AppScript.latin || script == AppScript.unknown;
-
-  return style.copyWith(
-    fontFamily: families.first,
-    fontFamilyFallback: families.length > 1 ? families.sublist(1) : null,
-    // Only the Latin display tracking is safe.
-    letterSpacing: isLatin ? style.letterSpacing : 0,
-  );
+/// Resolves a language code to its dominant script. Used for locale-driven
+/// chrome (the app bar, a language picker row) where no text is in hand.
+AppScript scriptForLanguage(String? languageCode) {
+  if (languageCode == null || languageCode.isEmpty) return AppScript.unknown;
+  final parts = languageCode.toLowerCase().split(RegExp('[-_]'));
+  if (parts.length > 1 && parts[1].length == 4) {
+    final bySubtag = <String, AppScript>{
+      'latn': AppScript.latin,
+      'deva': AppScript.devanagari,
+      'beng': AppScript.bengali,
+      'taml': AppScript.tamil,
+      'telu': AppScript.telugu,
+      'arab': AppScript.arabic,
+      'hebr': AppScript.hebrew,
+      'thai': AppScript.thai,
+      'hani': AppScript.han,
+      'hans': AppScript.han,
+      'hant': AppScript.han,
+      'jpan': AppScript.kana,
+      'kore': AppScript.hangul,
+      'khmr': AppScript.khmer,
+      'mymr': AppScript.myanmar,
+      'sinh': AppScript.sinhala,
+      'geor': AppScript.georgian,
+      'armn': AppScript.armenian,
+    }[parts[1]];
+    if (bySubtag != null) return bySubtag;
+  }
+  return <String, AppScript>{
+        'en': AppScript.latin,
+        'es': AppScript.latin,
+        'fr': AppScript.latin,
+        'de': AppScript.latin,
+        'pt': AppScript.latin,
+        'ru': AppScript.latin,
+        'el': AppScript.latin,
+        'ne': AppScript.devanagari,
+        'hi': AppScript.devanagari,
+        'mr': AppScript.devanagari,
+        'bn': AppScript.bengali,
+        'ta': AppScript.tamil,
+        'te': AppScript.telugu,
+        'th': AppScript.thai,
+        'lo': AppScript.lao,
+        'km': AppScript.khmer,
+        'my': AppScript.myanmar,
+        'si': AppScript.sinhala,
+        'ka': AppScript.georgian,
+        'hy': AppScript.armenian,
+        'am': AppScript.ethiopic,
+        'ar': AppScript.arabic,
+        'fa': AppScript.arabic,
+        'ur': AppScript.arabic,
+        'he': AppScript.hebrew,
+        'zh': AppScript.han,
+        'ja': AppScript.kana,
+        'ko': AppScript.hangul,
+      }[parts.first] ??
+      AppScript.unknown;
 }
+
+/// Writing direction for a language code, matching the server's
+/// `languages.direction` column.
+TextDirection directionForLanguage(String? code) =>
+    scriptForLanguage(code).isRtl ? TextDirection.rtl : TextDirection.ltr;

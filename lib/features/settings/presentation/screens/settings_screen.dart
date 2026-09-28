@@ -155,11 +155,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ListTile(
           title: Text(
             lang.displayLabel,
-            // The list is being read in that language, so it has to render in
-            // that language's font.
-            style: withScriptFallback(
+            // The label is being read in that language, so it has to render in
+            // that language's font. Resolving from the text rather than the
+            // active locale is what makes a language nobody enumerated work.
+            style: ScriptFonts.forText(
               Theme.of(context).textTheme.bodyLarge!,
-              lang.script,
+              lang.displayLabel,
             ),
           ),
           trailing: current?.languageCode == lang.code

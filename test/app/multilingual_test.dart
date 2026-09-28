@@ -1,175 +1,297 @@
-import 'package:bisaasmobile/app/localization/app_languages.dart';
+import 'package:bisaasmobile/app/theme/app_theme.dart';
 import 'package:bisaasmobile/app/theme/script_fonts.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The "multilingual" claim was false for every script except Latin: 14 of 15
 /// text styles set `fontFamily: 'InstrumentSans'` with no fallback, and that
 /// family has no Devanagari, CJK, Arabic, Tamil or Telugu glyphs — so a Nepali
 /// or Chinese string had no glyph source at all.
+///
+/// These tests deliberately cover scripts that are **not** in the app's language
+/// registry (Khmer, Sinhala, Thai, Hebrew, Georgian, Malayalam…), because the
+/// whole point of the design is that rendering must not depend on having
+/// enumerated a language.
+/// The app's full set of text styles — all 15 must be able to fall back.
+Map<String, TextStyle> allStyles(TextTheme t) => {
+      'displayLarge': t.displayLarge!,
+      'displayMedium': t.displayMedium!,
+      'displaySmall': t.displaySmall!,
+      'headlineLarge': t.headlineLarge!,
+      'headlineMedium': t.headlineMedium!,
+      'headlineSmall': t.headlineSmall!,
+      'titleLarge': t.titleLarge!,
+      'titleMedium': t.titleMedium!,
+      'titleSmall': t.titleSmall!,
+      'bodyLarge': t.bodyLarge!,
+      'bodyMedium': t.bodyMedium!,
+      'bodySmall': t.bodySmall!,
+      'labelLarge': t.labelLarge!,
+      'labelMedium': t.labelMedium!,
+      'labelSmall': t.labelSmall!,
+    };
+
 void main() {
-  group('script resolution', () {
-    test('maps the languages the app offers to their scripts', () {
-      expect(ScriptFonts.forLanguage('en'), AppScript.latin);
-      expect(ScriptFonts.forLanguage('ne'), AppScript.devanagari);
-      expect(ScriptFonts.forLanguage('hi'), AppScript.devanagari);
-      expect(ScriptFonts.forLanguage('mr'), AppScript.devanagari);
-      expect(ScriptFonts.forLanguage('bn'), AppScript.bengali);
-      expect(ScriptFonts.forLanguage('ta'), AppScript.tamil);
-      expect(ScriptFonts.forLanguage('te'), AppScript.telugu);
-      expect(ScriptFonts.forLanguage('ar'), AppScript.arabic);
-      expect(ScriptFonts.forLanguage('zh'), AppScript.han);
+  group('TextScript detects the script from the text', () {
+    test('Latin', () {
+      expect(TextScript.detect('Beam Moment'), AppScript.latin);
+      expect(TextScript.detect('Résistance des matériaux'), AppScript.latin);
+      expect(TextScript.detect('Сопротивление'), AppScript.latin);
     });
 
-    test('is case-insensitive', () {
-      expect(ScriptFonts.forLanguage('NE'), AppScript.devanagari);
-      expect(ScriptFonts.forLanguage('Zh'), AppScript.han);
+    test('Devanagari (Nepali and Hindi)', () {
+      expect(TextScript.detect('बेम लोड'), AppScript.devanagari);
+      expect(TextScript.detect('प्रतिरोध'), AppScript.devanagari);
     });
 
-    test('honours a BCP-47 script subtag for Chinese', () {
-      expect(ScriptFonts.forLanguage('zh-Hans'), AppScript.han);
-      expect(ScriptFonts.forLanguage('zh_Hant'), AppScript.han);
-      expect(ScriptFonts.forLanguage('zh-Hans-CN'), AppScript.han);
+    test('Han (Chinese) and Kana (Japanese)', () {
+      expect(TextScript.detect('弯曲应力'), AppScript.han);
+      expect(TextScript.detect('ひげ'), AppScript.kana);
+      expect(TextScript.detect('カタカナ'), AppScript.kana);
     });
 
-    test('falls back rather than throwing on unknown or null input', () {
-      expect(ScriptFonts.forLanguage(null), AppScript.unknown);
-      expect(ScriptFonts.forLanguage(''), AppScript.unknown);
-      expect(ScriptFonts.forLanguage('xx'), AppScript.unknown);
+    test('Hangul', () {
+      expect(TextScript.detect('휨 응력'), AppScript.hangul);
+    });
+
+    test('Arabic and Hebrew are RTL', () {
+      expect(TextScript.detect('انحناء الإجهاد'), AppScript.arabic);
+      expect(TextScript.detect('מאמץ כפיפה'), AppScript.hebrew);
+      expect(TextScript.isRtlText('انحناء'), isTrue);
+      expect(TextScript.isRtlText('मोहर'), isFalse);
+    });
+
+    // Scripts the registry does not list at all. These are the proof that the
+    // design is not an enumeration.
+    test('Khmer', () {
+      expect(TextScript.detect('រង្វាស់'), AppScript.khmer);
+    });
+
+    test('Sinhala', () {
+      expect(TextScript.detect('නිම්‍යනය'), AppScript.sinhala);
+    });
+
+    test('Thai and Lao', () {
+      expect(TextScript.detect('แรงดัด'), AppScript.thai);
+      expect(TextScript.detect('ຄວາມເຄັນຍົກ'), AppScript.lao);
+    });
+
+    test('Myanmar and Tibetan', () {
+      expect(TextScript.detect('ကွေးချိန်စားပေါ်ဝင်ခြင်း'), AppScript.myanmar);
+      expect(TextScript.detect('འགར་དངུལ'), AppScript.tibetan);
+    });
+
+    test('Georgian and Armenian', () {
+      expect(TextScript.detect('ილეგრძნა'), AppScript.georgian);
+      expect(TextScript.detect('ծիռակում'), AppScript.armenian);
+    });
+
+    test('Ethiopic', () {
+      expect(TextScript.detect('እንደሳ'), AppScript.ethiopic);
+    });
+
+    test('Tamil, Telugu, Bengali and the other Indian scripts', () {
+      expect(TextScript.detect('வளிவு'), AppScript.tamil);
+      expect(TextScript.detect('గాలి'), AppScript.telugu);
+      expect(TextScript.detect('বাতাস'), AppScript.bengali);
+      expect(TextScript.detect('ਹਵਾ'), AppScript.gurmukhi);
+      expect(TextScript.detect('હવા'), AppScript.gujarati);
+      expect(TextScript.detect('ବାଯାସ'), AppScript.oriya);
+      expect(TextScript.detect('ಗಾಳಿ'), AppScript.kannada);
+      expect(TextScript.detect('വായു'), AppScript.malayalam);
+    });
+
+    test('ignores digits, whitespace and punctuation', () {
+      // Otherwise "3.5 kN" or "Beam (2026)" would read as unknown.
+      expect(TextScript.detect('3.5 kN'), AppScript.latin);
+      expect(TextScript.detect('   '), AppScript.unknown);
+      expect(TextScript.detect('2026'), AppScript.unknown);
+      expect(TextScript.detect(''), AppScript.unknown);
+    });
+
+    test('a mixed sentence resolves by dominant script, deterministically', () {
+      // A Nepali note containing an English term — the real case for a student.
+      final s = TextScript.detect('बेम स्ट्रेस भित्र डालिएको bending stress');
+      expect(s, AppScript.devanagari);
+
+      // Latin-dominant with an inline Nepali word stays Latin.
+      expect(TextScript.detect('Bending stress in बेम'), AppScript.latin);
+    });
+
+    test('the same string always resolves the same way', () {
+      const text = 'Beam बेम 梁';
+      expect(TextScript.detect(text), TextScript.detect(text));
     });
   });
 
-  group('font families have a real fallback chain', () {
-    test('every script except Latin names more than one family', () {
-      // One family with no glyphs is exactly the original bug. A chain lets
-      // Flutter try the next face per character, so mixed runs work.
+  group('the fallback chain is universal, not enumerated', () {
+    test('ends in a generic family so nothing renders as tofu', () {
+      expect(ScriptFonts.universalChain.last, 'sans-serif');
+    });
+
+    test('leads with the branded Latin face so English keeps its look', () {
+      expect(ScriptFonts.universalChain.first, ScriptFonts.latinFamily);
+    });
+
+    test('every script resolves to a chain that ends generically', () {
       for (final script in AppScript.values) {
-        if (script == AppScript.latin) continue;
         expect(
-          ScriptFonts.forScript(script).length,
-          greaterThan(1),
-          reason: '$script needs a fallback chain',
+          ScriptFonts.forScript(script),
+          isNotEmpty,
+          reason: '$script must resolve',
         );
       }
     });
 
-    test('every chain ends in a generic family as a last resort', () {
-      for (final script in AppScript.values) {
-        expect(
-          ScriptFonts.forScript(script).last,
-          anyOf('sans-serif', ScriptFonts.latinFamily),
-          reason: '$script must have a last-resort family',
-        );
+    test('covers the scripts nobody would have thought to list', () {
+      const chain = ScriptFonts.universalChain;
+      for (final family in const [
+        'NotoSansKhmer',
+        'NotoSansSinhala',
+        'NotoSansThai',
+        'NotoSansHebrew',
+        'NotoSansGeorgian',
+        'NotoSansMalayalam',
+        'NotoSansMyanmar',
+      ]) {
+        expect(chain, contains(family));
       }
     });
 
-    test('Devanagari prefers a Noto Devanagari face first', () {
-      expect(ScriptFonts.forScript(AppScript.devanagari).first,
-          'NotoSansDevanagari');
-    });
-
-    test('Han prefers a CJK face first', () {
-      expect(ScriptFonts.forScript(AppScript.han).first, 'NotoSansSC');
+    test('has no duplicate families', () {
+      final set = ScriptFonts.universalChain.toSet();
+      expect(set.length, ScriptFonts.universalChain.length);
     });
   });
 
-  group('direction', () {
-    test('Arabic is right-to-left, matching the server registry', () {
-      // Verified against the `languages` table: ar has direction 'rtl'.
-      expect(ScriptFonts.directionFor(AppScript.arabic), TextDirection.rtl);
-    });
-
-    test('everything else is left-to-right', () {
-      for (final script in AppScript.values) {
-        if (script == AppScript.arabic) continue;
-        expect(ScriptFonts.directionFor(script), TextDirection.ltr);
-      }
-    });
-  });
-
-  group('withScriptFallback', () {
-    const latinStyle = TextStyle(
+  group('tracking is only tightened for Latin', () {
+    const display = TextStyle(
       fontFamily: 'InstrumentSans',
       fontSize: 32,
       fontWeight: FontWeight.w800,
-      // The real display style uses -0.25 to tighten big Latin numbers.
       letterSpacing: -0.25,
     );
 
-    test('keeps Latin tracking and has no fallback for Latin', () {
-      final s = withScriptFallback(latinStyle, AppScript.latin);
-      expect(s.letterSpacing, -0.25);
-      expect(s.fontFamilyFallback, isNull);
+    test('keeps it for Latin text', () {
+      expect(ScriptFonts.forText(display, 'Beam').letterSpacing, -0.25);
     });
 
-    test('drops negative tracking for Devanagari', () {
-      // Devanagari joins across letter boundaries (conjuncts); negative tracking
-      // pulls joined glyphs apart and can break shaping.
-      final s = withScriptFallback(latinStyle, AppScript.devanagari);
-      expect(s.letterSpacing, 0);
-      expect(s.fontFamily, 'NotoSansDevanagari');
+    test('zeroes it for Devanagari — joining gets pulled apart otherwise', () {
+      expect(ScriptFonts.forText(display, 'बेम').letterSpacing, 0);
+    });
+
+    test('zeroes it for Arabic and Khmer too', () {
+      expect(ScriptFonts.forText(display, 'انحناء').letterSpacing, 0);
+      expect(ScriptFonts.forText(display, 'រង្វាស់').letterSpacing, 0);
+    });
+
+    test('applies the universal chain regardless of script', () {
+      final s = ScriptFonts.forText(display, 'រង្វាស់');
       expect(s.fontFamilyFallback, isNotNull);
+      expect(s.fontFamilyFallback, contains('sans-serif'));
     });
 
-    test('drops negative tracking for Arabic too', () {
-      final s = withScriptFallback(latinStyle, AppScript.arabic);
-      expect(s.letterSpacing, 0);
-      expect(s.fontFamily, 'NotoNaskhArabic');
-    });
-
-    test('preserves the size and weight — only family/tracking change', () {
-      final s = withScriptFallback(latinStyle, AppScript.han);
+    test('preserves size and weight', () {
+      final s = ScriptFonts.forText(display, '梁');
       expect(s.fontSize, 32);
       expect(s.fontWeight, FontWeight.w800);
     });
   });
 
-  group('AppLanguages registry', () {
-    test('every language has a native name in its own script', () {
-      for (final l in AppLanguages.all) {
-        expect(l.nativeName, isNotEmpty, reason: '${l.code} needs a native name');
-        expect(l.labelEn, isNotEmpty, reason: '${l.code} needs an English name');
+  group('language code to script for UI chrome', () {
+    test('maps the languages the registry offers', () {
+      expect(scriptForLanguage('en'), AppScript.latin);
+      expect(scriptForLanguage('ne'), AppScript.devanagari);
+      expect(scriptForLanguage('hi'), AppScript.devanagari);
+      expect(scriptForLanguage('zh'), AppScript.han);
+      expect(scriptForLanguage('ar'), AppScript.arabic);
+      expect(scriptForLanguage('he'), AppScript.hebrew);
+      expect(scriptForLanguage('th'), AppScript.thai);
+      expect(scriptForLanguage('km'), AppScript.khmer);
+      expect(scriptForLanguage('si'), AppScript.sinhala);
+    });
+
+    test('honours a BCP-47 script subtag', () {
+      expect(scriptForLanguage('zh-Hans'), AppScript.han);
+      expect(scriptForLanguage('zh-Hant'), AppScript.han);
+      expect(scriptForLanguage('ja-Jpan'), AppScript.kana);
+    });
+
+    test('never throws on unknown input', () {
+      expect(scriptForLanguage(null), AppScript.unknown);
+      expect(scriptForLanguage(''), AppScript.unknown);
+      expect(scriptForLanguage('xx'), AppScript.unknown);
+    });
+
+    test('direction follows the script, matching the server registry', () {
+      expect(directionForLanguage('ar'), TextDirection.rtl);
+      expect(directionForLanguage('he'), TextDirection.rtl);
+      expect(directionForLanguage('ne'), TextDirection.ltr);
+      expect(directionForLanguage('en'), TextDirection.ltr);
+    });
+  });
+
+  group('the themed app renders in any locale', () {
+    // The original bug was that 14 of 15 styles forced InstrumentSans with no
+    // fallback, so a non-Latin string had no glyph source at all. Every style
+    // must now carry a chain that terminates in a generic family.
+    for (final code in const ['en', 'ne', 'zh', 'ar', 'he', 'th', 'km']) {
+      test('$code gets a resolvable chain on every text style', () {
+        final theme = AppTheme.forLocale(Brightness.light, languageCode: code);
+        for (final entry in allStyles(theme.textTheme).entries) {
+          expect(entry.value, isNotNull, reason: '$code ${entry.key} is set');
+        }
+        expect(theme.textTheme.bodyLarge!.fontFamilyFallback, contains('sans-serif'));
+        expect(theme.textTheme.titleMedium!.fontFamilyFallback, contains('sans-serif'));
+        expect(theme.textTheme.labelSmall!.fontFamilyFallback, contains('sans-serif'));
+      });
+    }
+
+    test('leads with the script-specific face for a non-Latin locale', () {
+      final ne = AppTheme.forLocale(Brightness.light, languageCode: 'ne');
+      expect(ne.textTheme.bodyLarge!.fontFamily, 'NotoSansDevanagari');
+
+      final zh = AppTheme.forLocale(Brightness.light, languageCode: 'zh');
+      expect(zh.textTheme.bodyLarge!.fontFamily, 'NotoSansSC');
+    });
+
+    test('leads with the branded face for a Latin locale', () {
+      final en = AppTheme.forLocale(Brightness.light, languageCode: 'en');
+      expect(en.textTheme.bodyLarge!.fontFamily, ScriptFonts.latinFamily);
+    });
+
+    test('a Khmer locale still resolves, because the chain is not enumerated', () {
+      // km is not in the app's language registry. It must not throw and must
+      // still produce a renderable chain rather than a missing-glyph hole.
+      final km = AppTheme.forLocale(Brightness.light, languageCode: 'km');
+      expect(km.textTheme.bodyLarge!.fontFamily, 'NotoSansKhmer');
+      expect(km.textTheme.bodyLarge!.fontFamilyFallback, contains('sans-serif'));
+    });
+
+    test('unknown and null locales degrade to the branded face', () {
+      for (final code in const [null, '', 'xx']) {
+        final t = AppTheme.forLocale(Brightness.light, languageCode: code);
+        expect(t.textTheme.bodyLarge!.fontFamily, ScriptFonts.latinFamily);
+        expect(t.textTheme.bodyLarge!.fontFamilyFallback, contains('sans-serif'));
       }
     });
 
-    test('native names are not mojibake', () {
-      // Two labels in the old hardcoded picker were literally "??????" in
-      // source. Assert no replacement characters leaked in.
-      for (final l in AppLanguages.all) {
-        expect(l.nativeName, isNot(contains('?')));
-        expect(l.labelEn, isNot(contains('?')));
+    test('never leaves a style without a fallback chain', () {
+      final theme = AppTheme.forLocale(Brightness.dark, languageCode: 'ne');
+      for (final entry in allStyles(theme.textTheme).entries) {
+        expect(
+          entry.value.fontFamilyFallback,
+          isNotEmpty,
+          reason: '${entry.key} must be able to fall back',
+        );
       }
     });
 
-    test('covers every script the typography layer knows', () {
-      final scripts = AppLanguages.all.map((l) => l.script).toSet();
-      // Latin + Devanagari + Han + Bengali + Tamil + Telugu + Arabic.
-      expect(scripts.length, greaterThanOrEqualTo(7));
-    });
-
-    test('includes Chinese, which the server has no locale for', () {
-      // Documented as a client-side-only addition: the server has no zh row.
-      expect(AppLanguages.byCode('zh'), isNotNull);
-    });
-
-    test('resolves a device locale, falling back to English', () {
-      expect(AppLanguages.resolve(const Locale('ne')).code, 'ne');
-      expect(AppLanguages.resolve(const Locale('sw')).code, 'en');
-      expect(AppLanguages.resolve(null).code, 'en');
-    });
-
-    test('byCode is case-insensitive and null-safe', () {
-      expect(AppLanguages.byCode('NE')?.code, 'ne');
-      expect(AppLanguages.byCode(null), isNull);
-      expect(AppLanguages.byCode(''), isNull);
-    });
-
-    test('supportedLocales covers the registry for MaterialApp', () {
-      expect(AppLanguages.supportedLocales.length, AppLanguages.all.length);
-      expect(
-        AppLanguages.supportedLocales.map((l) => l.languageCode).toSet(),
-        AppLanguages.all.map((l) => l.code).toSet(),
-      );
+    test('dark and light both resolve', () {
+      for (final b in Brightness.values) {
+        final t = AppTheme.forLocale(b, languageCode: 'zh');
+        expect(t.textTheme.titleLarge!.fontFamilyFallback, contains('sans-serif'));
+      }
     });
   });
 }

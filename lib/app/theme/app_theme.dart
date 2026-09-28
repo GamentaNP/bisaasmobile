@@ -13,34 +13,60 @@ import 'script_fonts.dart';
 abstract final class AppTheme {
   /// Theme for [brightness] with text styles resolved for [languageCode].
   ///
-  /// The script parameter exists because the base family is Latin-only. Without
-  /// it a Nepali or Chinese string has no glyph source and renders as tofu, so
-  /// the "multilingual" claim only held for English. Each style is mapped
-  /// through [withScriptFallback] so it carries a real fallback chain, and the
-  /// negative display tracking is dropped for non-Latin text because it breaks
-  /// Devanagari and Arabic joining.
+  /// The base family is Latin-only, so every style also gets the universal
+  /// fallback chain: the branded face stays primary and any script it lacks a
+  /// glyph for is resolved per-glyph down the chain to the platform's own Noto
+  /// faces. That is what makes *every* language render rather than only the ones
+  /// enumerated in a map — a script nobody thought about here still resolves,
+  /// because the chain ends in a generic family.
+  ///
+  /// [languageCode] only influences the leading family, so a UI-language switch
+  /// still leads with the right script.
   static ThemeData forLocale(Brightness brightness, {String? languageCode}) {
-    final script = ScriptFonts.forLanguage(languageCode);
     final t = _build(brightness);
+    final script = scriptForLanguage(languageCode);
+    final leading = ScriptFonts.forScript(script);
+    TextStyle s(TextStyle style) => _style(style, leading, script);
     return t.copyWith(
       textTheme: TextTheme(
-        displayLarge: withScriptFallback(t.textTheme.displayLarge!, script),
-        displayMedium: withScriptFallback(t.textTheme.displayMedium!, script),
-        displaySmall: withScriptFallback(t.textTheme.displaySmall!, script),
-        headlineLarge: withScriptFallback(t.textTheme.headlineLarge!, script),
-        headlineMedium: withScriptFallback(t.textTheme.headlineMedium!, script),
-        headlineSmall: withScriptFallback(t.textTheme.headlineSmall!, script),
-        titleLarge: withScriptFallback(t.textTheme.titleLarge!, script),
-        titleMedium: withScriptFallback(t.textTheme.titleMedium!, script),
-        titleSmall: withScriptFallback(t.textTheme.titleSmall!, script),
-        bodyLarge: withScriptFallback(t.textTheme.bodyLarge!, script),
-        bodyMedium: withScriptFallback(t.textTheme.bodyMedium!, script),
-        bodySmall: withScriptFallback(t.textTheme.bodySmall!, script),
-        labelLarge: withScriptFallback(t.textTheme.labelLarge!, script),
-        labelMedium: withScriptFallback(t.textTheme.labelMedium!, script),
-        labelSmall: withScriptFallback(t.textTheme.labelSmall!, script),
+        displayLarge: s(t.textTheme.displayLarge!),
+        displayMedium: s(t.textTheme.displayMedium!),
+        displaySmall: s(t.textTheme.displaySmall!),
+        headlineLarge: s(t.textTheme.headlineLarge!),
+        headlineMedium: s(t.textTheme.headlineMedium!),
+        headlineSmall: s(t.textTheme.headlineSmall!),
+        titleLarge: s(t.textTheme.titleLarge!),
+        titleMedium: s(t.textTheme.titleMedium!),
+        titleSmall: s(t.textTheme.titleSmall!),
+        bodyLarge: s(t.textTheme.bodyLarge!),
+        bodyMedium: s(t.textTheme.bodyMedium!),
+        bodySmall: s(t.textTheme.bodySmall!),
+        labelLarge: s(t.textTheme.labelLarge!),
+        labelMedium: s(t.textTheme.labelMedium!),
+        labelSmall: s(t.textTheme.labelSmall!),
       ),
     );
+  }
+
+  /// Leads with [leading] and keeps the universal chain as the per-glyph
+  /// backstop, so a run the leading face cannot draw still renders.
+  ///
+  /// Negative tracking is dropped for scripts that join across letter
+  /// boundaries. Every other style uses *positive* tracking, which is safe
+  /// everywhere — it only reads slightly loose — so this guard is really about
+  /// the one style that tightens ([AppTypography.displayLarge]).
+  static TextStyle _style(TextStyle style, List<String> leading, AppScript script) {
+    final base = style.copyWith(
+      fontFamily: leading.first,
+      fontFamilyFallback: <String>{
+        ...leading.skip(1),
+        ...ScriptFonts.universalChain.skip(1),
+      }.toList(),
+    );
+    if (script.supportsTightTracking || (style.letterSpacing ?? 0) >= 0) {
+      return base;
+    }
+    return base.copyWith(letterSpacing: 0);
   }
 
   static ThemeData get dark => _build(Brightness.dark);
