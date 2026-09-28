@@ -202,7 +202,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Select your primary syllabus track to personalize questions and study sprint plans.',
+          'Sets the syllabus this account studies towards.',
           style: AppTypography.bodyMedium.copyWith(
             color: theme.brightness == Brightness.dark
                 ? AppColors.textSecondaryDark
@@ -358,7 +358,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Help our IRT calibration engine tailor initial question difficulty to your stage.',
+          // Was: "Help our IRT calibration engine tailor initial question
+          // difficulty to your stage." Nothing reads this answer back —
+          // PATCH /me accepts only name/username/email, so there is nowhere on
+          // the server to persist it and nothing consumes it locally either.
+          'Sets where your streak and revision queue start from.',
           style: AppTypography.bodyMedium.copyWith(
             color: theme.brightness == Brightness.dark
                 ? AppColors.textSecondaryDark

@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import '../../../core/network/api_response.dart';
 
 /// Study-planner / sprint surfaces:
-///   * `GET  /quiz/study-planner/{exam}/coach`
-///   * `GET  /quiz/study-planner/{exam}/triage`
+///   * `GET  /quiz/coach`                             (exam resolved server-side)
+///   * `GET  /quiz/study-planner/{examId}/triage`     (numeric exam id)
 ///   * `GET  /quiz/sprint`
 ///   * `GET  /quiz/reports/weekly`
 ///   * `POST /quiz/sprint/{question}/grade`
@@ -31,13 +31,27 @@ class EiceRemoteDataSource {
     }
   }
 
-  Future<Map<String, dynamic>?> getCoach(String exam) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$exam/coach');
+  /// No exam segment.
+  ///
+  /// The route is `->whereNumber('exam')`, so it only matches a numeric
+  /// `QuizTargetExam` id. The client used to send the literal `'psc-civil'`,
+  /// which never matched and therefore 404'd at the routing layer on every
+  /// single call — verified against the running backend:
+  ///   study-planner/psc-civil/coach -> 404   (no such route)
+  ///   study-planner/1/coach         -> 401   (route resolves)
+  /// `GET /quiz/coach` takes no exam at all and `QuizStudyPlannerApiController`
+  /// resolves the user's own active target exam (highest priority first),
+  /// which is both correct and removes the client from that decision.
+  Future<Map<String, dynamic>?> getCoach() async {
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/coach');
     return _dataOf(res.data);
   }
 
-  Future<Map<String, dynamic>?> getTriage(String exam) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$exam/triage');
+  /// Numeric exam id, taken from `exam_id` in the coach payload. Unlike coach
+  /// this endpoint has no exam-less variant, so the id has to come from
+  /// somewhere real.
+  Future<Map<String, dynamic>?> getTriage(int examId) async {
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$examId/triage');
     return _dataOf(res.data);
   }
 

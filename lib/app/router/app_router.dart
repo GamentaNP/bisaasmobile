@@ -314,7 +314,7 @@ class AppRouter {
         builder: (context, state) =>
             GameWorldMapScreen(worldSlug: state.pathParameters['slug']!),
       ),
-      GoRoute(path: '/eice', name: RouteNames.eice, builder: (context, state) => EiceScreen(exam: state.uri.queryParameters['exam'] ?? 'psc-civil')),
+      GoRoute(path: '/eice', name: RouteNames.eice, builder: (context, state) => const EiceScreen()),
       GoRoute(path: '/psc', name: RouteNames.psc, builder: (context, state) => const PscScreen()),
       GoRoute(path: '/rewards', name: RouteNames.rewards, builder: (context, state) => const RewardsScreen()),
       GoRoute(path: '/social', name: RouteNames.social, builder: (context, state) => const SocialScreen()),
