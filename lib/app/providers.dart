@@ -17,6 +17,7 @@ import '../core/analytics/analytics_service.dart';
 import '../core/connectivity/api_reachability.dart';
 import '../core/connectivity/connectivity_service.dart';
 import '../core/network/dio_client.dart';
+import '../core/notifications/local_notification_service.dart';
 import 'config/app_config.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../core/security/app_lock.dart';
@@ -151,6 +152,15 @@ final analyticsProvider = Provider<AnalyticsService?>(
 
 /// Local notifications plugin — always available (even without Firebase).
 final localNotificationsPluginProvider = Provider<FlutterLocalNotificationsPlugin>((_) => FlutterLocalNotificationsPlugin());
+
+/// Lets the UI cancel the daily reminder once the daily quiz is done.
+///
+/// `bootstrap()` created its own instance as a local, so nothing outside it
+/// could reach `cancelDaily()` and the 08:00 "keep the streak alive" nudge
+/// fired even for a user who had already completed the daily.
+final localNotificationServiceProvider = Provider<LocalNotificationService>((ref) {
+  return LocalNotificationService(ref.watch(localNotificationsPluginProvider));
+});
 
 /// Null when Firebase is unavailable — FCM registration is skipped silently.
 final pushServiceProvider = Provider<PushNotificationService?>((ref) {

@@ -15,6 +15,7 @@ import '../../../../app/providers.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/security/biometric_auth.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
+import '../../../../features/profile/presentation/controllers/profile_skills_controller.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -127,9 +128,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ),
     );
-    if (selected == null && current == null) return;
-    await ref.read(localeProvider.notifier).setLocale(selected);
-  }
+      if (selected == null && current == null) return;
+      await ref.read(localeProvider.notifier).setLocale(selected);
+      // Persist server-side too. `PATCH /me/locale` exists and validates
+      // against config('app.supported_locales'); without this the preference
+      // lived only in local prefs, so it was lost on reinstall and invisible to
+      // anything server-side. Best-effort: a failed sync must not undo the
+      // local choice the user just made.
+      final code = selected?.languageCode;
+      if (code != null) {
+        try {
+          await ref.read(profileRemoteDataSourceProvider).updateLocale(code);
+        } catch (_) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Language saved on this device only — could not reach the server.'),
+            ),
+          );
+        }
+      }
+    }
 
   static const _localeOptions = <_LocaleOption>[
     _LocaleOption(null, 'System default'),

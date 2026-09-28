@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/logging/app_logger.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
@@ -30,6 +34,21 @@ class HomeScreen extends ConsumerWidget {
 
     final user = userState.value;
     final name = user != null && user.name.isNotEmpty ? user.name : 'Engineer';
+
+    // Stop nudging a user who has already done the daily. `cancelDaily()` was
+    // written but never reachable — bootstrap built its notification service as
+    // a local — so the 08:00 "keep the streak alive" reminder fired regardless.
+    // Best-effort: a failure here must not break the dashboard.
+    ref.listen(homeControllerProvider, (prev, next) {
+      final done = next.value?.isDailyCompleted ?? false;
+      final wasDone = prev?.value?.isDailyCompleted ?? false;
+      if (!done || wasDone) return;
+      unawaited(
+        ref.read(localNotificationServiceProvider).cancelDaily().catchError((Object e) {
+          AppLogger.i('cancelDaily failed (ignored): $e');
+        }),
+      );
+    });
 
     return SafeAreaScaffold(
       body: RefreshIndicator(

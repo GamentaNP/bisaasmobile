@@ -37,4 +37,17 @@ class ProfileRemoteDataSource {
     if (payload.isEmpty) return;
     await _dio.patch<Map<String, dynamic>>('/me', data: payload);
   }
+
+  /// `PATCH /me/locale` — persist the preferred locale server-side.
+  ///
+  /// `UpdateLocaleController` validates against `config('app.supported_locales')`
+  /// = en, es, fr, ar, ne, hi, bn, ta, te, so an unsupported code is a 422
+  /// rather than a silent write. The app only offers en/ne/hi, all of which are
+  /// in that list.
+  Future<void> updateLocale(String locale) async {
+    await _dio.patch<Map<String, dynamic>>(
+      '/me/locale',
+      data: <String, dynamic>{'locale': locale},
+    );
+  }
 }
