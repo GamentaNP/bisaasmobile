@@ -24,7 +24,6 @@ import '../core/security/token_manager.dart';
 import '../core/storage/database/app_database.dart';
 import '../core/storage/preferences.dart';
 import 'config/app_config.dart';
-import 'config/feature_flags.dart';
 
 Future<void> bootstrap() async {
   // Initialize Key-Value preferences
@@ -43,8 +42,10 @@ Future<void> bootstrap() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     CrashReporting.enableInDev();
     AppLogger.i('Firebase initialized');
-    // Remote Config flags — safe read fallbacks when this fails.
-    await FeatureFlags.init();
+    // Feature flags come from GET /api/v1/app/config (see appConfigProvider), not
+    // from Remote Config. Two sources for the same switches let them disagree, and
+    // they did: the Firebase copy defaulted economy_enabled to true while the
+    // operator's live config said false, so a kill-switch could be ignored.
   } catch (e, st) {
     AppLogger.w('Firebase not configured (dev without google-services.json): $e');
     if (kDebugMode) AppLogger.d(st);
