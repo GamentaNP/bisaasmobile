@@ -49,6 +49,8 @@ import '../../features/tutor/presentation/screens/tutor_onboarding_screen.dart';
 import '../../features/tutor/presentation/screens/tutor_plan_screen.dart';
 import '../../features/library/presentation/screens/library_browser_screen.dart';
 import '../../features/library/presentation/screens/library_detail_screen.dart';
+import '../../features/syllabus/presentation/screens/syllabus_tree_screen.dart';
+import '../../features/syllabus/presentation/screens/syllabus_versions_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/quiz/presentation/quiz_home_page.dart';
@@ -368,6 +370,20 @@ class AppRouter {
         path: '/library/:slug',
         name: RouteNames.libraryDetail,
         builder: (context, state) => LibraryDetailScreen(slug: state.pathParameters['slug']!),
+      ),
+      // Syllabus Engine — 22 verified routes under /syllabi/* and /me/syllabi/*.
+      // The catalog group is public server-side (`withoutMiddleware('auth:sanctum')`),
+      // so this stays reachable signed out.
+      GoRoute(
+        path: '/syllabus',
+        name: RouteNames.syllabus,
+        builder: (context, state) => const SyllabusVersionsScreen(),
+      ),
+      GoRoute(
+        path: '/syllabus/:versionId',
+        name: RouteNames.syllabusTree,
+        builder: (context, state) =>
+            SyllabusTreeScreen(versionPublicId: state.pathParameters['versionId']!),
       ),
       // Tutor (AI Tutor) — 12 verified routes under /learning/ai-tutor/*
       GoRoute(
