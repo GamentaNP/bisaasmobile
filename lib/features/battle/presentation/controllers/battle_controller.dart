@@ -198,7 +198,9 @@ class BattleController extends Notifier<BattleState> {
     final timeTakenMs = ((m.perQuestionSeconds - state.secondsLeftInQuestion).clamp(0, m.perQuestionSeconds)) * 1000;
     try {
       final dio = DioClient.instance.dio;
-      await dio.post<dynamic>('/quiz/battles/${m.id}/answer', data: {
+      // PUT, not POST: the server registers this transition canonically as PUT
+      // and keeps POST only as `answer.transition-alias` until the freeze.
+      await dio.put<dynamic>('/quiz/battles/${m.id}/answer', data: {
         'question_id': questionId,
         'question_index': state.currentQuestionIndex,
         'selected_option': selectedOption,

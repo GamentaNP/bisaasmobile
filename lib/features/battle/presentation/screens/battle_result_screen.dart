@@ -7,12 +7,30 @@ import 'package:lottie/lottie.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/network/dio_client.dart';
+import '../../data/datasources/battle_remote_data_source.dart';
+import '../../domain/battle_outcome.dart';
 import '../../domain/entities/battle.dart';
 import '../controllers/battle_controller.dart';
 
-/// Post-battle result. Reads `BattleMatch.winnerUid` + per-player
-/// scores from the controller state. Confetti for win, subtle anim
-/// for loss.
+/// Fetches the authoritative outcome.
+///
+/// The screen previously computed it client-side as
+/// `winnerUid == null || winnerUid == me.uid || me.score >= opp.score`, which
+/// rendered an **unresolved** battle as a victory and a score tie as a victory
+/// too. `GET /quiz/battles/{id}/results` decides it server-side, so a pending
+/// battle is shown as pending instead of being invented.
+final battleOutcomeProvider = FutureProvider.family<BattleOutcome, String>((
+  ref,
+  battleId,
+) async {
+  final raw = await BattleRemoteDataSource(DioClient.instance.dio).getResults(battleId);
+  return BattleOutcome.fromResults(raw, currentUserId: null);
+});
+
+/// Post-battle result. The verdict comes from the server, not from comparing
+/// scores on the device. Confetti for a win, subtle anim for a loss, and an
+/// honest "result pending" state when the battle has not resolved.
 class BattleResultScreen extends ConsumerWidget {
   const BattleResultScreen({super.key});
 
@@ -26,10 +44,34 @@ class BattleResultScreen extends ConsumerWidget {
         body: const Center(child: Text('No match to display')),
       );
     }
+
+    final outcomeAsync = ref.watch(battleOutcomeProvider(m.id));
+    final outcome = outcomeAsync.value;
+
+    // Fall back to the RTDB-derived winner ONLY when the server call fails, and
+    // treat "unknown" as unknown — never as a win.
+    final rtdbSaysWin = state.winnerUid != null && state.winnerUid == m.player1.uid;
+    final bool isWin;
+    final String headline;
+    if (outcome != null) {
+      isWin = outcome.isWin;
+      headline = switch (outcome.result) {
+        'win' => 'YOU WIN!',
+        'loss' => 'Good Fight!',
+        'draw' => 'DRAW',
+        _ => 'Result pending',
+      };
+    } else if (outcomeAsync.hasError) {
+      isWin = rtdbSaysWin;
+      headline = rtdbSaysWin ? 'YOU WIN!' : 'Good Fight!';
+    } else {
+      isWin = false;
+      headline = 'Result pending';
+    }
+
     // Best-effort me/opp split (no uid wired yet — default to player1 as me)
     final me = m.player1;
     final opp = m.player2;
-    final isWin = state.winnerUid == null || state.winnerUid == me.uid || me.score >= opp.score;
 
     return Scaffold(
       body: SafeArea(
@@ -38,13 +80,19 @@ class BattleResultScreen extends ConsumerWidget {
           child: Column(
             children: [
               const SizedBox(height: 16),
-              SizedBox(
-                width: 200,
-                height: 200,
-                child: Lottie.asset(isWin ? 'assets/animations/battle_win.json' : 'assets/animations/battle_lose.json', repeat: false),
-              ),
+              if (!isWin && headline == 'Result pending')
+                const SizedBox(
+                  height: 120,
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else
+                SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Lottie.asset(isWin ? 'assets/animations/battle_win.json' : 'assets/animations/battle_lose.json', repeat: false),
+                ),
               const SizedBox(height: 16),
-              Text(isWin ? 'YOU WIN!' : 'Good Fight!', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: isWin ? AppColors.xpGold : AppColors.textSecondaryDark)),
+              Text(headline, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: isWin ? AppColors.xpGold : AppColors.textSecondaryDark)),
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

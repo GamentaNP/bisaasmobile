@@ -2,19 +2,43 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_response.dart';
 
-/// Verified server routes (`routes/api/v1/quiz.php` — Firebase Multiplayer Battles):
-/// - GET  /quiz/firebase-token                → custom token for RTDB auth
-/// - POST /quiz/battles                       → create/find open battle ({category_id required, total_questions 5..20})
-/// - POST /quiz/battles/{id}/join             → join an open battle
-/// - POST /quiz/battles/{id}/answer           → {question_id, question_index, selected_option 1..4, time_taken_ms}
-/// - POST /quiz/battles/{id}/end              → force-finish
-/// - GET  /quiz/battles/{id}/results          → final results
-/// - GET  /quiz/battles/history               → battle history
-/// RTDB subscription is read-only on /battles/{lobbyId} (see docs/mobileapp/RTDB_BATTLE_SCHEMA.md).
-/// Dio baseUrl already ends with /api/v1.
+/// Verified server routes (`routes/api/v1/quiz.php:546-558` — Firebase
+/// Multiplayer Battles):
+/// - GET  /quiz/firebase-token                      → custom token for RTDB auth
+/// - POST /quiz/battles                             → create/find open battle
+///                                                      ({category_id required,
+///                                                       total_questions 5..20})
+/// - PUT  /quiz/battles/{id}/participation          → join an open battle
+/// - PUT  /quiz/battles/{id}/answer                → {question_id, question_index,
+///                                                      selected_option 1..4,
+///                                                      time_taken_ms}
+/// - PUT  /quiz/battles/{id}/completion             → force-finish (HOST ONLY)
+/// - GET  /quiz/battles/{id}/results                → final results
+/// - GET  /quiz/battles/history                     → battle history
+///
+/// **Canonical spellings are used deliberately.** The server registers the
+/// §4.3 state transitions as PUT and keeps the POST forms only as
+/// `*.transition-alias` pending a freeze. Only create and answer were wired
+/// before, so a battle could be started and answered but never joined, ended or
+/// read back — the result screen had to invent the outcome.
+///
+/// RTDB subscription is read-only on /battles/{lobbyId} (see
+/// docs/mobileapp/RTDB_BATTLE_SCHEMA.md). Dio baseUrl already ends with /api/v1.
 class BattleRemoteDataSource {
   const BattleRemoteDataSource(this._dio);
   final Dio _dio;
+
+  /// `data` out of the envelope, tolerating a raw body.
+  Map<String, dynamic> _dataOrEmpty(Map<String, dynamic>? body) {
+    if (body == null) return const {};
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return data;
+    try {
+      return ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?).data ?? const {};
+    } catch (_) {
+      return const {};
+    }
+  }
 
   Future<Map<String, dynamic>> getFirebaseToken() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/firebase-token');
@@ -83,5 +107,44 @@ class BattleRemoteDataSource {
     if (body['data'] is List) return (body['data'] as List).cast<Map<String, dynamic>>();
     final envelope = ApiResponse.fromJson(body, (json) => (json as List?)?.cast<Map<String, dynamic>>() ?? []);
     return envelope.data ?? [];
+  }
+
+  /// Joins an open battle. No request body.
+  ///
+  /// Returns a fresh `firebase_token` for RTDB auth, so a join by the second
+  /// player yields the credentials it needs without a second round-trip.
+  /// 404 when the battle is no longer available — a normal outcome, since the
+  /// lobby can fill while this request is in flight.
+  Future<Map<String, dynamic>> join(String firebaseBattleId) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/battles/$firebaseBattleId/participation',
+    );
+    return _dataOrEmpty(res.data);
+  }
+
+  /// Ends the battle and syncs results server-side.
+  ///
+  /// **Host only** — `BattleController::end` returns 403 "Only the battle host
+  /// can end the battle" for player 2, so the caller must not offer this to
+  /// everyone. 409 when the battle is not `in_progress`.
+  Future<Map<String, dynamic>> end(String firebaseBattleId) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/battles/$firebaseBattleId/completion',
+    );
+    return _dataOrEmpty(res.data);
+  }
+
+  /// Authoritative outcome. 403 for a user who is not a participant.
+  Future<Map<String, dynamic>> getResults(String firebaseBattleId) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/quiz/battles/$firebaseBattleId/results',
+    );
+    return _dataOrEmpty(res.data);
+  }
+
+  /// Completed battles for this user, newest first, with a `stats` block.
+  Future<Map<String, dynamic>> getHistory() async {
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/battles/history');
+    return _dataOrEmpty(res.data);
   }
 }
