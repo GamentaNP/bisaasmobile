@@ -62,6 +62,7 @@ abstract final class RouteNames {
   static const rewards = 'rewards';
   // Privacy / GDPR consent management.
   static const privacy = 'privacy';
+  static const privacyData = 'privacy-data';
   // Book Engine — public catalog plus the reader.
   static const books = 'books';
   static const bookDetail = 'book-detail';

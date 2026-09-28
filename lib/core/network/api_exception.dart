@@ -23,6 +23,10 @@ enum ApiErrorCode {
   internalError('INTERNAL_ERROR'),
   serviceUnavailable('SERVICE_UNAVAILABLE'),
   upgradeRequired('UPGRADE_REQUIRED'),
+  /// `ERASURE_REQUIRES_ACCOUNT` — an anonymous GDPR erasure was refused because
+  /// the visitor profile is stitched to a real account, so the erasure belongs
+  /// to the account-level flow. Mirrors `App\Http\Support\ApiErrorCode`.
+  erasureRequiresAccount('ERASURE_REQUIRES_ACCOUNT'),
   unknown('UNKNOWN');
 
   const ApiErrorCode(this.raw);

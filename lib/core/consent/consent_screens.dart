@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'consent_controller.dart';
 import 'consent_state.dart';
@@ -212,12 +213,20 @@ class PrivacySettingsScreen extends ConsumerWidget {
                     : ref.read(consentProvider.notifier).revoke(entry.$1),
               ),
             const Divider(),
+            ListTile(
+              leading: const Icon(Icons.storage_outlined),
+              title: const Text('Data stored about this device'),
+              subtitle: const Text('View, and erase, the anonymous profile'),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              onTap: () => context.push('/privacy/data'),
+            ),
+            const Divider(),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
                 'Turning off a category stops that collection from that moment. '
-                'It does not delete data already collected — for that, contact '
-                'privacy@bisaas.com.',
+                'It does not delete data already collected — for that, use the '
+                'link above or contact privacy@bisaas.com.',
                 style: theme.textTheme.bodySmall,
               ),
             ),
