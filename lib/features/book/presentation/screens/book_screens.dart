@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/theme/script_fonts.dart';
+import '../../../../core/logging/app_logger.dart';
+import '../../../quiz/data/datasources/content_quiz_remote_data_source.dart';
+import '../../../quiz/domain/entities/content_quiz.dart';
 import '../../domain/entities/book.dart';
 import '../controllers/book_controller.dart';
 
@@ -217,8 +220,7 @@ class BookDetailScreen extends ConsumerWidget {
                   unlocking: state.unlockingChapterId == c.id,
                   onOpen: () => _openChapter(context, ref, book, c),
                   onUnlock: () => notifier.unlockChapter(c.id),
-                ),
-              ),
+                ),              ),
           ],
         ),
       ),
@@ -227,7 +229,64 @@ class BookDetailScreen extends ConsumerWidget {
 
   /// Enters the reader at the server's saved position when there is one, so a
   /// returning reader lands where they left off rather than at page 1.
-  void _openChapter(BuildContext context, WidgetRef ref, Book book, BookChapter chapter) {
+  Future<void> _openChapter(BuildContext context, WidgetRef ref, Book book, BookChapter chapter) async {
+    // The recommended test for a chapter is the payoff for finishing it, so it is
+    // offered alongside the reader rather than hidden behind a separate flow.
+    // Null is a normal answer: not every chapter has one.
+    var recommended = <ContentQuiz?>[];
+    try {
+      recommended = [
+        await ref
+            .read(contentQuizRemoteDataSourceProvider)
+            .getRecommended(book.slug, chapter.id),
+      ];
+    } catch (e) {
+      AppLogger.w('recommended test unavailable: $e');
+    }
+    if (!context.mounted) return;
+
+    final quiz = recommended.first;
+    if (quiz != null) {
+      await showModalBottomSheet<void>(
+        context: context,
+        builder: (context) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Chapter test', style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 8),
+                // The server's own status, not an optimistic "your test is ready".
+                Text(quiz.statusLabel),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Read the chapter'),
+                    ),
+                    if (quiz.canStart) ...[
+                      const SizedBox(width: 12),
+                      OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          context.push('/numericals/${chapter.id}/practice');
+                        },
+                        child: Text('Take test (${quiz.questionCount})'),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+
     final progress = ref.read(bookDetailControllerProvider(slug)).progress;
     final page = progress?.currentPageNumber ?? chapter.startPage ?? 1;
     final topicId = progress?.currentTopicId ?? chapter.topics.firstOrNull?.id;
@@ -237,7 +296,7 @@ class BookDetailScreen extends ConsumerWidget {
       );
       return;
     }
-    context.push(
+    await context.push(
       '/books/${book.slug}/read?book=${book.id}&topic=$topicId&page=$page',
     );
   }
