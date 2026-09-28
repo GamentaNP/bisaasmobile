@@ -85,8 +85,10 @@ class ContestsRemoteDataSource {
 
   Future<int> joinContest(int id, {String? joinIntent, String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/contests/$id/join',
+    // Canonical transition is PUT /contests/{id}/participation; POST .../join
+    // is the alias (routes/api/v1/quiz.php:362-365).
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/contests/$id/participation',
       data: {
         if (joinIntent != null && joinIntent.isNotEmpty) 'join_intent': joinIntent,
       },

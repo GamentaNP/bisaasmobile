@@ -128,7 +128,9 @@ class LibraryRemoteDataSource {
 
   Future<LibraryUnlockDto> unlock(String slug, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
-    final res = await _dio.post<Map<String, dynamic>>(
+    // Canonical verb is PUT (`files.unlock`); the POST form is
+    // `files.unlock.transition-alias` (routes/api/v1/library.php:33-34).
+    final res = await _dio.put<Map<String, dynamic>>(
       '/library/files/$slug/unlock',
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),

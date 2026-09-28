@@ -229,7 +229,10 @@ class QuizRemoteDataSource {
     };
 
     final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/attempts/start',
+      // Canonical resource form. `/quiz/attempts/start` is registered as
+      // `attempts.start.transition-alias` and is additive-only until the
+      // grammar freeze (routes/api/v1/quiz.php:174-179).
+      '/quiz/attempts',
       data: data,
       options: Options(headers: {'Idempotency-Key': key}),
     );
@@ -265,7 +268,9 @@ class QuizRemoteDataSource {
     // per SubmitAnswerRequest. The duration is the server's integrity signal, so
     // it is measured per question on-device and sent on every answer.
     final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/attempts/$attemptId/answer',
+      // Canonical plural collection form; the singular `/answer` is
+      // `attempts.answer.transition-alias` (quiz.php:181-186).
+      '/quiz/attempts/$attemptId/answers',
       data: <String, dynamic>{
         'question_id': qId is int ? qId : int.tryParse(questionId) ?? questionId,
         'answer': selectedOptionId,
@@ -334,8 +339,10 @@ class QuizRemoteDataSource {
   Future<QuizResultDto> finishAttempt(String attemptId) async {
     // Idempotency-Key is mandatory on completion (server 422s without it —
     // same middleware as start/answer).
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/attempts/$attemptId/complete',
+    final res = await _dio.put<Map<String, dynamic>>(
+      // Canonical transition verb is PUT; the POST `/complete` form is
+      // `attempts.complete.transition-alias` (quiz.php:187-192).
+      '/quiz/attempts/$attemptId/completion',
       options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
     );
     final body = res.data;

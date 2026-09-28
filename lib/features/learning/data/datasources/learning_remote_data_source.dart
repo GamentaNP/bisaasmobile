@@ -213,7 +213,9 @@ class LearningRemoteDataSource {
 
   /// Grade a review — outcome one of again|hard|good|easy (FSRS). Uses Idempotency-Key.
   Future<ReviewItemDto> gradeReview(int reviewId, String outcome, {String? idempotencyKey}) async {
-    final res = await _dio.post<Map<String, dynamic>>(
+    // Canonical verb is PUT (routes/api/v1/learning.php:46); the POST form is
+    // the additive alias at :49 and goes away at the grammar freeze.
+    final res = await _dio.put<Map<String, dynamic>>(
       '/learning/reviews/$reviewId/grade',
       data: {'outcome': outcome},
       options: Options(headers: _idempotencyHeader(idempotencyKey)),

@@ -66,8 +66,10 @@ class LiveEventsRemoteDataSource {
 
   Future<LiveEventParticipantDto> register(int eventId, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/live-events/$eventId/register',
+    // Canonical is PUT /live-events/{id}/registration; POST .../register is
+    // the §4.3 alias (routes/api/v1/quiz.php:379-383).
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/live-events/$eventId/registration',
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );

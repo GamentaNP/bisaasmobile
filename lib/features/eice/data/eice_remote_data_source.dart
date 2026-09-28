@@ -78,7 +78,9 @@ class EiceRemoteDataSource {
   /// Returns true only when the server accepted the grade. A 4xx/5xx throws, so
   /// the caller can show why it failed instead of a bare "failed".
   Future<bool> gradeSprint(String questionId, int grade) async {
-    await _dio.post<Map<String, dynamic>>(
+    // PUT is canonical (`sprint.grade`); POST is `sprint.grade.transition-alias`
+    // (routes/api/v1/quiz.php:474-477).
+    await _dio.put<Map<String, dynamic>>(
       '/quiz/sprint/$questionId/grade',
       data: {'grade': grade},
     );

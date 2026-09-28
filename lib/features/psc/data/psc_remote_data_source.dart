@@ -35,7 +35,9 @@ class PscRemoteDataSource {
   }
 
   Future<Map<String, dynamic>?> submit(String id, Map<String, dynamic> payload) async {
-    final res = await _dio.post<Map<String, dynamic>>('/psc/blueprints/$id/submit', data: payload);
+    // Canonical transition is PUT /blueprints/{id}/submission
+    // (routes/api/v1.php:615); the POST .../submit form is the alias.
+    final res = await _dio.put<Map<String, dynamic>>('/psc/blueprints/$id/submission', data: payload);
     final body = res.data;
     if (body == null) return null;
     final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);

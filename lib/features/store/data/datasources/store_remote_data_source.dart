@@ -166,8 +166,10 @@ class StoreRemoteDataSource {
   Future<bool> equip(String slot, String assetId, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
     try {
-      final res = await _dio.post<Map<String, dynamic>>(
-        '/store/wardrobe/equip',
+    // Canonical resource form is PUT /wardrobe/equipment; POST /wardrobe/equip
+    // is the additive alias (routes/api/v1.php:546-548).
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/store/wardrobe/equipment',
         data: {'slot': slot, 'asset_id': int.tryParse(assetId) ?? assetId},
         options: Options(headers: {'Idempotency-Key': key}),
       );

@@ -32,11 +32,19 @@ class SyncQueueService {
     );
   }
 
-  /// Offline calculation snapshot — synced to `POST /v1/calculation-snapshots/sync` on reconnect.
+  /// Offline calculation snapshot, synced on reconnect.
   /// Payload is JSON-encoded `{domain, slug, inputs, outputs, calculated_at}`.
+  ///
+  /// Two bugs fixed here. The path was `/v1/calculation-snapshots/sync`, but
+  /// `ApiConfig.baseUrl` already ends in `/api/v1`, so every drain was posting to
+  /// `/api/v1/v1/calculation-snapshots/sync` and getting a **404** — offline
+  /// snapshots were silently never synced. And the canonical verb is PUT onto
+  /// the collection (`PUT /calculation-snapshots`, `sync.update`); the
+  /// `/sync` spelling is `sync.transition-alias` (routes/api/v1/calculators.php).
   Future<int> enqueueSnapshot(Map<String, dynamic> snapshot) => enqueue(
-        endpoint: '/v1/calculation-snapshots/sync',
+        endpoint: '/calculation-snapshots',
         payload: snapshot.toString(),
+        method: 'PUT',
       );
 
   Future<List<SyncQueueData>> pending() => _dao.pending();
