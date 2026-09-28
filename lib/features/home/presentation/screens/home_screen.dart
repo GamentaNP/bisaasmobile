@@ -7,6 +7,7 @@ import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../calculator/presentation/controllers/calculator_controller.dart';
 import '../../../game/game_providers.dart';
 import '../../../gamification/presentation/screens/rewards_screen.dart';
 import '../../domain/entities/dashboard_data.dart';
@@ -146,7 +147,7 @@ class HomeScreen extends ConsumerWidget {
             // 5. Explore the ecosystem — chunky grid
             Text('Explore', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
-            _buildQuickActionsGrid(context),
+            _buildQuickActionsGrid(context, ref),
 
             const SizedBox(height: 20),
 
@@ -166,7 +167,13 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickActionsGrid(BuildContext context) {
+  Widget _buildQuickActionsGrid(BuildContext context, WidgetRef ref) {
+    // The catalogue count is server-supplied (`total_calculators`). It was
+    // previously a hardcoded "232" in three places; the database actually
+    // holds 32 civil calculators, so the badge overstated the product.
+    final catalog = ref.watch(calculatorCatalogProvider);
+    final total = catalog.value?.totalCalculators ?? 0;
+    final calcTitle = total > 0 ? '$total Calculators' : 'Calculators';
     final actions = [
       {
         'title': 'Practice MCQs',
@@ -177,7 +184,7 @@ class HomeScreen extends ConsumerWidget {
         'route': '/quiz',
       },
       {
-        'title': '232 Calculators',
+        'title': calcTitle,
         'subtitle': 'Civil Formula Engines',
         'icon': Icons.calculate_rounded,
         'color': AppColors.brandAccent,

@@ -274,7 +274,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _Tile(icon: Icons.account_balance_wallet_rounded, title: 'Wallet', subtitle: 'coins via GET /me', onTapRoute: '/economy'),
           _Tile(icon: Icons.emoji_events_rounded, title: 'Achievements', subtitle: 'streak + badges', onTapRoute: '/achievements'),
           _Tile(icon: Icons.download_for_offline_rounded, title: 'Offline content', subtitle: 'cached packs + prefetch', onTapRoute: '/downloads'),
-          _Tile(icon: Icons.calculate_rounded, title: 'Calculators 232', subtitle: 'Civil formula engines', onTapRoute: '/calculators'),
+          _Tile(icon: Icons.calculate_rounded, title: 'Calculators', subtitle: 'Civil formula engines', onTapRoute: '/calculators'),
           _Tile(icon: Icons.settings_rounded, title: 'Settings', subtitle: 'language • biometrics • logout', onTapRoute: '/settings'),
           const SizedBox(height: 24),
         ],

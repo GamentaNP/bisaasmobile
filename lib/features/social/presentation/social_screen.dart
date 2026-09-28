@@ -14,7 +14,7 @@ class SocialScreen extends StatelessWidget {
   Future<void> _share(BuildContext context) async {
     try {
       AppLogger.i('Social share');
-      await SharePlus.instance.share(ShareParams(text: 'Join me on CivilCal — 232 calculators + Loksewa MCQs: https://bisaas.com', subject: 'CivilCal'));
+      await SharePlus.instance.share(ShareParams(text: 'Join me on CivilCal — civil engineering calculators + Loksewa MCQs: https://bisaas.com', subject: 'CivilCal'));
     } catch (e) {
       if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Share failed: $e')));
     }

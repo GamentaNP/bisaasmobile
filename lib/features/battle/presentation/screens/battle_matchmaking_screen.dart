@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vibration/vibration.dart';
 
@@ -51,7 +52,10 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
       setState(() => _countdown--);
       if (_countdown <= 0) {
         t.cancel();
-        if (mounted) Navigator.of(context).pushReplacementNamed('/battle/arena');
+        // go_router only: `pushReplacementNamed` throws here because
+        // MaterialApp.router has no onGenerateRoute. The arena is the PARENT
+        // route `/battle`; the sibling screens already use context.go.
+        context.go('/battle');
       }
     });
   }

@@ -64,9 +64,20 @@ class _TutorPlanScreenState extends ConsumerState<TutorPlanScreen> with SingleTi
         controller: _tabs,
         children: [
           _PlanTab(planState: planState),
-          _InsightsTab(weakAsync: weakAsync, scoreAsync: scoreAsync),
-          _RevisionsTab(revisionsAsync: revisionsAsync),
-          _WeeklyTab(reportAsync: reportAsync),
+          _InsightsTab(
+            weakAsync: weakAsync,
+            scoreAsync: scoreAsync,
+            onRetryWeak: () => ref.invalidate(tutorWeakAreasProvider),
+            onRetryScore: () => ref.invalidate(tutorProjectedScoreProvider),
+          ),
+          _RevisionsTab(
+            revisionsAsync: revisionsAsync,
+            onRetry: () => ref.invalidate(tutorRevisionsDueProvider),
+          ),
+          _WeeklyTab(
+            reportAsync: reportAsync,
+            onRetry: () => ref.invalidate(tutorWeeklyReportProvider),
+          ),
         ],
       ),
     );
@@ -245,9 +256,16 @@ class _PlanTab extends ConsumerWidget {
 // ── Insights tab ────────────────────────────────────────────────────────────
 
 class _InsightsTab extends StatelessWidget {
-  const _InsightsTab({required this.weakAsync, required this.scoreAsync});
+  const _InsightsTab({
+    required this.weakAsync,
+    required this.scoreAsync,
+    required this.onRetryWeak,
+    required this.onRetryScore,
+  });
   final AsyncValue<List<WeakArea>> weakAsync;
   final AsyncValue<ProjectedScore> scoreAsync;
+  final VoidCallback onRetryWeak;
+  final VoidCallback onRetryScore;
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +295,7 @@ class _InsightsTab extends StatelessWidget {
             ]),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => _ErrorCard(msg: e.toString(), onRetry: () {}),
+          error: (e, _) => _ErrorCard(msg: e.toString(), onRetry: onRetryScore),
         ),
         const SizedBox(height: 16),
         Text('Weak areas', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
@@ -298,7 +316,7 @@ class _InsightsTab extends StatelessWidget {
                       )).toList(),
                 ),
           loading: () => const LinearProgressIndicator(),
-          error: (e, _) => _ErrorCard(msg: e.toString(), onRetry: () {}),
+          error: (e, _) => _ErrorCard(msg: e.toString(), onRetry: onRetryWeak),
         ),
       ],
     );
@@ -308,7 +326,8 @@ class _InsightsTab extends StatelessWidget {
 // ── Revisions tab ───────────────────────────────────────────────────────────
 
 class _RevisionsTab extends StatelessWidget {
-  const _RevisionsTab({required this.revisionsAsync});
+  const _RevisionsTab({required this.revisionsAsync, required this.onRetry});
+  final VoidCallback onRetry;
   final AsyncValue<List<RevisionItem>> revisionsAsync;
 
   @override
@@ -337,7 +356,7 @@ class _RevisionsTab extends StatelessWidget {
               },
             ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: _ErrorCard(msg: e.toString(), onRetry: () {})),
+      error: (e, _) => Center(child: _ErrorCard(msg: e.toString(), onRetry: onRetry)),
     );
   }
 }
@@ -345,7 +364,8 @@ class _RevisionsTab extends StatelessWidget {
 // ── Weekly tab ──────────────────────────────────────────────────────────────
 
 class _WeeklyTab extends StatelessWidget {
-  const _WeeklyTab({required this.reportAsync});
+  const _WeeklyTab({required this.reportAsync, required this.onRetry});
+  final VoidCallback onRetry;
   final AsyncValue<WeeklyReport> reportAsync;
 
   @override
@@ -393,7 +413,7 @@ class _WeeklyTab extends StatelessWidget {
         ],
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Padding(padding: const EdgeInsets.all(16), child: _ErrorCard(msg: e.toString(), onRetry: () {}))),
+      error: (e, _) => Center(child: Padding(padding: const EdgeInsets.all(16), child: _ErrorCard(msg: e.toString(), onRetry: onRetry))),
     );
   }
 }

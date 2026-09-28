@@ -45,12 +45,19 @@ class LocalNotificationService {
         payload: payload,
       );
 
-  /// Daily 8am study reminder — timezone-aware, survives reboot via `exactAllowWhileIdle`.
+  /// Daily 8am study reminder — timezone-aware, survives reboot.
+  ///
+  /// Deliberately `inexactAllowWhileIdle`, not `exactAllowWhileIdle`. The
+  /// exact modes need `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM`, which
+  /// throw `PlatformException: exact_alarms_not_permitted` on Android 12+
+  /// without a user-grant flow, and are Play-policy restricted to alarm-clock
+  /// and calendar apps. A daily study nudge has no need for second-precision,
+  /// and the inexact mode is battery-friendly by design.
   Future<void> scheduleDailyQuizReminder() async {
     await _plugin.zonedSchedule(
       id: 1001,
       title: 'Daily Sprint ready ⚡',
-      body: 'Your 10 calibrated MCQs are waiting — keep the streak alive!',
+      body: 'Your daily MCQs are waiting — keep the streak alive!',
       scheduledDate: _nextInstanceOfTime(8, 0),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -59,7 +66,7 @@ class LocalNotificationService {
           importance: Importance.high,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: '/quiz',
     );

@@ -27,6 +27,24 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
     super.dispose();
   }
 
+  /// Shared by the primary button and the error banner's Retry, so a retry
+  /// re-sends the exact same payload instead of a reconstructed one.
+  Future<void> _submit() async {
+    final notifier = ref.read(tutorOnboardingControllerProvider.notifier);
+    if (ref.read(tutorOnboardingControllerProvider).session == null) {
+      await notifier.start();
+    }
+    final ok = await notifier.complete(payload: {
+      'goal': _goalCtrl.text.trim(),
+      'level': _levelCtrl.text.trim(),
+      'hours_per_day': int.tryParse(_hoursCtrl.text.trim()) ?? 2,
+    });
+    if (ok && mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Onboarding saved — plan will generate shortly.')));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -137,7 +155,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
           ),
           const SizedBox(height: 16),
           if (state.completeError != null)
-            _ErrorBanner(message: state.completeError!, onRetry: () {}),
+            _ErrorBanner(message: state.completeError!, onRetry: _submit),
           if (state.isCompleted)
             Container(
               padding: const EdgeInsets.all(14),
@@ -153,20 +171,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
           FilledButton.icon(
             onPressed: state.isStarting || state.isCompleting
                 ? null
-                : () async {
-                    // Start if needed
-                    if (state.session == null) {
-                      await ref.read(tutorOnboardingControllerProvider.notifier).start();
-                    }
-                    final ok = await ref.read(tutorOnboardingControllerProvider.notifier).complete(payload: {
-                      'goal': _goalCtrl.text.trim(),
-                      'level': _levelCtrl.text.trim(),
-                      'hours_per_day': int.tryParse(_hoursCtrl.text.trim()) ?? 2,
-                    });
-                    if (ok && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Onboarding saved — plan will generate shortly.')));
-                    }
-                  },
+                : _submit,
             icon: state.isCompleting ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.check_rounded),
             label: Text(state.isCompleted ? 'Completed' : 'Complete onboarding'),
           ),

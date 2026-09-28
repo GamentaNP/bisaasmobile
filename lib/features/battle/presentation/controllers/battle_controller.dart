@@ -47,6 +47,14 @@ class BattleState {
   final String? error;
   final String? winnerUid;
 
+  /// Sentinel so an explicitly-passed `null` still clears a field. Every
+  /// non-nullable-safe field in [BattleState] needs this: a bare
+  /// `error: null` means "clear the error" at call sites like
+  /// `copyWith(phase: BattlePhase.fetchingToken, error: null)`, so plain
+  /// `error ?? this.error` would make that clear impossible and
+  /// `error: this.error` would wipe the winner on the next unrelated update.
+  static const Object _unset = Object();
+
   BattleState copyWith({
     BattlePhase? phase,
     BattleToken? token,
@@ -55,8 +63,8 @@ class BattleState {
     String? selectedOptionId,
     bool? opponentAnsweredThisQ,
     int? secondsLeftInQuestion,
-    String? error,
-    String? winnerUid,
+    Object? error = _unset,
+    Object? winnerUid = _unset,
   }) =>
       BattleState(
         phase: phase ?? this.phase,
@@ -66,8 +74,8 @@ class BattleState {
         selectedOptionId: selectedOptionId ?? this.selectedOptionId,
         opponentAnsweredThisQ: opponentAnsweredThisQ ?? this.opponentAnsweredThisQ,
         secondsLeftInQuestion: secondsLeftInQuestion ?? this.secondsLeftInQuestion,
-        error: error,
-        winnerUid: winnerUid ?? this.winnerUid,
+        error: identical(error, _unset) ? this.error : error as String?,
+        winnerUid: identical(winnerUid, _unset) ? this.winnerUid : winnerUid as String?,
       );
 }
 

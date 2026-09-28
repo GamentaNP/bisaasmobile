@@ -30,6 +30,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
   Widget build(BuildContext context) {
     final catalogAsync = ref.watch(calculatorCatalogProvider);
     final theme = Theme.of(context);
+    final total = catalogAsync.value?.totalCalculators ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +42,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
             child: TextField(
               controller: _searchCtrl,
               decoration: InputDecoration(
-                hintText: 'Search 232 calculators…',
+                hintText: total > 0 ? 'Search $total calculators…' : 'Search calculators…',
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _query.isEmpty
                     ? null

@@ -193,7 +193,7 @@ class DonorLeaderboardEntryDto {
   });
 
   factory DonorLeaderboardEntryDto.fromJson(Map<String, dynamic> j) => DonorLeaderboardEntryDto(
-        donorName: (j['donorName'] as String?) ?? (j['donor_name'] as String?) ?? 'Generous Supporter',
+        donorName: (j['donorName'] as String?) ?? (j['donor_name'] as String?) ?? 'Anonymous',
         badge: (j['badge'] as String?) ?? 'bronze',
         badgeLabel: (j['badgeLabel'] as String?) ?? (j['badge_label'] as String?) ?? 'Bronze',
         badgeColor: (j['badgeColor'] as String?) ?? (j['badge_color'] as String?) ?? '#CD7F32',
