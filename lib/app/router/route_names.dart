@@ -67,6 +67,7 @@ abstract final class RouteNames {
   static const books = 'books';
   static const bookDetail = 'book-detail';
   static const bookReader = 'book-reader';
+  static const numericalPractice = 'numerical-practice';
   // Syllabus Engine — public catalog reads plus the learner's own plans.
   static const syllabus = 'syllabus';
   static const syllabusTree = 'syllabus-tree';

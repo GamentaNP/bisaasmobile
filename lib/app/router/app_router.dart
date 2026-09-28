@@ -51,6 +51,7 @@ import '../../features/library/presentation/screens/library_browser_screen.dart'
 import '../../core/consent/consent_screens.dart';
 import '../../features/book/presentation/screens/book_reader_screen.dart';
 import '../../features/book/presentation/screens/book_screens.dart';
+import '../../features/numericals/presentation/numerical_practice_screen.dart';
 import '../../features/privacy/presentation/privacy_data_screen.dart';
 import '../../features/library/presentation/screens/library_detail_screen.dart';
 import '../../features/syllabus/presentation/screens/syllabus_tree_screen.dart';
@@ -409,6 +410,13 @@ class AppRouter {
             startPage: int.tryParse(q['page'] ?? '') ?? 1,
           );
         },
+      ),
+      GoRoute(
+        path: '/numericals/:id/practice',
+        name: RouteNames.numericalPractice,
+        builder: (context, state) => NumericalPracticeScreen(
+          numericalId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+        ),
       ),
       // Syllabus Engine — 22 verified routes under /syllabi/* and /me/syllabi/*.
       // The catalog group is public server-side (`withoutMiddleware('auth:sanctum')`),
