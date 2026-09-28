@@ -6,11 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../app/theme/app_colors.dart';
 
-/// App-wide connectivity banner. Quiet when online; shows an amber "offline"
-/// strip when the device loses network, and a brief green "back online /
-/// syncing" confirmation when connectivity returns. Place near the top of a
-/// shell body (below the app bar) — it animates its own height so it can stay
-/// mounted.
+/// App-wide connectivity banner. Quiet when online; shows an amber strip when
+/// the API is genuinely unreachable, and a brief green "back online / syncing"
+/// confirmation when it returns.
+///
+/// The state comes from `apiReachableProvider`, which learns from real request
+/// outcomes — **not** from `connectivity_plus`. The radio reporting a network
+/// is a different question from "can we reach `/api/v1`", and the two disagree
+/// in both directions: a captive portal or a blocked API path reports
+/// "connected" while every request fails, which previously produced a confident
+/// "You're offline" strip to a user whose API calls were in fact succeeding.
 class OfflineStateBanner extends ConsumerStatefulWidget {
   const OfflineStateBanner({super.key});
 
@@ -42,10 +47,10 @@ class _OfflineStateBannerState extends ConsumerState<OfflineStateBanner> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(onlineStatusProvider, (p, n) => _onOnlineChanged(p?.value, n.value));
-    final online = ref.watch(onlineStatusProvider).value;
+    ref.listen(apiReachableProvider, (p, n) => _onOnlineChanged(p?.value, n.value));
+    final reachable = ref.watch(apiReachableProvider).value;
 
-    final offline = online == false;
+    final offline = reachable == false;
     final visible = offline || _showSynced;
 
     return AnimatedSize(
@@ -73,7 +78,7 @@ class _OfflineStateBannerState extends ConsumerState<OfflineStateBanner> {
                   Expanded(
                     child: Text(
                       offline
-                          ? "You're offline — progress will sync when you reconnect"
+                          ? "Can't reach our servers — progress syncs when the connection is back"
                           : 'Back online — syncing your queued activity',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: offline

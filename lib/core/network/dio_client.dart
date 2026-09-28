@@ -17,13 +17,19 @@ import 'certificate_pinning.dart';
 import 'device_risk_interceptor.dart';
 import 'install_identity_interceptor.dart';
 import 'logging_interceptor.dart';
+import '../connectivity/api_reachability.dart';
 import 'refresh_interceptor.dart';
 import 'request_id_interceptor.dart';
 import 'retry_interceptor.dart';
 
 class DioClient {
-  DioClient._(this.dio);
+  DioClient._(this.dio, this.reachability);
   final Dio dio;
+
+  /// Learns whether `/api/v1` is genuinely reachable from real request
+  /// outcomes. Owned here because the interceptors that feed it are built in
+  /// this class, and the offline banner reads it through the provider graph.
+  final ApiReachability reachability;
 
   static DioClient? _instance;
 
@@ -44,11 +50,13 @@ class DioClient {
       ),
     );
 
+    final reachability = ApiReachability();
+
     dio.interceptors.addAll([
       RequestIdInterceptor(),
       InstallIdentityInterceptor(),
       DeviceRiskInterceptor(),
-      AuthInterceptor(tokens),
+      AuthInterceptor(tokens, reachability),
       // Order matters: onError runs in reverse, so a 401 reaches
       // RefreshInterceptor (refresh + replay) before RetryInterceptor sees it,
       // and AuthInterceptor maps the final error to ApiException last.
@@ -86,7 +94,7 @@ class DioClient {
       }
     }
 
-    _instance = DioClient._(dio);
+    _instance = DioClient._(dio, reachability);
     return _instance!;
   }
 

@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../core/analytics/analytics_service.dart';
+import '../core/connectivity/api_reachability.dart';
 import '../core/connectivity/connectivity_service.dart';
 import '../core/network/dio_client.dart';
 import '../core/notifications/push_notification_service.dart';
@@ -49,11 +50,34 @@ final connectivityProvider = Provider<ConnectivityService>(
 );
 
 /// Live online/offline status. Seeds from a one-shot check then follows the
-/// platform stream. Used by `OfflineStateBanner`.
+/// platform stream.
+///
+/// This is the *radio* state. It is deliberately NOT what the offline banner
+/// shows, because "has an interface" and "can reach the API" are different
+/// questions — see `apiReachableProvider`.
 final onlineStatusProvider = StreamProvider<bool>((ref) async* {
   final svc = ref.watch(connectivityProvider);
   yield await svc.isOnline();
   yield* svc.onOnlineChanged;
+});
+
+/// Whether `/api/v1` is genuinely reachable, learned from real request
+/// outcomes rather than from the radio.
+final apiReachabilityProvider = Provider<ApiReachability>((ref) {
+  // Owned by DioClient because the interceptors that feed it live there.
+  if (DioClient.isInitialized) return DioClient.instance.reachability;
+  // Not booted yet (tests, early startup) — an isolated instance is harmless.
+  final tracker = ApiReachability();
+  ref.onDispose(tracker.dispose);
+  return tracker;
+});
+
+/// Banner-facing view of reachability. Optimistic until a request has actually
+/// completed, so a first launch never flashes "You're offline".
+final apiReachableProvider = StreamProvider<bool>((ref) async* {
+  final tracker = ref.watch(apiReachabilityProvider);
+  yield tracker.isReachable;
+  yield* tracker.onChanged;
 });
 
 final syncManagerProvider = Provider<SyncManager>(
