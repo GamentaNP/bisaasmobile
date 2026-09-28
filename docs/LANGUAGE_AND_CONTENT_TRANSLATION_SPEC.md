@@ -151,6 +151,20 @@ not a feature to re-implement.
 - Tests cover Khmer, Sinhala, Thai, Lao, Hebrew, Georgian, Armenian, Ethiopic,
   Myanmar, Tibetan, Malayalam, Kannada, Oriya, Gujarati, Gurmukhi — none of which
   are in the app's language registry. That is the point.
+- The **language registry is server-driven** (`49c7145`): `AppLanguages.adopt()`
+  installs a registry from `GET /api/v1/languages` and the seeded list is only
+  the fallback, so adding a language worldwide is a server change rather than a
+  client release. English is always retained and sorted first, because it is the
+  canonical fallback — a server that omits it, or an empty response, must not
+  leave the app with no language. Direction is derived from the **script**, not
+  from the server's `direction` field, so a server that wrongly reports Arabic
+  as `ltr` cannot make Arabic lay out left-to-right.
+- **ARB coverage is gated in CI** (`49c7145`): `tool/arb_coverage.dart` reports
+  per-locale coverage, untranslated keys, dead keys and placeholder drift, and
+  exits non-zero when a locale is incomplete. This is necessary because
+  generated l10n classes compile fine with a missing key and fall back to
+  English at runtime, so a 90%-translated locale otherwise ships a
+  mixed-language UI that no check notices.
 
 **Remaining client gap:** the ARB catalogue has **21 keys against ~266 English
 source files**. Rendering is solved; *interface strings* are not. See §9.
@@ -280,12 +294,18 @@ forget in a 5th.
 | Item | Status |
 |---|---|
 | Font/script rendering, all scripts | **DONE** (`d938dd5`) |
-| RTL layout (Arabic, Hebrew, Urdu, Persian) | **DONE** — direction derived from script |
+| RTL layout (Arabic, Hebrew, Urdu, Persian) | **DONE** — direction derived from script, not from the server |
 | Language picker, native-name labels | **DONE** |
+| Language registry server-driven | **DONE** (`49c7145`) — awaits `GET /languages` (G4) |
+| ARB coverage gate in CI | **DONE** (`49c7145`) |
 | `Accept-Language` sent on every request | **DONE** |
 | `PATCH /api/v1/me/locale` persistence | **DONE** (writes `users.locale` only) |
 | ARB catalogue | **21 keys / ~266 English files** — `app_en`, `app_ne`, `app_hi` only |
 | Interface translations for `es fr ar bn ta te zh` | **absent** |
+
+Nepali and Hindi are both at **100% of the 21-key template**, verified by the CI
+gate. `CivilCal` is byte-identical to English in both, which is correct — it is a
+brand name, and the coverage tool reports it as the only untranslated key.
 
 Interface strings are **not** machine-written. Generating them without a human or
 MT review would be fabricating translations. Adding a language is one ARB file
