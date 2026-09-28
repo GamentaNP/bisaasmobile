@@ -141,6 +141,9 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
         title: Text(configAsync.when(
           data: (c) => c.label,
           loading: () => widget.slug.replaceAll('-', ' '),
+          // The server has no label for us; showing the humanised slug is
+          // honest about where the name came from rather than implying the
+          // calculator loaded.
           error: (_, __) => widget.slug.replaceAll('-', ' '),
         )),
       ),

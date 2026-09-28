@@ -4,48 +4,70 @@ import 'package:dio/dio.dart';
 
 import '../../../core/network/api_response.dart';
 
+/// Study-planner / sprint surfaces:
+///   * `GET  /quiz/study-planner/{exam}/coach`
+///   * `GET  /quiz/study-planner/{exam}/triage`
+///   * `GET  /quiz/sprint`
+///   * `GET  /quiz/reports/weekly`
+///   * `POST /quiz/sprint/{question}/grade`
+///
+/// Every method used to be `catch (_) { return null / [] / false; }`, so a
+/// dead endpoint rendered as "no study plan" / "no sprint" / "grade failed" —
+/// the user could never tell a network or server fault from an empty account.
+/// Failures now propagate; a genuinely empty payload still returns empty.
 class EiceRemoteDataSource {
   const EiceRemoteDataSource(this._dio);
   final Dio _dio;
 
-  Future<Map<String, dynamic>?> getCoach(String exam) async {
+  /// Pull `data` out of the envelope, tolerating a raw body.
+  Map<String, dynamic>? _dataOf(Map<String, dynamic>? body) {
+    if (body == null) return null;
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return data;
     try {
-      final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$exam/coach');
-      final env = ApiResponse.fromJson(res.data!, (j) => j as Map<String, dynamic>?);
-      return env.data ?? res.data!['data'] as Map<String, dynamic>?;
-    } catch (_) { return null; }
+      return ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?).data;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getCoach(String exam) async {
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$exam/coach');
+    return _dataOf(res.data);
   }
 
   Future<Map<String, dynamic>?> getTriage(String exam) async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$exam/triage');
-      final env = ApiResponse.fromJson(res.data!, (j) => j as Map<String, dynamic>?);
-      return env.data ?? res.data!['data'] as Map<String, dynamic>?;
-    } catch (_) { return null; }
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$exam/triage');
+    return _dataOf(res.data);
   }
 
   Future<List<Map<String, dynamic>>> getSprint() async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/quiz/sprint');
-      final body = res.data!;
-      if (body['data'] is List) return (body['data'] as List).cast<Map<String, dynamic>>();
-      final env = ApiResponse.fromJson(body, (j) => (j as List?)?.cast<Map<String, dynamic>>() ?? []);
-      return env.data ?? [];
-    } catch (_) { return []; }
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/sprint');
+    final body = res.data;
+    if (body == null) return const [];
+    final data = body['data'];
+    if (data is List) return data.cast<Map<String, dynamic>>();
+    if (data is Map<String, dynamic>) {
+      final items = data['items'];
+      if (items is List) return items.cast<Map<String, dynamic>>();
+      return const [];
+    }
+    final env = ApiResponse.fromJson(body, (j) => (j as List?)?.cast<Map<String, dynamic>>() ?? []);
+    return env.data ?? const [];
   }
 
   Future<Map<String, dynamic>?> getWeekly() async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/quiz/reports/weekly');
-      final env = ApiResponse.fromJson(res.data!, (j) => j as Map<String, dynamic>?);
-      return env.data ?? res.data!['data'] as Map<String, dynamic>?;
-    } catch (_) { return null; }
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/reports/weekly');
+    return _dataOf(res.data);
   }
 
+  /// Returns true only when the server accepted the grade. A 4xx/5xx throws, so
+  /// the caller can show why it failed instead of a bare "failed".
   Future<bool> gradeSprint(String questionId, int grade) async {
-    try {
-      await _dio.post<Map<String, dynamic>>('/quiz/sprint/$questionId/grade', data: {'grade': grade});
-      return true;
-    } catch (_) { return false; }
+    await _dio.post<Map<String, dynamic>>(
+      '/quiz/sprint/$questionId/grade',
+      data: {'grade': grade},
+    );
+    return true;
   }
 }

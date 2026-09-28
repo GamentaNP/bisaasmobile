@@ -38,7 +38,12 @@ class LearningHomeScreen extends ConsumerWidget {
             reviewsAsync.when(
               data: (list) => _ReviewsCard(count: list.length, onOpen: () => context.go('/learning/reviews')),
               loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
+              // A failed SRS read means the learner does not know whether they
+              // have reviews due. Say so instead of silently hiding the card.
+              error: (e, _) => _InlineNotice(
+                message: 'Could not load your reviews due count',
+                onRetry: () => ref.invalidate(reviewsDueProvider),
+              ),
             ),
             const SizedBox(height: 16),
             Text('Tracks', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
@@ -171,6 +176,41 @@ class _ErrorCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
       child: Row(children: [Expanded(child: Text(msg, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: onRetry, child: const Text('Retry'))]),
+    );
+  }
+}
+
+/// A one-line inline error with a retry, for surfaces that would otherwise
+/// vanish on failure and leave the user unsure whether they have work due.
+class _InlineNotice extends StatelessWidget {
+  const _InlineNotice({required this.message, this.onRetry});
+
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.warnAmberBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.warnAmber.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud_off_rounded, size: 16, color: AppColors.warningShadow),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(fontSize: 12, color: AppColors.warningShadow),
+            ),
+          ),
+          if (onRetry != null)
+            TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ],
+      ),
     );
   }
 }

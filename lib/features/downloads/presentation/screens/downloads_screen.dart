@@ -21,6 +21,12 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
   bool _busy = false;
   String? _message;
 
+  /// Re-reads the offline stats. Held as a field because `FutureBuilder` needs
+  /// a stable future across rebuilds.
+  late Future<_OfflineStats?> _statsFuture = _loadStats();
+
+  void _reload() => setState(() => _statsFuture = _loadStats());
+
   Future<_OfflineStats?> _loadStats() async {
     final db = ref.read(appDatabaseProvider);
     final dao = QuizDao(db);
@@ -80,12 +86,44 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Offline content')),
       body: FutureBuilder<_OfflineStats?>(
-        future: _loadStats(),
+        future: _statsFuture,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
           final stats = snap.data;
+          // A Drift failure must not read as "0 questions cached" — that is
+          // indistinguishable from a fresh install and hides a real problem.
+          if (snap.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.storage_rounded, size: 40, color: Colors.grey),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Could not read offline storage',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Nothing is reported rather than showing a false zero.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: _reload,
+                      icon: const Icon(Icons.refresh_rounded, size: 18),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [

@@ -221,7 +221,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const SizedBox(height: 8),
           achievementsAsync.when(
             loading: () => const SizedBox(height: 96, child: Center(child: CircularProgressIndicator())),
-            error: (_, __) => const SizedBox(height: 32),
+            // Do not silently drop the section; say it failed.
+            error: (e, _) => SizedBox(
+              height: 56,
+              child: Center(
+                child: Text(
+                  'Could not load achievements',
+                  style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                ),
+              ),
+            ),
             data: (data) {
               final recent = data.achievements.where((a) => a.isCompleted).take(8).toList();
               if (recent.isEmpty) {

@@ -154,6 +154,10 @@ class HomeScreen extends ConsumerWidget {
             dashboardState.when(
               data: (data) => _buildActiveCourseCard(context, data),
               loading: () => const SizedBox.shrink(),
+              // The card invents a title ('Structural Analysis & Design (RCC)')
+              // when the server sends none, so on failure it is suppressed
+              // rather than replaced with something invented. The hero card
+              // above already reports the failure honestly.
               error: (_, __) => const SizedBox.shrink(),
             ),
           ],
