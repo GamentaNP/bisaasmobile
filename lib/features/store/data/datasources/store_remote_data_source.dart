@@ -122,14 +122,44 @@ class StoreRemoteDataSource {
       return WardrobeDto(slots: [], isDegraded: true);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        AppLogger.w('store getWardrobe: 404 — WO-3 not shipped, degraded placeholder');
-        return WardrobeDto.localMockDegraded();
+        // The route exists; a 404 here means it was genuinely unpublished.
+        // No mock slots - the UI shows an honest empty wardrobe.
+        AppLogger.w('store getWardrobe: 404 - route not available');
+        return const WardrobeDto(slots: [], isDegraded: true);
       }
       AppLogger.w('store getWardrobe failed: ${e.response?.statusCode} ${e.message}');
       return WardrobeDto(slots: [], isDegraded: true);
     } catch (e) {
       AppLogger.w('store getWardrobe unexpected: $e');
       return WardrobeDto(slots: [], isDegraded: true);
+    }
+  }
+
+  /// `DELETE /api/v1/store/wardrobe/equipment` with `{slot}`.
+  ///
+  /// The server exposes this (`routes/api/v1.php` store group) so a slot can
+  /// actually be emptied. The wardrobe UI previously had a visible "clear"
+  /// affordance wired to `() {}`, so nothing happened.
+  Future<bool> unequip(String slot, {String? idempotencyKey}) async {
+    final key = idempotencyKey ?? _uuid.v4();
+    try {
+      final res = await _dio.delete<Map<String, dynamic>>(
+        '/store/wardrobe/equipment',
+        data: {'slot': slot},
+        options: Options(headers: {'Idempotency-Key': key}),
+      );
+      final body = res.data;
+      if (body == null) return false;
+      if (body['success'] as bool? ?? false) return true;
+      final data = _extractMapData(body);
+      if (data != null && (data['unequipped'] == true || data['success'] == true)) return true;
+      return false;
+    } on DioException catch (e) {
+      AppLogger.w('store unequip $slot failed: ${e.response?.statusCode} ${e.message}');
+      return false;
+    } catch (e) {
+      AppLogger.w('store unequip $slot unexpected: $e');
+      return false;
     }
   }
 
@@ -151,7 +181,7 @@ class StoreRemoteDataSource {
       return success;
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        AppLogger.w('store equip $slot/$assetId: 404 degraded');
+        AppLogger.w('store equip $slot/$assetId: 404 - route not available');
         return false;
       }
       AppLogger.w('store equip failed: ${e.response?.statusCode} ${e.message}');

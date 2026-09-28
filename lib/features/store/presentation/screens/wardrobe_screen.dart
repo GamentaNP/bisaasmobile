@@ -54,7 +54,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                child: Row(children: [const Icon(Icons.science_rounded, size: 16, color: AppColors.brand), const SizedBox(width: 8), const Expanded(child: Text('Wardrobe in beta — preview slots only until GET /store/wardrobe ships (WO-3). Equipping is local preview.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3))), Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.brand, borderRadius: BorderRadius.circular(6)), child: const Text('BETA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white)))]),
+                child: const Row(children: [Icon(Icons.cloud_off_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text('The wardrobe service is unavailable, so slots cannot be shown or changed.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3)))]),
               ),
             if (state.isWardrobeLoading && wardrobe == null)
               const Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: CircularProgressIndicator())),
@@ -74,7 +74,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 ...wardrobe.slots.map((slot) => _SlotTile(
                       slot: slot,
                       isEquipping: _equippingSlot == slot.slot,
-                      onClear: () {}, // WO-3 has no unequip; preview only
+                      onClear: () => ref.read(storeControllerProvider.notifier).unequip(slot.slot),
                     )),
               const SizedBox(height: 18),
               const Divider(),
@@ -127,8 +127,19 @@ class _SlotTile extends StatelessWidget {
         dense: true,
         leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Icon(_iconForSlot(slot.slot), size: 16, color: AppColors.brand)),
         title: Text(slot.slot, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-        subtitle: Text(equipped != null ? '${equipped.name} • ${equipped.rarity}' : 'Empty — equip from store', style: TextStyle(fontSize: 11, color: equipped != null ? AppColors.correctGreen : Colors.grey)),
-        trailing: isEquipping ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : (equipped != null ? const Icon(Icons.check_circle_rounded, size: 18, color: AppColors.correctGreen) : const Icon(Icons.chevron_right_rounded, size: 18)),
+        subtitle: Text(equipped != null ? '${equipped.name}  ${equipped.rarity}' : 'Empty - equip from store', style: TextStyle(fontSize: 11, color: equipped != null ? AppColors.correctGreen : Colors.grey)),
+        trailing: isEquipping
+            ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+            : equipped != null
+                // Clear a slot. This button existed in the widget signature but
+                // was never rendered, and the call site passed `() {}`.
+                ? IconButton(
+                    tooltip: 'Clear $slot',
+                    icon: const Icon(Icons.remove_circle_outline_rounded, size: 18),
+                    color: AppColors.wrongRed,
+                    onPressed: onClear,
+                  )
+                : const Icon(Icons.chevron_right_rounded, size: 18),
       ),
     );
   }

@@ -76,13 +76,11 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.science_rounded, size: 16, color: AppColors.brand),
-                    const SizedBox(width: 8),
-                    const Expanded(child: Text('Shop is in beta — packs are preview only until GET /economy/shop ships (WO-2). No real charge yet.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3))),
-                    const SizedBox(width: 8),
-                    Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.brand, borderRadius: BorderRadius.circular(6)), child: const Text('BETA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white))),
+                    Icon(Icons.cloud_off_rounded, size: 16, color: AppColors.brand),
+                    SizedBox(width: 8),
+                    Expanded(child: Text('The coin shop is unavailable right now.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3))),
                   ],
                 ),
               ),

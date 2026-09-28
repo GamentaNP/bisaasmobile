@@ -194,11 +194,27 @@ class StoreController extends Notifier<StoreState> {
     state = state.copyWith(isEquipping: true, equipError: null);
     try {
       final ok = await _repo.equip(slot, assetId, idempotencyKey: _uuid.v4());
-      state = state.copyWith(isEquipping: false, equipError: ok ? null : 'Equip failed (beta — not available yet)');
+      state = state.copyWith(isEquipping: false, equipError: ok ? null : 'Could not equip $slot');
       if (ok) await fetchWardrobe();
       return ok;
     } catch (e, st) {
       AppLogger.w('store equip $slot/$assetId failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      state = state.copyWith(isEquipping: false, equipError: _msg(e));
+      return false;
+    }
+  }
+
+  /// Empty a wardrobe slot. The clear affordance used to be wired to `() {}`.
+  Future<bool> unequip(String slot) async {
+    state = state.copyWith(isEquipping: true, equipError: null);
+    try {
+      final ok = await _repo.unequip(slot, idempotencyKey: _uuid.v4());
+      state = state.copyWith(isEquipping: false, equipError: ok ? null : 'Could not clear $slot');
+      if (ok) await fetchWardrobe();
+      return ok;
+    } catch (e, st) {
+      AppLogger.w('store unequip $slot failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
       state = state.copyWith(isEquipping: false, equipError: _msg(e));
       return false;

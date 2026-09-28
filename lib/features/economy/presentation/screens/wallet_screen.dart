@@ -90,7 +90,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
             if (isDegraded) ...[
               const SizedBox(height: 10),
-              _BetaBanner(message: 'Ledger is in beta — history will appear when WO-1 ships. Coins are still credited server-authoritatively via quiz attempts.'),
+              _BetaBanner(message: 'Could not load your coin history. Balances and totals above are still server-authoritative.'),
             ],
             const SizedBox(height: 18),
             Row(

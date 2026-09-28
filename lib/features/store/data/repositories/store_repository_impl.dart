@@ -31,6 +31,10 @@ class StoreRepositoryImpl implements StoreRepository {
   }
 
   @override
+  Future<bool> unequip(String slot, {String? idempotencyKey}) =>
+      _remote.unequip(slot, idempotencyKey: idempotencyKey);
+
+  @override
   Future<bool> equip(String slot, String assetId, {String? idempotencyKey}) =>
       _remote.equip(slot, assetId, idempotencyKey: idempotencyKey);
 

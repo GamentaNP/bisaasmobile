@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_dynamic_calls
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/logging/app_logger.dart';
@@ -31,8 +32,24 @@ class SocialScreen extends StatelessWidget {
           FilledButton.icon(onPressed: () => _share(context), icon: const Icon(Icons.share_rounded), label: const Text('Share CivilCal')),
           const SizedBox(height: 16),
           const Divider(),
-          ListTile(leading: const Icon(Icons.leaderboard_rounded), title: const Text('Leaderboard'), subtitle: const Text('GET /quiz/leaderboards/{board} (read-only RTDB)'), onTap: () {}),
-          ListTile(leading: const Icon(Icons.card_giftcard_rounded), title: const Text('Referral'), subtitle: const Text('POST /quiz/referrals (server qualifies)'), onTap: () {}),
+          // Both tiles used to be dead `onTap: () {}` — the leaderboard screen
+          // already existed and was routed.
+          ListTile(
+            leading: const Icon(Icons.leaderboard_rounded),
+            title: const Text('Leaderboard'),
+            subtitle: const Text('See where you rank'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.go('/leaderboard'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.card_giftcard_rounded),
+            title: const Text('Referral'),
+            subtitle: const Text('Refer a friend — the server qualifies the reward'),
+            // No referral endpoint is exposed to clients yet (referrals are
+            // issued server-side), so this is honestly inert rather than a
+            // button that silently does nothing.
+            enabled: false,
+          ),
         ],
       ),
     );
