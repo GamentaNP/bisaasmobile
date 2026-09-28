@@ -13,7 +13,7 @@
 
 ---
 
-## 1. SHIPPED 2026-09-27 (8 commits)
+## 1. SHIPPED 2026-09-27 (12 commits)
 
 | Commit | What |
 |---|---|
@@ -23,10 +23,13 @@
 | `8aa04e8` | **Three shipped surfaces made reachable.** `QuizResultScreen` (471 lines) was dead because its route rendered the review screen instead; deleted the duplicate `AiTutorScreen`; wired 3 no-op taps; fixed a visible 10px layout overflow. |
 | `fd4175f` | **Daily quiz reads the real payload.** It was reading the wrong keys entirely, so `isDailyCompleted` was permanently false and the title/reward were invented. |
 | `a16ab4d` | **Lifelines shipped.** Three "coming soon" SnackBars replaced by the server's real 13-lifeline catalogue with server-built effects. Also added `time_taken_seconds` to every answer. |
-| `f462869` | **Every question count was reading a field the server does not send** — all courses/topics showed "0 questions". Also rewrote the practice session, which rendered literal `A/B/C/D` options and graded with `id.isEven && hashCode.isEven`. |
+| `f462869` | **Every question count read a field the server does not send** — all courses/topics showed "0 questions". Also rewrote the practice session, which rendered literal `A/B/C/D` options and graded with `id.isEven && hashCode.isEven`. |
 | `9e1fafd` | **Removed the 6 fake store assets, the permanently-dead `/store/market` call, the 15 fake home nodes, and the unhandled FCM crash.** |
+| `007f7ba` | **Stopped lying about live features.** `/economy/wallet`, `/wallet/ledger`, `/economy/shop`, `/store/assets` and `/store/wardrobe` all return 200 today while the UI said "not shipped" / "beta". Corrected. Wired wardrobe unequip and the 3 dead social/wardrobe buttons. |
+| `bf64a69` | **Missions (49, not 18) + daily check-in + spin wheel shipped.** Also fixed `ChunkyCard`: it paired a `borderRadius` with a non-uniform `Border`, which Flutter refuses to paint — the app's signature 3D extrusion was silently not rendering on **every** chunky card. |
+| `431b0c9` | **Outages no longer look like "no data"** in the PSC and notification sources. |
 
-**Gates, every commit:** `flutter analyze` → 0 issues · `flutter test` → 313 pass ·
+**Gates, every commit:** `flutter analyze` → 0 issues · `flutter test` → **337 pass** ·
 `flutter build apk --debug` → installed on the device · driven by hand on the device.
 
 ---
@@ -36,7 +39,7 @@
 | Check | Result |
 |---|---|
 | `flutter analyze` | **0 issues** (CI gate `--fatal-infos` satisfied) |
-| `flutter test` | **313 passing** |
+| `flutter test` | **337 passing** |
 | debug / release APK / release AAB | all build (R8 clean) |
 | Physical device install + launch | ✓ (Redmi 6A, API 28) |
 | Login against the real backend from device | ✓ |
@@ -114,22 +117,22 @@ returns `{data:{report:{weak_areas:[]}}}` for a fresh account, correctly.
 ### P1 — high value, backend already serves it
 
 | # | Item | Where |
-|---|---|---|
+|---|---|
 | A | **Per-level world-map play.** `POST /quiz/portal/levels/{level}/start` returns an attempt with no questions (see §3). Until §3 lands, `GameLevelIntroSheet` routes play through the proven course-attempt path — real grading, real XP, real stars — which works today. Once §3 lands, switch to the portal route for per-level attempts. | `game_level_intro_sheet.dart` |
-| B | **Missions dashboard + claim.** `GET /quiz/game/missions/dashboard` returns a **bare JSON array** in `data` (18 missions live). Claim via `PUT /quiz/game/missions/{mission}/claim` (the `POST` alias the client already uses also works) or `POST /quiz/game/missions/claims` for everything claimable. `claimMission()` exists in `game_remote_data_source.dart:90` with **no caller**. | `game/` + Home |
-| C | **Daily check-in + spin wheel.** `GET /rewards/daily-checkin/status` + `POST /rewards/daily-checkin` (409 when already claimed, payload echoed in `error.details`); `GET /rewards/spin/status` + `POST /rewards/spin`. **Parsing trap:** the spin pair is raw JSON outside the envelope — prefer the enveloped `POST /quiz/spin-wheel/spins` / `/ad-spins`. | new rewards surface |
-| D | **World map entry from Home is live; the world *banner* images are not.** Worlds carry `banner_image`; verify a CDN base URL or the gradient fallback is all that ships. | `game_worlds_screen.dart` |
-| E | **Lifelines: purchase-then-use is wired, ad-unlock is not.** `POST /attempts/{a}/lifelines/{slug}/ad-unlocks` exists but every seeded lifeline has `ad_unlock_enabled = false`, so it is correctly inert today. Wire it when ads are enabled. | `lifeline_remote_data_source.dart` |
+| B | **World map chapter/level play is real but coarse.** `GameWorldMapScreen` renders the server's chapters, levels, stars and boss flags correctly and level play works via the course path, but there is no per-level attempt, no `stars_earned` on the result, and no ghost rival. `GET /quiz/game/ghost?level_attempt_id=` and `/ai/coach-tip` are live and unwired. | `game/` |
+| C | **Missions ad-unlock / ad-spins.** `POST /quiz/spin-wheel/ad-spins` (3/day) and the lifeline `ad-unlock` route exist but every seeded item has the flag off, so they are correctly inert. Wire when ads are enabled. | `lifeline_remote_data_source.dart` |
+| D | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and never read or sent. The copy promises *"personalize questions"* and *"IRT calibration"* — both false. Either persist server-side or stop promising it. | `onboarding_screen.dart:25-96`, `preferences.dart:21,24,27` |
+| E | **7 remaining error-swallow blocks.** `eice_remote_data_source.dart:16,24,34,42,49` (5) still return hardcoded falses/empties; 3 `FutureBuilder`s have no `hasError` (`psc_screen.dart:18`, `downloads_screen.dart:82`, `quiz_browser_screen.dart:425`). PSC and notifications are fixed. | as listed |
+| F | **5 `error:` branches swallow failure.** `home_screen.dart:165`, `learning_home_screen.dart:40`, `profile_screen.dart:224`, `calculator_detail_screen.dart:144` and `downloads_screen.dart`. | as listed |
+| G | **"Offline" keys off general connectivity, not API reachability.** On the phone it read *"You're offline"* while API calls over the adb tunnel were succeeding — a captive portal or blocked `/api/v1` produces the same false state. | `lib/core/connectivity/` |
+| H | **Categories carry no question count at all** (`/quiz/courses/{id}/categories` returns only `{id,name,slug,sort_order}`), so the client fetches a page per category. Accurate but N+1 — 15 requests for one course. A count on the category row would remove it. | `quiz_browser_screen.dart` |
+| I | **Ledger/category N+1** and the "100+" lower-bound display are honest but a `total` on the questions endpoint would let both be exact. | backend ask §2.4 |
 
 ### P2 — remaining honesty gaps
 
-| # | Item | Where |
-|---|---|---|
-| F | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and never read or sent. The copy promises *"personalize questions"* and *"IRT calibration"* — both false. Either persist server-side or stop promising it. | `onboarding_screen.dart:25-96`, `preferences.dart:21,24,27` |
-| G | **9 error-swallow blocks make outages look empty.** `catch (_) { return []; }` in `eice_remote_data_source.dart:16,24,34,42,49` and `psc_remote_data_source.dart:18,26,34`; `notifications_screen.dart:23` turns a failed inbox into an empty one. 3 `FutureBuilder`s have no `hasError` (`psc_screen.dart:18`, `downloads_screen.dart:82`, `quiz_browser_screen.dart:425`). | as listed |
-| H | **6 `error:` branches swallow failure**, 2 of them fabricating values on the error path. `home_screen.dart:165`, `learning_home_screen.dart:40`, `profile_screen.dart:224`, `calculator_detail_screen.dart:144`. | as listed |
-| I | **"Offline" keys off general connectivity, not API reachability.** On the phone it read *"You're offline"* while API calls over the adb tunnel were succeeding — a captive portal or blocked `/api/v1` produces the same false state. | `lib/core/connectivity/` |
-| J | **Categories carry no question count at all** (`/quiz/courses/{id}/categories` returns only `{id,name,slug,sort_order}`), so the client fetches a page per category. Accurate but N+1 — 15 requests for one course. A count on the category row would remove it. | `quiz_browser_screen.dart` |
+| # | Item |
+|---|---|
+| F | **Onboarding collects 3 answers and discards them.** Exam / daily-goal / experience-level are written to SharedPreferences and never read or sent. The copy promises *"personalize questions"* and *"IRT calibration"* — both false. Either persist server-side or stop promising it. |
 
 ### P3 — hygiene
 
