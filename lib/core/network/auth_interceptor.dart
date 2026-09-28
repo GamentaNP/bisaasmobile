@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 
 import '../security/token_manager.dart';
 import 'api_exception.dart';
+import 'app_update_gate.dart';
 
 class AuthInterceptor extends Interceptor {
   AuthInterceptor(this._tokens);
@@ -35,6 +36,9 @@ class AuthInterceptor extends Interceptor {
       final status = err.response!.statusCode ?? 0;
       // Don't throw for pass-through 401 — let caller decide refresh-vs-logout
       final apiEx = ApiException.fromJson(status, data, requestId: reqId);
+      // A 426 refuses this *build*, not this request, so latch it globally
+      // before the error propagates — no screen of this build can work.
+      AppUpdateGate.instance.observe(apiEx);
       return handler.reject(
         DioException(
           requestOptions: err.requestOptions,

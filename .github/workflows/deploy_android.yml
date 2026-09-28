@@ -37,9 +37,25 @@ jobs:
             echo "keyPassword=$ANDROID_KEY_PASSWORD"
           } > android/key.properties
 
+      - name: Resolve app version
+        # Prefer the pubspec `version:` (the version actually being built) and
+        # fall back to the tag. github.ref_name is a `v*` tag, which the
+        # server's EnforceAppVersion regex rejects — it then passes the request
+        # through and the stale-client gate never fires.
+        id: ver
+        run: |
+          raw=$(grep -E '^version:' pubspec.yaml | head -1 | sed -E 's/^version:[[:space:]]*//')
+          ver="${raw%%+*}"
+          if ! echo "$ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'; then
+            ver="${GITHUB_REF_NAME#v}"
+            ver="${ver%%+*}"
+          fi
+          echo "value=$ver" >> "$GITHUB_OUTPUT"
+          echo "app version: $ver"
+
       - run: |
           flutter build appbundle --release \
-            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ github.ref_name }} \
+            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ steps.ver.outputs.value }} \
             --dart-define-from-file=dart_defines/production.json \
             --obfuscate --split-debug-info=build/symbols
 

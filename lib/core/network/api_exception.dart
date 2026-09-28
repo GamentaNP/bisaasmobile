@@ -22,6 +22,7 @@ enum ApiErrorCode {
   webhookUnauthorized('WEBHOOK_UNAUTHORIZED'),
   internalError('INTERNAL_ERROR'),
   serviceUnavailable('SERVICE_UNAVAILABLE'),
+  upgradeRequired('UPGRADE_REQUIRED'),
   unknown('UNKNOWN');
 
   const ApiErrorCode(this.raw);
@@ -79,6 +80,22 @@ class ApiException implements Exception {
       statusCode == 401;
 
   bool get isValidation => code == ApiErrorCode.validationError || statusCode == 422;
+
+  /// The server refused this build outright (`EnforceAppVersion` → 426,
+  /// `AppUpdateRequiredException`). Not a retryable failure: the only fix is a
+  /// new install, so the UI must offer a store link rather than a Retry button.
+  bool get isAppUpdateRequired =>
+      code == ApiErrorCode.upgradeRequired || statusCode == 426;
+
+  /// Minimum version the server demands, from `details.min_version`.
+  String? get minRequiredVersion {
+    final d = details;
+    if (d is Map && d['min_version'] is String) {
+      final v = d['min_version'] as String;
+      return v.isEmpty ? null : v;
+    }
+    return null;
+  }
 
   @override
   String toString() =>

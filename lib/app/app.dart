@@ -14,6 +14,7 @@ import '../l10n/app_localizations.dart';
 import '../shared/widgets/app_lock_overlay.dart';
 import 'localization/locale_controller.dart';
 import 'providers.dart';
+import 'force_update_screen.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 
@@ -153,7 +154,9 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
       locale: ref.watch(localeProvider),
       builder: (context, child) => AppLockOverlay(
         lock: ref.watch(appLockProvider),
-        child: child ?? const SizedBox.shrink(),
+        // Outside the lock: a build the server refuses cannot be unlocked
+        // into anything usable, so the update gate takes the whole surface.
+        child: ForceUpdateGate(child: child ?? const SizedBox.shrink()),
       ),
     );
   }

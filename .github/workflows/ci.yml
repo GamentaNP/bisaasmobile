@@ -59,10 +59,24 @@ jobs:
           } > android/key.properties
           echo "signed=true" >> "$GITHUB_OUTPUT"
 
+      - name: Resolve app version
+        # The server's EnforceAppVersion only judges a header matching
+        # /^\d+\.\d+\.\d+(-[\w.]+)?$/ and passes everything else through, so a
+        # non-semver value silently disables the stale-client gate. github.ref_name
+        # is a branch name here ("master"), which is not a version at all. The
+        # pubspec `version:` is the actual build version, so use it and strip the
+        # +build suffix.
+        id: ver
+        run: |
+          raw=$(grep -E '^version:' pubspec.yaml | head -1 | sed -E 's/^version:[[:space:]]*//')
+          ver="${raw%%+*}"
+          echo "value=$ver" >> "$GITHUB_OUTPUT"
+          echo "app version: $ver"
+
       - name: Build APK
         run: |
           flutter build apk \
-            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ github.ref_name }} \
+            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ steps.ver.outputs.value }} \
             --dart-define-from-file=dart_defines/production.json \
             --obfuscate --split-debug-info=build/symbols \
             ${{ steps.signing.outputs.signed == 'false' && '-Pallow-debug-signing=true' || '' }}
@@ -70,7 +84,7 @@ jobs:
       - name: Build App Bundle
         run: |
           flutter build appbundle \
-            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ github.ref_name }} \
+            --dart-define=ENV=prod --dart-define=APP_VERSION=${{ steps.ver.outputs.value }} \
             --dart-define-from-file=dart_defines/production.json \
             --obfuscate --split-debug-info=build/symbols \
             ${{ steps.signing.outputs.signed == 'false' && '-Pallow-debug-signing=true' || '' }}

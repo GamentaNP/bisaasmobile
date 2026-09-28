@@ -40,7 +40,31 @@ class InstallIdentityInterceptor extends Interceptor {
   /// throws at runtime on web (DDC) if invoked dynamically.
   static const _compiledAppVersion = String.fromEnvironment('APP_VERSION');
 
-  static String defaultAppVersion() => _compiledAppVersion;
+  /// Normalises whatever CI injected into a bare `MAJOR.MINOR.PATCH`.
+  ///
+  /// The server's `EnforceAppVersion` middleware only judges a version matching
+  /// `/^\d+\.\d+\.\d+(-[\w.]+)?$/` and — deliberately — *passes the request
+  /// through* when it does not match, because refusing header-less or
+  /// unparseable requests would brick older clients at deploy time. That
+  /// fail-open is correct, but it meant a tag-derived value silently disabled
+  /// the whole gate: CI passed `${{ github.ref_name }}`, so a `v1.2.3` tag sent
+  /// `v1.2.3`, the regex rejected it, and no release was ever actually gated.
+  /// Stripping the leading `v` and any `+build` suffix makes the header
+  /// judgeable, so a raised minimum can really lock out a stale build.
+  static String normaliseAppVersion(String raw) {
+    var v = raw.trim();
+    if (v.startsWith('v') || v.startsWith('V')) {
+      v = v.substring(1);
+    }
+    // `1.2.3+45` is valid Dart/pubspec but the server regex allows no `+`.
+    final plus = v.indexOf('+');
+    if (plus != -1) {
+      v = v.substring(0, plus);
+    }
+    return v;
+  }
+
+  static String defaultAppVersion() => normaliseAppVersion(_compiledAppVersion);
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
