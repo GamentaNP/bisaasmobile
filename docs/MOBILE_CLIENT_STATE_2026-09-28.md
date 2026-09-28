@@ -2,7 +2,8 @@
 
 > **Last updated:** 2026-09-28
 > **HEAD at time of writing:** `39c308f`
-> **Gates:** `flutter analyze` 0 issues · `flutter test` 717 passing · debug APK builds
+> **Gates:** `flutter analyze` 0 issues · `flutter test` 717 passing · debug APK builds ·
+> release AAB 112.1 MB, signed `CN=CivilCal Upload Key`
 
 This replaces the older ad-hoc "remaining work" notes. It records what is built,
 what is deliberately not built, and the server-side work the client is blocked
@@ -131,9 +132,10 @@ the backend stabilises.
 | ARB catalogue: 21 keys vs ~266 English files | **Not machine-written on purpose** — fabricated translations. The CI gate (`tool/arb_coverage.dart`) now fails the build on a partial locale, so this cannot regress silently. Use the server's `LocalizationStudio` (AI batch translate + CSV/JSON import/export) — that is the intended path. |
 | Bundle actual OFL Noto fonts | The chain names Noto families and falls through to the platform's own Noto faces, so text renders. Bundling would make it deterministic across OEM skins. |
 | Device smoke test | Blocked on `INSTALL_FAILED_USER_RESTRICTED`; needs a human to approve installs. |
-| Release AAB at current HEAD | An earlier AAB was built and verified signed (`CN=CivilCal Upload Key`, `android/key.properties` gitignored). Not rebuilt since these changes. |
+| Release AAB at current HEAD | **Done 2026-09-28.** 112.1 MB, verified signed `CN=CivilCal Upload Key, OU=Bisaas, O=Bisaas, L=Kathmandu, C=NP`. `android/key.properties` and the keystore are gitignored. Not yet uploaded to Play. |
 | Play listing, `assetlinks.json` | Not published. |
 | Per-level world map | Backend has no attempt-question retrieval. |
+| AAB size | 112 MB, dominated by the ~21 MB `libts.so` in each ABI. Legal, but worth a look before a real upload. |
 
 ### Content, not code
 
