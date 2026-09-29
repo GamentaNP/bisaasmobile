@@ -108,6 +108,19 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
         onRefresh: _onRefresh,
         child: CustomScrollView(
           slivers: [
+            // Books and the syllabus are separate corpora with their own
+            // readers, not files in the library. They used to be registered
+            // routes that nothing navigated to, so a user could never reach
+            // either one. Both live here because this is where reading content
+            // starts; the syllabus sits next to the Books entry because "what
+            // should I study" and "what should I read" are the same question.
+            SliverToBoxAdapter(
+              child: _CorpusEntryRow(
+                onBooks: () => context.push('/books'),
+                onSyllabus: () => context.push('/syllabus'),
+              ),
+            ),
+
             // Categories horizontal chips
             SliverToBoxAdapter(
               child: _CategoriesStrip(
@@ -489,6 +502,81 @@ class _FileCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(file.category!.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5))),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry points to the two corpora that are not library files.
+///
+/// Books and the syllabus each have their own reader, so they cannot be
+/// presented as a file card. They were registered routes that nothing navigated
+/// to, which made both features unreachable from the app; this row is what
+/// closes that.
+class _CorpusEntryRow extends StatelessWidget {
+  const _CorpusEntryRow({required this.onBooks, required this.onSyllabus});
+
+  final VoidCallback onBooks;
+  final VoidCallback onSyllabus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: _Entry(
+              icon: Icons.menu_book_rounded,
+              label: 'Books',
+              onTap: onBooks,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _Entry(
+              icon: Icons.account_tree_rounded,
+              label: 'Syllabus',
+              onTap: onSyllabus,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Entry extends StatelessWidget {
+  const _Entry({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: AppColors.brand),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),

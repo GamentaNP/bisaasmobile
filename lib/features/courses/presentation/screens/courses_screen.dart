@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/theme/app_colors.dart';
+
 import '../../../../core/network/dio_client.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
@@ -58,6 +60,35 @@ class CoursesScreen extends ConsumerWidget {
           }
           return CustomScrollView(
             slivers: [
+              // Books and the syllabus are separate corpora with their own
+              // readers, not course cards. Both were registered routes that
+              // nothing navigated to, so both features were unreachable; this
+              // tab is where a learner comes to decide what to study, which is
+              // exactly where those two decisions live.
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _CorpusTile(
+                          icon: Icons.menu_book_rounded,
+                          label: 'Books',
+                          onTap: () => context.push('/books'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _CorpusTile(
+                          icon: Icons.account_tree_rounded,
+                          label: 'Syllabus',
+                          onTap: () => context.push('/syllabus'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -88,7 +119,13 @@ class CoursesScreen extends ConsumerWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.92,
+                    // A fixed main-axis extent rather than an aspect ratio: the
+                    // cards hold a two-line title, a two-line description and a
+                    // full-width button, and an aspect ratio computed from the
+                    // tile width overflows by 13-31px on a 720px-wide phone.
+                    // An extent is independent of width, so the same card height
+                    // holds on a narrow phone and a tablet.
+                    mainAxisExtent: 214,
                   ),
                 ),
               ),
@@ -133,11 +170,9 @@ class _CourseCard extends StatelessWidget {
                   ),
                   child: Icon(Icons.menu_book_rounded, size: 18, color: color),
                 ),
-                const Spacer(),
                 Icon(Icons.chevron_right_rounded, size: 18, color: color),
               ],
-            ),
-            const SizedBox(height: 10),
+            ),            const SizedBox(height: 10),
             Text(
               course.title,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
@@ -156,7 +191,7 @@ class _CourseCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            const Spacer(),
+            const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
@@ -165,7 +200,53 @@ class _CourseCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                child: const Text('View syllabus', style: TextStyle(fontSize: 12)),
+                // Labelled for what it does. It opens the course's questions,
+                // not the Syllabus Engine corpus, which is a separate resource
+                // keyed on the syllabus version's public_id. A button promising a
+                // syllabus and landing on a question list is the same kind of
+                // dishonesty this pass has been removing elsewhere.
+                child: const Text('Browse questions', style: TextStyle(fontSize: 12)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A corpus that has its own reader, so it cannot be presented as a course card.
+class _CorpusTile extends StatelessWidget {
+  const _CorpusTile({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.25),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: AppColors.brand),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
