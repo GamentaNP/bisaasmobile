@@ -112,12 +112,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final selected = await showModalBottomSheet<Locale?>(
       context: context,
       showDragHandle: true,
-        builder: (context) => SafeArea(
+      // The sheet is scrollable and height-capped because the registry is
+      // server-driven: adding a language worldwide must not turn the picker into
+      // an overflow. A Column sized to its children overflowed the sheet by 308px
+      // on a 1440px-tall device, which is why this is not cosmetic.
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      builder: (context) => SafeArea(
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: _pickerRows(context, current),
           ),
         ),
+      ),
     );
       if (selected == null && current == null) return;
       await ref.read(localeProvider.notifier).setLocale(selected);
