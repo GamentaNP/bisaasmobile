@@ -60,30 +60,53 @@ class CoursesScreen extends ConsumerWidget {
           }
           return CustomScrollView(
             slivers: [
-              // Books and the syllabus are separate corpora with their own
-              // readers, not course cards. Both were registered routes that
-              // nothing navigated to, so both features were unreachable; this
-              // tab is where a learner comes to decide what to study, which is
-              // exactly where those two decisions live.
+              // Three separate corpora with their own readers, so none of them can
+              // be presented as a course card.
+              //
+              // The names are Bisaas's and they are not interchangeable:
+              //   Library  - PDFs/notes as soft form (/library/files)
+              //   Books    - the Book Engine: real books with a reader
+              //   Syllabus - the exam tree
+              //
+              // The bottom-nav branch was itself labelled "Library" while
+              // routing here, so a user looking for the PDF library found this
+              // tab with no way to reach it. The tab is now "Courses" and Library
+              // is offered here under its own name.
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: _CorpusTile(
-                          icon: Icons.menu_book_rounded,
-                          label: 'Books',
-                          onTap: () => context.push('/books'),
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _CorpusTile(
+                              icon: Icons.folder_open_rounded,
+                              label: 'Library',
+                              onTap: () => context.push('/library'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _CorpusTile(
+                              icon: Icons.menu_book_rounded,
+                              label: 'Books',
+                              onTap: () => context.push('/books'),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _CorpusTile(
-                          icon: Icons.account_tree_rounded,
-                          label: 'Syllabus',
-                          onTap: () => context.push('/syllabus'),
-                        ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _CorpusTile(
+                              icon: Icons.account_tree_rounded,
+                              label: 'Syllabus',
+                              onTap: () => context.push('/syllabus'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

@@ -59,7 +59,11 @@ class AppBottomNav extends StatelessWidget {
               destination(AppIcons.home, 'Home', 0),
               destination(AppIcons.quiz, 'Quiz', 1),
               destination(AppIcons.calculator, 'Tools', 2),
-              destination(AppIcons.library, 'Library', 3),
+              // Labelled for what it opens. This branch routes to /courses, so calling
+        // it "Library" was wrong: on Bisaas "Library" means the PDF/notes
+        // library (/library/files), which is a different corpus with its own
+        // route and is now reachable from the Courses screen as its own tile.
+        destination(AppIcons.library, 'Courses', 3),
               destination(AppIcons.profile, 'Profile', 4),
             ],
           ),

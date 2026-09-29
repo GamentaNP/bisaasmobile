@@ -1,9 +1,10 @@
 # Mobile client — build log and current state
 
-> **Last updated:** 2026-09-28
-> **HEAD at time of writing:** `58f59b4`
-> **Gates:** `flutter analyze` 0 issues · `flutter test` 825 passing · debug APK builds ·
-> release AAB 112.3 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green
+> **Last updated:** 2026-09-29
+> **HEAD at time of writing:** `aea5069`
+> **Gates:** `flutter analyze` 0 issues · `flutter test` 835 passing · debug APK builds ·
+> release AAB 112.3 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green ·
+> **verified running on a physical Redmi 6A (Android 9, API 28, armeabi-v7a)**
 
 This replaces the older ad-hoc "remaining work" notes. It records what is built,
 what is deliberately not built, and the server-side work the client is blocked
@@ -108,18 +109,55 @@ These are the properties worth not breaking. Each is pinned by a test.
 
 ## 4. Verified against the live backend
 
-Not all of it, because the backend currently rejects every authenticated request
-with 401 even on `/api/v1/me` (it has ~95 uncommitted files from another agent).
-What *was* verified live:
+Verified on a physical Redmi 6A (Android 9, API 28, armeabi-v7a) over an
+`adb reverse tcp:8443 tcp:443` tunnel to Laragon, authenticated with the debug
+auto-login account:
 
+- `POST /api/v1/auth/login` returns a working Sanctum PAT, and every screen
+  below renders live data behind it.
 - `GET /api/v1/syllabi` and `GET /syllabi/{id}/tree?depth=2` return real data.
   This surfaced the empty-string `children` field and the 542-vs-33 count skew,
   neither of which unit tests would have caught.
+- `GET /api/v1/library/categories`, `/library/files` and `/library/trending`
+  return 200 for an authenticated user.
 - `GET /api/v1/social/*` returns 401 unauthenticated, as the route group requires.
 
-Everything else was built against the **source contract** (route file + JsonResource
-+ controller), which is reliable but not proof of the live shape. Re-verify once
-the backend stabilises.
+### The three corpora are separate resources, not three names for one thing
+
+This was verified against the server source, because the client had been
+collapsing three distinct things into one "Library" label:
+
+| Client label | Server resource | Routes |
+| --- | --- | --- |
+| **Library** | `LibraryFile` — PDFs, notes and study files in soft form | `/api/v1/library/*` |
+| **Books** | Book Engine — authored books, chapters, topics, highlights | `/api/v1/books/*` |
+| **Syllabus** | The exam tree for the user's target exam | `/api/v1/syllabi/*` |
+| *(not an entry point)* | Arcade — a quiz **game mode** under `app/Domains/Quiz/Arcade` | `/api/v1/quiz/*` |
+
+Two separate bugs came out of this. The bottom-nav branch that routes to
+`/courses` was labelled "Library", so a user hunting for the PDF library landed
+on a course list with no route to it. And a course card's "View syllabus" button
+actually pushed `/quiz/browse`, so the label lied. Both are fixed, and
+`test/app/corpus_entry_point_test.dart` now guards all three entry points plus
+the nav label, so the mistake cannot silently come back.
+
+`Library` and `Books` both render correct empty states today because the server
+has no published files or books. That is honest server state, not a client
+failure, and the empty states say so rather than showing an error.
+
+### A dead token looks like a broken feature
+
+While verifying the above, Library returned 401 on every call and appeared
+broken. It was not: the device held Sanctum token `83`, but
+`personal_access_tokens` had no such row (max id 70, newest row 2026-09-22) —
+the dev database had been reseeded after that login. Every *authenticated*
+route 401'd with that token, including `/api/v1/me`, while public routes still
+returned 200. Clearing app data and logging in again minted token `84` and
+Library, Books and Courses all worked immediately.
+
+Worth remembering: other screens can look healthy while showing cached or
+locally-held data, so the first authenticated 401 is worth chasing on the
+server side before suspecting the client.
 
 ---
 

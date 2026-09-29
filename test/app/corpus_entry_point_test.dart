@@ -2,6 +2,26 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+/// Locates a file inside a sibling bisaas Laravel checkout, or returns null.
+///
+/// Resolution order: `BISAAS_ROOT`, then the Laragon sibling-directory default.
+/// Returns null instead of throwing so the caller can skip the cross-repo
+/// assertion on machines (and CI runners) without the backend.
+File? _resolveBackendFile(String relativePath) {
+  final candidates = <String>[
+    if (Platform.environment['BISAAS_ROOT'] case final String root?
+        when root.isNotEmpty)
+      root,
+    'C:/laragon/www/bisaas',
+    '../bisaas',
+  ];
+  for (final root in candidates) {
+    final file = File('$root/$relativePath');
+    if (file.existsSync()) return file;
+  }
+  return null;
+}
+
 /// Guards the entry points for the corpora that have their own readers.
 ///
 /// ## Why this exists
@@ -21,53 +41,74 @@ import 'package:flutter_test/flutter_test.dart';
 ///
 /// If a third reader corpus is added, add it here too.
 void main() {
-  final libraryScreen =
-      File('lib/features/library/presentation/screens/library_browser_screen.dart')
-          .readAsStringSync();
-  final routerSource =
-      File('lib/app/router/app_router.dart').readAsStringSync();
+  final routerSource = File('lib/app/router/app_router.dart')
+      .readAsStringSync();
 
-  group('the Library screen is the entry point for the reader corpora', () {
+  group('the Courses screen is the entry point for the three content corpora', () {
+    final courses = File(
+      'lib/features/courses/presentation/screens/courses_screen.dart',
+    ).readAsStringSync();
+
+    // These three are separate resources on the server and are NOT
+    // interchangeable, so each needs its own correctly named entry:
+    //   Library  - /library/files, PDFs and notes as soft form
+    //   Books    - /books, the Book Engine with a real reader
+    //   Syllabus - /syllabi, the exam tree
+    test('it navigates to the PDF library under its own name', () {
+      expect(courses, contains("push('/library')"));
+      expect(
+        courses,
+        contains("label: 'Library'"),
+        reason:
+            'on Bisaas "Library" means the PDF library, not the courses tab',
+      );
+    });
+
     test('it navigates to the book catalog', () {
-      expect(libraryScreen, contains("push('/books')"),
-          reason: 'the Book Engine reader is unreachable without this');
+      expect(courses, contains("push('/books')"));
+      expect(courses, contains("label: 'Books'"));
     });
 
     test('it navigates to the syllabus', () {
-      expect(libraryScreen, contains("push('/syllabus')"),
-          reason: 'the Syllabus Engine is unreachable without this');
+      expect(courses, contains("push('/syllabus')"));
+      expect(courses, contains("label: 'Syllabus'"));
     });
 
-    test('it labels both, so the entries are not mystery buttons', () {
-      expect(libraryScreen, contains("label: 'Books'"));
-      expect(libraryScreen, contains("label: 'Syllabus'"));
+    test('the bottom-nav branch is not labelled "Library"', () {
+      // It routes to /courses, so calling it Library was wrong: a user looking
+      // for the PDF library found this tab with no route to it.
+      final nav = File('lib/shared/widgets/bottom_nav.dart').readAsStringSync();
+      expect(nav, isNot(contains("'Library', 3)")));
+      expect(nav, contains("'Courses', 3)"));
     });
   });
 
   group('those entry points are real routes', () {
-    test('/books is registered at the top level', () {
+    test('/library, /books and /syllabus are all registered', () {
+      expect(routerSource, contains("path: '/library',"));
       expect(routerSource, contains("path: '/books',"));
-    });
-
-    test('/syllabus is registered at the top level', () {
       expect(routerSource, contains("path: '/syllabus',"));
     });
 
-    test('the catalog routes are public, so they work signed out', () {
-      // The server exposes both catalog groups outside auth:sanctum. If either
-      // were ever authenticated, this entry point would 401 for a guest.
-      expect(
-        File('C:/laragon/www/bisaas/routes/api/v1/syllabus.php')
-            .readAsStringSync(),
-        contains("withoutMiddleware('auth:sanctum')"),
-      );
-      expect(
-        File('C:/laragon/www/bisaas/routes/api/v1/book.php')
-            .readAsStringSync(),
-        isNot(contains("withoutMiddleware('auth:sanctum')")),
-        reason: 'book.php is outside the auth group by file location; if this '
-            'starts failing, the catalog is no longer public',
-      );
-    });
+    // The server exposes the syllabus catalog outside auth:sanctum. If it ever
+    // becomes authenticated, this entry point would 401 for a guest.
+    //
+    // This is a cross-repo contract check, so it only runs when a bisaas
+    // checkout is actually reachable. CI has no sibling Laravel app, and a test
+    // that cannot run there must skip rather than fail.
+    final syllabusRoutes = _resolveBackendFile('routes/api/v1/syllabus.php');
+
+    test(
+      'the catalogs are public, so they work signed out',
+      () {
+        expect(
+          syllabusRoutes!.readAsStringSync(),
+          contains("withoutMiddleware('auth:sanctum')"),
+        );
+      },
+      skip: syllabusRoutes == null
+          ? 'no bisaas checkout found; set BISAAS_ROOT to run this check'
+          : null,
+    );
   });
 }
