@@ -15,14 +15,26 @@ on. Read `LANGUAGE_AND_CONTENT_TRANSLATION_SPEC.md` for the language model.
 ## 1. The headline finding
 
 The app was never a shell. It had 29 feature modules and ~90 live API paths
-against a **433-route** `/api/v1` surface. What made it *feel* thin was that the
-**server has 39 feature flags and only 3 are on**:
+against a **433-route** `/api/v1` surface. What made it *feel* thin was that
+**23 of the server's 39 feature flags are off**:
 
 ```
-ON:  ai_prefer_free_models, book_quiz_answer_vision, personalization_v1
-OFF: 36  — economy, ads, social_engine, referral_rewards, syllabus_gateway,
-           quiz_gateway, learning_tutor_gateway, and all 8 book_engine/* flags
+ON (16): 13 AI Control Plane gateways (admin_chat, blog, campaign, embeddings,
+          learning_tutor, quiz, image, tts, stt, reranking, vector_store,
+          file_store, seo) + ai_prefer_free_models, book_quiz_answer_vision,
+          personalization_v1
+OFF (23): economy, ads, changelog, developers, syllabus_gateway, seo_pages,
+          the 7 social/referral/sharing flags, all 8 book_engine/* flags,
+          user_material_uploads, material_author_royalties
 ```
+
+**Count these at runtime, not from the config file.** `config/features.php` is
+only the compile-time default. `SettingsHydrationServiceProvider::configureFeatureFlagSettings()`
+overlays every flag from the `settings` table (`feature_flag_<name>`) at boot,
+so the 13 AI gateways that read `false` in the config file are actually **on**
+in the database. The comments in that file also refer to a "Pennant DB store"
+that is not installed — there is no `pennant_features` table, and
+`feature_flag_<name>` in `settings` is the only override that exists.
 
 Most of the product is built and switched off. The client gaps that did exist
 have been closed (below), but **turning the flags on is a business decision, not
@@ -176,7 +188,7 @@ server side before suspecting the client.
 | G7 | Dead code presented as live: `translation_cache`, `AiTranslationService`, `TranslationQuestionsJob`, an unrouted controller | Misleads the next agent |
 | G8 | Locale fields validated by length only; `?filter[language]` unvalidated | Junk locale silently returns empty |
 | G9 | `char()` blank padding, trimmed in 4 places | Fifth caller will forget |
-| — | 36 of 39 feature flags off | Most of the product is dark |
+| — | 23 of 39 feature flags off (16 on) | Whole subsystems are dark |
 
 ### Client — genuinely open
 
