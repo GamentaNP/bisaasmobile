@@ -6,10 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/calculator_controller.dart';
 
-/// Local calculator history (saved calculations from Drift `calculations`
-/// table). Server-side history will replace this when
-/// `GET /calculators/{domain}/{slug}/history` is wired in
-/// (see `MOBILE_API_INTEGRATION_GUIDE.md`).
+/// Calculator history, served by `GET /api/v1/calculators/{domain}/{slug}/history`.
+///
+/// The docblock here used to claim this read the Drift `calculations` table and
+/// that the server route "will be wired in when ready". Both were wrong: the
+/// controller has always called the server, and the `calculations` table has
+/// never been written by any code path. The table is one of five that exist in
+/// the schema with no producer — see
+/// `test/core/storage/unwired_tables_test.dart`, which records why each one is
+/// empty and, for the attempt tables, why filling it would be wrong.
 class CalculatorHistoryScreen extends ConsumerStatefulWidget {
   const CalculatorHistoryScreen({required this.domain, required this.slug, super.key});
   final String domain;
