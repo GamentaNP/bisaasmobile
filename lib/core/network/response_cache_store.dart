@@ -131,8 +131,18 @@ class ResponseCacheStore {
     await _db.delete(_db.cachedResponses).go();
   }
 
-  /// Removes expired-then-stale entries first, then oldest, until [incoming]
-  /// bytes fit inside the budget.
+  /// Removes oldest-first until [incoming] bytes fit inside the budget.
+  ///
+  /// Ordered by `cachedAt` alone, which is deliberate. Expired entries are by
+  /// definition the older ones, so "oldest first" already evicts stale before
+  /// fresh — no separate expiry pass is needed, and adding one would cost a
+  /// second query for no behavioural difference.
+  ///
+  /// With credential-scoped keys the budget is shared across the accounts that
+  /// have used this install. That is acceptable: the alternative is a
+  /// per-account budget, and an unbounded number of accounts would multiply the
+  /// ceiling by a number nobody chose. Eviction is oldest-first, so switching
+  /// accounts does not cost the new account its catalog.
   Future<void> _evictToBudget(int incoming) async {
     final total = await _totalBytes();
     final target = ResponseCachePolicy.maxTotalBytes - incoming;
