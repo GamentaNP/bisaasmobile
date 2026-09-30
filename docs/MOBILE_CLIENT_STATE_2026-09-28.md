@@ -188,7 +188,7 @@ server side before suspecting the client.
 | G7 | Dead code presented as live: `translation_cache`, `AiTranslationService`, `TranslationQuestionsJob`, an unrouted controller | Misleads the next agent |
 | G8 | Locale fields validated by length only; `?filter[language]` unvalidated | Junk locale silently returns empty |
 | G9 | `char()` blank padding, trimmed in 4 places | Fifth caller will forget |
-| C1 | `quiz_question_syllabus_node` has **0 rows** across **1,279** syllabus nodes, while `quiz_questions` holds **10,629** questions | The syllabus tree renders but almost nothing is practiseable. The single largest gap in the system: the questions exist and the tree exists, and nothing links them. |
+| C1 | `quiz_question_syllabus_node` has **0 rows** across **1,279** syllabus nodes, while `quiz_questions` holds **10,629** questions | The syllabus tree renders but almost nothing is practiseable. **Fully diagnosed 2026-09-30** — see `docs/SYLLABUS_QUESTION_MAPPING_GAP_2026-09-30.md` for the four root causes, the exact `category.name = node.title` join that works, and the fuzzy-matching rules that look better but are wrong. |
 | C2 | `library_files` and books are both empty | Both readers are now gated off the entry points, so this is honest rather than broken — but the features stay dark until content is seeded. |
 | — | 23 of 39 feature flags off (16 on) | Whole subsystems are dark |
 
