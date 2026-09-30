@@ -51,8 +51,9 @@ void main() {
   });
 
   test('the scripts we ship translations for have a bundled font', () {
-    // The picker offers English, Nepali (Devanagari) and Hindi (Devanagari),
-    // and the universal chain additionally covers Bengali and Tamil. These must
+    // The picker offers English, Nepali (Devanagari) and Hindi (Devanagari).
+    // The universal chain additionally covers Bengali, Tamil, Telugu and Arabic,
+    // because content can be in any of them regardless of UI locale. These must
     // not depend on which fonts the host device happens to have installed.
     const required = {
       AppScript.latin,
@@ -61,13 +62,38 @@ void main() {
       AppScript.tamil,
       AppScript.telugu,
       AppScript.arabic,
-      AppScript.han,
     };
     for (final script in required) {
       expect(
         ScriptFonts.forScript(script),
         isNotEmpty,
         reason: 'no font chain at all for ${script.name}',
+      );
+    }
+  });
+
+  test('no bundled font costs more than it earns in download size', () {
+    // A full CJK face is ~10 MB and was 93.5% of the font payload for a language
+    // the picker does not offer. The guard is deliberately simple: every
+    // bundled face must stay under 1 MB, which is generous for the Indic and
+    // Arabic faces we ship and impossible for an unsubsetted CJK font.
+    final declared = RegExp(r'^\s*-\s*family:\s*(\S+)\s*$', multiLine: true)
+        .allMatches(File('pubspec.yaml').readAsStringSync())
+        .map((m) => m.group(1)!)
+        .where((f) => f.startsWith('Noto'))
+        .toList();
+
+    const oneMb = 1024 * 1024;
+    for (final family in declared) {
+      final path = File('assets/fonts/noto/$family-Regular.ttf');
+      if (!path.existsSync()) continue;
+      expect(
+        path.lengthSync(),
+        lessThan(oneMb),
+        reason: '$family is '
+            '${(path.lengthSync() / oneMb).toStringAsFixed(1)} MB. Subset it '
+            'before bundling; do not ship a full CJK face for a language the '
+            'picker does not offer.',
       );
     }
   });

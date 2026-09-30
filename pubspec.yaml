@@ -127,6 +127,17 @@ flutter:
     # Family names match script_fonts.dart one-for-one. Only Regular is bundled:
     # Flutter synthesises other weights, and shipping 5 weights x 6 scripts would
     # add ~20 MB to the bundle for no legibility gain.
+    #
+    ## CJK is deliberately NOT bundled
+    #
+    # A full Noto Sans SC is 10.1 MB, which was 93.5% of the entire font payload
+    # and 12% of what a single arm64 device downloads. `zh` is not in the language
+    # picker and the server has no `zh` locale or translated questions, so every
+    # user was paying 10 MB for glyphs nothing in the product can produce. Han
+    # resolves to the platform font, which both Android and iOS ship.
+    #
+    # Re-add it only alongside a real `zh` translation set, and subset the face
+    # first - a 10 MB font for a 3-language launch is not defensible.
     - family: NotoSansDevanagari
       fonts:
         - asset: assets/fonts/noto/NotoSansDevanagari-Regular.ttf
@@ -146,10 +157,6 @@ flutter:
     - family: NotoSansArabic
       fonts:
         - asset: assets/fonts/noto/NotoSansArabic-Regular.ttf
-          weight: 400
-    - family: NotoSansSC
-      fonts:
-        - asset: assets/fonts/noto/NotoSansSC-Regular.ttf
           weight: 400
 
 flutter_launcher_icons:

@@ -395,13 +395,21 @@ void main() {
       });
     }
 
-    test('leads with the script-specific face for a non-Latin locale', () {
-      final ne = AppTheme.forLocale(Brightness.light, languageCode: 'ne');
-      expect(ne.textTheme.bodyLarge!.fontFamily, 'NotoSansDevanagari');
+      test('leads with the script-specific face for a non-Latin locale', () {
+        final ne = AppTheme.forLocale(Brightness.light, languageCode: 'ne');
+        expect(ne.textTheme.bodyLarge!.fontFamily, 'NotoSansDevanagari');
 
-      final zh = AppTheme.forLocale(Brightness.light, languageCode: 'zh');
-      expect(zh.textTheme.bodyLarge!.fontFamily, 'NotoSansSC');
-    });
+        // zh is not a shipped language and CJK is not bundled, so a zh locale
+        // must degrade to the platform font rather than name a face we do not
+        // ship. See the note on ScriptFonts.universalChain.
+        final zh = AppTheme.forLocale(Brightness.light, languageCode: 'zh');
+        expect(
+          ScriptFonts.forScript(AppScript.han),
+          ['sans-serif'],
+          reason: 'Han must resolve to the platform, not an unbundled family',
+        );
+        expect(zh.textTheme.bodyLarge!.fontFamilyFallback, contains('sans-serif'));
+      });
 
     test('leads with the branded face for a Latin locale', () {
       final en = AppTheme.forLocale(Brightness.light, languageCode: 'en');

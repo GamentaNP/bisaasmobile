@@ -153,15 +153,19 @@ abstract final class ScriptFonts {
   /// `forScript` against the declared families, so adding a face here without
   /// bundling it fails the build.
   ///
-  /// Scripts with no bundled face (Thai, Lao, Khmer, Georgian, Armenian,
-  /// Ethiopic, Tibetan, Hangul, Kana) deliberately resolve to `sans-serif` only.
-  /// They are not in the shipped language set, and Android/iOS both ship these
-  /// scripts, so the platform is a genuine fallback rather than a gamble. Bundle
-  /// a face first if one of these becomes a shipped language.
+  /// Scripts with no bundled face (CJK, Thai, Lao, Khmer, Georgian, Armenian,
+  /// Ethiopic, Tibetan, Hangul, Kana, Hebrew) deliberately resolve to
+  /// `sans-serif` only. They are not in the shipped language set, and Android/iOS
+  /// both ship these scripts, so the platform is a genuine fallback rather than a
+  /// gamble. Bundle a face first if one of these becomes a shipped language.
+  ///
+  /// CJK is called out because it was measurably not worth it: a full Noto Sans
+  /// SC is 10.1 MB, 93.5% of the font payload and 12% of a single device's
+  /// download, for a language the picker does not offer and the server cannot
+  /// serve. If `zh` ever ships, subset the face before bundling it.
   static const List<String> universalChain = [
     latinFamily,
     'NotoSansDevanagari',
-    'NotoSansSC',
     'NotoSansBengali',
     'NotoSansArabic',
     'NotoSansTamil',
@@ -177,9 +181,8 @@ abstract final class ScriptFonts {
   static List<String> forScript(AppScript script) => switch (script) {
         AppScript.latin => [latinFamily, 'sans-serif'],
         AppScript.devanagari => ['NotoSansDevanagari', latinFamily, 'sans-serif'],
-        // NotoSansTC and NotoSansJP are not bundled; NotoSansSC covers Han and
-        // the platform covers Kana.
-        AppScript.han => ['NotoSansSC', 'sans-serif'],
+        // CJK is not bundled - see the note on [universalChain].
+        AppScript.han => ['sans-serif'],
         AppScript.kana => ['sans-serif'],
         AppScript.hangul => ['sans-serif'],
         // NotoNaskhArabic is not bundled; NotoSansArabic is.
