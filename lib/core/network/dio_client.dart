@@ -19,6 +19,7 @@ import 'install_identity_interceptor.dart';
 import 'logging_interceptor.dart';
 import '../connectivity/api_reachability.dart';
 import 'refresh_interceptor.dart';
+import 'request_coalescer.dart';
 import 'request_id_interceptor.dart';
 import 'retry_interceptor.dart';
 
@@ -56,6 +57,13 @@ class DioClient {
       RequestIdInterceptor(),
       InstallIdentityInterceptor(),
       DeviceRiskInterceptor(),
+      // Deduplicates identical concurrent GETs. Registered before Auth so the
+      // join happens as early as possible - the whole point is to avoid the
+      // round trip, and every interceptor a request passes through is work we
+      // would rather not repeat. onRequest runs in registration order and
+      // onError/onResponse in reverse, so this does not disturb the 401 chain
+      // documented below.
+      RequestCoalescer(),
       AuthInterceptor(tokens, reachability),
       // Order matters: onError runs in reverse, so a 401 reaches
       // RefreshInterceptor (refresh + replay) before RetryInterceptor sees it,
