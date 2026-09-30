@@ -78,4 +78,41 @@ void main() {
       expect(RemoteImagePolicy.extraHosts, isEmpty);
     });
   });
+
+  group('CachedRemoteImageProvider.forUrl', () {
+    // The provider is the path a `CircleAvatar.backgroundImage` takes, and an
+    // avatar URL is exactly as much a database row as a banner URL is. A
+    // provider constructor cannot return null, so the check has to live in a
+    // factory — an earlier version of the file documented that the class
+    // "returns null when the URL is not allowed" above a constructor that
+    // could not, which would have been a silent bypass of the host check.
+    test('returns a provider for the API host', () {
+      expect(
+        CachedRemoteImageProvider.forUrl('https://$apiHost/storage/avatar.png'),
+        isNotNull,
+      );
+    });
+
+    test('returns null for a host that is not allow-listed', () {
+      // The signal the caller needs in order to draw initials or an icon.
+      expect(
+        CachedRemoteImageProvider.forUrl('https://evil.example/beacon.png'),
+        isNull,
+      );
+    });
+
+    test('returns null for a suffix-spoof of the API host', () {
+      expect(
+        CachedRemoteImageProvider.forUrl('https://$apiHost.attacker.net/x.png'),
+        isNull,
+      );
+    });
+
+    test('returns null for the two classic bypasses', () {
+      expect(CachedRemoteImageProvider.forUrl('javascript:alert(1)'), isNull);
+      expect(CachedRemoteImageProvider.forUrl('data:image/png;base64,AAAA'), isNull);
+      expect(CachedRemoteImageProvider.forUrl(null), isNull);
+      expect(CachedRemoteImageProvider.forUrl(''), isNull);
+    });
+  });
 }

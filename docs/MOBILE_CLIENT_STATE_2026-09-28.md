@@ -197,14 +197,40 @@ The nine calls that remain are exactly the ones that must not be cached —
 with wifi and mobile data both switched off the full 12-track syllabus tree
 still renders.
 
-**Conditional requests are not used, on purpose.** The server advertises an
-ETag on every hot endpoint but answers a matching `If-None-Match` with **200,
-not 304** — checked on `/syllabi`, `/quiz/courses`, `/calculators` and
-`/library/categories`. Sending the header would spend bytes to download the
-same body, so freshness is a client-side TTL and the stale copy is what the user
-sees while a background refresh runs. Fixing the server to honour 304 would cut
-bytes on a metered connection and is worth doing; it is not required for the
-cache to work.
+**Conditional requests: the server honours 304 and this client does not yet use
+them.** An earlier version of this document recorded the opposite — that "the
+server advertises an ETag on every hot endpoint but answers a matching
+`If-None-Match` with **200, not 304** — checked on `/syllabi`, `/quiz/courses`,
+`/calculators` and `/library/categories`". **That was a measurement error and it
+is retracted.** The server answers 304:
+
+```
+/syllabi       If-None-Match: "018e15ad…"  ->  304 Not Modified
+/quiz/courses  If-None-Match: "d5b1c6ee…"  ->  304 Not Modified
+/app/config    If-None-Match: "fefdf0a1…"  ->  304 Not Modified
+```
+
+`ApiCacheHeaders` implements it and `tests/Feature/Api/V1/ApiCacheHeadersTest.php`
+now pins 304 for all four launch endpoints. The ETag carries its quote
+characters, and **any client that strips them sends a header that can never
+match** — which looks indistinguishable from a server that ignores it. Two ways
+of losing the quotes, both observed while re-checking this: PowerShell mangles
+embedded `"` in a native `curl -H` argument, and `$cfg | curl -K -` pipes
+UTF-16 so no header is sent at all. Use a `curl --config` file on disk.
+
+So the client TTL below stands on its own merits and not on a server defect: a
+TTL is what serves a student with no connection, and a 304 cannot. Conditional
+revalidation is available as a byte-saving addition, not as the thing the cache
+depends on.
+
+**Response compression was the bigger miss.** With `Accept-Encoding: gzip,
+deflate, br` offered the API returned no `Content-Encoding` at all — 796 B,
+2 338 B, 578 B, uncompressed. `public/.htaccess` already carried the correct
+`AddOutputFilterByType` rule and it was inert because the module was not loaded.
+`CompressApiResponse` now does it in the application, so it holds on Apache,
+nginx and php-fpm and is covered by a test. `/quiz/courses` went 2 338 B → 912 B
+live. That is worth more than the entire disk cache below, on the requests the
+cache deliberately does not touch.
 
 | Case | Network | User sees |
 |---|---|---|
@@ -213,14 +239,46 @@ cache to work.
 | stale | unreachable | cache, no request, no error |
 | absent | any | a real request |
 
-The device database is unencrypted, so the allowlist is a **privacy
-boundary, not a performance setting**: `/me`, `/economy`, `/store`,
-`/quiz/attempts`, `/social`, `/rewards`, `/donations` and every mutation are
-excluded, and a second denylist sits in front of the allowlist so a future entry
-cannot capture a wallet. The cache is drained and cleared on sign-out. Server
-images get the same treatment: `RemoteImagePolicy` refuses any host but the API
-host, because a database row naming a third-party host would turn every app
-launch into a beacon to it.
+The device database is unencrypted, so the allowlist is a **privacy boundary,
+not a performance setting**. Two mechanisms, and both are required:
+
+1. An **allowlist**. `/me`, `/economy`, `/store`, `/quiz/attempts`, `/social`,
+   `/rewards`, `/donations` and every mutation are excluded, and a second
+   denylist sits in front of it so a future entry cannot capture a wallet.
+2. A **credential-scoped key**. SHA-256 of the `Authorization` header, truncated
+   — a hash, because the key is persisted and a bearer token on disk is a
+   credential at rest.
+
+The second was not there originally, and the allowlist is **not purely public**.
+`/library/categories` counts files through `applyVisibleTo($query, $user)` and
+`/library/trending` ranks through the same visibility, so both are functions of
+the signed-in principal. They are declared `user-scoped` in
+`ResponseCachePolicy`, they get a 5-minute TTL rather than hours so an unlock
+shows up promptly, and `filter[exclude_seen]` is refused by name because it makes
+`/syllabi/{v}/nodes/{n}/questions` per-principal while the path stays under a
+public 12-hour prefix. A test asserts every allow-listed path is either
+user-invariant on the server or declared user-scoped, so the docblock can no
+longer be the only thing asserting it.
+
+`AuthInterceptor` must therefore run **before** the cache — it is what sets the
+header the key hashes. The cache sits after it and before the coalescer. (An
+earlier version claimed the cache "must be first"; Dio gives each interceptor
+its own handler, so a later one may resolve it. The one-shot rule is per
+handler, not per chain.)
+
+**`GET /app/config` is no longer on the first-frame path.** It used to be awaited
+inside `bootstrap()`, before `runApp`, so a 578-byte request and its 15-second
+connect timeout stood between process start and the first pixel — and
+`ResponseCachePolicy` forbids caching that path, so the cache could never have
+covered the one call that gated the launch. It is now fetched by
+`appConfigProvider` from a post-frame callback; `applyAppConfig` latches the
+version floor into `AppUpdateGate`, which `ForceUpdateGate` already listens to.
+
+The cache is drained and cleared on sign-out, though the credential-scoped key
+means a missed drain is no longer a disclosure — it is only stale bytes.
+Server images get the same host treatment: `RemoteImagePolicy` refuses any host
+but the API host, because a database row naming a third-party host would turn
+every app launch into a beacon to it.
 
 ### Tables that are empty on purpose
 

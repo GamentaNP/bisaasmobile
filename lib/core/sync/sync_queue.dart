@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,39 +18,94 @@ class SyncQueueService {
   /// constraint on `sync_queue.idempotency_key` dedupes and the server can
   /// dedupe across retries. When omitted, a fresh key is minted per enqueue
   /// (best-effort for fire-once callers).
+  ///
+  /// ## Why [endpoint] is validated here rather than at drain time
+  ///
+  /// `SyncManager` replays rows through the *authenticated* Dio, and Dio honours
+  /// an absolute URL in place of `baseUrl`. A row whose `endpoint` read
+  /// `https://attacker.example/collect` would therefore make this app send the
+  /// signed-in user's bearer token to a third party — `AuthInterceptor` attaches
+  /// it to every request, and the queue is a table, not a trust boundary.
+  ///
+  /// Nothing enqueues today (see `unwired_tables_test.dart`), so this is not
+  /// reachable right now. It is one line away from being, and the whole point of
+  /// an offline queue is that whoever wires it will not read this far down.
+  /// Refuse to store a row that could never be replayed safely.
   Future<int> enqueue({
     required String endpoint,
     String method = 'POST',
     String? payload,
     String? idempotencyKey,
   }) {
+    final violation = validateEndpoint(endpoint);
+    if (violation != null) {
+      throw ArgumentError.value(
+        endpoint,
+        'endpoint',
+        'sync queue refuses $violation. Must be a relative path under the API '
+            'base, e.g. /calculation-snapshots',
+      );
+    }
+
     return _dao.enqueue(
       SyncQueueCompanion(
         endpoint: Value(endpoint),
-        method: Value(method),
+        method: Value(method.toUpperCase()),
         payload: Value(payload),
         idempotencyKey: Value(idempotencyKey ?? _uuid.v4()),
       ),
     );
   }
 
+  /// Why [endpoint] is not replayable, or null when it is.
+  ///
+  /// Static so `SyncManager` can re-check a row on the way out: a row written
+  /// before this rule existed is still on disk, and validating only at enqueue
+  /// would not have caught it.
+  static String? validateEndpoint(String endpoint) {
+    if (endpoint.isEmpty) return 'an empty endpoint';
+    if (endpoint.trim() != endpoint) return 'a path with surrounding whitespace';
+
+    // A scheme, or anything Uri would read as one, means an absolute URL, and
+    // Dio replaces `baseUrl` with it.
+    if (endpoint.contains('://')) return 'an absolute URL';
+    if (Uri.tryParse(endpoint)?.hasScheme ?? false) return 'a URL with a scheme';
+    // Protocol-relative: `//evil.example/x` is host-relative to a browser and is
+    // read as a host by several URL resolvers.
+    if (endpoint.startsWith('//')) return 'a protocol-relative URL';
+    // Must be rooted at the API base.
+    if (!endpoint.startsWith('/')) return 'a path that is not rooted';
+    // Nor able to climb out of it.
+    if (endpoint.contains('..')) return 'a path containing traversal';
+
+    return null;
+  }
+
   /// Offline calculation snapshot, synced on reconnect.
   /// Payload is JSON-encoded `{domain, slug, inputs, outputs, calculated_at}`.
   ///
-  /// Two bugs fixed here. The path was `/v1/calculation-snapshots/sync`, but
+  /// Two bugs fixed here, both found by reading rather than running, because
+  /// nothing calls this yet. The path was `/v1/calculation-snapshots/sync`, but
   /// `ApiConfig.baseUrl` already ends in `/api/v1`, so every drain was posting to
   /// `/api/v1/v1/calculation-snapshots/sync` and getting a **404** — offline
   /// snapshots were silently never synced. And the canonical verb is PUT onto
-  /// the collection (`PUT /calculation-snapshots`, `sync.update`); the
-  /// `/sync` spelling is `sync.transition-alias` (routes/api/v1/calculators.php).
+  /// the collection (`PUT /calculation-snapshots`, `sync.update`); the `/sync`
+  /// spelling is `sync.transition-alias` (routes/api/v1/calculators.php).
+  ///
+  /// The body was `snapshot.toString()`, which for a `Map<String, dynamic>`
+  /// produces Dart literal syntax — `{domain: Civil, inputs: {}}` — with
+  /// unquoted keys. That is not JSON, so the server would 422 it, `bump` would
+  /// retry five times and give up, and the whole thing would be indistinguishable
+  /// from the network being down. `jsonEncode` is the only thing here that
+  /// produces a body the API envelope can be parsed out of.
   Future<int> enqueueSnapshot(Map<String, dynamic> snapshot) => enqueue(
         endpoint: '/calculation-snapshots',
-        payload: snapshot.toString(),
+        payload: jsonEncode(snapshot),
         method: 'PUT',
       );
 
   Future<List<SyncQueueData>> pending() => _dao.pending();
-  Future<void> remove(int id) async => _dao.remove(id);
+  Future<void> remove(int id) => _dao.remove(id);
 
   /// Backoff after a failed attempt — linear-ish, capped under the retry limit.
   Future<void> bump(int id, int attempts) =>

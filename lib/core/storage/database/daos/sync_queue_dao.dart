@@ -21,7 +21,40 @@ class SyncQueueDao {
         .get();
   }
 
-  Future<int> enqueue(SyncQueueCompanion c) => db.into(db.syncQueue).insert(c);
+  /// Stores [c], collapsing a retry onto the row that is already queued.
+  ///
+  /// Returns the id of the row that now represents this operation — the newly
+  /// inserted one, or the pre-existing one when the `idempotency_key` matched.
+  ///
+  /// This was a plain `insert()`, and the unique constraint on
+  /// `idempotency_key` did not dedupe as `SyncQueueService.enqueue` claimed: it
+  /// *threw*. So the documented behaviour — "pass the same key so a retry
+  /// dedupes" — was an unhandled `SqliteException` instead. The realistic path
+  /// is a user re-tapping "save" while offline, which is precisely the case the
+  /// idempotency key exists for.
+  ///
+  /// `insertOrIgnore` then a re-read, rather than a select-then-insert, so two
+  /// concurrent enqueues of the same key cannot both decide the row is missing.
+  Future<int> enqueue(SyncQueueCompanion c) async {
+    await db
+        .into(db.syncQueue)
+        .insert(c, mode: InsertMode.insertOrIgnore);
+
+    final key = c.idempotencyKey.value;
+    if (key == null) {
+      // No key to resolve, so the newest row is the one just written.
+      final rows = await (db.select(db.syncQueue)
+            ..orderBy([(t) => OrderingTerm.desc(t.id)]))
+          .get();
+      return rows.isEmpty ? 0 : rows.first.id;
+    }
+
+    final row = await (db.select(db.syncQueue)
+          ..where((t) => t.idempotencyKey.equals(key)))
+        .getSingleOrNull();
+
+    return row?.id ?? 0;
+  }
 
   Future<int> remove(int id) =>
       (db.delete(db.syncQueue)..where((t) => t.id.equals(id))).go();

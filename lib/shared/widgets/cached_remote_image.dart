@@ -114,12 +114,35 @@ class CachedRemoteImage extends StatelessWidget {
 }
 
 /// Disk-caching [ImageProvider] for slots that want one, such as
-/// `CircleAvatar.backgroundImage`. Returns null when the URL is not allowed, so
-/// the caller falls back to its own initials or icon.
+/// `CircleAvatar.backgroundImage`.
 ///
 /// A thin subclass of the library's own provider rather than a wrapper: the
 /// `loadImage` key must be the provider instance the library expects, and
 /// delegating with a foreign key is what the naive version gets wrong.
+///
+/// ## Use [forUrl], not the constructor
+///
+/// This class does **not** check [RemoteImagePolicy]. It cannot: a provider
+/// constructor has to return something, and a provider that resolved to a
+/// transparent pixel would look like a layout bug rather than a policy
+/// rejection. So the check lives in the factory below, which returns `null` for
+/// a blocked host and lets the caller fall back to its own initials or icon.
+///
+/// The public constructor exists only because subclassing requires one, and it
+/// is a bypass. Calling it directly reintroduces exactly the beacon
+/// [RemoteImagePolicy] exists to stop, and it will not be caught by a test —
+/// which is why an earlier version of this file carried a docblock promising
+/// "returns null when the URL is not allowed" above a constructor that could
+/// not.
 class CachedRemoteImageProvider extends CachedNetworkImageProvider {
   const CachedRemoteImageProvider(super.url);
+
+  /// A provider for [url], or `null` when [RemoteImagePolicy] rejects it.
+  ///
+  /// This is the entry point to use. `null` is the signal to draw the caller's
+  /// fallback.
+  static ImageProvider? forUrl(String? url) {
+    if (!RemoteImagePolicy.isAllowed(url)) return null;
+    return CachedRemoteImageProvider(url!);
+  }
 }
