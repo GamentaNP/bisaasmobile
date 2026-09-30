@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 
 import '../logging/app_logger.dart';
@@ -56,6 +58,25 @@ class RequestCoalescer extends Interceptor {
   /// The query map is included because several endpoints are distinguished only
   /// by query, and `Accept-Language` is included because a Nepali session and an
   /// English session must never share a body.
+  ///
+  /// ## The credential is part of the identity
+  ///
+  /// This key is also the on-disk response-cache key, and it is *not* safe
+  /// without the credential. Several allow-listed catalog endpoints are
+  /// user-scoped on the server — `GET /library/categories` counts files through
+  /// `applyVisibleTo($query, $user)` and `GET /library/trending` ranks through
+  /// the caller's own visibility — so a body fetched as one account is not the
+  /// body another account should see. Two users behind one install, or one user
+  /// whose token was rotated mid-flight, are the cases that matter.
+  ///
+  /// A *hash* of the `Authorization` header, never the header itself. The key is
+  /// persisted to an unencrypted database, and a raw bearer token written there
+  /// would be a credential at rest. SHA-256 truncated to 16 hex chars is
+  /// 64 bits: ample to keep two accounts apart, useless for recovering a token.
+  ///
+  /// A side benefit worth stating: a sign-in or token rotation changes the
+  /// fingerprint, so entries written under the previous credential become
+  /// unreachable without waiting for the sign-out drain.
   static String keyFor(RequestOptions options) {
     final parts = options.queryParameters.entries
         .map((e) => '${e.key}=${e.value}')
@@ -63,7 +84,18 @@ class RequestCoalescer extends Interceptor {
       ..sort();
     final language = options.headers['Accept-Language'] ?? '';
     return '${options.method.toUpperCase()} ${options.path}'
-        '${parts.isEmpty ? '' : '?${parts.join('&')}'}|$language';
+        '${parts.isEmpty ? '' : '?${parts.join('&')}'}'
+        '|$language|${credentialFingerprint(options)}';
+  }
+
+  /// A non-reversible stand-in for the caller's credential.
+  ///
+  /// `'anon'` for an unauthenticated request, which keeps the public catalog
+  /// under one key exactly as before.
+  static String credentialFingerprint(RequestOptions options) {
+    final auth = options.headers['Authorization'];
+    if (auth is! String || auth.isEmpty) return 'anon';
+    return sha256.convert(utf8.encode(auth)).toString().substring(0, 16);
   }
 
   @override

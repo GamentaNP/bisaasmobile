@@ -24,6 +24,10 @@ void main() {
   late Dio dio;
   late ResponseCacheInterceptor cacheInterceptor;
 
+  /// Mirrors `AuthInterceptor`: the cache key is a hash of the bearer token, so
+  /// the header has to exist before the cache reads it. Set `token` to sign in.
+  String? token;
+
   setUp(() {
     db = AppDatabase(NativeDatabase.memory());
     store = ResponseCacheStore(db);
@@ -41,16 +45,34 @@ void main() {
     );
     dio = Dio(BaseOptions(baseUrl: 'https://example.test/api/v1'))
       ..httpClientAdapter = adapter
-      // Order matches production (dio_client.dart): the cache must be first,
-      // because its lookup is async and it short-circuits with resolve().
-      ..interceptors.addAll([cacheInterceptor, RequestCoalescer()]);
+      // Order matches production (dio_client.dart): auth, then the cache, then
+      // the coalescer. Auth must precede the cache or the credential is missing
+      // from the key; the cache must precede the coalescer or a hit re-enters a
+      // round trip that does not exist.
+      ..interceptors.addAll([
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+            handler.next(options);
+          },
+        ),
+        cacheInterceptor,
+        RequestCoalescer(),
+      ]);
   });
 
   tearDown(() async => db.close());
 
-  String keyFor(String path) => RequestCoalescer.keyFor(
-        RequestOptions(path: path, method: 'GET'),
+  String keyFor(String path, {String? as}) => RequestCoalescer.keyFor(
+        RequestOptions(
+          path: path,
+          method: 'GET',
+          headers: as == null ? null : {'Authorization': 'Bearer $as'},
+        ),
       );
+
 
   group('freshness', () {
     test('a cold request goes to the network and is then served from cache', () async {
@@ -175,6 +197,127 @@ void main() {
       expect(await db.select(db.cachedResponses).get(), isEmpty);
     });
 
+    test('one account never reads another account cached body', () async {
+      // `/library/categories` counts files through `applyVisibleTo($query, $user)`
+      // on the server, so the body is a function of the principal. The entry
+      // written by account A must be unreachable by account B on a shared
+      // device, even within the TTL.
+      adapter.body = {
+        'success': true,
+        'data': [
+          {'name': 'Structural', 'files_count': 12},
+        ],
+      };
+
+      token = 'account-a-token';
+      await dio.get<dynamic>('/library/categories');
+      await cacheInterceptor.whenIdle();
+      expect(adapter.hits, hasLength(1));
+
+      // Same account: served from cache.
+      final mine = await dio.get<dynamic>('/library/categories');
+      expect(mine.extra['from_cache'], isTrue);
+      expect(adapter.hits, hasLength(1));
+
+      // Different account: must go to the network, not read A's entry.
+      token = 'account-b-token';
+      adapter.body = {
+        'success': true,
+        'data': [
+          {'name': 'Structural', 'files_count': 3},
+        ],
+      };
+      final theirs = await dio.get<dynamic>('/library/categories');
+
+      expect(adapter.hits, hasLength(2), reason: 'B must not have read A body');
+      expect(theirs.extra['from_cache'], isNull);
+      expect(
+        (theirs.data! as Map<String, dynamic>)['data'],
+        equals([
+          {'name': 'Structural', 'files_count': 3},
+        ]),
+      );
+
+      // And B now has their own entry, not a shared one.
+      await cacheInterceptor.whenIdle();
+      final keys = (await db.select(db.cachedResponses).get())
+          .map((r) => r.cacheKey)
+          .toSet();
+      expect(keys, hasLength(2), reason: 'the two accounts must not share a key');
+    });
+
+    test('the key carries a hash of the credential, never the token itself', () async {
+      final options = RequestOptions(
+        path: '/library/categories',
+        method: 'GET',
+        headers: {'Authorization': 'Bearer secret-token-value'},
+      );
+
+      final key = RequestCoalescer.keyFor(options);
+
+      expect(key, isNot(contains('secret-token-value')));
+      expect(key, contains(RequestCoalescer.credentialFingerprint(options)));
+      // Stable across calls, so a refresh does not orphan its own entry.
+      expect(RequestCoalescer.keyFor(options), key);
+    });
+
+    test('an anonymous request is keyed apart from any signed-in one', () {
+      final anon = RequestOptions(path: '/syllabi', method: 'GET');
+      final authed = RequestOptions(
+        path: '/syllabi',
+        method: 'GET',
+        headers: {'Authorization': 'Bearer x'},
+      );
+
+      expect(RequestCoalescer.credentialFingerprint(anon), 'anon');
+      expect(RequestCoalescer.keyFor(anon), isNot(equals(RequestCoalescer.keyFor(authed))));
+    });
+
+    test('a token rotation retires the previous entry instead of reusing it',
+        () async {
+      adapter.body = {'success': true, 'data': 'a'};
+      token = 'first-token';
+      await dio.get<dynamic>('/syllabi');
+      await cacheInterceptor.whenIdle();
+
+      token = 'rotated-token';
+      await dio.get<dynamic>('/syllabi');
+
+      expect(
+        adapter.hits,
+        hasLength(2),
+        reason: 'a new credential must not read the old credential entry',
+      );
+    });
+
+    test('a user-varying query parameter is refused even on a public path', () {
+      // `/syllabi/{v}/nodes/{n}/questions?filter[exclude_seen]=true` drops what
+      // the caller has already answered, so the body is per-principal while the
+      // path sits under a public 12h prefix.
+      for (final param in const ['filter[exclude_seen]', 'exclude_seen']) {
+        expect(
+          ResponseCachePolicy.isEligible(
+            RequestOptions(
+              path: '/syllabi/abc/nodes/1/questions',
+              method: 'GET',
+              queryParameters: {param: 'true'},
+            ),
+          ),
+          isFalse,
+          reason: '$param makes the body user-specific',
+        );
+      }
+
+      // The same path without it stays cacheable.
+      expect(
+        ResponseCachePolicy.isEligible(
+          RequestOptions(path: '/syllabi/abc/nodes/1/questions', method: 'GET'),
+        ),
+        isTrue,
+      );
+    });
+
+
       test('a path that merely starts with an allowlisted name is not captured', () async {
         // /syllabiXYZ must not be captured by the /syllabi rule.
         expect(ResponseCachePolicy.freshnessFor('/syllabiXYZ'), isNull);
@@ -241,6 +384,79 @@ void main() {
       expect(ResponseCachePolicy.freshnessFor('/library/categories'), isNotNull);
     });
   });
+
+  group('allowlist is honest about which bodies are user-invariant', () {
+    // The allowlist used to be documented as "public payloads only, nothing
+    // that returns PII", and that was false for two entries: the server filters
+    // both library endpoints through the caller's own visibility. The docblock
+    // was the only enforcement, so this turns the claim into an invariant —
+    // a path that is user-scoped must be declared user-scoped, and a path that
+    // is NOT declared user-scoped must not be one the server varies by user.
+    test('every allow-listed path is either public or explicitly user-scoped',
+        () async {
+      const allowListed = [
+        '/syllabi',
+        '/syllabi/abc/tree',
+        '/quiz/courses',
+        '/quiz/courses/1/categories',
+        '/calculators',
+        '/books',
+        '/books/some-slug',
+        '/library/categories',
+        '/library/trending',
+      ];
+
+      for (final path in allowListed) {
+        expect(
+          ResponseCachePolicy.freshnessFor(path),
+          isNotNull,
+          reason: '$path is expected to be cached',
+        );
+      }
+    });
+
+    test('the two endpoints the server varies by user are declared user-scoped',
+        () {
+      // Verified on the server: LibraryApiController::categories() counts files
+      // through applyVisibleTo($query, $user); trending() ranks through the same
+      // visibility. Both return 401 unauthenticated.
+      expect(ResponseCachePolicy.isUserScoped('/library/categories'), isTrue);
+      expect(ResponseCachePolicy.isUserScoped('/library/trending'), isTrue);
+    });
+
+    test('the endpoints verified user-invariant are not declared user-scoped', () {
+      // Verified on the server: none of these read $request->user() on their
+      // hot path, and SyllabusCatalogController::tree() is served from a
+      // tenant-keyed cache.
+      for (final path in const [
+        '/syllabi',
+        '/syllabi/abc/tree',
+        '/quiz/courses',
+        '/calculators',
+        '/books',
+      ]) {
+        expect(
+          ResponseCachePolicy.isUserScoped(path),
+          isFalse,
+          reason: '$path is user-invariant; a short TTL would be wasted caution',
+        );
+      }
+    });
+
+    test('a user-scoped entry gets a TTL short enough to notice an entitlement',
+        () {
+      // A 12h TTL on `/library/categories` meant an unlock or a purchase could
+      // take half a day to appear. The bound below is the contract.
+      for (final path in const ['/library/categories', '/library/trending']) {
+        expect(
+          ResponseCachePolicy.freshnessFor(path),
+          lessThanOrEqualTo(const Duration(minutes: 15)),
+          reason: '$path must not be cached for hours',
+        );
+      }
+    });
+  });
+
 
   group('store hygiene', () {
     test('an entry from a different payload version is discarded, not misread',

@@ -23,21 +23,25 @@ import 'response_cache_store.dart';
 /// gets the tree immediately rather than a spinner for 800 ms, and is corrected
 /// a moment later without being interrupted.
 ///
-/// ## Why this must be the FIRST interceptor
+/// ## Where this sits in the chain
 ///
-/// A cache lookup is asynchronous. `RequestInterceptorHandler` is a one-shot:
-/// once any interceptor has called `next()`, that handler is spent, and calling
-/// `resolve()` on it later is a double-settle that deadlocks the request.
+/// Registered *after* `AuthInterceptor` and *before* `RequestCoalescer`.
 ///
-/// `InstallIdentityInterceptor` already does an async `onRequest` (via
-/// `unawaited`), which works only because it never settles the handler itself.
-/// This interceptor genuinely needs to short-circuit, so it must be registered
-/// first: its `resolve()` is then the first and only settle of that handler, and
-/// Dio runs the response chain from there.
+/// After auth, because the on-disk key is a hash of the bearer token
+/// ([RequestCoalescer.keyFor]). Ahead of auth the header is not yet set, every
+/// signed-in request would hash as `anon`, and one account's user-scoped catalog
+/// would be served to the next — the exact disclosure the credential-scoped key
+/// exists to prevent.
 ///
-/// A consequence worth stating: a cache hit never reaches `RequestCoalescer`.
-/// That is correct and cheap — there is no round trip to deduplicate — and it is
-/// why the coalescer stays behind this.
+/// Before the coalescer, because a cache hit means there is no round trip left
+/// to deduplicate.
+///
+/// A cache lookup is asynchronous and this interceptor genuinely needs to
+/// short-circuit with `handler.resolve()`. That is safe from any position: Dio
+/// hands each interceptor its own `RequestInterceptorHandler`, and the
+/// one-shot rule is per handler — calling `next()` and then `resolve()` on the
+/// *same* handler is the double-settle that deadlocks. A later interceptor
+/// resolving its own handler is the normal way to bypass the network.
 ///
 /// ## Why reachability decides, and only reachability
 ///
@@ -48,11 +52,16 @@ import 'response_cache_store.dart';
 /// It starts optimistic, which is the right bias: a first-run device with no
 /// evidence yet should still try the network rather than serve nothing.
 ///
-/// ## Why this cannot serve a PII response
+/// ## Why this cannot serve one user another's response
 ///
-/// [ResponseCachePolicy] is an allowlist. `/me`, `/economy`, `/quiz/attempts`
-/// and every mutation are excluded, so nothing reaches this interceptor that
-/// must not be persisted.
+/// Two independent reasons, and both are required.
+///
+///  1. [ResponseCachePolicy] is an allowlist. `/me`, `/economy`,
+///     `/quiz/attempts` and every mutation are excluded, so nothing reaches this
+///     interceptor that must not be persisted at all.
+///  2. The key carries a hash of the credential, so the two library endpoints
+///     whose bodies genuinely *are* per-principal — `/library/categories` and
+///     `/library/trending` — cannot be read across accounts.
 class ResponseCacheInterceptor extends Interceptor {
   ResponseCacheInterceptor({
     required ResponseCacheStore store,
@@ -174,19 +183,29 @@ class ResponseCacheInterceptor extends Interceptor {
   ///
   /// Reuses the TTL the policy already decided, so a refresh cannot silently
   /// extend an entry's life beyond what a normal fetch would grant.
+  ///
+  /// The credential is forwarded. It has to be: the entry this replaces was
+  /// written under a key derived from the caller's bearer token, and for the two
+  /// user-scoped library endpoints the body is *only* correct for that
+  /// principal. Dropping `Authorization` here would make every background
+  /// revalidation of those two a 401, so the entry would sit stale until the
+  /// store's 14-day horizon deleted it.
   void _revalidate(String key, RequestOptions original) {
     if (!_refreshing.add(key)) return;
 
     unawaited(() async {
       try {
+        final authorization = original.headers['Authorization'];
         final response = await _revalidator.get<dynamic>(
           original.path,
           queryParameters: original.queryParameters.isEmpty
               ? null
               : original.queryParameters,
           options: Options(
-            headers: {
+            headers: <String, dynamic>{
               'Accept': 'application/json',
+              if (authorization is String && authorization.isNotEmpty)
+                'Authorization': authorization,
               if (original.headers['Accept-Language'] case final String lang)
                 'Accept-Language': lang,
             },

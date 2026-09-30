@@ -112,6 +112,44 @@ void main() {
   });
 
   group('safety properties', () {
+    test('a follower with a different credential is not given the leader body',
+        () async {
+      // Sign-out mid-flight: A's `/library/categories` is in the air when the
+      // app signs in as B and asks for the same path. The body is
+      // user-scoped on the server, so joining the leader would hand B A's file
+      // counts. The credential is part of the key, so this is two requests.
+      final a = dio.get<dynamic>(
+        '/library/categories',
+        options: Options(headers: {'Authorization': 'Bearer account-a'}),
+      );
+      final b = dio.get<dynamic>(
+        '/library/categories',
+        options: Options(headers: {'Authorization': 'Bearer account-b'}),
+      );
+
+      final responses = await Future.wait([a, b]);
+
+      expect(adapter.hits, hasLength(2));
+      for (final response in responses) {
+        expect(response.statusCode, 200);
+      }
+    });
+
+    test('a follower with the same credential is coalesced', () async {
+      await Future.wait([
+        dio.get<dynamic>(
+          '/library/categories',
+          options: Options(headers: {'Authorization': 'Bearer same'}),
+        ),
+        dio.get<dynamic>(
+          '/library/categories',
+          options: Options(headers: {'Authorization': 'Bearer same'}),
+        ),
+      ]);
+
+      expect(adapter.hits, hasLength(1));
+    });
+
     test('POST is never coalesced - two buyers must create two orders', () async {
       await Future.wait([
         dio.post<dynamic>('/economy/shop/purchase', data: {'sku': 'x'}),

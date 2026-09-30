@@ -95,17 +95,26 @@ class DioClient {
           );
 
     dio.interceptors.addAll([
-      // Serves a cached body first and revalidates behind the user.
-      //
-      // MUST be first: its cache lookup is asynchronous and it short-circuits
-      // with handler.resolve(), so no earlier interceptor may have already
-      // spent the handler with next(). See ResponseCacheInterceptor.
-      ?cacheInterceptor,
       RequestIdInterceptor(),
       InstallIdentityInterceptor(),
       DeviceRiskInterceptor(),
-      RequestCoalescer(),
+      // Sets `Authorization` (and X-Device-Name) before the next interceptor
+      // runs, which is what lets the cache below key on the caller's credential
+      // rather than treating every signed-in user as the same reader.
       AuthInterceptor(tokens, reachability),
+      // Serves a cached body first and revalidates behind the user.
+      //
+      // MUST sit after AuthInterceptor and before RequestCoalescer:
+      //   * after auth, because the on-disk cache key is a hash of the bearer
+      //     token — see RequestCoalescer.keyFor. Ahead of auth the header is
+      //     absent, every signed-in request would hash as 'anon', and one
+      //     account's user-scoped catalog would be served to the next.
+      //   * before the coalescer, because a cache hit means there is no round
+      //     trip left to deduplicate.
+      // It may short-circuit with handler.resolve() from any position: Dio hands
+      // each interceptor its own handler, so resolving a later one is normal.
+      ?cacheInterceptor,
+      RequestCoalescer(),
       // Order matters: onError runs in reverse, so a 401 reaches
       // RefreshInterceptor (refresh + replay) before RetryInterceptor sees it,
       // and AuthInterceptor maps the final error to ApiException last.

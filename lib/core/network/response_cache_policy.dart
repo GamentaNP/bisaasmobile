@@ -19,23 +19,39 @@ import 'package:dio/dio.dart';
 ///   * `/social/*` — referral codes and share links
 ///   * anything that is not a GET
 ///
-/// ## Why the TTLs differ
+/// ## Not all of these are actually user-invariant
 ///
-/// A syllabus tree changes when the exam authority publishes a revision, and
-/// the server already caches that payload for 24h keyed on `structure_hash`.
-/// A calculator catalog changes when CivilCal ships one. Question *counts*
-/// change constantly, so those get a short TTL and are treated as advisory.
+/// Two entries below are **not** the same body for every caller:
+/// `LibraryApiController::categories()` counts files through
+/// `applyVisibleTo($query, $user)` and `trending()` ranks through the caller's
+/// own visibility, so both are functions of the signed-in principal. They are
+/// cacheable — the cache key is a hash of the bearer token, so two accounts can
+/// never read each other's entry — but they get a minutes-long TTL instead of
+/// hours, because an entitlement granted mid-session must show up promptly and a
+/// revoked one must disappear promptly.
 ///
-/// None of these can be made conditional: the server advertises ETags but
-/// answers a matching `If-None-Match` with 200, not 304. So freshness is a
-/// client-side deadline, and the stale copy is what the user sees while a
-/// background refresh runs.
+/// Every other entry is verified user-invariant on the server:
+/// `SyllabusCatalogController` and `QuizCourseApiController` read no principal
+/// on those paths, and `tree()` is served from a tenant-keyed cache.
+///
+/// ## The parameter trap
+///
+/// A prefix entry covers the whole subtree, so `/syllabi` also covers
+/// `/syllabi/{v}/nodes/{n}/questions` — which *is* user-scoped when called with
+/// `filter[exclude_seen]=true`, because it drops what the caller has already
+/// answered. A path cannot express that, so the parameter is excluded by name
+/// in [isEligible] instead.
 abstract final class ResponseCachePolicy {
   const ResponseCachePolicy._();
 
-  /// Bumped when the meaning of a cached payload changes. A mismatch makes the
-  /// entry invalid rather than being silently reinterpreted.
-  static const schemaVersion = '1';
+  /// Bumped when the meaning of a cached payload changes, or when the key
+  /// derivation changes. A mismatch makes the entry invalid rather than being
+  /// silently reinterpreted.
+  ///
+  /// v2 adds the credential fingerprint to the key. Every v1 entry was written
+  /// under a key that could not distinguish one signed-in user from another, so
+  /// none of them may survive.
+  static const schemaVersion = '2';
 
   /// Total bytes the cache may occupy. Generous for the catalog set this app
   /// actually caches, and small enough that a runaway server cannot fill a
@@ -47,11 +63,25 @@ abstract final class ResponseCachePolicy {
   /// under this.
   static const int maxEntryBytes = 512 * 1024;
 
-  /// Path prefix -> freshness window.
+  /// Path prefix -> freshness window, for bodies that are identical for every
+  /// caller.
   ///
-  /// Matched longest-prefix-first so `/syllabi/x/tree` can differ from
-  /// `/syllabi`. Paths are relative to `/api/v1`, exactly as `ApiConfig` builds
+  /// Matched longest-prefix-first so a more specific entry can override a
+  /// broader one. Paths are relative to `/api/v1`, exactly as `ApiConfig` builds
   /// them, and are compared case-sensitively because the server's routes are.
+  ///
+  /// ## Why the TTLs differ
+  ///
+  /// A syllabus tree changes when the exam authority publishes a revision, and
+  /// the server already caches that payload for 24h keyed on `structure_hash`.
+  /// A calculator catalog changes when CivilCal ships one. So these are long.
+  ///
+  /// Freshness here is a client-side deadline, and the stale copy is what the
+  /// user sees while a background refresh runs. The server *does* answer a
+  /// matching `If-None-Match` with 304 — `ApiCacheHeaders` implements it and
+  /// `tests/Feature/Api/V1/ApiCacheHeadersTest.php` asserts it — so a future
+  /// revision may add conditional revalidation on top of this without changing
+  /// the offline behaviour these TTLs exist for.
   static const Map<String, Duration> _freshness = {
     // The exam tree is the app's centrepiece and the most expensive fetch.
     // 12h matches the server's own 24h structure cache closely enough that a
@@ -63,30 +93,58 @@ abstract final class ResponseCachePolicy {
     '/quiz/courses': Duration(hours: 6),
     '/calculators': Duration(hours: 6),
 
-    // Library categories and the trending shelf. `files` is a paginated search
-    // surface with arbitrary filters, so it is not cached: the key space is
-    // unbounded and every distinct query would be an entry.
-    '/library/categories': Duration(hours: 12),
-    '/library/trending': Duration(hours: 3),
-
     // Books catalog. Same reasoning as courses.
     '/books': Duration(hours: 6),
   };
 
+  /// Path prefix -> freshness window, for bodies that depend on the caller.
+  ///
+  /// These are safe to cache only because the cache key carries a hash of the
+  /// bearer token, so entry-for-account-A is unreachable by account B. Keep it
+  /// that way: adding a path here without a credential-scoped key would be a
+  /// cross-account disclosure.
+  ///
+  /// The TTLs are minutes, not hours. These bodies are functions of what the
+  /// principal may see, so an unlock, a purchase or a subscription change has to
+  /// reach the screen promptly — in both directions.
+  static const Map<String, Duration> _userScopedFreshness = {
+    // `withCount(files)` filtered through `applyVisibleTo($query, $user)`.
+    '/library/categories': Duration(minutes: 5),
+    // Ranked through the caller's own visibility in `searchService->trending()`.
+    '/library/trending': Duration(minutes: 5),
+  };
+
+  /// Query parameters that make an otherwise-public response user-specific.
+  ///
+  /// `filter[exclude_seen]=true` tells the server to drop questions the caller
+  /// has already answered, so the body differs per principal while the path
+  /// stays under a public prefix. The path alone cannot express that, so the
+  /// parameter is refused by name.
+  static const Set<String> _userVaryingParams = {
+    'filter[exclude_seen]',
+    'exclude_seen',
+  };
+
+  /// Whether [path] resolves to a body that depends on the signed-in caller.
+  static bool isUserScoped(String path) => _longestMatch(path, _userScopedFreshness) != null;
+
   /// Freshness for [path], or null when the path must not be cached.
   static Duration? freshnessFor(String path) {
     if (_isNeverCacheable(path)) return null;
+    return _longestMatch(path, _freshness) ?? _longestMatch(path, _userScopedFreshness);
+  }
+
+  /// The TTL of the longest matching prefix across both maps.
+  static Duration? _longestMatch(String path, Map<String, Duration> table) {
     var bestPrefix = '';
-    var bestTtl = Duration.zero;
-    var matched = false;
-    for (final entry in _freshness.entries) {
+    Duration? bestTtl;
+    for (final entry in table.entries) {
       if (_matches(path, entry.key) && entry.key.length > bestPrefix.length) {
         bestPrefix = entry.key;
         bestTtl = entry.value;
-        matched = true;
       }
     }
-    return matched ? bestTtl : null;
+    return bestTtl;
   }
 
   /// Whether [options] is eligible at all, ignoring the allowlist.
@@ -100,6 +158,12 @@ abstract final class ResponseCachePolicy {
     if (options.extra['skipAuthRefresh'] == true) return false;
     // A response we could not interpret is not worth persisting.
     if (options.responseType != ResponseType.json) return false;
+    // A user-varying parameter makes the body per-principal even on a public
+    // path, and the key cannot tell two principals apart for an anonymous
+    // caller who set it. Refuse rather than guess.
+    for (final param in options.queryParameters.keys) {
+      if (_userVaryingParams.contains(param)) return false;
+    }
     return freshnessFor(options.path) != null;
   }
 
