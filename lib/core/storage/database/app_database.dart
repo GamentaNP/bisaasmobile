@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import 'tables/attempts_table.dart';
 import 'tables/calculations_table.dart';
+import 'tables/cached_responses_table.dart';
 import 'tables/courses_table.dart';
 import 'tables/downloads_table.dart';
 import 'tables/questions_table.dart';
@@ -14,7 +15,7 @@ import 'tables/sync_queue_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Questions, Attempts, Courses, Calculations, SyncQueue, QuizAttempts, Downloads])
+@DriftDatabase(tables: [Questions, Attempts, Courses, Calculations, SyncQueue, QuizAttempts, Downloads, CachedResponses])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? _openConnection());
@@ -42,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   factory AppDatabase.instance() => _instance ??= AppDatabase();
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -75,6 +76,24 @@ class AppDatabase extends _$AppDatabase {
             // replay via ApiCacheHeaders is the only cache. Devices that
             // created it under v2 drop it here; fresh installs never had it.
             await customStatement('DROP TABLE IF EXISTS cached_responses');
+          }
+
+          if (from < 4) {
+            // v4: the response-body cache returns, wired this time.
+            //
+            // v3 dropped it for two reasons, and only the first was real: it
+            // held arbitrary GET payloads on an unencrypted disk, and nothing
+            // ever read it back. The replacement it was dropped for — "HTTP
+            // ETag replay via ApiCacheHeaders is the only cache" — does not
+            // exist on the client, and the server advertises ETags while
+            // answering a matching If-None-Match with 200 rather than 304
+            // (checked on /syllabi, /quiz/courses, /calculators and
+            // /library/categories). So v3 shipped with no cache at all.
+            //
+            // The new table is written only for public catalog reads, behind an
+            // allowlist in ResponseCachePolicy, and is bounded by a byte budget.
+            // PII responses are never written.
+            await m.createTable(cachedResponses);
           }
         },
       );

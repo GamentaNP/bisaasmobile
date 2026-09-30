@@ -21,6 +21,8 @@ import '../connectivity/api_reachability.dart';
 import 'refresh_interceptor.dart';
 import 'request_coalescer.dart';
 import 'request_id_interceptor.dart';
+import 'response_cache_interceptor.dart';
+import 'response_cache_store.dart';
 import 'retry_interceptor.dart';
 
 class DioClient {
@@ -37,7 +39,10 @@ class DioClient {
   static DioClient get instance => _instance!;
   static bool get isInitialized => _instance != null;
 
-  static Future<DioClient> init({required TokenManager tokens}) async {
+  static Future<DioClient> init({
+    required TokenManager tokens,
+    ResponseCacheStore? cache,
+  }) async {
     if (_instance != null) return _instance!;
     final dio = Dio(
       BaseOptions(
@@ -54,15 +59,29 @@ class DioClient {
     final reachability = ApiReachability();
 
     dio.interceptors.addAll([
+      // Serves a cached body first and revalidates behind the user.
+      //
+      // MUST be first: its cache lookup is asynchronous and it short-circuits
+      // with handler.resolve(), so no earlier interceptor may have already
+      // spent the handler with next(). See ResponseCacheInterceptor.
+      if (cache != null)
+        ResponseCacheInterceptor(
+          store: cache,
+          reachability: reachability,
+          // Deliberately a separate, interceptor-free client so a background
+          // refresh cannot re-enter this one and recurse.
+          revalidator: Dio(BaseOptions(
+            baseUrl: ApiConfig.baseUrl,
+            connectTimeout: ApiConfig.connectTimeout,
+            receiveTimeout: ApiConfig.receiveTimeout,
+            sendTimeout: ApiConfig.sendTimeout,
+            headers: ApiConfig.defaultHeaders,
+            validateStatus: (s) => s != null && s >= 200 && s < 300,
+          )),
+        ),
       RequestIdInterceptor(),
       InstallIdentityInterceptor(),
       DeviceRiskInterceptor(),
-      // Deduplicates identical concurrent GETs. Registered before Auth so the
-      // join happens as early as possible - the whole point is to avoid the
-      // round trip, and every interceptor a request passes through is work we
-      // would rather not repeat. onRequest runs in registration order and
-      // onError/onResponse in reverse, so this does not disturb the 401 chain
-      // documented below.
       RequestCoalescer(),
       AuthInterceptor(tokens, reachability),
       // Order matters: onError runs in reverse, so a 401 reaches

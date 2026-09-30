@@ -43,6 +43,8 @@ import '../logging/app_logger.dart';
 /// * **Never joins a replay.** A `RetryInterceptor` or `RefreshInterceptor`
 ///   replay must run on its own or the retry would wait on the request that
 ///   failed.
+/// * **Sits behind `ResponseCacheInterceptor`.** A cache hit short-circuits
+///   before this, which is fine: there is no round trip left to deduplicate.
 class RequestCoalescer extends Interceptor {
   final Map<String, _InFlight> _inFlight = {};
 

@@ -4083,6 +4083,491 @@ class DownloadsCompanion extends UpdateCompanion<Download> {
   }
 }
 
+class $CachedResponsesTable extends CachedResponses
+    with TableInfo<$CachedResponsesTable, CachedResponse> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CachedResponsesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cacheKeyMeta = const VerificationMeta(
+    'cacheKey',
+  );
+  @override
+  late final GeneratedColumn<String> cacheKey = GeneratedColumn<String>(
+    'cache_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _etagMeta = const VerificationMeta('etag');
+  @override
+  late final GeneratedColumn<String> etag = GeneratedColumn<String>(
+    'etag',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cachedAtMeta = const VerificationMeta(
+    'cachedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cachedAt = GeneratedColumn<DateTime>(
+    'cached_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
+    'expires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _byteSizeMeta = const VerificationMeta(
+    'byteSize',
+  );
+  @override
+  late final GeneratedColumn<int> byteSize = GeneratedColumn<int>(
+    'byte_size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _schemaVersionMeta = const VerificationMeta(
+    'schemaVersion',
+  );
+  @override
+  late final GeneratedColumn<String> schemaVersion = GeneratedColumn<String>(
+    'schema_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('1'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    cacheKey,
+    body,
+    etag,
+    cachedAt,
+    expiresAt,
+    byteSize,
+    schemaVersion,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cached_responses';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CachedResponse> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('cache_key')) {
+      context.handle(
+        _cacheKeyMeta,
+        cacheKey.isAcceptableOrUnknown(data['cache_key']!, _cacheKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cacheKeyMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('etag')) {
+      context.handle(
+        _etagMeta,
+        etag.isAcceptableOrUnknown(data['etag']!, _etagMeta),
+      );
+    }
+    if (data.containsKey('cached_at')) {
+      context.handle(
+        _cachedAtMeta,
+        cachedAt.isAcceptableOrUnknown(data['cached_at']!, _cachedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cachedAtMeta);
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_expiresAtMeta);
+    }
+    if (data.containsKey('byte_size')) {
+      context.handle(
+        _byteSizeMeta,
+        byteSize.isAcceptableOrUnknown(data['byte_size']!, _byteSizeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_byteSizeMeta);
+    }
+    if (data.containsKey('schema_version')) {
+      context.handle(
+        _schemaVersionMeta,
+        schemaVersion.isAcceptableOrUnknown(
+          data['schema_version']!,
+          _schemaVersionMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cacheKey};
+  @override
+  CachedResponse map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CachedResponse(
+      cacheKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cache_key'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      etag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}etag'],
+      ),
+      cachedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cached_at'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires_at'],
+      )!,
+      byteSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}byte_size'],
+      )!,
+      schemaVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}schema_version'],
+      )!,
+    );
+  }
+
+  @override
+  $CachedResponsesTable createAlias(String alias) {
+    return $CachedResponsesTable(attachedDatabase, alias);
+  }
+}
+
+class CachedResponse extends DataClass implements Insertable<CachedResponse> {
+  /// `GET /path?sorted=query|Accept-Language`. Primary key: one entry per
+  /// distinct request, so a changed query is a different entry rather than an
+  /// overwrite.
+  final String cacheKey;
+
+  /// The raw JSON envelope, stored verbatim. Re-parsed on read rather than
+  /// serialised DTOs, so a DTO field rename does not invalidate the cache.
+  final String body;
+
+  /// The server-advertised ETag, kept for diagnostics and for a future
+  /// conditional request. Not currently used to skip a transfer, because the
+  /// server does not honour `If-None-Match`.
+  final String? etag;
+  final DateTime cachedAt;
+
+  /// Freshness deadline. Past this the entry is stale: still served when the
+  /// network is unavailable, but revalidated in the background when it is not.
+  final DateTime expiresAt;
+
+  /// Length of [body], so eviction can enforce a budget without decoding it.
+  final int byteSize;
+
+  /// Bumped when a cached payload's meaning changes. Mismatched entries are
+  /// treated as absent.
+  final String schemaVersion;
+  const CachedResponse({
+    required this.cacheKey,
+    required this.body,
+    this.etag,
+    required this.cachedAt,
+    required this.expiresAt,
+    required this.byteSize,
+    required this.schemaVersion,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['cache_key'] = Variable<String>(cacheKey);
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || etag != null) {
+      map['etag'] = Variable<String>(etag);
+    }
+    map['cached_at'] = Variable<DateTime>(cachedAt);
+    map['expires_at'] = Variable<DateTime>(expiresAt);
+    map['byte_size'] = Variable<int>(byteSize);
+    map['schema_version'] = Variable<String>(schemaVersion);
+    return map;
+  }
+
+  CachedResponsesCompanion toCompanion(bool nullToAbsent) {
+    return CachedResponsesCompanion(
+      cacheKey: Value(cacheKey),
+      body: Value(body),
+      etag: etag == null && nullToAbsent ? const Value.absent() : Value(etag),
+      cachedAt: Value(cachedAt),
+      expiresAt: Value(expiresAt),
+      byteSize: Value(byteSize),
+      schemaVersion: Value(schemaVersion),
+    );
+  }
+
+  factory CachedResponse.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CachedResponse(
+      cacheKey: serializer.fromJson<String>(json['cacheKey']),
+      body: serializer.fromJson<String>(json['body']),
+      etag: serializer.fromJson<String?>(json['etag']),
+      cachedAt: serializer.fromJson<DateTime>(json['cachedAt']),
+      expiresAt: serializer.fromJson<DateTime>(json['expiresAt']),
+      byteSize: serializer.fromJson<int>(json['byteSize']),
+      schemaVersion: serializer.fromJson<String>(json['schemaVersion']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'cacheKey': serializer.toJson<String>(cacheKey),
+      'body': serializer.toJson<String>(body),
+      'etag': serializer.toJson<String?>(etag),
+      'cachedAt': serializer.toJson<DateTime>(cachedAt),
+      'expiresAt': serializer.toJson<DateTime>(expiresAt),
+      'byteSize': serializer.toJson<int>(byteSize),
+      'schemaVersion': serializer.toJson<String>(schemaVersion),
+    };
+  }
+
+  CachedResponse copyWith({
+    String? cacheKey,
+    String? body,
+    Value<String?> etag = const Value.absent(),
+    DateTime? cachedAt,
+    DateTime? expiresAt,
+    int? byteSize,
+    String? schemaVersion,
+  }) => CachedResponse(
+    cacheKey: cacheKey ?? this.cacheKey,
+    body: body ?? this.body,
+    etag: etag.present ? etag.value : this.etag,
+    cachedAt: cachedAt ?? this.cachedAt,
+    expiresAt: expiresAt ?? this.expiresAt,
+    byteSize: byteSize ?? this.byteSize,
+    schemaVersion: schemaVersion ?? this.schemaVersion,
+  );
+  CachedResponse copyWithCompanion(CachedResponsesCompanion data) {
+    return CachedResponse(
+      cacheKey: data.cacheKey.present ? data.cacheKey.value : this.cacheKey,
+      body: data.body.present ? data.body.value : this.body,
+      etag: data.etag.present ? data.etag.value : this.etag,
+      cachedAt: data.cachedAt.present ? data.cachedAt.value : this.cachedAt,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+      byteSize: data.byteSize.present ? data.byteSize.value : this.byteSize,
+      schemaVersion: data.schemaVersion.present
+          ? data.schemaVersion.value
+          : this.schemaVersion,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedResponse(')
+          ..write('cacheKey: $cacheKey, ')
+          ..write('body: $body, ')
+          ..write('etag: $etag, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('byteSize: $byteSize, ')
+          ..write('schemaVersion: $schemaVersion')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    cacheKey,
+    body,
+    etag,
+    cachedAt,
+    expiresAt,
+    byteSize,
+    schemaVersion,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CachedResponse &&
+          other.cacheKey == this.cacheKey &&
+          other.body == this.body &&
+          other.etag == this.etag &&
+          other.cachedAt == this.cachedAt &&
+          other.expiresAt == this.expiresAt &&
+          other.byteSize == this.byteSize &&
+          other.schemaVersion == this.schemaVersion);
+}
+
+class CachedResponsesCompanion extends UpdateCompanion<CachedResponse> {
+  final Value<String> cacheKey;
+  final Value<String> body;
+  final Value<String?> etag;
+  final Value<DateTime> cachedAt;
+  final Value<DateTime> expiresAt;
+  final Value<int> byteSize;
+  final Value<String> schemaVersion;
+  final Value<int> rowid;
+  const CachedResponsesCompanion({
+    this.cacheKey = const Value.absent(),
+    this.body = const Value.absent(),
+    this.etag = const Value.absent(),
+    this.cachedAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.byteSize = const Value.absent(),
+    this.schemaVersion = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CachedResponsesCompanion.insert({
+    required String cacheKey,
+    required String body,
+    this.etag = const Value.absent(),
+    required DateTime cachedAt,
+    required DateTime expiresAt,
+    required int byteSize,
+    this.schemaVersion = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : cacheKey = Value(cacheKey),
+       body = Value(body),
+       cachedAt = Value(cachedAt),
+       expiresAt = Value(expiresAt),
+       byteSize = Value(byteSize);
+  static Insertable<CachedResponse> custom({
+    Expression<String>? cacheKey,
+    Expression<String>? body,
+    Expression<String>? etag,
+    Expression<DateTime>? cachedAt,
+    Expression<DateTime>? expiresAt,
+    Expression<int>? byteSize,
+    Expression<String>? schemaVersion,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cacheKey != null) 'cache_key': cacheKey,
+      if (body != null) 'body': body,
+      if (etag != null) 'etag': etag,
+      if (cachedAt != null) 'cached_at': cachedAt,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (byteSize != null) 'byte_size': byteSize,
+      if (schemaVersion != null) 'schema_version': schemaVersion,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CachedResponsesCompanion copyWith({
+    Value<String>? cacheKey,
+    Value<String>? body,
+    Value<String?>? etag,
+    Value<DateTime>? cachedAt,
+    Value<DateTime>? expiresAt,
+    Value<int>? byteSize,
+    Value<String>? schemaVersion,
+    Value<int>? rowid,
+  }) {
+    return CachedResponsesCompanion(
+      cacheKey: cacheKey ?? this.cacheKey,
+      body: body ?? this.body,
+      etag: etag ?? this.etag,
+      cachedAt: cachedAt ?? this.cachedAt,
+      expiresAt: expiresAt ?? this.expiresAt,
+      byteSize: byteSize ?? this.byteSize,
+      schemaVersion: schemaVersion ?? this.schemaVersion,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cacheKey.present) {
+      map['cache_key'] = Variable<String>(cacheKey.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (etag.present) {
+      map['etag'] = Variable<String>(etag.value);
+    }
+    if (cachedAt.present) {
+      map['cached_at'] = Variable<DateTime>(cachedAt.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<DateTime>(expiresAt.value);
+    }
+    if (byteSize.present) {
+      map['byte_size'] = Variable<int>(byteSize.value);
+    }
+    if (schemaVersion.present) {
+      map['schema_version'] = Variable<String>(schemaVersion.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedResponsesCompanion(')
+          ..write('cacheKey: $cacheKey, ')
+          ..write('body: $body, ')
+          ..write('etag: $etag, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('byteSize: $byteSize, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4093,6 +4578,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
   late final $QuizAttemptsTable quizAttempts = $QuizAttemptsTable(this);
   late final $DownloadsTable downloads = $DownloadsTable(this);
+  late final $CachedResponsesTable cachedResponses = $CachedResponsesTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4105,6 +4593,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     syncQueue,
     quizAttempts,
     downloads,
+    cachedResponses,
   ];
 }
 
@@ -6079,6 +6568,252 @@ typedef $$DownloadsTableProcessedTableManager =
       Download,
       PrefetchHooks Function()
     >;
+typedef $$CachedResponsesTableCreateCompanionBuilder =
+    CachedResponsesCompanion Function({
+      required String cacheKey,
+      required String body,
+      Value<String?> etag,
+      required DateTime cachedAt,
+      required DateTime expiresAt,
+      required int byteSize,
+      Value<String> schemaVersion,
+      Value<int> rowid,
+    });
+typedef $$CachedResponsesTableUpdateCompanionBuilder =
+    CachedResponsesCompanion Function({
+      Value<String> cacheKey,
+      Value<String> body,
+      Value<String?> etag,
+      Value<DateTime> cachedAt,
+      Value<DateTime> expiresAt,
+      Value<int> byteSize,
+      Value<String> schemaVersion,
+      Value<int> rowid,
+    });
+
+class $$CachedResponsesTableFilterComposer
+    extends Composer<_$AppDatabase, $CachedResponsesTable> {
+  $$CachedResponsesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cacheKey => $composableBuilder(
+    column: $table.cacheKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get etag => $composableBuilder(
+    column: $table.etag,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get byteSize => $composableBuilder(
+    column: $table.byteSize,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CachedResponsesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CachedResponsesTable> {
+  $$CachedResponsesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cacheKey => $composableBuilder(
+    column: $table.cacheKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get etag => $composableBuilder(
+    column: $table.etag,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get byteSize => $composableBuilder(
+    column: $table.byteSize,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CachedResponsesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CachedResponsesTable> {
+  $$CachedResponsesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cacheKey =>
+      $composableBuilder(column: $table.cacheKey, builder: (column) => column);
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<String> get etag =>
+      $composableBuilder(column: $table.etag, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get cachedAt =>
+      $composableBuilder(column: $table.cachedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+
+  GeneratedColumn<int> get byteSize =>
+      $composableBuilder(column: $table.byteSize, builder: (column) => column);
+
+  GeneratedColumn<String> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => column,
+  );
+}
+
+class $$CachedResponsesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CachedResponsesTable,
+          CachedResponse,
+          $$CachedResponsesTableFilterComposer,
+          $$CachedResponsesTableOrderingComposer,
+          $$CachedResponsesTableAnnotationComposer,
+          $$CachedResponsesTableCreateCompanionBuilder,
+          $$CachedResponsesTableUpdateCompanionBuilder,
+          (
+            CachedResponse,
+            BaseReferences<
+              _$AppDatabase,
+              $CachedResponsesTable,
+              CachedResponse
+            >,
+          ),
+          CachedResponse,
+          PrefetchHooks Function()
+        > {
+  $$CachedResponsesTableTableManager(
+    _$AppDatabase db,
+    $CachedResponsesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CachedResponsesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CachedResponsesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CachedResponsesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> cacheKey = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<String?> etag = const Value.absent(),
+                Value<DateTime> cachedAt = const Value.absent(),
+                Value<DateTime> expiresAt = const Value.absent(),
+                Value<int> byteSize = const Value.absent(),
+                Value<String> schemaVersion = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedResponsesCompanion(
+                cacheKey: cacheKey,
+                body: body,
+                etag: etag,
+                cachedAt: cachedAt,
+                expiresAt: expiresAt,
+                byteSize: byteSize,
+                schemaVersion: schemaVersion,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String cacheKey,
+                required String body,
+                Value<String?> etag = const Value.absent(),
+                required DateTime cachedAt,
+                required DateTime expiresAt,
+                required int byteSize,
+                Value<String> schemaVersion = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedResponsesCompanion.insert(
+                cacheKey: cacheKey,
+                body: body,
+                etag: etag,
+                cachedAt: cachedAt,
+                expiresAt: expiresAt,
+                byteSize: byteSize,
+                schemaVersion: schemaVersion,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CachedResponsesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CachedResponsesTable,
+      CachedResponse,
+      $$CachedResponsesTableFilterComposer,
+      $$CachedResponsesTableOrderingComposer,
+      $$CachedResponsesTableAnnotationComposer,
+      $$CachedResponsesTableCreateCompanionBuilder,
+      $$CachedResponsesTableUpdateCompanionBuilder,
+      (
+        CachedResponse,
+        BaseReferences<_$AppDatabase, $CachedResponsesTable, CachedResponse>,
+      ),
+      CachedResponse,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6097,4 +6832,6 @@ class $AppDatabaseManager {
       $$QuizAttemptsTableTableManager(_db, _db.quizAttempts);
   $$DownloadsTableTableManager get downloads =>
       $$DownloadsTableTableManager(_db, _db.downloads);
+  $$CachedResponsesTableTableManager get cachedResponses =>
+      $$CachedResponsesTableTableManager(_db, _db.cachedResponses);
 }

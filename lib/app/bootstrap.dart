@@ -17,6 +17,7 @@ import '../core/network/api_exception.dart';
 import '../core/network/app_update_gate.dart';
 import '../core/network/dio_client.dart';
 import '../core/network/install_identity_interceptor.dart';
+import '../core/network/response_cache_store.dart';
 import '../core/notifications/local_notification_service.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../core/security/app_security.dart';
@@ -69,7 +70,14 @@ Future<void> bootstrap() async {
   if (existing == null) {
     await TokenManager.resolveDeviceName(tokens);
   }
-  await DioClient.init(tokens: tokens);
+    // The database is warmed above (line ~55), so the response cache is ready
+    // before the first request. Passing it here rather than constructing it
+    // inside DioClient keeps the network layer free of a storage dependency and
+    // lets tests boot a client with no cache at all.
+    await DioClient.init(
+      tokens: tokens,
+      cache: ResponseCacheStore(AppDatabase.instance()),
+    );
 
   // Fetch the operator config before the first frame. `GET /app/config` is
   // public and carries the maintenance switch and the force-update floor, so

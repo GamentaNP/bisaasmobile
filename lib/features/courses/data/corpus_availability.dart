@@ -111,20 +111,31 @@ final corpusStatusProvider = FutureProvider.family<CorpusStatus, String>((
 
 final _corpusCountProvider = FutureProvider.family<int, String>((ref, code) {
   final dio = ref.watch(dioProvider);
+  // Page size is passed as queryParameters, never interpolated into the path.
+  // Dio treats a `?` inside `path` as an ordinary character, so
+  // '/syllabi?per_page=1' is one opaque path: RequestCoalescer would key it
+  // differently from a properly parameterised request for the same resource,
+  // and ResponseCachePolicy rejects it outright because its prefix matcher only
+  // treats '/' as a boundary. Both are correctness bugs, not just lost caching.
+  Future<Response<Map<String, dynamic>>> probe(String path) => dio.get(
+        path,
+        queryParameters: const {'per_page': 1},
+      );
+
   return switch (code) {
-    'library' => _count(
-      dio.get<Map<String, dynamic>>('/library/files?per_page=1'),
-    ),
-    'books' => _count(dio.get<Map<String, dynamic>>('/books?per_page=1')),
-    'syllabus' => _count(dio.get<Map<String, dynamic>>('/syllabi?per_page=1')),
+    'library' => _count(() => probe('/library/files')),
+    'books' => _count(() => probe('/books')),
+    'syllabus' => _count(() => probe('/syllabi')),
     _ => throw ArgumentError('Unknown corpus: $code'),
   };
 });
 
 /// Reads a count from either a top-level `total`, a `meta.total`, or the length
 /// of `data`, because the three corpora serialise pagination differently.
-Future<int> _count(Future<Response<Map<String, dynamic>>> request) async {
-  final response = await request;
+Future<int> _count(
+  Future<Response<Map<String, dynamic>>> Function() request,
+) async {
+  final response = await request();
   final body = response.data;
   if (body == null) return 0;
   final data = body['data'];
