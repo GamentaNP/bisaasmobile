@@ -2,8 +2,8 @@
 
 > **Last updated:** 2026-09-29
 > **HEAD at time of writing:** `aea5069`
-> **Gates:** `flutter analyze` 0 issues · `flutter test` 835 passing · debug APK builds ·
-> release AAB 112.3 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green ·
+> **Gates:** `flutter analyze` 0 issues · `flutter test` 843 passing · debug APK builds ·
+> release AAB 118.7 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green ·
 > **verified running on a physical Redmi 6A (Android 9, API 28, armeabi-v7a)**
 
 This replaces the older ad-hoc "remaining work" notes. It records what is built,
@@ -188,6 +188,8 @@ server side before suspecting the client.
 | G7 | Dead code presented as live: `translation_cache`, `AiTranslationService`, `TranslationQuestionsJob`, an unrouted controller | Misleads the next agent |
 | G8 | Locale fields validated by length only; `?filter[language]` unvalidated | Junk locale silently returns empty |
 | G9 | `char()` blank padding, trimmed in 4 places | Fifth caller will forget |
+| C1 | `quiz_question_syllabus_node` has **0 rows** across **1,279** syllabus nodes, while `quiz_questions` holds **10,629** questions | The syllabus tree renders but almost nothing is practiseable. The single largest gap in the system: the questions exist and the tree exists, and nothing links them. |
+| C2 | `library_files` and books are both empty | Both readers are now gated off the entry points, so this is honest rather than broken — but the features stay dark until content is seeded. |
 | — | 23 of 39 feature flags off (16 on) | Whole subsystems are dark |
 
 ### Client — genuinely open
@@ -195,9 +197,9 @@ server side before suspecting the client.
 | Item | Notes |
 |---|---|
 | ARB catalogue: 21 keys vs ~266 English files | **Not machine-written on purpose** — fabricated translations. The CI gate (`tool/arb_coverage.dart`) now fails the build on a partial locale, so this cannot regress silently. Use the server's `LocalizationStudio` (AI batch translate + CSV/JSON import/export) — that is the intended path. |
-| Bundle actual OFL Noto fonts | The chain names Noto families and falls through to the platform's own Noto faces, so text renders. Bundling would make it deterministic across OEM skins. |
-| Device smoke test | Blocked on `INSTALL_FAILED_USER_RESTRICTED`; needs a human to approve installs. |
-| Release AAB at current HEAD | **Done 2026-09-28.** 112.3 MB, verified signed `CN=CivilCal Upload Key, OU=Bisaas, O=Bisaas, L=Kathmandu, C=NP`. `android/key.properties` and the keystore are gitignored. Not yet uploaded to Play. |
+| Bundle actual OFL Noto fonts | **Done 2026-09-30.** The chain named 24 Noto families but only InstrumentSans was declared in `pubspec.yaml`, so every non-Latin script silently fell through to the platform font. Bundled Devanagari, Bengali, Tamil, Telugu, Arabic and Han (+6.4 MB, AAB 112.3 → 118.7 MB). `test/app/font_coverage_test.dart` now fails the build if the chain names a family that is not bundled. Verified on device: नेपाली and हिन्दी render from the bundle. Scripts we do not ship resolve to `sans-serif` honestly rather than naming a face we do not have. |
+| Device smoke test | **Done 2026-09-30** on a Redmi 6A (Android 9, API 28) over `adb reverse tcp:8443 tcp:443`. |
+| Release AAB at current HEAD | **Rebuilt 2026-09-30 at `8a6d0b7`.** 118.7 MB, signature verified (`jar verified`). `android/key.properties` and the keystore are gitignored. **Still not uploaded to Play, and the signing key still has no confirmed off-repo backup.** |
 | Play listing, `assetlinks.json` | Not published. |
 | Per-level world map | Backend has no attempt-question retrieval. |
 | AAB size | 112 MB, dominated by the ~21 MB `libts.so` in each ABI. Legal, but worth a look before a real upload. |
