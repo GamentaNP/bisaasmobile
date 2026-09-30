@@ -26,13 +26,30 @@ import 'response_cache_store.dart';
 import 'retry_interceptor.dart';
 
 class DioClient {
-  DioClient._(this.dio, this.reachability);
+  DioClient._(this.dio, this.reachability, this._cache);
   final Dio dio;
 
   /// Learns whether `/api/v1` is genuinely reachable from real request
   /// outcomes. Owned here because the interceptors that feed it are built in
   /// this class, and the offline banner reads it through the provider graph.
   final ApiReachability reachability;
+
+  final ResponseCacheInterceptor? _cache;
+
+  /// Empties the public-response cache, used on sign-out.
+  ///
+  /// Drains in-flight writes first. A write that lands *after* the delete
+  /// would repopulate the table, so on a shared device the next account would
+  /// inherit the previous one's cached catalog state. Today only public data
+  /// is cached, so nothing sensitive is at stake - but the policy is one
+  /// careless allowlist entry away from that changing, and the drain is the
+  /// whole reason `whenIdle` exists.
+  Future<void> clearResponseCache() async {
+    final cache = _cache;
+    if (cache == null) return;
+    await cache.whenIdle();
+    await cache.clearStore();
+  }
 
   static DioClient? _instance;
 
@@ -58,27 +75,32 @@ class DioClient {
 
     final reachability = ApiReachability();
 
+    // Held so sign-out can drain and clear it; null when no cache is wired
+    // (tests, and the web path where the database is not warmed at boot).
+    final cacheInterceptor = cache == null
+        ? null
+        : ResponseCacheInterceptor(
+            store: cache,
+            reachability: reachability,
+            // Deliberately a separate, interceptor-free client so a background
+            // refresh cannot re-enter this one and recurse.
+            revalidator: Dio(BaseOptions(
+              baseUrl: ApiConfig.baseUrl,
+              connectTimeout: ApiConfig.connectTimeout,
+              receiveTimeout: ApiConfig.receiveTimeout,
+              sendTimeout: ApiConfig.sendTimeout,
+              headers: ApiConfig.defaultHeaders,
+              validateStatus: (s) => s != null && s >= 200 && s < 300,
+            )),
+          );
+
     dio.interceptors.addAll([
       // Serves a cached body first and revalidates behind the user.
       //
       // MUST be first: its cache lookup is asynchronous and it short-circuits
       // with handler.resolve(), so no earlier interceptor may have already
       // spent the handler with next(). See ResponseCacheInterceptor.
-      if (cache != null)
-        ResponseCacheInterceptor(
-          store: cache,
-          reachability: reachability,
-          // Deliberately a separate, interceptor-free client so a background
-          // refresh cannot re-enter this one and recurse.
-          revalidator: Dio(BaseOptions(
-            baseUrl: ApiConfig.baseUrl,
-            connectTimeout: ApiConfig.connectTimeout,
-            receiveTimeout: ApiConfig.receiveTimeout,
-            sendTimeout: ApiConfig.sendTimeout,
-            headers: ApiConfig.defaultHeaders,
-            validateStatus: (s) => s != null && s >= 200 && s < 300,
-          )),
-        ),
+      ?cacheInterceptor,
       RequestIdInterceptor(),
       InstallIdentityInterceptor(),
       DeviceRiskInterceptor(),
@@ -121,7 +143,7 @@ class DioClient {
       }
     }
 
-    _instance = DioClient._(dio, reachability);
+    _instance = DioClient._(dio, reachability, cacheInterceptor);
     return _instance!;
   }
 

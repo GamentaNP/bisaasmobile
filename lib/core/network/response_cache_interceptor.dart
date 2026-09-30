@@ -98,6 +98,9 @@ class ResponseCacheInterceptor extends Interceptor {
     }
   }
 
+  /// Deletes every cached body. Callers must [whenIdle] first.
+  Future<void> clearStore() => _store.clear();
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (!ResponseCachePolicy.isEligible(options)) {

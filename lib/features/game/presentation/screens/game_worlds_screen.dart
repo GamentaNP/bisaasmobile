@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
+import '../../../../shared/widgets/cached_remote_image.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../data/models/game_models.dart';
@@ -80,10 +81,10 @@ class _WorldCard extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 if (world.bannerImage != null && world.bannerImage!.isNotEmpty)
-                  Image.network(
-                    world.bannerImage!,
+                  CachedRemoteImage(
+                    url: world.bannerImage,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const _BrandFill(),
+                    fallback: const _BrandFill(),
                   )
                 else
                   const _BrandFill(),

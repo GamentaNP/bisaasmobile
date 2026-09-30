@@ -11,6 +11,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../shared/widgets/app_bar.dart';
+import '../../../../shared/widgets/cached_remote_image.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
@@ -138,7 +139,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       CircleAvatar(
                         radius: 36,
                         backgroundColor: AppColors.brand.withValues(alpha: 0.15),
-                        backgroundImage: user?.avatarUrl != null ? NetworkImage(user!.avatarUrl!) : null,
+                        // Disk-cached and host-checked. `NetworkImage` only holds
+                        // bytes in memory for the session, so the avatar was
+                        // re-downloaded on every cold start.
+                        backgroundImage: RemoteImagePolicy.isAllowed(user?.avatarUrl)
+                            ? CachedRemoteImageProvider(user!.avatarUrl!)
+                            : null,
                         child: user?.avatarUrl == null
                             ? Text(
                                 user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'C',

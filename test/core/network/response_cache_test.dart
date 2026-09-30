@@ -335,6 +335,24 @@ void main() {
       await store.clear();
       expect(await db.select(db.cachedResponses).get(), isEmpty);
     });
+
+    test('whenIdle drains, so a sign-out clear cannot be repopulated', () async {
+      // A write in flight when logout() clears the table would land *after* the
+      // delete and put the previous account's catalog back. The drain is the
+      // reason whenIdle exists, so assert the counter actually reaches zero.
+      adapter.body = {'success': true, 'data': 'v1'};
+      await dio.get<dynamic>('/syllabi');
+
+      await cacheInterceptor.whenIdle();
+      expect(
+        cacheInterceptor.pendingWrites,
+        0,
+        reason: 'whenIdle must not return while a write is outstanding',
+      );
+
+      await cacheInterceptor.clearStore();
+      expect(await db.select(db.cachedResponses).get(), isEmpty);
+    });
   });
 }
 

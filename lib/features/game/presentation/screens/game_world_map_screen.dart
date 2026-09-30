@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/widgets/cached_remote_image.dart';
 import '../../game_providers.dart';
 import '../../data/models/game_models.dart';
 import 'game_level_intro_sheet.dart';
@@ -53,8 +54,11 @@ class _WorldMapBody extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 if (map.world.bannerImage != null)
-                  Image.network(map.world.bannerImage!, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(color: AppColors.brand))
+                  CachedRemoteImage(
+                    url: map.world.bannerImage,
+                    fit: BoxFit.cover,
+                    fallback: Container(color: AppColors.brand),
+                  )
                 else
                   Container(
                     decoration: BoxDecoration(

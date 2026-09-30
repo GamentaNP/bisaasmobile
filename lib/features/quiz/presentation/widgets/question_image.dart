@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/widgets/cached_remote_image.dart';
 
 /// Renders the optional question image with a max 400px constraint,
 /// shimmer placeholder, and tap-to-zoom.
@@ -16,6 +17,14 @@ class QuestionImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty) return const SizedBox.shrink();
+    // A question image is server-supplied like any other, so it gets the same
+    // host check. Blocked or unparseable URLs render the broken-image icon
+    // rather than reaching out to whatever host the row named.
+    if (!RemoteImagePolicy.isAllowed(imageUrl)) {
+      return const Center(
+        child: Icon(Icons.broken_image_outlined, color: Colors.grey, size: 48),
+      );
+    }
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxWidth * 0.75),

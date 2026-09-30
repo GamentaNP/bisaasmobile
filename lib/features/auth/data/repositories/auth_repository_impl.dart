@@ -1,3 +1,4 @@
+import '../../../../core/network/dio_client.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -69,14 +70,21 @@ class AuthRepositoryImpl implements AuthRepository {
     return User(id: 0, name: name, email: email);
   }
 
-  @override
-  Future<void> logout() async {
-    try {
-      await _remoteDataSource.logout();
-    } finally {
-      await _tokenManager.clear();
+    @override
+    Future<void> logout() async {
+      try {
+        await _remoteDataSource.logout();
+      } finally {
+        await _tokenManager.clear();
+        // Drop the public-response cache too. Only non-personal catalog data is
+        // in it, but on a shared device the next account would otherwise start
+        // from the previous one's cached world, and the allowlist that keeps it
+        // personal-data-free is one careless entry away from mattering.
+        if (DioClient.isInitialized) {
+          await DioClient.instance.clearResponseCache();
+        }
+      }
     }
-  }
 
   @override
   Future<User?> getCurrentUser() async {
