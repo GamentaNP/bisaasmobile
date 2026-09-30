@@ -2,8 +2,8 @@
 
 > **Last updated:** 2026-09-29
 > **HEAD at time of writing:** `aea5069`
-> **Gates:** `flutter analyze` 0 issues · `flutter test` 843 passing · debug APK builds ·
-> release AAB 118.7 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green ·
+> **Gates:** `flutter analyze` 0 issues · `flutter test` 886 passing · debug APK builds ·
+> release AAB 113.2 MB, signed `CN=CivilCal Upload Key` · ARB coverage gate green ·
 > **verified running on a physical Redmi 6A (Android 9, API 28, armeabi-v7a)**
 
 This replaces the older ad-hoc "remaining work" notes. It records what is built,
@@ -170,6 +170,71 @@ Library, Books and Courses all worked immediately.
 Worth remembering: other screens can look healthy while showing cached or
 locally-held data, so the first authenticated 401 is worth chasing on the
 server side before suspecting the client.
+
+### What "instant" actually means here, measured
+
+Two interceptors on the single `Dio`, verified on the Redmi 6A:
+
+**`RequestCoalescer`** collapses identical concurrent GETs. `GET /me` fired
+twice per cold start, `GET /quiz/courses` has six call sites, `GET /learning/today`
+has three, the missions dashboard two. After: every startup endpoint completes
+exactly once. GET only, because coalescing a POST would drop an order.
+
+**`ResponseCacheInterceptor`** serves a cached body first and revalidates behind
+the user, for an allowlist of public catalog reads. Measured on the second
+launch:
+
+| Endpoint | Network requests on a warm run |
+|---|---|
+| `/syllabi` (catalog + probe) | 0 |
+| `/quiz/courses` | 0 |
+| `/calculators` | 0 |
+| `/library/categories` | 0 |
+| `/books` | 0 |
+
+The nine calls that remain are exactly the ones that must not be cached —
+`/me`, `/learning/today`, `/quiz/streak`, `/quiz/game/*`, `/rewards/*` — and
+with wifi and mobile data both switched off the full 12-track syllabus tree
+still renders.
+
+**Conditional requests are not used, on purpose.** The server advertises an
+ETag on every hot endpoint but answers a matching `If-None-Match` with **200,
+not 304** — checked on `/syllabi`, `/quiz/courses`, `/calculators` and
+`/library/categories`. Sending the header would spend bytes to download the
+same body, so freshness is a client-side TTL and the stale copy is what the user
+sees while a background refresh runs. Fixing the server to honour 304 would cut
+bytes on a metered connection and is worth doing; it is not required for the
+cache to work.
+
+| Case | Network | User sees |
+|---|---|---|
+| fresh | any | cache, no request |
+| stale | reachable | cache immediately, one background refresh |
+| stale | unreachable | cache, no request, no error |
+| absent | any | a real request |
+
+The device database is unencrypted, so the allowlist is a **privacy
+boundary, not a performance setting**: `/me`, `/economy`, `/store`,
+`/quiz/attempts`, `/social`, `/rewards`, `/donations` and every mutation are
+excluded, and a second denylist sits in front of the allowlist so a future entry
+cannot capture a wallet. The cache is drained and cleared on sign-out. Server
+images get the same treatment: `RemoteImagePolicy` refuses any host but the API
+host, because a database row naming a third-party host would turn every app
+launch into a beacon to it.
+
+### Tables that are empty on purpose
+
+Five of the seven Drift tables have no producer. `attempts` and `quiz_attempts`
+**must** stay empty — the latter has a `provisionalScore` column, and filling it
+would mean grading on the device, which the architecture forbids.
+`unwired_tables_test.dart` asserts no code path can insert into either, so the
+gap cannot be closed by accident.
+
+`SyncQueueDao` writes `sync_queue`, but `SyncQueueService.enqueue` has no
+production caller: the calculator-snapshot path that fed it was unwired without
+the method being removed. The queue therefore drains zero rows every 30 seconds
+forever, which is worse than not having one because it looks like it works.
+That is a real gap, and the test fails if anything starts calling `enqueue`.
 
 ---
 
