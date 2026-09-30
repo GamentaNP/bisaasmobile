@@ -143,67 +143,66 @@ abstract final class ScriptFonts {
   static const latinFamily = 'InstrumentSans';
 
   /// Ordered broad-coverage chain. Order matters: the branded face is first so
-  /// English and numerals keep the chunky look, then Noto faces by script.
+  /// English and numerals keep the chunky look, then the bundled Noto faces.
   ///
-  /// Not exhaustive *by design* — anything missing falls through to the
-  /// platform font instead of rendering as tofu.
+  /// Every family listed here except `sans-serif` **must** be declared in
+  /// `pubspec.yaml`. Naming an undeclared family does not error - Flutter quietly
+  /// falls through to the platform font - so a typo or an un-bundled face is
+  /// invisible in CI and shows up as tofu on a device whose OEM ships a trimmed
+  /// font set. `test/app/font_coverage_test.dart` asserts this list and
+  /// `forScript` against the declared families, so adding a face here without
+  /// bundling it fails the build.
+  ///
+  /// Scripts with no bundled face (Thai, Lao, Khmer, Georgian, Armenian,
+  /// Ethiopic, Tibetan, Hangul, Kana) deliberately resolve to `sans-serif` only.
+  /// They are not in the shipped language set, and Android/iOS both ship these
+  /// scripts, so the platform is a genuine fallback rather than a gamble. Bundle
+  /// a face first if one of these becomes a shipped language.
   static const List<String> universalChain = [
     latinFamily,
     'NotoSansDevanagari',
     'NotoSansSC',
-    'NotoSansTC',
-    'NotoNaskhArabic',
-    'NotoSansHebrew',
     'NotoSansBengali',
+    'NotoSansArabic',
     'NotoSansTamil',
     'NotoSansTelugu',
-    'NotoSansGurmukhi',
-    'NotoSansGujarati',
-    'NotoSansOriya',
-    'NotoSansKannada',
-    'NotoSansMalayalam',
-    'NotoSansSinhala',
-    'NotoSansThai',
-    'NotoSansLao',
-    'NotoSansKhmer',
-    'NotoSansMyanmar',
-    'NotoSansGeorgian',
-    'NotoSansArmenian',
-    'NotoSansEthiopic',
-    'NotoSansTibetan',
-    'NotoSansJP',
-    'NotoSansKR',
     'sans-serif',
   ];
 
   /// Families best suited to a script, used when a caller wants to lead with a
   /// specific face (e.g. rendering a standalone content block).
+  ///
+  /// Same contract as [universalChain]: a named family must be bundled, or this
+  /// must be `['sans-serif']` and let the platform supply it.
   static List<String> forScript(AppScript script) => switch (script) {
         AppScript.latin => [latinFamily, 'sans-serif'],
         AppScript.devanagari => ['NotoSansDevanagari', latinFamily, 'sans-serif'],
-        AppScript.han => ['NotoSansSC', 'NotoSansTC', 'sans-serif'],
-        AppScript.kana => ['NotoSansJP', 'NotoSansSC', 'sans-serif'],
-        AppScript.hangul => ['NotoSansKR', 'sans-serif'],
-        AppScript.arabic => ['NotoNaskhArabic', 'NotoSansArabic', 'sans-serif'],
-        AppScript.hebrew => ['NotoSansHebrew', 'sans-serif'],
+        // NotoSansTC and NotoSansJP are not bundled; NotoSansSC covers Han and
+        // the platform covers Kana.
+        AppScript.han => ['NotoSansSC', 'sans-serif'],
+        AppScript.kana => ['sans-serif'],
+        AppScript.hangul => ['sans-serif'],
+        // NotoNaskhArabic is not bundled; NotoSansArabic is.
+        AppScript.arabic => ['NotoSansArabic', latinFamily, 'sans-serif'],
+        AppScript.hebrew => ['sans-serif'],
         AppScript.bengali => ['NotoSansBengali', 'sans-serif'],
-        AppScript.gurmukhi => ['NotoSansGurmukhi', 'sans-serif'],
-        AppScript.gujarati => ['NotoSansGujarati', 'sans-serif'],
-        AppScript.oriya => ['NotoSansOriya', 'sans-serif'],
-        AppScript.kannada => ['NotoSansKannada', 'sans-serif'],
-        AppScript.malayalam => ['NotoSansMalayalam', 'sans-serif'],
-        AppScript.tibetan => ['NotoSansTibetan', 'sans-serif'],
+        AppScript.gurmukhi => ['sans-serif'],
+        AppScript.gujarati => ['sans-serif'],
+        AppScript.oriya => ['sans-serif'],
+        AppScript.kannada => ['sans-serif'],
+        AppScript.malayalam => ['sans-serif'],
+        AppScript.tibetan => ['sans-serif'],
         AppScript.tamil => ['NotoSansTamil', 'sans-serif'],
         AppScript.telugu => ['NotoSansTelugu', 'sans-serif'],
-        AppScript.thai => ['NotoSansThai', 'sans-serif'],
-        AppScript.lao => ['NotoSansLao', 'sans-serif'],
-        AppScript.khmer => ['NotoSansKhmer', 'sans-serif'],
-        AppScript.myanmar => ['NotoSansMyanmar', 'sans-serif'],
-        AppScript.georgian => ['NotoSansGeorgian', 'sans-serif'],
-        AppScript.armenian => ['NotoSansArmenian', 'sans-serif'],
-        AppScript.sinhala => ['NotoSansSinhala', 'sans-serif'],
+        AppScript.thai => ['sans-serif'],
+        AppScript.lao => ['sans-serif'],
+        AppScript.khmer => ['sans-serif'],
+        AppScript.myanmar => ['sans-serif'],
+        AppScript.georgian => ['sans-serif'],
+        AppScript.armenian => ['sans-serif'],
+        AppScript.sinhala => ['sans-serif'],
         AppScript.tifinagh => ['sans-serif'],
-        AppScript.ethiopic => ['NotoSansEthiopic', 'sans-serif'],
+        AppScript.ethiopic => ['sans-serif'],
         AppScript.canadianAboriginal => ['sans-serif'],
         AppScript.unknown => [latinFamily, 'sans-serif'],
       };

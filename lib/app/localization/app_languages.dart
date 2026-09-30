@@ -94,12 +94,25 @@ class AppLanguage {
 ///
 /// ## Chinese
 ///
-/// `zh` is included so the client can *render* 中文, but the server has no `zh`
-/// locale: it is absent from `languages`, absent from every row of
-/// `translation_directions`, and `CN` maps to `default_locale: en`. Chinese
-/// users therefore get a fully translated interface (once the ARB files exist)
-/// but **no translated questions** until a `zh` row and translation directions
-/// are seeded. Selecting 中文 for content is a backend task.
+/// `zh` is intentionally NOT seeded. It renders correctly as a script, but the
+/// server has no `zh` locale: absent from `languages`, absent from every row of
+/// `translation_directions`, and `CN` maps to `default_locale: en`.
+///
+/// ## Why the seed is only the three languages that are actually translated
+///
+/// A language picker is a promise. Listing 中文 / বাংলা / தமிழ் when
+/// `lib/l10n` has no ARB file for them means a user who cannot read English
+/// picks their language, gets an English interface back, and concludes the app
+/// is broken. That is strictly worse than the language not being offered.
+///
+/// So the seed is exactly the set with an ARB file, and it is asserted by
+/// `test/app/language_honesty_test.dart`: the registry and the ARB directory
+/// must agree, which means adding a language is a two-step change (write the
+/// ARB, then add the registry entry) and cannot silently half-happen.
+///
+/// Translation coverage is a content task, not a client task. When
+/// `app_bn.arb` etc. are written, add the registry entry in the same commit and
+/// this test starts covering the new language automatically.
 abstract final class AppLanguages {
   const AppLanguages._();
 
@@ -111,13 +124,6 @@ abstract final class AppLanguages {
     AppLanguage(code: 'en', labelEn: 'English', nativeName: 'English'),
     AppLanguage(code: 'ne', labelEn: 'Nepali', nativeName: 'नेपाली'),
     AppLanguage(code: 'hi', labelEn: 'Hindi', nativeName: 'हिन्दी'),
-    AppLanguage(code: 'bn', labelEn: 'Bengali', nativeName: 'বাংলা'),
-    AppLanguage(code: 'ta', labelEn: 'Tamil', nativeName: 'தமிழ்'),
-    AppLanguage(code: 'te', labelEn: 'Telugu', nativeName: 'తెలుగు'),
-    AppLanguage(code: 'zh', labelEn: 'Chinese', nativeName: '中文'),
-    AppLanguage(code: 'es', labelEn: 'Spanish', nativeName: 'Español'),
-    AppLanguage(code: 'fr', labelEn: 'French', nativeName: 'Français'),
-    AppLanguage(code: 'ar', labelEn: 'Arabic', nativeName: 'العربية'),
   ];
 
   /// Registry in effect. Overwritten by [adopt] once `GET /api/v1/languages`

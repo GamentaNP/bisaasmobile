@@ -145,17 +145,30 @@ void main() {
     });
 
     test('covers the scripts nobody would have thought to list', () {
-      const chain = ScriptFonts.universalChain;
-      for (final family in const [
-        'NotoSansKhmer',
-        'NotoSansSinhala',
-        'NotoSansThai',
-        'NotoSansHebrew',
-        'NotoSansGeorgian',
-        'NotoSansMalayalam',
-        'NotoSansMyanmar',
+      // A script the registry does not list must still resolve to a chain that
+      // ends at the platform font, which is what makes rendering independent of
+      // the language list.
+      //
+      // The previous version asserted a Noto family per script, and that was
+      // hollow: 19 of those families were never bundled, so Flutter fell through
+      // to the platform anyway while the test looked like it proved specific
+      // coverage. Naming a family we do not ship is a claim, not a guarantee.
+      // See test/app/font_coverage_test.dart, which asserts that every family the
+      // chain does name is really bundled.
+      for (final script in const [
+        AppScript.khmer,
+        AppScript.sinhala,
+        AppScript.thai,
+        AppScript.hebrew,
+        AppScript.georgian,
+        AppScript.malayalam,
+        AppScript.myanmar,
       ]) {
-        expect(chain, contains(family));
+        expect(
+          ScriptFonts.forScript(script).last,
+          'sans-serif',
+          reason: '$script is not bundled, so it must end at the platform font',
+        );
       }
     });
 
@@ -395,13 +408,14 @@ void main() {
       expect(en.textTheme.bodyLarge!.fontFamily, ScriptFonts.latinFamily);
     });
 
-    test('a Khmer locale still resolves, because the chain is not enumerated', () {
-      // km is not in the app's language registry. It must not throw and must
-      // still produce a renderable chain rather than a missing-glyph hole.
-      final km = AppTheme.forLocale(Brightness.light, languageCode: 'km');
-      expect(km.textTheme.bodyLarge!.fontFamily, 'NotoSansKhmer');
-      expect(km.textTheme.bodyLarge!.fontFamilyFallback, contains('sans-serif'));
-    });
+      test('a Khmer locale still resolves, because the chain is not enumerated', () {
+        // km is not in the app's language registry. It must not throw and must
+        // still produce a renderable chain rather than a missing-glyph hole.
+        // Khmer is not bundled, so the platform supplies it - see the note on
+        // 'covers the scripts nobody would have thought to list'.
+        final km = AppTheme.forLocale(Brightness.light, languageCode: 'km');
+        expect(km.textTheme.bodyLarge!.fontFamilyFallback, contains('sans-serif'));
+      });
 
     test('unknown and null locales degrade to the branded face', () {
       for (final code in const [null, '', 'xx']) {

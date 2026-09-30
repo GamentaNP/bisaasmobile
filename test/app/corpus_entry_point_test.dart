@@ -54,24 +54,46 @@ void main() {
     //   Library  - /library/files, PDFs and notes as soft form
     //   Books    - /books, the Book Engine with a real reader
     //   Syllabus - /syllabi, the exam tree
-    test('it navigates to the PDF library under its own name', () {
-      expect(courses, contains("push('/library')"));
+    //
+    // The tiles are declared as records in `_CorpusTiles._tiles` rather than as
+    // inline widgets, so assert on that table. A literal `push('/books')` in the
+    // screen body would mean the tile is no longer gated on having content,
+    // which is the bug this file was rewritten for.
+    for (final (code, label, route) in const [
+      ('library', 'Library', '/library'),
+      ('books', 'Books', '/books'),
+      ('syllabus', 'Syllabus', '/syllabus'),
+    ]) {
+      test('it offers $label as a distinct, correctly named entry', () {
+        expect(
+          courses,
+          contains("code: '$code'"),
+          reason: 'the $label corpus must be declared as its own tile',
+        );
+        expect(
+          courses,
+          contains("label: '$label'"),
+          reason:
+              'on Bisaas "$label" must name the $label resource, not something else',
+        );
+        expect(
+          courses,
+          contains("route: '$route'"),
+          reason: 'the $label tile must point at the real registered path',
+        );
+      });
+    }
+
+    test('every corpus tile is gated on the server actually having content', () {
+      // Without this the app ships a Books tab that can only ever render
+      // "No books have been published yet", because all eight book_engine
+      // rollout flags are off and nothing has been ingested.
+      expect(courses, contains('corpusStatusProvider'));
       expect(
         courses,
-        contains("label: 'Library'"),
-        reason:
-            'on Bisaas "Library" means the PDF library, not the courses tab',
+        contains('CorpusAvailability.empty'),
+        reason: 'an empty corpus must be dropped from the entry points',
       );
-    });
-
-    test('it navigates to the book catalog', () {
-      expect(courses, contains("push('/books')"));
-      expect(courses, contains("label: 'Books'"));
-    });
-
-    test('it navigates to the syllabus', () {
-      expect(courses, contains("push('/syllabus')"));
-      expect(courses, contains("label: 'Syllabus'"));
     });
 
     test('the bottom-nav branch is not labelled "Library"', () {

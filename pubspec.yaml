@@ -116,6 +116,42 @@ flutter:
         - asset: assets/fonts/InstrumentSans-Bold.ttf
           weight: 700
 
+    # Non-Latin scripts are bundled rather than left to the OEM.
+    #
+    # The universal chain in lib/app/theme/script_fonts.dart already asks for
+    # these families by name, but until they were declared here Flutter silently
+    # fell through to the platform's `sans-serif`. That works on a Redmi (Android
+    # ships Noto) and fails on any OEM that ships a trimmed font set, where the
+    # user sees tofu boxes for exactly the languages the app is built for.
+    #
+    # Family names match script_fonts.dart one-for-one. Only Regular is bundled:
+    # Flutter synthesises other weights, and shipping 5 weights x 6 scripts would
+    # add ~20 MB to the bundle for no legibility gain.
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/noto/NotoSansDevanagari-Regular.ttf
+          weight: 400
+    - family: NotoSansBengali
+      fonts:
+        - asset: assets/fonts/noto/NotoSansBengali-Regular.ttf
+          weight: 400
+    - family: NotoSansTamil
+      fonts:
+        - asset: assets/fonts/noto/NotoSansTamil-Regular.ttf
+          weight: 400
+    - family: NotoSansTelugu
+      fonts:
+        - asset: assets/fonts/noto/NotoSansTelugu-Regular.ttf
+          weight: 400
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/noto/NotoSansArabic-Regular.ttf
+          weight: 400
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/noto/NotoSansSC-Regular.ttf
+          weight: 400
+
 flutter_launcher_icons:
   android: true
   ios: true
