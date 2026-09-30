@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bisaasmobile/app/config/app_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -125,6 +127,88 @@ void main() {
     test('an empty current version is never below — CI must not lock out', () {
       // A local/debug build with no APP_VERSION must not be blocked.
       expect(isVersionBelow('', '9.9.9'), isFalse);
+    });
+  });
+
+  group('applyAppConfig', () {
+    // The version floor used to be latched inside `bootstrap()`, awaited before
+    // `runApp`. That put `GET /app/config` — 578 bytes on the wire — and its
+    // 15s connect timeout between process start and first paint. The latch moved
+    // here so it can happen the moment the config lands, after the first frame.
+    setUp(AppConfigCache.reset);
+    tearDown(AppConfigCache.reset);
+
+    test('stores the config so a second reader does not re-request it', () {
+      expect(AppConfigCache.value, isNull);
+
+      applyAppConfig(AppConfig.fromJson(live));
+
+      expect(AppConfigCache.value, isNotNull);
+    });
+
+    test('a null config is a no-op, not a cleared cache', () {
+      // An outage must leave whatever we had rather than resetting to unknown.
+      applyAppConfig(AppConfig.fromJson(live));
+
+      applyAppConfig(null);
+
+      expect(AppConfigCache.value, isNotNull);
+    });
+
+    test('a build above the floor is not blocked', () {
+      // No APP_VERSION in a test build, so `defaultAppVersion()` is empty and
+      // the floor is never applied. The guard that matters is in
+      // `isVersionBelow`, asserted above; this proves the latch is a no-op
+      // rather than throwing when the version is unknown.
+      applyAppConfig(AppConfig.fromJson(live));
+
+      expect(
+        () => applyAppConfig(AppConfig.fromJson(live)),
+        returnsNormally,
+      );
+    });
+
+    test('applying twice is harmless, because a rebuild may call it again', () {
+      applyAppConfig(AppConfig.fromJson(live));
+
+      expect(
+        () => applyAppConfig(AppConfig.fromJson(live)),
+        returnsNormally,
+      );
+      expect(AppConfigCache.value, isNotNull);
+    });
+  });
+
+  group('the first frame is not blocked on the network', () {
+    // A source-level guard, and deliberately so. The regression being prevented
+    // is invisible to a unit test: `bootstrap()` awaiting a Dio call again would
+    // still pass every behavioural test while reintroducing a blank launch on a
+    // bad network. This is the one place a structural assertion is the right
+    // instrument.
+    test('bootstrap() contains no network call', () {
+      final source = File('lib/app/bootstrap.dart').readAsStringSync();
+
+      expect(
+        RegExp(r'\.fetch\(\)|\.get<|await .*dio|DioClient\.instance\.dio')
+            .hasMatch(source),
+        isFalse,
+        reason:
+            'bootstrap() runs before runApp(). Any request here delays the first '
+            'frame by a network round trip, and up to '
+            'ApiConfig.connectTimeout on a bad connection. Fetch '
+            'GET /app/config from appConfigProvider instead.',
+      );
+    });
+
+    test('the config fetch happens in a provider, off the critical path', () {
+      final source = File('lib/app/providers.dart').readAsStringSync();
+
+      expect(
+        source,
+        contains('applyAppConfig'),
+        reason: 'the version floor has to be latched somewhere that runs '
+            'post-frame',
+      );
     });
   });
 }

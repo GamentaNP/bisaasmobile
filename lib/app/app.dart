@@ -47,6 +47,26 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     _listenPushNavigation();
     _listenAuthForPushAndAnalytics();
     _askForConsentOnce();
+    _warmAppConfigAfterFirstFrame();
+  }
+
+  /// Starts `GET /app/config` once the first frame is on screen.
+  ///
+  /// It used to run in `bootstrap()`, awaited before `runApp`, which put a
+  /// 578-byte request and its 15-second connect timeout between process start
+  /// and first paint. Nothing about the config needed to be pre-frame: the
+  /// maintenance and force-update gates are widgets that read it reactively, and
+  /// `applyAppConfig` latches the version floor whenever the config lands.
+  ///
+  /// Warming it here rather than leaving it to first use keeps the request off
+  /// the critical path without making it lazy-forever.
+  void _warmAppConfigAfterFirstFrame() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(
+        ref.read(appConfigProvider.future).catchError((Object _) => null),
+      );
+    });
   }
 
   /// Asks for consent the first time the app is opened, before any non-essential

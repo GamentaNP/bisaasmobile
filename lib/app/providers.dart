@@ -47,13 +47,20 @@ final dioProvider = Provider<Dio>((ref) {
 /// while the server said false, which is how an operator's kill-switch came to
 /// be ignored.
 final appConfigProvider = FutureProvider<AppConfig?>((ref) async {
-  // Reuse the boot fetch rather than issuing a second identical request.
+  // Reuse a config that arrived early rather than issuing a second identical
+  // request. Normally null here, because the fetch is post-frame: it used to
+  // happen in `bootstrap()` and the app could not paint until it returned.
   final cached = AppConfigCache.value;
-  if (cached != null) return cached;
+  if (cached != null) {
+    applyAppConfig(cached);
+    return cached;
+  }
 
   try {
     final config = await AppConfigDataSource(ref.watch(dioProvider)).fetch();
-    AppConfigCache.value = config;
+    // Latches the version floor into the update gate. Safe after the first
+    // frame: `ForceUpdateGate` listens to that gate and swaps the screen in.
+    applyAppConfig(config);
     return config;
   } on Object {
     // A config outage must not brick the app. `null` means "unknown", and every

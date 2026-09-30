@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../core/network/api_exception.dart';
+import '../../core/network/app_update_gate.dart';
+import '../../core/network/install_identity_interceptor.dart';
+
 /// Operator configuration served by `GET /api/v1/app/config`.
 ///
 /// This is the only public (pre-auth) endpoint that carries the maintenance
@@ -106,19 +110,57 @@ class AppConfigDataSource {
 /// Holds the config fetched during `bootstrap()` so the provider does not
 /// immediately re-request it.
 ///
-/// The boot fetch has to happen before the first frame (the version floor is
-/// latched into the update gate there, and the maintenance gate is about to
-/// render). Without this the app hit `GET /app/config` twice on every launch,
-/// which was visible in logcat.
+/// The provider still fetches on its own; this only exists so that a config
+/// obtained early — or injected by a test — is reused rather than re-requested.
 class AppConfigCache {
   const AppConfigCache._();
 
-  /// The config fetched during `bootstrap()`, if any. Public so the provider
-  /// can reuse it instead of issuing a second identical request.
+  /// The most recent config seen, if any. Public so the provider can reuse it
+  /// instead of issuing a second identical request.
   static AppConfig? value;
 
   /// Test seam.
   static void reset() => value = null;
+}
+
+/// Latches the operator's version floor into [AppUpdateGate].
+///
+/// Called from `appConfigProvider` as soon as a config is available, which is
+/// *after* the first frame rather than before it. `AppUpdateGate` is a
+/// `Listenable` and `ForceUpdateGate` listens to it, so a build below the floor
+/// is still swapped out — one frame later, instead of never having painted at
+/// all.
+///
+/// Doing this in `bootstrap()` meant a 15-second connect timeout on a bad
+/// network produced a blank screen, for a 578-byte request. That is the wrong
+/// trade: an hour-old maintenance switch is survivable, a blank launch is not.
+void applyAppConfig(AppConfig? config) {
+  if (config == null) return;
+  AppConfigCache.value = config;
+
+  final current = InstallIdentityInterceptor.defaultAppVersion();
+  if (current.isEmpty) return;
+
+  final floor = config.minVersionFor(
+    platform: defaultTargetPlatform == TargetPlatform.iOS
+        ? TargetPlatform.iOS
+        : TargetPlatform.android,
+  );
+  if (!isVersionBelow(current, floor)) return;
+
+  AppUpdateGate.instance.observe(
+    ApiException(
+      statusCode: 426,
+      code: ApiErrorCode.upgradeRequired,
+      message: 'This app version is no longer supported.',
+      details: <String, dynamic>{
+        'min_version': floor,
+        'platform':
+            defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
+        'current_version': current,
+      },
+    ),
+  );
 }
 
 /// Compares two dotted version strings.

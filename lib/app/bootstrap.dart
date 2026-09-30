@@ -13,10 +13,7 @@ import '../core/analytics/crash_reporting.dart';
 import '../core/device/system_ui_service.dart';
 import '../core/errors/error_reporter.dart';
 import '../core/logging/app_logger.dart';
-import '../core/network/api_exception.dart';
-import '../core/network/app_update_gate.dart';
 import '../core/network/dio_client.dart';
-import '../core/network/install_identity_interceptor.dart';
 import '../core/network/response_cache_store.dart';
 import '../core/notifications/local_notification_service.dart';
 import '../core/notifications/push_notification_service.dart';
@@ -24,7 +21,6 @@ import '../core/security/app_security.dart';
 import '../core/security/token_manager.dart';
 import '../core/storage/database/app_database.dart';
 import '../core/storage/preferences.dart';
-import 'config/app_config.dart';
 
 Future<void> bootstrap() async {
   // Initialize Key-Value preferences
@@ -79,41 +75,20 @@ Future<void> bootstrap() async {
       cache: ResponseCacheStore(AppDatabase.instance()),
     );
 
-  // Fetch the operator config before the first frame. `GET /app/config` is
-  // public and carries the maintenance switch and the force-update floor, so
-  // this works with no session and before any UI exists to be gated. Wrapped in
-  // a try because a config outage must not stop the app from starting — an
-  // earlier version had no call here at all, which is why the maintenance
-  // switch was impossible to honour.
-  try {
-    final config = await AppConfigDataSource(DioClient.instance.dio).fetch();
-    // Share it with appConfigProvider so the gate does not re-request.
-    AppConfigCache.value = config;
-    if (config != null) {
-      // Latch the version floor into the update gate so a stale build is told
-      // at launch rather than only when some unrelated call happens to 426.
-      final current = InstallIdentityInterceptor.defaultAppVersion();
-      if (current.isNotEmpty) {
-        final floor = config.minVersionFor(platform: defaultTargetPlatform);
-        if (isVersionBelow(current, floor)) {
-          AppUpdateGate.instance.observe(
-            ApiException(
-              statusCode: 426,
-              code: ApiErrorCode.upgradeRequired,
-              message: 'This app version is no longer supported.',
-              details: <String, dynamic>{
-                'min_version': floor,
-                'platform': defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
-                'current_version': current,
-              },
-            ),
-          );
-        }
-      }
-    }
-  } on Object catch (e) {
-    AppLogger.w('app config unavailable at boot: $e');
-  }
+  // `GET /app/config` is NOT fetched here.
+  //
+  // It used to be, awaited, before `runApp` — a 578-byte request standing
+  // between the process starting and the first pixel. With a 15s connect
+  // timeout (`ApiConfig.connectTimeout`) a bad connection produced a blank
+  // screen for a quarter of a minute, and `ResponseCachePolicy` deliberately
+  // refuses to cache this path, so the cache could never have covered it.
+  //
+  // Nothing about the config needs to be pre-frame. `appConfigProvider` fetches
+  // it, `applyAppConfig` latches the version floor into the update gate, and
+  // both `MaintenanceGate` and `ForceUpdateGate` are widgets that already read
+  // it reactively. A stale maintenance switch for one launch is survivable; a
+  // blank launch is not. `CivilCalApp.initState` warms the provider so the
+  // request starts on the first frame instead of on first use.
 
   // Honor the saved locale on the wire (Accept-Language) per AGENTS.md.
   final savedLocale = Preferences.instance.locale;
