@@ -52,7 +52,7 @@ dependencies:
   connectivity_plus: ^7.3.1
 
   # === HAPTICS / SHARING ===
-  vibration: ^3.2.0
+  vibration: ^3.2.1
   share_plus: ^13.3.0
   url_launcher: ^6.3.1
 
