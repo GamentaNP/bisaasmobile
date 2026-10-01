@@ -67,7 +67,7 @@ dependencies:
   local_auth: ^3.0.2
 
   # === DEEP LINKS (civilcal:// + https app links) ===
-  app_links: ^6.3.2
+  app_links: ^7.2.1
 
   # === CERT PINNING (SHA-256 of leaf cert) ===
   crypto: ^3.0.3
