@@ -98,40 +98,116 @@ void main() {
   });
 
   group('snapshot body', () {
-    test('is JSON, not Dart map syntax', () async {
-      // `snapshot.toString()` produced `{domain: Civil, inputs: {}}` — unquoted
-      // keys, which is not JSON. The API would 422 it, `bump` would retry five
-      // times and give up, and the result would be indistinguishable from the
-      // network being down.
-      final snapshot = <String, dynamic>{
-        'domain': 'civil',
-        'slug': 'bmr',
-        'inputs': {'weight_kg': 70},
-        'outputs': {'bmi': 24.5},
-        'calculated_at': '2026-09-30T00:00:00+05:45',
-      };
-
-      await queue.enqueueSnapshot(snapshot);
+    test('matches the shape CalculationSnapshotController::sync validates', () async {
+      // The server requires a `snapshots` collection where `domain` is a string
+      // and `input_payload` / `result_payload` are both arrays. The previous
+      // flat `{domain, slug, inputs, outputs}` body would have 422'd, retried
+      // and given up, looking exactly like a network outage.
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        calculatorSlug: 'bmr',
+        inputs: const {'weight_kg': 70},
+        result: const {'bmi': 24.5},
+      );
 
       final row = (await db.select(db.syncQueue).get()).single;
       expect(row.endpoint, '/calculation-snapshots');
       expect(row.method, 'PUT');
-      expect(jsonDecode(row.payload!), snapshot);
+
+      final body = jsonDecode(row.payload!) as Map<String, dynamic>;
+      final snapshots = body['snapshots'] as List<dynamic>;
+      expect(snapshots, hasLength(1));
+
+      final snapshot = snapshots.single as Map<String, dynamic>;
+      expect(snapshot['domain'], 'civil');
+      expect(snapshot['calculator_slug'], 'bmr');
+      expect(snapshot['input_payload'], {'weight_kg': 70});
+      expect(snapshot['result_payload'], {'bmi': 24.5});
+      expect(snapshot.containsKey('client_uuid'), isFalse);
+      expect(snapshot.containsKey('is_favorite'), isFalse);
     });
 
     test('round-trips nested and unicode payloads', () async {
-      final snapshot = <String, dynamic>{
-        'title': 'भारतको इतिहास',
-        'nested': {
-          'list': [1, 2, {'deep': true}],
-          'null_field': null,
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        calculatorSlug: 'concrete',
+        inputs: const {
+          'title': '??????',
+          'nested': {
+            'list': [1, 2, true],
+            'null_field': null,
+          },
         },
-      };
-
-      await queue.enqueueSnapshot(snapshot);
+        result: const {'volume': 12.5},
+      );
 
       final row = (await db.select(db.syncQueue).get()).single;
-      expect(jsonDecode(row.payload!), snapshot);
+      final body = jsonDecode(row.payload!) as Map<String, dynamic>;
+      final snapshot =
+          (body['snapshots'] as List<dynamic>).single as Map<String, dynamic>;
+      expect(snapshot['input_payload'], {
+        'title': '??????',
+        'nested': {
+          'list': [1, 2, true],
+          'null_field': null,
+        },
+      });
+    });
+
+    test('omits client_uuid rather than sending a malformed one', () async {
+      // The server validates it as a uuid and rejects the whole batch over one
+      // bad value, so a non-UUID must be dropped rather than forwarded.
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        calculatorSlug: 'bmr',
+        inputs: const {'a': 1},
+        result: const {'b': 2},
+        clientUuid: 'not-a-uuid',
+      );
+
+      final row = (await db.select(db.syncQueue).get()).single;
+      final body = jsonDecode(row.payload!) as Map<String, dynamic>;
+      final snapshot =
+          (body['snapshots'] as List<dynamic>).single as Map<String, dynamic>;
+      expect(snapshot.containsKey('client_uuid'), isFalse);
+    });
+
+    test('sends client_uuid when it really is a UUID', () async {
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        calculatorSlug: 'bmr',
+        inputs: const {'a': 1},
+        result: const {'b': 2},
+        clientUuid: '0f8fad5b-d9cb-469f-a165-70867728950e',
+      );
+
+      final row = (await db.select(db.syncQueue).get()).single;
+      final body = jsonDecode(row.payload!) as Map<String, dynamic>;
+      final snapshot =
+          (body['snapshots'] as List<dynamic>).single as Map<String, dynamic>;
+      expect(snapshot['client_uuid'], '0f8fad5b-d9cb-469f-a165-70867728950e');
+    });
+
+    test('omits last_opened_at, so a skewed clock cannot lose the batch', () async {
+      // The server validates it `before_or_equal:now` and rejects the WHOLE
+      // collection over one bad row. A phone whose clock is minutes ahead would
+      // therefore lose the user's inputs and results to protect a field that is
+      // nullable and only used for display ordering.
+      //
+      // Verified against the live endpoint: a body carrying last_opened_at was
+      // rejected with "must be a date before or equal to now"; the same body
+      // without it validates.
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        inputs: const {'a': 1},
+        result: const {'b': 2},
+      );
+
+      final row = (await db.select(db.syncQueue).get()).single;
+      final body = jsonDecode(row.payload!) as Map<String, dynamic>;
+      final snapshot =
+          (body['snapshots'] as List<dynamic>).single as Map<String, dynamic>;
+      expect(snapshot.containsKey('last_opened_at'), isFalse);
     });
   });
 

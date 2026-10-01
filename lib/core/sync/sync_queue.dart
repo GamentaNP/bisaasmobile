@@ -81,28 +81,74 @@ class SyncQueueService {
     return null;
   }
 
-  /// Offline calculation snapshot, synced on reconnect.
-  /// Payload is JSON-encoded `{domain, slug, inputs, outputs, calculated_at}`.
+  /// Queues one calculation snapshot for `PUT /api/v1/calculation-snapshots`.
   ///
-  /// Two bugs fixed here, both found by reading rather than running, because
-  /// nothing calls this yet. The path was `/v1/calculation-snapshots/sync`, but
-  /// `ApiConfig.baseUrl` already ends in `/api/v1`, so every drain was posting to
-  /// `/api/v1/v1/calculation-snapshots/sync` and getting a **404** — offline
-  /// snapshots were silently never synced. And the canonical verb is PUT onto
-  /// the collection (`PUT /calculation-snapshots`, `sync.update`); the `/sync`
-  /// spelling is `sync.transition-alias` (routes/api/v1/calculators.php).
+  /// ## The payload shape is not ours to choose
   ///
-  /// The body was `snapshot.toString()`, which for a `Map<String, dynamic>`
-  /// produces Dart literal syntax — `{domain: Civil, inputs: {}}` — with
-  /// unquoted keys. That is not JSON, so the server would 422 it, `bump` would
-  /// retry five times and give up, and the whole thing would be indistinguishable
-  /// from the network being down. `jsonEncode` is the only thing here that
-  /// produces a body the API envelope can be parsed out of.
-  Future<int> enqueueSnapshot(Map<String, dynamic> snapshot) => enqueue(
-        endpoint: '/calculation-snapshots',
-        payload: jsonEncode(snapshot),
-        method: 'PUT',
-      );
+  /// `CalculationSnapshotController::sync` validates a **collection**:
+  ///
+  /// ```json
+  /// { "snapshots": [ { "domain": "...", "calculator_slug": "...",
+  ///      "input_payload": { ... }, "result_payload": { ... } } ] }
+  /// ```
+  ///
+  /// `snapshots` is required, bounded to 100, `input_payload` and
+  /// `result_payload` must both be arrays, and `client_uuid` must be a real UUID
+  /// when present. An earlier version of this docblock described a flat
+  /// `{domain, slug, inputs, outputs, calculated_at}` object, which the server
+  /// has never accepted: it would have 422'd, `bump` would retry and give up,
+  /// and the failure would be indistinguishable from the network being down.
+  ///
+  /// One row carries one snapshot rather than batching to the 100 limit, so a
+  /// burst of calculations costs a burst of idempotent PUTs instead of one
+  /// body that has to be re-serialised every time another entry arrives.
+Future<int> enqueueSnapshot({
+    required String domain,
+    required Map<String, dynamic> inputs,
+    required Map<String, dynamic> result,
+    String? calculatorSlug,
+    String? clientUuid,
+  }) {
+    // Built imperatively rather than with collection-if: three of these fields
+    // are conditionally *omitted*, and the server rejects the whole batch over
+    // one malformed or null value. Being explicit about "absent" is the point.
+    final snapshot = <String, dynamic>{
+      'domain': domain,
+      'input_payload': inputs,
+      'result_payload': result,
+      // `last_opened_at` is deliberately NOT sent. It is nullable, used only for
+      // display ordering, and validated `before_or_equal:now` — so a phone whose
+      // clock is even slightly ahead loses the *entire* batch, including the
+      // user's inputs and results. Paying a whole-row rejection risk for a
+      // display hint is a bad trade, and the server stamps its own clock anyway.
+      //
+      // Verified: a body carrying it was rejected with "must be a date before or
+      // equal to now" while the same body without it validates.
+    };
+    if (calculatorSlug != null) {
+      snapshot['calculator_slug'] = calculatorSlug;
+    }
+    // Only sent when it really is a UUID, because the server validates it as one
+    // and would reject the entire batch over a malformed value.
+    if (clientUuid != null && _isUuid(clientUuid)) {
+      snapshot['client_uuid'] = clientUuid;
+    }
+
+    return enqueue(
+      endpoint: '/calculation-snapshots',
+      method: 'PUT',
+      payload: jsonEncode({
+        'snapshots': [snapshot],
+      }),
+    );
+  }
+
+  static final _uuidPattern = RegExp(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+    caseSensitive: false,
+  );
+
+  static bool _isUuid(String value) => _uuidPattern.hasMatch(value);
 
   Future<List<SyncQueueData>> pending() => _dao.pending();
   Future<void> remove(int id) => _dao.remove(id);

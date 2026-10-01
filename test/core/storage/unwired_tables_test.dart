@@ -126,31 +126,47 @@ void main() {
       );
     });
 
-    test('the sync queue is wired but never fed', () {
-      // SyncQueueDao writes; SyncQueueService.enqueue has no production caller.
-      // An offline write queue that is never enqueued into drains zero rows
-      // every 30 seconds forever, which is worse than not having one because it
-      // looks like it works.
+    test('the sync queue has exactly one producer, and it is the calculator', () {
+      // `sync_queue` was, for a long time, a queue that nothing fed:
+      // SyncQueueDao writes, SyncQueueService.enqueue had no production caller,
+      // and SyncManager drained zero rows every 30 seconds forever. That looks
+      // like working offline support and is not.
+      //
+      // CalculatorRepositoryImpl now queues every result, so the queue is live.
+      // This test pins that to two known call sites: the service's own method
+      // and the repository. A third means something else now assumes it owns
+      // replay, and the endpoint validation in SyncQueueService is the only
+      // thing standing between a bad row and a bearer token leaving the device.
+      const expected = {
+        // Calls SyncQueueService.enqueue / enqueueSnapshot.
+        'lib/features/calculator/data/repositories/calculator_repository_impl.dart',
+        // The DAO underneath; reached through the service, never directly.
+        'lib/core/storage/database/daos/sync_queue_dao.dart',
+      };
+
       final lib = Directory('lib');
-      final callers = <String>[];
+      final producers = <String>{};
       for (final file in lib.listSync(recursive: true).whereType<File>()) {
         if (!file.path.endsWith('.dart')) continue;
-        final path = file.path.replaceAll('\\', '/');
-        if (path.endsWith('sync_queue.dart') || path.endsWith('sync_manager.dart')) {
+        if (file.path.endsWith('app_database.g.dart')) continue;
+        if (file.path.endsWith('sync_queue.dart')) continue;
+        // The DAO method itself, not a caller of the queue.
+        if (file.path.endsWith('sync_queue_dao.dart')) {
+          producers.add(file.path.replaceAll('\\', '/'));
           continue;
         }
         final source = file.readAsStringSync();
-        if (source.contains('.enqueue(') || source.contains('enqueueSnapshot(')) {
-          callers.add(path);
+        if (source.contains('enqueue(') || source.contains('enqueueSnapshot(')) {
+          producers.add(file.path.replaceAll('\\', '/'));
         }
       }
 
       expect(
-        callers,
-        isEmpty,
-        reason: 'something now feeds the offline write queue. Good - but move it '
-            'out of the "no producer" list and record the contract it replays '
-            'against, because SyncManager replays these as idempotent POSTs.',
+        producers,
+        expected,
+        reason: 'the offline write queue gained or lost a producer. Every new '
+            'one is an independent claim on replay, so record the contract it '
+            'replays against here.',
       );
     });
   });

@@ -2,10 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/providers.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/dio_client.dart';
-import '../../../../core/consent/consent_gate.dart';
 import '../../data/datasources/calculator_remote_data_source.dart';
 import '../../data/repositories/calculator_repository_impl.dart';
 import '../../domain/entities/calculator.dart';
@@ -18,8 +19,15 @@ final calculatorRemoteDataSourceProvider = Provider<CalculatorRemoteDataSource>(
 });
 
 final calculatorRepositoryProvider = Provider<CalculatorRepository>((ref) {
-  return CalculatorRepositoryImpl(ref.watch(calculatorRemoteDataSourceProvider));
-});
+    // The queue is what makes a calculation outlive the session: the repository
+    // records every result to the sync queue and `SyncManager` replays it to
+    // PUT /api/v1/calculation-snapshots. A controller comment used to claim this
+    // happened "in repo" while the repository did neither.
+    return CalculatorRepositoryImpl(
+      ref.watch(calculatorRemoteDataSourceProvider),
+      ref.watch(syncQueueServiceProvider),
+    );
+  });
 
 final calculatorCatalogProvider = FutureProvider<CalculatorCatalogDto>((ref) async {
   final repo = ref.watch(calculatorRepositoryProvider);
@@ -84,7 +92,9 @@ class CalculatorController extends Notifier<CalcState> {
     try {
       final repo = ref.read(calculatorRepositoryProvider);
       final r = await repo.calculate(domain: domain, slug: slug, inputs: inputs);
-      // Push to local history (drift persistence + server sync handled in repo).
+      // Push to the in-memory history the History sheet reads. Durability is the
+        // repository's job: it queues every result to the sync queue, which
+        // SyncManager replays to PUT /api/v1/calculation-snapshots.
       final newEntry = CalcHistoryEntry(
         label: '$slug · ${DateTime.now().toIso8601String().substring(0, 16)}',
         data: {...inputs, 'result': r.data},

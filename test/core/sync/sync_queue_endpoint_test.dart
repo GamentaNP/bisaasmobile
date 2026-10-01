@@ -2,6 +2,8 @@ import 'package:bisaasmobile/core/storage/database/app_database.dart';
 import 'package:bisaasmobile/core/storage/database/daos/sync_queue_dao.dart';
 import 'package:bisaasmobile/core/sync/sync_queue.dart';
 import 'package:drift/drift.dart' show Value;
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -34,13 +36,12 @@ void main() {
   });
 
   Future<SyncQueueCompanion> enqueueSnapshot() async {
-    await queue.enqueueSnapshot(<String, dynamic>{
-      'domain': 'civil',
-      'slug': 'beam-shear',
-      'inputs': <String, dynamic>{'b': 200},
-      'outputs': <String, dynamic>{'v': 12},
-      'calculated_at': '2026-09-28T00:00:00+00:00',
-    });
+    await queue.enqueueSnapshot(
+      domain: 'civil',
+      calculatorSlug: 'beam-shear',
+      inputs: const <String, dynamic>{'b': 200},
+      result: const <String, dynamic>{'v': 12},
+    );
     return verify(() => dao.enqueue(captureAny())).captured.single
         as SyncQueueCompanion;
   }
@@ -64,9 +65,14 @@ void main() {
     expect(row.idempotencyKey.value, isNotEmpty);
   });
 
-  test('the payload is preserved verbatim for the server to reconcile', () async {
+  test('the payload carries what the server validates', () async {
     final row = await enqueueSnapshot();
-    expect(row.payload.value, contains('beam-shear'));
-    expect(row.payload.value, contains('calculated_at'));
+    final body =
+        jsonDecode(row.payload.value!) as Map<String, dynamic>;
+    final snapshot =
+        (body['snapshots'] as List<dynamic>).single as Map<String, dynamic>;
+    expect(snapshot['calculator_slug'], 'beam-shear');
+    expect(snapshot['input_payload'], {'b': 200});
+    expect(snapshot['result_payload'], {'v': 12});
   });
 }
