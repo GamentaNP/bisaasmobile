@@ -90,7 +90,7 @@ dev_dependencies:
   # riverpod_generator chain was removed: the project hand-writes every
   # fromJson and the sole generated file is app_database.g.dart.
   build_runner: ^2.4.14
-  drift_dev: ^2.21.0
+  drift_dev: ^2.35.1
   mocktail: ^1.0.4
   # integration_test/patrol intentionally omitted — their native plugins have
   # no release variant and break `flutter build appbundle` (flutter/flutter#92978).
