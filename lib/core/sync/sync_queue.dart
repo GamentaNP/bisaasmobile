@@ -143,6 +143,36 @@ Future<int> enqueueSnapshot({
     );
   }
 
+  /// Queues one offline bot match receipt for `POST /quiz/offline/match-receipt`.
+  ///
+  /// An offline match is by definition played without a connection, so the
+  /// receipt is the one thing here that is *expected* to be produced offline.
+  /// Queueing it is the normal path, not an error path.
+  ///
+  /// ## Why the manifest id is the idempotency key
+  ///
+  /// [manifestId] names exactly one issued match, so it is the natural key for
+  /// the same logical operation. Reusing it means a device that retries after a
+  /// dropped response — or that crashes mid-sync and drains the queue again —
+  /// files the same row rather than a second one. The server is idempotent on
+  /// the same value, so the two layers agree instead of one deduping and the
+  /// other not.
+  ///
+  /// A fresh UUID per enqueue would be wrong here: the retry would look like a
+  /// new report, and a legitimately repeated match (same roster, same pack day)
+  /// would be indistinguishable from a duplicate.
+  Future<int> enqueueOfflineMatchReceipt({
+    required String manifestId,
+    required Map<String, dynamic> payload,
+  }) {
+    return enqueue(
+      endpoint: '/quiz/offline/match-receipt',
+      method: 'POST',
+      payload: jsonEncode(payload),
+      idempotencyKey: manifestId,
+    );
+  }
+
   static final _uuidPattern = RegExp(
     r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
     caseSensitive: false,
