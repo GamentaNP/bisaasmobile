@@ -8,6 +8,7 @@ abstract class CalculatorRepository {
     required String domain,
     required String slug,
     required Map<String, dynamic> inputs,
+    required String idempotencyKey,
   });
   Future<List<Map<String, dynamic>>> getHistory(String domain, String slug);
 }

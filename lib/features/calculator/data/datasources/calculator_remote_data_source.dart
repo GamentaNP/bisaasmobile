@@ -33,10 +33,12 @@ class CalculatorRemoteDataSource {
     required String domain,
     required String slug,
     required Map<String, dynamic> inputs,
+    required String idempotencyKey,
   }) async {
     final res = await _dio.post<Map<String, dynamic>>(
       '/$domain/$slug/calculate',
       data: inputs,
+      options: Options(headers: {'Idempotency-Key': idempotencyKey}),
     );
     // Calculate envelope varies — some calculators return {success,data,message}
     // others return direct result under data. We normalize.

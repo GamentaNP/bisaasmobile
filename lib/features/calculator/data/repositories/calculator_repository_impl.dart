@@ -37,11 +37,13 @@ class CalculatorRepositoryImpl implements CalculatorRepository {
     required String domain,
     required String slug,
     required Map<String, dynamic> inputs,
+    required String idempotencyKey,
   }) async {
     final result = await _remote.calculate(
       domain: domain,
       slug: slug,
       inputs: inputs,
+      idempotencyKey: idempotencyKey,
     );
     await _recordSnapshot(domain: domain, slug: slug, inputs: inputs, result: result);
     return result;

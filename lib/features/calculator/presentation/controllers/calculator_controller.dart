@@ -12,6 +12,7 @@ import '../../data/repositories/calculator_repository_impl.dart';
 import '../../domain/entities/calculator.dart';
 import '../../domain/repositories/calculator_repository.dart';
 import '../../data/models/calculator_dto.dart';
+import 'calculator_request_idempotency.dart';
 
 // ──Providers──────────────────────────────────────────────────────────────
 final calculatorRemoteDataSourceProvider = Provider<CalculatorRemoteDataSource>((ref) {
@@ -84,6 +85,9 @@ class CalcState {
 }
 
 class CalculatorController extends Notifier<CalcState> {
+  final CalculatorRequestIdempotency _requestIdempotency =
+      CalculatorRequestIdempotency();
+
   @override
   CalcState build() => const CalcState();
 
@@ -91,7 +95,18 @@ class CalculatorController extends Notifier<CalcState> {
     state = state.copyWith(loading: true, error: null, fieldErrors: null);
     try {
       final repo = ref.read(calculatorRepositoryProvider);
-      final r = await repo.calculate(domain: domain, slug: slug, inputs: inputs);
+      final idempotencyKey = _requestIdempotency.keyFor(
+        domain: domain,
+        slug: slug,
+        inputs: inputs,
+      );
+      final r = await repo.calculate(
+        domain: domain,
+        slug: slug,
+        inputs: inputs,
+        idempotencyKey: idempotencyKey,
+      );
+      _requestIdempotency.complete();
       // Push to the in-memory history the History sheet reads. Durability is the
         // repository's job: it queues every result to the sync queue, which
         // SyncManager replays to PUT /api/v1/calculation-snapshots.
@@ -140,7 +155,10 @@ class CalculatorController extends Notifier<CalcState> {
     state = state.copyWith(historyLoading: false, history: filtered);
   }
 
-  void clear() => state = CalcState(history: state.history);
+  void clear() {
+    _requestIdempotency.complete();
+    state = CalcState(history: state.history);
+  }
 }
 
 final calculatorControllerProvider =
