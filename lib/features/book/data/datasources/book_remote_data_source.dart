@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/book.dart';
 import '../models/book_dto.dart';
 
@@ -49,7 +50,9 @@ class BookRemoteDataSource {
   }
 
   List<dynamic> _list(Map<String, dynamic>? body) {
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) return data;
     if (data is Map && data['items'] is List) return data['items'] as List;

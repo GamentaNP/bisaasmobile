@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/network/api_response.dart';
+import '../../../core/network/api_failure.dart';
 
 /// Study-planner / sprint surfaces:
 ///   * `GET  /quiz/coach`                             (exam resolved server-side)
@@ -58,7 +59,9 @@ class EiceRemoteDataSource {
   Future<List<Map<String, dynamic>>> getSprint() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/sprint');
     final body = res.data;
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) return data.cast<Map<String, dynamic>>();
     if (data is Map<String, dynamic>) {

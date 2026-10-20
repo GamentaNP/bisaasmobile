@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/game_models.dart';
 import '../models/mission_dto.dart';
 
@@ -22,7 +23,9 @@ class GameRemoteDataSource {
   Future<List<GameWorldSummaryDto>> getWorlds() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/game/worlds');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     try {
       final env = ApiResponse.fromJson(body, (data) => data);
       final raw = env.data;
@@ -62,7 +65,9 @@ class GameRemoteDataSource {
       queryParameters: cadence == null ? null : {'cadence': cadence},
     );
     final body = res.data;
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
 
     List<dynamic>? rows;
     final data = body['data'];

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 
 /// Verified server routes (`routes/api/v1/quiz.php:546-558` — Firebase
 /// Multiplayer Battles):
@@ -91,7 +92,9 @@ class BattleRemoteDataSource {
   }
 
   List<Map<String, dynamic>> _dataList(Map<String, dynamic>? body) {
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) return data.whereType<Map<String, dynamic>>().toList();
     if (data is Map<String, dynamic>) {

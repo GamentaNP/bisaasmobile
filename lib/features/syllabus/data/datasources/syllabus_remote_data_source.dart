@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/syllabus.dart';
 import '../models/syllabus_dto.dart';
 
@@ -50,7 +51,9 @@ class SyllabusRemoteDataSource {
   }
 
   List<dynamic> _dataList(Map<String, dynamic>? body) {
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) return data;
     if (data is Map && data['items'] is List) return data['items'] as List;

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/tutor_dto.dart';
 import '../../domain/entities/tutor.dart';
 
@@ -230,7 +231,9 @@ class TutorRemoteDataSource {
   Future<List<WeakAreaDto>> getWeakAreas() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/weak-areas');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
 
     List<Map<String, dynamic>> raw = [];
     final data = body['data'];
@@ -305,7 +308,9 @@ class TutorRemoteDataSource {
   Future<List<RevisionItemDto>> getRevisionsDue() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/revisions/due');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     List<Map<String, dynamic>> raw = [];
     if (data is List) {

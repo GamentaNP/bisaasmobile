@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/live_event_dto.dart';
 
 /// Verified routes:
@@ -21,7 +22,9 @@ class LiveEventsRemoteDataSource {
       queryParameters: {'limit': limit},
     );
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     List<Map<String, dynamic>> raw = [];
     final data = body['data'];
     if (data is Map<String, dynamic> && data['events'] is List) {

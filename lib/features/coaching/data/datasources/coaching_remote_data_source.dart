@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/coaching_dto.dart';
 
 /// Coaching surfaces are intentionally tolerant — if a dedicated coaching route
@@ -83,7 +84,9 @@ class CoachingRemoteDataSource {
     try {
       final res = await _dio.get<Map<String, dynamic>>('/learning/tracks');
       final body = res.data;
-      if (body == null) return [];
+      if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
       if (body['data'] is List) {
         final env = ApiResponse.fromJson(body, (j) => (j as List).cast<Map<String, dynamic>>());
         final list = env.data ?? [];
@@ -92,8 +95,8 @@ class CoachingRemoteDataSource {
       final data = body['data'] as Map<String, dynamic>? ?? body;
       final list = (data['tracks'] ?? data['data'] ?? data['items'] ?? []) as List;
       return list.cast<Map<String, dynamic>>().map(CoachingTrackDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/leaderboard_dto.dart';
 import '../../domain/entities/leaderboard.dart';
 
@@ -58,7 +59,9 @@ class LeaderboardRemoteDataSource {
   Future<List<MyRank>> getMyRanks() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/leaderboards/my-rank');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return MyRankDto.listFromJson(data);
@@ -115,7 +118,9 @@ class LeaderboardRemoteDataSource {
   Future<List<DonorLeaderboardEntry>> getDonationLeaderboard() async {
     final res = await _dio.get<Map<String, dynamic>>('/donations/leaderboard');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     // Data shape: {topDonors: [{donorName, badge, badgeLabel, badgeColor, totalDonatedFormatted, streakMonths}]}
     List<Map<String, dynamic>> raw = [];
     final data = body['data'];

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../shared/widgets/app_bar.dart';
 import '../../../../shared/widgets/empty_state.dart';
@@ -74,7 +75,20 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
   Future<List<QuizCourseEntry>> _loadCourses() async {
     final dio = DioClient.instance.dio;
     final res = await dio.get<Map<String, dynamic>>('/quiz/courses');
-    final data = res.data?['data'] as List? ?? const [];
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty course catalog response',
+        endpoint: '/quiz/courses',
+      );
+    }
+    final data = body['data'];
+    if (data is! List) {
+      throw ContractViolation(
+        'Expected a course list under `data`',
+        endpoint: '/quiz/courses',
+      );
+    }
     return data
         .cast<Map<String, dynamic>>()
         .map(QuizCourseEntry.fromJson)
@@ -86,7 +100,20 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
     final res = await dio.get<Map<String, dynamic>>(
       '/quiz/courses/${course.id}/categories',
     );
-    final data = res.data?['data'] as List? ?? const [];
+    final body = res.data;
+    if (body == null) {
+      throw ContractViolation(
+        'Empty category response',
+        endpoint: '/quiz/courses/${course.id}/categories',
+      );
+    }
+    final data = body['data'];
+    if (data is! List) {
+      throw ContractViolation(
+        'Expected a category list under `data`',
+        endpoint: '/quiz/courses/${course.id}/categories',
+      );
+    }
     return data
         .cast<Map<String, dynamic>>()
         .map(QuizCategoryEntry.fromJson)

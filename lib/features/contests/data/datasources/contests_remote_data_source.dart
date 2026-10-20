@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/contest_dto.dart';
 
 /// Verified routes:
@@ -144,7 +145,9 @@ class ContestsRemoteDataSource {
       queryParameters: {'limit': limit},
     );
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return data.cast<Map<String, dynamic>>().map(ContestEntryDto.fromJson).toList();
@@ -166,8 +169,8 @@ class ContestsRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (env.data ?? []).map(ContestEntryDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 

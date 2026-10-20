@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/network/api_response.dart';
+import '../../../core/network/api_failure.dart';
 
 /// PSC exam blueprints — `GET /api/v1/psc/blueprints` and the exam lifecycle
 /// (`POST /psc/blueprints/{id}/exam`, `POST|PUT .../submission`).
@@ -18,7 +19,9 @@ class PscRemoteDataSource {
   Future<List<Map<String, dynamic>>> getBlueprints() async {
     final res = await _dio.get<Map<String, dynamic>>('/psc/blueprints');
     final body = res.data;
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     if (body['data'] is List) {
       return (body['data'] as List).cast<Map<String, dynamic>>();
     }

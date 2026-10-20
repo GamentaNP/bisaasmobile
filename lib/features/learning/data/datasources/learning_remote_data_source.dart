@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
 import '../models/learning_dto.dart';
 
 /// Server-verified routes (php artisan route:list --path=api/v1/learning in C:\laragon\www\bisaas):
@@ -25,7 +26,9 @@ class LearningRemoteDataSource {
   Future<List<LearningTrackDto>> getTracks() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/tracks');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return data.whereType<Map<String, dynamic>>().map(LearningTrackDto.fromJson).toList();
@@ -46,8 +49,8 @@ class LearningRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (env.data ?? []).map(LearningTrackDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 
@@ -56,7 +59,9 @@ class LearningRemoteDataSource {
   Future<List<LearningGoalDto>> getGoals() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/goals');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return data.whereType<Map<String, dynamic>>().map(LearningGoalDto.fromJson).toList();
@@ -67,8 +72,8 @@ class LearningRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (env.data ?? []).map(LearningGoalDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 
@@ -189,7 +194,9 @@ class LearningRemoteDataSource {
   Future<List<ReviewItemDto>> getReviewsDue() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/reviews/due');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return data.whereType<Map<String, dynamic>>().map(ReviewItemDto.fromJson).toList();
@@ -206,8 +213,8 @@ class LearningRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (env.data ?? []).map(ReviewItemDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 

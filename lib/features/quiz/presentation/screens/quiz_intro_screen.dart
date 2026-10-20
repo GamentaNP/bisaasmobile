@@ -6,6 +6,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_shadows.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../shared/widgets/app_bar.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
@@ -44,7 +45,16 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
     // Course metadata: find the course in the active catalog.
     final coursesRes =
         await dio.get<Map<String, dynamic>>('/quiz/courses');
-    final courses = (coursesRes.data?['data'] as List? ?? const [])
+    final rawCourses = coursesRes.data?['data'];
+    if (rawCourses is! List) {
+      // A failed catalog read must not be rendered as "a quiz with no
+      // questions" — that is a lie about the server's state.
+      throw const ContractViolation(
+        'Empty course catalog response',
+        endpoint: '/quiz/courses',
+      );
+    }
+    final courses = rawCourses
         .cast<Map<String, dynamic>>()
         .map(QuizCourseEntry.fromJson)
         .toList();
