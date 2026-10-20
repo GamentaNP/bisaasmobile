@@ -1,25 +1,36 @@
-// ignore_for_file: omit_local_variable_types, unnecessary_lambdas, unnecessary_non_null_assertion, use_null_aware_elements
+// ignore_for_file: omit_local_variable_types, unnecessary_lambdas, use_null_aware_elements
 
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/envelope.dart';
+import '../../../../core/network/pagination.dart';
 import '../models/attempt_dto.dart';
 import '../models/quiz_dto.dart';
+import '../models/quiz_funnel_dto.dart';
 
 /// Verified server routes (`php artisan route:list --path=api/v1` in C:\laragon\www\bisaas):
 /// - GET  /quiz/courses                          → list courses (public catalog)
-/// - GET  /quiz/courses/{course}/questions       → paginated questions for course (AUTH)
-/// - GET  /quiz/questions                        → cross-domain search (AUTH)
+/// - GET  /quiz/courses/{course}/questions       → cursor-paginated questions for course (AUTH)
+/// - GET  /quiz/questions                        → cursor-paginated cross-domain search (AUTH)
 /// - POST /quiz/attempts/start                   → start attempt (auth, Idempotency-Key)
 /// - POST /quiz/attempts/{attempt}/answer        → submit answer (auth, {question_id:int, answer:string})
 /// - POST /quiz/attempts/{attempt}/complete      → complete + score (auth)
 /// - GET  /quiz/attempts/{attempt}/results       → results detail (auth)
-/// - GET  /quiz/attempts/history                 → offset paginated history (auth)
+/// - GET  /quiz/attempts/history                 → cursor-paginated history (auth)
 ///
 /// The question corpus requires a credential (server security plan W0.1) and is
 /// throttled on its own bucket: 30/min, 300/hr, 1500/day. Only the catalog is
 /// public, and it carries no question text.
+///
+/// **Cursor pagination.** `MOBILE_API_INTEGRATION_GUIDE.md` §4.1 moved
+/// `/quiz/questions`, `/quiz/courses/{course}/questions` and
+/// `/quiz/attempts/history` to the cursor shape; the server already defaults
+/// to it (`ServesQuestionCollections::wantsCursorPagination`). Sending
+/// `?page=2` to a cursor endpoint returns page one forever, so this data source
+/// never sends `page` to those routes — it walks `next_cursor` instead.
 ///
 /// Dio baseUrl already ends with /api/v1 — never add prefix.
 /// All POSTs carry Idempotency-Key per-request via Options (never global).
@@ -29,81 +40,62 @@ class QuizRemoteDataSource {
 
   static const _uuid = Uuid();
 
+  /// Page size used when walking the cursor collection. The server caps
+  /// `per_page` at 100 for the question collections.
+  static const _perPage = 50;
+
+
   // ── Courses as quiz list (server has no /quiz/quizzes) ────────────────────
 
   Future<List<Map<String, dynamic>>> getQuizList({String? subjectSlug}) async {
     // subjectSlug maps to course slug filter if needed — currently ignored, returns all courses
     final res = await _dio.get<Map<String, dynamic>>('/quiz/courses');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty course catalog response', endpoint: '/quiz/courses');
+    }
     // Envelope: {success, data: [...], message, ...}
     final data = body['data'];
     if (data is List) return data.cast<Map<String, dynamic>>();
     if (data is Map<String, dynamic> && data['items'] is List) {
       return (data['items'] as List).cast<Map<String, dynamic>>();
     }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return json.cast<Map<String, dynamic>>();
-        if (json is Map<String, dynamic> && json['items'] is List) {
-          return (json['items'] as List).cast<Map<String, dynamic>>();
-        }
-        return <Map<String, dynamic>>[];
-      });
-      return env.data ?? [];
-    } catch (_) {
-      return [];
-    }
+    throw ContractViolation(
+      'Expected a course list under `data`',
+      endpoint: '/quiz/courses',
+    );
   }
 
   // ── Session: questions for a course → QuizSessionDto ───────────────────────
 
-  Future<QuizSessionDto> getQuizSession(String quizId, {int? categoryId}) async {
+  /// Builds a playable session for [quizId].
+  ///
+  /// [questionLimit] caps how many questions are pulled. The session seeds the
+  /// attempt with exactly the question ids it fetched (the server grades those
+  /// ids), so the cap is a deliberate product limit, not a pagination
+  /// artefact — the walk underneath it is a full cursor walk, so the cap is
+  /// never the reason a course looks empty.
+  Future<QuizSessionDto> getQuizSession(
+    String quizId, {
+    int? categoryId,
+    int questionLimit = 20,
+  }) async {
     // quizId is courseId (string int) from getQuizList
     final courseId = int.tryParse(quizId);
     if (courseId != null) {
-      final res = await _dio.get<Map<String, dynamic>>(
-        '/quiz/courses/$courseId/questions',
-        queryParameters: {
-          'per_page': 20,
-          if (categoryId != null) 'category_id': categoryId,
-        },
+      var raw = await getCourseQuestions(
+        courseId,
+        categoryId: categoryId,
+        limit: questionLimit,
       );
-      final body = res.data;
-      if (body == null) throw Exception('Quiz session data missing');
-
-      // Paginated envelope: data: {items: [...], pagination: ...} OR data: [...]
-      List<Map<String, dynamic>> raw = [];
-      if (body['data'] is Map<String, dynamic>) {
-        final d = body['data'] as Map<String, dynamic>;
-        if (d['items'] is List) raw = (d['items'] as List).cast<Map<String, dynamic>>();
-      } else if (body['data'] is List) {
-        raw = (body['data'] as List).cast<Map<String, dynamic>>();
-      } else {
-        try {
-          final env = ApiResponse.fromJson(body, (json) {
-            if (json is List) return json.cast<Map<String, dynamic>>();
-            if (json is Map<String, dynamic> && json['items'] is List) {
-              return (json['items'] as List).cast<Map<String, dynamic>>();
-            }
-            return <Map<String, dynamic>>[];
-          });
-          raw = env.data ?? [];
-        } catch (_) {}
-      }
 
       if (raw.isEmpty) {
         // Fallback: try global search if course has no questions
-        final fb = await _dio.get<Map<String, dynamic>>(
-          '/quiz/questions',
-          queryParameters: {'per_page': 20, 'course_id': courseId},
+        raw = await getQuestionSearch(
+          search: null,
+          courseId: courseId,
+          limit: questionLimit,
         );
-        final fbData = fb.data?['data'];
-        if (fbData is Map<String, dynamic> && fbData['items'] is List) {
-          raw = (fbData['items'] as List).cast<Map<String, dynamic>>();
-        } else if (fbData is List) {
-          raw = fbData.cast<Map<String, dynamic>>();
-        }
       }
 
       final questions = raw.map((j) {
@@ -160,17 +152,17 @@ class QuizRemoteDataSource {
       // Fetch course name for title
       var title = 'Quiz';
       try {
-        final courseRes = await _dio.get<Map<String, dynamic>>('/quiz/courses');
-        final courses = courseRes.data?['data'];
-        if (courses is List) {
-          for (final c in courses.cast<Map<String, dynamic>>()) {
-            if ((c['id']?.toString() ?? '') == quizId) {
-              title = (c['name'] ?? c['title'] ?? 'Quiz') as String;
-              break;
-            }
+        final courses = await getQuizList();
+        for (final c in courses) {
+          if ((c['id']?.toString() ?? '') == quizId) {
+            title = (c['name'] ?? c['title'] ?? 'Quiz') as String;
+            break;
           }
         }
-      } catch (_) {}
+      } catch (_) {
+        // The title is cosmetic; a failed catalog read must not fail the
+        // session. The questions themselves are already in hand.
+      }
 
       return QuizSessionDto(
         id: quizId,
@@ -182,17 +174,7 @@ class QuizRemoteDataSource {
     }
 
     // Non-numeric quizId — fallback to global search
-    final res = await _dio.get<Map<String, dynamic>>(
-      '/quiz/questions',
-      queryParameters: {'per_page': 20, 'search': quizId},
-    );
-    final body = res.data;
-    final raw = <Map<String, dynamic>>[];
-    if (body?['data'] is Map && (body!['data'] as Map)['items'] is List) {
-      raw.addAll(((body!['data'] as Map)['items'] as List).cast<Map<String, dynamic>>());
-    } else if (body?['data'] is List) {
-      raw.addAll((body!['data'] as List).cast<Map<String, dynamic>>());
-    }
+    final raw = await getQuestionSearch(search: quizId, limit: questionLimit);
     return QuizSessionDto(
       id: quizId,
       title: 'Quiz',
@@ -204,6 +186,154 @@ class QuizRemoteDataSource {
           })).toList(),
       durationSeconds: 20 * 60,
     );
+  }
+
+  // ── Funnel (guest tier) ────────────────────────────────────────────────────
+
+  /// The authenticated guest-tier funnel bundle.
+  ///
+  /// `GET /quiz/funnel?item_limit=8` — the same public bundle the web
+  /// carousel renders: sampled public questions, live taxonomy counts and a
+  /// fresh-content promo. Never answer keys.
+  ///
+  /// The server validates `item_limit` as 1..12 and answers 422 when it is
+  /// out of range — never a silent clamp.
+  Future<QuizFunnelDto> getFunnel({int itemLimit = 8}) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/quiz/funnel',
+      queryParameters: {'item_limit': itemLimit},
+    );
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty funnel response',
+        endpoint: '/quiz/funnel',
+      );
+    }
+    final data = requireDataMap(body, endpoint: '/quiz/funnel');
+    return QuizFunnelDto.fromJson(data);
+  }
+
+  /// The public guest funnel bundle.
+  ///
+  /// `GET /quiz/guest-funnel?item_limit=8` — the pre-registration sampler.
+  /// The guest ceiling is 8; anything above it is a 422.
+  Future<QuizFunnelDto> getGuestFunnel({int itemLimit = 8}) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/quiz/guest-funnel',
+      queryParameters: {'item_limit': itemLimit},
+    );
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty guest funnel response',
+        endpoint: '/quiz/guest-funnel',
+      );
+    }
+    final data = requireDataMap(body, endpoint: '/quiz/guest-funnel');
+    return QuizFunnelDto.fromJson(data);
+  }
+
+  // ── Cursor walks ────────────────────────────────────────────────────────────
+
+  /// Walks `GET /quiz/courses/{courseId}/questions` until [limit] questions
+  /// are collected or the cursor runs out.
+  ///
+  /// The endpoint is cursor-paginated (`MOBILE_API_INTEGRATION_GUIDE.md` §4.1);
+  /// `next_cursor` is opaque and is round-tripped verbatim.
+  Future<List<Map<String, dynamic>>> getCourseQuestions(
+    int courseId, {
+    int? categoryId,
+    int limit = 100,
+    int perPage = _perPage,
+  }) async {
+    final collected = <Map<String, dynamic>>[];
+    String? cursor;
+
+    while (collected.length < limit) {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/quiz/courses/$courseId/questions',
+        queryParameters: cursorQuery(
+          cursor: cursor,
+          perPage: perPage,
+          extra: {
+            if (categoryId != null) 'category_id': categoryId,
+          },
+        ),
+      );
+      final body = res.data;
+      if (body == null) break;
+
+      final page = parsePage<Map<String, dynamic>>(
+        body,
+        (row) => row,
+        endpoint: '/quiz/courses/$courseId/questions',
+      );
+      collected.addAll(page.items);
+      if (!page.hasMore || page.items.isEmpty) break;
+
+      final next = page.nextCursor;
+      if (next == null || next.isEmpty) break;
+      cursor = next;
+    }
+
+    if (collected.length > limit) {
+      return collected.sublist(0, limit);
+    }
+    return collected;
+  }
+
+  /// Walks `GET /quiz/questions` until [limit] questions are collected or the
+  /// cursor runs out.
+  ///
+  /// The canonical filter grammar is `filter[<name>]`; the bare spellings are
+  /// legacy aliases the server still honours
+  /// (`LibraryApiController`, `QuizQuestionApiController`).
+  Future<List<Map<String, dynamic>>> getQuestionSearch({
+    String? search,
+    int? courseId,
+    int? categoryId,
+    String? difficulty,
+    int limit = 100,
+    int perPage = _perPage,
+  }) async {
+    final collected = <Map<String, dynamic>>[];
+    String? cursor;
+
+    while (collected.length < limit) {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/quiz/questions',
+        queryParameters: cursorQuery(
+          cursor: cursor,
+          perPage: perPage,
+          extra: {
+            if (search != null && search.isNotEmpty) 'search': search,
+            if (courseId != null) 'course_id': courseId,
+            if (categoryId != null) 'category_id': categoryId,
+            if (difficulty != null && difficulty.isNotEmpty) 'difficulty': difficulty,
+          },
+        ),
+      );
+      final body = res.data;
+      if (body == null) break;
+
+      final page = parsePage<Map<String, dynamic>>(
+        body,
+        (row) => row,
+        endpoint: '/quiz/questions',
+      );
+      collected.addAll(page.items);
+      if (!page.hasMore || page.items.isEmpty) break;
+
+      final next = page.nextCursor;
+      if (next == null || next.isEmpty) break;
+      cursor = next;
+    }
+
+    if (collected.length > limit) {
+      return collected.sublist(0, limit);
+    }
+    return collected;
   }
 
   // ── Start attempt ──────────────────────────────────────────────────────────
@@ -362,7 +492,9 @@ class QuizRemoteDataSource {
     final correct = (d['correct_count'] as int?) ?? (d['correct'] as int?) ?? 0;
     final wrong = (d['wrong_count'] as int?) ?? (d['wrong'] as int?) ?? 0;
     final skipped = (d['skipped_count'] as int?) ?? (d['skipped'] as int?) ?? 0;
-    final total = correct + wrong + skipped == 0 ? 20 : correct + wrong + skipped;
+    final total = (d['total_questions'] as int?) ??
+        (d['total'] as int?) ??
+        (correct + wrong + skipped == 0 ? 20 : correct + wrong + skipped);
     return QuizResultDto.fromJson({
       'attempt_id': (d['attempt_id'] ?? d['id'] ?? attemptId).toString(),
       'stats': {
@@ -371,9 +503,9 @@ class QuizRemoteDataSource {
         'wrong': wrong,
         'skipped': skipped,
       },
-      'total_xp_earned': 0,
-      'total_coins_earned': 0,
-      'duration_seconds': 0,
+      'total_xp_earned': d['total_xp_earned'] ?? d['xp_earned'] ?? 0,
+      'total_coins_earned': d['total_coins_earned'] ?? d['coins_earned'] ?? 0,
+      'duration_seconds': d['duration_seconds'] ?? 0,
     });
   }
 
