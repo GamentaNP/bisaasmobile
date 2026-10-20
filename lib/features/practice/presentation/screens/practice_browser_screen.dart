@@ -9,15 +9,23 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../tutor/presentation/controllers/tutor_controller.dart';
 import '../controllers/practice_controller.dart';
+import '../practice_session_args.dart';
 import '../../domain/entities/practice.dart';
+// Re-exported so the router keeps resolving the session args from this
+// screen, which is where they used to live.
+export '../practice_session_args.dart';
 
 /// Practice hub — untimed drilling, bookmarked sets, self-challenge, weak-topic drill.
 /// Endpoints:
 /// - GET /quiz/bookmarks (cursor, bearer)
-/// - GET /quiz/attempts/history (offset, bearer)
-/// - POST /quiz/attempts/start with mode=practice (Idempotency-Key)
-/// Bookmarks are cursor-paginated; history is offset paginated.
-/// All tolerant additive parsing; never throws on new server fields.
+/// - GET /quiz/attempts/history (cursor, bearer)
+/// - GET /quiz/questions (cursor, bearer)
+/// - POST /quiz/attempts with mode=practice + question_ids (Idempotency-Key)
+/// - POST /quiz/attempts/{attempt}/answers
+/// - PUT /quiz/attempts/{attempt}/completion
+///
+/// Every drill is a live server attempt seeded with the exact question ids the
+/// screen shows, so the server grades what the user actually saw.
 class PracticeBrowserScreen extends ConsumerStatefulWidget {
   const PracticeBrowserScreen({super.key});
 
@@ -76,40 +84,68 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No bookmarks to practice'), backgroundColor: AppColors.wrongRed));
       return;
     }
-    final questions = items.map((b) => b.question).toList();
-    unawaited(context.push('/practice/session', extra: PracticeSessionArgs(title: 'Bookmarked Practice', questions: questions, isTimed: false)));
+
+    // The bookmarks endpoint publishes the question *text* but not its answer
+    // options, so a bookmark cannot be drilled on its own. The server can
+    // however hand out a fresh, fully-formed question set for the bookmarked
+    // category — so the drill is seeded from the server by category and the
+    // bookmarked topic is preserved.
+    final categoryId = items
+        .map((b) => b.question.categoryId)
+        .firstWhere((id) => id != null, orElse: () => null);
+
+    final notifier = ref.read(practiceControllerProvider.notifier);
+    final drill = await notifier.startDrill(
+      title: 'Bookmarked Practice',
+      categoryId: categoryId,
+      count: items.length.clamp(5, 30),
+    );
+    if (!mounted) return;
+    if (drill == null) {
+      final err = ref.read(practiceControllerProvider).startError ?? 'Could not start the drill';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
+      return;
+    }
+    unawaited(context.push('/practice/session', extra: PracticeSessionArgs.fromDrill(drill)));
   }
 
-  Future<void> _startWeakTopic({int? topicId}) async {
-    // For demo, start a practice attempt server-side with topicId if available, else local drill
+  /// Weak-topic drill.
+  ///
+  /// The server's weak-area analysis publishes a topic *name* (not an id), and
+  /// `GET /quiz/questions` has no `topic_id` filter — so the topic is matched
+  /// with the server's own text search, which it does honour. The questions
+  /// that come back are seeded into a practice attempt, so the drill is graded
+  /// by the server like any other.
+  Future<void> _startWeakTopic({String? topic, int? topicId}) async {
     final notifier = ref.read(practiceControllerProvider.notifier);
-    final attemptId = await notifier.startSession(topicId: topicId, questionCount: 10);
+    final drill = await notifier.startDrill(
+      title: topic == null ? 'Practice Drill' : 'Drill: $topic',
+      search: topic,
+      count: 10,
+    );
     if (!mounted) return;
-    if (attemptId != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Practice started: $attemptId'), backgroundColor: AppColors.correctGreen));
-      // For now, also push local session with placeholder questions from history or bookmarks
-      // In real flow, would fetch attempt questions via GET /quiz/attempts/{id} — but practice/history shows untimed local preview
-      final bookmarks = ref.read(practiceControllerProvider).bookmarks;
-      final qs = bookmarks.isNotEmpty ? bookmarks.take(5).map((b) => b.question).toList() : <PracticeQuestion>[];
-      if (qs.isNotEmpty) {
-        unawaited(context.push('/practice/session', extra: PracticeSessionArgs(title: 'Weak Topic Drill', questions: qs, isTimed: false)));
-      }
-    } else {
-      final err = ref.read(practiceControllerProvider).startError ?? 'Failed to start';
+    if (drill == null) {
+      final err = ref.read(practiceControllerProvider).startError ?? 'Could not start the drill';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
+      return;
     }
+    unawaited(context.push('/practice/session', extra: PracticeSessionArgs.fromDrill(drill)));
   }
 
   Future<void> _startSelfChallenge({required int count, String? difficulty}) async {
     final notifier = ref.read(practiceControllerProvider.notifier);
-    final attemptId = await notifier.startSession(questionCount: count);
+    final drill = await notifier.startDrill(
+      title: 'Self Challenge',
+      difficulty: difficulty,
+      count: count,
+    );
     if (!mounted) return;
-    if (attemptId != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Self-challenge started ($count Qs): $attemptId'), backgroundColor: AppColors.correctGreen));
-    } else {
+    if (drill == null) {
       final err = ref.read(practiceControllerProvider).startError ?? 'Failed to start self-challenge';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
+      return;
     }
+    unawaited(context.push('/practice/session', extra: PracticeSessionArgs.fromDrill(drill)));
   }
 }
 
@@ -181,10 +217,15 @@ class _BookmarksTab extends ConsumerWidget {
                     subtitle: Text('${b.question.type ?? 'mcq'} • difficulty ${b.question.difficulty ?? '-'} • ${b.question.points ?? 0} pts', style: const TextStyle(fontSize: 11, color: Colors.grey)),
                     trailing: IconButton(
                       icon: state.isTogglingBookmark ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bookmark_remove_rounded),
-                      onPressed: () => ref.read(practiceControllerProvider.notifier).toggleBookmark(b.question.id),
+                      // Removes the bookmark. The server's `POST` alias converges
+                      // to `bookmarked: true` and cannot remove, so this calls
+                      // `DELETE /quiz/bookmarks/{question}`.
+                      onPressed: () => ref.read(practiceControllerProvider.notifier).removeBookmark(b.question.id),
                     ),
                     onTap: () {
-                      // Practice single question untimed
+                      // Review a single bookmark. The bookmarks endpoint does
+                      // not publish answer options, so this is a read-through
+                      // pass, not a drill — there is no attempt behind it.
                       context.push('/practice/session', extra: PracticeSessionArgs(title: 'Bookmarked', questions: [b.question], isTimed: false));
                     },
                   ),
@@ -224,8 +265,9 @@ class _BookmarksTab extends ConsumerWidget {
 class _WeakTopicTab extends ConsumerWidget {
   const _WeakTopicTab({required this.onStart});
 
-  /// The topic id is passed through so "Drill" opens that topic's questions.
-  final void Function({int? topicId}) onStart;
+  /// The topic *name* is passed through so the drill is seeded with the
+  /// server's own questions for that topic.
+  final void Function({String? topic, int? topicId}) onStart;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -315,7 +357,7 @@ class _WeakTopicTab extends ConsumerWidget {
                       style: const TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                     trailing: FilledButton.tonal(
-                      onPressed: () => onStart(topicId: int.tryParse(w.topicId ?? '')),
+                      onPressed: () => onStart(topic: w.topic, topicId: int.tryParse(w.topicId ?? '')),
                       child: const Text('Drill', style: TextStyle(fontSize: 12)),
                     ),
                   ),
@@ -412,37 +454,51 @@ class _HistoryTab extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(practiceControllerProvider.notifier).fetchHistory(),
-      child: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: state.history.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (context, i) {
-          final h = state.history[i];
-          return Card(
-            margin: EdgeInsets.zero,
-            child: ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: (h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
-                child: Icon(h.isCompleted ? Icons.check_circle_rounded : Icons.hourglass_empty_rounded, size: 16, color: h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange),
-              ),
-              title: Text('Attempt #${h.id} • ${h.mode}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-              subtitle: Text('${h.status} • score ${h.score ?? '-'} • ${h.correctCount ?? 0}✓ ${h.wrongCount ?? 0}✗ ${h.skippedCount ?? 0}– • ${h.questionCount ?? '-'} Qs', style: const TextStyle(fontSize: 11, color: Colors.grey)),
-              trailing: Text(h.completedAt != null ? '${h.completedAt!.toLocal().toIso8601String().split('T').first}' : '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: state.history.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemBuilder: (context, i) {
+                final h = state.history[i];
+                return Card(
+                  margin: EdgeInsets.zero,
+                  child: ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(color: (h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+                      child: Icon(h.isCompleted ? Icons.check_circle_rounded : Icons.hourglass_empty_rounded, size: 16, color: h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange),
+                    ),
+                    title: Text('Attempt #${h.id} • ${h.mode}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    subtitle: Text('${h.status} • score ${h.score ?? '-'} • ${h.correctCount ?? 0}✓ ${h.wrongCount ?? 0}✗ ${h.skippedCount ?? 0}– • ${h.questionCount ?? '-'} Qs', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    trailing: Text(h.completedAt != null ? '${h.completedAt!.toLocal().toIso8601String().split('T').first}' : '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          // Attempt history is cursor-paginated (`MOBILE_API_INTEGRATION_GUIDE.md`
+          // §4.1), so there is no page number to jump to — only "next".
+          if (state.historyPagination?.hasMore == true)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: OutlinedButton.icon(
+                onPressed: state.isHistoryLoading
+                    ? null
+                    : () {
+                        final next = state.historyPagination?.nextCursor;
+                        ref.read(practiceControllerProvider.notifier).fetchHistory(cursor: next, append: true);
+                      },
+                icon: const Icon(Icons.expand_more_rounded),
+                label: const Text('Load more (cursor)'),
+              ),
+            ),
+        ],
       ),
     );
   }
 }
 
 // ── Session args ──────────────────────────────────────────────────────────────
-
-class PracticeSessionArgs {
-  const PracticeSessionArgs({required this.title, required this.questions, this.isTimed = false, this.timeLimitSeconds});
-  final String title;
-  final List<PracticeQuestion> questions;
-  final bool isTimed;
-  final int? timeLimitSeconds;
-}

@@ -17,6 +17,16 @@ DateTime? _asDate(Object? v) {
   return null;
 }
 
+/// `difficulty` is a string on the wire ("easy" | "medium" | "hard" |
+/// "expert"). A numeric difficulty is tolerated because the field is loosely
+/// typed in a few places, but it is never the primary representation.
+String? _asDifficulty(Object? v) {
+  if (v == null) return null;
+  if (v is String) return v.isEmpty ? null : v;
+  if (v is num) return '$v';
+  return null;
+}
+
 // ── PracticeQuestion / BookmarkedQuestion ────────────────────────────────────
 
 /// One answer choice as the server sent it: `{key, text}`.
@@ -39,6 +49,7 @@ class PracticeQuestionDto {
     this.difficulty,
     this.points,
     this.categoryId,
+    this.courseId,
     this.options = const [],
   });
 
@@ -74,9 +85,13 @@ class PracticeQuestionDto {
       id: _asInt(j['id']) ?? 0,
       questionText: (j['question_text'] ?? j['questionText'] ?? j['body'] ?? j['title'] ?? '').toString(),
       type: j['type'] as String?,
-      difficulty: _asInt(j['difficulty']),
+      // `difficulty` is a *string* on the wire ("easy" | "medium" | "hard" |
+      // "expert"). The previous parser read it as an int, so every question
+      // reported a null difficulty and the UI showed a bare "-".
+      difficulty: _asDifficulty(j['difficulty']),
       points: _asInt(j['points']),
       categoryId: _asInt(j['quiz_category_id'] ?? j['category_id']),
+      courseId: _asInt(j['quiz_course_id'] ?? j['course_id']),
       options: options,
     );
   }
@@ -84,9 +99,10 @@ class PracticeQuestionDto {
   final int id;
   final String questionText;
   final String? type;
-  final int? difficulty;
+  final String? difficulty;
   final int? points;
   final int? categoryId;
+  final int? courseId;
   final List<PracticeOptionDto> options;
 
   PracticeQuestion toDomain() => PracticeQuestion(
@@ -96,6 +112,7 @@ class PracticeQuestionDto {
         difficulty: difficulty,
         points: points,
         categoryId: categoryId,
+        courseId: courseId,
         options: options.map((o) => o.toDomain()).toList(),
       );
 }
@@ -196,4 +213,51 @@ class PracticeStartDto {
   final String mode;
   final String status;
   final int questionCount;
+}
+
+// ── Server-graded drill result ──────────────────────────────────────────────
+
+/// The payload of `PUT /api/v1/quiz/attempts/{attempt}/completion`.
+///
+/// The drill's score comes from here and nowhere else — the client never
+/// grades. The server withholds answer keys until the attempt is graded
+/// (`QuizQuestionResource` exposure policy), so before completion the only
+/// honest thing the client can show is "submitted".
+class PracticeResultDto {
+  const PracticeResultDto({
+    required this.attemptId,
+    this.score,
+    this.correctCount = 0,
+    this.wrongCount = 0,
+    this.skippedCount = 0,
+    this.completedAt,
+  });
+
+  factory PracticeResultDto.fromJson(Map<String, dynamic> j) => PracticeResultDto(
+        attemptId: (_asInt(j['attempt_id'] ?? j['id']) ?? 0).toString(),
+        score: _asInt(j['score']),
+        correctCount: _asInt(j['correct_count']) ?? 0,
+        wrongCount: _asInt(j['wrong_count']) ?? 0,
+        skippedCount: _asInt(j['skipped_count']) ?? 0,
+        completedAt: _asDate(j['completed_at']),
+      );
+
+  final String attemptId;
+  final int? score;
+  final int correctCount;
+  final int wrongCount;
+  final int skippedCount;
+  final DateTime? completedAt;
+
+  int get answered => correctCount + wrongCount;
+  int get total => correctCount + wrongCount + skippedCount;
+
+  PracticeResult toDomain() => PracticeResult(
+        attemptId: attemptId,
+        score: score,
+        correctCount: correctCount,
+        wrongCount: wrongCount,
+        skippedCount: skippedCount,
+        completedAt: completedAt,
+      );
 }

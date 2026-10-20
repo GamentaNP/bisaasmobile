@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/practice.dart';
-import 'practice_browser_screen.dart';
+import '../controllers/practice_controller.dart';
+import '../practice_session_args.dart';
 
-/// Untimed practice drill.
+/// Untimed practice drill, backed by a live server attempt.
 ///
-/// Per spec 4.6: no coin cost, no leaderboard effect, no streak risk.
+/// Per spec 4.6: no coin cost, no leaderboard effect, no streak risk. The
+/// server decides that, not the client — the client only asks for a
+/// `mode: 'practice'` attempt and shows what the server returns.
 ///
 /// **No invented content, and no invented grading.** The previous version of
 /// this screen rendered a literal `['A','B','C','D']` option list labelled
@@ -15,10 +18,12 @@ import 'practice_browser_screen.dart';
 /// `_current.id.isEven && opt.hashCode.isEven` — i.e. it showed fake questions
 /// and reported a made-up score.
 ///
-/// The server withholds answer keys until an attempt is graded
-/// (`QuizQuestionResource` exposure policy), so this drill genuinely *cannot*
-/// know whether an answer was right. It therefore records selections and says
-/// exactly that, instead of asserting a verdict the client has no basis for.
+/// The screen now submits every answer to the attempt and completes it, so the
+/// score in the result dialog is the **server's** score
+/// (`PUT /quiz/attempts/{attempt}/completion`). The server withholds answer
+/// keys until an attempt is graded (`QuizQuestionResource` exposure policy),
+/// so during the drill the only honest thing to show is "submitted" — never
+/// right/wrong.
 class PracticeSessionScreen extends ConsumerStatefulWidget {
   const PracticeSessionScreen({super.key, required this.args});
   final PracticeSessionArgs args;
@@ -35,25 +40,60 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
   /// index → selected option key. Absence means "not answered / skipped".
   final Map<int, String> _answers = {};
 
+  /// When the question was first shown — the timing evidence the server's
+  /// integrity engine consumes.
+  final Map<int, DateTime> _shownAt = {};
+
+  bool _submitting = false;
+  bool _completing = false;
+
   PracticeQuestion get _current => widget.args.questions[_index];
   bool get _isLast => _index >= widget.args.questions.length - 1;
   String? get _selected => _answers[_index];
 
-  void _select(String optionKey) {
+  @override
+  void initState() {
+    super.initState();
+    _shownAt[0] = DateTime.now();
+  }
+
+  Future<void> _select(String optionKey) async {
+    if (_answers.containsKey(_index)) return; // already answered
     setState(() {
-      if (_answers.containsKey(_index)) return; // already answered
       _answers[_index] = optionKey;
       _answered++;
     });
+    await _submitCurrent();
   }
 
-  void _skip() {
+  Future<void> _skip() async {
+    if (_answers.containsKey(_index)) return;
     setState(() {
-      if (_answers.containsKey(_index)) return;
       _answers[_index] = '__skip__';
       _skipped++;
     });
     _next();
+  }
+
+  /// Sends the answer for the current question to the server.
+  ///
+  /// The attempt id is empty for a review-only drill (a bookmark tap with no
+  /// live attempt), in which case there is nothing to submit.
+  Future<void> _submitCurrent() async {
+    final attemptId = widget.args.attemptId;
+    final answer = _answers[_index];
+    if (attemptId.isEmpty || answer == null || answer == '__skip__') return;
+
+    setState(() => _submitting = true);
+    final startedAt = _shownAt[_index] ?? DateTime.now();
+    final elapsed = DateTime.now().difference(startedAt).inSeconds;
+    await ref.read(practiceControllerProvider.notifier).submitAnswer(
+          attemptId: attemptId,
+          questionId: _current.id,
+          answer: answer,
+          timeTakenSeconds: elapsed.clamp(0, 86400),
+        );
+    if (mounted) setState(() => _submitting = false);
   }
 
   void _next() {
@@ -61,7 +101,10 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
       _showResult();
       return;
     }
-    setState(() => _index++);
+    setState(() {
+      _index++;
+      _shownAt[_index] = DateTime.now();
+    });
   }
 
   void _prev() {
@@ -69,8 +112,23 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     setState(() => _index--);
   }
 
-  void _showResult() {
-    showDialog(
+  Future<void> _showResult() async {
+    final attemptId = widget.args.attemptId;
+    PracticeResult? result;
+
+    if (attemptId.isNotEmpty) {
+      setState(() => _completing = true);
+      result = await ref.read(practiceControllerProvider.notifier).completeAttempt(attemptId);
+      if (mounted) setState(() => _completing = false);
+    }
+
+    if (!mounted) return;
+
+    final completionError = result == null && attemptId.isNotEmpty
+        ? ref.read(practiceControllerProvider).startError
+        : null;
+
+    await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (c) => AlertDialog(
@@ -88,13 +146,48 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
             Text('${widget.args.questions.length} questions', style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 4),
             Text('$_answered answered • $_skipped skipped', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            const SizedBox(height: 8),
-            const Text(
-              'No score is shown because the server grades answers and does not '
-              'publish answer keys to the client. Run this as a graded quiz from '
-              'the Quiz tab to see a real result.',
-              style: TextStyle(fontSize: 11, color: Colors.grey),
-            ),
+            if (result != null) ...[
+              const SizedBox(height: 12),
+              // The score comes from the server's completion payload. The client
+              // never grades.
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.correctGreen.withValues(alpha: 0.25)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      result.score != null ? 'Score ${result.score}' : 'Graded by the server',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.correctGreen),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${result.correctCount} correct • ${result.wrongCount} wrong • ${result.skippedCount} skipped',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ] else if (completionError != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.25)),
+                ),
+                child: Text(
+                  'The server could not grade this drill: $completionError',
+                  style: const TextStyle(fontSize: 12, color: AppColors.wrongRed),
+                ),
+              ),
+            ] else ...[
+              const SizedBox(height: 8),
+              const Text(
+                'This was a review pass. No attempt was created, so there is no '
+                'score to show.',
+                style: TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -249,7 +342,14 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(color: AppColors.lifelineCyan.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.lifelineCyan.withValues(alpha: 0.25))),
-                    child: const Row(children: [Icon(Icons.schedule_rounded, size: 16, color: AppColors.lifelineCyan), SizedBox(width: 8), Expanded(child: Text('Answer recorded. The server grades it — this drill does not and will not guess a score.', style: TextStyle(fontSize: 11, color: AppColors.lifelineCyan)))]),
+                    child: Row(children: [
+                      if (_submitting)
+                        const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                      else
+                        const Icon(Icons.schedule_rounded, size: 16, color: AppColors.lifelineCyan),
+                      const SizedBox(width: 8),
+                      const Expanded(child: Text('Answer sent to the server. It grades the attempt — this screen never guesses a score.', style: TextStyle(fontSize: 11, color: AppColors.lifelineCyan))),
+                    ]),
                   ),
                 ],
                 const SizedBox(height: 16),
@@ -259,7 +359,11 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                     const Spacer(),
                     TextButton.icon(onPressed: answered ? null : _skip, icon: const Icon(Icons.skip_next_rounded, size: 16), label: const Text('Skip')),
                     const SizedBox(width: 8),
-                    FilledButton.icon(onPressed: _next, icon: Icon(_isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded, size: 16), label: Text(_isLast ? 'Finish' : 'Next')),
+                    FilledButton.icon(
+                      onPressed: _completing ? null : _next,
+                      icon: Icon(_isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded, size: 16),
+                      label: Text(_completing ? 'Grading…' : (_isLast ? 'Finish' : 'Next')),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),

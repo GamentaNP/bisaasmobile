@@ -28,7 +28,7 @@ final practiceBookmarksProvider = FutureProvider<Paginated<BookmarkedQuestion>>(
 
 final practiceAttemptHistoryProvider = FutureProvider<Paginated<PracticeAttemptHistoryItem>>((ref) async {
   final repo = ref.watch(practiceRepositoryProvider);
-  return repo.getAttemptHistory(page: 1, perPage: 20);
+  return repo.getAttemptHistory(perPage: 20);
 });
 
 // ── Controller state ──────────────────────────────────────────────────────────
@@ -48,6 +48,7 @@ class PracticeState {
     this.isTogglingBookmark = false,
     this.toggleError,
     this.isStartingSession = false,
+    this.isCompletingSession = false,
     this.startError,
   });
 
@@ -64,6 +65,7 @@ class PracticeState {
   final bool isTogglingBookmark;
   final String? toggleError;
   final bool isStartingSession;
+  final bool isCompletingSession;
   final String? startError;
 
   static const _sentinel = Object();
@@ -82,6 +84,7 @@ class PracticeState {
     bool? isTogglingBookmark,
     Object? toggleError = _sentinel,
     bool? isStartingSession,
+    bool? isCompletingSession,
     Object? startError = _sentinel,
   }) {
     return PracticeState(
@@ -98,6 +101,7 @@ class PracticeState {
       isTogglingBookmark: isTogglingBookmark ?? this.isTogglingBookmark,
       toggleError: toggleError == _sentinel ? this.toggleError : toggleError as String?,
       isStartingSession: isStartingSession ?? this.isStartingSession,
+      isCompletingSession: isCompletingSession ?? this.isCompletingSession,
       startError: startError == _sentinel ? this.startError : startError as String?,
     );
   }
@@ -125,10 +129,10 @@ class PracticeController extends Notifier<PracticeState> {
     }
   }
 
-  Future<void> fetchHistory({int page = 1, bool append = false}) async {
+  Future<void> fetchHistory({String? cursor, bool append = false}) async {
     state = state.copyWith(isHistoryLoading: true, historyError: null);
     try {
-      final paginated = await _repo.getAttemptHistory(page: page, perPage: 20);
+      final paginated = await _repo.getAttemptHistory(cursor: cursor, perPage: 20);
       final newList = append ? [...state.history, ...paginated.items] : paginated.items;
       state = state.copyWith(history: newList, historyPagination: paginated.pagination, isHistoryLoading: false);
     } catch (e, st) {
@@ -138,45 +142,111 @@ class PracticeController extends Notifier<PracticeState> {
     }
   }
 
-  Future<bool> toggleBookmark(int questionId) async {
+  /// Adds or removes a bookmark.
+  ///
+  /// The two directions are separate server calls (`PUT` to add, `DELETE` to
+  /// remove). The `POST` alias converges to `bookmarked: true` and cannot
+  /// remove, so a single "toggle" method would silently fail to un-bookmark.
+  Future<bool> setBookmark(int questionId, {required bool bookmarked}) async {
     state = state.copyWith(isTogglingBookmark: true, toggleError: null);
     try {
-      await _repo.toggleBookmark(questionId, idempotencyKey: _uuid.v4());
+      if (bookmarked) {
+        await _repo.addBookmark(questionId, idempotencyKey: _uuid.v4());
+      } else {
+        await _repo.removeBookmark(questionId);
+      }
       state = state.copyWith(isTogglingBookmark: false);
-      // Refresh bookmarks
       await fetchBookmarks();
       return true;
     } catch (e, st) {
-      AppLogger.w('practice toggleBookmark $questionId failed: $e');
+      AppLogger.w('practice setBookmark $questionId failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
       state = state.copyWith(isTogglingBookmark: false, toggleError: _msg(e));
       return false;
     }
   }
 
-  Future<String?> startSession({
-    List<int>? questionIds,
-    int? topicId,
-    int? categoryId,
+  /// Removes a bookmark.
+  Future<bool> removeBookmark(int questionId) =>
+      setBookmark(questionId, bookmarked: false);
+
+  /// Starts a drill: loads the real questions from the server, seeds a practice
+  /// attempt with exactly those ids, and hands back the live attempt.
+  ///
+  /// Returns null on failure with [PracticeState.startError] set.
+  Future<PracticeDrill?> startDrill({
+    required String title,
     int? courseId,
-    int questionCount = 10,
+    int? categoryId,
+    String? difficulty,
+    String? search,
+    int count = 10,
   }) async {
     state = state.copyWith(isStartingSession: true, startError: null);
     try {
-      final attemptId = await _repo.startPracticeAttempt(
-        questionIds: questionIds,
-        topicId: topicId,
-        categoryId: categoryId,
+      final drill = await _repo.startDrill(
+        title: title,
         courseId: courseId,
-        questionCount: questionCount,
+        categoryId: categoryId,
+        difficulty: difficulty,
+        search: search,
+        count: count,
         idempotencyKey: _uuid.v4(),
       );
       state = state.copyWith(isStartingSession: false);
-      return attemptId;
+      return drill;
     } catch (e, st) {
-      AppLogger.w('practice startSession failed: $e');
+      AppLogger.w('practice startDrill failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
       state = state.copyWith(isStartingSession: false, startError: _msg(e));
+      return null;
+    }
+  }
+
+  /// Submits one answer to the live drill attempt.
+  ///
+  /// A failure here is surfaced but never blocks the drill: the user has
+  /// already answered, and the server-side attempt is closed when the drill
+  /// completes. The answer count is what the server reports, so a dropped
+  /// answer shows up as a lower score rather than as a lie.
+  Future<bool> submitAnswer({
+    required String attemptId,
+    required int questionId,
+    required String answer,
+    int? timeTakenSeconds,
+  }) async {
+    try {
+      await _repo.submitAnswer(
+        attemptId: attemptId,
+        questionId: questionId,
+        answer: answer,
+        timeTakenSeconds: timeTakenSeconds,
+        idempotencyKey: _uuid.v4(),
+      );
+      return true;
+    } catch (e, st) {
+      AppLogger.w('practice submitAnswer $attemptId/$questionId failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      return false;
+    }
+  }
+
+  /// Completes the drill and returns the server's verdict.
+  Future<PracticeResult?> completeAttempt(String attemptId) async {
+    state = state.copyWith(isCompletingSession: true, startError: null);
+    try {
+      final result = await _repo.completeAttempt(
+        attemptId: attemptId,
+        idempotencyKey: _uuid.v4(),
+      );
+      state = state.copyWith(isCompletingSession: false);
+      // The history list now has a new row.
+      await fetchHistory();
+      return result;
+    } catch (e, st) {
+      AppLogger.w('practice completeAttempt $attemptId failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      state = state.copyWith(isCompletingSession: false, startError: _msg(e));
       return null;
     }
   }

@@ -1,35 +1,72 @@
-import 'package:bisaasmobile/shared/domain/paginated.dart';
+import '../../../../core/network/pagination.dart';
+import '../../../../shared/domain/paginated.dart';
 
 import '../entities/practice.dart';
 
 abstract class PracticeRepository {
   // Bookmarks (cursor paginated)
-  Future<Paginated<BookmarkedQuestion>> getBookmarks({String? cursor, int perPage = 20});
-  Future<bool> toggleBookmark(int questionId, {String? idempotencyKey});
-  Future<bool> addBookmark(int questionId, {String? idempotencyKey});
-  Future<bool> removeBookmark(int questionId);
-
-  // History (offset paginated via Paginated wrapper)
-  Future<Paginated<PracticeAttemptHistoryItem>> getAttemptHistory({int page = 1, int perPage = 20});
-
-  // Drill questions
-  Future<List<PracticeQuestion>> getQuestions({
-    int? topicId,
-    int? categoryId,
-    int? courseId,
-    String? difficulty,
-    String? query,
-    int page = 1,
+  Future<Paginated<BookmarkedQuestion>> getBookmarks({
+    String? cursor,
     int perPage = 20,
   });
 
-  // Start server practice attempt
-  Future<String> startPracticeAttempt({
-    List<int>? questionIds,
-    int? topicId,
-    int? categoryId,
+  /// Adds a bookmark. `PUT /quiz/bookmarks/{question}` — the canonical form.
+  Future<bool> addBookmark(int questionId, {String? idempotencyKey});
+
+  /// Removes a bookmark. `DELETE /quiz/bookmarks/{question}`.
+  ///
+  /// Separate from [addBookmark] on purpose: the `POST` alias converges to
+  /// `bookmarked: true` rather than toggling, so one method cannot serve both
+  /// directions.
+  Future<bool> removeBookmark(int questionId);
+
+  // History (cursor paginated — §4.1 migration)
+  Future<Paginated<PracticeAttemptHistoryItem>> getAttemptHistory({
+    String? cursor,
+    int perPage = 20,
+  });
+
+  /// Real server questions for a drill.
+  ///
+  /// The server honours `course_id`, `category_id`, `difficulty` and `search`
+  /// on `GET /quiz/questions`; there is no `topic_id` filter, so a topic drill
+  /// is a text `search` over the topic name.
+  Future<List<PracticeQuestion>> getQuestions({
     int? courseId,
-    int questionCount = 10,
+    int? categoryId,
+    String? difficulty,
+    String? search,
+    int limit = 20,
+  });
+
+  /// Starts the practice attempt that backs a drill, seeded with exactly the
+  /// questions the client is going to show.
+  Future<PracticeDrill> startDrill({
+    required String title,
+    int? courseId,
+    int? categoryId,
+    String? difficulty,
+    String? search,
+    int count = 10,
+    String? idempotencyKey,
+  });
+
+  /// Submits one answer to the drill attempt.
+  Future<void> submitAnswer({
+    required String attemptId,
+    required int questionId,
+    required String answer,
+    int? timeTakenSeconds,
+    String? idempotencyKey,
+  });
+
+  /// Completes the drill and returns the server's verdict.
+  Future<PracticeResult> completeAttempt({
+    required String attemptId,
     String? idempotencyKey,
   });
 }
+
+/// Re-exported so callers do not need to import the network layer for the
+/// page type.
+typedef PracticePage<T> = Page<T>;

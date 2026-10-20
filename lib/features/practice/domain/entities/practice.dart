@@ -18,15 +18,19 @@ class PracticeQuestion {
     this.difficulty,
     this.points,
     this.categoryId,
+    this.courseId,
     this.options = const [],
   });
 
   final int id;
   final String questionText;
   final String? type;
-  final int? difficulty;
+
+  /// "easy" | "medium" | "hard" | "expert" — the server's own label.
+  final String? difficulty;
   final int? points;
   final int? categoryId;
+  final int? courseId;
 
   /// The real choices from the server. Empty means the server sent none —
   /// which is a reason to say so, never a licence to render A/B/C/D.
@@ -88,4 +92,51 @@ class PracticeSessionConfig {
   final List<PracticeQuestion> questions;
   final bool isTimed;
   final int? timeLimitSeconds;
+}
+
+/// A drill that is bound to a live server attempt.
+///
+/// Every drill the app runs is a real `QuizAttempt` in `mode: 'practice'`,
+/// seeded with the exact question ids the client shows. The server grades it
+/// and the client only renders what the server returns.
+@immutable
+class PracticeDrill {
+  const PracticeDrill({
+    required this.attemptId,
+    required this.title,
+    required this.questions,
+  });
+
+  /// The server attempt id. Every answer is submitted against it.
+  final String attemptId;
+  final String title;
+  final List<PracticeQuestion> questions;
+
+  int get length => questions.length;
+}
+
+/// The server's own verdict on a completed drill.
+///
+/// Never computed on-device: the client has no answer key, so it has no basis
+/// for a score.
+@immutable
+class PracticeResult {
+  const PracticeResult({
+    required this.attemptId,
+    this.score,
+    this.correctCount = 0,
+    this.wrongCount = 0,
+    this.skippedCount = 0,
+    this.completedAt,
+  });
+
+  final String attemptId;
+  final int? score;
+  final int correctCount;
+  final int wrongCount;
+  final int skippedCount;
+  final DateTime? completedAt;
+
+  int get answered => correctCount + wrongCount;
+  int get total => correctCount + wrongCount + skippedCount;
 }
