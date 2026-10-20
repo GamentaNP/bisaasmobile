@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/logging/app_logger.dart';
+import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
+import '../../data/datasources/social_sign_in_gateway.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -10,6 +13,12 @@ import '../../domain/repositories/auth_repository.dart';
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   final dio = DioClient.instance.dio;
   return AuthRemoteDataSource(dio);
+});
+
+/// The platform SDK gateway. Overridden in tests so the auth controller can
+/// be exercised without a device.
+final socialSignInGatewayProvider = Provider<SocialSignInGateway>((ref) {
+  return PlatformSocialSignInGateway();
 });
 
 final tokenManagerProvider = Provider<TokenManager>((ref) {
@@ -25,6 +34,17 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     remoteDataSource: remote,
     tokenManager: tokenManager,
   );
+});
+
+/// Which social providers this build can actually use.
+///
+/// A provider whose client id was never compiled in is hidden rather than
+/// offered as a button that is guaranteed to fail.
+final socialProvidersAvailableProvider = FutureProvider<bool>((ref) async {
+  final gateway = ref.watch(socialSignInGatewayProvider);
+  final google = await gateway.isAvailable(SocialProvider.google);
+  final apple = await gateway.isAvailable(SocialProvider.apple);
+  return google || apple;
 });
 
 class AuthNotifier extends AsyncNotifier<User?> {
@@ -51,6 +71,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
     });
     if (state.hasError) {
       final err = state.error;
+      // An unverified account is a recoverable state, not a dead end: the
+      // resend action becomes available.
+      ref.read(emailVerificationRequiredProvider.notifier).observe(err);
       if (err is Exception) {
         throw err;
       }
@@ -137,7 +160,88 @@ class AuthNotifier extends AsyncNotifier<User?> {
     // state without forcing a re-login on this one.
     state = AsyncData(await repo.getCurrentUser());
   }
+
+  /// Signs in with Google or Apple.
+  ///
+  /// The platform SDK produces an id_token; the server verifies it and mints
+  /// the bearer PAT. Nothing about the credential is trusted from the client.
+  ///
+  /// [credential] is passed when the caller already holds one — Apple's own
+  /// button widget hands the credential over directly — and omitted when the
+  /// gateway should run the flow itself.
+  ///
+  /// Returns false when the user dismissed the picker, so the caller can stay
+  /// silent instead of showing an error for a deliberate cancellation.
+  Future<bool> loginWithSocial(
+    SocialProvider provider, {
+    SocialIdToken? credential,
+  }) async {
+    state = const AsyncValue.loading();
+    final gateway = ref.read(socialSignInGatewayProvider);
+    try {
+      final token = credential ?? await gateway.signIn(provider);
+      if (token == null) {
+        // The user closed the picker.
+        state = const AsyncValue.data(null);
+        return false;
+      }
+      final tokenManager = ref.read(tokenManagerProvider);
+      final deviceName = await TokenManager.resolveDeviceName(tokenManager);
+      final repo = ref.read(authRepositoryProvider);
+      final user = await repo.loginWithSocial(
+        provider: provider,
+        idToken: token.idToken,
+        name: token.name,
+        deviceName: deviceName,
+      );
+      state = AsyncValue.data(user);
+      return true;
+    } catch (e, st) {
+      AppLogger.w('auth loginWithSocial ${provider.name} failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+
+  /// Resends the account-verification email.
+  ///
+  /// Throws [ApiException] with `AUTH_EMAIL_UNVERIFIED` handled by the
+  /// caller — the endpoint is throttled server-side, so the client does not
+  /// add its own timer.
+  Future<void> resendVerificationEmail() async {
+    final repo = ref.read(authRepositoryProvider);
+    await repo.resendVerificationEmail();
+  }
 }
 
 final authControllerProvider =
     AsyncNotifierProvider<AuthNotifier, User?>(AuthNotifier.new);
+
+/// Whether the account needs its email address verified.
+///
+/// The server answers `403 AUTH_EMAIL_UNVERIFIED` on protected endpoints for
+/// an unverified account. The flag is raised when that code is seen, so the
+/// UI can offer the resend action
+/// (`POST /auth/email/verification-notification`) instead of leaving the user
+/// with a bare "Forbidden".
+final emailVerificationRequiredProvider =
+    NotifierProvider<EmailVerificationNotifier, bool>(
+  EmailVerificationNotifier.new,
+);
+
+class EmailVerificationNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void requireVerification() => state = true;
+
+  void clear() => state = false;
+
+  /// Raises the flag when [error] is the server's unverified-account code.
+  void observe(Object? error) {
+    if (error is ApiException && error.code == ApiErrorCode.authEmailUnverified) {
+      requireVerification();
+    }
+  }
+}

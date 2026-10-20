@@ -1,3 +1,4 @@
+import '../../data/datasources/social_sign_in_gateway.dart';
 import '../entities/user.dart';
 
 abstract class AuthRepository {
@@ -37,4 +38,21 @@ abstract class AuthRepository {
     required String password,
     required String passwordConfirmation,
   });
+
+  /// Signs in with a social provider's id_token.
+  ///
+  /// The server verifies the token and mints the same bearer PAT the password
+  /// flow returns, so the client persists it identically.
+  Future<User> loginWithSocial({
+    required SocialProvider provider,
+    required String idToken,
+    String? name,
+    required String deviceName,
+  });
+
+  /// Resends the account-verification email.
+  ///
+  /// The server answers 200 whether or not the address still needs
+  /// verifying, so this never leaks account state.
+  Future<void> resendVerificationEmail();
 }

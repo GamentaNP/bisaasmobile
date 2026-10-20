@@ -69,6 +69,12 @@ dependencies:
   # === DEEP LINKS (civilcal:// + https app links) ===
   app_links: ^6.3.2
 
+  # === SOCIAL LOGIN (Google / Apple id_token → POST /auth/social/*) ===
+  # The server verifies the id_token with Socialite in stateless mode, so the
+  # client only ever forwards the token — it never exchanges credentials.
+  google_sign_in: ^7.2.0
+  sign_in_with_apple: ^7.0.1
+
   # === CERT PINNING (SHA-256 of leaf cert) ===
   crypto: ^3.0.3
 
@@ -94,7 +100,11 @@ dev_dependencies:
   mocktail: ^1.0.4
   # integration_test/patrol intentionally omitted — their native plugins have
   # no release variant and break `flutter build appbundle` (flutter/flutter#92978).
-  # Reintroduce as a dedicated E2E harness package in Phase 6 (testing pyramid).
+  # The `integration_test` plugin additionally pulls androidx.test:runner,
+  # androidx.test:rules and espresso-core in as **api** dependencies, so an app
+  # that depends on it ships Espresso inside the release AAB.
+  # The on-device tests therefore live in their own package: `device_tests/`,
+  # which depends on this app by path and gets the plugin for itself.
   flutter_launcher_icons: ^0.14.1
 
 flutter:

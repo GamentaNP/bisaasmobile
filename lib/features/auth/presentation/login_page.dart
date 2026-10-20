@@ -8,6 +8,8 @@ import '../../../app/theme/app_typography.dart';
 import '../../../core/errors/error_handler.dart';
 import '../../../shared/widgets/gradient_button.dart';
 import 'controllers/auth_controller.dart';
+import 'widgets/email_verification_banner.dart';
+import 'widgets/social_sign_in_buttons.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key, this.notice});
@@ -141,8 +143,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             : AppColors.textSecondaryLight,
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    // Investor one-tap auto-login (debug only, never in release)
+                      const SizedBox(height: 30),
+                      const EmailVerificationBanner(),
+                      // Investor one-tap auto-login (debug only, never in release)
+
                     if (kDebugMode) ...[
                       OutlinedButton.icon(
                         key: const Key('debug_auto_login'),
@@ -225,6 +229,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       loading: _loading,
                       onPressed: _login,
                       icon: Icons.login_rounded,
+                    ),
+                    const SizedBox(height: 12),
+                    SocialSignInButtons(
+                      onSignedIn: (_) async {
+                        if (!mounted) return;
+                        context.go('/home');
+                      },
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton(

@@ -3,13 +3,14 @@ import '../../../../core/security/token_manager.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../datasources/social_sign_in_gateway.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl({
     required AuthRemoteDataSource remoteDataSource,
     required TokenManager tokenManager,
-  })  : _remoteDataSource = remoteDataSource,
-        _tokenManager = tokenManager;
+  }) : _remoteDataSource = remoteDataSource,
+       _tokenManager = tokenManager;
 
   final AuthRemoteDataSource _remoteDataSource;
   final TokenManager _tokenManager;
@@ -70,26 +71,36 @@ class AuthRepositoryImpl implements AuthRepository {
     return User(id: 0, name: name, email: email);
   }
 
-    @override
-    Future<void> logout() async {
-      try {
-        await _remoteDataSource.logout();
-      } finally {
-        await _tokenManager.clear();
-        // Drop the public-response cache too. Only non-personal catalog data is
-        // in it, but on a shared device the next account would otherwise start
-        // from the previous one's cached world, and the allowlist that keeps it
-        // personal-data-free is one careless entry away from mattering.
-        if (DioClient.isInitialized) {
-          await DioClient.instance.clearResponseCache();
-        }
+  @override
+  Future<void> logout() async {
+    try {
+      await _remoteDataSource.logout();
+    } finally {
+      await _tokenManager.clear();
+      // Drop the public-response cache too. Only non-personal catalog data is
+      // in it, but on a shared device the next account would otherwise start
+      // from the previous one's cached world, and the allowlist that keeps it
+      // personal-data-free is one careless entry away from mattering.
+      if (DioClient.isInitialized) {
+        await DioClient.instance.clearResponseCache();
       }
     }
+  }
 
   @override
   Future<User?> getCurrentUser() async {
     final token = await _tokenManager.readToken();
     if (token == null || token.isEmpty) return null;
+
+    if (await _tokenManager.shouldRefresh()) {
+      final deviceName = await TokenManager.resolveDeviceName(_tokenManager);
+      final rotated = await _remoteDataSource.refresh(deviceName: deviceName);
+      await _tokenManager.persist(
+        token: rotated.token,
+        expiresAt: rotated.expiresAt,
+        deviceName: deviceName,
+      );
+    }
 
     final userDto = await _remoteDataSource.getCurrentUser();
     return userDto?.toDomain();
@@ -127,4 +138,42 @@ class AuthRepositoryImpl implements AuthRepository {
       passwordConfirmation: passwordConfirmation,
     );
   }
+
+  @override
+  Future<User> loginWithSocial({
+    required SocialProvider provider,
+    required String idToken,
+    String? name,
+    required String deviceName,
+  }) async {
+    final response = switch (provider) {
+      SocialProvider.google => await _remoteDataSource.loginWithGoogle(
+          idToken: idToken,
+        ),
+      SocialProvider.apple => await _remoteDataSource.loginWithApple(
+          idToken: idToken,
+          name: name,
+        ),
+    };
+
+    // The social flow mints the same bearer PAT the password flow does, so it
+    // is persisted the same way — only in flutter_secure_storage.
+    await _tokenManager.persist(
+      token: response.token,
+      expiresAt: response.expiresAt,
+      deviceName: deviceName,
+    );
+
+    if (response.user != null) {
+      return response.user!.toDomain();
+    }
+
+    final userDto = await _remoteDataSource.getCurrentUser();
+    return userDto?.toDomain() ??
+        User(id: 0, name: name ?? '', email: response.user?.email ?? '');
+  }
+
+  @override
+  Future<void> resendVerificationEmail() =>
+      _remoteDataSource.resendVerificationEmail();
 }
