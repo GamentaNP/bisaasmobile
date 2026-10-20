@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/features/store/data/datasources/store_remote_data_source.dart';
 import 'package:bisaasmobile/features/store/data/models/store_dto.dart';
 import 'package:bisaasmobile/features/store/domain/entities/store.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -99,11 +100,22 @@ void main() {
       expect(dto.slots, isEmpty);
     });
 
-    test('localMockDegraded returns 4 slots isDegraded true', () {
-      final dto = WardrobeDto.localMockDegraded();
-      expect(dto.isDegraded, isTrue);
-      expect(dto.slots.length, 4);
-      expect(dto.toDomain().isDegraded, isTrue);
+    test('an integer id does not throw', () {
+      // Regression: the server publishes `'id' => $asset->id` (an int). The
+      // previous parser read it as a String and threw a TypeError on every
+      // row, which the data source swallowed into an empty catalogue.
+      expect(
+        () => StoreAssetDto.fromJson({'id': 5, 'slug': 'x', 'name': 'X'}),
+        returnsNormally,
+      );
+      expect(StoreAssetDto.fromJson({'id': 5, 'slug': 'x', 'name': 'X'}).id, '5');
+    });
+
+    test('the server slot names are the ones the API accepts', () {
+      expect(
+        StoreRemoteDataSource.wardrobeSlots,
+        containsAll(<String>['avatar_frame', 'avatar', 'quiz_theme', 'sound_pack', 'mascot']),
+      );
     });
   });
 

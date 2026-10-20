@@ -8,10 +8,15 @@ import '../controllers/economy_controller.dart';
 import '../../domain/entities/economy.dart';
 
 /// Wallet — balance headline + ledger grouped by day.
-/// Balance is server-authoritative (GET /economy/wallet when WO-1 ships, else GET /me).
-/// Ledger is GET /economy/wallet/ledger (cursor) — currently WO-1 missing → tolerant empty/beta placeholder.
-/// Flutter never mints, never decrements locally. Ledger renders credits.description as source label
-/// (not metadata->source) per bisaas/AGENTS.md:155.
+///
+/// Balance is server-authoritative: `GET /economy/wallet` first, falling back
+/// to the balance `GET /me` carries. The ledger is `GET /economy/wallet/ledger`,
+/// which is cursor-paginated — the screen walks it with the server's
+/// `next_cursor`.
+///
+/// Flutter never mints, never decrements locally. Ledger renders
+/// credits.description as source label (not metadata->source) per
+/// bisaas/AGENTS.md:155.
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
 
@@ -26,6 +31,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(economyControllerProvider.notifier).fetchWallet();
       ref.read(economyControllerProvider.notifier).fetchLedger();
+      ref.read(economyControllerProvider.notifier).fetchWalletCategories();
     });
   }
 
@@ -38,7 +44,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final walletCoins = state.wallet?.coins;
     final fallbackCoins = user?.coins ?? 0;
     final balance = walletCoins ?? fallbackCoins;
-    final isDegraded = state.isLedgerDegraded;
     final ledger = state.ledger;
 
     final grouped = _groupByDay(ledger);
@@ -49,6 +54,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         onRefresh: () => Future.wait([
           ref.read(economyControllerProvider.notifier).fetchWallet(),
           ref.read(economyControllerProvider.notifier).fetchLedger(),
+          ref.read(economyControllerProvider.notifier).fetchWalletCategories(),
         ]),
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -88,10 +94,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 ],
               ),
             ),
-            if (isDegraded) ...[
-              const SizedBox(height: 10),
-              _BetaBanner(message: 'Could not load your coin history. The balance above is still correct.'),
-            ],
             const SizedBox(height: 18),
             Row(
               children: [
@@ -101,11 +103,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               ],
             ),
             const SizedBox(height: 4),
-            Text(
-              isDegraded
-                  ? 'History unavailable yet — quiz rewards still credit correctly (server ledger).'
-                  : 'Grouped by day. Source labels come from credits.description (not metadata.source).',
-              style: const TextStyle(fontSize: 11, color: Colors.grey),
+            const Text(
+              'Grouped by day. Source labels come from credits.description (not metadata.source).',
+              style: TextStyle(fontSize: 11, color: Colors.grey),
             ),
             const SizedBox(height: 12),
 
@@ -125,9 +125,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 ),
               ),
 
-            if (ledger.isEmpty && !state.isLedgerLoading) ...[
+            if (ledger.isEmpty && !state.isLedgerLoading && state.ledgerError == null) ...[
               const SizedBox(height: 8),
-              _EmptyLedger(isDegraded: isDegraded),
+              const _EmptyLedger(),
             ] else ...[
               for (final entry in grouped.entries) ...[
                 const SizedBox(height: 14),
@@ -135,9 +135,37 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 const SizedBox(height: 6),
                 ...entry.value.map((e) => _LedgerTile(entry: e)),
               ],
-              const SizedBox(height: 8),
-              if (isDegraded)
-                const Text('Showing local preview — real ledger is append-only on the server and will appear automatically once the endpoint ships.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+              // The ledger is cursor-paginated, so "next" is the server's
+              // `next_cursor` rather than a page number.
+              if (state.ledgerHasMore)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: OutlinedButton.icon(
+                    onPressed: state.isLedgerLoading
+                        ? null
+                        : () => ref.read(economyControllerProvider.notifier).fetchLedger(cursor: state.ledgerCursor, append: true),
+                    icon: const Icon(Icons.expand_more_rounded),
+                    label: const Text('Load more'),
+                  ),
+                ),
+            ],
+
+            // ── Own spending by category ─────────────────────────────────────
+            if (state.walletCategories != null) ...[
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 12),
+              Text('Where your coins went', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(
+                'Last ${state.walletCategories!.periodDays} days • earned ${state.walletCategories!.earned} • spent ${state.walletCategories!.spentAbsolute}',
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+              const SizedBox(height: 10),
+              if (state.walletCategories!.categories.isEmpty)
+                const Text('No coin activity in this period.', style: TextStyle(fontSize: 11, color: Colors.grey))
+              else
+                ...state.walletCategories!.categories.map((c) => _CategoryTile(category: c)),
             ],
 
             const SizedBox(height: 20),
@@ -196,8 +224,7 @@ class _LedgerTile extends StatelessWidget {
 }
 
 class _EmptyLedger extends StatelessWidget {
-  const _EmptyLedger({required this.isDegraded});
-  final bool isDegraded;
+  const _EmptyLedger();
 
   @override
   Widget build(BuildContext context) {
@@ -208,14 +235,12 @@ class _EmptyLedger extends StatelessWidget {
         children: [
           Icon(Icons.receipt_long_rounded, size: 28, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35)),
           const SizedBox(height: 8),
-          Text(isDegraded ? 'Ledger in beta' : 'No transactions yet', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          const Text('No transactions yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
           const SizedBox(height: 4),
-          Text(
-            isDegraded
-                ? 'Your coins are safe — they credit on the server after each graded quiz. Transaction history is not available yet.'
-                : 'Complete a quiz to earn coins. Every credit is recorded on our servers.',
+          const Text(
+            'Complete a quiz to earn coins. Every credit is recorded on our servers.',
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
+            style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
           ),
         ],
       ),
@@ -223,21 +248,33 @@ class _EmptyLedger extends StatelessWidget {
   }
 }
 
-class _BetaBanner extends StatelessWidget {
-  const _BetaBanner({required this.message});
-  final String message;
+/// One row of the "where your coins went" breakdown.
+class _CategoryTile extends StatelessWidget {
+  const _CategoryTile({required this.category});
+  final WalletCategory category;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
+    final spending = category.isSpending;
+    final color = spending ? AppColors.wrongRed : AppColors.correctGreen;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          const Icon(Icons.science_rounded, size: 16, color: AppColors.brand),
-          const SizedBox(width: 8),
-          Expanded(child: Text(message, style: const TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3))),
-          Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.brand, borderRadius: BorderRadius.circular(6)), child: const Text('BETA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white))),
+          Expanded(
+            child: Text(
+              category.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+          ),
+          Text('${category.entries}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          const SizedBox(width: 10),
+          Text(
+            '${spending ? '-' : '+'}${category.coins.abs()}',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
+          ),
         ],
       ),
     );

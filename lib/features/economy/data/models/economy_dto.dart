@@ -1,9 +1,11 @@
 // ignore_for_file: omit_local_variable_types, prefer_final_locals, prefer_constructors_over_static_methods
+import '../../../../core/network/api_response.dart';
 import '../../domain/entities/economy.dart';
 
 /// Tolerant DTOs — additive parsing, never throws on missing/extra fields.
-/// Verified live: GET /economy/resources/inventory, GET /donations/*, POST /donations/freeze-streak
-/// Missing (WO-1/WO-2): wallet, ledger, shop — tolerant mock fallback, isDegraded flag.
+/// Verified live: GET /economy/resources/inventory, GET /economy/wallet,
+/// GET /economy/wallet/ledger, GET /economy/shop, GET /donations/*,
+/// POST /donations/freeze-streak, POST /economy/shop/purchase.
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -16,19 +18,11 @@ int? _asInt(Object? v) {
   return null;
 }
 
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  if (v is num) return v.toDouble();
-  return null;
-}
-
 DateTime? _asDate(Object? v) {
   if (v is String) return DateTime.tryParse(v);
   return null;
 }
+
 
 // ── Resource inventory (live) ─────────────────────────────────────────────────
 
@@ -377,67 +371,233 @@ class LedgerEntryDto {
       );
 }
 
-// ── Shop packs (WO-2) ─────────────────────────────────────────────────────────
+// ── Coin shop (GET /economy/shop) ─────────────────────────────────────────────
 
-/// Paginated ledger page with an explicit degraded flag — the data source
-/// knows whether the WO-1 endpoint 404'd (degraded) vs. a legitimately empty
-/// account, so the UI never shows the beta banner for a real empty ledger.
+/// Paginated ledger page.
+///
+/// The ledger endpoint is cursor-paginated: the `cursor` parameter is the id
+/// of the last-seen entry (`EconomyWalletController::ledger`), and the
+/// canonical pagination block is published at the top level of the envelope.
 class LedgerPageDto {
-  const LedgerPageDto({required this.entries, this.isDegraded = false});
-  final List<LedgerEntryDto> entries;
-  final bool isDegraded;
-}
-
-class CoinPackDto {
-  const CoinPackDto({
-    required this.id,
-    required this.coins,
-    required this.price,
-    this.currency = 'USD',
-    this.bonusCoins = 0,
-    this.label,
-    this.isPopular = false,
-    this.isBestValue = false,
+  const LedgerPageDto({
+    required this.entries,
+    this.pagination,
   });
 
-  factory CoinPackDto.fromJson(Map<String, dynamic> j) {
-    // price may be direct double/string or cents int; tolerant.
-    double? rawPrice = _asDouble(j['price']);
-    if (rawPrice == null && j['price_cents'] != null) {
-      final cents = _asInt(j['price_cents']);
-      if (cents != null) rawPrice = cents / 100.0;
-    }
-    return CoinPackDto(
-      id: (j['id'] as String?) ?? (j['slug'] as String?) ?? j['pack_id']?.toString() ?? '',
-      coins: _asInt(j['coins'] ?? j['amount']) ?? 0,
-      price: rawPrice ?? 0.0,
-      currency: (j['currency'] as String?) ?? 'USD',
-      bonusCoins: _asInt(j['bonus_coins'] ?? j['bonus']) ?? 0,
-      label: j['label'] as String? ?? j['name'] as String?,
-      isPopular: (j['is_popular'] as bool?) ?? (j['popular'] as bool?) ?? false,
-      isBestValue: (j['is_best_value'] as bool?) ?? (j['best_value'] as bool?) ?? false,
+  final List<LedgerEntryDto> entries;
+  final Pagination? pagination;
+
+  bool get hasMore => pagination?.hasMore ?? false;
+  String? get nextCursor => pagination?.nextCursor;
+}
+
+/// One row of the coin shop.
+///
+/// The server publishes resources and bundles under separate keys
+/// (`data.resources`, `data.bundles`) plus a merged `data.packs` alias. The
+/// split keys are read because the merged alias loses the `type` that
+/// `POST /economy/shop/purchase` validates.
+class ShopItemDto {
+  const ShopItemDto({
+    required this.id,
+    required this.type,
+    required this.key,
+    required this.name,
+    required this.priceCoins,
+    this.description,
+    this.icon,
+    this.category,
+    this.sellPriceCoins,
+    this.originalPriceCoins,
+    this.contents = const {},
+    this.sortOrder = 0,
+  });
+
+  factory ShopItemDto.fromJson(
+    Map<String, dynamic> j, {
+    required ShopItemType type,
+  }) {
+    return ShopItemDto(
+      // `id` is an integer on the wire. The previous parser read it as a
+      // String and threw a TypeError on every row, which the data source
+      // swallowed — so the whole catalogue silently rendered as empty.
+      id: _asInt(j['id']) ?? 0,
+      type: type,
+      key: (j['key'] as String?) ?? (j['slug'] as String?) ?? '',
+      name: (j['name'] as String?) ?? (j['title'] as String?) ?? '',
+      priceCoins: _asInt(
+            j['price_coins'] ??
+                j['base_price_coins'] ??
+                j['priceCoins'] ??
+                j['price'],
+          ) ??
+          0,
+      description: j['description'] as String?,
+      icon: j['icon'] as String?,
+      category: j['category'] as String?,
+      sellPriceCoins: _asInt(j['sell_price_coins']),
+      originalPriceCoins: _asInt(j['original_price_coins']),
+      contents: j['contents'] is Map
+          ? (j['contents'] as Map).cast<String, dynamic>()
+          : const {},
+      sortOrder: _asInt(j['sort_order']) ?? 0,
     );
   }
 
-  final String id;
-  final int coins;
-  final double price;
-  final String currency;
-  final int bonusCoins;
-  final String? label;
-  final bool isPopular;
-  final bool isBestValue;
+  final int id;
+  final ShopItemType type;
+  final String key;
+  final String name;
+  final int priceCoins;
+  final String? description;
+  final String? icon;
+  final String? category;
+  final int? sellPriceCoins;
+  final int? originalPriceCoins;
+  final Map<String, dynamic> contents;
+  final int sortOrder;
 
-  CoinPack toDomain() => CoinPack(
+  ShopItem toDomain() => ShopItem(
         id: id,
-        coins: coins,
-        price: price,
-        currency: currency,
-        bonusCoins: bonusCoins,
-        label: label,
-        isPopular: isPopular,
-        isBestValue: isBestValue,
+        type: type,
+        key: key,
+        name: name,
+        priceCoins: priceCoins,
+        description: description,
+        icon: icon,
+        category: category,
+        sellPriceCoins: sellPriceCoins,
+        originalPriceCoins: originalPriceCoins,
+        contents: contents,
+        sortOrder: sortOrder,
       );
+}
+
+/// Own coin spending grouped by category.
+///
+/// `GET /economy/wallet/categories` returns an object, not a list:
+/// `data.categories` is a keyed map of `{label, coins, entries}` and
+/// `data.totals` carries `{earned, spent}`.
+class WalletCategoriesDto {
+  const WalletCategoriesDto({
+    required this.categories,
+    required this.earned,
+    required this.spent,
+    this.periodDays = 30,
+  });
+
+  factory WalletCategoriesDto.fromJson(Map<String, dynamic> j) {
+    final categories = <WalletCategoryDto>[];
+    final raw = j['categories'];
+    if (raw is Map) {
+      for (final entry in raw.entries) {
+        final value = entry.value;
+        if (value is Map) {
+          categories.add(
+            WalletCategoryDto.fromJson(
+              entry.key.toString(),
+              value.cast<String, dynamic>(),
+            ),
+          );
+        }
+      }
+    } else if (raw is List) {
+      categories.addAll(
+        raw.whereType<Map<String, dynamic>>().map((e) {
+          final key = (e['key'] ?? e['category'] ?? '').toString();
+          return WalletCategoryDto.fromJson(key, e);
+        }),
+      );
+    }
+
+    final totals = j['totals'];
+    final totalsMap = totals is Map ? totals.cast<String, dynamic>() : const <String, dynamic>{};
+    final period = j['period'];
+    final periodMap = period is Map ? period.cast<String, dynamic>() : const <String, dynamic>{};
+
+    return WalletCategoriesDto(
+      categories: categories,
+      earned: _asInt(totalsMap['earned']) ?? 0,
+      spent: _asInt(totalsMap['spent']) ?? 0,
+      periodDays: _asInt(periodMap['days']) ?? 30,
+    );
+  }
+
+  final List<WalletCategoryDto> categories;
+  final int earned;
+  final int spent;
+  final int periodDays;
+
+  WalletCategories toDomain() => WalletCategories(
+        categories: categories.map((c) => c.toDomain()).toList(),
+        earned: earned,
+        spent: spent,
+        periodDays: periodDays,
+      );
+}
+
+class WalletCategoryDto {
+  const WalletCategoryDto({
+    required this.key,
+    required this.label,
+    required this.coins,
+    required this.entries,
+  });
+
+  factory WalletCategoryDto.fromJson(String key, Map<String, dynamic> j) {
+    return WalletCategoryDto(
+      key: key,
+      label: (j['label'] as String?) ?? key,
+      coins: _asInt(j['coins'] ?? j['amount']) ?? 0,
+      entries: _asInt(j['entries'] ?? j['count']) ?? 0,
+    );
+  }
+
+  final String key;
+  final String label;
+  final int coins;
+  final int entries;
+
+  WalletCategory toDomain() => WalletCategory(
+        key: key,
+        label: label,
+        coins: coins,
+        entries: entries,
+      );
+}
+
+/// The outcome of a coin purchase.
+class ShopPurchaseResultDto {
+  const ShopPurchaseResultDto({
+    required this.success,
+    this.itemKey,
+    this.itemType,
+    this.quantity = 0,
+    this.coinsSpent = 0,
+    this.coinBalance,
+    this.message,
+  });
+
+  factory ShopPurchaseResultDto.fromJson(Map<String, dynamic> j) {
+    final type = j['type'] as String?;
+    return ShopPurchaseResultDto(
+      success: (j['success'] as bool?) ?? true,
+      itemKey: j['key'] as String? ?? (j['resource_key'] as String?),
+      itemType: type == null ? null : ShopItemType.fromWire(type),
+      quantity: _asInt(j['quantity']) ?? 0,
+      coinsSpent: _asInt(j['coins_spent'] ?? j['spent_coins'] ?? j['cost']) ?? 0,
+      coinBalance: _asInt(j['coin_balance'] ?? j['balance'] ?? j['coins']),
+      message: j['message'] as String?,
+    );
+  }
+
+  final bool success;
+  final String? itemKey;
+  final ShopItemType? itemType;
+  final int quantity;
+  final int coinsSpent;
+  final int? coinBalance;
+  final String? message;
 }
 
 // ── Donations (live) ──────────────────────────────────────────────────────────

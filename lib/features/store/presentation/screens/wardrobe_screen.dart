@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../data/datasources/store_remote_data_source.dart';
 import '../controllers/store_controller.dart';
 import '../../domain/entities/store.dart';
 
 /// Wardrobe — equip owned premium assets.
-/// WO-3 missing → tolerant degraded placeholder (local mock slots + beta banner).
-/// POST /store/wardrobe/equip carries Idempotency-Key.
+///
+/// `GET /store/wardrobe` publishes every slot with the asset equipped in it;
+/// `PUT /store/wardrobe/equipment` equips and `DELETE` clears. Every write
+/// carries an Idempotency-Key.
+///
+/// The server's slot names are fixed (`avatar_frame`, `avatar`, `quiz_theme`,
+/// `sound_pack`, `mascot`), so an asset whose category is not one of them
+/// cannot be equipped and the button is disabled rather than sending a
+/// request the server will reject.
 class WardrobeScreen extends ConsumerStatefulWidget {
   const WardrobeScreen({super.key});
 
@@ -32,7 +40,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     final ok = await ref.read(storeControllerProvider.notifier).equip(slot, assetId);
     if (!mounted) return;
     setState(() => _equippingSlot = null);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Equipped!' : 'Equip in beta — will be live when WO-3 ships.'), backgroundColor: ok ? AppColors.correctGreen : AppColors.brandDark));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Equipped!' : 'Could not equip that item.'), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
   }
 
   @override
@@ -41,7 +49,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     final theme = Theme.of(context);
     final wardrobe = state.wardrobe;
     final catalog = state.catalog;
-    final isDegraded = state.isDegraded;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Wardrobe')),
@@ -50,12 +57,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            if (isDegraded)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                child: const Row(children: [Icon(Icons.cloud_off_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text('The wardrobe service is unavailable, so slots cannot be shown or changed.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3)))]),
-              ),
             if (state.isWardrobeLoading && wardrobe == null)
               const Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: CircularProgressIndicator())),
             if (state.wardrobeError != null)
@@ -94,9 +95,14 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         title: Text(a.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                         subtitle: Text('${a.category ?? a.slug} • ${a.rarity} • ${a.priceCoins} coins', style: const TextStyle(fontSize: 11, color: Colors.grey)),
                         trailing: _EquipButton(
-                          isEquipping: _equippingSlot == (a.category ?? a.id),
+                          isEquipping: _equippingSlot == a.category,
                           isOwned: a.isOwned,
-                          onPressed: () => _equip(a.category ?? 'frame', a.id),
+                          // The server only accepts its own slot names
+                          // (`StoreController::WARDROBE_SLOTS`); the previous
+                          // fallback of `'frame'` was a guaranteed 422.
+                          onPressed: _isEquippableSlot(a.category)
+                              ? () => _equip(a.category!, a.id)
+                              : null,
                         ),
                       ),
                     )),
@@ -149,7 +155,9 @@ class _EquipButton extends StatelessWidget {
   const _EquipButton({required this.isEquipping, required this.isOwned, required this.onPressed});
   final bool isEquipping;
   final bool isOwned;
-  final VoidCallback onPressed;
+
+  /// Null when the asset's category is not a slot the server accepts.
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +168,7 @@ class _EquipButton extends StatelessWidget {
         style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 10)),
         child: isEquipping
             ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-            : Text(isOwned ? 'Equip' : 'Preview', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            : Text(onPressed == null ? '—' : (isOwned ? 'Equip' : 'Preview'), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -177,6 +185,16 @@ Color _rarityColor(String r) {
     default:
       return const Color(0xFF94A3B8);
   }
+}
+
+/// Whether [category] is one of the wardrobe slots the server accepts.
+///
+/// `PUT /store/wardrobe/equipment` validates `slot` against
+/// `StoreController::WARDROBE_SLOTS`, so an asset in any other category
+/// cannot be equipped at all.
+bool _isEquippableSlot(String? category) {
+  if (category == null) return false;
+  return StoreRemoteDataSource.wardrobeSlots.contains(category);
 }
 
 IconData _iconForSlot(String slot) {

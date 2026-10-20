@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../controllers/economy_controller.dart';
-import '../../domain/entities/economy.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../domain/entities/economy.dart';
+import '../controllers/economy_controller.dart';
 
-/// Coin shop — packs (WO-2). Idempotency-Key on every POST /economy/shop/purchase
-/// even when endpoint returns 404 (graceful beta — never crashes, never double-charges).
-/// Prices are never hardcoded beyond local mock placeholder; server price wins when it ships.
+/// Coin shop — materials and bundles bought with coins.
+///
+/// `GET /economy/shop` publishes `data.resources` (priced with
+/// `base_price_coins`) and `data.bundles` (priced with `price_coins`).
+/// `POST /economy/shop/purchase` takes `{type, key, quantity}` and requires an
+/// Idempotency-Key, so a retried purchase never charges twice.
+///
+/// The screen renders exactly what the server published. There is no local
+/// placeholder catalogue and no "beta" mode: the endpoint is live, so a
+/// failure is an error with a retry, and an empty catalogue is an empty
+/// catalogue.
 class ShopScreen extends ConsumerStatefulWidget {
   const ShopScreen({super.key});
 
@@ -17,27 +25,29 @@ class ShopScreen extends ConsumerStatefulWidget {
 }
 
 class _ShopScreenState extends ConsumerState<ShopScreen> {
-  String? _purchasingId;
+  String? _purchasingKey;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(economyControllerProvider.notifier).fetchPacks();
+      ref.read(economyControllerProvider.notifier).fetchShopItems();
     });
   }
 
-  Future<void> _purchase(CoinPack pack) async {
-    setState(() => _purchasingId = pack.id);
-    final res = await ref.read(economyControllerProvider.notifier).purchasePack(pack.id);
+  Future<void> _purchase(ShopItem item) async {
+    setState(() => _purchasingKey = item.key);
+    final result = await ref.read(economyControllerProvider.notifier).purchaseShopItem(item);
     if (!mounted) return;
-    setState(() => _purchasingId = null);
-    final msg = res?['message'] as String? ?? (res?['is_degraded'] == true ? 'Shop is in beta — purchases will be live when WO-2 ships.' : 'Purchase attempted.');
-    final isDegraded = res?['is_degraded'] == true;
+    setState(() => _purchasingKey = null);
+
+    final message = result?.message ??
+        (result?.success == true ? 'Purchased ${item.name}' : 'Purchase failed');
+    final ok = result?.success == true;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg),
-        backgroundColor: isDegraded ? AppColors.brandDark : (res?['success'] == true ? AppColors.correctGreen : AppColors.wrongRed),
+        content: Text(message),
+        backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed,
         duration: const Duration(seconds: 3),
       ),
     );
@@ -48,12 +58,14 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final state = ref.watch(economyControllerProvider);
     final user = ref.watch(authControllerProvider).value;
     final theme = Theme.of(context);
-    final packs = state.packs;
+    final items = state.shopItems;
+    final resources = items.where((i) => i.type == ShopItemType.resource).toList();
+    final bundles = items.where((i) => i.type == ShopItemType.bundle).toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Coin Shop')),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(economyControllerProvider.notifier).fetchPacks(),
+        onRefresh: () => ref.read(economyControllerProvider.notifier).fetchShopItems(),
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -64,63 +76,59 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 children: [
                   const Icon(Icons.monetization_on_rounded, color: AppColors.coinYellow),
                   const SizedBox(width: 10),
-                  Text('${user?.coins ?? 0} coins', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.coinYellow)),
-                  const Spacer(),
-                  if (state.isPacksDegraded)
-                    Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.brand, borderRadius: BorderRadius.circular(6)), child: const Text('BETA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white))),
+                  Text('${state.wallet?.coins ?? user?.coins ?? 0} coins', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.coinYellow)),
                 ],
               ),
             ),
-            if (state.isPacksDegraded) ...[
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                child: const Row(
-                  children: [
-                    Icon(Icons.cloud_off_rounded, size: 16, color: AppColors.brand),
-                    SizedBox(width: 8),
-                    Expanded(child: Text('The coin shop is unavailable right now.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3))),
-                  ],
-                ),
-              ),
-            ],
-            if (state.isPacksLoading)
+            if (state.isShopLoading)
               const Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: CircularProgressIndicator())),
-            if (state.packsError != null)
+            if (state.shopError != null)
               Card(
                 color: AppColors.wrongRed.withValues(alpha: 0.08),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.packsError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchPacks(), child: const Text('Retry'))]),
+                  child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.shopError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchShopItems(), child: const Text('Retry'))]),
                 ),
               ),
-            if (!state.isPacksLoading && packs.isEmpty && state.packsError == null)
+            if (!state.isShopLoading && items.isEmpty && state.shopError == null)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Column(
                   children: [
                     Icon(Icons.store_rounded, size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.35)),
                     const SizedBox(height: 8),
-                    const Text('No packs yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('Nothing for sale yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     const SizedBox(height: 4),
-                    const Text('Coin packs will appear here when the shop ships.', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    const Text('The shop has no items published on the server right now.', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey)),
                   ],
                 ),
               ),
-            if (packs.isNotEmpty) ...[
+            if (bundles.isNotEmpty) ...[
               const SizedBox(height: 14),
-              Text('Packs', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text('Bundles', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              ...bundles.map((b) => _ShopRow(
+                    item: b,
+                    isPurchasing: _purchasingKey == b.key,
+                    onBuy: () => _purchase(b),
+                  )),
+            ],
+            if (resources.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              Text('Materials', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 0.92),
-                itemCount: packs.length,
+                itemCount: resources.length,
                 itemBuilder: (context, i) {
-                  final p = packs[i];
-                  final isPurchasing = _purchasingId == p.id;
-                  return _PackCard(pack: p, isPurchasing: isPurchasing, onBuy: () => _purchase(p));
+                  final p = resources[i];
+                  return _MaterialCard(
+                    item: p,
+                    isPurchasing: _purchasingKey == p.key,
+                    onBuy: () => _purchase(p),
+                  );
                 },
               ),
             ],
@@ -149,54 +157,113 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   }
 }
 
-class _PackCard extends StatelessWidget {
-  const _PackCard({required this.pack, required this.isPurchasing, required this.onBuy});
-  final CoinPack pack;
+class _MaterialCard extends StatelessWidget {
+  const _MaterialCard({required this.item, required this.isPurchasing, required this.onBuy});
+  final ShopItem item;
   final bool isPurchasing;
   final VoidCallback onBuy;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: pack.isBestValue ? AppColors.xpGold.withValues(alpha: 0.5) : pack.isPopular ? AppColors.brand.withValues(alpha: 0.4) : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.35), width: pack.isBestValue || pack.isPopular ? 1.5 : 1),
-        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35)),
+        color: theme.colorScheme.surface,
       ),
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (pack.isPopular || pack.isBestValue)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(color: pack.isBestValue ? AppColors.xpGold : AppColors.brand, borderRadius: BorderRadius.circular(6)),
-                    child: Text(pack.isBestValue ? 'BEST VALUE' : 'POPULAR', style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white)),
-                  ),
-                const SizedBox(height: 8),
-                const Icon(Icons.monetization_on_rounded, color: AppColors.coinYellow, size: 28),
-                const SizedBox(height: 6),
-                Text(pack.label ?? '${pack.coins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                Text('${pack.totalCoins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.coinYellow)),
-                if (pack.bonusCoins > 0) Text('+${pack.bonusCoins} bonus', style: const TextStyle(fontSize: 11, color: AppColors.correctGreen, fontWeight: FontWeight.w600)),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: isPurchasing ? null : onBuy,
-                    style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8)),
-                    child: isPurchasing
-                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text(pack.displayPrice, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  ),
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              item.icon == null ? Icons.inventory_2_rounded : Icons.category_rounded,
+              color: AppColors.coinYellow,
+              size: 28,
             ),
-          ),
-        ],
+            const SizedBox(height: 6),
+            Text(
+              item.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+            if (item.category != null) ...[
+              const SizedBox(height: 2),
+              Text(item.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+            ],
+            const Spacer(),
+            Text('${item.priceCoins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.coinYellow)),
+            if (item.sellPriceCoins != null) ...[
+              const SizedBox(height: 2),
+              Text('sells back for ${item.sellPriceCoins}', style: const TextStyle(fontSize: 10, color: Colors.grey)),
+            ],
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: isPurchasing ? null : onBuy,
+                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8)),
+                child: isPurchasing
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Text('Buy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ShopRow extends StatelessWidget {
+  const _ShopRow({required this.item, required this.isPurchasing, required this.onBuy});
+  final ShopItem item;
+  final bool isPurchasing;
+  final VoidCallback onBuy;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Icon(Icons.inventory_2_rounded, color: AppColors.xpGold, size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                  if (item.description != null && item.description!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(item.description!, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                  ],
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text('${item.priceCoins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.coinYellow)),
+                      if (item.discountCoins > 0) ...[
+                        const SizedBox(width: 6),
+                        Text('save ${item.discountCoins}', style: const TextStyle(fontSize: 10, color: AppColors.correctGreen, fontWeight: FontWeight.w600)),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            FilledButton(
+              onPressed: isPurchasing ? null : onBuy,
+              style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
+              child: isPurchasing
+                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Buy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            ),
+          ],
+        ),
       ),
     );
   }

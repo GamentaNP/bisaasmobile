@@ -141,13 +141,15 @@ class LedgerEntry {
 class WalletLedger {
   const WalletLedger({
     required this.entries,
-    this.isDegraded = false,
     this.hasMore = false,
+    this.nextCursor,
   });
 
   final List<LedgerEntry> entries;
-  final bool isDegraded;
   final bool hasMore;
+
+  /// The opaque cursor for the next page of the ledger.
+  final String? nextCursor;
 
   /// Grouped by day (yyyy-MM-dd) descending.
   Map<String, List<LedgerEntry>> get groupedByDay {
@@ -161,32 +163,152 @@ class WalletLedger {
   }
 }
 
-// ── Shop packs (WO-2 — no API yet) ──────────────────────────────────────────
+// ── Coin shop (GET /economy/shop) ─────────────────────────────────────────────
 
+/// What kind of shop row this is.
+///
+/// The server sells **materials and bundles for coins** — not USD coin packs.
+/// `POST /economy/shop/purchase` validates `type ∈ {resource, bundle}` and
+/// `key`, so the distinction is part of the contract, not a UI detail.
+enum ShopItemType {
+  resource,
+  bundle;
+
+  /// The wire value the server validates against.
+  String get wireValue => name;
+
+  static ShopItemType fromWire(String? raw) =>
+      raw == 'bundle' ? ShopItemType.bundle : ShopItemType.resource;
+}
+
+/// One purchasable row of the coin shop.
+///
+/// Rows are priced in **coins** (`base_price_coins` for resources,
+/// `price_coins` for bundles). The previous model in this file described USD
+/// coin packs (`price`, `currency`, `bonusCoins`), which the server has never
+/// served — every field rendered as `0` / `$0.00` on top of a catalogue that
+/// could not even be parsed.
 @immutable
-class CoinPack {
-  const CoinPack({
+class ShopItem {
+  const ShopItem({
     required this.id,
-    required this.coins,
-    required this.price,
-    this.currency = 'USD',
-    this.bonusCoins = 0,
-    this.label,
-    this.isPopular = false,
-    this.isBestValue = false,
+    required this.type,
+    required this.key,
+    required this.name,
+    required this.priceCoins,
+    this.description,
+    this.icon,
+    this.category,
+    this.sellPriceCoins,
+    this.originalPriceCoins,
+    this.contents = const {},
+    this.sortOrder = 0,
   });
 
-  final String id;
-  final int coins;
-  final double price;
-  final String currency;
-  final int bonusCoins;
-  final String? label;
-  final bool isPopular;
-  final bool isBestValue;
+  final int id;
+  final ShopItemType type;
 
-  int get totalCoins => coins + bonusCoins;
-  String get displayPrice => '\$${price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 2)}';
+  /// The server's purchase key — what `POST /economy/shop/purchase` sends.
+  final String key;
+  final String name;
+  final String? description;
+  final String? icon;
+  final String? category;
+
+  /// What it costs, in coins.
+  final int priceCoins;
+
+  /// What it sells back for, in coins (resources only).
+  final int? sellPriceCoins;
+
+  /// The bundle's undiscounted price, when the server published one.
+  final int? originalPriceCoins;
+
+  /// What is inside a bundle. Empty for resources.
+  final Map<String, dynamic> contents;
+  final int sortOrder;
+
+  bool get isBundle => type == ShopItemType.bundle;
+
+  /// How much the bundle saves, in coins. Zero when there is no discount.
+  int get discountCoins {
+    final original = originalPriceCoins;
+    if (original == null || original <= priceCoins) return 0;
+    return original - priceCoins;
+  }
+}
+
+// ── Own coin spending by category (GET /economy/wallet/categories) ────────────
+
+/// One source category of coin spending.
+///
+/// The server groups the caller's own ledger by the event-key prefix
+/// (`quiz_achievement`, `daily_checkin`, …) and publishes the group as
+/// `{label, coins, entries}` where `coins` is signed — negative for spending.
+@immutable
+class WalletCategory {
+  const WalletCategory({
+    required this.key,
+    required this.label,
+    required this.coins,
+    required this.entries,
+  });
+
+  final String key;
+  final String label;
+
+  /// Signed total for the period. Negative means the user spent coins.
+  final int coins;
+  final int entries;
+
+  bool get isSpending => coins < 0;
+}
+
+/// Own coin spending, grouped by category.
+///
+/// `GET /economy/wallet/categories?period=7d|30d|90d` — an object-shaped
+/// aggregate with no pagination.
+@immutable
+class WalletCategories {
+  const WalletCategories({
+    required this.categories,
+    required this.earned,
+    required this.spent,
+    this.periodDays = 30,
+  });
+
+  final List<WalletCategory> categories;
+
+  /// Coins earned in the period (positive).
+  final int earned;
+
+  /// Coins spent in the period (negative on the wire).
+  final int spent;
+  final int periodDays;
+
+  int get spentAbsolute => spent.abs();
+}
+
+/// The result of a coin purchase.
+@immutable
+class ShopPurchaseResult {
+  const ShopPurchaseResult({
+    required this.success,
+    this.itemKey,
+    this.itemType,
+    this.quantity = 0,
+    this.coinsSpent = 0,
+    this.coinBalance,
+    this.message,
+  });
+
+  final bool success;
+  final String? itemKey;
+  final ShopItemType? itemType;
+  final int quantity;
+  final int coinsSpent;
+  final int? coinBalance;
+  final String? message;
 }
 
 // ── Donations (verified live routes) ────────────────────────────────────────

@@ -156,26 +156,102 @@ void main() {
     });
   });
 
-  group('CoinPackDto', () {
-    test('fromJson minimal', () {
-      final dto = CoinPackDto.fromJson({'id': 'pack_100', 'coins': 100, 'price': 0.99});
-      expect(dto.id, 'pack_100');
-      expect(dto.coins, 100);
-      expect(dto.price, 0.99);
-      expect(dto.toDomain(), isA<CoinPack>());
-      expect(dto.toDomain().totalCoins, 100);
+  group('ShopItemDto', () {
+    test('fromJson a server resource row', () {
+      // The server publishes an integer id, a key and `base_price_coins`.
+      final dto = ShopItemDto.fromJson(
+        {
+          'id': 7,
+          'key': 'cement_bag',
+          'name': 'Cement Bag',
+          'category': 'material',
+          'base_price_coins': 120,
+          'sell_price_coins': 60,
+          'sort_order': 3,
+        },
+        type: ShopItemType.resource,
+      );
+      expect(dto.id, 7);
+      expect(dto.key, 'cement_bag');
+      expect(dto.priceCoins, 120);
+      expect(dto.sellPriceCoins, 60);
+      expect(dto.type, ShopItemType.resource);
+      expect(dto.toDomain(), isA<ShopItem>());
+      expect(dto.toDomain().isBundle, isFalse);
     });
 
-    test('fromJson handles price_cents and additive', () {
-      final dto = CoinPackDto.fromJson({'id': 'p1', 'coins': 200, 'price_cents': 199, 'extra': 'ignored'});
-      expect(dto.price, closeTo(1.99, 0.001));
+    test('fromJson a server bundle row', () {
+      final dto = ShopItemDto.fromJson(
+        {
+          'id': 2,
+          'key': 'starter_bundle',
+          'name': 'Starter Bundle',
+          'description': 'A head start',
+          'price_coins': 500,
+          'original_price_coins': 700,
+          'contents': {'cement_bag': 4},
+        },
+        type: ShopItemType.bundle,
+      );
+      expect(dto.priceCoins, 500);
+      expect(dto.originalPriceCoins, 700);
+      expect(dto.contents['cement_bag'], 4);
+      expect(dto.toDomain().isBundle, isTrue);
+      expect(dto.toDomain().discountCoins, 200);
     });
 
-    test('fromJson handles bonus and popularity flags', () {
-      final dto = CoinPackDto.fromJson({'id': 'p2', 'coins': 500, 'price': 4.99, 'bonus_coins': 50, 'is_popular': true});
-      expect(dto.bonusCoins, 50);
-      expect(dto.isPopular, true);
-      expect(dto.toDomain().totalCoins, 550);
+    test('an integer id does not throw', () {
+      // Regression: the previous parser read `id` as a String and threw a
+      // TypeError on every row, which the data source swallowed — so the
+      // whole catalogue rendered as empty.
+      expect(
+        () => ShopItemDto.fromJson({'id': 5, 'key': 'k', 'name': 'n'}, type: ShopItemType.resource),
+        returnsNormally,
+      );
+    });
+
+    test('ShopItemType wire values match the server contract', () {
+      expect(ShopItemType.resource.wireValue, 'resource');
+      expect(ShopItemType.bundle.wireValue, 'bundle');
+      expect(ShopItemType.fromWire('bundle'), ShopItemType.bundle);
+      expect(ShopItemType.fromWire('resource'), ShopItemType.resource);
+    });
+  });
+
+  group('WalletCategoriesDto', () {
+    test('parses the keyed category map and totals', () {
+      final dto = WalletCategoriesDto.fromJson({
+        'period': {'days': 30},
+        'categories': {
+          'daily_checkin': {'label': 'Daily check-in', 'coins': 120, 'entries': 4},
+          'quiz_achievement': {'label': 'Quiz rewards', 'coins': -50, 'entries': 1},
+        },
+        'totals': {'earned': 120, 'spent': -50},
+      });
+      expect(dto.categories.length, 2);
+      expect(dto.earned, 120);
+      expect(dto.spent, -50);
+      expect(dto.periodDays, 30);
+      final domain = dto.toDomain();
+      expect(domain.categories.first.label, 'Daily check-in');
+      expect(domain.spentAbsolute, 50);
+    });
+  });
+
+  group('ShopPurchaseResultDto', () {
+    test('parses the server purchase payload', () {
+      final dto = ShopPurchaseResultDto.fromJson({
+        'type': 'bundle',
+        'key': 'starter_bundle',
+        'quantity': 2,
+        'coins_spent': 1000,
+        'coin_balance': 4200,
+      });
+      expect(dto.success, isTrue);
+      expect(dto.itemType, ShopItemType.bundle);
+      expect(dto.itemKey, 'starter_bundle');
+      expect(dto.coinsSpent, 1000);
+      expect(dto.coinBalance, 4200);
     });
   });
 

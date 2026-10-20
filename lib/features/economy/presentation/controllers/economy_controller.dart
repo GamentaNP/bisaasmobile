@@ -38,11 +38,14 @@ class EconomyState {
     this.ledger = const [],
     this.isLedgerLoading = false,
     this.ledgerError,
-    this.isLedgerDegraded = false,
-    this.packs = const [],
-    this.isPacksLoading = false,
-    this.packsError,
-    this.isPacksDegraded = false,
+    this.ledgerHasMore = false,
+    this.ledgerCursor,
+    this.walletCategories,
+    this.isCategoriesLoading = false,
+    this.categoriesError,
+    this.shopItems = const [],
+    this.isShopLoading = false,
+    this.shopError,
     this.isFreezingStreak = false,
     this.freezeMessage,
     this.lastFreezeResult,
@@ -73,12 +76,22 @@ class EconomyState {
   final List<LedgerEntry> ledger;
   final bool isLedgerLoading;
   final String? ledgerError;
-  final bool isLedgerDegraded;
 
-  final List<CoinPack> packs;
-  final bool isPacksLoading;
-  final String? packsError;
-  final bool isPacksDegraded;
+  /// Whether the server says another ledger page exists (cursor pagination).
+  final bool ledgerHasMore;
+
+  /// The opaque cursor for the next ledger page.
+  final String? ledgerCursor;
+
+  /// Own coin spending, grouped by category.
+  final WalletCategories? walletCategories;
+  final bool isCategoriesLoading;
+  final String? categoriesError;
+
+  /// The coin shop catalogue: materials and bundles.
+  final List<ShopItem> shopItems;
+  final bool isShopLoading;
+  final String? shopError;
 
   final bool isFreezingStreak;
   final String? freezeMessage;
@@ -88,9 +101,20 @@ class EconomyState {
   final String? purchaseError;
   final String? purchaseMessage;
 
-  /// Global degraded: any WO missing surface is in beta placeholder mode.
-  /// Wallet/ledger/shop/market/wardrobe have no API per master :134.
-  bool get isDegraded => isLedgerDegraded || isPacksDegraded || inventoryBundle?.isDegraded == true;
+  /// True when any surface is currently failing.
+  ///
+  /// There is no "beta placeholder" mode any more: every economy endpoint the
+  /// app calls exists on the server, so a failure is a failure and the UI
+  /// shows it instead of silently rendering an empty catalogue.
+  bool get hasErrors =>
+      error != null ||
+      inventoryError != null ||
+      leaderboardError != null ||
+      feedError != null ||
+      walletError != null ||
+      ledgerError != null ||
+      categoriesError != null ||
+      shopError != null;
 
   static const _sentinel = Object();
 
@@ -112,11 +136,14 @@ class EconomyState {
     List<LedgerEntry>? ledger,
     bool? isLedgerLoading,
     Object? ledgerError = _sentinel,
-    bool? isLedgerDegraded,
-    List<CoinPack>? packs,
-    bool? isPacksLoading,
-    Object? packsError = _sentinel,
-    bool? isPacksDegraded,
+    bool? ledgerHasMore,
+    Object? ledgerCursor = _sentinel,
+    Object? walletCategories = _sentinel,
+    bool? isCategoriesLoading,
+    Object? categoriesError = _sentinel,
+    List<ShopItem>? shopItems,
+    bool? isShopLoading,
+    Object? shopError = _sentinel,
     bool? isFreezingStreak,
     Object? freezeMessage = _sentinel,
     Object? lastFreezeResult = _sentinel,
@@ -142,11 +169,14 @@ class EconomyState {
       ledger: ledger ?? this.ledger,
       isLedgerLoading: isLedgerLoading ?? this.isLedgerLoading,
       ledgerError: ledgerError == _sentinel ? this.ledgerError : ledgerError as String?,
-      isLedgerDegraded: isLedgerDegraded ?? this.isLedgerDegraded,
-      packs: packs ?? this.packs,
-      isPacksLoading: isPacksLoading ?? this.isPacksLoading,
-      packsError: packsError == _sentinel ? this.packsError : packsError as String?,
-      isPacksDegraded: isPacksDegraded ?? this.isPacksDegraded,
+      ledgerHasMore: ledgerHasMore ?? this.ledgerHasMore,
+      ledgerCursor: ledgerCursor == _sentinel ? this.ledgerCursor : ledgerCursor as String?,
+      walletCategories: walletCategories == _sentinel ? this.walletCategories : walletCategories as WalletCategories?,
+      isCategoriesLoading: isCategoriesLoading ?? this.isCategoriesLoading,
+      categoriesError: categoriesError == _sentinel ? this.categoriesError : categoriesError as String?,
+      shopItems: shopItems ?? this.shopItems,
+      isShopLoading: isShopLoading ?? this.isShopLoading,
+      shopError: shopError == _sentinel ? this.shopError : shopError as String?,
       isFreezingStreak: isFreezingStreak ?? this.isFreezingStreak,
       freezeMessage: freezeMessage == _sentinel ? this.freezeMessage : freezeMessage as String?,
       lastFreezeResult: lastFreezeResult == _sentinel ? this.lastFreezeResult : lastFreezeResult as FreezeStreakResult?,
@@ -222,7 +252,7 @@ class EconomyController extends Notifier<EconomyState> {
     }
   }
 
-  // ── Wallet / Ledger (WO-1 degraded) ───────────────────────────────────────
+  // ── Wallet / Ledger ────────────────────────────────────────────────────────
 
   Future<void> fetchWallet() async {
     state = state.copyWith(isWalletLoading: true, walletError: null);
@@ -236,64 +266,91 @@ class EconomyController extends Notifier<EconomyState> {
     }
   }
 
-  Future<void> fetchLedger({int page = 1, int perPage = 20}) async {
+  /// Loads a page of the coin ledger.
+  ///
+  /// The endpoint is cursor-paginated, so [cursor] is the `next_cursor` the
+  /// server handed out — there is no page number to jump to.
+  Future<void> fetchLedger({String? cursor, int perPage = 20, bool append = false}) async {
     state = state.copyWith(isLedgerLoading: true, ledgerError: null);
     try {
-      final ledger = await _repo.getLedger(page: page, perPage: perPage);
-      // Repository returns empty with isDegraded heuristic when WO-1 missing.
-      // Surface degraded flag so UI can show beta placeholder.
-      state = state.copyWith(ledger: ledger.entries, isLedgerLoading: false, isLedgerDegraded: ledger.isDegraded);
+      final ledger = await _repo.getLedger(cursor: cursor, perPage: perPage);
+      state = state.copyWith(
+        ledger: append ? [...state.ledger, ...ledger.entries] : ledger.entries,
+        isLedgerLoading: false,
+        ledgerHasMore: ledger.hasMore,
+        ledgerCursor: ledger.nextCursor,
+      );
     } catch (e, st) {
       AppLogger.w('economy fetchLedger failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLedgerLoading: false, ledgerError: _msg(e), isLedgerDegraded: true);
+      state = state.copyWith(isLedgerLoading: false, ledgerError: _msg(e));
     }
   }
 
-  // ── Shop packs (WO-2 degraded) ────────────────────────────────────────────
-
-  Future<void> fetchPacks() async {
-    state = state.copyWith(isPacksLoading: true, packsError: null);
+  /// Own coin spending, grouped by source category.
+  Future<void> fetchWalletCategories({String period = '30d'}) async {
+    state = state.copyWith(isCategoriesLoading: true, categoriesError: null);
     try {
-      final p = await _repo.getShopPacks();
-      final reallyDegraded = _isMockPacks(p);
-      state = state.copyWith(packs: p, isPacksLoading: false, isPacksDegraded: reallyDegraded);
-      if (reallyDegraded) AppLogger.w('economy fetchPacks: serving local mock degraded placeholder');
+      final categories = await _repo.getWalletCategories(period: period);
+      state = state.copyWith(walletCategories: categories, isCategoriesLoading: false);
     } catch (e, st) {
-      AppLogger.w('economy fetchPacks failed: $e');
+      AppLogger.w('economy fetchWalletCategories failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isPacksLoading: false, packsError: _msg(e), isPacksDegraded: true);
+      state = state.copyWith(isCategoriesLoading: false, categoriesError: _msg(e));
     }
   }
 
-  bool _isMockPacks(List<CoinPack> p) {
-    if (p.isEmpty) return true;
-    const mockIds = {'pack_100', 'pack_300', 'pack_700', 'pack_1500', 'pack_3500'};
-    return p.every((e) => mockIds.contains(e.id));
+  // ── Coin shop ──────────────────────────────────────────────────────────────
+
+  /// Loads the shop catalogue.
+  ///
+  /// There is no "beta placeholder" branch any more: `GET /economy/shop` is a
+  /// live endpoint, so an empty catalogue is an empty catalogue and a failure
+  /// is a failure. The old code inferred "degraded" from an empty list, which
+  /// hid a real catalogue behind a BETA banner whenever the DTO threw.
+  Future<void> fetchShopItems() async {
+    state = state.copyWith(isShopLoading: true, shopError: null);
+    try {
+      final items = await _repo.getShopItems();
+      state = state.copyWith(shopItems: items, isShopLoading: false);
+    } catch (e, st) {
+      AppLogger.w('economy fetchShopItems failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      state = state.copyWith(isShopLoading: false, shopError: _msg(e));
+    }
   }
 
-  Future<Map<String, dynamic>?> purchasePack(String packId) async {
+  /// Buys a shop row with coins.
+  ///
+  /// The Idempotency-Key is minted once per user action and reused for a
+  /// retry of that same action, so a dropped response never double-charges.
+  Future<ShopPurchaseResult?> purchaseShopItem(ShopItem item, {int quantity = 1}) async {
     state = state.copyWith(isPurchasing: true, purchaseError: null, purchaseMessage: null);
     try {
-      final res = await _repo.purchasePack(packId, idempotencyKey: _uuid.v4());
-      final success = res['success'] as bool? ?? false;
-      final isDegraded = res['is_degraded'] as bool? ?? false;
-      if (isDegraded) {
-        AppLogger.w('economy purchasePack $packId degraded: ${res['message']}');
-        state = state.copyWith(isPurchasing: false, purchaseMessage: res['message'] as String? ?? 'Shop not available yet (beta)');
-        return res;
+      final result = await _repo.purchaseShopItem(
+        type: item.type,
+        key: item.key,
+        quantity: quantity,
+        idempotencyKey: _uuid.v4(),
+      );
+      if (!result.success) {
+        state = state.copyWith(
+          isPurchasing: false,
+          purchaseError: result.message ?? 'Purchase failed',
+        );
+        return result;
       }
-      if (!success) {
-        state = state.copyWith(isPurchasing: false, purchaseError: res['message'] as String? ?? 'Purchase failed');
-        return res;
-      }
-      state = state.copyWith(isPurchasing: false, purchaseMessage: res['message'] as String? ?? 'Purchase successful');
-      // Refresh wallet/ledger after success when WO-1 ships
+      state = state.copyWith(
+        isPurchasing: false,
+        purchaseMessage: result.message ?? 'Purchased ${item.name}',
+      );
+      // The wallet and the ledger both moved.
       await fetchWallet();
       await fetchLedger();
-      return res;
+      await fetchShopItems();
+      return result;
     } catch (e, st) {
-      AppLogger.w('economy purchasePack $packId failed: $e');
+      AppLogger.w('economy purchaseShopItem ${item.key} failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
       state = state.copyWith(isPurchasing: false, purchaseError: _msg(e));
       return null;
@@ -301,7 +358,15 @@ class EconomyController extends Notifier<EconomyState> {
   }
 
   Future<void> refreshAll() async {
-    await Future.wait([fetchInventory(), fetchLeaderboard(), fetchFeed(), fetchWallet(), fetchLedger(), fetchPacks()]);
+    await Future.wait([
+      fetchInventory(),
+      fetchLeaderboard(),
+      fetchFeed(),
+      fetchWallet(),
+      fetchLedger(),
+      fetchWalletCategories(),
+      fetchShopItems(),
+    ]);
   }
 }
 

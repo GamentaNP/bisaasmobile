@@ -1,4 +1,4 @@
-// ignore_for_file: omit_local_variable_types, prefer_constructors_over_static_methods
+// ignore_for_file: omit_local_variable_types
 import '../../domain/entities/store.dart';
 
 int? _asInt(Object? v) {
@@ -31,7 +31,12 @@ class StoreAssetDto {
 
   factory StoreAssetDto.fromJson(Map<String, dynamic> j) {
     return StoreAssetDto(
-      id: (j['id'] as String?) ?? j['id']?.toString() ?? '',
+      // `id` is an **integer** on the wire (`PremiumAsset` publishes
+      // `'id' => $asset->id`). The previous parser read it as a `String?`,
+      // which threw a `TypeError` on every row; the data source caught it and
+      // returned an empty list, so the store always rendered "0 assets" and
+      // the wardrobe always rendered its "service unavailable" banner.
+      id: j['id']?.toString() ?? (j['slug'] as String?) ?? '',
       slug: (j['slug'] as String?) ?? (j['key'] as String?) ?? '',
       name: (j['name'] as String?) ?? (j['title'] as String?) ?? '',
       description: j['description'] as String?,
@@ -130,20 +135,6 @@ class WardrobeDto {
         slots: slots.map((s) => s.toDomain()).toList(),
         isDegraded: isDegraded,
       );
-
-  /// REMOVED 2026-09-27: this used to pre-fill the `frame` slot with a fake
-  /// equipped asset, so a player who had equipped nothing was shown a
-  /// "Golden Frame" they did not own. Slots now start empty and are filled
-  /// only from `GET /api/v1/store/wardrobe`.
-  static WardrobeDto localMockDegraded() => const WardrobeDto(
-        slots: [
-          WardrobeSlotDto(slot: 'frame'),
-          WardrobeSlotDto(slot: 'badge'),
-          WardrobeSlotDto(slot: 'theme'),
-          WardrobeSlotDto(slot: 'title'),
-        ],
-        isDegraded: true,
-      );
 }
 
 class MarketListingDto {
@@ -173,7 +164,7 @@ class StorePurchaseResultDto {
 
   factory StorePurchaseResultDto.fromJson(Map<String, dynamic> j) => StorePurchaseResultDto(
         success: (j['success'] as bool?) ?? (j['purchased'] as bool?) ?? false,
-        assetId: (j['asset_id'] as String?) ?? (j['assetId'] as String?) ?? j['id']?.toString(),
+        assetId: j['asset_id']?.toString() ?? (j['assetId'] as String?) ?? j['id']?.toString(),
         coinsSpent: _asInt(j['coins_spent'] ?? j['coinsSpent'] ?? j['price_coins']) ?? 0,
         newBalance: _asInt(j['new_balance'] ?? j['balance'] ?? j['coins']),
         message: j['message'] as String?,

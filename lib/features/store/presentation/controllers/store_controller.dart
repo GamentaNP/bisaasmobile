@@ -70,8 +70,17 @@ class StoreState {
   final bool isEquipping;
   final String? equipError;
 
-  /// Global degraded: store is entirely WO-3 beta until backend ships.
-  bool get isDegraded => catalog?.isDegraded == true || wardrobe?.isDegraded == true;
+  /// True when any surface is failing.
+  ///
+  /// There is no "beta placeholder" mode: every store endpoint the app calls
+  /// exists on the server, so a failure is a failure and the UI shows it.
+  bool get hasErrors =>
+      error != null ||
+      catalogError != null ||
+      assetError != null ||
+      wardrobeError != null ||
+      purchaseError != null ||
+      equipError != null;
 
   static const _sentinel = Object();
 
@@ -138,7 +147,6 @@ class StoreController extends Notifier<StoreState> {
     try {
       final c = await _repo.getAssets();
       state = state.copyWith(catalog: c, isCatalogLoading: false);
-      if (c.isDegraded) AppLogger.w('store fetchCatalog: serving local mock degraded placeholder');
     } catch (e, st) {
       AppLogger.w('store fetchCatalog failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
@@ -163,7 +171,6 @@ class StoreController extends Notifier<StoreState> {
     state = state.copyWith(isPurchasing: true, purchaseError: null, lastPurchaseResult: null);
     try {
       final res = await _repo.purchaseAsset(slug, idempotencyKey: _uuid.v4());
-      if (res.isDegraded) AppLogger.w('store purchase $slug degraded: ${res.message}');
       state = state.copyWith(isPurchasing: false, lastPurchaseResult: res, purchaseError: res.success ? null : res.message);
       if (res.success) {
         await fetchCatalog();

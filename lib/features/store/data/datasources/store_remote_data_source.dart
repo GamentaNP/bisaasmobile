@@ -1,138 +1,124 @@
-
 import 'package:dio/dio.dart';
-import 'package:uuid/uuid.dart';
 
-import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
+import '../../../../core/network/pagination.dart';
 import '../models/store_dto.dart';
 
-/// Server routes — all WO-3 (not shipped): GET /store/assets, GET /store/assets/{s}, POST /store/assets/{s}/purchase, GET /store/wardrobe, POST /store/wardrobe/equip
-/// Per law 11 additive parsing: never crash on new field, always degrade gracefully (beta placeholder, isDegraded flag).
+/// Premium asset store — server routes (`routes/api/v1.php` store group):
+/// - GET    /store/assets                → cursor-paginated catalogue
+/// - GET    /store/assets/{slug}         → single asset + is_owned
+/// - POST   /store/assets/{slug}/purchase→ buy with coins (Idempotency-Key)
+/// - GET    /store/wardrobe              → slots with the equipped asset
+/// - PUT    /store/wardrobe/equipment    → equip (Idempotency-Key)
+/// - DELETE /store/wardrobe/equipment    → unequip (Idempotency-Key)
+///
 /// Dio baseUrl already ends with /api/v1.
+///
+/// **A failure is never an empty catalogue.** The previous version of this file
+/// caught every error and returned `[]`, so a server error, a contract drift
+/// and a genuinely empty catalogue all rendered as the same "0 assets" empty
+/// state. Now a failure throws and the UI shows an error with a retry.
 class StoreRemoteDataSource {
   const StoreRemoteDataSource(this._dio);
   final Dio _dio;
-  static const _uuid = Uuid();
+
+  /// The server's canonical wardrobe slots, in its own order.
+  ///
+  /// `StoreController::WARDROBE_SLOTS` = avatar_frame, avatar, quiz_theme,
+  /// sound_pack, mascot. The client previously invented a `frame` slot that
+  /// the server rejects, so equipping from the UI was a guaranteed 422.
+  static const wardrobeSlots = <String>[
+    'avatar_frame',
+    'avatar',
+    'quiz_theme',
+    'sound_pack',
+    'mascot',
+  ];
 
   Future<List<StoreAssetDto>> getAssets() async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/store/assets');
-      final body = res.data;
-      if (body == null) return [];
-      final data = body['data'];
-      if (data is List) return data.whereType<Map<String, dynamic>>().map(StoreAssetDto.fromJson).toList();
-      if (data is Map<String, dynamic>) {
-        final items = data['assets'] ?? data['items'] ?? data['data'];
-        if (items is List) return items.whereType<Map<String, dynamic>>().map(StoreAssetDto.fromJson).toList();
-      }
-      final envData = _extractMapData(body);
-      if (envData != null) {
-        final items = envData['assets'] ?? envData['items'];
-        if (items is List) return items.whereType<Map<String, dynamic>>().map(StoreAssetDto.fromJson).toList();
-      }
-      return [];
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        // Empty, not degraded: the UI shows an honest empty state with retry.
-        AppLogger.w('store getAssets: 404 — no assets published');
-        return [];
-      }
-      AppLogger.w('store getAssets failed: ${e.response?.statusCode} ${e.message}');
-      return [];
-    } catch (e) {
-      AppLogger.w('store getAssets unexpected: $e');
-      return [];
+    final res = await _dio.get<Map<String, dynamic>>('/store/assets');
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty store catalogue response',
+        endpoint: '/store/assets',
+      );
     }
+    final page = parsePage<StoreAssetDto>(
+      body,
+      StoreAssetDto.fromJson,
+      endpoint: '/store/assets',
+    );
+    return page.items;
   }
 
   Future<StoreAssetDto?> getAsset(String slug) async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/store/assets/$slug');
-      final body = res.data;
-      if (body == null) return null;
-      final data = _extractMapData(body) ?? (body['data'] is Map<String, dynamic> ? body['data'] as Map<String, dynamic> : null);
-      if (data == null) return null;
-      // If data is the asset itself or wrapped
-      if (data.containsKey('id') || data.containsKey('slug')) return StoreAssetDto.fromJson(data);
-      final inner = data['asset'] ?? data['data'];
-      if (inner is Map<String, dynamic>) return StoreAssetDto.fromJson(inner);
-      return null;
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        AppLogger.w('store getAsset $slug: 404 degraded');
-        return null;
-      }
-      AppLogger.w('store getAsset $slug failed: ${e.response?.statusCode} ${e.message}');
-      return null;
-    } catch (e) {
-      AppLogger.w('store getAsset $slug unexpected: $e');
-      return null;
+    final res = await _dio.get<Map<String, dynamic>>('/store/assets/$slug');
+    final body = res.data;
+    if (body == null) {
+      throw ContractViolation(
+        'Empty asset response',
+        endpoint: '/store/assets/$slug',
+      );
     }
+    final data = requireDataMap(body, endpoint: '/store/assets/$slug');
+    // The asset may be the payload itself or nested one level.
+    if (data.containsKey('id') || data.containsKey('slug')) {
+      return StoreAssetDto.fromJson(data);
+    }
+    final inner = data['asset'] ?? data['data'];
+    if (inner is Map<String, dynamic>) return StoreAssetDto.fromJson(inner);
+    throw ContractViolation(
+      'Asset payload not found in the response',
+      endpoint: '/store/assets/$slug',
+    );
   }
 
-  Future<StorePurchaseResultDto> purchaseAsset(String slug, {String? idempotencyKey}) async {
-    final key = idempotencyKey ?? _uuid.v4();
-    try {
-      final res = await _dio.post<Map<String, dynamic>>(
-        '/store/assets/$slug/purchase',
-        data: {},
-        options: Options(headers: {'Idempotency-Key': key}),
+  Future<StorePurchaseResultDto> purchaseAsset(
+    String slug, {
+    String? idempotencyKey,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/store/assets/$slug/purchase',
+      data: {},
+      options: Options(headers: idempotencyHeader(idempotencyKey)),
+    );
+    final body = res.data;
+    if (body == null) {
+      throw ContractViolation(
+        'Empty purchase response',
+        endpoint: '/store/assets/$slug/purchase',
       );
-      final body = res.data;
-      if (body == null) return const StorePurchaseResultDto(success: false, message: 'Empty response');
-      final data = _extractMapData(body);
-      if (data != null) {
-        if (data.containsKey('success') || data.containsKey('purchased') || data.containsKey('coins_spent')) {
-          return StorePurchaseResultDto.fromJson(data);
-        }
-        // envelope wrapped
-        final success = body['success'] as bool? ?? false;
-        return StorePurchaseResultDto(success: success, message: body['message'] as String?, assetId: slug);
-      }
-      return StorePurchaseResultDto(success: body['success'] as bool? ?? false, message: body['message'] as String?, assetId: slug);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        AppLogger.w('store purchaseAsset $slug: 404 — WO-3 not shipped, graceful degrade');
-        return const StorePurchaseResultDto(success: false, message: 'Store not available yet (beta)', isDegraded: true);
-      }
-      final msg = _dioErrorMessage(e);
-      AppLogger.w('store purchaseAsset $slug failed: ${e.response?.statusCode} $msg');
-      return StorePurchaseResultDto(success: false, message: msg);
-    } catch (e) {
-      AppLogger.w('store purchaseAsset $slug unexpected: $e');
-      return StorePurchaseResultDto(success: false, message: e.toString());
     }
+    final data = requireDataMap(
+      body,
+      endpoint: '/store/assets/$slug/purchase',
+    );
+    if (data.containsKey('success') ||
+        data.containsKey('purchased') ||
+        data.containsKey('coins_spent')) {
+      return StorePurchaseResultDto.fromJson(data);
+    }
+    // Envelope-wrapped: the envelope itself carries the verdict.
+    return StorePurchaseResultDto(
+      success: body['success'] as bool? ?? false,
+      message: body['message'] as String?,
+      assetId: slug,
+    );
   }
 
   Future<WardrobeDto> getWardrobe() async {
-    try {
-      final res = await _dio.get<Map<String, dynamic>>('/store/wardrobe');
-      final body = res.data;
-      if (body == null) return WardrobeDto(slots: [], isDegraded: true);
-      final data = _extractMapData(body);
-      if (data != null) {
-        // WardrobeDto handles both list and map shapes additively
-        return WardrobeDto.fromJson(data);
-      }
-      // data might be list directly
-      final raw = body['data'];
-      if (raw is List) {
-        return WardrobeDto(slots: raw.whereType<Map<String, dynamic>>().map(WardrobeSlotDto.fromJson).toList());
-      }
-      return WardrobeDto(slots: [], isDegraded: true);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        // The route exists; a 404 here means it was genuinely unpublished.
-        // No mock slots - the UI shows an honest empty wardrobe.
-        AppLogger.w('store getWardrobe: 404 - route not available');
-        return const WardrobeDto(slots: [], isDegraded: true);
-      }
-      AppLogger.w('store getWardrobe failed: ${e.response?.statusCode} ${e.message}');
-      return WardrobeDto(slots: [], isDegraded: true);
-    } catch (e) {
-      AppLogger.w('store getWardrobe unexpected: $e');
-      return WardrobeDto(slots: [], isDegraded: true);
+    final res = await _dio.get<Map<String, dynamic>>('/store/wardrobe');
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty wardrobe response',
+        endpoint: '/store/wardrobe',
+      );
     }
+    final data = requireDataMap(body, endpoint: '/store/wardrobe');
+    return WardrobeDto.fromJson(data);
   }
 
   /// `DELETE /api/v1/store/wardrobe/equipment` with `{slot}`.
@@ -141,90 +127,43 @@ class StoreRemoteDataSource {
   /// actually be emptied. The wardrobe UI previously had a visible "clear"
   /// affordance wired to `() {}`, so nothing happened.
   Future<bool> unequip(String slot, {String? idempotencyKey}) async {
-    final key = idempotencyKey ?? _uuid.v4();
-    try {
-      final res = await _dio.delete<Map<String, dynamic>>(
-        '/store/wardrobe/equipment',
-        data: {'slot': slot},
-        options: Options(headers: {'Idempotency-Key': key}),
-      );
-      final body = res.data;
-      if (body == null) return false;
-      if (body['success'] as bool? ?? false) return true;
-      final data = _extractMapData(body);
-      if (data != null && (data['unequipped'] == true || data['success'] == true)) return true;
-      return false;
-    } on DioException catch (e) {
-      AppLogger.w('store unequip $slot failed: ${e.response?.statusCode} ${e.message}');
-      return false;
-    } catch (e) {
-      AppLogger.w('store unequip $slot unexpected: $e');
-      return false;
+    final res = await _dio.delete<Map<String, dynamic>>(
+      '/store/wardrobe/equipment',
+      data: {'slot': slot},
+      options: Options(headers: idempotencyHeader(idempotencyKey)),
+    );
+    final body = res.data;
+    if (body == null) return false;
+    if (body['success'] as bool? ?? false) return true;
+    final data = _extractMapData(body);
+    if (data != null && (data['unequipped'] == true || data['success'] == true)) {
+      return true;
     }
+    return false;
   }
 
   Future<bool> equip(String slot, String assetId, {String? idempotencyKey}) async {
-    final key = idempotencyKey ?? _uuid.v4();
-    try {
-    // Canonical resource form is PUT /wardrobe/equipment; POST /wardrobe/equip
-    // is the additive alias (routes/api/v1.php:546-548).
     final res = await _dio.put<Map<String, dynamic>>(
+      // Canonical resource form is PUT /wardrobe/equipment; POST /wardrobe/equip
+      // is the additive alias (routes/api/v1.php).
       '/store/wardrobe/equipment',
-        data: {'slot': slot, 'asset_id': int.tryParse(assetId) ?? assetId},
-        options: Options(headers: {'Idempotency-Key': key}),
-      );
-      final body = res.data;
-      if (body == null) return false;
-      final success = body['success'] as bool? ?? false;
-      // Some APIs return 200 with success true even without envelope
-      if (success) return true;
-      final data = _extractMapData(body);
-      if (data != null && (data['equipped'] == true || data['success'] == true)) return true;
-      return success;
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        AppLogger.w('store equip $slot/$assetId: 404 - route not available');
-        return false;
-      }
-      AppLogger.w('store equip failed: ${e.response?.statusCode} ${e.message}');
-      return false;
-    } catch (e) {
-      AppLogger.w('store equip unexpected: $e');
-      return false;
+      data: {'slot': slot, 'asset_id': int.tryParse(assetId) ?? assetId},
+      options: Options(headers: idempotencyHeader(idempotencyKey)),
+    );
+    final body = res.data;
+    if (body == null) return false;
+    final success = body['success'] as bool? ?? false;
+    if (success) return true;
+    final data = _extractMapData(body);
+    if (data != null && (data['equipped'] == true || data['success'] == true)) {
+      return true;
     }
+    return false;
   }
-
-  /// REMOVED 2026-09-27: `getMarket()` called `GET /api/v1/store/market`,
-  /// which has never existed on the server (verified against
-  /// `bisaas/routes/api/v1.php:527-553` — the store group registers only
-  /// `/store/assets`, `/store/assets/{slug}`, `/store/assets/{slug}/purchase`,
-  /// `/store/wardrobe` and the equipment routes). The call could only ever
-  /// return 404, was swallowed into an empty list, and the UI then showed
-  /// "Market coming soon" forever.
-  ///
-  /// The real coin-trading surface is the economy group, already wired on the
-  /// Economy tab: `GET /economy/shop` (resources / bundles / packs) and
-  /// `POST /economy/market/sells`. There is no community resale marketplace.
 
   Map<String, dynamic>? _extractMapData(Map<String, dynamic> body) {
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      return env.data;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  String _dioErrorMessage(DioException e) {
-    final d = e.response?.data;
-    if (d is Map<String, dynamic>) {
-      final m = d['message'] as String?;
-      if (m != null && m.isNotEmpty) return m;
-      final err = d['error'] is Map ? (d['error'] as Map)['message'] as String? : null;
-      if (err != null && err.isNotEmpty) return err;
-    }
-    return e.message ?? 'Request failed';
+    return null;
   }
 }

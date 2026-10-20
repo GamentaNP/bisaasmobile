@@ -65,12 +65,6 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            if (state.isDegraded || catalog?.isDegraded == true)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                child: Row(children: [const Icon(Icons.science_rounded, size: 16, color: AppColors.brand), const SizedBox(width: 8), const Expanded(child: Text('Store preview — nothing here can be purchased yet. No real charge is made.', style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3))), Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.brand, borderRadius: BorderRadius.circular(6)), child: const Text('BETA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white)))]),
-              ),
             if (state.isCatalogLoading)
               const Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: CircularProgressIndicator())),
             if (state.catalogError != null)
