@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
-import '../models/calculator_dto.dart';
+import '../../../../core/network/envelope.dart';
 import '../../domain/entities/calculator.dart';
+import '../models/calculator_assistant_dto.dart';
+import '../models/calculator_dto.dart';
 
 class CalculatorRemoteDataSource {
   const CalculatorRemoteDataSource(this._dio);
@@ -19,7 +22,7 @@ class CalculatorRemoteDataSource {
   }
 
   Future<CalculatorConfig> getConfig(String domain, String slug) async {
-    final res = await _dio.get<Map<String, dynamic>>('/$domain/$slug');
+    final res = await _dio.get<Map<String, dynamic>>('/$domain/$slug/schema');
     final envelope = ApiResponse.fromJson(
       res.data!,
       (json) => CalculatorConfigDto.fromJson(json! as Map<String, dynamic>),
@@ -64,7 +67,10 @@ class CalculatorRemoteDataSource {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getHistory(String domain, String slug) async {
+  Future<List<Map<String, dynamic>>> getHistory(
+    String domain,
+    String slug,
+  ) async {
     final res = await _dio.get<Map<String, dynamic>>('/$domain/$slug/history');
     final envelope = ApiResponse.fromJson(
       res.data!,
@@ -76,5 +82,67 @@ class CalculatorRemoteDataSource {
       return (res.data!['data'] as List).cast<Map<String, dynamic>>();
     }
     return [];
+  }
+
+  // ── AI assistant ───────────────────────────────────────────────────────────
+
+  /// Asks the server's calculator assistant about the current form.
+  ///
+  /// `POST /api/v1/ai/calculator-assist` — the **non-streaming** endpoint
+  /// (`MOBILE_API_INTEGRATION_GUIDE.md` §6: the SSE variant is web-only).
+  ///
+  /// The assistant is advisory. It proposes values for the calculator's
+  /// fields; the user decides whether to apply them. The client never
+  /// calculates anything itself.
+  ///
+  /// The server refuses with 503 when the assistant is disabled for this
+  /// calculator, 402 when the budget cap is exhausted and 429 when the rate
+  /// limit is hit — all of which arrive as an ApiException with the
+  /// server's own message.
+  Future<CalculatorAssistantDto> assist({
+    required String message,
+    String? domain,
+    String? slug,
+    String? name,
+    List<Map<String, dynamic>>? fields,
+    Map<String, dynamic>? currentInputs,
+  }) async {
+    final context = <String, dynamic>{
+      if (domain != null && domain.isNotEmpty) 'domain': domain,
+      if (slug != null && slug.isNotEmpty) 'slug': slug,
+      if (name != null && name.isNotEmpty) 'name': name,
+      if (fields != null && fields.isNotEmpty) 'fields': fields,
+    };
+
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/ai/calculator-assist',
+      data: <String, dynamic>{
+        'message': message,
+        if (context.isNotEmpty) 'calculator_context': context,
+        if (currentInputs != null && currentInputs.isNotEmpty)
+          'current_inputs': currentInputs,
+      },
+    );
+
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty assistant response',
+        endpoint: '/ai/calculator-assist',
+      );
+    }
+    final data = requireDataMap(body, endpoint: '/ai/calculator-assist');
+    final assistant = data['assistant'];
+    if (assistant is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Assistant payload missing',
+        endpoint: '/ai/calculator-assist',
+      );
+    }
+    final metadata = data['metadata'];
+    return CalculatorAssistantDto.fromJson(
+      assistant,
+      metadata: metadata is Map<String, dynamic> ? metadata : const {},
+    );
   }
 }

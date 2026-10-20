@@ -1,4 +1,5 @@
 import '../entities/calculator.dart';
+import '../entities/calculator_assistant.dart';
 import '../../data/models/calculator_dto.dart';
 
 abstract class CalculatorRepository {
@@ -11,4 +12,17 @@ abstract class CalculatorRepository {
     required String idempotencyKey,
   });
   Future<List<Map<String, dynamic>>> getHistory(String domain, String slug);
+
+  /// Asks the server's calculator assistant about the current form.
+  ///
+  /// The assistant is advisory: it proposes field values, and the user
+  /// decides whether to apply them. The client never calculates.
+  Future<CalculatorAssistant> assist({
+    required String message,
+    String? domain,
+    String? slug,
+    String? name,
+    List<Map<String, dynamic>>? fields,
+    Map<String, dynamic>? currentInputs,
+  });
 }

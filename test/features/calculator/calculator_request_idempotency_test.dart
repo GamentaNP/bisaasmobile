@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:bisaasmobile/features/calculator/data/datasources/calculator_remote_data_source.dart';
 import 'package:bisaasmobile/features/calculator/data/models/calculator_dto.dart';
 import 'package:bisaasmobile/features/calculator/domain/entities/calculator.dart';
+import 'package:bisaasmobile/features/calculator/domain/entities/calculator_assistant.dart';
 import 'package:bisaasmobile/features/calculator/domain/repositories/calculator_repository.dart';
 import 'package:bisaasmobile/features/calculator/presentation/controllers/calculator_controller.dart';
 import 'package:bisaasmobile/features/calculator/presentation/controllers/calculator_request_idempotency.dart';
@@ -37,6 +38,17 @@ class _FailingCalculatorRepository implements CalculatorRepository {
 
   @override
   Future<List<Map<String, dynamic>>> getHistory(String domain, String slug) =>
+      throw UnimplementedError();
+
+  @override
+  Future<CalculatorAssistant> assist({
+    required String message,
+    String? domain,
+    String? slug,
+    String? name,
+    List<Map<String, dynamic>>? fields,
+    Map<String, dynamic>? currentInputs,
+  }) =>
       throw UnimplementedError();
 }
 

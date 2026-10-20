@@ -1,6 +1,7 @@
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/sync/sync_queue.dart';
 import '../../domain/entities/calculator.dart';
+import '../../domain/entities/calculator_assistant.dart';
 import '../../domain/repositories/calculator_repository.dart';
 import '../datasources/calculator_remote_data_source.dart';
 import '../models/calculator_dto.dart';
@@ -73,4 +74,24 @@ class CalculatorRepositoryImpl implements CalculatorRepository {
 
   @override
   Future<List<Map<String, dynamic>>> getHistory(String domain, String slug) => _remote.getHistory(domain, slug);
+
+  @override
+  Future<CalculatorAssistant> assist({
+    required String message,
+    String? domain,
+    String? slug,
+    String? name,
+    List<Map<String, dynamic>>? fields,
+    Map<String, dynamic>? currentInputs,
+  }) async {
+    final dto = await _remote.assist(
+      message: message,
+      domain: domain,
+      slug: slug,
+      name: name,
+      fields: fields,
+      currentInputs: currentInputs,
+    );
+    return dto.toDomain();
+  }
 }

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/calculator.dart';
 import '../controllers/calculator_controller.dart';
+import '../widgets/calculator_assistant_panel.dart';
 import '../widgets/calculator_input_field.dart';
 import '../widgets/formula_display.dart';
 import '../widgets/status_badge.dart';
@@ -115,6 +116,25 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
     return map;
   }
 
+  /// Writes a value the assistant proposed into the matching input field.
+  ///
+  /// The assistant is advisory: the user taps "Apply" on a specific
+  /// suggestion, and only then does anything change. The client never
+  /// silently fills a field.
+  void _applyAssistantValue(String field, String value) {
+    final ctrl = _textCtrls[field];
+    if (ctrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No input named "$field" on this calculator')),
+      );
+      return;
+    }
+    setState(() => ctrl.text = value);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$field = $value')),
+    );
+  }
+
   Future<void> _calculate(CalculatorConfig? config) async {
     if (!_formKey.currentState!.validate()) return;
     final inputs = _useSchema && config != null
@@ -182,7 +202,25 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
               _renderSchemaForm(theme, config, calcState)
             else
               _renderLegacyForm(theme, calcState),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            CalculatorAssistantPanel(
+              domain: widget.domain,
+              slug: widget.slug,
+              name: config.label,
+              fields: config.fields
+                  .map((f) => <String, dynamic>{
+                        'name': f.name,
+                        'label': f.label,
+                        if (f.unit != null) 'unit': f.unit,
+                        'type': f.type,
+                      })
+                  .toList(),
+              currentInputs: _useSchema
+                  ? _collectSchemaInputs(config)
+                  : _collectLegacyInputs(),
+              onApplyValue: _applyAssistantValue,
+            ),
+            const SizedBox(height: 4),
             FilledButton.icon(
               onPressed: calcState.loading ? null : () => _calculate(config),
               icon: calcState.loading
