@@ -16,6 +16,12 @@ analyzer:
     - ios/**
     - web/**
     - windows/**
+    # The device-test harness is a **separate package** with its own
+    # pubspec (it needs `integration_test`, whose Android plugin would
+    # otherwise pull Espresso into the release AAB). It resolves against its
+    # own package root, so the app's analyzer cannot resolve its imports —
+    # it is analyzed on its own, from its own directory.
+    - device_tests/**
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/*.drift.dart"

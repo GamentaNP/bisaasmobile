@@ -1,0 +1,19 @@
+# The device-test harness is its own package.
+#
+# It is analyzed from its own directory (`cd device_tests && flutter analyze`)
+# because it resolves `integration_test` and the app package against its own
+# pubspec — the root analyzer cannot resolve them.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+  language:
+    strict-casts: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    always_use_package_imports: false
+    avoid_print: true
+    prefer_relative_imports: false

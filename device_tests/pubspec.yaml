@@ -1,0 +1,48 @@
+name: bisaas_device_tests
+description: >-
+  On-device integration tests for the CivilCal Flutter client.
+publish_to: 'none'
+version: 1.0.0+1
+
+# WHY THIS IS A SEPARATE PACKAGE
+#
+# `integration_test` is an Android plugin: its Gradle module pulls
+# `androidx.test:runner`, `androidx.test:rules` and `espresso-core` in as
+# **api** dependencies, so any app that depends on it ships the Espresso test
+# framework inside the release AAB. The app's own `pubspec.yaml` deliberately
+# does not depend on it (see the note there).
+#
+# Keeping the device tests in their own package means:
+#   * the app's release artifact stays clean — no test framework inside it;
+#   * the device tests still get the real app, because they depend on it by
+#     path and therefore build it with all of its own plugins.
+#
+# RUN
+#   cd device_tests
+#   flutter pub get
+#   flutter test integration_test -d <device-id>
+#
+# The tests that need a live backend are gated on the `RUN_LIVE_TESTS`
+# dart-define so the offline ones still run on a device with no server:
+#   flutter test integration_test -d <device-id> --dart-define=RUN_LIVE_TESTS=true
+
+environment:
+  sdk: ^3.13.2
+  flutter: '>=3.27.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  # The app under test, by path.
+  bisaasmobile:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

@@ -43,6 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+# Gradle's per-module build output (reports, intermediates).
+/android/build/
+/android/app/build/
 
 # Widget Preview related
 .widget_preview/
