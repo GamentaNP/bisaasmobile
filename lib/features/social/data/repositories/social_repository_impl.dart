@@ -13,20 +13,97 @@ class SocialRepositoryImpl implements SocialRepository {
   Future<ReferralClaim> claimReferralCode(String code) => _remote.claimReferralCode(code);
 
   @override
-  Future<List<ShareMoment>> getActiveMoments() => _remote.getActiveMoments();
+  Future<ShareMoment?> getMoment() => _remote.getMoment();
 
   @override
-  Future<void> dismissMoment(String momentId) => _remote.dismissMoment(momentId);
+  Future<void> dismissMoment(String kind) => _remote.dismissMoment(kind);
 
   @override
-  Future<void> recordShare({String? subject, int? subjectId, String? channel}) =>
-      _remote.recordShare(subject: subject, subjectId: subjectId, channel: channel);
+  Future<void> recordShare({required String token, String? channel}) =>
+      _remote.recordShare(token: token, channel: channel);
 
   @override
   Future<SocialProof?> getProof({required String subject, required int id}) =>
       _remote.getProof(subject: subject, id: id);
 
   @override
-  Future<String?> createShareLink({String? subject, int? subjectId}) =>
-      _remote.createShareLink(subject: subject, subjectId: subjectId);
+  Future<ShareLink?> createShareLink({
+    required String kind,
+    int? subjectId,
+    String? channel,
+  }) async {
+    final dto = await _remote.createShareLink(
+      kind: kind,
+      subjectId: subjectId,
+      channel: channel,
+    );
+    if (dto == null) return null;
+    return ShareLink(
+      token: dto.token,
+      url: dto.url,
+      kind: dto.kind,
+      expiresAt: dto.expiresAt,
+      copyTitle: dto.copyTitle,
+      copyBody: dto.copyBody,
+    );
+  }
+
+  @override
+  Future<SharedLink?> resolveShare(String token) async {
+    final dto = await _remote.resolveShare(token);
+    if (dto == null) return null;
+    return SharedLink(
+      token: dto.token,
+      kind: dto.kind,
+      creatorName: dto.creatorName,
+      expiresAt: dto.expiresAt,
+      webLandingUrl: dto.webLandingUrl,
+      sandboxAvailable: dto.sandboxAvailable,
+    );
+  }
+
+  @override
+  Future<SandboxAttempt?> startSandbox({
+    required String token,
+    required String guestSessionId,
+  }) async {
+    final dto = await _remote.startSandbox(
+      token: token,
+      guestSessionId: guestSessionId,
+    );
+    if (dto == null) return null;
+    return SandboxAttempt(
+      attemptId: dto.attemptId,
+      guestSessionId: dto.guestSessionId,
+      questionCount: dto.questionCount,
+    );
+  }
+
+  @override
+  Future<SandboxAnswer?> answerSandbox({
+    required int attemptId,
+    required int questionId,
+    required String answer,
+  }) async {
+    final dto = await _remote.answerSandbox(
+      attemptId: attemptId,
+      questionId: questionId,
+      answer: answer,
+    );
+    if (dto == null) return null;
+    return SandboxAnswer(questionId: dto.questionId, isCorrect: dto.isCorrect);
+  }
+
+  @override
+ Future<SandboxResult?> completeSandbox(int attemptId) async {
+    final dto = await _remote.completeSandbox(attemptId);
+    if (dto == null) return null;
+    return SandboxResult(
+      score: dto.score,
+      correct: dto.correct,
+      wrong: dto.wrong,
+      skipped: dto.skipped,
+      total: dto.total,
+    );
+  }
 }

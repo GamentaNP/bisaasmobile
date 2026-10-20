@@ -11,16 +11,49 @@ abstract class SocialRepository {
 
   Future<ReferralClaim> claimReferralCode(String code);
 
-  /// Prompts the user has not dismissed.
-  Future<List<ShareMoment>> getActiveMoments();
+  /// The share prompt the server picked for this user, or null when there is
+  /// nothing to prompt.
+  Future<ShareMoment?> getMoment();
 
-  Future<void> dismissMoment(String momentId);
+  /// Tells the server the prompt was dismissed. The server validates `kind`.
+  Future<void> dismissMoment(String kind);
 
   /// Fire-and-forget; failures are swallowed.
-  Future<void> recordShare({String? subject, int? subjectId, String? channel});
+  ///
+  /// The server identifies the share by its **token**, so the token of the
+  /// link that was shared is required.
+  Future<void> recordShare({required String token, String? channel});
 
   Future<SocialProof?> getProof({required String subject, required int id});
 
-  /// Null when the server declined to mint a tracked link.
-  Future<String?> createShareLink({String? subject, int? subjectId});
+  /// Mints a tracked share link. Null when the server declined.
+  ///
+  /// [kind] is one of the server's share kinds (`achievement`, `quiz_result`,
+  /// `streak`, `calculator`, `challenge`).
+  Future<ShareLink?> createShareLink({
+    required String kind,
+    int? subjectId,
+    String? channel,
+  });
+
+  // ── Public share / guest sandbox ───────────────────────────────────────────
+
+  /// Resolves an incoming share link.
+  Future<SharedLink?> resolveShare(String token);
+
+  /// Starts a guest sandbox attempt bound to [guestSessionId].
+  Future<SandboxAttempt?> startSandbox({
+    required String token,
+    required String guestSessionId,
+  });
+
+  /// Answers one sandbox question.
+  Future<SandboxAnswer?> answerSandbox({
+    required int attemptId,
+    required int questionId,
+    required String answer,
+  });
+
+  /// Completes the sandbox attempt and returns the server's result.
+  Future<SandboxResult?> completeSandbox(int attemptId);
 }

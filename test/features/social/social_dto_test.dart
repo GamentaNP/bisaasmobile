@@ -164,22 +164,24 @@ void main() {
 
   group('ShareMomentDto', () {
     test('parses a moment', () {
+      // The server publishes `data.moment = {kind, priority}` — the kind IS
+      // the moment's identity, there is no separate id.
       final m = ShareMomentDto.fromJson(<String, dynamic>{
-        'id': 'streak-7',
         'kind': 'streak',
+        'priority': 3,
         'ctaLabel': 'Share your streak',
         'title': 'You are on a 7-day streak',
         'rewardCoins': 20,
       })!.moment;
-      expect(m.id, 'streak-7');
+      expect(m.id, 'streak');
       expect(m.kind, 'streak');
+      expect(m.priority, 3);
       expect(m.hasReward, isTrue);
       expect(m.dismissed, isFalse);
     });
 
     test('hasReward is false when the server attached no figure', () {
       final m = ShareMomentDto.fromJson(<String, dynamic>{
-        'id': 'a',
         'kind': 'streak',
       })!.moment;
       expect(m.hasReward, isFalse, reason: 'never invent a coin amount');
@@ -192,7 +194,7 @@ void main() {
     });
 
     test('rejects a row with no id or no kind', () {
-      expect(ShareMomentDto.fromJson(<String, dynamic>{'kind': 'streak'}), isNull);
+      expect(ShareMomentDto.fromJson(<String, dynamic>{'kind': 'streak'}), isNotNull);
       expect(ShareMomentDto.fromJson(<String, dynamic>{'id': 'a'}), isNull);
     });
   });

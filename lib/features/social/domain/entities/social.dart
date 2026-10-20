@@ -115,12 +115,18 @@ class ShareMoment {
     required this.ctaLabel,
     this.title,
     this.rewardCoins = 0,
+    this.priority = 0,
     this.dismissed = false,
   });
 
+  /// The moment's identity.
+  ///
+  /// The server publishes `data.moment = {kind, priority}` — there is no
+  /// separate id, so the kind *is* the identity. It is also what
+  /// `POST /social/moments/dismissals` validates.
   final String id;
 
-  /// Server enum, e.g. `streak`, `achievement`, `result`.
+  /// Server enum, e.g. `streak`, `achievement`, `quiz_result`.
   final String kind;
   final String ctaLabel;
   final String? title;
@@ -128,9 +134,128 @@ class ShareMoment {
   /// Only shown when the server attached one. A client-invented coin figure
   /// would be a promise the server does not make.
   final int rewardCoins;
+
+  /// The server's priority tier — 1 wins the slot when the user has reached
+  /// their prompt cap.
+  final int priority;
   final bool dismissed;
 
   bool get hasReward => rewardCoins > 0;
+}
+
+/// A tracked share link the server minted.
+class ShareLink {
+  const ShareLink({
+    required this.token,
+    required this.url,
+    this.kind,
+    this.expiresAt,
+    this.copyTitle,
+    this.copyBody,
+  });
+
+  /// The opaque token. `POST /social/share-recorded` identifies the share by
+  /// this token, and `GET /public/social/share/{token}` resolves it.
+  final String token;
+
+  /// The absolute URL the server built. The client never builds share URLs
+  /// itself — the host differs per environment.
+  final String url;
+  final String? kind;
+  final String? expiresAt;
+
+  /// Server-authored copy. Preferred over anything the client composes,
+  /// because the copy is what has been reviewed for accuracy.
+  final String? copyTitle;
+  final String? copyBody;
+
+  /// The text to put in front of the share sheet.
+  String get shareText {
+    final title = copyTitle;
+    final body = copyBody;
+    if (title != null && body != null) return '$title\n$body';
+    if (body != null) return body;
+    if (title != null) return title;
+    return 'Try this on CivilCal';
+  }
+}
+
+/// An incoming share link, resolved from its token.
+class SharedLink {
+  const SharedLink({
+    required this.token,
+    this.kind,
+    this.creatorName,
+    this.expiresAt,
+    this.webLandingUrl,
+    this.sandboxAvailable = false,
+  });
+
+  final String token;
+  final String? kind;
+
+  /// The display name of the person who shared it.
+  final String? creatorName;
+  final String? expiresAt;
+  final String? webLandingUrl;
+
+  /// Whether the server will let a guest play the sandbox for this link.
+  final bool sandboxAvailable;
+
+  bool get isExpired {
+    final raw = expiresAt;
+    if (raw == null) return false;
+    final at = DateTime.tryParse(raw);
+    if (at == null) return false;
+    return at.isBefore(DateTime.now());
+  }
+}
+
+/// A guest sandbox attempt — a playable attempt for a visitor with no account.
+class SandboxAttempt {
+  const SandboxAttempt({
+    required this.attemptId,
+    required this.guestSessionId,
+    this.questionCount = 0,
+  });
+
+  final int attemptId;
+
+  /// The client-generated session id the attempt is bound to.
+  final String guestSessionId;
+  final int questionCount;
+}
+
+/// The server's verdict on one sandbox answer.
+class SandboxAnswer {
+  const SandboxAnswer({required this.questionId, this.isCorrect});
+
+  final int questionId;
+
+  /// Null means the question was skipped — the server publishes null rather
+  /// than false, so null must not be rendered as "wrong".
+  final bool? isCorrect;
+}
+
+/// The server's result for a completed sandbox attempt.
+///
+/// A sandbox attempt grants **zero** progression: no coins, no XP, no streak.
+class SandboxResult {
+  const SandboxResult({
+    this.score = 0,
+    this.correct = 0,
+    this.wrong = 0,
+    this.skipped = 0,
+    this.total = 0,
+  });
+
+  final double score;
+  final int correct;
+  final int wrong;
+  final int skipped;
+  final int total;
+
+  int get answered => correct + wrong;
 }
 
 /// A server-computed shareable proof about a subject.

@@ -131,19 +131,162 @@ class ShareMomentDto {
   const ShareMomentDto(this.moment);
   final ShareMoment moment;
 
+  /// The server publishes `data.moment = {kind, priority}`.
+  ///
+  /// The previous parser demanded an `id`/`key` field that the server has
+  /// never sent, so every moment was discarded and the share-prompt cards
+  /// never rendered. The moment's identity **is** its `kind`.
   static ShareMomentDto? fromJson(Map<String, dynamic> json) {
-    final id = _strOrNull(json['id'] ?? json['key'] ?? json['moment_key']);
     final kind = _strOrNull(json['kind'] ?? json['type']);
-    if (id == null || kind == null) return null;
+    if (kind == null) return null;
     return ShareMomentDto(ShareMoment(
-      id: id,
+      id: kind,
       kind: kind,
       ctaLabel: _str(json['ctaLabel'] ?? json['cta_label'] ?? json['label'], 'Share'),
       title: _strOrNull(json['title']),
       rewardCoins: _toInt(json['rewardCoins'] ?? json['reward_coins']),
+      priority: _toInt(json['priority']),
       dismissed: json['dismissed'] == true,
     ));
   }
+}
+
+/// A tracked share link the server minted.
+class ShareLinkDto {
+  const ShareLinkDto({
+    required this.token,
+    required this.url,
+    this.kind,
+    this.expiresAt,
+    this.copyTitle,
+    this.copyBody,
+  });
+
+  static ShareLinkDto? fromJson(Map<String, dynamic> json) {
+    final token = _strOrNull(json['token']);
+    final url = _strOrNull(json['url']);
+    if (token == null || url == null) return null;
+    final copy = json['copy'];
+    final copyMap = copy is Map ? copy.cast<String, dynamic>() : const <String, dynamic>{};
+    return ShareLinkDto(
+      token: token,
+      url: url,
+      kind: _strOrNull(json['kind']),
+      expiresAt: json['expires_at'] as String?,
+      copyTitle: _strOrNull(copyMap['title']),
+      copyBody: _strOrNull(copyMap['body']),
+    );
+  }
+
+  final String token;
+  final String url;
+  final String? kind;
+  final String? expiresAt;
+  final String? copyTitle;
+  final String? copyBody;
+}
+
+/// An incoming share link, resolved from its token.
+class SharedLinkDto {
+  const SharedLinkDto({
+    required this.token,
+    this.kind,
+    this.creatorName,
+    this.expiresAt,
+    this.webLandingUrl,
+    this.sandboxAvailable = false,
+  });
+
+  static SharedLinkDto? fromJson(Map<String, dynamic> json) {
+    final token = _strOrNull(json['token']);
+    if (token == null) return null;
+    return SharedLinkDto(
+      token: token,
+      kind: _strOrNull(json['kind']),
+      creatorName: _strOrNull(json['creator_name']),
+      expiresAt: json['expires_at'] as String?,
+      webLandingUrl: _strOrNull(json['web_landing_url']),
+      sandboxAvailable: json['sandbox_available'] == true,
+    );
+  }
+
+  final String token;
+  final String? kind;
+  final String? creatorName;
+  final String? expiresAt;
+  final String? webLandingUrl;
+
+  /// Whether the server will let a guest play the sandbox for this link.
+  final bool sandboxAvailable;
+}
+
+/// A guest sandbox attempt.
+class SandboxStartDto {
+  const SandboxStartDto({
+    required this.attemptId,
+    required this.guestSessionId,
+    this.questionCount = 0,
+  });
+
+  static SandboxStartDto? fromJson(Map<String, dynamic> json) {
+    final attemptId = _toInt(json['attempt_id']);
+    if (attemptId == 0) return null;
+    return SandboxStartDto(
+      attemptId: attemptId,
+      guestSessionId: _str(json['guest_session_id']),
+      questionCount: _toInt(json['questions']),
+    );
+  }
+
+  final int attemptId;
+  final String guestSessionId;
+  final int questionCount;
+}
+
+/// The server's verdict on one sandbox answer.
+class SandboxAnswerDto {
+  const SandboxAnswerDto({required this.questionId, this.isCorrect});
+
+  static SandboxAnswerDto? fromJson(Map<String, dynamic> json) {
+    final questionId = _toInt(json['question_id']);
+    if (questionId == 0) return null;
+    return SandboxAnswerDto(
+      questionId: questionId,
+      // Null means "skipped" — the server publishes null rather than false.
+      isCorrect: json['is_correct'] as bool?,
+    );
+  }
+
+  final int questionId;
+  final bool? isCorrect;
+}
+
+/// The server's result for a completed sandbox attempt.
+class SandboxResultDto {
+  const SandboxResultDto({
+    this.score = 0,
+    this.correct = 0,
+    this.wrong = 0,
+    this.skipped = 0,
+    this.total = 0,
+  });
+
+  static SandboxResultDto? fromJson(Map<String, dynamic> json) {
+    final score = json['score'];
+    return SandboxResultDto(
+      score: score is num ? score.toDouble() : double.tryParse('$score') ?? 0,
+      correct: _toInt(json['correct']),
+      wrong: _toInt(json['wrong']),
+      skipped: _toInt(json['skipped']),
+      total: _toInt(json['total']),
+    );
+  }
+
+  final double score;
+  final int correct;
+  final int wrong;
+  final int skipped;
+  final int total;
 }
 
 class SocialProofDto {

@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/network/api_response.dart';
 import '../../domain/entities/social.dart';
 import '../models/social_dto.dart';
 
@@ -9,7 +8,7 @@ import '../models/social_dto.dart';
 /// `C:\laragon\www\bisaas`. Do not invent routes — re-check that file first.
 ///
 /// Authenticated (`auth:sanctum` + `api.idempotency`):
-/// - GET  /social/moments                        share prompts
+/// - GET  /social/moments                        the one prompt the server picked
 /// - GET  /social/creative                       share copy variants
 /// - POST /social/links                          create a tracked share link
 /// - POST /social/moments/dismissals             stop showing a prompt
@@ -20,8 +19,8 @@ import '../models/social_dto.dart';
 /// - PUT  /social/sandbox/claim                  guest sandbox claim
 ///
 /// Public, Pennant-gated on `social_engine_enabled`:
-/// - GET  /public/social/share/{token}
-/// - POST /public/social/sandbox/{token}
+/// - GET  /public/social/share/{token}           resolve an incoming share
+/// - POST /public/social/sandbox/{token}         start a guest sandbox attempt
 /// - PUT  /public/social/sandbox/{attempt}/answer
 /// - PUT  /public/social/sandbox/{attempt}/completion
 ///
@@ -33,15 +32,6 @@ class SocialRemoteDataSource {
   final Dio _dio;
 
   static const _uuid = Uuid();
-
-  Map<String, dynamic>? _data(Map<String, dynamic>? body) {
-    if (body == null) return null;
-    final envelope = ApiResponse.fromJson(body, (json) => json);
-    final data = envelope.data;
-    if (data is Map<String, dynamic>) return data;
-    if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
-    return null;
-  }
 
   // ── Referrals ──────────────────────────────────────────────────────────────
 
@@ -80,48 +70,53 @@ class SocialRemoteDataSource {
 
   // ── Share moments and proof ────────────────────────────────────────────────
 
-  Future<List<ShareMoment>> getMoments() async {
+  /// The share prompt the server picked for this user.
+  ///
+  /// The endpoint publishes **one** moment, not a list:
+  /// `data: {moment: null}` when there is nothing to prompt, otherwise
+  /// `data: {moment: {kind, priority}}`. The previous client expected a list
+  /// and therefore never rendered a single prompt.
+  Future<ShareMoment?> getMoment() async {
     final res = await _dio.get<Map<String, dynamic>>('/social/moments');
-    final data = res.data?['data'];
-    final list = data is List
-        ? data
-        : (data is Map && data['items'] is List ? data['items'] as List : const []);
-    final out = <ShareMoment>[];
-    for (final m in list) {
-      if (m is! Map) continue;
-      final dto = ShareMomentDto.fromJson(m.cast<String, dynamic>());
-      if (dto != null) out.add(dto.moment);
-    }
-    return out;
+    final data = _data(res.data);
+    if (data == null) return null;
+    final raw = data['moment'];
+    if (raw is! Map) return null;
+    final dto = ShareMomentDto.fromJson(raw.cast<String, dynamic>());
+    return dto?.moment;
   }
 
-  /// Dismissed prompts are filtered out rather than shown with a dismissed flag:
-  /// a prompt the user already refused should not reappear.
-  Future<List<ShareMoment>> getActiveMoments() async {
-    final all = await getMoments();
-    return all.where((m) => !m.dismissed).toList();
-  }
-
-  Future<void> dismissMoment(String momentId) async {
-    await _dio.post<void>('/social/moments/dismissals', data: {'moment_key': momentId});
+  /// Tells the server the prompt was dismissed.
+  ///
+  /// The server validates `kind` — the same enum value the moment carried.
+  /// Dismissal is idempotent, so a double-tap is harmless.
+  Future<void> dismissMoment(String kind) async {
+    await _dio.post<void>(
+      '/social/moments/dismissals',
+      data: {'kind': kind},
+    );
   }
 
   /// Tells the server a share actually happened.
   ///
-  /// Fire-and-forget: the user sharing is not something to block them on, and a
-  /// failure here must not surface as an error.
-  Future<void> recordShare({String? subject, int? subjectId, String? channel}) async {
+  /// The server identifies the share by its **token** (`share_link.token`),
+  /// not by a subject id, and resolves it server-side. This is best-effort
+  /// analytics only: the user sharing is not something to block them on, and a
+  /// failure here must not surface as an error — the ledger never reads it.
+  Future<void> recordShare({
+    required String token,
+    String? channel,
+  }) async {
     try {
       await _dio.post<void>(
         '/social/share-recorded',
-        data: {
-          'subject': ?subject,
-          'id': ?subjectId,
-          'channel': ?channel,
+        data: <String, dynamic>{
+          'token': token,
+          if (channel != null && channel.isNotEmpty) 'channel': channel,
         },
         options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
       );
-    } catch (_) {
+    } on Object {
       // Ignored on purpose — see the doc comment.
     }
   }
@@ -133,26 +128,126 @@ class SocialRemoteDataSource {
     );
     final data = _data(res.data);
     if (data == null) return null;
-    return SocialProofDto.fromJson(data)?.proof;
+    // The payload nests the proof under `proof`.
+    final proof = data['proof'];
+    if (proof is! Map) return null;
+    return SocialProofDto.fromJson(proof.cast<String, dynamic>())?.proof;
   }
 
   // ── Share links ────────────────────────────────────────────────────────────
 
-  /// Creates a tracked share link. Returns null when the server declines, in
-  /// which case the caller should share the referral URL directly rather than
-  /// fabricate a tracked one.
-  Future<String?> createShareLink({String? subject, int? subjectId}) async {
+  /// Creates a tracked share link.
+  ///
+  /// `POST /social/links` requires `kind` — one of the `ShareMomentKind`
+  /// values (`achievement`, `quiz_result`, `streak`, `calculator`,
+  /// `challenge`) — and returns `data.share_link.{token, url, kind,
+  /// expires_at, copy}`.
+  ///
+  /// Returns null when the server declines, in which case the caller should
+  /// share the referral URL directly rather than fabricate a tracked one.
+  Future<ShareLinkDto?> createShareLink({
+    required String kind,
+    int? subjectId,
+    String? channel,
+  }) async {
+    final payload = <String, dynamic>{'kind': kind};
+    if (subjectId != null) payload['subject_id'] = subjectId;
+    if (channel != null && channel.isNotEmpty) payload['channel'] = channel;
+
     final res = await _dio.post<Map<String, dynamic>>(
       '/social/links',
-      data: {
-        'subject': ?subject,
-        'subject_id': ?subjectId,
-      },
+      data: payload,
       options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
     );
     final data = _data(res.data);
-    final url = data?['url'] ?? data?['share_url'] ?? data?['shareUrl'];
-    if (url is String && url.trim().isNotEmpty) return url.trim();
+    if (data == null) return null;
+    final link = data['share_link'];
+    if (link is! Map) return null;
+    return ShareLinkDto.fromJson(link.cast<String, dynamic>());
+  }
+
+  // ── Public share resolution ────────────────────────────────────────────────
+
+  /// Resolves an incoming share link.
+  ///
+  /// `GET /public/social/share/{token}` — public by design: the recipient of
+  /// a share link is by definition not the sender. The response carries the
+  /// creator's display name, the kind and whether a guest sandbox is available.
+  Future<SharedLinkDto?> resolveShare(String token) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/public/social/share/$token',
+    );
+    final data = _data(res.data);
+    if (data == null) return null;
+    final share = data['share'];
+    if (share is! Map) return null;
+    return SharedLinkDto.fromJson(share.cast<String, dynamic>());
+  }
+
+  // ── Guest sandbox ──────────────────────────────────────────────────────────
+
+  /// Starts a guest sandbox attempt from a share token.
+  ///
+  /// `POST /public/social/sandbox/{token}` with a client-generated
+  /// `guest_session_id` (8..64 characters). The attempt runs against a
+  /// sentinel user and completes with **zero progression grants**
+  /// (`AttemptService::completeSandboxed`), so a guest can play without
+  /// touching anyone's balance.
+  Future<SandboxStartDto?> startSandbox({
+    required String token,
+    required String guestSessionId,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/public/social/sandbox/$token',
+      data: {'guest_session_id': guestSessionId},
+    );
+    final data = _data(res.data);
+    if (data == null) return null;
+    final attempt = data['sandbox_attempt'];
+    if (attempt is! Map) return null;
+    return SandboxStartDto.fromJson(attempt.cast<String, dynamic>());
+  }
+
+  /// Answers one sandbox question.
+  ///
+  /// `PUT /public/social/sandbox/{attempt}/answer` — the canonical state-set
+  /// shape; the POST spelling is the transition alias.
+  Future<SandboxAnswerDto?> answerSandbox({
+    required int attemptId,
+    required int questionId,
+    required String answer,
+  }) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/public/social/sandbox/$attemptId/answer',
+      data: {'question_id': questionId, 'answer': answer},
+    );
+    final data = _data(res.data);
+    if (data == null) return null;
+    final answerData = data['answer'];
+    if (answerData is! Map) return null;
+    return SandboxAnswerDto.fromJson(answerData.cast<String, dynamic>());
+  }
+
+  /// Completes the sandbox attempt and returns the server's result.
+  ///
+  /// `PUT /public/social/sandbox/{attempt}/completion`.
+  Future<SandboxResultDto?> completeSandbox(int attemptId) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/public/social/sandbox/$attemptId/completion',
+    );
+    final data = _data(res.data);
+    if (data == null) return null;
+    final result = data['result'];
+    if (result is! Map) return null;
+    return SandboxResultDto.fromJson(result.cast<String, dynamic>());
+  }
+
+  // ── helpers ────────────────────────────────────────────────────────────────
+
+  Map<String, dynamic>? _data(Map<String, dynamic>? body) {
+    if (body == null) return null;
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return data;
     return null;
   }
 }

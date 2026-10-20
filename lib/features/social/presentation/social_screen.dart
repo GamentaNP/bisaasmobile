@@ -83,22 +83,25 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        if (state.moments.isNotEmpty) ...[
-          ...state.moments.map(
-            (m) => Card(
-              child: ListTile(
-                title: Text(m.title ?? m.ctaLabel),
-                subtitle: m.hasReward ? Text('Earn ${m.rewardCoins} coins') : null,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(onPressed: () => notifier.dismiss(m), child: const Text('No')),
-                    FilledButton(
-                      onPressed: () => _share(context, dash, message: m.title),
-                      child: Text(m.ctaLabel),
-                    ),
-                  ],
-                ),
+        if (state.moment != null) ...[
+          Card(
+            child: ListTile(
+              title: Text(state.moment!.title ?? state.moment!.ctaLabel),
+              subtitle: state.moment!.hasReward
+                  ? Text('Earn ${state.moment!.rewardCoins} coins')
+                  : null,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () => notifier.dismiss(state.moment!),
+                    child: const Text('No'),
+                  ),
+                  FilledButton(
+                    onPressed: () => _shareMoment(context, state.moment!),
+                    child: Text(state.moment!.ctaLabel),
+                  ),
+                ],
               ),
             ),
           ),
@@ -228,20 +231,57 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
     );
   }
 
-  Future<void> _share(BuildContext context, ReferralDashboard dash, {String? message}) async {
-    final text = message == null
-        ? 'Use my code ${dash.code} on CivilCal — civil engineering calculators and Loksewa MCQs.'
-        : '$message\n\nUse my code ${dash.code}: ${dash.shareUrl}';
+  Future<void> _share(BuildContext context, ReferralDashboard dash) async {
+    // The URL is server-built, so it already points at the right host. The
+    // referral URL is always included — the previous version omitted it for
+    // the plain "share invite link" button, so the recipient got a bare code
+    // with no way to reach the sign-up page.
+    final text =
+        'Use my code ${dash.code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n${dash.shareUrl}';
     try {
-      // The URL is server-built, so it already points at the right host.
       await SharePlus.instance.share(
         ShareParams(text: text, subject: 'CivilCal'),
       );
-      // Confirming a share happened is a courtesy to the server, not something to
-      // block the user on, so the result is ignored.
-      unawaited(
-        ref.read(socialRepositoryProvider).recordShare(subject: 'referral'),
+    } catch (e) {
+      AppLogger.w('share failed: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the share sheet')),
+        );
+      }
+    }
+  }
+
+  /// Shares the moment the server picked.
+  ///
+  /// A **tracked** link is minted first (`POST /social/links`), so the server
+  /// can attribute the share. When the server declines to mint one the
+  /// referral URL is shared instead — never a fabricated tracked URL.
+  Future<void> _shareMoment(BuildContext context, ShareMoment moment) async {
+    final notifier = ref.read(socialControllerProvider.notifier);
+    ShareLink? link;
+    try {
+      link = await notifier.createShareLink(kind: moment.kind);
+    } catch (e) {
+      AppLogger.w('share link mint failed: $e');
+    }
+
+    final text = link?.shareText ??
+        'I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.';
+    final url = link?.url;
+
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          text: url == null ? text : '$text\n$url',
+          subject: 'CivilCal',
+        ),
       );
+      if (link != null) {
+        // Confirming a share happened is a courtesy to the server, not
+        // something to block the user on.
+        unawaited(notifier.recordShare(token: link.token));
+      }
     } catch (e) {
       AppLogger.w('share failed: $e');
       if (context.mounted) {

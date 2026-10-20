@@ -41,7 +41,7 @@ void main() {
     bool failDashboard = false,
     ReferralClaim? claim,
     bool failClaim = false,
-    List<ShareMoment> moments = const [],
+    ShareMoment? moment,
   }) {
     if (failDashboard) {
       when(remote.getReferralDashboard).thenThrow(StateError('boom'));
@@ -50,7 +50,7 @@ void main() {
     } else {
       when(remote.getReferralDashboard).thenAnswer((_) async => null);
     }
-    when(remote.getActiveMoments).thenAnswer((_) async => moments);
+    when(remote.getMoment).thenAnswer((_) async => moment);
     if (failClaim) {
       when(() => remote.claimReferralCode(any())).thenThrow(StateError('boom'));
     } else {
@@ -111,7 +111,7 @@ void main() {
 
     test('a moments failure does not blank a loaded dashboard', () async {
       when(remote.getReferralDashboard).thenAnswer((_) async => dashboard());
-      when(remote.getActiveMoments).thenThrow(StateError('moments down'));
+      when(remote.getMoment).thenThrow(StateError('moments down'));
       final c = ProviderContainer(
         overrides: [socialRemoteDataSourceProvider.overrideWithValue(remote)],
       );
@@ -120,7 +120,7 @@ void main() {
       final s = c.read(socialControllerProvider);
       expect(s.dashboard, isNotNull,
           reason: 'the dashboard is the point of the screen');
-      expect(s.moments, isEmpty);
+      expect(s.moment, isNull);
     });
   });
 
@@ -212,19 +212,19 @@ void main() {
   });
 
   group('dismissing a moment', () {
-    const moment = ShareMoment(id: 'streak-7', kind: 'streak', ctaLabel: 'Share');
+    const moment = ShareMoment(id: 'streak', kind: 'streak', ctaLabel: 'Share');
 
     test('removes it locally so it does not reappear while in flight', () async {
-      final c = containerWith(dash: dashboard(), moments: const [moment]);
+      final c = containerWith(dash: dashboard(), moment: moment);
       await settle(c);
-      expect(c.read(socialControllerProvider).moments, hasLength(1));
+      expect(c.read(socialControllerProvider).moment, isNotNull);
       await c.read(socialControllerProvider.notifier).dismiss(moment);
-      expect(c.read(socialControllerProvider).moments, isEmpty);
+      expect(c.read(socialControllerProvider).moment, isNull);
     });
 
     test('a dismissal that fails is not resurrected into an error', () async {
       when(remote.getReferralDashboard).thenAnswer((_) async => dashboard());
-      when(remote.getActiveMoments).thenAnswer((_) async => [moment]);
+      when(remote.getMoment).thenAnswer((_) async => moment);
       when(() => remote.dismissMoment(any())).thenThrow(StateError('down'));
       final c = ProviderContainer(
         overrides: [socialRemoteDataSourceProvider.overrideWithValue(remote)],
@@ -233,7 +233,7 @@ void main() {
       await settle(c);
       await c.read(socialControllerProvider.notifier).dismiss(moment);
       final s = c.read(socialControllerProvider);
-      expect(s.moments, isEmpty);
+      expect(s.moment, isNull);
       expect(s.error, isNull,
           reason: 'a failed dismissal is not a screen-level error');
     });

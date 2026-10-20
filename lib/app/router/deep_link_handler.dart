@@ -19,12 +19,24 @@ abstract final class DeepLinkHandler {
         return '/quiz/${uri.pathSegments.first}';
       }
       if (uri.host == 'battle') return '/battle';
+      if (uri.host == 's' && uri.pathSegments.isNotEmpty) {
+        // civilcal://s/{token} — the share link the server mints.
+        return '/social/share/${uri.pathSegments.first}';
+      }
     }
 
     // https://bisaas.com/* app links.
     if (appHosts.contains(uri.host) && uri.pathSegments.isNotEmpty) {
       if (uri.pathSegments.first == 'quiz' && uri.pathSegments.length > 1) {
         return '/quiz/${uri.pathSegments[1]}';
+      }
+
+      // A share link is `https://bisaas.com/s/{token}` — the same shape the
+      // server publishes (`GrowthController::link` → `url('/s/'.$token)`).
+      // Without this the recipient's phone opens the browser instead of the
+      // in-app guest sandbox.
+      if (uri.pathSegments.first == 's' && uri.pathSegments.length > 1) {
+        return '/social/share/${uri.pathSegments[1]}';
       }
 
       // The link the password-reset email actually contains is the Fortify web

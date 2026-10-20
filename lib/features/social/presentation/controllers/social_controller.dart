@@ -20,7 +20,7 @@ class SocialState {
   const SocialState({
     this.isLoading = false,
     this.dashboard,
-    this.moments = const [],
+    this.moment,
     this.error,
     this.claimInFlight = false,
     this.claimMessage,
@@ -28,7 +28,9 @@ class SocialState {
 
   final bool isLoading;
   final ReferralDashboard? dashboard;
-  final List<ShareMoment> moments;
+
+  /// The share prompt the server picked, if any.
+  final ShareMoment? moment;
   final String? error;
   final bool claimInFlight;
   final String? claimMessage;
@@ -40,7 +42,7 @@ class SocialState {
   SocialState copyWith({
     bool? isLoading,
     ReferralDashboard? dashboard,
-    List<ShareMoment>? moments,
+    Object? moment = _sentinel,
     String? error,
     bool clearError = false,
     bool? claimInFlight,
@@ -50,12 +52,14 @@ class SocialState {
     return SocialState(
       isLoading: isLoading ?? this.isLoading,
       dashboard: dashboard ?? this.dashboard,
-      moments: moments ?? this.moments,
+      moment: moment == _sentinel ? this.moment : moment as ShareMoment?,
       error: clearError ? null : (error ?? this.error),
       claimInFlight: claimInFlight ?? this.claimInFlight,
       claimMessage: clearClaimMessage ? null : (claimMessage ?? this.claimMessage),
     );
   }
+
+  static const _sentinel = Object();
 }
 
 class SocialController extends Notifier<SocialState> {
@@ -74,16 +78,16 @@ class SocialController extends Notifier<SocialState> {
     if (state.hasLoaded && !force) return;
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      // The dashboard is the point of the screen; moments are supplementary, so
-      // a moments failure must not blank the whole thing.
+      // The dashboard is the point of the screen; the share prompt is
+      // supplementary, so a moments failure must not blank the whole thing.
       final dashboard = await _repo.getReferralDashboard();
-      var moments = <ShareMoment>[];
+      ShareMoment? moment;
       try {
-        moments = await _repo.getActiveMoments();
+        moment = await _repo.getMoment();
       } catch (e) {
-        AppLogger.w('social moments failed: $e');
+        AppLogger.w('social moment failed: $e');
       }
-      state = state.copyWith(isLoading: false, dashboard: dashboard, moments: moments);
+      state = state.copyWith(isLoading: false, dashboard: dashboard, moment: moment);
     } catch (e, st) {
       AppLogger.w('social dashboard failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
@@ -122,18 +126,68 @@ class SocialController extends Notifier<SocialState> {
 
   void clearClaimMessage() => state = state.copyWith(clearClaimMessage: true);
 
+  /// Dismisses the share prompt.
+  ///
+  /// The server validates the moment's **kind**, which is also its identity.
+  /// The prompt is removed locally first: the user should not see it reappear
+  /// while the request is in flight.
   Future<void> dismiss(ShareMoment moment) async {
-    // Remove it locally first: the user should not see it reappear while the
-    // request is in flight.
-    state = state.copyWith(
-      moments: state.moments.where((m) => m.id != moment.id).toList(),
-    );
+    state = state.copyWith(moment: null);
     try {
-      await _repo.dismissMoment(moment.id);
+      await _repo.dismissMoment(moment.kind);
     } catch (e) {
       AppLogger.w('dismiss moment failed: $e');
     }
   }
+
+  // ── Share links ────────────────────────────────────────────────────────────
+
+  /// Mints a tracked share link.
+  ///
+  /// Returns null when the server declined; the caller then shares the
+  /// referral URL directly rather than fabricating a tracked one.
+  Future<ShareLink?> createShareLink({
+    required String kind,
+    int? subjectId,
+    String? channel,
+  }) {
+    return _repo.createShareLink(kind: kind, subjectId: subjectId, channel: channel);
+  }
+
+  /// Tells the server the share actually happened.
+  ///
+  /// Fire-and-forget: the ledger never reads it, and a failure here must not
+  /// interrupt the user.
+  Future<void> recordShare({required String token, String? channel}) =>
+      _repo.recordShare(token: token, channel: channel);
+
+  // ── Public share / guest sandbox ───────────────────────────────────────────
+
+  /// Resolves an incoming share link.
+  Future<SharedLink?> resolveShare(String token) => _repo.resolveShare(token);
+
+  /// Starts a guest sandbox attempt.
+  Future<SandboxAttempt?> startSandbox({
+    required String token,
+    required String guestSessionId,
+  }) =>
+      _repo.startSandbox(token: token, guestSessionId: guestSessionId);
+
+  /// Answers one sandbox question.
+  Future<SandboxAnswer?> answerSandbox({
+    required int attemptId,
+    required int questionId,
+    required String answer,
+  }) =>
+      _repo.answerSandbox(
+        attemptId: attemptId,
+        questionId: questionId,
+        answer: answer,
+      );
+
+  /// Completes the sandbox attempt.
+  Future<SandboxResult?> completeSandbox(int attemptId) =>
+      _repo.completeSandbox(attemptId);
 }
 
 final socialControllerProvider = NotifierProvider<SocialController, SocialState>(
