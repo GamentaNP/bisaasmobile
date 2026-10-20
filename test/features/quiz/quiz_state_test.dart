@@ -19,8 +19,21 @@ void main() {
     expect(s.phase, QuizPhase.loading);
     expect(s.currentIndex, 0);
     expect(s.answers, isEmpty);
+    expect(s.quizResult, isNull);
     expect(s.isOfflinePractice, false);
     expect(s.remainingSeconds, 0);
+  });
+
+  test('stores and clears the authoritative quiz result', () {
+    const result = QuizResult(
+      attemptId: 'a1', totalQuestions: 10, correctAnswers: 8,
+      wrongAnswers: 1, skipped: 1, totalXpEarned: 80,
+      totalCoinsEarned: 20, durationSeconds: 42, accuracy: 0.8,
+    );
+    var s = QuizState.initial().copyWith(phase: QuizPhase.finished, quizResult: result);
+    expect(s.quizResult, same(result));
+    s = s.copyWith(quizResult: null);
+    expect(s.quizResult, isNull);
   });
 
   test('copyWith sentinel clears lastResult', () {

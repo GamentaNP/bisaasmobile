@@ -27,7 +27,9 @@ class ScriptedAdapter implements HttpClientAdapter {
   ) async {
     requests.add(options);
     if (requests.length > responses.length) {
-      throw StateError('Unexpected extra request ${options.method} ${options.path}');
+      throw StateError(
+        'Unexpected extra request ${options.method} ${options.path}',
+      );
     }
     final entry = responses[requests.length - 1];
     if (entry is DioException Function(RequestOptions)) {
@@ -39,22 +41,22 @@ class ScriptedAdapter implements HttpClientAdapter {
 }
 
 ResponseBody ok() => ResponseBody.fromString(
-      '{"success":true,"data":{}}',
-      200,
-      headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType],
-      },
-    );
+  '{"success":true,"data":{}}',
+  200,
+  headers: {
+    Headers.contentTypeHeader: [Headers.jsonContentType],
+  },
+);
 
 ResponseBody status(int code) =>
     ResponseBody.fromString('{"message":"no"}', code);
 
 DioException timeoutErr(RequestOptions options) => DioException(
-      // Real adapters throw with the actual request options — the retry
-      // counter lives in options.extra.
-      requestOptions: options,
-      type: DioExceptionType.connectionTimeout,
-    );
+  // Real adapters throw with the actual request options — the retry
+  // counter lives in options.extra.
+  requestOptions: options,
+  type: DioExceptionType.connectionTimeout,
+);
 
 Dio _dioWith(ScriptedAdapter adapter, {Duration? baseDelay, int? maxRetries}) {
   final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'))
@@ -107,7 +109,7 @@ void main() {
     );
   });
 
-  test('429 is retried even for non-idempotent POSTs', () async {
+  test('429 is not retried for non-idempotent POSTs without a key', () async {
     final adapter = ScriptedAdapter([
       ResponseBody.fromString(
         '{"message":"slow down"}',
@@ -116,14 +118,39 @@ void main() {
           'retry-after': ['0'],
         },
       ),
-      ok(),
     ]);
     final dio = _dioWith(adapter);
 
-    final res = await dio.post<dynamic>('/battle/move');
-    expect(res.statusCode, 200);
-    expect(adapter.requests, hasLength(2));
+    await expectLater(
+      dio.post<dynamic>('/battle/move'),
+      throwsA(isA<DioException>()),
+    );
+    expect(adapter.requests, hasLength(1));
   });
+
+  test(
+    '429 retries a non-idempotent POST when it has an idempotency key',
+    () async {
+      final adapter = ScriptedAdapter([
+        ResponseBody.fromString(
+          '{"message":"slow down"}',
+          429,
+          headers: {
+            'retry-after': ['0'],
+          },
+        ),
+        ok(),
+      ]);
+      final dio = _dioWith(adapter);
+
+      final res = await dio.post<dynamic>(
+        '/battle/move',
+        options: Options(headers: {'Idempotency-Key': 'uuid-123'}),
+      );
+      expect(res.statusCode, 200);
+      expect(adapter.requests, hasLength(2));
+    },
+  );
 
   test('429 honors integer Retry-After seconds over base backoff', () async {
     final adapter = ScriptedAdapter([
@@ -143,27 +170,36 @@ void main() {
     expect(res.statusCode, 200);
   });
 
-  test('connection errors on GET retry, then give up after maxRetries', () async {
-    // Scripted as tear-offs so each throw carries the real request options.
-    final adapter = ScriptedAdapter([
-      timeoutErr,
-      timeoutErr,
-      timeoutErr,
-      timeoutErr,
-    ]);
-    final dio = _dioWith(adapter, maxRetries: 3);
+  test(
+    'connection errors on GET retry, then give up after maxRetries',
+    () async {
+      // Scripted as tear-offs so each throw carries the real request options.
+      final adapter = ScriptedAdapter([
+        timeoutErr,
+        timeoutErr,
+        timeoutErr,
+        timeoutErr,
+      ]);
+      final dio = _dioWith(adapter, maxRetries: 3);
 
-    await expectLater(dio.get<dynamic>('/things'), throwsA(isA<DioException>()));
-    // 1 original + 3 retries.
-    expect(adapter.requests, hasLength(4));
-  });
+      await expectLater(
+        dio.get<dynamic>('/things'),
+        throwsA(isA<DioException>()),
+      );
+      // 1 original + 3 retries.
+      expect(adapter.requests, hasLength(4));
+    },
+  );
 
-  test('429 POST still counts against maxRetries', () async {
+  test('429 keyed POST still counts against maxRetries', () async {
     final adapter = ScriptedAdapter([status(429), status(429), status(429)]);
     final dio = _dioWith(adapter, maxRetries: 2);
 
     await expectLater(
-      dio.post<dynamic>('/battle/move'),
+      dio.post<dynamic>(
+        '/battle/move',
+        options: Options(headers: {'Idempotency-Key': 'uuid-123'}),
+      ),
       throwsA(isA<DioException>()),
     );
     // 1 original + 2 retries — capped.

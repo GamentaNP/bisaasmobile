@@ -5,7 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('CalculatorDto', () {
     test('fromJson snake_case tolerant', () {
-      final dto = CalculatorDto.fromJson({'slug': 'beam-deflection', 'domain': 'civil', 'label': 'Beam Deflection'});
+      final dto = CalculatorDto.fromJson({
+        'slug': 'beam-deflection',
+        'domain': 'civil',
+        'label': 'Beam Deflection',
+      });
       expect(dto.slug, 'beam-deflection');
       expect(dto.domain, 'civil');
       expect(dto.label, 'Beam Deflection');
@@ -14,7 +18,10 @@ void main() {
     });
 
     test('label fallback to slug spaced', () {
-      final dto = CalculatorDto.fromJson({'slug': 'soil-compaction', 'domain': 'civil'});
+      final dto = CalculatorDto.fromJson({
+        'slug': 'soil-compaction',
+        'domain': 'civil',
+      });
       expect(dto.label, 'soil compaction');
     });
   });
@@ -32,7 +39,13 @@ void main() {
               {'slug': 'b', 'domain': 'civil', 'label': 'B'},
             ],
           },
-          {'domain': 'electrical', 'label': 'Elec', 'calculators': [{'slug': 'c', 'domain': 'electrical', 'label': 'C'}]},
+          {
+            'domain': 'electrical',
+            'label': 'Elec',
+            'calculators': [
+              {'slug': 'c', 'domain': 'electrical', 'label': 'C'},
+            ],
+          },
         ],
       });
       expect(dto.totalCalculators, 3);
@@ -61,11 +74,35 @@ void main() {
       expect(cfg.calculateEndpoint, contains('calculate'));
       expect(cfg.domainLabel, 'Civil Engineering');
     });
+
+    test('uses version-relative fallback and preserves server dimensions', () {
+      final dto = CalculatorConfigDto.fromJson({
+        'domain': 'civil',
+        'slug': 'beam-deflection',
+        'label': 'Beam Deflection',
+        'domain_label': 'Civil Engineering',
+        'output_dimensions': [
+          {'path': 'result.deflection', 'canonical_unit': 'mm'},
+        ],
+        'calculation_modes': [
+          {'id': 'point', 'label': 'Point Load'},
+        ],
+      });
+
+      final cfg = dto.toDomain();
+      expect(cfg.calculateEndpoint, '/civil/beam-deflection/calculate');
+      expect(cfg.outputDimensions.single['canonical_unit'], 'mm');
+      expect(cfg.calculationModes.single['id'], 'point');
+    });
   });
 
   group('CalculationResult', () {
     test('holds inputs and data', () {
-      const r = CalculationResult(inputs: {'length': 5}, data: {'result': 25}, message: 'ok');
+      const r = CalculationResult(
+        inputs: {'length': 5},
+        data: {'result': 25},
+        message: 'ok',
+      );
       expect(r.inputs['length'], 5);
       expect(r.data['result'], 25);
     });

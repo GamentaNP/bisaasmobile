@@ -386,18 +386,24 @@ class QuizController extends Notifier<QuizState> {
     final attemptId = state.attemptId;
     if (attemptId == null) return;
 
+    late final QuizResult result;
     try {
-      await _repo.finishAttempt(attemptId);
-    } catch (_) {
-      // Finish is best-effort; result screen still shows local totals
+      result = await _repo.finishAttempt(attemptId);
+    } catch (e) {
+      state = state.copyWith(
+        phase: QuizPhase.error,
+        errorMessage: 'Could not finish the quiz. Please try again.',
+      );
+      AppLogger.w('quiz completion failed for $attemptId: $e');
+      return;
     }
 
-    state = state.copyWith(phase: QuizPhase.finished);
+    state = state.copyWith(phase: QuizPhase.finished, quizResult: result);
     try {
       await ref.read(analyticsProvider).log(AnalyticsEvents.quizComplete, params: {
-        'correct': state.answers.values.where((r) => r.isCorrect).length,
-        'total': state.session?.totalQuestions ?? state.answers.length,
-        'xp': state.totalXpEarned,
+        'correct': result.correctAnswers,
+        'total': result.totalQuestions,
+        'xp': result.totalXpEarned,
       });
     } catch (_) {}
   }

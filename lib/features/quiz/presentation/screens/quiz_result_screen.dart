@@ -26,10 +26,15 @@ class QuizResultScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final session = quizState.session;
     final answered = quizState.answers.length;
-    final correct =
+    final localCorrect =
         quizState.answers.values.where((r) => r.isCorrect).length;
-    final accuracy = answered > 0 ? correct / answered : 0.0;
-    final totalQ = session?.totalQuestions ?? answered;
+    final serverResult = quizState.quizResult;
+    final correct = serverResult?.correctAnswers ?? localCorrect;
+    final accuracy = serverResult?.accuracy ??
+        (answered > 0 ? localCorrect / answered : 0.0);
+    final totalQ = serverResult?.totalQuestions ?? session?.totalQuestions ?? answered;
+    final xpEarned = serverResult?.totalXpEarned ?? quizState.totalXpEarned;
+    final coinsEarned = serverResult?.totalCoinsEarned ?? quizState.totalCoinsEarned;
 
     Color gradeColor;
     String gradeLabel;
@@ -52,7 +57,7 @@ class QuizResultScreen extends StatelessWidget {
             // Celebratory confetti on first frame (server-graded only).
             _ConfettiOnMount(
               celebrate: !quizState.isOfflinePractice,
-              coinsEarned: quizState.totalCoinsEarned,
+              coinsEarned: coinsEarned,
             ),
             const SizedBox(height: 8),
 
@@ -165,13 +170,13 @@ class QuizResultScreen extends StatelessWidget {
                   color: AppColors.correctGreen,
                 ),
                 _StatCard(
-                  value: '+${quizState.totalXpEarned}',
+                  value: '+$xpEarned',
                   label: 'XP Earned',
                   icon: Icons.bolt_rounded,
                   color: AppColors.xpGold,
                 ),
                 _StatCard(
-                  value: '+${quizState.totalCoinsEarned}',
+                  value: '+$coinsEarned',
                   label: 'Coins',
                   icon: Icons.monetization_on_rounded,
                   color: AppColors.coinYellow,
@@ -211,7 +216,7 @@ class QuizResultScreen extends StatelessWidget {
 
             // ── Share (server never mints locally — share is native sheet only) ──
             OutlinedButton.icon(
-              onPressed: () => _shareResult(context, accuracy, correct, totalQ, quizState),
+              onPressed: () => _shareResult(context, accuracy, correct, totalQ, quizState, xpEarned: xpEarned, coinsEarned: coinsEarned),
               icon: const Icon(Icons.share_rounded, size: 18),
               label: const Text('Share Result'),
               style: OutlinedButton.styleFrom(
@@ -389,13 +394,15 @@ Future<void> _shareResult(
   double accuracy,
   int correct,
   int totalQ,
-  QuizState quizState,
-) async {
+  QuizState quizState, {
+  required int xpEarned,
+  required int coinsEarned,
+}) async {
   final pct = (accuracy * 100).round();
   final title = quizState.session?.title ?? 'CivilCal Quiz';
   final grade = pct >= 80 ? 'Excellent' : pct >= 50 ? 'Good Job' : 'Keep Practicing';
   final msg = 'I scored $correct/$totalQ ($pct%) on "$title" — $grade! '
-      'XP +${quizState.totalXpEarned} · Coins +${quizState.totalCoinsEarned} '
+      'XP +$xpEarned · Coins +$coinsEarned '
       'via CivilCal (BiSaaS). Try: https://bisaas.com';
   try {
     AppLogger.i('Share quiz result $pct% $title');

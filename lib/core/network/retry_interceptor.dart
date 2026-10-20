@@ -9,9 +9,8 @@ import '../logging/app_logger.dart';
 /// Uses exponential backoff with jitter for 5xx / network errors.
 ///
 /// Contract (`MOBILE_API_INTEGRATION_GUIDE.md`): never retry non-idempotent
-/// POSTs unless the server explicitly asks (429 Retry-After — rate-limited
-/// calls never reached execution) or the call carries an `Idempotency-Key`
-/// (server dedupes replays).
+/// POSTs unless the call carries an `Idempotency-Key` (server dedupes
+/// replays). A 429 is retryable only for already replay-safe requests.
 class RetryInterceptor extends Interceptor {
   RetryInterceptor({
     required this.dio,
@@ -27,7 +26,10 @@ class RetryInterceptor extends Interceptor {
   final Duration baseDelay;
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final opts = err.requestOptions;
     final attempt = (opts.extra['retry_attempt'] as int?) ?? 0;
 
@@ -66,13 +68,15 @@ class RetryInterceptor extends Interceptor {
   bool _shouldRetry(DioException err, int? status) {
     final opts = err.requestOptions;
     final method = opts.method.toUpperCase();
-    final replaySafe = method == 'GET' ||
+    final replaySafe =
+        method == 'GET' ||
         method == 'HEAD' ||
         method == 'OPTIONS' ||
         opts.headers.containsKey('Idempotency-Key');
 
-    // Always retry 429 (rate limit) — server says when via Retry-After.
-    if (status == 429) return true;
+    // A rate limit response does not make a non-idempotent request safe to
+    // replay. Retry 429 only when the request is already replay-safe.
+    if (status == 429) return replaySafe;
     // Retry 5xx and network timeouts only when the server can dedupe replays.
     if (status != null && status >= 500 && status < 600) return replaySafe;
     if (err.type == DioExceptionType.connectionTimeout ||

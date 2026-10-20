@@ -21,9 +21,10 @@ abstract final class ApiConfig {
 
   /// Headers every request must carry.
   static Map<String, String> get defaultHeaders => const {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      };
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Accept-Language': 'en',
+  };
 
   /// Full OpenAPI docs (for dev tooling, not fetched at runtime).
   static String get openApiUrl => '$baseUrl/openapi.json';

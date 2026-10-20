@@ -27,6 +27,7 @@ class QuizState {
     required this.currentIndex,
     required this.answers,
     required this.lastResult,
+    this.quizResult,
     required this.elapsedSeconds,
     required this.comboCount,
     required this.totalXpEarned,
@@ -49,6 +50,7 @@ class QuizState {
         currentIndex: 0,
         answers: {},
         lastResult: null,
+        quizResult: null,
         elapsedSeconds: 0,
         comboCount: 0,
         totalXpEarned: 0,
@@ -62,6 +64,8 @@ class QuizState {
   /// Maps questionId → AttemptResult (server graded)
   final Map<String, AttemptResult> answers;
   final AttemptResult? lastResult;
+  /// Authoritative totals returned by the server when the attempt is finished.
+  final QuizResult? quizResult;
   final int elapsedSeconds;
   final int comboCount;
   final int totalXpEarned;
@@ -121,6 +125,7 @@ class QuizState {
     int? currentIndex,
     Map<String, AttemptResult>? answers,
     Object? lastResult = _sentinel,
+    Object? quizResult = _sentinel,
     int? elapsedSeconds,
     int? comboCount,
     int? totalXpEarned,
@@ -144,6 +149,9 @@ class QuizState {
       lastResult: lastResult == _sentinel
           ? this.lastResult
           : lastResult as AttemptResult?,
+      quizResult: quizResult == _sentinel
+          ? this.quizResult
+          : quizResult as QuizResult?,
       elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
       comboCount: comboCount ?? this.comboCount,
       totalXpEarned: totalXpEarned ?? this.totalXpEarned,

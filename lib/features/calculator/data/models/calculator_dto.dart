@@ -8,11 +8,12 @@ class CalculatorDto {
   });
 
   factory CalculatorDto.fromJson(Map<String, dynamic> j) => CalculatorDto(
-        slug: (j['slug'] as String?) ?? '',
-        domain: (j['domain'] as String?) ?? '',
-        label: (j['label'] as String?) ??
-            ((j['slug'] as String?)?.replaceAll('-', ' ') ?? ''),
-      );
+    slug: (j['slug'] as String?) ?? '',
+    domain: (j['domain'] as String?) ?? '',
+    label:
+        (j['label'] as String?) ??
+        ((j['slug'] as String?)?.replaceAll('-', ' ') ?? ''),
+  );
 
   final String slug;
   final String domain;
@@ -51,7 +52,8 @@ class CalculatorCatalogDto {
     required this.domains,
   });
 
-  factory CalculatorCatalogDto.fromJson(Map<String, dynamic> j) => CalculatorCatalogDto(
+  factory CalculatorCatalogDto.fromJson(Map<String, dynamic> j) =>
+      CalculatorCatalogDto(
         totalCalculators: (j['total_calculators'] as int?) ?? 0,
         domains: ((j['domains'] as List?) ?? [])
             .cast<Map<String, dynamic>>()
@@ -62,9 +64,8 @@ class CalculatorCatalogDto {
   final int totalCalculators;
   final List<CalculatorDomainDto> domains;
 
-  List<Calculator> toDomainsFlat() => domains
-      .expand((d) => d.calculators.map((c) => c.toDomain()))
-      .toList();
+  List<Calculator> toDomainsFlat() =>
+      domains.expand((d) => d.calculators.map((c) => c.toDomain())).toList();
 }
 
 class CalculatorConfigDto {
@@ -78,21 +79,31 @@ class CalculatorConfigDto {
     this.fields = const [],
     this.stepsInResponse = false,
     this.defaults = const {},
+    this.outputDimensions = const [],
+    this.calculationModes = const [],
   });
 
-  factory CalculatorConfigDto.fromJson(Map<String, dynamic> j) => CalculatorConfigDto(
+  factory CalculatorConfigDto.fromJson(Map<String, dynamic> j) =>
+      CalculatorConfigDto(
         domain: (j['domain'] as String?) ?? '',
         slug: (j['slug'] as String?) ?? '',
         label: (j['label'] as String?) ?? '',
         domainLabel: (j['domain_label'] as String?) ?? '',
         endpoints: (j['endpoints'] as Map<String, dynamic>?) ?? {},
-        formulaLatex: (j['formula_latex'] as String?) ?? (j['formula'] as String?),
+        formulaLatex:
+            (j['formula_latex'] as String?) ?? (j['formula'] as String?),
         fields: ((j['fields'] as List?) ?? const [])
             .cast<Map<String, dynamic>>()
             .map(CalculatorField.fromJson)
             .toList(),
         stepsInResponse: (j['steps_in_response'] as bool?) ?? false,
         defaults: (j['defaults'] as Map<String, dynamic>?) ?? const {},
+        outputDimensions: ((j['output_dimensions'] as List?) ?? const [])
+            .whereType<Map<String, dynamic>>()
+            .toList(),
+        calculationModes: ((j['calculation_modes'] as List?) ?? const [])
+            .whereType<Map<String, dynamic>>()
+            .toList(),
       );
 
   final String domain;
@@ -104,17 +115,21 @@ class CalculatorConfigDto {
   final List<CalculatorField> fields;
   final bool stepsInResponse;
   final Map<String, dynamic> defaults;
+  final List<Map<String, dynamic>> outputDimensions;
+  final List<Map<String, dynamic>> calculationModes;
 
   CalculatorConfig toDomain() => CalculatorConfig(
-        domain: domain,
-        slug: slug,
-        label: label,
-        domainLabel: domainLabel,
-        calculateEndpoint: (endpoints['calculate'] as String?) ??
-            '/api/v1/$domain/$slug/calculate',
-        formulaLatex: formulaLatex,
-        fields: fields,
-        stepsInResponse: stepsInResponse,
-        defaults: defaults,
-      );
+    domain: domain,
+    slug: slug,
+    label: label,
+    domainLabel: domainLabel,
+    calculateEndpoint:
+        (endpoints['calculate'] as String?) ?? '/$domain/$slug/calculate',
+    formulaLatex: formulaLatex,
+    fields: fields,
+    stepsInResponse: stepsInResponse,
+    defaults: defaults,
+    outputDimensions: outputDimensions,
+    calculationModes: calculationModes,
+  );
 }

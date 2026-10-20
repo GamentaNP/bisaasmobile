@@ -71,20 +71,20 @@ class CalculatorField {
   final String? helpText;
 
   factory CalculatorField.fromJson(Map<String, dynamic> j) => CalculatorField(
-        name: (j['name'] as String?) ?? '',
-        label: (j['label'] as String?) ?? ((j['name'] as String?) ?? ''),
-        type: (j['type'] as String?) ?? 'number',
-        required: (j['required'] as bool?) ?? false,
-        unit: j['unit'] as String?,
-        min: (j['min'] as num?)?.toDouble(),
-        max: (j['max'] as num?)?.toDouble(),
-        precision: j['precision'] as int?,
-        options: ((j['options'] as List?) ?? const [])
-            .cast<Map<String, dynamic>>()
-            .map(CalculatorSelectOption.fromJson)
-            .toList(),
-        helpText: j['help_text'] as String?,
-      );
+    name: (j['name'] as String?) ?? '',
+    label: (j['label'] as String?) ?? ((j['name'] as String?) ?? ''),
+    type: (j['type'] as String?) ?? 'number',
+    required: (j['required'] as bool?) ?? false,
+    unit: j['unit'] as String?,
+    min: (j['min'] as num?)?.toDouble(),
+    max: (j['max'] as num?)?.toDouble(),
+    precision: j['precision'] as int?,
+    options: ((j['options'] as List?) ?? const [])
+        .cast<Map<String, dynamic>>()
+        .map(CalculatorSelectOption.fromJson)
+        .toList(),
+    helpText: j['help_text'] as String?,
+  );
 }
 
 @immutable
@@ -99,6 +99,8 @@ class CalculatorConfig {
     this.fields = const [],
     this.stepsInResponse = false,
     this.defaults = const {},
+    this.outputDimensions = const [],
+    this.calculationModes = const [],
   });
 
   final String domain;
@@ -120,6 +122,8 @@ class CalculatorConfig {
 
   /// Server-supplied default values keyed by `field.name`.
   final Map<String, dynamic> defaults;
+  final List<Map<String, dynamic>> outputDimensions;
+  final List<Map<String, dynamic>> calculationModes;
 }
 
 @immutable
@@ -136,8 +140,10 @@ class CalculationResult {
 
   /// `data.status` ∈ {`safe`, `check`, `fail`} when server returns it.
   String? get status => data['status'] as String?;
-  num? get limitValue => (data['limit_value'] as num?) ?? (data['limit'] as num?);
-  num? get actualValue => (data['actual_value'] as num?) ?? (data['value'] as num?);
+  num? get limitValue =>
+      (data['limit_value'] as num?) ?? (data['limit'] as num?);
+  num? get actualValue =>
+      (data['actual_value'] as num?) ?? (data['value'] as num?);
 
   /// `data.steps` → list of {label, formula, result}.
   List<Map<String, dynamic>> get steps {

@@ -15,35 +15,47 @@ import '../../data/models/calculator_dto.dart';
 import 'calculator_request_idempotency.dart';
 
 // ──Providers──────────────────────────────────────────────────────────────
-final calculatorRemoteDataSourceProvider = Provider<CalculatorRemoteDataSource>((ref) {
-  return CalculatorRemoteDataSource(DioClient.instance.dio);
-});
+final calculatorRemoteDataSourceProvider = Provider<CalculatorRemoteDataSource>(
+  (ref) {
+    return CalculatorRemoteDataSource(DioClient.instance.dio);
+  },
+);
 
 final calculatorRepositoryProvider = Provider<CalculatorRepository>((ref) {
-    // The queue is what makes a calculation outlive the session: the repository
-    // records every result to the sync queue and `SyncManager` replays it to
-    // PUT /api/v1/calculation-snapshots. A controller comment used to claim this
-    // happened "in repo" while the repository did neither.
-    return CalculatorRepositoryImpl(
-      ref.watch(calculatorRemoteDataSourceProvider),
-      ref.watch(syncQueueServiceProvider),
-    );
-  });
+  // The queue is what makes a calculation outlive the session: the repository
+  // records every result to the sync queue and `SyncManager` replays it to
+  // PUT /api/v1/calculation-snapshots. A controller comment used to claim this
+  // happened "in repo" while the repository did neither.
+  return CalculatorRepositoryImpl(
+    ref.watch(calculatorRemoteDataSourceProvider),
+    ref.watch(syncQueueServiceProvider),
+  );
+});
 
-final calculatorCatalogProvider = FutureProvider<CalculatorCatalogDto>((ref) async {
+final calculatorCatalogProvider = FutureProvider<CalculatorCatalogDto>((
+  ref,
+) async {
   final repo = ref.watch(calculatorRepositoryProvider);
   return repo.getCatalog();
 });
 
-final calculatorConfigProvider = FutureProvider.family<CalculatorConfig, ({String domain, String slug})>((ref, key) async {
-  final repo = ref.watch(calculatorRepositoryProvider);
-  return repo.getConfig(key.domain, key.slug);
-});
+final calculatorConfigProvider =
+    FutureProvider.family<CalculatorConfig, ({String domain, String slug})>((
+      ref,
+      key,
+    ) async {
+      final repo = ref.watch(calculatorRepositoryProvider);
+      return repo.getConfig(key.domain, key.slug);
+    });
 
 // ── Calculate state ─────────────────────────────────────────────────────
 @immutable
 class CalcHistoryEntry {
-  const CalcHistoryEntry({required this.label, required this.data, required this.createdAt});
+  const CalcHistoryEntry({
+    required this.label,
+    required this.data,
+    required this.createdAt,
+  });
   final String label;
   final Map<String, dynamic> data;
   final DateTime createdAt;
@@ -73,15 +85,14 @@ class CalcState {
     Map<String, dynamic>? fieldErrors,
     List<CalcHistoryEntry>? history,
     bool? historyLoading,
-  }) =>
-      CalcState(
-        loading: loading ?? this.loading,
-        result: result ?? this.result,
-        error: error == const Object() ? this.error : error as String?,
-        fieldErrors: fieldErrors ?? this.fieldErrors,
-        history: history ?? this.history,
-        historyLoading: historyLoading ?? this.historyLoading,
-      );
+  }) => CalcState(
+    loading: loading ?? this.loading,
+    result: result ?? this.result,
+    error: error == const Object() ? this.error : error as String?,
+    fieldErrors: fieldErrors ?? this.fieldErrors,
+    history: history ?? this.history,
+    historyLoading: historyLoading ?? this.historyLoading,
+  );
 }
 
 class CalculatorController extends Notifier<CalcState> {
@@ -91,7 +102,11 @@ class CalculatorController extends Notifier<CalcState> {
   @override
   CalcState build() => const CalcState();
 
-  Future<void> calculate(String domain, String slug, Map<String, dynamic> inputs) async {
+  Future<void> calculate(
+    String domain,
+    String slug,
+    Map<String, dynamic> inputs,
+  ) async {
     state = state.copyWith(loading: true, error: null, fieldErrors: null);
     try {
       final repo = ref.read(calculatorRepositoryProvider);
@@ -108,8 +123,8 @@ class CalculatorController extends Notifier<CalcState> {
       );
       _requestIdempotency.complete();
       // Push to the in-memory history the History sheet reads. Durability is the
-        // repository's job: it queues every result to the sync queue, which
-        // SyncManager replays to PUT /api/v1/calculation-snapshots.
+      // repository's job: it queues every result to the sync queue, which
+      // SyncManager replays to PUT /api/v1/calculation-snapshots.
       final newEntry = CalcHistoryEntry(
         label: '$slug · ${DateTime.now().toIso8601String().substring(0, 16)}',
         data: {...inputs, 'result': r.data},
@@ -121,12 +136,21 @@ class CalculatorController extends Notifier<CalcState> {
         history: [newEntry, ...state.history],
       );
       try {
-        await ref.read(analyticsProvider).log(AnalyticsEvents.calculatorCalculate, params: {'domain': domain, 'slug': slug});
+        await ref
+            .read(analyticsProvider)
+            .log(
+              AnalyticsEvents.calculatorCalculate,
+              params: {'domain': domain, 'slug': slug},
+            );
       } catch (_) {}
     } on DioException catch (e) {
       final apiErr = e.error;
       if (apiErr is ApiException && apiErr.errors != null) {
-        state = state.copyWith(loading: false, error: apiErr.message, fieldErrors: apiErr.errors);
+        state = state.copyWith(
+          loading: false,
+          error: apiErr.message,
+          fieldErrors: apiErr.errors,
+        );
       } else if (apiErr is ApiException) {
         state = state.copyWith(loading: false, error: apiErr.message);
       } else {
@@ -138,7 +162,10 @@ class CalculatorController extends Notifier<CalcState> {
             fieldErrors: (data['errors'] as Map).cast<String, dynamic>(),
           );
         } else {
-          state = state.copyWith(loading: false, error: e.message ?? 'Calculation failed');
+          state = state.copyWith(
+            loading: false,
+            error: e.message ?? 'Calculation failed',
+          );
         }
       }
     } catch (e) {
@@ -148,11 +175,33 @@ class CalculatorController extends Notifier<CalcState> {
 
   Future<void> loadHistory(String domain, String slug) async {
     state = state.copyWith(historyLoading: true);
-    // TODO(agent-b): replace with `GET /calculators/{domain}/{slug}/history`
-    // when the endpoint ships. For now we filter the in-memory history by slug.
-    await Future<void>.delayed(const Duration(milliseconds: 200));
-    final filtered = state.history.where((e) => e.label.startsWith('$slug · ')).toList();
-    state = state.copyWith(historyLoading: false, history: filtered);
+    try {
+      final rows = await ref
+          .read(calculatorRepositoryProvider)
+          .getHistory(domain, slug);
+      final entries = rows.map((row) {
+        final createdAt =
+            DateTime.tryParse(row['created_at'] as String? ?? '') ??
+            DateTime.now();
+        return CalcHistoryEntry(
+          label: '$slug · ${createdAt.toIso8601String().substring(0, 16)}',
+          data: row,
+          createdAt: createdAt,
+        );
+      }).toList();
+      state = state.copyWith(historyLoading: false, history: entries);
+    } catch (e) {
+      // Keep useful session results visible while making the server failure
+      // explicit instead of pretending history loaded successfully.
+      final local = state.history
+          .where((e) => e.label.startsWith('$slug · '))
+          .toList();
+      state = state.copyWith(
+        historyLoading: false,
+        history: local,
+        error: e.toString(),
+      );
+    }
   }
 
   void clear() {
