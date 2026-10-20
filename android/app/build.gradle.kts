@@ -1,4 +1,5 @@
 import java.util.Properties
+import java.util.Base64
 import java.io.FileInputStream
 
 plugins {
@@ -20,12 +21,113 @@ if (file("google-services.json").exists()) {
 // be signed with the upload key; the debug fallback is opt-in and loud, because
 // a silently debug-signed AAB cannot be published or updated later.
 // Escape hatch for local smoke builds: -Pallow-debug-signing=true
+//
+// FAIL CLOSED. A release build is refused when the signing configuration is
+// missing *or incomplete*. The previous version only checked that
+// `key.properties` was non-empty, so a file with three of the four keys got
+// past the guard and then died inside the Kotlin DSL with a bare
+// "null cannot be cast to non-null type" — which reads like a toolchain bug
+// and sends the release engineer down the wrong path.
 val keystoreProperties = Properties().apply {
     val f = rootProject.file("key.properties")
     if (f.exists()) FileInputStream(f).use { load(it) }
 }
 
 val allowDebugSigning = (project.findProperty("allow-debug-signing") as String?) == "true"
+
+// The four keys the upload signing config needs, and the human-readable
+// reason each one is required.
+val requiredSigningKeys = listOf(
+    "keyAlias" to "the alias of the upload key inside the keystore",
+    "keyPassword" to "the private key password",
+    "storeFile" to "the path to the .jks/.keystore file",
+    "storePassword" to "the keystore password",
+)
+
+val missingSigningKeys = requiredSigningKeys
+    .filter { (key, _) -> keystoreProperties.getProperty(key).isNullOrBlank() }
+    .map { (key, reason) -> "$key ($reason)" }
+
+// The keystore file has to exist too — a present-but-wrong `storeFile` is the
+// same failure as a missing key, and it is caught here with a message that
+// says what to do about it.
+val configuredStoreFile = keystoreProperties.getProperty("storeFile")
+val storeFileMissing = configuredStoreFile != null &&
+    configuredStoreFile.isNotBlank() &&
+    !file(configuredStoreFile).exists()
+
+val signingReady = missingSigningKeys.isEmpty() && !storeFileMissing
+
+// Whether this invocation is actually building a release variant.
+//
+// The guard below MUST NOT fire for a debug build: `buildTypes { release { … } }`
+// is evaluated during *configuration*, for every build, so a throw in there
+// would make `flutter run` and `flutter build apk --debug` impossible on a
+// machine that has no upload keystore — which is every developer machine and
+// every CI runner that is not building a release.
+//
+// The task names are the reliable signal: Flutter invokes Gradle with
+// `assembleRelease` / `bundleRelease` for a release build and
+// `assembleDebug` for a debug one.
+val buildingRelease = gradle.startParameter.taskNames.any { taskName ->
+    taskName.contains("Release", ignoreCase = true)
+}
+
+// Certificate pins, read from the dart-defines the Flutter tool passes to
+// Gradle.
+//
+// The Flutter tool encodes the defines as a comma-separated list of
+// individually base64-encoded `KEY=VALUE` strings (`encodeDartDefines`), so
+// they can be decoded here.
+//
+// The runtime guard in `lib/core/network/certificate_pinning.dart` refuses to
+// start a production build without a usable pin. That is the right behaviour
+// for the device, but it means the failure is discovered on a user's phone
+// rather than in CI. Checking the same thing here fails the *build* instead,
+// which is where it can be fixed.
+val dartDefines: Map<String, String> =
+    (project.findProperty("dart-defines") as String? ?: "")
+        .split(",")
+        .filter { it.isNotBlank() }
+        .mapNotNull { encoded ->
+            runCatching {
+                String(Base64.getDecoder().decode(encoded), Charsets.UTF_8)
+            }.getOrNull()
+        }
+        .mapNotNull { define ->
+            val separator = define.indexOf('=')
+            if (separator <= 0) null else define.substring(0, separator) to
+                define.substring(separator + 1)
+        }
+        .toMap()
+
+/**
+ * A pin that is still a deployment placeholder is not a pin: it can never
+ * match a real certificate, and treating it as configured would let a
+ * release ship with pinning that is silently dead.
+ */
+fun isUsablePin(value: String?): Boolean {
+    if (value.isNullOrBlank()) return false
+    val upper = value.uppercase()
+    return !upper.contains("REPLACE") &&
+        !upper.contains("PLACEHOLDER") &&
+        !upper.contains("TODO") &&
+        !upper.contains("XXXX")
+}
+
+val productionEnv = dartDefines["ENV"] ?: ""
+val usablePins = listOf("CERT_PIN_1", "CERT_PIN_2", "CERT_PIN_3")
+    .mapNotNull { dartDefines[it] }
+    .filter { isUsablePin(it) }
+
+val pinsMissing = when {
+    productionEnv != "prod" -> emptyList()
+    usablePins.isEmpty() -> listOf(
+        "no usable certificate pin was passed. Pass at least CERT_PIN_1 " +
+            "via --dart-define-from-file=dart_defines/production.json."
+    )
+    else -> emptyList()
+}
 
 android {
     namespace = "com.bisaas.bisaasmobile"
@@ -75,7 +177,7 @@ android {
 
     buildTypes {
         release {
-            if (keystoreProperties.isNotEmpty()) {
+            if (signingReady) {
                 signingConfig = signingConfigs.create("upload") {
                     keyAlias = keystoreProperties["keyAlias"] as String
                     keyPassword = keystoreProperties["keyPassword"] as String
@@ -88,12 +190,48 @@ android {
                         "This artifact must never be published or distributed."
                 )
                 signingConfig = signingConfigs.getByName("debug")
-            } else {
+            } else if (buildingRelease) {
+                // Fail closed, with a message that says exactly what is wrong.
+                val problems = buildList {
+                    if (missingSigningKeys.isNotEmpty()) {
+                        add("android/key.properties is missing or incomplete:\n" +
+                            missingSigningKeys.joinToString("\n") { "  - $it" })
+                    }
+                    if (storeFileMissing) {
+                        add("android/key.properties points storeFile at " +
+                            "\"$configuredStoreFile\", which does not exist.")
+                    }
+                }.joinToString("\n")
+
                 throw GradleException(
-                    "Release build requires android/key.properties (keyAlias, keyPassword, " +
-                        "storeFile, storePassword). In CI, materialise it from the " +
-                        "ANDROID_KEYSTORE_BASE64 secret. For a throwaway local smoke build only, " +
-                        "pass -Pallow-debug-signing=true."
+                    "Release signing is not configured, so the release build is refused.\n" +
+                        "$problems\n\n" +
+                        "Create android/key.properties (gitignored) with:\n" +
+                        "  keyAlias=...\n  keyPassword=...\n  storeFile=../upload-keystore.jks\n" +
+                        "  storePassword=...\n" +
+                        "In CI, materialise it from the ANDROID_KEYSTORE_BASE64 secret.\n" +
+                        "For a throwaway local smoke build only, pass -Pallow-debug-signing=true."
+                )
+            }
+            // When the signing configuration is absent and this invocation is
+            // not building a release, the release variant simply carries no
+            // signing config. A later release build re-evaluates this script
+            // and refuses — so the failure is still closed, it just happens at
+            // the point where it matters.
+
+            // Certificate pins are mandatory for a production release, and
+            // the check belongs here rather than only at app start: a release
+            // that ships without pinning has to be caught in CI, not on a
+            // user's phone.
+            if (buildingRelease && pinsMissing.isNotEmpty()) {
+                throw GradleException(
+                    "Certificate pinning is not configured for this production " +
+                        "release, so the build is refused.\n" +
+                        pinsMissing.joinToString("\n") { "  - $it" } +
+                        "\n\nThe runtime guard in " +
+                        "lib/core/network/certificate_pinning.dart would " +
+                        "refuse to start the app anyway; failing the build " +
+                        "here means the mistake is caught before it ships."
                 )
             }
 
