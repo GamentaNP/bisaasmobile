@@ -2,7 +2,9 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
+import '../../../../core/network/pagination.dart';
 import '../models/library_dto.dart';
 
 /// Server-verified routes (php artisan route:list --path=api/v1 in C:\laragon\www\bisaas):
@@ -27,7 +29,9 @@ class LibraryRemoteDataSource {
   Future<List<LibraryCategoryDto>> getCategories() async {
     final res = await _dio.get<Map<String, dynamic>>('/library/categories');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     // Tolerant: data may be List directly or envelope
     final data = body['data'];
     if (data is List) {
@@ -43,66 +47,64 @@ class LibraryRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (envelope.data ?? []).map(LibraryCategoryDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 
-  // ── Files (paginated) ───────────────────────────────────────────────────
+  // ── Files (cursor paginated) ───────────────────────────────────────────
 
-  Future<({List<LibraryFileDto> items, Pagination? pagination})> getFiles({
+  /// `GET /library/files` is one of the four collections that moved to the
+  /// cursor shape (`MOBILE_API_INTEGRATION_GUIDE.md` §4.1). The server already
+  /// defaults to it, so sending `?page=2` returns page one forever — the
+  /// client walks `next_cursor` instead.
+  ///
+  /// Filters are sent with the canonical `filter[...]` grammar; the server
+  /// also honours the bare spelling, but the bracket form is the documented
+  /// one and is rejected loudly when the key is unknown
+  /// (`RejectsUnknownListParams`).
+  ///
+  /// One behavioural note from the contract: the cursor path walks the
+  /// deterministic `average_rating → download_count → id` order, while the
+  /// text-relevance ordering of a `?q=` search is an offset-shape feature.
+  /// A search therefore still returns relevance-ranked rows on the first page.
+  Future<Page<LibraryFileDto>> getFiles({
     int? categoryId,
     String? query,
     String? fileType,
     String? visibility,
     double? minRating,
     int? maxCost,
-    int page = 1,
+    String? cursor,
     int perPage = 20,
   }) async {
-    final qp = <String, dynamic>{
-      if (categoryId != null) 'category_id': categoryId,
-      if (query != null && query.isNotEmpty) 'q': query,
-      if (fileType != null && fileType.isNotEmpty) 'file_type': fileType,
-      if (visibility != null && visibility.isNotEmpty) 'visibility': visibility,
-      if (minRating != null) 'min_rating': minRating,
-      if (maxCost != null) 'max_cost': maxCost,
-      'page': page,
-      'per_page': perPage,
-    };
-    final res = await _dio.get<Map<String, dynamic>>('/library/files', queryParameters: qp);
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/library/files',
+      queryParameters: cursorQuery(
+        cursor: cursor,
+        perPage: perPage,
+        extra: <String, dynamic>{
+          if (categoryId != null) 'filter[category_id]': categoryId,
+          if (query != null && query.isNotEmpty) 'filter[search]': query,
+          if (fileType != null && fileType.isNotEmpty) 'filter[file_type]': fileType,
+          if (visibility != null && visibility.isNotEmpty) 'filter[visibility]': visibility,
+          if (minRating != null) 'filter[min_rating]': minRating,
+          if (maxCost != null) 'filter[max_cost]': maxCost,
+        },
+      ),
+    );
     final body = res.data;
-    if (body == null) return (items: <LibraryFileDto>[], pagination: null);
-
-    Pagination? pagination;
-    final pagRaw = body['pagination'];
-    if (pagRaw is Map<String, dynamic>) {
-      pagination = Pagination.fromJson(pagRaw);
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty library files response',
+        endpoint: '/library/files',
+      );
     }
-
-    var raw = <Map<String, dynamic>>[];
-    final data = body['data'];
-    if (data is Map<String, dynamic> && data['items'] is List) {
-      raw = (data['items'] as List).cast<Map<String, dynamic>>();
-    } else if (data is List) {
-      raw = data.cast<Map<String, dynamic>>();
-    } else {
-      // Try envelope fallback
-      try {
-        final env = ApiResponse.fromJson(body, (json) {
-          if (json is Map<String, dynamic> && json['items'] is List) {
-            return (json['items'] as List).cast<Map<String, dynamic>>();
-          }
-          if (json is List) return (json as List).cast<Map<String, dynamic>>();
-          return <Map<String, dynamic>>[];
-        });
-        raw = env.data ?? [];
-        pagination = env.pagination ?? pagination;
-      } catch (_) {}
-    }
-
-    final items = raw.map(LibraryFileDto.fromJson).toList();
-    return (items: items, pagination: pagination);
+    return parsePage<LibraryFileDto>(
+      body,
+      LibraryFileDto.fromJson,
+      endpoint: '/library/files',
+    );
   }
 
   // ── File detail ─────────────────────────────────────────────────────────
@@ -282,7 +284,9 @@ class LibraryRemoteDataSource {
   Future<List<LibraryFileDto>> getTrending() async {
     final res = await _dio.get<Map<String, dynamic>>('/library/trending');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return data.cast<Map<String, dynamic>>().map(LibraryFileDto.fromJson).toList();
@@ -299,8 +303,8 @@ class LibraryRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (env.data ?? []).map(LibraryFileDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 
@@ -309,7 +313,9 @@ class LibraryRemoteDataSource {
   Future<List<LibraryFileDto>> getRecommendations() async {
     final res = await _dio.get<Map<String, dynamic>>('/library/recommendations');
     final body = res.data;
-    if (body == null) return [];
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is List) {
       return data.cast<Map<String, dynamic>>().map(LibraryFileDto.fromJson).toList();
@@ -326,8 +332,8 @@ class LibraryRemoteDataSource {
         return <Map<String, dynamic>>[];
       });
       return (env.data ?? []).map(LibraryFileDto.fromJson).toList();
-    } catch (_) {
-      return [];
+    } catch (e) {
+      throw toApiException(e);
     }
   }
 }

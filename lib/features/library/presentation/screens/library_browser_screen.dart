@@ -31,7 +31,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
     Future.microtask(() {
       final c = ref.read(libraryControllerProvider.notifier);
       c.fetchCategories();
-      c.fetchFiles(page: 1, perPage: 20);
+      c.fetchFiles(perPage: 20);
       c.trending();
       c.recommendations();
     });
@@ -47,20 +47,20 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
     final q = v.trim();
     setState(() => _query = q.toLowerCase());
     // Debounced fetch — immediate for now; could add Timer debouncer
-    ref.read(libraryControllerProvider.notifier).fetchFiles(query: q, page: 1);
+    ref.read(libraryControllerProvider.notifier).fetchFiles(query: q);
   }
 
   void _onCategoryTap(int? categoryId) {
     final notifier = ref.read(libraryControllerProvider.notifier);
     notifier.setCategory(categoryId);
-    notifier.fetchFiles(categoryId: categoryId, page: 1, query: _query);
+    notifier.fetchFiles(categoryId: categoryId, query: _query);
   }
 
   Future<void> _onRefresh() async {
     final n = ref.read(libraryControllerProvider.notifier);
     await Future.wait([
       n.fetchCategories(),
-      n.fetchFiles(page: 1, query: _query.isEmpty ? null : _query),
+      n.fetchFiles(query: _query.isEmpty ? null : _query),
       n.trending(),
       n.recommendations(),
     ]);
@@ -172,7 +172,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ErrorView(message: state.filesError!, onRetry: () => ref.read(libraryControllerProvider.notifier).fetchFiles(page: 1)),
+                  child: ErrorView(message: state.filesError!, onRetry: () => ref.read(libraryControllerProvider.notifier).fetchFiles()),
                 ),
               )
             else if (state.files.isEmpty && !state.isFilesLoading)
@@ -214,7 +214,9 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                 ),
               ),
 
-            // Load more / pagination hint
+            // Load more / pagination hint.
+            // The list is cursor-paginated, so "next" is the server's
+            // `next_cursor`, not a page number.
             if (state.filesPagination != null && (state.filesPagination!.hasMore ?? false))
               SliverToBoxAdapter(
                 child: Padding(
@@ -223,8 +225,8 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                     onPressed: state.isFilesLoading
                         ? null
                         : () {
-                            final next = (state.filesPagination!.currentPage ?? 1) + 1;
-                            ref.read(libraryControllerProvider.notifier).fetchFiles(page: next, append: true);
+                            final next = state.filesPagination?.nextCursor;
+                            ref.read(libraryControllerProvider.notifier).fetchFiles(cursor: next, append: true);
                           },
                     icon: const Icon(Icons.expand_more_rounded),
                     label: const Text('Load more'),

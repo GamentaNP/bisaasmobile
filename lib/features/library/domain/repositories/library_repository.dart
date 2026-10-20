@@ -5,8 +5,12 @@ import '../entities/library.dart';
 abstract class LibraryRepository {
   Future<List<LibraryCategory>> getCategories();
 
-  /// Paginated file list — filters are additive, all optional.
+  /// Cursor-paginated file list — filters are additive, all optional.
   /// Returns items + pagination so callers can render "load more".
+  ///
+  /// The endpoint is cursor-paginated (`MOBILE_API_INTEGRATION_GUIDE.md` §4.1),
+  /// so the caller passes back the `next_cursor` it was given rather than a
+  /// page number.
   Future<Paginated<LibraryFile>> getFiles({
     int? categoryId,
     String? query,
@@ -14,7 +18,7 @@ abstract class LibraryRepository {
     String? visibility,
     double? minRating,
     int? maxCost,
-    int page,
+    String? cursor,
     int perPage,
   });
 

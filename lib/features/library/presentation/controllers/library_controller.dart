@@ -255,6 +255,10 @@ class LibraryController extends Notifier<LibraryState> {
 
   // ── Files (with filters) ────────────────────────────────────────────────
 
+  /// Loads a page of the file list.
+  ///
+  /// The endpoint is cursor-paginated, so [cursor] is the `next_cursor` the
+  /// server handed out — there is no page number to jump to.
   Future<void> fetchFiles({
     String? query,
     int? categoryId,
@@ -262,7 +266,7 @@ class LibraryController extends Notifier<LibraryState> {
     String? visibility,
     double? minRating,
     int? maxCost,
-    int page = 1,
+    String? cursor,
     int perPage = 20,
     bool append = false,
   }) async {
@@ -283,7 +287,7 @@ class LibraryController extends Notifier<LibraryState> {
         visibility: visibility,
         minRating: minRating,
         maxCost: maxCost,
-        page: page,
+        cursor: cursor,
         perPage: perPage,
       );
       final newFiles = append ? [...state.files, ...paginated.items] : paginated.items;
@@ -299,7 +303,8 @@ class LibraryController extends Notifier<LibraryState> {
     }
   }
 
-  Future<void> refreshFiles() => fetchFiles(page: 1, perPage: 20);
+  /// Reloads the first page, dropping any cursor.
+  Future<void> refreshFiles() => fetchFiles(perPage: 20);
 
   // ── File detail ─────────────────────────────────────────────────────────
 

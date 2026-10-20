@@ -21,7 +21,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
     String? visibility,
     double? minRating,
     int? maxCost,
-    int page = 1,
+    String? cursor,
     int perPage = 20,
   }) async {
     final res = await _remote.getFiles(
@@ -31,7 +31,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
       visibility: visibility,
       minRating: minRating,
       maxCost: maxCost,
-      page: page,
+      cursor: cursor,
       perPage: perPage,
     );
     return Paginated<LibraryFile>(
