@@ -37,8 +37,13 @@ class ApiResponse<T> {
 }
 
 /// Offset-or-cursor pagination — check endpoint's OpenAPI entry.
+///
+/// The discriminator is the `type` key the server publishes (`"offset"` /
+/// `"cursor"`); when it is absent the shape is inferred from which fields are
+/// present. See `MOBILE_API_INTEGRATION_GUIDE.md` §4.
 class Pagination {
   const Pagination({
+    this.type,
     this.total,
     this.perPage,
     this.currentPage,
@@ -50,16 +55,22 @@ class Pagination {
   });
 
   factory Pagination.fromJson(Map<String, dynamic> j) => Pagination(
-        total: j['total'] as int?,
-        perPage: j['per_page'] as int?,
-        currentPage: j['current_page'] as int?,
-        totalPages: j['total_pages'] as int?,
+        type: j['type'] as String?,
+        total: _asInt(j['total']),
+        perPage: _asInt(j['per_page']),
+        currentPage: _asInt(j['current_page']),
+        totalPages: _asInt(j['total_pages']),
         hasMore: j['has_more'] as bool?,
-        count: j['count'] as int?,
-        nextCursor: j['next_cursor'] as String?,
-        prevCursor: j['prev_cursor'] as String?,
+        count: _asInt(j['count']),
+        // `next_cursor` is opaque for the cursor-paginated endpoints (a base64
+        // blob) but a plain integer id on the coin-ledger endpoint, which
+        // declares `cursor` as an integer parameter. Both are round-tripped
+        // verbatim; nothing here parses them.
+        nextCursor: _asCursor(j['next_cursor']),
+        prevCursor: _asCursor(j['prev_cursor']),
       );
 
+  final String? type;
   final int? total;
   final int? perPage;
   final int? currentPage;
@@ -68,4 +79,22 @@ class Pagination {
   final int? count;
   final String? nextCursor;
   final String? prevCursor;
+
+  /// True when the server described this page as cursor-shaped.
+  bool get isCursor => type == 'cursor' || nextCursor != null;
+
+  static int? _asInt(Object? v) {
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
+  static String? _asCursor(Object? v) {
+    if (v == null) return null;
+    if (v is String) return v.isEmpty ? null : v;
+    if (v is int) return '$v';
+    if (v is num) return v.toString();
+    return null;
+  }
 }

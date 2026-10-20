@@ -103,5 +103,7 @@ class ApiException implements Exception {
 
   @override
   String toString() =>
-      'ApiException($statusCode $code: $message${requestId != null ? " req=$requestId" : ""})';
+      // The **raw** code, not the Dart enum name: the wire value is what the
+      // server sent and what a support ticket correlates on.
+      'ApiException($statusCode ${code.raw}: $message${requestId != null ? " req=$requestId" : ""})';
 }
