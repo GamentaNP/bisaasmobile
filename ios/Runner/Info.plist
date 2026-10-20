@@ -37,6 +37,32 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- Security identifiers (deployment verification).
+
+	     ITSAppUsesNonExemptEncryption=false declares that the app does not use
+	     exempt encryption, so the store does not gate every build on an
+	     export-compliance questionnaire. The app talks to one HTTPS API and
+	     stores its bearer PAT in the iOS keychain.
+
+	     UIFileSharingEnabled / LSSupportsOpeningDocumentsInPlace stay off: the
+	     app has no user documents to expose through the Files app, and
+	     leaving them on would publish the local cache directory to anyone
+	     with the device.
+
+	     NSAppTransportSecurity is declared explicitly with no exceptions so
+	     the ATS posture is visible in the plist rather than implied by its
+	     absence. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIFileSharingEnabled</key>
+	<false/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSFaceIDUsageDescription</key>

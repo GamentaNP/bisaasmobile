@@ -57,9 +57,11 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:dio/io.dart';
 
+import '../../app/config/env.dart';
+
 abstract final class CertificatePinning {
   // ---------------------------------------------------------------------------
-  // Compile-time injection � populate via --dart-define in CI/CD.
+  // Compile-time injection — populate via --dart-define in CI/CD.
   // Up to 3 pins supported (primary + 2 backup/rotation slots).
   // ---------------------------------------------------------------------------
   static const _pin1 = String.fromEnvironment('CERT_PIN_1', defaultValue: '');
@@ -73,23 +75,80 @@ abstract final class CertificatePinning {
         if (_pin3.isNotEmpty) _pin3,
       ];
 
+  /// Whether this build has at least one usable pin.
+  ///
+  /// A pin that is still the `__REPLACE_…__` placeholder is **not** usable:
+  /// treating it as configured would let a release ship with pinning that
+  /// can never match a real certificate.
+  static bool get pinsConfigured {
+    final pins = prodPins;
+    if (pins.isEmpty) return false;
+    return pins.every((p) => !_isPlaceholder(p));
+  }
+
+  /// Whether a pin value is a deployment placeholder rather than a real pin.
+  static bool _isPlaceholder(String pin) {
+    final upper = pin.toUpperCase();
+    return upper.contains('REPLACE') ||
+        upper.contains('PLACEHOLDER') ||
+        upper.contains('TODO') ||
+        upper.contains('XXXX');
+  }
+
+  /// The hosts this build must never relax TLS for.
+  ///
+  /// The dev certificate shim (`DioClient`) allows a self-signed certificate
+  /// for the configured base URL's host. That is right for `bisaas.test` and
+  /// wrong for `bisaas.com`: a debug build pointed at production must not
+  /// accept a forged certificate for it.
+  static const productionHosts = <String>{
+    'bisaas.com',
+    'www.bisaas.com',
+    'staging.bisaas.com',
+  };
+
   /// Applies pinning to [adapter] for [host].
   ///
-  /// - Dev hosts (`bisaas.test`, `10.0.2.2`) ? no-op (DioClient already
+  /// - Dev hosts (`bisaas.test`, `10.0.2.2`) → no-op (DioClient already
   ///   uses `badCertificateCallback` for those).
-  /// - No pins configured ? standard chain validation only.
-  /// - Pins configured ? fail-closed: reject any cert not in [prodPins].
-  static void apply(IOHttpClientAdapter adapter, {required String host}) {
-    if (host.contains('bisaas.test') || host.contains('10.0.2.2')) return;
-    final pins = prodPins;
-    if (pins.isEmpty) return; // no pins ? standard validation only
+  /// - No pins configured in a **production** build → **throws**. A release
+  ///   that ships without pinning is silently weaker than the one that was
+  ///   reviewed, so the app refuses to talk to the API at all rather than
+  ///   quietly degrading. Staging keeps standard chain validation, because a
+  ///   staging box is not the thing being defended.
+  /// - Pins configured → fail-closed: reject any cert not in [prodPins].
+  static void apply(
+    IOHttpClientAdapter adapter, {
+    required String host,
+    List<String>? pins,
+  }) {
+    if (_isDevHost(host)) return;
+
+    final effective = pins ?? prodPins;
+    final usable = effective.where((p) => !_isPlaceholder(p)).toList();
+
+    if (usable.isEmpty) {
+      if (currentEnv().isProd) {
+        throw StateError(
+          'Certificate pinning is not configured for this production build. '
+          'Pass the pins via --dart-define-from-file=dart_defines/production.json '
+          '(CERT_PIN_1 at minimum). Refusing to start: an unpinned release is '
+          'not the artefact that was reviewed.',
+        );
+      }
+      return; // staging: standard validation only
+    }
 
     adapter.validateCertificate = (cert, h, port) {
       final pin = pinFor(cert);
-      // Unknown/uncomputable cert ? reject. Fail closed.
-      return pin != null && pins.contains(pin);
+      // Unknown/uncomputable cert → reject. Fail closed.
+      return pin != null && usable.contains(pin);
     };
   }
+
+  /// Whether [host] is one of the local development hosts.
+  static bool _isDevHost(String host) =>
+      host.contains('bisaas.test') || host.contains('10.0.2.2');
 
   /// Returns `sha256/<base64 digest>` of the leaf certificate DER, or null.
   static String? pinFor(X509Certificate? cert) {

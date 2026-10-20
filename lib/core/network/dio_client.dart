@@ -164,7 +164,13 @@ class DioClient {
         'localhost',
         '127.0.0.1',
         Uri.parse(ApiConfig.baseUrl).host,
-      }..removeWhere((h) => h.isEmpty);
+      }
+        // A production host is never a development host, even when a debug
+        // build is pointed at it with `--dart-define=API_HOST=…`. Accepting a
+        // self-signed certificate for `bisaas.com` would hand anyone who can
+        // intercept the connection a working MITM against the live API.
+        ..removeWhere((h) => CertificatePinning.productionHosts.contains(h))
+        ..removeWhere((h) => h.isEmpty);
 
   /// Private LAN addresses are allowed so a physical device on Wi-Fi can reach
   /// the Laragon host; everything else is rejected even in debug.

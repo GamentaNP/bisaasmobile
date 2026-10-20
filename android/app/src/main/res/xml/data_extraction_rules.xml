@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Backup / transfer rules (security plan W2.6, deployment verification).
+
+  `android:allowBackup="false"` already disables cloud backup and adb backup,
+  but on API 31+ a device-to-device transfer can still carry some app data on
+  OEM builds that ignore the flag. The app stores a bearer PAT in
+  flutter_secure_storage and cached quiz answers on disk, so neither the
+  cloud backup nor the device-transfer path may carry anything.
+
+  Everything is excluded explicitly rather than relying on the manifest flag
+  alone: the manifest flag is the intent, this file is the enforcement.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>

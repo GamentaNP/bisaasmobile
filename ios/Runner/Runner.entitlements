@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Sign in with Apple.
+
+	  The `sign_in_with_apple` plugin needs this entitlement to return an
+	  identity token on iOS. Without it the Apple button fails at runtime
+	  with an authorization error even though the app builds fine — which is
+	  exactly the kind of failure that only shows up on a device.
+
+	  Enabling it also requires the "Sign in with Apple" capability on the
+	  App ID in the Apple Developer portal, and `APPLE_CLIENT_ID` /
+	  `APPLE_REDIRECT_URI` compiled in (see AGENTS.md → release
+	  configuration).
+	-->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+</dict>
+</plist>
