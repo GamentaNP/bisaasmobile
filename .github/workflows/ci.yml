@@ -27,6 +27,27 @@ jobs:
       # catches it. Non-zero exit fails the build.
       - run: dart run tool/arb_coverage.dart
 
+  # The device-test harness is its own package (it needs `integration_test`,
+  # whose Android plugin would otherwise pull Espresso into the release AAB).
+  # It is analyzed here so a broken device test cannot land silently; the
+  # tests themselves need a device and run from the `device-tests` workflow.
+  device-tests-analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.2'
+          cache: true
+      - run: flutter pub get
+      - name: Resolve the device-test package
+        working-directory: device_tests
+        run: flutter pub get
+      - name: Analyze the device tests
+        working-directory: device_tests
+        run: flutter analyze
+
   build-android:
     needs: analyze-test
     runs-on: ubuntu-latest

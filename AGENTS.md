@@ -22,12 +22,32 @@ If a rule conflicts between `bisaas` and `bisaasmobile`, `bisaas` wins for API c
 - **Envelope:** `{success, data, message, pagination, timestamp, api_version}` — see `docs/MOBILE_API_INTEGRATION_GUIDE.md:73` and `lib/core/network/api_response.dart:12`.
 - **Error codes:** `ApiErrorCode` registry (`App\Http\Support\ApiErrorCode` on server, mirrored in `lib/core/network/api_exception.dart:8`). Treat unknowns as generic.
 - **Auth:** Bearer PAT from `POST /api/v1/auth/login` (or register/social). Stored ONLY in `flutter_secure_storage` via `lib/core/security/token_manager.dart:16`, never SharedPreferences.
+- **Social login:** the client obtains an **id_token** from the platform SDK and posts it to `POST /auth/social/google` or `POST /auth/social/apple`. The server verifies it with Socialite in stateless mode. The client never sees a provider access token and never holds a client secret.
 - **Refresh:** Proactive when `expires_at < 7 days` → `POST /api/v1/auth/refresh` with `X-Device-Name` (single-use rotation; persist new token atomically).
-- **Idempotency:** `Idempotency-Key: <uuid>` on POSTs that must not double-fire (attempt start, purchases). Client retries must reuse the same key.
-- **Streaming:** Day-one client uses **non-streaming** AI endpoints (`POST /learning/tutor`). SSE (`/learning/tutor/stream`) is web-only until mobile demand is proven.
+- **Idempotency:** `Idempotency-Key: <uuid>` on POSTs that must not double-fire (attempt start, answer, completion, purchases, lifeline use/ad-unlock, referral claim). Client retries must reuse the same key.
+- **Streaming:** Day-one client uses **non-streaming** AI endpoints (`POST /learning/tutor`, `POST /ai/calculator-assist`). SSE (`/learning/tutor/stream`) is web-only until mobile demand is proven.
 - **Push:** Register FCM after login → `POST /api/v1/device-tokens {token, platform}`; delete on logout.
+- **Cursor pagination:** four question-family collections are cursor-shaped (`GET /quiz/questions`, `GET /quiz/courses/{id}/questions`, `GET /quiz/attempts/history`, `GET /library/files`). The server defaults to cursor, so **never send `page` to them** — walk `next_cursor` instead (`lib/core/network/pagination.dart`). Offset on those routes is deprecated with a `Mon, 07 Mar 2027` sunset.
+- **BYOK:** `GET/POST /ai-keys`, `DELETE /ai-keys/{key}`. Secrets are write-only — every response carries only a masked `••••last4` preview.
+- **Own AI usage:** `GET /me/ai-usage?period=7d|30d|90d`, `GET /me/ai-usage/tutor-sessions`, `GET /economy/wallet/categories`, `GET /quiz/game/report-card/history`. **Units and feature names only** — never internal USD cost.
 
 Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` and OpenAPI at `GET /api/v1/openapi.json` + `/api/v1/quiz/openapi.json`.
+
+### Failure contract — a failure is never an empty list
+
+A data source **throws** on a transport error, a non-2xx status, or a body it
+does not understand. It may only return an empty collection when the server
+actually published zero rows. The helpers that enforce this live in
+`lib/core/network/`:
+
+| File | What it provides |
+|---|---|
+| `api_failure.dart` | `toApiException(Object)` — any caught error becomes a typed `ApiException` carrying the server's frozen `error.code`; `ContractViolation` for a 2xx body that does not match the documented shape. |
+| `envelope.dart` | `requireDataMap` / `requireDataList` / `requireCollection` — read `data` out of the envelope or throw. `idempotencyHeader` / `deviceNameHeader`. |
+| `pagination.dart` | `Page<T>`, `parsePage`, `cursorQuery`, `collectAllPages` — the one place that knows the cursor walk. |
+
+A controller catches the throw and renders an error **with a retry**; it must
+never convert the failure into "you have no rows".
 
 ## Local backend reference
 
@@ -40,6 +60,26 @@ Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` a
 Dart ^3.13.2 / Flutter >=3.27.0 / Riverpod + go_router + Dio + Drift + flutter_secure_storage. Run `flutter pub get` after any pubspec edit.
 
 **Codegen:** the *only* generated file is `lib/core/storage/database/app_database.g.dart` (Drift). Run `dart run build_runner build --delete-conflicting-outputs` when touching the Drift schema in `app_database.dart`, and nothing else. The `freezed` / `json_serializable` / `riverpod_generator` chain was removed on 2026-09-28 as dead weight — there are zero `@freezed`, `@JsonSerializable` and `@riverpod` annotations in the tree, every DTO hand-writes `fromJson`, and every provider is hand-written. Do not reintroduce it without a real reason; if you do add codegen, also add the matching `pubspec` deps and a `build.yaml`.
+
+**Testing — three layers, all of them run in CI:**
+
+| Layer | Where | What it proves |
+|---|---|---|
+| Unit | `test/**` (mirrors `lib/`) | One layer at a time: DTO parsing, controller state, interceptor behaviour. |
+| Integration | `test/integration/` | The **whole client stack** — real `Dio` → interceptors → `HttpClientAdapter` → envelope → DTO → domain → repository → controller — against a scripted transport (`test/integration/support/fake_api.dart`). This is the layer where the production contract bugs lived, so it is the layer that matters most. |
+| Device | `device_tests/` (its own package) | On-device smoke tests: engine, plugins, platform channels, real navigation. |
+
+`device_tests/` is a **separate package** on purpose: `integration_test` is an
+Android plugin whose Gradle module pulls `androidx.test:runner`,
+`androidx.test:rules` and `espresso-core` in as **api** dependencies, so an
+app that depends on it ships Espresso inside the release AAB. The app's own
+`pubspec.yaml` therefore does not depend on `integration_test`; the device
+tests depend on the app by path and get the plugin for themselves.
+
+```bash
+cd device_tests && flutter pub get && flutter analyze
+cd device_tests && flutter test integration_test -d DEVICE_ID
+```
 
 **Entry points:** `lib/main.dart` is the only entry point. Environment is selected with `--dart-define=ENV=dev|staging|prod`, not by separate `main_*.dart` files (the byte-identical `main_dev`/`main_prod`/`main_staging` copies were deleted as misleading on 2026-09-28).
 
@@ -80,6 +120,22 @@ flutter run -d windows --dart-define=ENV=dev
 flutter run -d android --dart-define=ENV=dev       # needs Android SDK (see below)
 ```
 
+### Release configuration — the defines a release build needs
+
+A release build is refused unless the signing material and the certificate
+pins are both present. Both fail **closed**, and both are checked in CI
+(`test/core/security/deployment_verification_test.dart`).
+
+| Define | Source | Required for |
+|---|---|---|
+| `CERT_PIN_1` (+ `CERT_PIN_2` backup) | `dart_defines/production.json` | Any non-dev build. A production build with no usable pin is refused **twice**: the Gradle script fails the build (so CI catches it), and the runtime refuses to start (so a device cannot run an unpinned release). `lib/core/network/certificate_pinning.dart`, `android/app/build.gradle.kts`. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_SERVER_CLIENT_ID` | `--dart-define` | Google sign-in. Without the *server* client id the SDK issues no `id_token` and the server answers `AUTH_SOCIAL_FAILED`. |
+| `APPLE_CLIENT_ID` / `APPLE_REDIRECT_URI` | `--dart-define` | Apple sign-in. The redirect URI is required on Android and web. On iOS the **"Sign in with Apple" capability** must also be enabled on the App ID in the Apple Developer portal, and `ios/Runner/Runner.entitlements` (already wired via `CODE_SIGN_ENTITLEMENTS`) must stay in the project. |
+| `ENV` | `--dart-define=ENV=prod` | Selects the flavor. The dev certificate shim is compiled out of any non-debug build, and a production host is never in the permissive host set. |
+
+Social buttons whose provider is not configured are **hidden**, not shown
+disabled — a button that is guaranteed to fail is worse than no button.
+
 Wiring notes (verified 2026-09-27 by an on-device run):
 
 - **Cleartext is blocked in EVERY build — including debug.** The claim that
@@ -89,6 +145,10 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   `res/xml/network_security_config.xml` has `base-config cleartextTrafficPermitted="false"`, so
   `API_HOST=http://…` will not work anywhere. Release builds additionally keep strict TLS plus
   optional pinning (`CertificatePinning.prodPins`).
+- **The dev certificate shim never covers a production host.** `DioClient._devCertificateHosts()`
+  removes `CertificatePinning.productionHosts` (`bisaas.com`, `www.bisaas.com`,
+  `staging.bisaas.com`) from the permissive set, so a *debug* build pointed at production with
+  `--dart-define=API_HOST=https://bisaas.com` still rejects a forged certificate for it.
 - **Reaching a local Laragon backend from a device — use HTTPS over an adb tunnel.** `bisaas.test`
   does not resolve on a phone. Laragon's vhost
   (`C:\laragon\etc\apache2\sites-enabled\auto.bisaas.test.conf`) already has `localhost` in
@@ -121,6 +181,30 @@ Wiring notes (verified 2026-09-27 by an on-device run):
 - **Token refresh:** `RefreshInterceptor` is registered on the Dio chain (401 → single-use
   rotation → replay with `skipAuthRefresh` guard); `RetryInterceptor` never replays
   non-idempotent POSTs unless an `Idempotency-Key` header is present.
+- **Release signing fails closed.** `android/app/build.gradle.kts` refuses a **release**
+  build when `android/key.properties` is missing or incomplete, and names the missing keys.
+  The check is gated on the requested Gradle task names (`assembleRelease` / `bundleRelease`)
+  so a **debug** build on a machine with no upload keystore still works — `buildTypes { release
+  { … } }` is evaluated at configuration time for every build, so an ungated throw there
+  would break `flutter run` everywhere.
+- **Release certificate pins are enforced at build time too.** The same Gradle script
+  decodes the `dart-defines` property the Flutter tool passes it and refuses a
+  **production** release that has no usable `CERT_PIN_1`. The runtime guard
+  (`lib/core/network/certificate_pinning.dart`) already refuses to start such a build; this
+  means the mistake is caught in CI rather than on a user's phone.
+- **Backup and transfer are blocked.** `android:allowBackup="false"` plus
+  `res/xml/backup_rules.xml` (API 28–30) and `res/xml/data_extraction_rules.xml` (API 31+)
+  exclude everything, so the bearer PAT in `flutter_secure_storage` and the cached quiz
+  answers on disk never leave the device — not even by device-to-device transfer on an OEM
+  build that ignores the manifest flag.
+- **iOS security identifiers** are explicit in `ios/Runner/Info.plist`:
+  `ITSAppUsesNonExemptEncryption=false`, `UIFileSharingEnabled=false`,
+  `LSSupportsOpeningDocumentsInPlace=false`, and an `NSAppTransportSecurity` block with
+  `NSAllowsArbitraryLoads=false` (no exceptions).
+- **Sign in with Apple on iOS** needs `ios/Runner/Runner.entitlements` (the
+  `com.apple.developer.applesignin` entitlement), wired into the three Runner build
+  configurations via `CODE_SIGN_ENTITLEMENTS`. The capability must also be enabled on the
+  App ID in the Apple Developer portal — a build-time setting that cannot be checked in.
 
 ## Android toolchain (Windows 11) — INSTALLED
 
