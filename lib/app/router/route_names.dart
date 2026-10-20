@@ -9,6 +9,7 @@ abstract final class RouteNames {
   static const quiz = 'quiz';
   static const quizAttempt = 'quiz-attempt';
   static const quizResult = 'quiz-result';
+  static const quizFunnel = 'quiz-funnel';
   static const calculator = 'calculator';
   static const calculators = 'calculators';
   static const courses = 'courses';
@@ -18,11 +19,15 @@ abstract final class RouteNames {
   static const eice = 'eice';
   static const psc = 'psc';
   static const social = 'social';
+  static const socialShare = 'social-share';
   static const search = 'search';
   static const notifications = 'notifications';
   static const downloads = 'downloads';
   static const profile = 'profile';
   static const settings = 'settings';
+  // AI — own usage analytics and bring-your-own-key management.
+  static const aiUsage = 'ai-usage';
+  static const aiKeys = 'ai-keys';
   static const achievements = 'achievements';
   static const library = 'library';
   static const libraryDetail = 'library-detail';

@@ -223,6 +223,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => context.push('/privacy'),
           ),
           const Divider(height: 1),
+          const _SectionHeader('AI'),
+          ListTile(
+            leading: const Icon(Icons.insights_rounded),
+            title: const Text('Your AI usage'),
+            subtitle: const Text('What AI used on your behalf, by feature'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () => context.push('/ai/usage'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.key_rounded),
+            title: const Text('Your AI keys'),
+            subtitle: const Text('Run AI features on your own provider quota'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () => context.push('/ai/keys'),
+          ),
+          const Divider(height: 1),
           const _SectionHeader('Account'),
           ListTile(
             leading: const Icon(Icons.logout_rounded),

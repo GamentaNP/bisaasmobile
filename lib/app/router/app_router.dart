@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/security/token_manager.dart';
+import '../../features/ai_settings/presentation/screens/ai_keys_screen.dart';
+import '../../features/ai_settings/presentation/screens/ai_usage_screen.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
@@ -40,6 +42,7 @@ import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/downloads/presentation/screens/downloads_screen.dart';
 import '../../features/psc/presentation/psc_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
+import '../../features/social/presentation/screens/social_share_screen.dart';
 import '../../features/social/presentation/social_screen.dart';
 import '../../features/eice/presentation/eice_screen.dart';
 import '../../features/store/presentation/screens/premium_store_screen.dart';
@@ -61,6 +64,7 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/quiz/presentation/quiz_home_page.dart';
 import '../../features/quiz/presentation/screens/quiz_attempt_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_browser_screen.dart';
+import '../../features/quiz/presentation/screens/quiz_funnel_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_intro_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_result_route.dart';
 import '../../features/quiz/presentation/screens/quiz_review_screen.dart';
@@ -288,6 +292,16 @@ class AppRouter {
         builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
+        path: '/ai/usage',
+        name: RouteNames.aiUsage,
+        builder: (context, state) => const AiUsageScreen(),
+      ),
+      GoRoute(
+        path: '/ai/keys',
+        name: RouteNames.aiKeys,
+        builder: (context, state) => const AiKeysScreen(),
+      ),
+      GoRoute(
         path: '/achievements',
         name: RouteNames.achievements,
         builder: (context, state) => const AchievementsScreen(),
@@ -316,6 +330,11 @@ class AppRouter {
         path: '/learning/reviews',
         name: RouteNames.learningReviews,
         builder: (context, state) => const ReviewsDueScreen(),
+      ),
+      GoRoute(
+        path: '/quiz/funnel',
+        name: RouteNames.quizFunnel,
+        builder: (context, state) => const QuizFunnelScreen(),
       ),
       GoRoute(
         path: '/practice',
@@ -351,6 +370,13 @@ class AppRouter {
       GoRoute(path: '/psc', name: RouteNames.psc, builder: (context, state) => const PscScreen()),
       GoRoute(path: '/rewards', name: RouteNames.rewards, builder: (context, state) => const RewardsScreen()),
       GoRoute(path: '/social', name: RouteNames.social, builder: (context, state) => const SocialScreen()),
+      GoRoute(
+        path: '/social/share/:token',
+        name: RouteNames.socialShare,
+        builder: (context, state) => SocialShareScreen(
+          token: state.pathParameters['token'] ?? '',
+        ),
+      ),
       GoRoute(path: '/economy', name: RouteNames.economy, builder: (context, state) => const EconomyScreen()),
       GoRoute(path: '/economy/wallet', name: RouteNames.economyWallet, builder: (context, state) => const WalletScreen()),
       GoRoute(path: '/economy/shop', name: RouteNames.economyShop, builder: (context, state) => const ShopScreen()),
