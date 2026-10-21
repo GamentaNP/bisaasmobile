@@ -106,41 +106,50 @@ class PracticeRepositoryImpl implements PracticeRepository {
       throw const PracticeDrillException('There are no bookmarks to drill.');
     }
 
-    // The bookmarks endpoint publishes the question *text* but not its answer
-    // options, so a bookmark cannot be rendered as a drill on its own. What
-    // the server CAN do is hand out the same questions again — with their
-    // options — when asked for the category they belong to.
+    // The bookmarks endpoint publishes the question **and its options**, so a
+    // bookmark can be drilled as it is — no borrowing a category and no
+    // re-fetching by id. The attempt is seeded with the bookmarked ids, so
+    // the server grades the questions the user actually bookmarked — not a
+    // random set from the same category.
     //
-    // So the drill is built from the **bookmarked question ids**: for each
-    // category the bookmarks span, the category's questions are fetched (they
-    // carry the options) and the bookmarked ids are picked back out of them.
-    // The attempt is then seeded with those exact ids, so the server grades
-    // the questions the user actually bookmarked — not a random set from the
-    // same category.
+    // A bookmark that arrives without options (an older server, or a
+    // question whose options were stripped) cannot be rendered, so it is
+    // looked up through the category instead. When that also fails, it is
+    // reported rather than silently swapped for an unrelated question.
     final wanted = <int, BookmarkedQuestion>{
       for (final b in bookmarks) b.question.id: b,
     };
 
-    final byCategory = <int?, List<int>>{};
-    for (final id in wanted.keys) {
-      final category = wanted[id]!.question.categoryId;
-      byCategory.putIfAbsent(category, () => <int>[]).add(id);
+    final resolved = <int, PracticeQuestion>{};
+    final needsLookup = <int>[];
+
+    for (final entry in wanted.entries) {
+      final question = entry.value.question;
+      if (question.options.isNotEmpty) {
+        resolved[entry.key] = question;
+      } else {
+        needsLookup.add(entry.key);
+      }
     }
 
-    final resolved = <int, PracticeQuestion>{};
+    if (needsLookup.isNotEmpty) {
+      final byCategory = <int?, List<int>>{};
+      for (final id in needsLookup) {
+        final category = wanted[id]!.question.categoryId;
+        byCategory.putIfAbsent(category, () => <int>[]).add(id);
+      }
 
-    for (final entry in byCategory.entries) {
-      final categoryId = entry.key;
-      final ids = entry.value;
+      for (final entry in byCategory.entries) {
+        final ids = entry.value;
+        final candidates = entry.key == null
+            ? // A bookmark with no category cannot be looked up by category,
+              // so the question text is used as the server's own search.
+              await _findByText(wanted, ids)
+            : await getQuestions(categoryId: entry.key, limit: 200);
 
-      final candidates = categoryId == null
-          ? // A bookmark with no category cannot be looked up by category, so
-            // the question text is used as the server's own search instead.
-            await _findByText(wanted, ids)
-          : await getQuestions(categoryId: categoryId, limit: 200);
-
-      for (final candidate in candidates) {
-        if (ids.contains(candidate.id)) resolved[candidate.id] = candidate;
+        for (final candidate in candidates) {
+          if (ids.contains(candidate.id)) resolved[candidate.id] = candidate;
+        }
       }
     }
 
@@ -151,8 +160,6 @@ class PracticeRepositoryImpl implements PracticeRepository {
       );
     }
 
-    // Keep the server's order, not the bookmark list's, so the drill reads
-    // like a quiz.
     final questions = resolved.values.toList();
     final start = await _remote.startPracticeAttempt(
       questionIds: questions.map((q) => q.id).toList(),
@@ -169,7 +176,7 @@ class PracticeRepositoryImpl implements PracticeRepository {
     );
   }
 
-  /// Looks up uncategorised bookmarks by their question text.
+  /// Looks up bookmarks that arrived without options by their question text.
   ///
   /// `GET /quiz/questions?search=` matches on `question_text`, which is the
   /// one field the bookmarks endpoint does publish.
