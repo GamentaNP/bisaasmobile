@@ -225,12 +225,84 @@ class SharedLinkDto {
   final bool sandboxAvailable;
 }
 
+/// A question in the guest sandbox.
+///
+/// The server publishes the sandbox questions in the same learner-safe shape
+/// the question collection uses (`QuizQuestionResource`): the text, the
+/// options, and **no answer key**. The verdict comes back from the answer
+/// endpoint after the guest has committed.
+class SandboxQuestionDto {
+  const SandboxQuestionDto({
+    required this.id,
+    required this.questionText,
+    this.type,
+    this.options = const [],
+    this.difficulty,
+    this.points = 0,
+  });
+
+  factory SandboxQuestionDto.fromJson(Map<String, dynamic> json) {
+    final options = <SandboxOptionDto>[];
+    final raw = json['options'];
+    if (raw is List) {
+      for (var i = 0; i < raw.length; i++) {
+        final o = raw[i];
+        if (o is Map<String, dynamic>) {
+          options.add(
+            SandboxOptionDto(
+              key: (o['key'] ?? o['value'] ?? o['label'] ?? '$i').toString(),
+              text: (o['text'] ?? o['label'] ?? o['value'] ?? '').toString(),
+            ),
+          );
+        } else if (o is String) {
+          options.add(SandboxOptionDto(key: '$i', text: o));
+        }
+      }
+    }
+
+    return SandboxQuestionDto(
+      id: _toInt(json['id']),
+      questionText: (json['question_text'] ?? json['body'] ?? '').toString(),
+      type: json['type'] as String?,
+      options: options,
+      difficulty: json['difficulty'] as String?,
+      points: _toInt(json['points']),
+    );
+  }
+
+  final int id;
+  final String questionText;
+  final String? type;
+  final List<SandboxOptionDto> options;
+  final String? difficulty;
+  final int points;
+
+  SandboxQuestion toDomain() => SandboxQuestion(
+        id: id,
+        questionText: questionText,
+        type: type,
+        options: options.map((o) => o.toDomain()).toList(),
+        difficulty: difficulty,
+        points: points,
+      );
+}
+
+class SandboxOptionDto {
+  const SandboxOptionDto({required this.key, required this.text});
+
+  final String key;
+  final String text;
+
+  SandboxOption toDomain() => SandboxOption(key: key, text: text);
+}
+
 /// A guest sandbox attempt.
 class SandboxStartDto {
   const SandboxStartDto({
     required this.attemptId,
     required this.guestSessionId,
     this.questionCount = 0,
+    this.questions = const [],
   });
 
   static SandboxStartDto fromJson(Map<String, dynamic> json) {
@@ -238,16 +310,38 @@ class SandboxStartDto {
     if (attemptId == 0) {
       throw const FormatException('Sandbox payload has no attempt id');
     }
+    final questions = <SandboxQuestionDto>[];
+    final raw = json['question_items'];
+    if (raw is List) {
+      for (final q in raw) {
+        if (q is Map<String, dynamic>) {
+          questions.add(SandboxQuestionDto.fromJson(q));
+        }
+      }
+    }
     return SandboxStartDto(
       attemptId: attemptId,
       guestSessionId: _str(json['guest_session_id']),
       questionCount: _toInt(json['questions']),
+      questions: questions,
     );
   }
 
   final int attemptId;
   final String guestSessionId;
+
+  /// How many questions the attempt holds.
   final int questionCount;
+
+  /// The questions themselves, so the guest can be shown what to answer.
+  final List<SandboxQuestionDto> questions;
+
+  SandboxAttempt toDomain() => SandboxAttempt(
+        attemptId: attemptId,
+        guestSessionId: guestSessionId,
+        questionCount: questionCount,
+        questions: questions.map((q) => q.toDomain()).toList(),
+      );
 }
 
 /// The server's verdict on one sandbox answer.

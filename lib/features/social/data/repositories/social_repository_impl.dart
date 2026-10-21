@@ -73,6 +73,7 @@ class SocialRepositoryImpl implements SocialRepository {
       attemptId: dto.attemptId,
       guestSessionId: dto.guestSessionId,
       questionCount: dto.questionCount,
+      questions: dto.questions.map((q) => q.toDomain()).toList(),
     );
   }
 

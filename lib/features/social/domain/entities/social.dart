@@ -5,6 +5,8 @@
 /// decides that a referral "counted", and never mints a reward.
 library;
 
+import 'package:meta/meta.dart';
+
 /// The user's referral dashboard.
 ///
 /// ## Key casing
@@ -211,12 +213,44 @@ class SharedLink {
   }
 }
 
+/// One answer choice of a sandbox question.
+@immutable
+class SandboxOption {
+  const SandboxOption({required this.key, required this.text});
+
+  final String key;
+  final String text;
+}
+
+/// A question the guest is asked to answer.
+@immutable
+class SandboxQuestion {
+  const SandboxQuestion({
+    required this.id,
+    required this.questionText,
+    this.type,
+    this.options = const [],
+    this.difficulty,
+    this.points = 0,
+  });
+
+  final int id;
+  final String questionText;
+  final String? type;
+  final List<SandboxOption> options;
+  final String? difficulty;
+  final int points;
+
+  bool get hasOptions => options.isNotEmpty;
+}
+
 /// A guest sandbox attempt — a playable attempt for a visitor with no account.
 class SandboxAttempt {
   const SandboxAttempt({
     required this.attemptId,
     required this.guestSessionId,
     this.questionCount = 0,
+    this.questions = const [],
   });
 
   final int attemptId;
@@ -224,6 +258,11 @@ class SandboxAttempt {
   /// The client-generated session id the attempt is bound to.
   final String guestSessionId;
   final int questionCount;
+
+  /// The questions the server picked, in the order it picked them.
+  final List<SandboxQuestion> questions;
+
+  bool get isPlayable => questions.isNotEmpty;
 }
 
 /// The server's verdict on one sandbox answer.
