@@ -142,11 +142,25 @@ class StoreController extends Notifier<StoreState> {
 
   String _msg(Object e) => e.toString();
 
-  Future<void> fetchCatalog() async {
+  /// Loads a page of the catalogue.
+  ///
+  /// `GET /store/assets` is cursor-paginated, so the first page is not the
+  /// whole catalogue. Pass the cursor back to append the rest.
+  Future<void> fetchCatalog({String? cursor, bool append = false}) async {
     state = state.copyWith(isCatalogLoading: true, catalogError: null);
     try {
-      final c = await _repo.getAssets();
-      state = state.copyWith(catalog: c, isCatalogLoading: false);
+      final page = await _repo.getAssets(cursor: cursor);
+      final assets = append
+          ? [...state.catalog?.assets ?? const <StoreAsset>[], ...page.items]
+          : page.items;
+      state = state.copyWith(
+        catalog: StoreCatalog(
+          assets: assets,
+          hasMore: page.hasMore,
+          nextCursor: page.nextCursor,
+        ),
+        isCatalogLoading: false,
+      );
     } catch (e, st) {
       AppLogger.w('store fetchCatalog failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
@@ -240,7 +254,17 @@ class StoreController extends Notifier<StoreState> {
 
 final storeControllerProvider = NotifierProvider<StoreController, StoreState>(StoreController.new);
 
+/// The first page of the catalogue, for surfaces that only need a read.
+///
+/// The endpoint is cursor-paginated, so this is the **first page**, not the
+/// whole catalogue. The store screen uses the controller instead, because it
+/// can walk the pages.
 final storeCatalogProvider = FutureProvider<StoreCatalog>((ref) async {
   final repo = ref.watch(storeRepositoryProvider);
-  return repo.getAssets();
+  final page = await repo.getAssets();
+  return StoreCatalog(
+    assets: page.items,
+    hasMore: page.hasMore,
+    nextCursor: page.nextCursor,
+  );
 });

@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
@@ -401,9 +403,35 @@ Future<void> _shareResult(
   final pct = (accuracy * 100).round();
   final title = quizState.session?.title ?? 'CivilCal Quiz';
   final grade = pct >= 80 ? 'Excellent' : pct >= 50 ? 'Good Job' : 'Keep Practicing';
-  final msg = 'I scored $correct/$totalQ ($pct%) on "$title" — $grade! '
+  final clientCopy = 'I scored $correct/$totalQ ($pct%) on "$title" — $grade! '
       'XP +$xpEarned · Coins +$coinsEarned '
       'via CivilCal (BiSaaS). Try: https://bisaas.com';
+
+  // Prefer the server's own copy. The share line makes a claim about what
+  // the user achieved, and the server is the only party that has reviewed
+  // the wording — the client's fallback is used only when the server
+  // publishes no proof.
+  var msg = clientCopy;
+  // The proof endpoint takes a numeric subject id.
+  final courseId = int.tryParse(quizState.session?.id ?? '');
+  if (courseId != null) {
+    try {
+      // The screen is a plain StatelessWidget, so the container is read from
+      // the context rather than through a WidgetRef.
+      final container = ProviderScope.containerOf(context, listen: false);
+      final proof = await container.read(
+        socialProofProvider((subject: 'course', id: courseId)).future,
+      );
+      final serverCopy = proof?.shareText;
+      if (serverCopy != null && serverCopy.trim().isNotEmpty) {
+        msg = serverCopy;
+      }
+    } catch (e) {
+      // The proof is an enhancement, not a precondition for sharing.
+      AppLogger.w('Share proof unavailable: $e');
+    }
+  }
+
   try {
     AppLogger.i('Share quiz result $pct% $title');
     await SharePlus.instance.share(ShareParams(text: msg, subject: 'My CivilCal Result — $title'));

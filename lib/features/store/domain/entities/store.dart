@@ -1,8 +1,12 @@
 import 'package:meta/meta.dart';
 
 /// Pure Dart store entities — premium assets, wardrobe, market.
-/// All price/ownership is server-authoritative; client never invents.
-/// Until WO-3 ships, data is local mock + isDegraded flag (beta placeholder).
+/// All price/ownership is server-authoritative; the client never invents.
+///
+/// The store endpoints are live: `GET /store/assets` is cursor-paginated and
+/// every row is a real premium asset. The "local mock + beta placeholder" mode
+/// this file used to describe was removed on 2026-10-20 — it was hiding a
+/// working catalogue behind a fake degraded state.
 @immutable
 class StoreAsset {
   const StoreAsset({
@@ -47,10 +51,9 @@ class WardrobeSlot {
 
 @immutable
 class Wardrobe {
-  const Wardrobe({required this.slots, this.isDegraded = false});
+  const Wardrobe({required this.slots});
 
   final List<WardrobeSlot> slots;
-  final bool isDegraded;
 
   StoreAsset? equippedIn(String slot) =>
       slots.where((s) => s.slot == slot).map((s) => s.equippedAsset).firstOrNull;
@@ -83,7 +86,6 @@ class StorePurchaseResult {
     this.coinsSpent = 0,
     this.newBalance,
     this.message,
-    this.isDegraded = false,
   });
 
   final bool success;
@@ -91,18 +93,24 @@ class StorePurchaseResult {
   final int coinsSpent;
   final int? newBalance;
   final String? message;
-  final bool isDegraded;
 }
 
+/// A page of the catalogue.
 @immutable
 class StoreCatalog {
   const StoreCatalog({
     required this.assets,
-    this.isDegraded = false,
+    this.hasMore = false,
+    this.nextCursor,
   });
 
   final List<StoreAsset> assets;
-  final bool isDegraded;
+
+  /// Whether the server has more pages after this one.
+  final bool hasMore;
+
+  /// The opaque cursor for the next page.
+  final String? nextCursor;
 
   bool get isEmpty => assets.isEmpty;
 

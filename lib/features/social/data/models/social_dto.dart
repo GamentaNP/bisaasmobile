@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_constructors_over_static_methods
 /// Social growth DTOs.
 ///
 /// ## Key casing — read this before changing anything
@@ -162,10 +163,12 @@ class ShareLinkDto {
     this.copyBody,
   });
 
-  static ShareLinkDto? fromJson(Map<String, dynamic> json) {
+  static ShareLinkDto fromJson(Map<String, dynamic> json) {
     final token = _strOrNull(json['token']);
     final url = _strOrNull(json['url']);
-    if (token == null || url == null) return null;
+    if (token == null || url == null) {
+      throw const FormatException('Share link payload has no token or url');
+    }
     final copy = json['copy'];
     final copyMap = copy is Map ? copy.cast<String, dynamic>() : const <String, dynamic>{};
     return ShareLinkDto(
@@ -197,9 +200,11 @@ class SharedLinkDto {
     this.sandboxAvailable = false,
   });
 
-  static SharedLinkDto? fromJson(Map<String, dynamic> json) {
+  static SharedLinkDto fromJson(Map<String, dynamic> json) {
     final token = _strOrNull(json['token']);
-    if (token == null) return null;
+    if (token == null) {
+      throw const FormatException('Share link payload has no token');
+    }
     return SharedLinkDto(
       token: token,
       kind: _strOrNull(json['kind']),
@@ -228,9 +233,11 @@ class SandboxStartDto {
     this.questionCount = 0,
   });
 
-  static SandboxStartDto? fromJson(Map<String, dynamic> json) {
+  static SandboxStartDto fromJson(Map<String, dynamic> json) {
     final attemptId = _toInt(json['attempt_id']);
-    if (attemptId == 0) return null;
+    if (attemptId == 0) {
+      throw const FormatException('Sandbox payload has no attempt id');
+    }
     return SandboxStartDto(
       attemptId: attemptId,
       guestSessionId: _str(json['guest_session_id']),
@@ -247,15 +254,18 @@ class SandboxStartDto {
 class SandboxAnswerDto {
   const SandboxAnswerDto({required this.questionId, this.isCorrect});
 
-  static SandboxAnswerDto? fromJson(Map<String, dynamic> json) {
+  static SandboxAnswerDto fromJson(Map<String, dynamic> json) {
     final questionId = _toInt(json['question_id']);
-    if (questionId == 0) return null;
+    if (questionId == 0) {
+      throw const FormatException('Sandbox answer payload has no question id');
+    }
     return SandboxAnswerDto(
       questionId: questionId,
-      // Null means "skipped" — the server publishes null rather than false.
+      // Null means "skipped" - the server publishes null rather than false.
       isCorrect: json['is_correct'] as bool?,
     );
   }
+
 
   final int questionId;
   final bool? isCorrect;
@@ -271,7 +281,7 @@ class SandboxResultDto {
     this.total = 0,
   });
 
-  static SandboxResultDto? fromJson(Map<String, dynamic> json) {
+  static SandboxResultDto fromJson(Map<String, dynamic> json) {
     final score = json['score'];
     return SandboxResultDto(
       score: score is num ? score.toDouble() : double.tryParse('$score') ?? 0,

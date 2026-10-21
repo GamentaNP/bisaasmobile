@@ -1,3 +1,5 @@
+import 'package:bisaasmobile/core/network/pagination.dart';
+
 import '../../domain/entities/store.dart';
 import '../../domain/repositories/store_repository.dart';
 import '../datasources/store_remote_data_source.dart';
@@ -7,9 +9,14 @@ class StoreRepositoryImpl implements StoreRepository {
   final StoreRemoteDataSource _remote;
 
   @override
-  Future<StoreCatalog> getAssets() async {
-    final dtos = await _remote.getAssets();
-    return StoreCatalog(assets: dtos.map((d) => d.toDomain()).toList(), isDegraded: false);
+  Future<Page<StoreAsset>> getAssets({String? cursor, int perPage = 25}) async {
+    final page = await _remote.getAssets(cursor: cursor, perPage: perPage);
+    return Page<StoreAsset>(
+      items: page.items.map((d) => d.toDomain()).toList(),
+      pagination: page.pagination,
+      nextCursor: page.nextCursor,
+      hasMore: page.hasMore,
+    );
   }
 
   @override

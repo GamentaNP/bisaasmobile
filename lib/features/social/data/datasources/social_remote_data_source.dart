@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/social.dart';
 import '../models/social_dto.dart';
 
@@ -143,9 +144,10 @@ class SocialRemoteDataSource {
   /// `challenge`) — and returns `data.share_link.{token, url, kind,
   /// expires_at, copy}`.
   ///
-  /// Returns null when the server declines, in which case the caller should
-  /// share the referral URL directly rather than fabricate a tracked one.
-  Future<ShareLinkDto?> createShareLink({
+  /// Throws when the server declines or answers a body the client cannot
+  /// read — a share link is either minted or it is not, and "we could not
+  /// parse it" must not become "no link, share the referral URL instead".
+  Future<ShareLinkDto> createShareLink({
     required String kind,
     int? subjectId,
     String? channel,
@@ -159,11 +161,28 @@ class SocialRemoteDataSource {
       data: payload,
       options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
     );
-    final data = _data(res.data);
-    if (data == null) return null;
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty share-link response',
+        endpoint: '/social/links',
+      );
+    }
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Share-link payload not understood',
+        endpoint: '/social/links',
+      );
+    }
     final link = data['share_link'];
-    if (link is! Map) return null;
-    return ShareLinkDto.fromJson(link.cast<String, dynamic>());
+    if (link is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Share-link payload not understood',
+        endpoint: '/social/links',
+      );
+    }
+    return ShareLinkDto.fromJson(link);
   }
 
   // ── Public share resolution ────────────────────────────────────────────────
@@ -173,15 +192,32 @@ class SocialRemoteDataSource {
   /// `GET /public/social/share/{token}` — public by design: the recipient of
   /// a share link is by definition not the sender. The response carries the
   /// creator's display name, the kind and whether a guest sandbox is available.
-  Future<SharedLinkDto?> resolveShare(String token) async {
+  Future<SharedLinkDto> resolveShare(String token) async {
     final res = await _dio.get<Map<String, dynamic>>(
       '/public/social/share/$token',
     );
-    final data = _data(res.data);
-    if (data == null) return null;
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty share-link response',
+        endpoint: '/public/social/share/{token}',
+      );
+    }
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Share-link payload not understood',
+        endpoint: '/public/social/share/{token}',
+      );
+    }
     final share = data['share'];
-    if (share is! Map) return null;
-    return SharedLinkDto.fromJson(share.cast<String, dynamic>());
+    if (share is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Share-link payload not understood',
+        endpoint: '/public/social/share/{token}',
+      );
+    }
+    return SharedLinkDto.fromJson(share);
   }
 
   // ── Guest sandbox ──────────────────────────────────────────────────────────
@@ -193,7 +229,7 @@ class SocialRemoteDataSource {
   /// sentinel user and completes with **zero progression grants**
   /// (`AttemptService::completeSandboxed`), so a guest can play without
   /// touching anyone's balance.
-  Future<SandboxStartDto?> startSandbox({
+  Future<SandboxStartDto> startSandbox({
     required String token,
     required String guestSessionId,
   }) async {
@@ -201,18 +237,35 @@ class SocialRemoteDataSource {
       '/public/social/sandbox/$token',
       data: {'guest_session_id': guestSessionId},
     );
-    final data = _data(res.data);
-    if (data == null) return null;
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty sandbox response',
+        endpoint: '/public/social/sandbox/{token}',
+      );
+    }
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Sandbox payload not understood',
+        endpoint: '/public/social/sandbox/{token}',
+      );
+    }
     final attempt = data['sandbox_attempt'];
-    if (attempt is! Map) return null;
-    return SandboxStartDto.fromJson(attempt.cast<String, dynamic>());
+    if (attempt is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Sandbox payload not understood',
+        endpoint: '/public/social/sandbox/{token}',
+      );
+    }
+    return SandboxStartDto.fromJson(attempt);
   }
 
   /// Answers one sandbox question.
   ///
   /// `PUT /public/social/sandbox/{attempt}/answer` — the canonical state-set
   /// shape; the POST spelling is the transition alias.
-  Future<SandboxAnswerDto?> answerSandbox({
+  Future<SandboxAnswerDto> answerSandbox({
     required int attemptId,
     required int questionId,
     required String answer,
@@ -221,25 +274,59 @@ class SocialRemoteDataSource {
       '/public/social/sandbox/$attemptId/answer',
       data: {'question_id': questionId, 'answer': answer},
     );
-    final data = _data(res.data);
-    if (data == null) return null;
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty sandbox answer response',
+        endpoint: '/public/social/sandbox/{attempt}/answer',
+      );
+    }
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Sandbox answer payload not understood',
+        endpoint: '/public/social/sandbox/{attempt}/answer',
+      );
+    }
     final answerData = data['answer'];
-    if (answerData is! Map) return null;
-    return SandboxAnswerDto.fromJson(answerData.cast<String, dynamic>());
+    if (answerData is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Sandbox answer payload not understood',
+        endpoint: '/public/social/sandbox/{attempt}/answer',
+      );
+    }
+    return SandboxAnswerDto.fromJson(answerData);
   }
 
   /// Completes the sandbox attempt and returns the server's result.
   ///
   /// `PUT /public/social/sandbox/{attempt}/completion`.
-  Future<SandboxResultDto?> completeSandbox(int attemptId) async {
+  Future<SandboxResultDto> completeSandbox(int attemptId) async {
     final res = await _dio.put<Map<String, dynamic>>(
       '/public/social/sandbox/$attemptId/completion',
     );
-    final data = _data(res.data);
-    if (data == null) return null;
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty sandbox completion response',
+        endpoint: '/public/social/sandbox/{attempt}/completion',
+      );
+    }
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Sandbox completion payload not understood',
+        endpoint: '/public/social/sandbox/{attempt}/completion',
+      );
+    }
     final result = data['result'];
-    if (result is! Map) return null;
-    return SandboxResultDto.fromJson(result.cast<String, dynamic>());
+    if (result is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Sandbox completion payload not understood',
+        endpoint: '/public/social/sandbox/{attempt}/completion',
+      );
+    }
+    return SandboxResultDto.fromJson(result);
   }
 
   // ── helpers ────────────────────────────────────────────────────────────────

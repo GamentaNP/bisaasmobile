@@ -253,7 +253,7 @@ void main() {
       final link = await repository.createShareLink(kind: 'streak');
 
       expect(link, isNotNull);
-      expect(link!.token, 'tok_123');
+      expect(link.token, 'tok_123');
       expect(link.url, 'https://bisaas.com/s/tok_123');
       expect(link.shareText, contains('CivilCal'));
 
@@ -328,7 +328,7 @@ void main() {
       final shared = await repository.resolveShare('tok_123');
 
       expect(shared, isNotNull);
-      expect(shared!.creatorName, 'Ram');
+      expect(shared.creatorName, 'Ram');
       expect(shared.sandboxAvailable, isTrue);
       expect(shared.isExpired, isFalse);
     });
@@ -352,7 +352,7 @@ void main() {
       );
 
       expect(attempt, isNotNull);
-      expect(attempt!.attemptId, 321);
+      expect(attempt.attemptId, 321);
       expect(attempt.questionCount, 5);
 
       final body = api.jsonBodyOf(0);
@@ -377,7 +377,7 @@ void main() {
       final result = await repository.completeSandbox(321);
 
       expect(result, isNotNull);
-      expect(result!.score, 60.0);
+      expect(result.score, 60.0);
       expect(result.correct, 3);
       expect(result.total, 5);
     });

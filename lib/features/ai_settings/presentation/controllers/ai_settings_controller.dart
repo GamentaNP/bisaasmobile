@@ -48,10 +48,15 @@ class AiSettingsState {
     this.tutorSessions = const [],
     this.isSessionsLoading = false,
     this.sessionsError,
+    this.sessionsHasMore = false,
+    this.sessionsCursor,
     this.reportCard = const [],
     this.isReportCardLoading = false,
     this.reportCardError,
+    this.reportCardHasMore = false,
+    this.reportCardCursor,
   });
+
 
   final List<AiKey> keys;
   final bool isKeysLoading;
@@ -72,9 +77,22 @@ class AiSettingsState {
   final bool isSessionsLoading;
   final String? sessionsError;
 
+  /// Whether the server has more tutor conversations after this page.
+  final bool sessionsHasMore;
+
+  /// The opaque cursor for the next page of tutor conversations.
+  final String? sessionsCursor;
+
   final List<ReportCardWeek> reportCard;
   final bool isReportCardLoading;
   final String? reportCardError;
+
+  /// Whether the server has more weekly summaries after this page.
+  final bool reportCardHasMore;
+
+  /// The opaque cursor for the next page of weekly summaries.
+  final String? reportCardCursor;
+
 
   static const _sentinel = Object();
 
@@ -94,10 +112,15 @@ class AiSettingsState {
     List<TutorSession>? tutorSessions,
     bool? isSessionsLoading,
     Object? sessionsError = _sentinel,
+    bool? sessionsHasMore,
+    Object? sessionsCursor = _sentinel,
     List<ReportCardWeek>? reportCard,
     bool? isReportCardLoading,
     Object? reportCardError = _sentinel,
+    bool? reportCardHasMore,
+    Object? reportCardCursor = _sentinel,
   }) {
+
     return AiSettingsState(
       keys: keys ?? this.keys,
       isKeysLoading: isKeysLoading ?? this.isKeysLoading,
@@ -118,12 +141,20 @@ class AiSettingsState {
       isSessionsLoading: isSessionsLoading ?? this.isSessionsLoading,
       sessionsError:
           sessionsError == _sentinel ? this.sessionsError : sessionsError as String?,
+      sessionsHasMore: sessionsHasMore ?? this.sessionsHasMore,
+      sessionsCursor:
+          sessionsCursor == _sentinel ? this.sessionsCursor : sessionsCursor as String?,
       reportCard: reportCard ?? this.reportCard,
       isReportCardLoading: isReportCardLoading ?? this.isReportCardLoading,
       reportCardError: reportCardError == _sentinel
           ? this.reportCardError
           : reportCardError as String?,
+      reportCardHasMore: reportCardHasMore ?? this.reportCardHasMore,
+      reportCardCursor: reportCardCursor == _sentinel
+          ? this.reportCardCursor
+          : reportCardCursor as String?,
     );
+
   }
 }
 
@@ -246,6 +277,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
         tutorSessions:
             append ? [...state.tutorSessions, ...page.items] : page.items,
         isSessionsLoading: false,
+        sessionsHasMore: page.hasMore,
+        sessionsCursor: page.nextCursor,
       );
     } catch (e, st) {
       AppLogger.w('ai settings fetchTutorSessions failed: $e');
@@ -262,6 +295,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
         reportCard:
             append ? [...state.reportCard, ...page.items] : page.items,
         isReportCardLoading: false,
+        reportCardHasMore: page.hasMore,
+        reportCardCursor: page.nextCursor,
       );
     } catch (e, st) {
       AppLogger.w('ai settings fetchReportCardHistory failed: $e');
@@ -270,6 +305,7 @@ class AiSettingsController extends Notifier<AiSettingsState> {
     }
   }
 }
+
 
 final aiSettingsControllerProvider =
     NotifierProvider<AiSettingsController, AiSettingsState>(

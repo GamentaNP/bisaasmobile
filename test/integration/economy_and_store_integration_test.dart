@@ -212,10 +212,47 @@ void main() {
 
       final catalog = await repository.getAssets();
 
-      expect(catalog.assets, hasLength(1));
-      expect(catalog.assets.first.id, '5');
-      expect(catalog.assets.first.slug, 'frame_gold');
-      expect(catalog.assets.first.priceCoins, 500);
+      expect(catalog.items, hasLength(1));
+      expect(catalog.items.first.id, '5');
+      expect(catalog.items.first.slug, 'frame_gold');
+      expect(catalog.items.first.priceCoins, 500);
+    });
+
+    test('the catalogue is walked with a cursor, not a page number', () async {
+      api.on(
+        'GET',
+        '/store/assets',
+        FakeRoute.envelope(<String, dynamic>{
+          'success': true,
+          'data': <String, dynamic>{
+            'items': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 5,
+                'slug': 'frame_gold',
+                'name': 'Golden Frame',
+                'category': 'avatar_frame',
+                'price_coins': 500,
+              },
+            ],
+          },
+          'pagination': <String, dynamic>{
+            'type': 'cursor',
+            'per_page': 25,
+            'count': 1,
+            'has_more': true,
+            'next_cursor': 'next-page',
+          },
+        }),
+      );
+
+      final page = await repository.getAssets(cursor: 'prev-page');
+
+      expect(page.hasMore, isTrue);
+      expect(page.nextCursor, 'next-page');
+
+      final query = api.queryOf(0);
+      expect(query['cursor'], 'prev-page');
+      expect(query.containsKey('page'), isFalse);
     });
 
     test('equipping targets a slot the server accepts', () async {

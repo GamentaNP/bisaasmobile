@@ -36,8 +36,16 @@ class StoreRemoteDataSource {
     'mascot',
   ];
 
-  Future<List<StoreAssetDto>> getAssets() async {
-    final res = await _dio.get<Map<String, dynamic>>('/store/assets');
+  /// The store catalogue.
+  ///
+  /// `GET /store/assets` is **cursor-paginated** on the server, so the first
+  /// page is not the whole catalogue. The cursor is returned so the caller
+  /// can ask for the rest.
+  Future<Page<StoreAssetDto>> getAssets({String? cursor, int perPage = 25}) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/store/assets',
+      queryParameters: cursorQuery(cursor: cursor, perPage: perPage),
+    );
     final body = res.data;
     if (body == null) {
       throw const ContractViolation(
@@ -45,12 +53,11 @@ class StoreRemoteDataSource {
         endpoint: '/store/assets',
       );
     }
-    final page = parsePage<StoreAssetDto>(
+    return parsePage<StoreAssetDto>(
       body,
       StoreAssetDto.fromJson,
       endpoint: '/store/assets',
     );
-    return page.items;
   }
 
   Future<StoreAssetDto?> getAsset(String slug) async {
@@ -133,7 +140,11 @@ class StoreRemoteDataSource {
       options: Options(headers: idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return false;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     if (body['success'] as bool? ?? false) return true;
     final data = _extractMapData(body);
     if (data != null && (data['unequipped'] == true || data['success'] == true)) {
@@ -151,7 +162,11 @@ class StoreRemoteDataSource {
       options: Options(headers: idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return false;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final success = body['success'] as bool? ?? false;
     if (success) return true;
     final data = _extractMapData(body);

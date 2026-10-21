@@ -38,11 +38,12 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
     final res = await ref.read(storeControllerProvider.notifier).purchase(asset.slug.isNotEmpty ? asset.slug : asset.id);
     if (!mounted) return;
     setState(() => _purchasingId = null);
-    final msg = res?.message ?? (res?.isDegraded == true ? 'Store is in beta — purchases live when WO-3 ships.' : (res?.success == true ? 'Purchased ${asset.name}!' : 'Purchase failed'));
+    final msg = res?.message ?? (res?.success == true ? 'Purchased ${asset.name}!' : 'Purchase failed');
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: res?.isDegraded == true ? AppColors.brandDark : (res?.success == true ? AppColors.correctGreen : AppColors.wrongRed)),
+      SnackBar(content: Text(msg), backgroundColor: res?.success == true ? AppColors.correctGreen : AppColors.wrongRed),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +105,23 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
                     final a = assets[i];
                     return _AssetCard(asset: a, isPurchasing: _purchasingId == a.id, onBuy: () => _purchase(a));
                   },
+                ),
+              // The catalogue is cursor-paginated, so the first page is not the
+              // whole catalogue. Without this the user sees 25 of 60 assets
+              // and no way to know 35 more exist.
+              if (catalog.hasMore)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: OutlinedButton.icon(
+                    onPressed: state.isCatalogLoading
+                        ? null
+                        : () => ref.read(storeControllerProvider.notifier).fetchCatalog(
+                              cursor: catalog.nextCursor,
+                              append: true,
+                            ),
+                    icon: const Icon(Icons.expand_more_rounded),
+                    label: const Text('Load more'),
+                  ),
                 ),
             ],
             if (state.lastPurchaseResult != null) ...[
@@ -193,7 +211,9 @@ class _AssetCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: isPurchasing ? null : onBuy,
+                // An owned asset cannot be bought again. The button used to
+                // fire a purchase for something the user already owned.
+                onPressed: (isPurchasing || asset.isOwned) ? null : onBuy,
                 style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8), backgroundColor: asset.isOwned ? AppColors.correctGreen : null),
                 child: isPurchasing
                     ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))

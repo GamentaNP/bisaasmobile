@@ -145,10 +145,10 @@ void main() {
       expect(dto.toDomain().success, isTrue);
     });
 
-    test('fromJson degraded true on 404 placeholder', () {
-      final dto = StorePurchaseResultDto.fromJson({'success': false, 'message': 'Store not available yet (beta)', 'is_degraded': true});
-      expect(dto.isDegraded, isTrue);
-      expect(dto.toDomain().isDegraded, isTrue);
+    test('a declined purchase is not degraded — it simply failed', () {
+      final dto = StorePurchaseResultDto.fromJson({'success': false, 'message': 'Not enough coins'});
+      expect(dto.success, isFalse);
+      expect(dto.message, 'Not enough coins');
     });
 
     test('handles string coins_spent', () {
@@ -165,12 +165,17 @@ void main() {
           const StoreAssetDto(id: 'theme_midnight', slug: 'theme_midnight', name: 'Midnight Theme', description: 'd', priceCoins: 300, rarity: 'common', category: 'theme').toDomain(),
         ];
 
-    test('isDegraded and featured filter', () {
-      final catalog = StoreCatalog(assets: storeAssets(), isDegraded: true);
-      expect(catalog.isDegraded, isTrue);
+    test('featured filter and category filter', () {
+      final catalog = StoreCatalog(assets: storeAssets());
       expect(catalog.featured, hasLength(2));
       expect(catalog.byCategory('frame'), hasLength(1));
       expect(catalog.isEmpty, isFalse);
+    });
+
+    test('the catalogue carries its pagination state', () {
+      final catalog = StoreCatalog(assets: storeAssets(), hasMore: true, nextCursor: 'abc');
+      expect(catalog.hasMore, isTrue);
+      expect(catalog.nextCursor, 'abc');
     });
 
     test('rarity ordering', () {
@@ -180,7 +185,7 @@ void main() {
     });
 
     test('an empty catalogue is empty, not fabricated', () {
-      final catalog = StoreCatalog(assets: const [], isDegraded: false);
+      final catalog = StoreCatalog(assets: const []);
       expect(catalog.isEmpty, isTrue);
       expect(catalog.featured, isEmpty);
     });

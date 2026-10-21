@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/empty_state.dart';
@@ -42,12 +43,16 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
   ///
   /// Generated on the device, 8..64 characters (the server's rule), and
   /// stable for the life of this screen so a retry re-uses it.
+  ///
+  /// The randomness comes from `uuid` rather than `DateTime.now().hashCode`:
+  /// `hashCode` is not a cryptographic source and is not guaranteed stable
+  /// across isolates, and this id is what binds a guest attempt to a device.
   late final String _guestSessionId = _generateGuestSessionId();
 
+  static const _uuid = Uuid();
+
   static String _generateGuestSessionId() {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toRadixString(36);
-    final salt = DateTime.now().hashCode.abs().toRadixString(36);
-    return 'guest-$stamp-$salt';
+    return 'guest-${_uuid.v4()}';
   }
 
   @override
@@ -66,13 +71,6 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
           .read(socialControllerProvider.notifier)
           .resolveShare(widget.token);
       if (!mounted) return;
-      if (link == null) {
-        setState(() {
-          _loading = false;
-          _error = 'That share link could not be found.';
-        });
-        return;
-      }
       setState(() {
         _link = link;
         _loading = false;
@@ -102,9 +100,6 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
       setState(() {
         _starting = false;
         _attempt = attempt;
-        if (attempt == null) {
-          _error = 'The sandbox is not available for this link right now.';
-        }
       });
     } on Object catch (e) {
       if (!mounted) return;
@@ -179,8 +174,9 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
                     ),
                     const SizedBox(height: 12),
                   ],
-                  if (_attempt != null)
-                    const _SandboxReady()
+                if (_attempt != null)
+                  _SandboxReady(questionCount: _attempt!.questionCount)
+
                   else if (link.sandboxAvailable && !link.isExpired)
                     FilledButton.icon(
                       onPressed: _starting ? null : _startSandbox,
@@ -222,31 +218,40 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
 
 /// Shown once the sandbox attempt exists.
 ///
-/// The questions themselves are not published to the client before the
-/// attempt starts (the server picks the preview set), so this panel hands
-/// over to the graded flow and explains what happens next.
+/// **Honest about what the client can do.** The sandbox payload publishes the
+/// attempt id and a question *count* — the server picks the preview set
+/// server-side and does not publish the questions to an unauthenticated
+/// client. So the challenge cannot be rendered or answered here yet, and this
+/// panel says exactly that instead of showing a green "Challenge ready" box
+/// that leads nowhere.
+///
+/// The wiring for the playable flow is already in place
+/// (`answerSandbox` / `completeSandbox`); it becomes reachable the moment the
+/// server publishes the sandbox questions.
 class _SandboxReady extends StatelessWidget {
-  const _SandboxReady();
+  const _SandboxReady({required this.questionCount});
+
+  final int questionCount;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.correctGreen.withValues(alpha: 0.08),
+        color: AppColors.warnAmberBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.correctGreen.withValues(alpha: 0.25)),
+        border: Border.all(color: AppColors.warnAmber.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.play_circle_fill_rounded,
-                  size: 18, color: AppColors.correctGreen),
+              const Icon(Icons.info_outline_rounded,
+                  size: 18, color: AppColors.warningShadow),
               const SizedBox(width: 8),
               Text(
-                'Challenge ready',
+                'Challenge started',
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
@@ -255,11 +260,20 @@ class _SandboxReady extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+          Text(
+            questionCount > 0
+                ? 'Your $questionCount-question sandbox attempt is open on our '
+                    'servers. The questions themselves are not published to '
+                    'guests yet, so they cannot be played in the app.'
+                : 'Your sandbox attempt is open on our servers. The questions '
+                    'themselves are not published to guests yet, so they '
+                    'cannot be played in the app.',
+            style: const TextStyle(fontSize: 12, height: 1.4),
+          ),
+          const SizedBox(height: 8),
           const Text(
-            'The questions are chosen by our servers when the challenge starts, '
-            'and your answers are graded there too. A guest challenge never '
-            'awards coins, XP or streak — create a free account to keep your '
-            'progress.',
+            'A guest challenge never awards coins, XP or streak. Create a free '
+            'account to play the full catalogue and keep your progress.',
             style: TextStyle(fontSize: 12, height: 1.4),
           ),
           const SizedBox(height: 12),

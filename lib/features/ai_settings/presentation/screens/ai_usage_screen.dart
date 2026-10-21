@@ -154,6 +154,22 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
               )
             else
               ...state.tutorSessions.map((s) => _SessionRow(session: s)),
+            // The tutor conversations are cursor-paginated, so the first page
+            // is not all of them.
+            if (state.sessionsHasMore)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: OutlinedButton.icon(
+                  onPressed: state.isSessionsLoading
+                      ? null
+                      : () => notifier.fetchTutorSessions(
+                            cursor: state.sessionsCursor,
+                            append: true,
+                          ),
+                  icon: const Icon(Icons.expand_more_rounded, size: 18),
+                  label: const Text('Load more conversations'),
+                ),
+              ),
 
             // ── Report card trend ─────────────────────────────────────────
             const SizedBox(height: 24),
@@ -180,6 +196,21 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
               )
             else
               ...state.reportCard.map((w) => _WeekRow(week: w)),
+            // The weekly history is cursor-paginated too.
+            if (state.reportCardHasMore)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: OutlinedButton.icon(
+                  onPressed: state.isReportCardLoading
+                      ? null
+                      : () => notifier.fetchReportCardHistory(
+                            cursor: state.reportCardCursor,
+                            append: true,
+                          ),
+                  icon: const Icon(Icons.expand_more_rounded, size: 18),
+                  label: const Text('Load more weeks'),
+                ),
+              ),
           ],
         ),
       ),

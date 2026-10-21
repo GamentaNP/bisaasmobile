@@ -181,6 +181,17 @@ class QuizFunnelDto {
   });
 
   factory QuizFunnelDto.fromJson(Map<String, dynamic> j) {
+    // Additive parsing: a new field is ignored, but a body that carries
+    // **none** of the three known sections is not a funnel bundle — it is a
+    // body the client does not understand, and it must not be rendered as
+    // "there is no content".
+    const known = ['items', 'counts', 'promo'];
+    if (!known.any(j.containsKey)) {
+      throw const FormatException(
+        'Funnel payload carries none of items/counts/promo',
+      );
+    }
+
     final items = <FunnelItemDto>[];
     final raw = j['items'];
     if (raw is List) {
@@ -188,6 +199,7 @@ class QuizFunnelDto {
         raw.whereType<Map<String, dynamic>>().map(FunnelItemDto.fromJson),
       );
     }
+
     final counts = j['counts'];
     final promo = j['promo'];
     return QuizFunnelDto(

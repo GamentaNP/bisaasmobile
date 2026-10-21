@@ -1,7 +1,15 @@
+import 'package:bisaasmobile/core/network/pagination.dart';
+
 import '../entities/store.dart';
 
 abstract class StoreRepository {
-  Future<StoreCatalog> getAssets();
+  /// A page of the catalogue.
+  ///
+  /// `GET /store/assets` is cursor-paginated, so the first page is not the
+  /// whole catalogue. The caller passes the returned cursor back to load the
+  /// rest.
+  Future<Page<StoreAsset>> getAssets({String? cursor, int perPage});
+
   Future<StoreAsset?> getAsset(String slug);
   Future<StorePurchaseResult> purchaseAsset(String slug, {String? idempotencyKey});
   Future<Wardrobe> getWardrobe();

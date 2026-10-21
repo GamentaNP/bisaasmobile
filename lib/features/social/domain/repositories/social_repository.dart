@@ -26,11 +26,11 @@ abstract class SocialRepository {
 
   Future<SocialProof?> getProof({required String subject, required int id});
 
-  /// Mints a tracked share link. Null when the server declined.
+  /// Mints a tracked share link.
   ///
   /// [kind] is one of the server's share kinds (`achievement`, `quiz_result`,
   /// `streak`, `calculator`, `challenge`).
-  Future<ShareLink?> createShareLink({
+  Future<ShareLink> createShareLink({
     required String kind,
     int? subjectId,
     String? channel,
@@ -39,21 +39,21 @@ abstract class SocialRepository {
   // ── Public share / guest sandbox ───────────────────────────────────────────
 
   /// Resolves an incoming share link.
-  Future<SharedLink?> resolveShare(String token);
+  Future<SharedLink> resolveShare(String token);
 
   /// Starts a guest sandbox attempt bound to [guestSessionId].
-  Future<SandboxAttempt?> startSandbox({
+  Future<SandboxAttempt> startSandbox({
     required String token,
     required String guestSessionId,
   });
 
   /// Answers one sandbox question.
-  Future<SandboxAnswer?> answerSandbox({
+  Future<SandboxAnswer> answerSandbox({
     required int attemptId,
     required int questionId,
     required String answer,
   });
 
   /// Completes the sandbox attempt and returns the server's result.
-  Future<SandboxResult?> completeSandbox(int attemptId);
+  Future<SandboxResult> completeSandbox(int attemptId);
 }

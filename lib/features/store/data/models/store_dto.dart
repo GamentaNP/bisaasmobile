@@ -106,7 +106,7 @@ class WardrobeSlotDto {
 }
 
 class WardrobeDto {
-  const WardrobeDto({required this.slots, this.isDegraded = false});
+  const WardrobeDto({required this.slots});
 
   factory WardrobeDto.fromJson(Map<String, dynamic> j) {
     final raw = j['slots'] ?? j['wardrobe'] ?? j['items'];
@@ -124,16 +124,13 @@ class WardrobeDto {
     }
     return WardrobeDto(
       slots: slots,
-      isDegraded: (j['is_degraded'] as bool?) ?? false,
     );
   }
 
   final List<WardrobeSlotDto> slots;
-  final bool isDegraded;
 
   Wardrobe toDomain() => Wardrobe(
         slots: slots.map((s) => s.toDomain()).toList(),
-        isDegraded: isDegraded,
       );
 }
 
@@ -160,7 +157,7 @@ class MarketListingDto {
 }
 
 class StorePurchaseResultDto {
-  const StorePurchaseResultDto({required this.success, this.assetId, this.coinsSpent = 0, this.newBalance, this.message, this.isDegraded = false});
+  const StorePurchaseResultDto({required this.success, this.assetId, this.coinsSpent = 0, this.newBalance, this.message});
 
   factory StorePurchaseResultDto.fromJson(Map<String, dynamic> j) => StorePurchaseResultDto(
         success: (j['success'] as bool?) ?? (j['purchased'] as bool?) ?? false,
@@ -168,7 +165,6 @@ class StorePurchaseResultDto {
         coinsSpent: _asInt(j['coins_spent'] ?? j['coinsSpent'] ?? j['price_coins']) ?? 0,
         newBalance: _asInt(j['new_balance'] ?? j['balance'] ?? j['coins']),
         message: j['message'] as String?,
-        isDegraded: (j['is_degraded'] as bool?) ?? false,
       );
 
   final bool success;
@@ -176,7 +172,6 @@ class StorePurchaseResultDto {
   final int coinsSpent;
   final int? newBalance;
   final String? message;
-  final bool isDegraded;
 
   StorePurchaseResult toDomain() => StorePurchaseResult(
         success: success,
@@ -184,6 +179,5 @@ class StorePurchaseResultDto {
         coinsSpent: coinsSpent,
         newBalance: newBalance,
         message: message,
-        isDegraded: isDegraded,
       );
 }

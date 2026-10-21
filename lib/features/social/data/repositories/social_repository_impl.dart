@@ -27,7 +27,7 @@ class SocialRepositoryImpl implements SocialRepository {
       _remote.getProof(subject: subject, id: id);
 
   @override
-  Future<ShareLink?> createShareLink({
+  Future<ShareLink> createShareLink({
     required String kind,
     int? subjectId,
     String? channel,
@@ -37,7 +37,6 @@ class SocialRepositoryImpl implements SocialRepository {
       subjectId: subjectId,
       channel: channel,
     );
-    if (dto == null) return null;
     return ShareLink(
       token: dto.token,
       url: dto.url,
@@ -49,9 +48,8 @@ class SocialRepositoryImpl implements SocialRepository {
   }
 
   @override
-  Future<SharedLink?> resolveShare(String token) async {
+  Future<SharedLink> resolveShare(String token) async {
     final dto = await _remote.resolveShare(token);
-    if (dto == null) return null;
     return SharedLink(
       token: dto.token,
       kind: dto.kind,
@@ -63,7 +61,7 @@ class SocialRepositoryImpl implements SocialRepository {
   }
 
   @override
-  Future<SandboxAttempt?> startSandbox({
+  Future<SandboxAttempt> startSandbox({
     required String token,
     required String guestSessionId,
   }) async {
@@ -71,7 +69,6 @@ class SocialRepositoryImpl implements SocialRepository {
       token: token,
       guestSessionId: guestSessionId,
     );
-    if (dto == null) return null;
     return SandboxAttempt(
       attemptId: dto.attemptId,
       guestSessionId: dto.guestSessionId,
@@ -80,7 +77,7 @@ class SocialRepositoryImpl implements SocialRepository {
   }
 
   @override
-  Future<SandboxAnswer?> answerSandbox({
+  Future<SandboxAnswer> answerSandbox({
     required int attemptId,
     required int questionId,
     required String answer,
@@ -90,14 +87,12 @@ class SocialRepositoryImpl implements SocialRepository {
       questionId: questionId,
       answer: answer,
     );
-    if (dto == null) return null;
     return SandboxAnswer(questionId: dto.questionId, isCorrect: dto.isCorrect);
   }
 
   @override
- Future<SandboxResult?> completeSandbox(int attemptId) async {
+  Future<SandboxResult> completeSandbox(int attemptId) async {
     final dto = await _remote.completeSandbox(attemptId);
-    if (dto == null) return null;
     return SandboxResult(
       score: dto.score,
       correct: dto.correct,

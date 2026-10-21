@@ -143,16 +143,12 @@ class SocialController extends Notifier<SocialState> {
   // ── Share links ────────────────────────────────────────────────────────────
 
   /// Mints a tracked share link.
-  ///
-  /// Returns null when the server declined; the caller then shares the
-  /// referral URL directly rather than fabricating a tracked one.
-  Future<ShareLink?> createShareLink({
+  Future<ShareLink> createShareLink({
     required String kind,
     int? subjectId,
     String? channel,
-  }) {
-    return _repo.createShareLink(kind: kind, subjectId: subjectId, channel: channel);
-  }
+  }) =>
+      _repo.createShareLink(kind: kind, subjectId: subjectId, channel: channel);
 
   /// Tells the server the share actually happened.
   ///
@@ -164,17 +160,17 @@ class SocialController extends Notifier<SocialState> {
   // ── Public share / guest sandbox ───────────────────────────────────────────
 
   /// Resolves an incoming share link.
-  Future<SharedLink?> resolveShare(String token) => _repo.resolveShare(token);
+  Future<SharedLink> resolveShare(String token) => _repo.resolveShare(token);
 
   /// Starts a guest sandbox attempt.
-  Future<SandboxAttempt?> startSandbox({
+  Future<SandboxAttempt> startSandbox({
     required String token,
     required String guestSessionId,
   }) =>
       _repo.startSandbox(token: token, guestSessionId: guestSessionId);
 
   /// Answers one sandbox question.
-  Future<SandboxAnswer?> answerSandbox({
+  Future<SandboxAnswer> answerSandbox({
     required int attemptId,
     required int questionId,
     required String answer,
@@ -186,7 +182,7 @@ class SocialController extends Notifier<SocialState> {
       );
 
   /// Completes the sandbox attempt.
-  Future<SandboxResult?> completeSandbox(int attemptId) =>
+  Future<SandboxResult> completeSandbox(int attemptId) =>
       _repo.completeSandbox(attemptId);
 }
 

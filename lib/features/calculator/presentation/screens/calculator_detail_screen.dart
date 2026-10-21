@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/calculator.dart';
 import '../controllers/calculator_controller.dart';
@@ -46,6 +47,12 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   final _legacyFields = <_LegacyFieldEntry>[_LegacyFieldEntry()];
 
   bool _useSchema = false;
+
+  /// Whether a session token exists.
+  ///
+  /// The calculator screens are guest-reachable, but the assistant endpoint
+  /// is not, so the panel is only offered to a signed-in user.
+  bool get _hasSession => ref.read(hasSessionProvider).value ?? false;
 
   @override
   void initState() {
@@ -122,6 +129,17 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   /// suggestion, and only then does anything change. The client never
   /// silently fills a field.
   void _applyAssistantValue(String field, String value) {
+    // A boolean field lives in the bool map, not the text map. The previous
+    // version only looked at the text map, so applying a suggestion to a
+    // boolean showed a misleading "no input named X" error.
+    if (_boolValues.containsKey(field)) {
+      setState(() => _boolValues[field] = value == 'true' || value == '1');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$field = $value')),
+      );
+      return;
+    }
+
     final ctrl = _textCtrls[field];
     if (ctrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -203,23 +221,27 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
             else
               _renderLegacyForm(theme, calcState),
             const SizedBox(height: 12),
-            CalculatorAssistantPanel(
-              domain: widget.domain,
-              slug: widget.slug,
-              name: config.label,
-              fields: config.fields
-                  .map((f) => <String, dynamic>{
-                        'name': f.name,
-                        'label': f.label,
-                        if (f.unit != null) 'unit': f.unit,
-                        'type': f.type,
-                      })
-                  .toList(),
-              currentInputs: _useSchema
-                  ? _collectSchemaInputs(config)
-                  : _collectLegacyInputs(),
-              onApplyValue: _applyAssistantValue,
-            ),
+            // The assistant endpoint lives inside the authenticated v1 group,
+            // so a guest would get a 401 for every question. The panel is
+            // hidden rather than offered as a control that cannot work.
+            if (_hasSession)
+              CalculatorAssistantPanel(
+                domain: widget.domain,
+                slug: widget.slug,
+                name: config.label,
+                fields: config.fields
+                    .map((f) => <String, dynamic>{
+                          'name': f.name,
+                          'label': f.label,
+                          if (f.unit != null) 'unit': f.unit,
+                          'type': f.type,
+                        })
+                    .toList(),
+                currentInputs: _useSchema
+                    ? _collectSchemaInputs(config)
+                    : _collectLegacyInputs(),
+                onApplyValue: _applyAssistantValue,
+              ),
             const SizedBox(height: 4),
             FilledButton.icon(
               onPressed: calcState.loading ? null : () => _calculate(config),
