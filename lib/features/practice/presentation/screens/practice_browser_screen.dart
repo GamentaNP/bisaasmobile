@@ -85,26 +85,30 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
       return;
     }
 
-    // The bookmarks endpoint publishes the question *text* but not its answer
-    // options, so a bookmark cannot be drilled on its own. The server can
-    // however hand out a fresh, fully-formed question set for the bookmarked
-    // category — so the drill is seeded from the server by category and the
-    // bookmarked topic is preserved.
-    final categoryId = items
-        .map((b) => b.question.categoryId)
-        .firstWhere((id) => id != null, orElse: () => null);
-
+    // The drill is seeded with the bookmarked question ids, so the server
+    // grades the questions the user actually bookmarked — not a random set
+    // from the same category.
     final notifier = ref.read(practiceControllerProvider.notifier);
-    final drill = await notifier.startDrill(
+    final drill = await notifier.startBookmarkDrill(
       title: 'Bookmarked Practice',
-      categoryId: categoryId,
-      count: items.length.clamp(5, 30),
+      bookmarks: items,
     );
     if (!mounted) return;
     if (drill == null) {
       final err = ref.read(practiceControllerProvider).startError ?? 'Could not start the drill';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
       return;
+    }
+    if (drill.undrillableCount > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${drill.undrillableCount} of ${items.length} bookmarks could not be '
+            'drilled — the server does not publish their answer options yet.',
+          ),
+          backgroundColor: AppColors.streakOrange,
+        ),
+      );
     }
     unawaited(context.push('/practice/session', extra: PracticeSessionArgs.fromDrill(drill)));
   }

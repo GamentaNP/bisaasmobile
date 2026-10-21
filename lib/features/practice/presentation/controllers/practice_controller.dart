@@ -203,6 +203,32 @@ class PracticeController extends Notifier<PracticeState> {
     }
   }
 
+  /// Starts a drill over the user's own bookmarks.
+  ///
+  /// The attempt is seeded with the bookmarked question ids, so the server
+  /// grades what the user bookmarked rather than a random set from the same
+  /// category.
+  Future<PracticeDrill?> startBookmarkDrill({
+    required String title,
+    required List<BookmarkedQuestion> bookmarks,
+  }) async {
+    state = state.copyWith(isStartingSession: true, startError: null);
+    try {
+      final drill = await _repo.startBookmarkDrill(
+        title: title,
+        bookmarks: bookmarks,
+        idempotencyKey: _uuid.v4(),
+      );
+      state = state.copyWith(isStartingSession: false);
+      return drill;
+    } catch (e, st) {
+      AppLogger.w('practice startBookmarkDrill failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      state = state.copyWith(isStartingSession: false, startError: _msg(e));
+      return null;
+    }
+  }
+
   /// Submits one answer to the live drill attempt.
   ///
   /// A failure here is surfaced but never blocks the drill: the user has

@@ -105,12 +105,21 @@ class PracticeDrill {
     required this.attemptId,
     required this.title,
     required this.questions,
+    this.undrillableCount = 0,
   });
 
   /// The server attempt id. Every answer is submitted against it.
   final String attemptId;
   final String title;
   final List<PracticeQuestion> questions;
+
+  /// How many of the requested questions the server would not serve with
+  /// answer options, so they could not be drilled.
+  ///
+  /// This is reported rather than hidden: the user asked to drill N
+  /// bookmarks and got N - M, and the difference is the server's, not a
+  /// client's, so it has to be visible.
+  final int undrillableCount;
 
   int get length => questions.length;
 }

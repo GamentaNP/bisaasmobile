@@ -47,9 +47,23 @@ abstract class PracticeRepository {
     int? categoryId,
     String? difficulty,
     String? search,
-    int count = 10,
+    int count,
     String? idempotencyKey,
   });
+
+  /// Starts a drill over the user's **own bookmarks**.
+  ///
+  /// The bookmarks endpoint publishes the question text but not the answer
+  /// options, so the implementation asks the server for the same questions
+  /// again (by their category, or by their text when the bookmark has no
+  /// category) and seeds the attempt with the bookmarked ids. The server
+  /// therefore grades the questions the user actually bookmarked.
+  Future<PracticeDrill> startBookmarkDrill({
+    required String title,
+    required List<BookmarkedQuestion> bookmarks,
+    String? idempotencyKey,
+  });
+
 
   /// Submits one answer to the drill attempt.
   Future<void> submitAnswer({

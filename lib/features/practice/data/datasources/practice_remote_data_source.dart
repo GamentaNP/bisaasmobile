@@ -70,7 +70,11 @@ class PracticeRemoteDataSource {
       options: Options(headers: idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return false;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     if (body['success'] == true) return true;
     final data = body['data'];
     if (data is Map<String, dynamic> && data['bookmarked'] == true) return true;
@@ -84,7 +88,11 @@ class PracticeRemoteDataSource {
       '/quiz/bookmarks/$questionId',
     );
     final body = res.data;
-    if (body == null) return false;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     if (body['success'] == true) return true;
     final data = body['data'];
     if (data is Map<String, dynamic> && data['bookmarked'] == false) return true;
