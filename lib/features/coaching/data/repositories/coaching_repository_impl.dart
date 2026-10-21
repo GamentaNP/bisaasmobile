@@ -33,44 +33,22 @@ class CoachingRepositoryImpl implements CoachingRepository {
   }
 
   @override
-  Future<List<WeakArea>> getWeakAreas() async {
-    try {
-      return await _tutorRepo.getWeakAreas();
-    } catch (_) {
-      return [];
-    }
-  }
+  Future<List<WeakArea>> getWeakAreas() => _tutorRepo.getWeakAreas();
 
   @override
-  Future<ProjectedScore?> getProjectedScore() async {
-    try {
-      return await _tutorRepo.getProjectedScore();
-    } catch (_) {
-      return null;
-    }
-  }
+  Future<ProjectedScore?> getProjectedScore() => _tutorRepo.getProjectedScore();
 
   @override
-  Future<WeeklyReport?> getWeeklyReport() async {
-    try {
-      return await _tutorRepo.getWeeklyReport();
-    } catch (_) {
-      return null;
-    }
-  }
+  Future<WeeklyReport?> getWeeklyReport() => _tutorRepo.getWeeklyReport();
 
   @override
-  Future<List<RevisionItem>> getRevisionsDue() async {
-    try {
-      return await _tutorRepo.getRevisionsDue();
-    } catch (_) {
-      return [];
-    }
-  }
+  Future<List<RevisionItem>> getRevisionsDue() => _tutorRepo.getRevisionsDue();
 
   @override
   Future<CoachingDashboardData> getDashboard({String? goalId}) async {
-    // Fan-out with tolerant individual failures — dashboard never throws.
+    // Fan-out with tolerant individual failures — the dashboard itself never
+    // throws, but a section that failed is **recorded** rather than rendered
+    // as "no weak areas" / "projected score 0.0".
     Readiness? readiness;
     CoachingToday? today;
     List<CoachingTrack> tracks = [];
@@ -79,35 +57,48 @@ class CoachingRepositoryImpl implements CoachingRepository {
     WeeklyReport? weeklyReport;
     List<RevisionItem> revisionsDue = [];
 
-    final futures = <Future<void>>[
-      () async {
+    final failedSections = <String>[];
+
+    Future<void> section(
+      String name,
+      Future<void> Function() run,
+    ) async {
+      try {
+        await run();
+      } on Object {
+        failedSections.add(name);
+      }
+    }
+
+    await Future.wait([
+      section('readiness', () async {
         if (goalId != null && goalId.isNotEmpty) {
           readiness = await getReadiness(goalId);
         }
-      }(),
-      () async {
+      }),
+      section('today', () async {
         today = await getToday();
-      }(),
-      () async {
+      }),
+      section('tracks', () async {
         tracks = await getTracks();
-      }(),
-      () async {
+      }),
+      section('weakAreas', () async {
         weakAreas = await getWeakAreas();
-      }(),
-      () async {
+      }),
+      section('projectedScore', () async {
         projectedScore = await getProjectedScore();
-      }(),
-      () async {
+      }),
+      section('weeklyReport', () async {
         weeklyReport = await getWeeklyReport();
-      }(),
-      () async {
+      }),
+      section('revisionsDue', () async {
         revisionsDue = await getRevisionsDue();
-      }(),
-    ];
+      }),
+    ]);
 
-    await Future.wait(futures.map((f) => f.catchError((_) {})));
-
-    final isDegraded = readiness == null && today == null && weakAreas.isEmpty && projectedScore == null;
+    // A section that failed is not the same as a section that is empty, so
+    // the banner names the failures instead of implying a quiet account.
+    final isDegraded = failedSections.isNotEmpty;
 
     return CoachingDashboardData(
       readiness: readiness,
@@ -118,6 +109,7 @@ class CoachingRepositoryImpl implements CoachingRepository {
       weeklyReport: weeklyReport,
       revisionsDue: revisionsDue,
       isDegraded: isDegraded,
+      failedSections: failedSections,
     );
   }
 }

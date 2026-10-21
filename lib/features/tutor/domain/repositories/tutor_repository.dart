@@ -6,8 +6,14 @@ abstract class TutorRepository {
   Future<void> completeOnboarding(String sessionId, {Map<String, dynamic>? payload});
 
   // Chat
-  Future<TutorChatResult> chat(String message, {List<TutorMessage>? history});
-  Future<String> askLegacyTutor(String prompt, {List<TutorMessage>? history});
+  ///
+  /// Posts to `POST /learning/tutor`, the route the server records in the AI
+  /// usage ledger.
+  Future<TutorChatResult> chat(
+    String message, {
+    List<TutorMessage>? history,
+    String topic,
+  });
 
   // Plan
   Future<TutorPlan> getPlan();

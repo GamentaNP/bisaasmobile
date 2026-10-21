@@ -73,6 +73,7 @@ class CoachingDashboardData {
     this.weeklyReport,
     this.revisionsDue = const [],
     this.isDegraded = false,
+    this.failedSections = const [],
   });
 
   final Readiness? readiness;
@@ -82,7 +83,15 @@ class CoachingDashboardData {
   final ProjectedScore? projectedScore;
   final WeeklyReport? weeklyReport;
   final List<RevisionItem> revisionsDue;
+
+  /// Whether any section failed to load.
+  ///
+  /// A failed section is not an empty section, so the banner says which ones
+  /// failed instead of implying the account is quiet.
   final bool isDegraded;
+
+  /// The names of the sections that failed to load.
+  final List<String> failedSections;
 
   bool get hasAnyData =>
       readiness != null ||

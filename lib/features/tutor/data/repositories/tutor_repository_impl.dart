@@ -14,20 +14,18 @@ class TutorRepositoryImpl implements TutorRepository {
 
   @override
   Future<void> completeOnboarding(String sessionId, {Map<String, dynamic>? payload}) async {
-    await _remote.completeOnboarding(sessionId, payload: payload);
+    await _remote.completeOnboarding(sessionId: sessionId, payload: payload);
   }
 
   @override
-  Future<TutorChatResult> chat(String message, {List<TutorMessage>? history}) async {
+  Future<TutorChatResult> chat(
+    String message, {
+    List<TutorMessage>? history,
+    String topic = 'General',
+  }) async {
     final hist = history?.map((m) => {'role': m.role, 'content': m.content}).toList();
-    final dto = await _remote.chat(message, history: hist);
+    final dto = await _remote.chat(message, topic: topic, history: hist);
     return dto.toDomain();
-  }
-
-  @override
-  Future<String> askLegacyTutor(String prompt, {List<TutorMessage>? history}) async {
-    final hist = history?.map((m) => {'role': m.role, 'content': m.content}).toList();
-    return _remote.askLegacyTutor(prompt, history: hist);
   }
 
   @override

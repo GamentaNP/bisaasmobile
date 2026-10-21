@@ -20,16 +20,6 @@ final tutorRepositoryProvider = Provider<TutorRepository>((ref) {
 });
 
 // Future providers for read-only surfaces
-final tutorPlanProvider = FutureProvider<TutorPlan>((ref) async {
-  final repo = ref.watch(tutorRepositoryProvider);
-  return repo.getPlan();
-});
-
-final tutorTodayProvider = FutureProvider<TutorToday>((ref) async {
-  final repo = ref.watch(tutorRepositoryProvider);
-  return repo.getToday();
-});
-
 final tutorWeakAreasProvider = FutureProvider<List<WeakArea>>((ref) async {
   final repo = ref.watch(tutorRepositoryProvider);
   return repo.getWeakAreas();
@@ -102,7 +92,12 @@ class TutorChatController extends Notifier<TutorChatState> {
     return e.toString();
   }
 
-  Future<void> send(String prompt, {bool useLegacy = false}) async {
+  /// Sends a message to the tutor.
+  ///
+  /// The chat posts to `POST /learning/tutor`, the route the server records
+  /// in the AI usage ledger — so the user's own "Your AI usage" page
+  /// reflects the conversations they actually had.
+  Future<void> send(String prompt, {String topic = 'General'}) async {
     if (prompt.trim().isEmpty) return;
     final user = TutorMessage(role: 'user', content: prompt.trim(), timestamp: DateTime.now());
     state = state.copyWith(
@@ -113,24 +108,7 @@ class TutorChatController extends Notifier<TutorChatState> {
       sentinel: null,
     );
     try {
-      if (useLegacy) {
-        final answer = await _repo.askLegacyTutor(prompt, history: state.messages);
-        final assistant = TutorMessage(
-          role: 'assistant',
-          content: answer.isEmpty ? 'No response (tutor offline).' : answer,
-          timestamp: DateTime.now(),
-        );
-        state = state.copyWith(
-          messages: [...state.messages, assistant],
-          isSending: false,
-        );
-        try {
-          await ref.read(analyticsProvider).log('tutor_message_sent', params: {'legacy': '1'});
-        } catch (_) {}
-        return;
-      }
-
-      final result = await _repo.chat(prompt, history: state.messages);
+      final result = await _repo.chat(prompt, history: state.messages, topic: topic);
       final content = result.answer.isEmpty
           ? (result.isNoData
               ? 'Not enough history yet — complete a few quizzes and try again.'
