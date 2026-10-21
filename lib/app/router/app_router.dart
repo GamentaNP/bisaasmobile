@@ -485,11 +485,6 @@ class AppRouter {
         name: RouteNames.coaching,
         builder: (context, state) => CoachingDashboardScreen(goalId: state.uri.queryParameters['goal']),
       ),
-      GoRoute(
-        path: '/coaching/dashboard',
-        name: RouteNames.coachingDashboard,
-        builder: (context, state) => CoachingDashboardScreen(goalId: state.uri.queryParameters['goal']),
-      ),
       // Streak + Leaderboard + Contests + Live Events — Part 4 (WO-4)
       GoRoute(
         path: '/streak',

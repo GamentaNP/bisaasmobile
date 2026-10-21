@@ -65,6 +65,14 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
               child: _WorldsBanner(onTap: () => context.go('/game/worlds')),
             ),
+            // The practice drill (bookmarks, weak topics, self-challenge) is
+            // the untimed, server-graded path. It has to be reachable from
+            // the quiz tab — a shipped feature with no entry point is a
+            // feature nobody has.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: _PracticeBanner(onTap: () => context.go('/practice')),
+            ),
             Expanded(
               child: FutureBuilder<List<_QuizTopic>>(
                 future: _courses,
@@ -212,6 +220,58 @@ class _WorldsBanner extends StatelessWidget {
                 Icon(Icons.chevron_right_rounded, color: Colors.white, size: 26),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Secondary entry point to the untimed practice drill.
+///
+/// `POST /quiz/attempts` in `mode: practice` — graded by the server, but
+/// with no leaderboard, no XP and no streak effect.
+class _PracticeBanner extends StatelessWidget {
+  const _PracticeBanner({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.brand.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: const Row(
+            children: [
+              Icon(Icons.edit_note_rounded, color: AppColors.brand, size: 24),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Practice drill',
+                      style: TextStyle(
+                        color: AppColors.brand,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Drill your bookmarks and weak topics — untimed, no rank effect',
+                      style: TextStyle(color: AppColors.textTertiaryDark, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: AppColors.brand, size: 24),
+            ],
           ),
         ),
       ),
