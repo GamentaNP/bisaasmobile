@@ -202,6 +202,44 @@ class _BookmarksTab extends ConsumerWidget {
               ],
             ),
           ),
+          // A failed bookmark removal used to be invisible: the spinner ran,
+          // the icon came back, and the user believed the bookmark was gone.
+          if (state.toggleError != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.wrongRedBg,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: AppColors.wrongRed.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline_rounded,
+                        size: 16, color: AppColors.wrongRed),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        state.toggleError!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.wrongRed,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => ref
+                          .read(practiceControllerProvider.notifier)
+                          .fetchBookmarks(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -52,7 +52,19 @@ class ContestsRemoteDataSource {
         });
         raw = env.data ?? [];
         pagination = env.pagination ?? pagination;
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Contest list payload not understood: $e',
+          endpoint: '/quiz/contests',
+        );
+      }
+    }
+    if (raw.isEmpty && !body.containsKey('data')) {
+      // No `data` key at all: this is not a contest list.
+      throw const ContractViolation(
+        'Contest list payload not understood',
+        endpoint: '/quiz/contests',
+      );
     }
     return (items: raw.map(ContestDto.fromJson).toList(), pagination: pagination);
   }

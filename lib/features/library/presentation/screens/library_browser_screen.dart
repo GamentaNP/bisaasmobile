@@ -120,8 +120,21 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
               ),
             ),
 
-            // Trending horizontal
-            if (state.trending.isNotEmpty || state.isTrendingLoading)
+            // Trending horizontal.
+            // A failed trending read used to make the whole row vanish, so the
+            // screen looked half-broken with no explanation. It now says why.
+            if (state.trendingError != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: ErrorView(
+                    message: 'Could not load the trending files.\n${state.trendingError}',
+                    onRetry: () =>
+                        ref.read(libraryControllerProvider.notifier).fetchTrending(),
+                  ),
+                ),
+              )
+            else if (state.trending.isNotEmpty || state.isTrendingLoading)
               SliverToBoxAdapter(
                 child: _HorizontalFileSection(
                   title: 'Trending',
@@ -133,8 +146,22 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                 ),
               ),
 
-            // Recommendations horizontal
-            if (state.recommendations.isNotEmpty || state.isRecommendationsLoading)
+            // Recommendations horizontal.
+            if (state.recommendationsError != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: ErrorView(
+                    message:
+                        'Could not load your recommendations.\n${state.recommendationsError}',
+                    onRetry: () => ref
+                        .read(libraryControllerProvider.notifier)
+                        .fetchRecommendations(),
+                  ),
+                ),
+              )
+            else if (state.recommendations.isNotEmpty ||
+                state.isRecommendationsLoading)
               SliverToBoxAdapter(
                 child: _HorizontalFileSection(
                   title: 'Recommended for you',

@@ -1,5 +1,6 @@
 // ignore_for_file: strict_raw_type
 
+import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/battle.dart';
 import '../../domain/repositories/battle_repository.dart';
 import '../datasources/battle_remote_data_source.dart';
@@ -44,8 +45,18 @@ class BattleRepositoryImpl implements BattleRepository {
           correctOptionId: '',
           points: (raw['points'] as int?) ?? 10,
         );
+    // The battle id is the handle the arena subscribes to on RTDB, so a
+    // placeholder would leave it listening on a lobby that does not exist.
+    // A payload with no id is a drift, and the caller has to hear about it.
+    final id = (m['id'] ?? m['battle_id'] ?? m['lobby_id'])?.toString();
+    if (id == null || id.isEmpty) {
+      throw const ContractViolation(
+        'Battle payload has no id',
+        endpoint: '/quiz/battles',
+      );
+    }
     return BattleMatch(
-      id: (m['id'] ?? m['battle_id'] ?? m['lobby_id'] ?? 'demo') as String,
+      id: id,
       status: (m['status'] ?? 'searching') as String,
       opponentLabel: (m['opponent'] ?? m['opponent_label'] ?? 'Searching…') as String,
       player1: player(m['player1'] as Map?),

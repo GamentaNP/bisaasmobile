@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/notification_item.dart';
@@ -19,7 +20,12 @@ class NotificationsRemoteDataSource {
   Future<List<NotificationItem>> fetch() async {
     final res = await _dio.dio.get<Map<String, dynamic>>('/notifications');
     final body = res.data;
-    if (body == null) return const [];
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/notifications',
+      );
+    }
 
     final data = body['data'];
     // The endpoint returns a cursor envelope `{items: [...], pagination}` by
@@ -32,13 +38,22 @@ class NotificationsRemoteDataSource {
             .map(NotificationItem.fromJson)
             .toList();
       }
-      return const [];
+      // A map with no `items` is a body we do not understand — an empty
+      // inbox would claim there is nothing to read.
+      throw const ContractViolation(
+        'Notifications payload not understood',
+        endpoint: '/notifications',
+      );
     }
     if (data is List) {
       return data
           .whereType<Map<String, dynamic>>()
           .map(NotificationItem.fromJson)
           .toList();
+    }
+    if (data == null && body.containsKey('data')) {
+      // The server published no inbox at all — a real, empty inbox.
+      return const [];
     }
     final env = ApiResponse.fromJson(
       body,

@@ -35,10 +35,16 @@ class LearningRemoteDataSource {
     }
     if (data is Map<String, dynamic>) {
       // envelope fallback: data.tracks
-      final nested = data['tracks'] ?? data['data'] ?? [];
+      final nested = data['tracks'] ?? data['data'];
       if (nested is List) {
         return nested.whereType<Map<String, dynamic>>().map(LearningTrackDto.fromJson).toList();
       }
+      // A map with no list inside is a body we do not understand, not an
+      // empty catalogue.
+      throw const ContractViolation(
+        'Learning tracks payload not understood',
+        endpoint: '/learning/tracks',
+      );
     }
     try {
       final env = ApiResponse.fromJson(body, (json) {
@@ -153,11 +159,13 @@ class LearningRemoteDataSource {
     final res = await _dio.get<Map<String, dynamic>>('/learning/today');
     final body = res.data;
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    // Controller returns success(data:null) when no active goal
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/learning/today',
+      );
+    }
+    // The controller returns success(data:null) when there is no active goal —
+    // that is a real answer, not a failure.
     if (body['data'] == null) return null;
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
@@ -166,7 +174,12 @@ class LearningRemoteDataSource {
       try {
         final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
         data = env.data;
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Learning today payload not understood: $e',
+          endpoint: '/learning/today',
+        );
+      }
     }
     if (data == null) return null;
     // If data is empty map, treat as no plan

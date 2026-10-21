@@ -3,6 +3,8 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/logging/app_logger.dart';
+import '../../../../core/network/api_exception.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/dashboard_dto.dart';
 
@@ -20,35 +22,15 @@ class HomeRemoteDataSource {
   const HomeRemoteDataSource(this._dio);
   final Dio _dio;
 
-  // Offline / unreachable fallback. Every field is an honest zero or null:
-  // no invented quiz title, no invented XP threshold. The UI renders an
-  // "offline" treatment when it sees a zero-streak, un-scheduled, zero-balance
-  // payload rather than a fake "Daily Engineering Sprint".
-  static const _fallback = DashboardDto(
-    streakDays: 0,
-    isDailyCompleted: false,
-    dailyQuizScheduled: false,
-    dailyQuizTitle: null,
-    dailyQuizQuestionsCount: 0,
-    dailyQuizXpReward: null,
-    dailyQuizCoinsReward: null,
-    level: 1,
-    currentXp: 0,
-    nextLevelXp: null,
-    coinsBalance: 0,
-    activeCourseTitle: null,
-    activeCourseProgress: 0,
-  );
-
   Future<DashboardDto> getDashboard() async {
     // Parallel fetches — each isolated so one 404/offline does not kill dashboard.
-    final meFuture = _safeGet('/me');
-    final streakFuture = _safeGet('/quiz/streak');
-    final dailyFuture = _safeGet('/quiz/daily');
-    final todayFuture = _safeGet('/learning/today');
-    final missionsFuture = _safeGet('/quiz/game/missions/dashboard');
+    final meFuture = _probe('/me');
+    final streakFuture = _probe('/quiz/streak');
+    final dailyFuture = _probe('/quiz/daily');
+    final todayFuture = _probe('/learning/today');
+    final missionsFuture = _probe('/quiz/game/missions/dashboard');
 
-    final results = await Future.wait<Map<String, dynamic>?>([
+    final results = await Future.wait<_Probe>([
       meFuture,
       streakFuture,
       dailyFuture,
@@ -56,16 +38,26 @@ class HomeRemoteDataSource {
       missionsFuture,
     ]);
 
-    final me = results[0];
-    final streak = results[1];
-    final daily = results[2];
-    final today = results[3];
-    final missions = results[4];
+    final me = results[0].data;
+    final streak = results[1].data;
+    final daily = results[2].data;
+    final today = results[3].data;
+    final missions = results[4].data;
 
-    // If all are null we are offline or backend not reachable → fallback.
-    if (me == null && streak == null && daily == null && today == null) {
-      AppLogger.w('Home dashboard: all remotes null → offline fallback');
-      return _fallback;
+    // The dashboard is a **merge**, so one absent endpoint is normal: a 404 on
+    // `/quiz/daily` means "no daily quiz is scheduled", not "the server is
+    // down". But when *every* endpoint failed, the merge would produce a
+    // dashboard of zeros that is indistinguishable from a real account with
+    // nothing to do — so that case is an error, and the screen shows the
+    // offline treatment instead of inventing a plausible-looking home.
+    if (results.every((p) => p.failed)) {
+      AppLogger.w('Home dashboard: every endpoint failed → surfacing the error');
+      throw const ApiException(
+        statusCode: 0,
+        code: ApiErrorCode.serviceUnavailable,
+        message:
+            'Could not reach the server, so the dashboard cannot be shown.',
+      );
     }
 
     // Merge into shape DashboardDto understands.
@@ -162,20 +154,31 @@ class HomeRemoteDataSource {
     try {
       return DashboardDto.fromJson(merged);
     } catch (e, st) {
-      AppLogger.w('Dashboard merge parse failed → fallback: $e');
+      AppLogger.w('Dashboard merge parse failed → surfacing the error: $e');
       if (const bool.fromEnvironment('dart.vm.product') == false) {
         AppLogger.d(st);
       }
-      return _fallback;
+      // A merge the client cannot read is a contract drift, not an empty
+      // dashboard. Returning the zeroed fallback here would have shown a
+      // plausible-looking home screen for a response nobody understood.
+      throw ContractViolation(
+        'Dashboard payload not understood',
+        endpoint: '/me',
+      );
     }
   }
 
-  /// GET `path` returning the `data` envelope or null on any failure.
-  /// Never throws — callers decide fallback.
-  Future<Map<String, dynamic>?> _safeGet(String path) async {
+  /// GET `path`, distinguishing "the server says this does not exist" from
+  /// "we could not reach the server".
+  ///
+  /// A 404 or a 401 on one of the dashboard's optional sections is a
+  /// legitimate absence — the merge simply leaves that part out. A transport
+  /// error, a 5xx or a body we cannot read is a **failure**, and the caller
+  /// needs to know the difference.
+  Future<_Probe> _probe(String path) async {
     try {
       final res = await _dio.get<Map<String, dynamic>>(path);
-      if (res.data == null) return null;
+      if (res.data == null) return const _Probe(data: null, failed: true);
       // Server `data` may be a map OR a list (e.g. missions dashboard
       // returns `data: [ ... ]`) — tolerate both without a cast crash.
       final envelope = ApiResponse.fromJson(
@@ -187,18 +190,32 @@ class HomeRemoteDataSource {
         },
       );
       if (envelope.data is Map<String, dynamic>) {
-        return envelope.data as Map<String, dynamic>;
+        return _Probe(data: envelope.data as Map<String, dynamic>, failed: false);
       }
-      return null;
+      return const _Probe(data: null, failed: true);
     } on DioException catch (e) {
       final code = e.response?.statusCode;
       // 404/401 on streak/daily during early backend staging is expected — no log spam.
-      if (code == 404 || code == 401) return null;
-      AppLogger.w('Home _safeGet $path failed $code: ${e.message}');
-      return null;
+      if (code == 404 || code == 401) {
+        return const _Probe(data: null, failed: false);
+      }
+      AppLogger.w('Home _probe $path failed $code: ${e.message}');
+      return const _Probe(data: null, failed: true);
     } catch (e) {
-      AppLogger.w('Home _safeGet $path error: $e');
-      return null;
+      AppLogger.w('Home _probe $path error: $e');
+      return const _Probe(data: null, failed: true);
     }
   }
+}
+
+/// The outcome of one dashboard probe.
+class _Probe {
+  const _Probe({required this.data, required this.failed});
+
+  /// The `data` object, or null when the server legitimately has nothing.
+  final Map<String, dynamic>? data;
+
+  /// Whether the request itself failed (transport, 5xx, or an unreadable
+  /// body) — as opposed to the server answering "there is nothing here".
+  final bool failed;
 }

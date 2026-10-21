@@ -150,7 +150,23 @@ class LeaderboardRemoteDataSource {
           final top = d['topDonors'] ?? d['top_donors'];
           if (top is List) raw = (top as List).cast<Map<String, dynamic>>();
         }
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Donation leaderboard payload not understood: $e',
+          endpoint: '/donations/leaderboard',
+        );
+      }
+    }
+    if (raw.isEmpty &&
+        !body.containsKey('topDonors') &&
+        !body.containsKey('top_donors') &&
+        !body.containsKey('data')) {
+      // None of the shapes the server uses for the donor wall is present, so
+      // this is not a donor wall — it is a body we do not understand.
+      throw const ContractViolation(
+        'Donation leaderboard payload not understood',
+        endpoint: '/donations/leaderboard',
+      );
     }
     return raw.map((e) => DonorLeaderboardEntryDto.fromJson(e).toDomain()).toList();
   }

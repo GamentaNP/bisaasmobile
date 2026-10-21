@@ -371,19 +371,3 @@ class EconomyController extends Notifier<EconomyState> {
 }
 
 final economyControllerProvider = NotifierProvider<EconomyController, EconomyState>(EconomyController.new);
-
-// ── Convenience future providers for isolated screens ───────────────────────
-final economyInventoryProvider = FutureProvider<EconomyInventoryBundle>((ref) async {
-  final repo = ref.watch(economyRepositoryProvider);
-  return repo.getInventory();
-});
-
-final donationLeaderboardProvider = FutureProvider<List<DonorLeaderboardEntry>>((ref) async {
-  final repo = ref.watch(economyRepositoryProvider);
-  return repo.getDonationLeaderboard();
-});
-
-final donationFeedProvider = FutureProvider<List<DonationFeedEntry>>((ref) async {
-  final repo = ref.watch(economyRepositoryProvider);
-  return repo.getDonationFeed();
-});

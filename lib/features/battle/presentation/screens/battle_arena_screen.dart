@@ -44,21 +44,65 @@ class BattleArenaScreen extends ConsumerWidget {
       );
     }
 
+    final m = state.match!;
+
+    // A match the server opened but did not fill with questions is a broken
+    // match, not an empty arena. Indexing `questions[0]` on an empty list
+    // used to crash the screen during build.
+    if (m.questions.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Battle Arena')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline_rounded,
+                    size: 48, color: AppColors.wrongRed),
+                const SizedBox(height: 12),
+                const Text(
+                  'This match has no questions',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  state.error ??
+                      'The server opened the match without sending any '
+                          'questions, so there is nothing to play.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: () => context.go('/battle/matchmaking'),
+                  icon: const Icon(Icons.search_rounded),
+                  label: const Text('Find a Match'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     if (state.phase == BattlePhase.finished) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/battle/result');
       });
     }
 
-    final m = state.match!;
-    final q = m.questions[state.currentQuestionIndex];
+    // The index is clamped: the question list can shrink under the user
+    // (a question removed server-side) and an out-of-range index is a crash.
+    final index = state.currentQuestionIndex.clamp(0, m.questions.length - 1);
+    final q = m.questions[index];
     final me = m.player1;
     final opp = m.player2;
     final timerPct = m.perQuestionSeconds == 0 ? 0.0 : state.secondsLeftInQuestion / m.perQuestionSeconds;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Battle · Q${state.currentQuestionIndex + 1}/${m.questions.length}'),
+        title: Text('Battle · Q${index + 1}/${m.questions.length}'),
       ),
       body: Column(
         children: [

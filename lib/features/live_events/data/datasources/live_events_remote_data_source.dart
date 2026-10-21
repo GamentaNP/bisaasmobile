@@ -43,7 +43,19 @@ class LiveEventsRemoteDataSource {
           return <Map<String, dynamic>>[];
         });
         raw = env.data ?? [];
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Live-events payload not understood: $e',
+          endpoint: '/quiz/live-events',
+        );
+      }
+    }
+    if (raw.isEmpty && !body.containsKey('data') && !body.containsKey('events')) {
+      // Neither `data` nor `events`: this is not a live-events list.
+      throw const ContractViolation(
+        'Live-events payload not understood',
+        endpoint: '/quiz/live-events',
+      );
     }
     return raw.map(LiveEventDto.fromJson).toList();
   }

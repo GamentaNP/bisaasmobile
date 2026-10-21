@@ -1,5 +1,21 @@
 import 'package:meta/meta.dart';
 
+/// A drill that could not be started for a **business** reason.
+///
+/// Not a failure of the app and not a bug: there is nothing to drill, or the
+/// server has not published what is needed yet. It is its own type so the
+/// message shown to the user is the sentence written for them, rather than
+/// Dart's `Bad state: …` prefix.
+class PracticeDrillException implements Exception {
+  const PracticeDrillException(this.message);
+
+  /// A sentence written for the user.
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
 @immutable
 class PracticeOption {
   const PracticeOption({required this.key, required this.text});

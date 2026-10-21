@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/corpus_availability.dart';
 import '../../../../shared/widgets/empty_state.dart';
@@ -19,14 +20,26 @@ import '../../../quiz/presentation/screens/quiz_browser_screen.dart';
 final _coursesProvider = FutureProvider<List<QuizCourseEntry>>((ref) async {
   final dio = DioClient.instance.dio;
   final res = await dio.get<Map<String, dynamic>>('/quiz/courses');
-  final data = res.data?['data'];
+  final body = res.data;
+  if (body == null) {
+    throw const ContractViolation(
+      'Empty response body',
+      endpoint: '/quiz/courses',
+    );
+  }
+  final data = body['data'];
   if (data is List) {
     return data
         .cast<Map<String, dynamic>>()
         .map(QuizCourseEntry.fromJson)
         .toList();
   }
-  return const [];
+  // A body that is not a list is a catalogue we do not understand. Returning
+  // an empty list here made a drift look like "no courses published yet".
+  throw const ContractViolation(
+    'Course catalogue payload not understood',
+    endpoint: '/quiz/courses',
+  );
 });
 
 class CoursesScreen extends ConsumerWidget {

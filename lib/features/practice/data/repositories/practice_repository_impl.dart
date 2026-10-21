@@ -77,7 +77,7 @@ class PracticeRepositoryImpl implements PracticeRepository {
       limit: count,
     );
     if (questions.isEmpty) {
-      throw StateError(
+      throw const PracticeDrillException(
         'No questions are available for this drill on the server yet.',
       );
     }
@@ -103,7 +103,7 @@ class PracticeRepositoryImpl implements PracticeRepository {
     String? idempotencyKey,
   }) async {
     if (bookmarks.isEmpty) {
-      throw StateError('There are no bookmarks to drill.');
+      throw const PracticeDrillException('There are no bookmarks to drill.');
     }
 
     // The bookmarks endpoint publishes the question *text* but not its answer
@@ -145,7 +145,7 @@ class PracticeRepositoryImpl implements PracticeRepository {
     }
 
     if (resolved.isEmpty) {
-      throw StateError(
+      throw const PracticeDrillException(
         'The server does not publish the answer options for these bookmarks '
         'yet, so they cannot be drilled. Tap a bookmark to read it instead.',
       );

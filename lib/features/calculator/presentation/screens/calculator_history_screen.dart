@@ -40,7 +40,37 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
       ),
       body: state.historyLoading
           ? const Center(child: CircularProgressIndicator())
-          : state.history.isEmpty
+          : state.error != null
+              // A failed history read is an error, not "you have no history".
+              // The screen used to claim the user had never saved a
+              // calculation when the server had simply failed.
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.cloud_off_rounded,
+                            size: 48, color: Colors.grey),
+                        const SizedBox(height: 12),
+                        Text(
+                          state.error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: () => ref
+                              .read(calculatorControllerProvider.notifier)
+                              .loadHistory(widget.domain, widget.slug),
+                          icon: const Icon(Icons.refresh_rounded, size: 18),
+                          label: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : state.history.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

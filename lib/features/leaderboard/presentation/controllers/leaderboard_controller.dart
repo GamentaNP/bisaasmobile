@@ -173,9 +173,3 @@ class LeaderboardController extends Notifier<LeaderboardState> {
 }
 
 final leaderboardControllerProvider = NotifierProvider<LeaderboardController, LeaderboardState>(LeaderboardController.new);
-
-// Optional future provider for direct reads
-final myRankProvider = FutureProvider<List<MyRank>>((ref) async {
-  final repo = ref.watch(leaderboardRepositoryProvider);
-  return repo.getMyRanks();
-});

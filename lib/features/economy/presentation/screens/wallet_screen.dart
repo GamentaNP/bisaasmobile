@@ -59,6 +59,17 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // A failed wallet read must say so. The balance below falls back
+            // to the `GET /me` figure, which may be stale — without this the
+            // user sees a number with no idea it could be out of date.
+            if (state.walletError != null) ...[
+              _ErrorCard(
+                message: state.walletError!,
+                onRetry: () =>
+                    ref.read(economyControllerProvider.notifier).fetchWallet(),
+              ),
+              const SizedBox(height: 10),
+            ],
             // ── Balance headline ──────────────────────────────────────────────
             Container(
               width: double.infinity,
@@ -151,7 +162,23 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ],
 
             // ── Own spending by category ─────────────────────────────────────
-            if (state.walletCategories != null) ...[
+            // A failed categories read must not make the whole section
+            // disappear: the user would conclude they spent nothing.
+            if (state.categoriesError != null) ...[
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 12),
+              Text('Where your coins went',
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              _ErrorCard(
+                message: state.categoriesError!,
+                onRetry: () => ref
+                    .read(economyControllerProvider.notifier)
+                    .fetchWalletCategories(),
+              ),
+            ] else if (state.walletCategories != null) ...[
               const SizedBox(height: 20),
               const Divider(),
               const SizedBox(height: 12),
@@ -196,6 +223,39 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     } catch (_) {
       return isoDay;
     }
+  }
+}
+
+class _ErrorCard extends StatelessWidget {
+  const _ErrorCard({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.wrongRedBg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline_rounded,
+              size: 16, color: AppColors.wrongRed),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(fontSize: 12, color: AppColors.wrongRed),
+            ),
+          ),
+          TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ],
+      ),
+    );
   }
 }
 

@@ -224,7 +224,18 @@ class LibraryRemoteDataSource {
         });
         raw = env.data ?? [];
         pagination = env.pagination ?? pagination;
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Reviews payload not understood: $e',
+          endpoint: '/library/files/{slug}/reviews',
+        );
+      }
+    }
+    if (raw.isEmpty && !body.containsKey('data')) {
+      throw const ContractViolation(
+        'Reviews payload not understood',
+        endpoint: '/library/files/{slug}/reviews',
+      );
     }
 
     return (items: raw.map(LibraryReviewDto.fromJson).toList(), pagination: pagination);
@@ -299,7 +310,18 @@ class LibraryRemoteDataSource {
         });
         raw = env.data ?? [];
         pagination = env.pagination ?? pagination;
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Unlocks payload not understood: $e',
+          endpoint: '/library/me/unlocks',
+        );
+      }
+    }
+    if (raw.isEmpty && !body.containsKey('data')) {
+      throw const ContractViolation(
+        'Unlocks payload not understood',
+        endpoint: '/library/me/unlocks',
+      );
     }
 
     return (items: raw.map(LibraryUnlockItemDto.fromJson).toList(), pagination: pagination);
