@@ -1,0 +1,86 @@
+name: Device tests
+
+# The device tests are the layer the host-side tests cannot reach: the
+# engine, the plugins, the platform channels and the real navigation stack.
+# They live in their own package (`device_tests/`) because the
+# `integration_test` plugin would otherwise pull Espresso into the release
+# AAB — see `device_tests/pubspec.yaml` for the full reasoning.
+#
+# The `analyze-test` job in `ci.yml` analyses that package, so a broken
+# device test cannot land silently. This workflow actually *runs* them, on
+# an emulator, so a broken app cannot land silently either.
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  android-emulator:
+    name: Android emulator (API ${{ matrix.api-level }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 28 is the app's `minSdk` — the floor the founder's QA phone runs,
+        # and the release most likely to break: notification channels,
+        # scoped storage and the runtime-permission flow all changed
+        # around it. 30 is the "modern but not bleeding edge" case.
+        api-level: [28, 30]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.2'
+          cache: true
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Resolve the app
+        run: flutter pub get
+
+      - name: Resolve the device-test package
+        working-directory: device_tests
+        run: flutter pub get
+
+      # The emulator needs hardware acceleration. Without the udev rule the
+      # runner cannot open /dev/kvm and the emulator falls back to software
+      # emulation, which is too slow to finish a Flutter test run.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run the device tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          disable-animations: true
+          # The app is not signed with the upload key here and does not need
+          # to be: this is a test build, never a published artifact.
+          script: |
+            cd device_tests
+            flutter test integration_test -d emulator-5554
+          # The emulator images for API 28 are the least reliable of the two;
+          # a timeout there is a runner problem, not an app problem.
+          timeout-minutes: 45
+
+      - name: Upload the test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-test-report-${{ matrix.api-level }}
+          path: device_tests/build
+          retention-days: 14
+          if-no-files-found: ignore

@@ -19,8 +19,11 @@ jobs:
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter analyze
       - run: flutter test --coverage
-      # Gate is a floor to stop regressions; the committed roadmap target is 70%.
-      - run: dart scripts/coverage_check.dart --min=40
+      # A floor, not a target: it stops regressions without failing every
+      # PR that adds an uncovered line. It was 40% when the suite was half
+      # the size it is now; the measured coverage is 57.9%, so the floor
+      # moves to 55% and the committed roadmap target stays 70%.
+      - run: dart scripts/coverage_check.dart --min=55
       - run: flutter gen-l10n
       # A locale that is not 100% translated ships a mixed-language UI, and
       # generated l10n classes fall back to English silently, so nothing else
