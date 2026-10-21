@@ -1,7 +1,10 @@
 name: bisaasmobile
 description: CivilCal Flutter Client - Market-Dominating Mobile Learning for Engineering Students (Android/iOS) - Bisaas Ecosystem Client
 publish_to: 'none'
-version: 1.0.0+1
+# 1.0.2+2 — the git tag `v1.0.1` was already released, so a build carrying
+# 1.0.0 is older than what the server's `EnforceAppVersion` gate considers
+# current and gets a 426 on every API call.
+version: 1.0.2+2
 
 environment:
   sdk: ^3.13.2
@@ -26,7 +29,13 @@ dependencies:
   # === LOCAL DATABASE (offline packs) ===
   drift: ^2.21.0
   drift_flutter: ^0.3.1
-  sqlite3_flutter_libs: ^0.6.0+eol
+  # `sqlite3_flutter_libs` was removed on purpose. Since `package:sqlite3` 3.x
+  # the native library is produced by the package's own native-assets build
+  # hook (`sqlite3/hook/build.dart`), and `sqlite3_flutter_libs` is an empty
+  # stub whose own source says "This package does not do anything" — it only
+  # exists so old dependents keep resolving. The resolved `sqlite3` here is
+  # 3.5.2, so the dependency contributed nothing but a false promise that the
+  # app ships a native SQLite.
 
   # === SECURE STORAGE (tokens) ===
   flutter_secure_storage: ^11.0.0

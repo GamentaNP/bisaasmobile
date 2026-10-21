@@ -173,6 +173,27 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // The ABIs a release ships.
+        //
+        // `x86_64` is dropped on purpose: no retail device runs it, and the
+        // Play Store never serves that slice — it was ~21 MB of upload for
+        // nothing. `armeabi-v7a` stays, because the budget handsets this app
+        // targets (the same reason `minSdk` is 28) are still frequently
+        // 32-bit, and dropping the slice would make the app uninstallable
+        // on them.
+        //
+        // The filter applies to the *release* only. Debug builds stay
+        // universal so the x86_64 emulator can still run them.
+        //
+        // The Talsec runtime the freeRASP plugin binds to ships
+        // arm64-v8a, armeabi-v7a and x86_64, so both remaining slices have a
+        // native library — filtering cannot produce a half-linked APK.
+        if (buildingRelease) {
+            ndk {
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+            }
+        }
     }
 
     buildTypes {
