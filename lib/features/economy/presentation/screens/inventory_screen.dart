@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,7 @@ import '../controllers/economy_controller.dart';
 
 /// Resource inventory — 8 city resources + catalog + recent activity.
 /// Live via GET /economy/resources/inventory (throttle:economy-read).
-/// Tolerant additive parsing; shows empty/beta placeholder when degraded.
+/// Tolerant additive parsing; a failure is shown as an error with a retry.
 class InventoryScreen extends ConsumerStatefulWidget {
   const InventoryScreen({super.key});
 
@@ -45,12 +44,6 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            if (bundle?.isDegraded == true)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                child: Row(children: [const Icon(Icons.science_rounded, size: 16, color: AppColors.brand), const SizedBox(width: 8), const Expanded(child: Text('Inventory in beta — catalog will populate when economy resources sync.', style: TextStyle(fontSize: 11, color: AppColors.brandDark)))]),
-              ),
             if (state.inventoryError != null)
               Card(
                 color: AppColors.wrongRed.withValues(alpha: 0.08),

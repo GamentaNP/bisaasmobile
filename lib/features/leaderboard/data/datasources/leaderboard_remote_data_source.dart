@@ -34,7 +34,10 @@ class LeaderboardRemoteDataSource {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
       if (env.data != null) return _parseShow(env.data!);
     } catch (_) {}
-    throw Exception('Leaderboard missing data');
+    throw const ContractViolation(
+      'Leaderboard payload not understood',
+      endpoint: '/quiz/leaderboards',
+    );
   }
 
   LeaderboardShow _parseShow(Map<String, dynamic> data) {
@@ -81,7 +84,11 @@ class LeaderboardRemoteDataSource {
     } catch (_) {}
     // Fallback: body itself may be list under but handle
     if (body['ranks'] is List) return MyRankDto.listFromJson(body['ranks']);
-    return [];
+    // A body the client cannot read is a drift, not "you have no ranks".
+    throw const ContractViolation(
+      'My-rank payload not understood',
+      endpoint: '/quiz/leaderboards/my-rank',
+    );
   }
 
   Future<Map<String, dynamic>> submitScore({
@@ -105,7 +112,12 @@ class LeaderboardRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) return {};
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/leaderboard',
+      );
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
     try {

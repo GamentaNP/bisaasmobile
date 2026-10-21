@@ -112,7 +112,9 @@ class LibraryRemoteDataSource {
   Future<LibraryFileDto> getFile(String slug) async {
     final res = await _dio.get<Map<String, dynamic>>('/library/files/$slug');
     final body = res.data;
-    if (body == null) throw Exception('Library file not found: $slug');
+    if (body == null) {
+        throw ContractViolation('Empty response body', endpoint: '/library/files/$slug');
+      }
     // Success envelope: data is object
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
@@ -122,7 +124,9 @@ class LibraryRemoteDataSource {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
       data = env.data;
     }
-    if (data == null) throw Exception('Library file data missing for $slug');
+    if (data == null) {
+        throw ContractViolation('Library file payload not understood', endpoint: '/library/files/$slug');
+      }
     return LibraryFileDto.fromJson(data);
   }
 
@@ -138,7 +142,9 @@ class LibraryRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) throw Exception('Unlock response empty');
+    if (body == null) {
+      throw const ContractViolation('Empty response body', endpoint: '/library/files/{slug}/unlock');
+    }
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -146,7 +152,9 @@ class LibraryRemoteDataSource {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
       data = env.data;
     }
-    if (data == null) throw Exception('Unlock data missing');
+    if (data == null) {
+      throw const ContractViolation('Unlock payload not understood', endpoint: '/library/files/{slug}/unlock');
+    }
     return LibraryUnlockDto.fromJson(data);
   }
 
@@ -155,7 +163,9 @@ class LibraryRemoteDataSource {
   Future<String> getDownloadUrl(String slug) async {
     final res = await _dio.get<Map<String, dynamic>>('/library/files/$slug/download');
     final body = res.data;
-    if (body == null) throw Exception('Download response empty');
+    if (body == null) {
+      throw const ContractViolation('Empty response body', endpoint: '/library/files/{slug}/download');
+    }
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -163,9 +173,13 @@ class LibraryRemoteDataSource {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
       data = env.data;
     }
-    if (data == null) throw Exception('Download URL missing');
+    if (data == null) {
+      throw const ContractViolation('Download payload not understood', endpoint: '/library/files/{slug}/download');
+    }
     final url = (data['download_url'] as String?) ?? (data['url'] as String?) ?? '';
-    if (url.isEmpty) throw Exception('Download URL empty');
+    if (url.isEmpty) {
+      throw const ContractViolation('Download URL empty', endpoint: '/library/files/{slug}/download');
+    }
     return url;
   }
 
@@ -181,7 +195,11 @@ class LibraryRemoteDataSource {
       queryParameters: {'page': page, 'per_page': perPage},
     );
     final body = res.data;
-    if (body == null) return (items: <LibraryReviewDto>[], pagination: null);
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
 
     Pagination? pagination;
     final pagRaw = body['pagination'];
@@ -225,7 +243,9 @@ class LibraryRemoteDataSource {
       },
     );
     final body = res.data;
-    if (body == null) throw Exception('Review submit response empty');
+    if (body == null) {
+      throw const ContractViolation('Empty response body', endpoint: '/library/files/{slug}/reviews');
+    }
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -233,7 +253,9 @@ class LibraryRemoteDataSource {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
       data = env.data;
     }
-    if (data == null) throw Exception('Review data missing');
+    if (data == null) {
+      throw const ContractViolation('Review payload not understood', endpoint: '/library/files/{slug}/reviews');
+    }
     return LibraryReviewDto.fromJson(data);
   }
 
@@ -248,7 +270,11 @@ class LibraryRemoteDataSource {
       queryParameters: {'page': page, 'per_page': perPage},
     );
     final body = res.data;
-    if (body == null) return (items: <LibraryUnlockItemDto>[], pagination: null);
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
 
     Pagination? pagination;
     final pagRaw = body['pagination'];

@@ -23,7 +23,11 @@ class ContestsRemoteDataSource {
       queryParameters: {'page': page, 'per_page': perPage},
     );
     final body = res.data;
-    if (body == null) return (items: <ContestDto>[], pagination: null);
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Pagination? pagination;
     if (body['pagination'] is Map<String, dynamic>) {
       pagination = Pagination.fromJson(body['pagination'] as Map<String, dynamic>);
@@ -75,7 +79,11 @@ class ContestsRemoteDataSource {
   Future<Map<String, dynamic>> getJoinIntent(int id) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/contests/$id/join-intent');
     final body = res.data;
-    if (body == null) return {};
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
     try {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
@@ -96,7 +104,11 @@ class ContestsRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) return 0;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -177,7 +189,11 @@ class ContestsRemoteDataSource {
   Future<ContestRecapDto> getRecap(int id) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/contests/$id/recap');
     final body = res.data;
-    if (body == null) return ContestRecapDto.fromJson({});
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;

@@ -19,6 +19,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/numerical.dart';
+import '../../../../core/network/api_failure.dart';
 
 class NumericalRemoteDataSource {
   const NumericalRemoteDataSource(this._dio);
@@ -27,7 +28,11 @@ class NumericalRemoteDataSource {
   static const _uuid = Uuid();
 
   Map<String, dynamic>? _data(Map<String, dynamic>? body) {
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
     return null;

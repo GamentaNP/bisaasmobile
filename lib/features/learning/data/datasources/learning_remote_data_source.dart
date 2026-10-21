@@ -152,7 +152,11 @@ class LearningRemoteDataSource {
   Future<DailyPlanDto?> getToday() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/today');
     final body = res.data;
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     // Controller returns success(data:null) when no active goal
     if (body['data'] == null) return null;
     Map<String, dynamic>? data;

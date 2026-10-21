@@ -29,16 +29,23 @@ class BattleRemoteDataSource {
   const BattleRemoteDataSource(this._dio);
   final Dio _dio;
 
-  /// `data` out of the envelope, tolerating a raw body.
+  /// `data` out of the envelope.
+  ///
+  /// A body the client cannot read is a contract drift and throws — it must
+  /// never become an empty lobby, which would render as "no battles".
   Map<String, dynamic> _dataOrEmpty(Map<String, dynamic>? body) {
-    if (body == null) return const {};
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
     try {
-      return ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?).data ?? const {};
-    } catch (_) {
-      return const {};
+      final parsed = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?).data;
+      if (parsed != null) return parsed;
+    } on Object {
+      // Fall through to the contract violation below.
     }
+    throw const ContractViolation('Battle payload not understood');
   }
 
   Future<Map<String, dynamic>> getFirebaseToken() async {
@@ -64,7 +71,16 @@ class BattleRemoteDataSource {
       res.data!,
       (json) => json as Map<String, dynamic>?,
     );
-    final data = envelope.data ?? res.data!['data'] as Map<String, dynamic>? ?? {'id': 'demo', 'status': 'searching'};
+    final data = envelope.data ?? res.data!['data'] as Map<String, dynamic>?;
+    if (data == null) {
+      // The previous fallback was `{'id': 'demo', 'status': 'searching'}` —
+      // a fabricated battle id that left the arena waiting on a lobby that
+      // does not exist. A body we cannot read is a failure, not a demo.
+      throw const ContractViolation(
+        'Battle payload not understood',
+        endpoint: '/quiz/battles',
+      );
+    }
     return Map<String, dynamic>.from(data as Map);
   }
 

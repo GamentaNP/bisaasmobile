@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../../domain/offline/offline_bot_models.dart';
 
@@ -19,24 +20,34 @@ class OfflineBotRemoteDataSource {
 
   final Dio _dio;
 
-  /// `data` out of the envelope, tolerating a raw body.
+  /// `data` out of the envelope.
   ///
-  /// Same defensive shape as the battle data source: a response that cannot be
-  /// read yields an empty map rather than an exception, because a device must
-  /// queue and retry rather than crash on an unexpected payload.
+  /// A response that cannot be read is a contract drift and throws. The
+  /// previous version yielded an empty map, which the caller could not
+  /// distinguish from a roster with no opponents — and an offline match with
+  /// no opponents is a broken match, not an empty one.
   Map<String, dynamic> _dataOrEmpty(Map<String, dynamic>? body) {
-    if (body == null) return const {};
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/offline/bot-roster',
+      );
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
     try {
-      return ApiResponse.fromJson(
+      final parsed = ApiResponse.fromJson(
         body,
         (j) => j as Map<String, dynamic>?,
-      ).data ??
-          const {};
-    } catch (_) {
-      return const {};
+      ).data;
+      if (parsed != null) return parsed;
+    } on Object {
+      // Fall through to the contract violation below.
     }
+    throw const ContractViolation(
+      'Bot roster payload not understood',
+      endpoint: '/quiz/offline/bot-roster',
+    );
   }
 
   /// Fetch the opponents for an offline match.

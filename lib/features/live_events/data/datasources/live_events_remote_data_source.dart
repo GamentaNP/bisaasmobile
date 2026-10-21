@@ -145,7 +145,11 @@ class LiveEventsRemoteDataSource {
   Future<LiveEventSnapshotDto> getSnapshot(int eventId) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/live-events/$eventId/snapshot');
     final body = res.data;
-    if (body == null) return LiveEventSnapshotDto.fromJson({});
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       final d = body['data'] as Map<String, dynamic>;

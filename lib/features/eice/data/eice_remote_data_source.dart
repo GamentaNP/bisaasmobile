@@ -20,16 +20,26 @@ class EiceRemoteDataSource {
   const EiceRemoteDataSource(this._dio);
   final Dio _dio;
 
-  /// Pull `data` out of the envelope, tolerating a raw body.
-  Map<String, dynamic>? _dataOf(Map<String, dynamic>? body) {
-    if (body == null) return null;
+  /// Pull `data` out of the envelope.
+  ///
+  /// Returns null **only** when the server published no payload at all
+  /// (`data: null`) — a real "you have no plan". A body the client cannot
+  /// parse is a contract drift and throws, so it can never be rendered as
+  /// "no study plan".
+  Map<String, dynamic>? _dataOf(
+    Map<String, dynamic>? body,
+    String endpoint,
+  ) {
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
-    try {
-      return ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?).data;
-    } catch (_) {
-      return null;
-    }
+    if (data == null && body.containsKey('data')) return null;
+    throw ContractViolation(
+      'Payload not understood: expected `data` to be an object',
+      endpoint: endpoint,
+    );
   }
 
   /// No exam segment.
@@ -45,7 +55,7 @@ class EiceRemoteDataSource {
   /// which is both correct and removes the client from that decision.
   Future<Map<String, dynamic>?> getCoach() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/coach');
-    return _dataOf(res.data);
+    return _dataOf(res.data, '/quiz/coach');
   }
 
   /// Numeric exam id, taken from `exam_id` in the coach payload. Unlike coach
@@ -53,7 +63,7 @@ class EiceRemoteDataSource {
   /// somewhere real.
   Future<Map<String, dynamic>?> getTriage(int examId) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/study-planner/$examId/triage');
-    return _dataOf(res.data);
+    return _dataOf(res.data, '/quiz/study-planner/$examId/triage');
   }
 
   Future<List<Map<String, dynamic>>> getSprint() async {
@@ -75,7 +85,7 @@ class EiceRemoteDataSource {
 
   Future<Map<String, dynamic>?> getWeekly() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/reports/weekly');
-    return _dataOf(res.data);
+    return _dataOf(res.data, '/quiz/reports/weekly');
   }
 
   /// Returns true only when the server accepted the grade. A 4xx/5xx throws, so

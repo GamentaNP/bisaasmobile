@@ -514,7 +514,11 @@ class QuizRemoteDataSource {
   Future<Map<String, dynamic>?> getAttemptResults(String attemptId) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/attempts/$attemptId/results');
     final body = res.data;
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
     try {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);

@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/visitor_data.dart';
+import '../../../../core/network/api_failure.dart';
 
 /// Anonymous personalization routes, verified against
 /// `routes/api/v1/personalization.php` in `C:\laragon\www\bisaas`.
@@ -41,7 +42,11 @@ class PrivacyRemoteDataSource {
   Future<VisitorData?> getVisitorData() async {
     final res = await _dio.get<Map<String, dynamic>>('/visitor-data');
     final body = res.data;
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final data = body['data'];
     final map = data is Map<String, dynamic> ? data : body;
     final id = map['visitor_id'];

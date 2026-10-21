@@ -41,7 +41,11 @@ class TutorRemoteDataSource {
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return const TutorOnboardingStartDto(sessionId: '');
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     // Envelope tolerant
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
@@ -72,7 +76,11 @@ class TutorRemoteDataSource {
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return const TutorOnboardingCompleteDto();
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final raw = body['data'];
     // `late final` (not `?`) because every branch assigns; the compiler proves
     // it. The previous `data ?? {}` was dead code that turned a malformed
@@ -108,7 +116,11 @@ class TutorRemoteDataSource {
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return const TutorChatResponseDto(answer: '');
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     // Body may be envelope or direct
     Map<String, dynamic> data;
     if (body['data'] is Map<String, dynamic>) {
@@ -143,7 +155,11 @@ class TutorRemoteDataSource {
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) return '';
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     try {
       final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
       final data = env.data ?? body['data'];
@@ -162,7 +178,11 @@ class TutorRemoteDataSource {
   Future<TutorPlanDto> getPlan() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/plan');
     final body = res.data;
-    if (body == null) return TutorPlanDto.fromJson({});
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic> data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -182,7 +202,11 @@ class TutorRemoteDataSource {
   Future<TutorTodayDto> getToday() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/today');
     final body = res.data;
-    if (body == null) return TutorTodayDto.fromJson({'date': DateTime.now().toIso8601String()});
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic> data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -271,7 +295,11 @@ class TutorRemoteDataSource {
   Future<ProjectedScoreDto> getProjectedScore() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/projected-score');
     final body = res.data;
-    if (body == null) return ProjectedScoreDto.fromJson({'score': 0});
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic> data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -290,7 +318,11 @@ class TutorRemoteDataSource {
   Future<WeeklyReportDto> getWeeklyReport() async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/ai-tutor/weekly-report');
     final body = res.data;
-    if (body == null) return WeeklyReportDto.fromJson({});
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     Map<String, dynamic> data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;

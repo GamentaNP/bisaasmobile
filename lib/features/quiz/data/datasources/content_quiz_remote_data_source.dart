@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/content_quiz.dart';
+import '../../../../core/network/api_failure.dart';
 
 final contentQuizRemoteDataSourceProvider = Provider<ContentQuizRemoteDataSource>(
   (ref) => ContentQuizRemoteDataSource(DioClient.instance.dio),
@@ -24,7 +25,11 @@ class ContentQuizRemoteDataSource {
   static const _uuid = Uuid();
 
   Map<String, dynamic>? _data(Map<String, dynamic>? body) {
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final envelope = ApiResponse.fromJson(body, (json) => json);
     final data = envelope.data;
     if (data is Map<String, dynamic>) return data;

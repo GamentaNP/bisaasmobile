@@ -42,7 +42,11 @@ class SyllabusRemoteDataSource {
   /// Returns null rather than throwing on an unexpected shape, so a single
   /// malformed response degrades one screen instead of the whole session.
   Map<String, dynamic>? _dataObject(Map<String, dynamic>? body) {
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final envelope = ApiResponse.fromJson(body, (json) => json);
     final data = envelope.data;
     if (data is Map<String, dynamic>) return data;

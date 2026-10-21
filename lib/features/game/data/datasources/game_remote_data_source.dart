@@ -49,7 +49,12 @@ class GameRemoteDataSource {
             .toList();
       }
     }
-    return [];
+    // A body the client cannot read is a contract drift, not "there are no
+    // worlds". Throwing keeps an outage from rendering as an empty game.
+    throw const ContractViolation(
+      'Worlds payload not understood',
+      endpoint: '/quiz/game/worlds',
+    );
   }
 
   // ── Missions ────────────────────────────────────────────────────────────────
@@ -84,7 +89,12 @@ class GameRemoteDataSource {
         if (d is List) rows = d;
       } catch (_) {}
     }
-    if (rows == null) return const [];
+    if (rows == null) {
+      throw const ContractViolation(
+        'Missions payload not understood',
+        endpoint: '/quiz/game/missions/dashboard',
+      );
+    }
     return rows.whereType<Map<String, dynamic>>().map(MissionDto.fromJson).toList();
   }
 
@@ -114,7 +124,9 @@ class GameRemoteDataSource {
   }
 
   Map<String, dynamic> _dataOrEmpty(Map<String, dynamic>? body) {
-    if (body == null) return const {};
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return data;
     return body;
@@ -127,7 +139,12 @@ class GameRemoteDataSource {
   Future<GameWorldMapDto?> getWorldMap(String slug) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/game/world/$slug/map');
     final body = res.data;
-    if (body == null) return null;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/game/world/{slug}/map',
+      );
+    }
     try {
       final env = ApiResponse.fromJson(body, (data) => data);
       final raw = env.data;
@@ -140,7 +157,11 @@ class GameRemoteDataSource {
         return GameWorldMapDto.fromJson(data);
       }
     }
-    return null;
+    // A world map the client cannot read is a drift, not "no map".
+    throw const ContractViolation(
+      'World map payload not understood',
+      endpoint: '/quiz/game/world/{slug}/map',
+    );
   }
 
   // ── Missions ────────────────────────────────────────────────────────────────
@@ -149,14 +170,23 @@ class GameRemoteDataSource {
   Future<Map<String, dynamic>?> getMissionsDashboard() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/game/missions/dashboard');
     final body = res.data;
-    if (body == null) return null;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/game/missions/dashboard',
+      );
+    }
     try {
       final env = ApiResponse.fromJson(body, (data) => data);
       final raw = env.data;
       if (raw is Map<String, dynamic>) return raw;
     } catch (_) {
-      return body['data'] as Map<String, dynamic>?;
+      final data = body['data'];
+      if (data is Map<String, dynamic>) return data;
     }
-    return null;
+    throw const ContractViolation(
+      'Missions dashboard payload not understood',
+      endpoint: '/quiz/game/missions/dashboard',
+    );
   }
 }

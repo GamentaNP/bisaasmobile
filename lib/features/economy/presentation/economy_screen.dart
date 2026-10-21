@@ -6,9 +6,14 @@ import '../../../app/theme/app_colors.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 
 /// Economy hub — destinations inside Profile (5 tabs stay Home/Play/Calculate/Learn/Profile per task_plan.md R4).
-/// Routes: /economy/wallet (balance+ledger grouped by day), /economy/shop (packs), /economy/inventory (8 resources).
-/// Wallet/Shop/Ledger are WO-1/WO-2 beta (no API yet) → tolerant degraded placeholders; never crash on added field (law 11).
-/// Verified live: GET /economy/resources/inventory, GET /donations/leaderboard|feed, POST /donations/freeze-streak.
+/// Routes: /economy/wallet (balance+ledger grouped by day), /economy/shop (materials and bundles), /economy/inventory (resources).
+///
+/// Every one of these is a **live** endpoint: `GET /economy/wallet`,
+/// `GET /economy/wallet/ledger`, `GET /economy/shop`,
+/// `POST /economy/shop/purchase`, `GET /economy/resources/inventory`,
+/// `GET /donations/leaderboard|feed`, `POST /donations/freeze-streak`.
+/// There is no beta placeholder mode: a failure is a failure and the screen
+/// shows it with a retry.
 /// Flutter never mints, never grades, never ranks locally — coins are server-authoritative via EconomyService::debit.
 class EconomyScreen extends ConsumerWidget {
   const EconomyScreen({super.key});

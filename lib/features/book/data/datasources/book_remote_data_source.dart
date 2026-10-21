@@ -41,7 +41,11 @@ class BookRemoteDataSource {
   static const _uuid = Uuid();
 
   Map<String, dynamic>? _data(Map<String, dynamic>? body) {
-    if (body == null) return null;
+    if (body == null) {
+  throw const ContractViolation(
+    'Empty response body',
+  );
+}
     final envelope = ApiResponse.fromJson(body, (json) => json);
     final data = envelope.data;
     if (data is Map<String, dynamic>) return data;

@@ -47,6 +47,13 @@ class FakeRoute {
   factory FakeRoute.envelope(Map<String, dynamic> envelope) =>
       FakeRoute(200, envelope);
 
+  /// A 200 with a **raw** body — no envelope.
+  ///
+  /// This is what a contract drift looks like on the wire: a 200 whose shape
+  /// the client does not recognise. Use [FakeRoute.ok] for a well-formed
+  /// payload, and this when the point of the test is that the body is wrong.
+  factory FakeRoute.raw(Map<String, dynamic> body) => FakeRoute(200, body);
+
   /// A canonical error envelope.
   factory FakeRoute.error(
     int statusCode,

@@ -1,6 +1,7 @@
 ﻿import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/streak_dto.dart';
 
@@ -17,23 +18,53 @@ import '../models/streak_dto.dart';
 ///
 /// All self-service mutations carry an `Idempotency-Key` (the server 422s
 /// `IDEMPOTENCY_KEY_REQUIRED` without it) and are throttled `quiz-answer`.
+///
+/// **A failure is never a zero streak.** This data source used to answer a
+/// transport error or a drifted body with
+/// `StreakDto(currentStreak: 0, longestStreak: 0)` — which is a *plausible*
+/// business value, not an obviously broken one. A user whose streak had
+/// actually reset, and a user whose server was down, saw exactly the same
+/// screen. Every read here now throws instead, so the failure is visible and
+/// the zero state means what it says.
 class StreakRemoteDataSource {
   const StreakRemoteDataSource(this._dio);
   final Dio _dio;
   static const _uuid = Uuid();
 
-  Future<StreakDto> getStreak() async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/streak');
-    final body = res.data;
-    if (body == null) return const StreakDto(currentStreak: 0, longestStreak: 0);
+  /// Reads the `data` object out of a streak envelope.
+  ///
+  /// The streak endpoints publish the payload in three shapes depending on
+  /// the route (a bare object, `{data: {...}}`, and the canonical envelope),
+  /// so all three are accepted — and a body that matches none of them is a
+  /// contract drift, not an empty streak.
+  Map<String, dynamic> _data(Map<String, dynamic>? body, String endpoint) {
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
     final data = body['data'];
-    if (data is Map<String, dynamic>) return StreakDto.fromJson(data);
+    if (data is Map<String, dynamic>) return data;
     try {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakDto.fromJson(env.data!);
-    } catch (_) {}
-    if (body.containsKey('current_streak')) return StreakDto.fromJson(body);
-    return const StreakDto(currentStreak: 0, longestStreak: 0);
+      final parsed = env.data;
+      if (parsed != null) return parsed;
+    } on Object {
+      // Fall through to the bare-body check below.
+    }
+    if (body.containsKey('current_streak') ||
+        body.containsKey('frozen') ||
+        body.containsKey('success') ||
+        body.containsKey('active_count')) {
+      return body;
+    }
+    throw ContractViolation(
+      'Streak payload not understood',
+      endpoint: endpoint,
+    );
+  }
+
+  Future<StreakDto> getStreak() async {
+    final res = await _dio.get<Map<String, dynamic>>('/quiz/streak');
+    return StreakDto.fromJson(_data(res.data, '/quiz/streak'));
   }
 
   Future<FreezeStreakDto> freezeStreak({String? idempotencyKey}) async {
@@ -44,17 +75,11 @@ class StreakRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) return const FreezeStreakDto(frozen: false);
-    if (body.containsKey('frozen') || body.containsKey('success')) {
+    if (body != null &&
+        (body.containsKey('frozen') || body.containsKey('success'))) {
       return FreezeStreakDto.fromJson(body);
     }
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return FreezeStreakDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return FreezeStreakDto.fromJson(env.data!);
-    } catch (_) {}
-    return const FreezeStreakDto(frozen: false);
+    return FreezeStreakDto.fromJson(_data(body, '/donations/freeze-streak'));
   }
 
   // ── WO-6 Streak self-service ──────────────────────────────────────────────
@@ -62,15 +87,9 @@ class StreakRemoteDataSource {
   /// GET /quiz/streak/repair — eligibility check, no coins spent.
   Future<StreakRepairEligibilityDto> getRepairEligibility() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/streak/repair');
-    final body = res.data;
-    if (body == null) return const StreakRepairEligibilityDto(eligible: false);
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return StreakRepairEligibilityDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakRepairEligibilityDto.fromJson(env.data!);
-    } catch (_) {}
-    return const StreakRepairEligibilityDto(eligible: false);
+    return StreakRepairEligibilityDto.fromJson(
+      _data(res.data, '/quiz/streak/repair'),
+    );
   }
 
   /// POST /quiz/streak/repair — spend 50 coins to bridge a missed day.
@@ -82,13 +101,14 @@ class StreakRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) return const StreakRepairResultDto(repaired: false, message: 'Empty response');
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/streak/repair',
+      );
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return StreakRepairResultDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakRepairResultDto.fromJson(env.data!);
-    } catch (_) {}
     final success = body['success'] as bool? ?? false;
     return StreakRepairResultDto(repaired: success, message: body['message'] as String?);
   }
@@ -102,13 +122,14 @@ class StreakRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) return const StreakInsuranceResultDto(purchased: false, message: 'Empty response');
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/streak/insurance',
+      );
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return StreakInsuranceResultDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakInsuranceResultDto.fromJson(env.data!);
-    } catch (_) {}
     final success = body['success'] as bool? ?? false;
     return StreakInsuranceResultDto(purchased: success, message: body['message'] as String?);
   }
@@ -116,26 +137,8 @@ class StreakRemoteDataSource {
   /// GET /quiz/streak/insurance — banked auto-repair tokens + cost.
   Future<StreakInsuranceStatusDto> getInsuranceStatus() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/streak/insurance');
-    final body = res.data;
-    if (body == null) {
-      return const StreakInsuranceStatusDto(
-        activeCount: 0,
-        maxActive: 0,
-        costCoins: 0,
-        canPurchase: false,
-      );
-    }
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return StreakInsuranceStatusDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakInsuranceStatusDto.fromJson(env.data!);
-    } catch (_) {}
-    return const StreakInsuranceStatusDto(
-      activeCount: 0,
-      maxActive: 0,
-      costCoins: 0,
-      canPurchase: false,
+    return StreakInsuranceStatusDto.fromJson(
+      _data(res.data, '/quiz/streak/insurance'),
     );
   }
 
@@ -147,29 +150,15 @@ class StreakRemoteDataSource {
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );
-    final body = res.data;
-    if (body == null) return const StreakInsuranceUsedDto(used: false);
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return StreakInsuranceUsedDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakInsuranceUsedDto.fromJson(env.data!);
-    } catch (_) {}
-    return StreakInsuranceUsedDto.fromJson(body);
+    return StreakInsuranceUsedDto.fromJson(
+      _data(res.data, '/quiz/streak/insurance/use'),
+    );
   }
 
   /// GET /quiz/streak/wager — active wager status.
   Future<StreakWagerStatusDto> getActiveWager() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/streak/wager');
-    final body = res.data;
-    if (body == null) return const StreakWagerStatusDto(wager: null, currentStreak: 0);
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return StreakWagerStatusDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakWagerStatusDto.fromJson(env.data!);
-    } catch (_) {}
-    return const StreakWagerStatusDto(wager: null, currentStreak: 0);
+    return StreakWagerStatusDto.fromJson(_data(res.data, '/quiz/streak/wager'));
   }
 
   /// POST /quiz/streak/wager — commit a coin wager on N consecutive days.
@@ -185,13 +174,14 @@ class StreakRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) return const StreakWagerOpenedDto(opened: false, message: 'Empty response');
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/streak/wager',
+      );
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) return StreakWagerOpenedDto.fromJson(data);
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return StreakWagerOpenedDto.fromJson(env.data!);
-    } catch (_) {}
     final success = body['success'] as bool? ?? false;
     return StreakWagerOpenedDto(opened: success, message: body['message'] as String?);
   }
