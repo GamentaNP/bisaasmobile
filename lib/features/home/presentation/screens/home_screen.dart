@@ -16,6 +16,7 @@ import '../../../game/game_providers.dart';
 import '../../../gamification/presentation/screens/rewards_screen.dart';
 import '../../domain/entities/dashboard_data.dart';
 import '../controllers/home_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Home — player HUD (streak / coins / XP), daily-streak hero, the real world
 /// progression summary, and the explore grid.
@@ -28,6 +29,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final userState = ref.watch(authControllerProvider);
     final dashboardState = ref.watch(homeControllerProvider);
@@ -64,12 +66,12 @@ class HomeScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hi, $name 👋',
+                        l10n.homeGreeting(name),
                         style: theme.textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Level ${user?.level ?? 1} • ${user?.xp ?? 0} XP',
+                        l10n.homeLevel(user?.level ?? 1, user?.xp ?? 0),
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -113,7 +115,7 @@ class HomeScreen extends ConsumerWidget {
                   icon: Icons.bolt,
                   color: AppColors.xpGold,
                   shadow: AppColors.goldShadow,
-                  title: 'Daily',
+                  title: l10n.homeDaily,
                   sub: 'Bonus XP',
                   onTap: () => context.go('/quiz'),
                 ),
@@ -122,7 +124,7 @@ class HomeScreen extends ConsumerWidget {
                   icon: Icons.sports_kabaddi,
                   color: AppColors.wrongRed,
                   shadow: AppColors.errorShadow,
-                  title: 'Battle',
+                  title: l10n.homeBattle,
                   sub: '1v1 duel',
                   onTap: () => context.go('/battle'),
                 ),
@@ -131,7 +133,7 @@ class HomeScreen extends ConsumerWidget {
                   icon: Icons.grid_view,
                   color: AppColors.violet,
                   shadow: AppColors.purpleShadow,
-                  title: 'Browse',
+                  title: l10n.homeBrowse,
                   sub: 'All topics',
                   onTap: () => context.go('/quiz/browse'),
                 ),
@@ -164,7 +166,7 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // 5. Explore the ecosystem — chunky grid
-            Text('Explore', style: theme.textTheme.titleMedium),
+            Text(l10n.homeExplore, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             _buildQuickActionsGrid(context, ref),
 
@@ -309,6 +311,7 @@ class HomeScreen extends ConsumerWidget {
     BuildContext context,
     DashboardData data,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final title = data.activeCourseTitle;
     final progress = data.activeCourseProgress.clamp(0.0, 1.0);
@@ -321,14 +324,14 @@ class HomeScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'CURRENT COURSE',
+                l10n.homeCurrentCourse,
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: AppColors.textTertiaryLight,
                   letterSpacing: 0.8,
                 ),
               ),
               Text(
-                '${(progress * 100).round()}% Done',
+                l10n.homePercentDone((progress * 100).round()),
                 style: const TextStyle(
                   color: AppColors.brand,
                   fontWeight: FontWeight.w800,
@@ -408,6 +411,7 @@ class _MissionsEntryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final missionsAsync = ref.watch(gameMissionsProvider);
 
     return missionsAsync.when(
@@ -415,12 +419,12 @@ class _MissionsEntryCard extends ConsumerWidget {
       error: (_, __) => ChunkyCard(
         padding: const EdgeInsets.all(14),
         onTap: () => context.go('/game/missions'),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.flag_outlined, size: 20, color: AppColors.textTertiaryLight),
             SizedBox(width: 10),
             Expanded(
-              child: Text('Missions unavailable', style: TextStyle(fontSize: 13)),
+              child: Text(l10n.homeMissionsUnavailable, style: TextStyle(fontSize: 13)),
             ),
             Icon(Icons.chevron_right_rounded, size: 20),
           ],
@@ -442,8 +446,8 @@ class _MissionsEntryCard extends ConsumerWidget {
               Expanded(
                 child: Text(
                   claimable > 0
-                      ? '$claimable mission${claimable == 1 ? '' : 's'} ready to claim'
-                      : 'Missions — ${missions.length} active',
+                      ? l10n.homeMissionsReady(claimable)
+                      : l10n.homeMissionsActive(missions.length),
                   style: AppTypography.titleSmall.copyWith(
                     fontWeight: FontWeight.w700,
                     color: claimable > 0 ? AppColors.correctGreen : null,
@@ -464,6 +468,7 @@ class _WorldsEntryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final worldsAsync = ref.watch(gameWorldsProvider);
 
     return worldsAsync.when(
@@ -474,15 +479,15 @@ class _WorldsEntryCard extends ConsumerWidget {
           children: [
             const Icon(Icons.public_off_rounded, size: 24, color: AppColors.textTertiaryLight),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Could not load your worlds',
+                l10n.homeWorldsLoadError,
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
               ),
             ),
             TextButton(
               onPressed: () => ref.invalidate(gameWorldsProvider),
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -491,13 +496,13 @@ class _WorldsEntryCard extends ConsumerWidget {
         if (worlds.isEmpty) {
           return ChunkyCard(
             padding: const EdgeInsets.all(16),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.public_rounded, size: 24, color: AppColors.textTertiaryLight),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'No worlds published yet — browse topics to keep practising.',
+                    l10n.homeWorldsEmpty,
                     style: TextStyle(fontSize: 13, color: AppColors.textTertiaryLight),
                   ),
                 ),
@@ -526,7 +531,7 @@ class _WorldsEntryCard extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Your worlds',
+                      l10n.homeYourWorlds,
                       style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -540,7 +545,7 @@ class _WorldsEntryCard extends ConsumerWidget {
               ChunkyProgressBar(value: overall, color: AppColors.xpGold, height: 10),
               const SizedBox(height: 10),
               Text(
-                'Continue: ${next.name}',
+                l10n.homeContinue(next.name),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.bodySmall.copyWith(
@@ -563,6 +568,7 @@ class _OfflineStreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ChunkyCard(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -574,12 +580,12 @@ class _OfflineStreakCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Could not load your dashboard',
+                  l10n.homeDashboardLoadError,
                   style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Nothing is shown rather than guessing. Pull to refresh, or retry below.',
+                  l10n.homeDashboardEmpty,
                   style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryLight),
                 ),
                 const SizedBox(height: 4),

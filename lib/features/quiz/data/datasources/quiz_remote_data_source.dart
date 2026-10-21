@@ -10,6 +10,7 @@ import '../../../../core/network/pagination.dart';
 import '../models/attempt_dto.dart';
 import '../models/quiz_dto.dart';
 import '../models/quiz_funnel_dto.dart';
+import '../../../../app/localization/l10n.dart';
 
 /// Verified server routes (`php artisan route:list --path=api/v1` in C:\laragon\www\bisaas):
 /// - GET  /quiz/courses                          → list courses (public catalog)
@@ -177,7 +178,7 @@ class QuizRemoteDataSource {
     final raw = await getQuestionSearch(search: quizId, limit: questionLimit);
     return QuizSessionDto(
       id: quizId,
-      title: 'Quiz',
+      title: appL10n().quiz,
       questions: raw.map((j) => QuestionDto.fromJson({
             'id': (j['id'] ?? '').toString(),
             'body': (j['question_text'] ?? '') as String,

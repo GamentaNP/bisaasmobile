@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../core/network/app_update_gate.dart';
 import 'theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
 /// Blocking screen shown when the server refuses this build (HTTP 426).
 ///
@@ -18,6 +19,7 @@ class ForceUpdateScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final gate = AppUpdateGate.instance;
     final theme = Theme.of(context);
     final url = StoreLinks.forPlatform(
@@ -49,7 +51,7 @@ class ForceUpdateScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Update required',
+                  l10n.forceUpdateTitle,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -58,18 +60,15 @@ class ForceUpdateScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   gate.minVersion == null
-                      ? 'This version of CivilCal is no longer supported. '
-                          'Please update to the latest version to continue.'
-                      : 'This version of CivilCal is no longer supported. '
-                          'Please update to version ${gate.minVersion} or later '
-                          'to continue.',
+                      ? l10n.forceUpdateUnsupportedLatest
+                      : l10n.forceUpdateUnsupportedVersion(gate.minVersion!),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                 ),
-                if (gate.currentVersion != null) ...[
+                if (gate.currentVersion case final String currentVersion) ...[
                   const SizedBox(height: 8),
                   Text(
-                    'Your version: ${gate.currentVersion}',
+                    l10n.forceUpdateYourVersion(currentVersion),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -80,11 +79,11 @@ class ForceUpdateScreen extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: () => unawaited(_openStore(context, url)),
                   icon: const Icon(Icons.download_rounded),
-                  label: const Text('Update now'),
+                  label: Text(l10n.forceUpdateNow),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Your account and progress are safe — nothing is lost by updating.',
+                  l10n.forceUpdateReassurance,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -99,6 +98,7 @@ class ForceUpdateScreen extends StatelessWidget {
   }
 
   Future<void> _openStore(BuildContext context, String url) async {
+    final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     var launched = false;
     try {
@@ -112,7 +112,7 @@ class ForceUpdateScreen extends StatelessWidget {
     if (!launched) {
       // Don't leave the tap looking broken if no browser is available.
       messenger.showSnackBar(
-        SnackBar(content: Text('Could not open the store. Visit $url')),
+        SnackBar(content: Text(l10n.forceUpdateStoreFailed(url))),
       );
     }
   }

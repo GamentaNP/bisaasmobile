@@ -16,6 +16,7 @@ import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
 import '../../../gamification/presentation/widgets/lottie_overlay.dart';
 import '../state/quiz_state.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Results screen shown after quiz completion — summarizes server-authoritative
 /// totals (XP, coins, accuracy, streak).
@@ -25,6 +26,7 @@ class QuizResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final session = quizState.session;
     final answered = quizState.answers.length;
@@ -142,7 +144,7 @@ class QuizResultScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Accuracy',
+                      l10n.quizResultAccuracy,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: AppColors.textSecondaryDark,
                       ),
@@ -153,7 +155,7 @@ class QuizResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '$correct of $totalQ correct',
+              l10n.quizResultCorrectOf(correct, totalQ),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.textTertiaryLight,
                 fontWeight: FontWeight.w700,
@@ -167,19 +169,19 @@ class QuizResultScreen extends StatelessWidget {
               children: [
                 _StatCard(
                   value: '$correct/$totalQ',
-                  label: 'Correct',
+                  label: l10n.quizResultCorrect,
                   icon: Icons.check_circle_rounded,
                   color: AppColors.correctGreen,
                 ),
                 _StatCard(
                   value: '+$xpEarned',
-                  label: 'XP Earned',
+                  label: l10n.quizResultXpEarned,
                   icon: Icons.bolt_rounded,
                   color: AppColors.xpGold,
                 ),
                 _StatCard(
                   value: '+$coinsEarned',
-                  label: 'Coins',
+                  label: l10n.quizResultCoins,
                   icon: Icons.monetization_on_rounded,
                   color: AppColors.coinYellow,
                 ),
@@ -193,7 +195,7 @@ class QuizResultScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Answer Review',
+                  l10n.quizResultAnswerReview,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -220,7 +222,7 @@ class QuizResultScreen extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () => _shareResult(context, accuracy, correct, totalQ, quizState, xpEarned: xpEarned, coinsEarned: coinsEarned),
               icon: const Icon(Icons.share_rounded, size: 18),
-              label: const Text('Share Result'),
+              label: Text(l10n.commonShareResult),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
@@ -233,7 +235,7 @@ class QuizResultScreen extends StatelessWidget {
 
             // ── CTAs ─────────────────────────────────────────────────────
             GradientButton(
-              label: 'Back to Home',
+              label: l10n.quizResultBackToHome,
               icon: Icons.home_rounded,
               onPressed: () => context.go('/home'),
             ),
@@ -248,7 +250,7 @@ class QuizResultScreen extends StatelessWidget {
                 }
               },
               icon: const Icon(Icons.fact_check_outlined),
-              label: const Text('Review All Answers'),
+              label: Text(l10n.quizResultReviewAll),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
@@ -260,7 +262,7 @@ class QuizResultScreen extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () => context.go('/quiz'),
               icon: const Icon(Icons.replay_rounded),
-              label: const Text('More Practice'),
+              label: Text(l10n.quizResultMorePractice),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
@@ -400,6 +402,7 @@ Future<void> _shareResult(
   required int xpEarned,
   required int coinsEarned,
 }) async {
+  final l10n = AppLocalizations.of(context)!;
   final pct = (accuracy * 100).round();
   final title = quizState.session?.title ?? 'CivilCal Quiz';
   final grade = pct >= 80 ? 'Excellent' : pct >= 50 ? 'Good Job' : 'Keep Practicing';
@@ -439,7 +442,7 @@ Future<void> _shareResult(
     AppLogger.w('Share failed: $e');
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Share unavailable: $e')),
+        SnackBar(content: Text(l10n.quizResultShareFailed(e))),
       );
     }
   }
@@ -477,15 +480,16 @@ class _ConfettiOnMountState extends State<_ConfettiOnMount> {
   }
 
   void _maybeFire() {
+    final l10n = AppLocalizations.of(context)!;
     if (_fired || !widget.celebrate || !mounted) return;
     _fired = true;
     if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) return;
     unawaited(
       LottieOverlay.show(
         context,
-        const LottieOverlay(
+        LottieOverlay(
           asset: 'assets/animations/confetti.json',
-          title: 'Quiz Complete!',
+          title: l10n.quizResultTitle,
           autoDismiss: Duration(milliseconds: 2200),
         ),
       ),

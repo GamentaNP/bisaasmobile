@@ -7,6 +7,7 @@ import '../../../../core/errors/error_handler.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../domain/password_policy.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Completes a password reset from the emailed link.
 ///
@@ -88,12 +89,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final hasCredentials = (widget.token?.isNotEmpty ?? false) &&
         (widget.email?.isNotEmpty ?? false);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Set a new password')),
+      appBar: AppBar(title: Text(l10n.authSetNewPasswordTitle)),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -116,13 +118,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Choose a new password',
+                    l10n.authResetTitle,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'You will be signed out everywhere, including this device.',
+                    l10n.authResetSubtitle,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall,
                   ),
@@ -130,12 +132,11 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   if (!hasCredentials)
                     _Notice(
                       icon: Icons.link_off_rounded,
-                      text: 'This link is missing its reset token. Open the link from '
-                          'your email, or request a new one.',
+                      text: l10n.authResetMissingToken,
                       color: AppColors.wrongRed,
                       action: FilledButton.tonal(
                         onPressed: () => context.go('/forgot-password'),
-                        child: const Text('Request a new link'),
+                        child: Text(l10n.authRequestNewLink),
                       ),
                     )
                   else ...[
@@ -151,8 +152,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => _confirmFocus.requestFocus(),
                       decoration: InputDecoration(
-                        labelText: 'New password',
-                        helperText: 'At least ${PasswordPolicy.minLength} characters',
+                        labelText: l10n.authNewPasswordLabel,
+                        helperText: l10n.authMinChars(PasswordPolicy.minLength),
                         border: const OutlineInputBorder(),
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         suffixIcon: IconButton(
@@ -170,8 +171,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       autofillHints: const [AutofillHints.newPassword],
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _submit(),
-                      decoration: const InputDecoration(
-                        labelText: 'Confirm new password',
+                      decoration: InputDecoration(
+                        labelText: l10n.authConfirmNewPasswordLabel,
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.lock_reset_rounded),
                       ),
@@ -189,14 +190,14 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     ],
                     const SizedBox(height: 24),
                     GradientButton(
-                      label: _loading ? 'Updating…' : 'Update password',
+                      label: _loading ? l10n.authUpdating : l10n.authUpdatePassword,
                       onPressed: _loading ? null : _submit,
                       loading: _loading,
                     ),
                     const SizedBox(height: 10),
                     TextButton(
                       onPressed: _loading ? null : () => context.go('/forgot-password'),
-                      child: const Text('Request a new link instead'),
+                      child: Text(l10n.authRequestNewLinkInstead),
                     ),
                   ],
                 ],

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -63,6 +64,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Container(
@@ -106,7 +108,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
                 const SizedBox(height: 22),
                 Text(
-                  'CivilCal',
+                  l10n.appTitle,
                   style: AppTypography.headlineMedium.copyWith(
                     color: isDark
                         ? AppColors.textPrimaryDark
@@ -117,7 +119,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'BiSaaS Engineering Learning Ecosystem',
+                  l10n.authSplashTagline,
                   style: AppTypography.bodySmall.copyWith(
                     color: isDark
                         ? AppColors.textTertiaryDark

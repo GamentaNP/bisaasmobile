@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/network/api_exception.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Offers to resend the account-verification email.
 ///
@@ -48,6 +49,7 @@ class _EmailVerificationBannerState extends ConsumerState<EmailVerificationBanne
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final required = ref.watch(emailVerificationRequiredProvider);
     if (!required) return const SizedBox.shrink();
 
@@ -65,14 +67,14 @@ class _EmailVerificationBannerState extends ConsumerState<EmailVerificationBanne
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(Icons.mark_email_unread_rounded,
                   size: 18, color: AppColors.warningShadow),
               SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Verify your email to unlock every feature.',
+                  l10n.authVerifyEmailBanner,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -86,8 +88,8 @@ class _EmailVerificationBannerState extends ConsumerState<EmailVerificationBanne
           const SizedBox(height: 8),
           Text(
             _sent
-                ? 'If that address still needs verifying, a new link is on its way. Check your inbox and spam folder.'
-                : 'We send a one-tap verification link to the address on your account.',
+                ? l10n.authVerificationResentBody
+                : l10n.authVerificationResentHint,
             style: const TextStyle(fontSize: 11, color: AppColors.warningShadow),
           ),
           if (_error != null) ...[
@@ -110,7 +112,7 @@ class _EmailVerificationBannerState extends ConsumerState<EmailVerificationBanne
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.refresh_rounded, size: 16),
-              label: Text(_sent ? 'Verification sent' : 'Resend verification email'),
+              label: Text(_sent ? l10n.authVerificationSent : l10n.authResendVerification),
               style: TextButton.styleFrom(foregroundColor: AppColors.warningShadow),
             ),
           ),

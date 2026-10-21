@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/calculator_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Calculator history, served by `GET /api/v1/calculators/{domain}/{slug}/history`.
 ///
@@ -33,10 +34,11 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(calculatorControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.slug.replaceAll('-', ' ')} · history'),
+        title: Text(l10n.calcHistoryTitle(widget.slug.replaceAll('-', ' '))),
       ),
       body: state.historyLoading
           ? const Center(child: CircularProgressIndicator())
@@ -64,7 +66,7 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
                               .read(calculatorControllerProvider.notifier)
                               .loadHistory(widget.domain, widget.slug),
                           icon: const Icon(Icons.refresh_rounded, size: 18),
-                          label: const Text('Retry'),
+                          label: Text(l10n.retry),
                         ),
                       ],
                     ),
@@ -74,10 +76,10 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(Icons.history_rounded, size: 56, color: Colors.grey),
                       SizedBox(height: 8),
-                      Text('No saved calculations yet', style: TextStyle(color: Colors.grey)),
+                      Text(l10n.calcHistoryEmpty, style: TextStyle(color: Colors.grey)),
                     ],
                   ),
                 )

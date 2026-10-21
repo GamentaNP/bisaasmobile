@@ -1,22 +1,22 @@
 {
   "@@locale": "ne",
   "appTitle": "CivilCal",
-  "signIn": "साइन इन",
+  "signIn": "साइन इन गर्नुहोस्",
   "register": "दर्ता गर्नुहोस्",
   "quiz": "क्विज",
   "practice": "अभ्यास",
-  "calculators": "क्याल्कुलेटर",
-  "courses": "पाठ्यक्रमहरू",
+  "calculators": "क्यालकुलेटर",
+  "courses": "कोर्स",
   "continueAsGuest": "अतिथिको रूपमा जारी राख्नुहोस्",
-  "backend": "ब्याकेन्ड",
+  "backend": "ब्याकइन्ड",
   "env": "वातावरण",
-  "home": "गृह",
+  "home": "गृहपृष्ठ",
   "profile": "प्रोफाइल",
   "settings": "सेटिङ",
   "offline": "अफलाइन",
-  "retry": "पुन: प्रयास गर्नुहोस्",
-  "error": "केही गलत भयो",
-  "streakDays": "लगातार: {days} दिन",
+  "retry": "फेरि प्रयास",
+  "error": "केही गडबड भयो",
+  "streakDays": "स्ट्रिक: {days} दिन",
   "@streakDays": {
     "placeholders": {
       "days": {
@@ -24,7 +24,7 @@
       }
     }
   },
-  "coinsBalance": "{count} सिक्काहरू",
+  "coinsBalance": "{count} क्विन",
   "@coinsBalance": {
     "placeholders": {
       "count": {
@@ -32,7 +32,510 @@
       }
     }
   },
-  "appLocked": "CivilCal लक भएको छ",
-  "unlock": "अनलक गर्नुहोस्",
-  "unlockCivilCal": "CivilCal अनलक गर्नुहोस्"
+  "appLocked": "CivilCal लक छ",
+  "unlock": "खोल्नुहोस्",
+  "unlockCivilCal": "CivilCal खोल्नुहोस्",
+  "commonCancel": "रद्द गर्नुहोस्",
+  "commonSave": "सुरक्षित गर्नुहोस्",
+  "commonClose": "बन्द गर्नुहोस्",
+  "commonGoBack": "पछाडि जानुहोस्",
+  "commonStay": "यहै रहनुहोस्",
+  "commonExit": "बाहिर निस्कनुहोस्",
+  "commonEmail": "इमेल",
+  "commonPassword": "पासवर्ड",
+  "commonContinueWithGoogle": "Google सँग जारी राख्नुहोस्",
+  "commonContinueWithApple": "Apple सँग जारी राख्नुहोस्",
+  "commonOr": "वा",
+  "commonSkip": "छोड्नुहोस्",
+  "commonCheckAgain": "फेरि जाँच्नुहोस्",
+  "commonContactSupport": "सहायता सम्पर्क गर्नुहोस्",
+  "commonShareResult": "नतिजा साझेदार गर्नुहोस्",
+  "commonPoints": "{count} अंक",
+  "@commonPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonPercent": "{value}%",
+  "@commonPercent": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonXpGained": "+{amount} XP",
+  "@commonXpGained": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "authWelcomeBackTitle": "पुनः स्वागत छ",
+  "authWelcomeBackSubtitle": "आफ्ना क्विज, सूत्र र अंक हेर्न साइन इन गर्नुहोस्",
+  "authForgotPasswordTitle": "पासवर्ड बिर्सनुभयो?",
+  "authForgotPasswordSubtitle": "तपाईंको दर्ता गरिएको इमेल लेख्नुहोस्, हामी पासवर्ड रिसेट गर्ने निर्देश पठाउनेछौं।",
+  "authEmailAddressLabel": "इमेल ठेगाना",
+  "authSendResetLink": "रिसेट लिंक पठाउनुहोस्",
+  "authCheckEmailTitle": "आफ्नो इमेल हेर्नुहोस्",
+  "authCheckEmailBody": "{email} सँग खाता भए छुट्टै पासवर्ड रिसेट लिंक पठाइनेछौं।",
+  "@authCheckEmailBody": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "authReturnToLogin": "लगइनमा फर्कनुहोस्",
+  "authJoinTitle": "CivilCal मा सामेल हुनुहोस्",
+  "authJoinSubtitle": "इन्जिनियरिङ परीक्षा र गणितका लागि तपाईंको साथी",
+  "authFullNameLabel": "पूरा नाम",
+  "authConfirmPasswordLabel": "पासवर्ड पुष्टि गर्नुहोस्",
+  "authCreateAccount": "खाता खोल्नुहोस्",
+  "authAlreadyHaveAccount": "पहिले नै खाता छ?",
+  "authNoAccount": "खाता छैन?",
+  "authSetNewPasswordTitle": "नयाँ पासवर्ड राख्नुहोस्",
+  "authResetTitle": "नयाँ पासवर्ड छान्नुहोस्",
+  "authResetSubtitle": "तपाईं सबै यन्त्रमा, यस यन्त्रमा पनि, साइन आउट हुनुहुनेछ।",
+  "authResetMissingToken": "यो लिंकमा रिसेट टोकन छैन। इमेलबाट पठाइएको लिंक खोल्नुहोस्, वा नयाँ लिंक माग्नुहोस्।",
+  "authRequestNewLink": "नयाँ लिंक माग्नुहोस्",
+  "authRequestNewLinkInstead": "त्यसैले नयाँ लिंक माग्नुहोस्",
+  "authNewPasswordLabel": "नयाँ पासवर्ड",
+  "authConfirmNewPasswordLabel": "नयाँ पासवर्ड पुष्टि गर्नुहोस्",
+  "authMinChars": "कम्तीमा {count} अक्षर",
+  "@authMinChars": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "authVerifyEmailBanner": "सबै सुविधा खोल्न आफ्नो इमेल प्रमाणित गर्नुहोस्।",
+  "authSplashTagline": "बिसास इन्जिनियरिङ लर्निङ इकोसिस्टम",
+  "authInvalidEmail": "मान्य इमेल लेख्नुहोस्",
+  "authPasswordRequired": "कृपया आफ्नो पासवर्ड लेख्नुहोस्",
+  "onboardingStepOf": "चरण {current} / {total}",
+  "@onboardingStepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingTargetExamTitle": "लक्षित परीक्षा",
+  "onboardingTargetExamBody": "यो खाताले कुन पाठ्यक्रमतर्फ अध्ययन गर्छ तो तोक्न्छ।",
+  "onboardingDailyGoalTitle": "दैनिक अभ्यासको लक्ष्य",
+  "onboardingDailyGoalBody": "तपाईं दैनिक कति समय दिन चाहनुहुन्छ? जुनसुकै बेला परिवर्तन गर्न सकिन्छ।",
+  "onboardingMinutesPerDay": "दिनमा {minutes} मिनेट — {label}",
+  "@onboardingMinutesPerDay": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      },
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "onboardingCurrentLevelTitle": "तपाईंको हालको तह",
+  "onboardingCurrentLevelBody": "तपाईंको स्ट्रिक र दोहोराइ कतामा सुरु हुन्छ तो तोक्न्छ।",
+  "quizHomeTitle": "अभ्यास र क्विज",
+  "quizHomeLoadError": "क्विज लोड गर्न सकिएन",
+  "quizHomeEmptyTitle": "अहिलेसम्म कुनै क्विज छैन",
+  "quizHomeEmptyBody": "तपाईंको परीक्षाका प्रश्न संग्रह तयार हुँदैछ। छिट्टै फेरि जाँच्नुहोस्।",
+  "quizPlayWorlds": "वर्ल्डहरू खेल्नुहोस्",
+  "quizPlayWorldsSubtitle": "अध्याय, तह र बड — अघि बढ्दै स्टार कमाउनुहोस्",
+  "quizPracticeDrill": "अभ्यास ड्रिल",
+  "quizPracticeDrillSubtitle": "आफ्ना बुकमार्क र कमजोर विषय दोहोराउनुहोस् — समयसीमा छैन, अंकमा असर छैन",
+  "quizIntroDetailsTitle": "क्विजको विवरण",
+  "quizIntroLoadFailed": "क्विज लोड गर्न सकिएन: {reason}",
+  "@quizIntroLoadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizIntroQuestions": "प्रश्नहरू",
+  "quizIntroMinutes": "मिनेट",
+  "quizIntroStart": "क्विज सुरु गर्नुहोस्",
+  "quizIntroHowItWorks": "यसरी काम गर्छ",
+  "quizAttemptLoadError": "क्विज लोड गर्न सकिएन",
+  "quizAttemptOfflineNotice": "अफलाइन अभ्यास — आधिकारिक होइन। इन्टरनेट फर्केपछि XP/क्विन मिलाइनेछन्।",
+  "quizAttemptUnsupportedEffect": "{effect} प्रयोग भयो — सर्भरले यस्तो इफेक्ट फर्कायो जुन यो एपले अहिले देखाउन सक्दैन।",
+  "@quizAttemptUnsupportedEffect": {
+    "placeholders": {
+      "effect": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizAttemptCombo": "×{count} कम्बो!",
+  "@quizAttemptCombo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizAttemptExitTitle": "क्विजबाट निस्कने?",
+  "quizAttemptExitBody": "तपाईंको हालको प्रगति हराउनेछ। निस्कनेमा पक्का हुनुहुन्छ?",
+  "quizResultTitle": "क्विज पूरा भयो!",
+  "quizResultAccuracy": "शुद्धता",
+  "quizResultCorrectOf": "{total} मध्ये {correct} सही",
+  "@quizResultCorrectOf": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "quizResultCorrect": "सही",
+  "quizResultXpEarned": "कमाइएको XP",
+  "quizResultCoins": "क्विन",
+  "quizResultAnswerReview": "उत्तर पुनरावलोकन",
+  "quizResultBackToHome": "गृहपृष्ठमा फर्कनुहोस्",
+  "quizResultReviewAll": "सबै उत्तर हेर्नुहोस्",
+  "quizResultMorePractice": "थप अभ्यास",
+  "quizResultShareFailed": "साझेदारी उपलब्ध छैन: {reason}",
+  "@quizResultShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReviewTitle": "उत्तरहरू हेर्नुहोस्",
+  "quizReviewLoadFailed": "पुनरावलोकन लोड गर्न सकिएन: {reason}",
+  "@quizReviewLoadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReviewEmpty": "हेर्नुपर्ने कुनै उत्तर छैन",
+  "quizReviewYourAnswer": "तपाईंको उत्तर",
+  "quizReviewNotAnswered": "उत्तर दिइएको छैन",
+  "quizReviewQuestionNumber": "प्रश्न {number}",
+  "@quizReviewQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFunnelTryItOut": "आजमाएर हेर्नुहोस्",
+  "quizFunnelSampleTitle": "नमुना प्रश्नहरू",
+  "quizFunnelShown": "{count} देखाइएको",
+  "@quizFunnelShown": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizFunnelEmptyTitle": "अहिलेसम्म कुनै नमुना प्रश्न छैन",
+  "quizFunnelEmptyBody": "अहिले सङ्ग्रहमा सार्वजनिक प्रश्न छैनन्। खाता खोल्नुहोस्, सबै कुरा देख्नुहुन्छ।",
+  "quizFunnelCreateAccount": "खेल्न निःशुल्क खाता खोल्नुहोस्",
+  "quizFunnelPlayGraded": "मूल्याङ्कनसहितको क्विज खेल्नुहोस्",
+  "quizFunnelPracticeNote": "अभ्यास मोडले अंक, XP वा स्ट्रिकलाई कहिल्यै असर गर्दैन।",
+  "quizOfflinePractice": "अफलाइन अभ्यास — {subject}",
+  "@quizOfflinePractice": {
+    "placeholders": {
+      "subject": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFinishFailed": "क्विज समाप्त गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।",
+  "quizCountUnavailable": "संख्या उपलब्ध छैन",
+  "calcBrowserEmpty": "कुनै क्यालकुलेटर प्रकाशित छैन",
+  "calcBrowserCount": "{count} क्यालकुलेटर • {domains} क्षेत्र",
+  "@calcBrowserCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "domains": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcBrowserLoadError": "क्यालकुलेटर लोड गर्न सकिएन",
+  "calcShareFailed": "यो नतिजा साझेदार गर्न सकिएन: {reason}",
+  "@calcShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcNoInputNamed": "यस क्यालकुलेटरमा \"{name}\" नामको इनपुट छैन",
+  "@calcNoInputNamed": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcAddInput": "कम्तीमा एउटा इनपुट थप्नुहोस्",
+  "calcInputsLabel": "इनपुट · {label}",
+  "@calcInputsLabel": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcInputsLegacy": "इनपुट (पुरानो)",
+  "calcKeyLabel": "कुञ्जी",
+  "calcKeyExample": "जस्तै: लम्बाइ",
+  "calcValueLabel": "मान",
+  "calcValueExample": "जस्तै: 12.5",
+  "calcAssistantTitle": "सहायकलाई सोध्नुहोस्",
+  "calcAssistantExample": "जस्तै: २५ MPa मिक्सका लागि ३ म चौडाइ, ४ म गहराइको स्ल्याब",
+  "calcAssistantSuggested": "सुझाव दिइएका मान",
+  "calcAssistantAlso": "तपाईं यो पनि सोध्न सक्नुहुन्छ",
+  "calcHistoryTitle": "{subject} · इतिहास",
+  "@calcHistoryTitle": {
+    "placeholders": {
+      "subject": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcHistoryEmpty": "अहिलेसम्म कुनै गणित सुरक्षित गरिएको छैन",
+  "calcStepByStep": "चरणबद्ध",
+  "calcShareResult": "नतिजा साझेदार गर्नुहोस्",
+  "calcPracticeRelated": "सम्बन्धित प्रश्न अभ्यास गर्नुहोस्",
+  "calcViewHistory": "इतिहास हेर्नुहोस्",
+  "calcNoSchema": "सर्भरले फाँटको स्किमा दिएन। सामान्य कुञ्जी/मान सम्पादकमा प्रयोग गरिन्छ।",
+  "calcAddField": "फाँट थप्नुहोस्",
+  "calcInputsCount": "इनपुट: {count}",
+  "@calcInputsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "calcAsk": "सोध्नुहोस्",
+  "calcApply": "प्रयोग गर्नुहोस्",
+  "calcAssistantDisclaimer": "सहायकले सुझाव दिन्छ, निर्णय तपाईंको। गणित सधैँ सर्भरले गर्छ।",
+  "homeGreeting": "नमस्ते, {name} 👋",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeLevel": "तह {level} • {xp} XP",
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeDaily": "दैनिक",
+  "homeBattle": "ब्याटल",
+  "homeBrowse": "हेर्नुहोस्",
+  "homeExplore": "घुम्नुहोस्",
+  "homeCurrentCourse": "हालको कोर्स",
+  "homePercentDone": "{percent}% पूरा",
+  "@homePercentDone": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeMissionsUnavailable": "मिसन उपलब्ध छैन",
+  "homeWorldsLoadError": "तपाईंका वर्ल्ड लोड गर्न सकिएन",
+  "homeWorldsEmpty": "अहिलेसम्म कुनै वर्ल्ड प्रकाशित छैन — अभ्यास जारी राख्न विषय हेर्नुहोस्।",
+  "homeYourWorlds": "तपाईंका वर्ल्ड",
+  "homeStars": "{earned} / {total} ⭐",
+  "@homeStars": {
+    "placeholders": {
+      "earned": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "homeContinue": "जारी राख्नुहोस्: {title}",
+  "@homeContinue": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeDashboardLoadError": "तपाईंको ड्यासबोर्ड लोड गर्न सकिएन",
+  "homeDashboardEmpty": "अनुमान गर्नुको सट्टा केही देखाइएको छैन। तान्नुहोस्, वा तल फेरि प्रयास गर्नुहोस्।",
+  "homeDashboardUnreachable": "सर्भरसम्म पुग्न सकिएन, त्यसैले ड्यासबोर्ड देखाउन सकिएन।",
+  "consentTitle": "गोपनीयता विकल्प",
+  "consentIntro": "तपाईंको खाता र क्विजको प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। Settings → Privacy मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।",
+  "consentNecessary": "आवश्यक",
+  "consentNecessaryBody": "साइन इन र तपाईंको सुरक्षित काम, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच। एप चल्नका लागि आवश्यक।",
+  "consentFunctional": "कार्यक्षम",
+  "consentFunctionalBody": "तपाईंको भाषा र फिल्टरजस्ता सेटिङ यस यन्त्रमा सम्झनुहोस्।",
+  "consentAnalytics": "विश्लेषण",
+  "consentAnalyticsBody": "प्रयोग सम्बन्धी घटना जुन सुविधाहरू उपयोगी छन् भनी देखाउँछ। तिनीहरू तपाईंको खातासँग होइन, यन्त्र पहिचानसँग जोडिन्छन्। प्रश्नको सामग्री कहिल्यै समावेश हुँदैन।",
+  "consentMarketing": "प्रचार",
+  "consentMarketingBody": "अफर र प्रचार। तपाईं नभाएसम्म बन्द।",
+  "consentSaveChoices": "विकल्प सुरक्षित गर्नुहोस्",
+  "consentNecessaryOnly": "आवश्यक मात्र राखेर जारी राख्नुहोस्",
+  "consentLoadError": "तपाईंका विकल्प लोड गर्न सकिएन",
+  "consentNecessaryAlwaysOn": "सधैं सक्रिय। तपाईंको खाता, सुरक्षित काम, पुश टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच।",
+  "consentDataStored": "यस यन्त्रबारे सुरक्षित डाटा",
+  "consentDataStoredSubtitle": "अनाम प्रोफाइल हेर्नुहोस् र मेटाउनुहोस्",
+  "consentFootnote": "कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@bisaas.com मा सम्पर्क गर्नुहोस्।",
+  "privacyTitle": "तपाईंको डाटा",
+  "privacyAnonymousProfile": "अनाम प्रोफाइल",
+  "privacyReference": "सन्दर्भ {reference}",
+  "@privacyReference": {
+    "placeholders": {
+      "reference": {
+        "type": "Object"
+      }
+    }
+  },
+  "privacyEraseData": "सुरक्षित डाटा मेटाउनुहोस्",
+  "privacyLocalChoices": "यस यन्त्रका विकल्प",
+  "privacyEraseTitle": "सुरक्षित डाटा मेटाउने?",
+  "privacyEraseBody": "यसले अनाम प्रोफाइल र यस यन्त्रका लागि सुरक्षित भएका सबै इन्टेन्ट घटना मेटाउँछ। यो पूर्ववत् हुँदैन।",
+  "privacyErased": "सुरक्षित डाटा मेटाइयो",
+  "privacyEraseFailed": "डाटा मेटाउन सकिएन। फेरि प्रयास गर्नुहोस्।",
+  "privacyEraseConfirm": "मेटाउनुहोस्",
+  "privacyMenu": "गोपनीयता",
+  "notificationDailyTitle": "दैनिक स्प्रिन्ट तयार छ ⚡",
+  "notificationDailyBody": "तपाईंका दैनिक बहुविकल्पीय प्रश्न तयार छन् — स्ट्रिक जोगाउनुहोस्!",
+  "forceUpdateTitle": "अद्यावधिक आवश्यक",
+  "forceUpdateYourVersion": "तपाईंको संस्करण: {version}",
+  "@forceUpdateYourVersion": {
+    "placeholders": {
+      "version": {
+        "type": "Object"
+      }
+    }
+  },
+  "forceUpdateNow": "अहिले अद्यावधिक गर्नुहोस्",
+  "forceUpdateReassurance": "तपाईंको खाता र प्रगति सुरक्षित छ — अद्यावधिकले केही गुमाउँदैन।",
+  "forceUpdateStoreFailed": "स्टोर खोल्न सकिएन। {url} मा जानुहोस्",
+  "@forceUpdateStoreFailed": {
+    "placeholders": {
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "maintenanceTitle": "हामी छिट्टै फर्कन्छौं",
+  "maintenanceBody": "CivilCal सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।",
+  "versionUnsupported": "यो एप संस्करण अब समर्थित छैन।",
+  "authUpdating": "अद्यावधिक हुँदैछ…",
+  "authUpdatePassword": "पासवर्ड अद्यावधिक गर्नुहोस्",
+  "authVerificationResentBody": "यो ठेगाना अझै प्रमाणित हुनुपर्ने छ भने नयाँ लिंक पठाइदैछौं। आफ्नो इनबक्स र स्प्याम फोल्डर हेर्नुहोस्।",
+  "authVerificationResentHint": "हामी तपाईंको खाताको ठेगानामा एक ट्यापको प्रमाणीकरण लिंक पठाउँछौं।",
+  "authVerificationSent": "प्रमाणीकरण पठाइयो",
+  "authResendVerification": "प्रमाणीकरण इमेल पुनः पठाउनुहोस्",
+  "calcSearchInDomain": "{scope} क्यालकुलेटर खोज्नुहोस्…",
+  "@calcSearchInDomain": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcSearchPlaceholder": "क्यालकुलेटर खोज्नुहोस्…",
+  "calcCalculating": "गणना हुँदैछ…",
+  "calcCalculateServer": "गणना गर्नुहोस् (सर्भर)",
+  "calcVia": "{source} मार्फत",
+  "@calcVia": {
+    "placeholders": {
+      "source": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeMissionsReady": "{count} मिसन दावी गर्न तयार",
+  "@homeMissionsReady": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeMissionsActive": "मिसन — {count} सक्रिय",
+  "@homeMissionsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingStartLearning": "सिकाइ सुरु गर्नुहोस्",
+  "onboardingContinue": "जारी राख्नुहोस्",
+  "privacyLinkedToAccount": "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ। सबै मेटाउन खाता नै हटाउनुहोस्।",
+  "quizSeeResults": "नतिजा हेर्नुहोस्",
+  "quizNextQuestion": "अर्को प्रश्न",
+  "quizAnswerSubmitted": "उत्तर पठाइयो",
+  "quizBrowseQuizzes": "क्विजहरू हेर्नुहोस्",
+  "quizPickTopic": "विषय छान्नुहोस्",
+  "quizSearchCourses": "कोर्स खोज्नुहोस्…",
+  "quizSearchTopics": "विषय खोज्नुहोस्…",
+  "quizNoCoursesYet": "अहिलेसम्म कुनै कोर्स छैन",
+  "quizNoMatches": "कुनै मिलान छैन",
+  "quizSetsBeingPrepared": "तपाईंको परीक्षाका प्रश्न संग्रह तयार हुँदैछ।",
+  "quizTryDifferentSearch": "अर्को खोजी प्रयास गर्नुहोस्",
+  "quizNoTopicsYet": "अहिलेसम्म कुनै विषय छैन",
+  "quizCourseNoActiveTopics": "यो कोर्समा अहिलेसम्म कुनै सक्रिय विषय छैन।",
+  "quizFunnelSampleBody": "हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न Quiz ट्याब खोल्नुहोस्।",
+  "quizFunnelPublicBody": "हाम्रो सङ्ग्रहबाट सार्वजनिक प्रश्नहरू। निःशुल्क खाता बनाएपछि उत्तरहरू खुल्छन्।",
+  "quizFreshQuestions": "हालै नयाँ प्रश्नहरू थपिएका छन्।",
+  "quizNewIn": "{scope} मा नयाँ",
+  "@quizNewIn": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizNoQuestionText": "यो प्रश्नको सर्भरमा कुनै पाठ छैन।",
+  "quizGraded": "अंकयुक्त",
+  "quizXp": "XP",
+  "quizByServer": "सर्भरद्वारा",
+  "forceUpdateUnsupportedLatest": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
+  "forceUpdateUnsupportedVersion": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
+  "@forceUpdateUnsupportedVersion": {
+    "placeholders": {
+      "version": {
+        "type": "Object"
+      }
+    }
+  },
+  "routeNotFound": "मार्ग फेला परेन: {path}",
+  "@routeNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "Object"
+      }
+    }
+  }
 }

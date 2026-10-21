@@ -181,6 +181,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // The base font family is Latin-only, so the theme is rebuilt for the active
     // script. Switching language therefore re-themes the whole app rather than
     // only changing translated strings — otherwise Nepali/Chinese/Arabic text
@@ -190,7 +191,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     final dark = AppTheme.forLocale(Brightness.dark, languageCode: locale?.languageCode);
 
     return MaterialApp.router(
-      title: 'CivilCal',
+      title: l10n.appTitle,
       theme: light,
       darkTheme: dark,
       themeMode: ThemeMode.system,

@@ -13,6 +13,7 @@ import '../state/quiz_state.dart';
 import '../widgets/difficulty_badge.dart';
 import '../widgets/lifeline_bar.dart';
 import '../widgets/question_image.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Live quiz attempt screen — full session UI with timer, question body,
 /// answer options, and server-graded feedback overlay.
@@ -51,12 +52,13 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   /// This only surfaces the outcome: an effect the client cannot render is
   /// reported as such instead of being silently dropped.
   Future<void> _useLifeline(String slug) async {
+    final l10n = AppLocalizations.of(context)!;
     final effect = await ref.read(quizControllerProvider.notifier).useLifeline(slug);
     if (!mounted) return;
     if (effect != null && !effect.hasVisibleOutcome) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$slug used — the server returned an effect this app cannot show yet.'),
+          content: Text(l10n.quizAttemptUnsupportedEffect(slug)),
           backgroundColor: AppColors.warnAmber,
         ),
       );
@@ -130,6 +132,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   }
 
   Widget _buildError(BuildContext context, QuizState state) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -139,7 +142,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             const Icon(Icons.wifi_off_rounded, size: 56, color: AppColors.wrongRed),
             const SizedBox(height: 16),
             Text(
-              'Could not load quiz',
+              l10n.quizAttemptLoadError,
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -158,11 +161,11 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
               onPressed: () =>
                   ref.read(quizControllerProvider.notifier)
                       .startSession(widget.quizId, categoryId: widget.categoryId),
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
             TextButton(
               onPressed: () => context.pop(),
-              child: const Text('Go Back'),
+              child: Text(l10n.commonGoBack),
             ),
           ],
         ),
@@ -171,6 +174,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   }
 
   Widget _buildQuizBody(BuildContext context, QuizState state) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final session = state.session!;
@@ -269,7 +273,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Offline practice — not official. XP/coins will reconcile when back online.',
+                    l10n.quizAttemptOfflineNotice,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: AppColors.streakOrange,
                       fontWeight: FontWeight.w600,
@@ -483,7 +487,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: ChunkyButton(
-              label: state.isLastQuestion ? 'See Results' : 'Next Question',
+              label: state.isLastQuestion ? l10n.quizSeeResults : l10n.quizNextQuestion,
               onPressed: () =>
                   ref.read(quizControllerProvider.notifier).nextQuestion(),
             ),
@@ -493,7 +497,8 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   }
 
   Widget _buildFeedbackPanel(BuildContext context, QuizState state) {
-    final result = state.lastResult!;
+
+    final l10n = AppLocalizations.of(context)!;    final result = state.lastResult!;
     final theme = Theme.of(context);
     // The API withholds grading until complete/results — an empty
     // correctOptionId means "saved, verdict pending", never "wrong".
@@ -519,7 +524,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                isPending ? 'Answer submitted' : (isCorrect ? 'Great job!' : 'Not quite'),
+                isPending ? l10n.quizAnswerSubmitted : (isCorrect ? 'Great job!' : 'Not quite'),
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: verdictColor,
@@ -530,7 +535,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
               if (result.xpEarned > 0) ...[
                 const Icon(Icons.bolt_rounded, size: 16, color: AppColors.goldShadow),
                 Text(
-                  '+${result.xpEarned} XP',
+                  l10n.commonXpGained(result.xpEarned),
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
                     color: AppColors.goldShadow,
@@ -543,7 +548,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                 const Icon(Icons.local_fire_department_rounded,
                     size: 16, color: AppColors.warningShadow),
                 Text(
-                  '×${state.comboCount} Combo!',
+                  l10n.quizAttemptCombo(state.comboCount),
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
                     color: AppColors.warningShadow,
@@ -570,21 +575,22 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
   }
 
   Future<void> _showExitDialog(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+
+      final l10n = AppLocalizations.of(context)!;    final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Exit Quiz?'),
-        content: const Text(
-          'Your current progress will be lost. Are you sure you want to exit?',
+        title: Text(l10n.quizAttemptExitTitle),
+        content: Text(
+          l10n.quizAttemptExitBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Stay'),
+            child: Text(l10n.commonStay),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Exit'),
+            child: Text(l10n.commonExit),
           ),
         ],
       ),

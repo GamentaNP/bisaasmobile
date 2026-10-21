@@ -14,6 +14,7 @@ import '../widgets/calculator_input_field.dart';
 import '../widgets/formula_display.dart';
 import '../widgets/status_badge.dart';
 import '../widgets/step_by_step_solution.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Schema-driven calculator screen.
 ///
@@ -146,6 +147,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
     CalculatorConfig config,
     CalcState calcState,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final result = calcState.result;
     if (result == null) return;
 
@@ -170,7 +172,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not share this result: $e')),
+        SnackBar(content: Text(l10n.calcShareFailed(e))),
       );
     } finally {
       if (mounted) setState(() => _sharing = false);
@@ -178,6 +180,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   }
 
   void _applyAssistantValue(String field, String value) {
+    final l10n = AppLocalizations.of(context)!;
     // A boolean field lives in the bool map, not the text map. The previous
     // version only looked at the text map, so applying a suggestion to a
     // boolean showed a misleading "no input named X" error.
@@ -192,7 +195,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
     final ctrl = _textCtrls[field];
     if (ctrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No input named "$field" on this calculator')),
+        SnackBar(content: Text(l10n.calcNoInputNamed(field))),
       );
       return;
     }
@@ -203,13 +206,14 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   }
 
   Future<void> _calculate(CalculatorConfig? config) async {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) return;
     final inputs = _useSchema && config != null
         ? _collectSchemaInputs(config)
         : _collectLegacyInputs();
     if (inputs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Add at least one input')),
+        SnackBar(content: Text(l10n.calcAddInput)),
       );
       return;
     }
@@ -252,6 +256,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   }
 
   Widget _buildBody(BuildContext context, ThemeData theme, CalculatorConfig config, CalcState calcState) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -297,7 +302,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
               icon: calcState.loading
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                   : const Icon(Icons.calculate_rounded),
-              label: Text(calcState.loading ? 'Calculating…' : 'Calculate (server)'),
+              label: Text(calcState.loading ? l10n.calcCalculating : l10n.calcCalculateServer),
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
             ),
             const SizedBox(height: 8),
@@ -321,7 +326,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.share_rounded, size: 18),
-                label: const Text('Share result'),
+                label: Text(l10n.calcShareResult),
               ),
               const SizedBox(height: 8),
               OutlinedButton.icon(
@@ -332,14 +337,14 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
                   },
                 ).toString()),
                 icon: const Icon(Icons.school_rounded, size: 18),
-                label: const Text('Practice related questions'),
+                label: Text(l10n.calcPracticeRelated),
               ),
             ],
             const SizedBox(height: 20),
             OutlinedButton.icon(
               onPressed: () => context.go('/calculators/${widget.domain}/${widget.slug}/history'),
               icon: const Icon(Icons.history_rounded),
-              label: const Text('View history'),
+              label: Text(l10n.calcViewHistory),
             ),
           ],
         ),
@@ -348,10 +353,11 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   }
 
   Widget _renderSchemaForm(ThemeData theme, CalculatorConfig config, CalcState calcState) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Inputs · ${config.label}', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(l10n.calcInputsLabel(config.label), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         ...config.fields.map((f) {
           final fieldErr = calcState.fieldErrors?[f.name];
@@ -380,13 +386,14 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   }
 
   Widget _renderLegacyForm(ThemeData theme, CalcState calcState) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Inputs (legacy)', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(l10n.calcInputsLegacy, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        const Text(
-          'Server did not return a field schema. Falling back to generic key/value editor.',
+        Text(
+          l10n.calcNoSchema,
           style: TextStyle(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 12),
@@ -403,8 +410,8 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
                   child: TextFormField(
                     controller: f.keyCtrl,
                     decoration: InputDecoration(
-                      labelText: 'key',
-                      hintText: 'e.g. length',
+                      labelText: l10n.calcKeyLabel,
+                      hintText: l10n.calcKeyExample,
                       errorText: fieldErr is List ? fieldErr.join(', ') : null,
                       border: const OutlineInputBorder(),
                       isDense: true,
@@ -416,9 +423,9 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
                   flex: 3,
                   child: TextFormField(
                     controller: f.valCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'value',
-                      hintText: 'e.g. 12.5',
+                    decoration: InputDecoration(
+                      labelText: l10n.calcValueLabel,
+                      hintText: l10n.calcValueExample,
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
@@ -440,7 +447,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
         TextButton.icon(
           onPressed: () => setState(() => _legacyFields.add(_LegacyFieldEntry())),
           icon: const Icon(Icons.add_rounded, size: 18),
-          label: const Text('Add field'),
+          label: Text(l10n.calcAddField),
         ),
       ],
     );
@@ -498,6 +505,7 @@ class _ErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -525,7 +533,7 @@ class _ErrorCard extends StatelessWidget {
           ],
           if (onRetry != null) ...[
             const SizedBox(height: 10),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
+            FilledButton(onPressed: onRetry, child: Text(l10n.retry)),
           ],
         ],
       ),
@@ -539,6 +547,7 @@ class _ResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final pretty = const JsonEncoder.withIndent('  ').convert(result.data);
     return Container(
       padding: const EdgeInsets.all(14),
@@ -556,7 +565,7 @@ class _ResultCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(result.message ?? 'Calculated (server)', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
               const Spacer(),
-              Text('inputs: ${result.inputs.length}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              Text(l10n.calcInputsCount(result.inputs.length), style: const TextStyle(fontSize: 11, color: Colors.grey)),
             ],
           ),
           const SizedBox(height: 10),

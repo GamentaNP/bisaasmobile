@@ -7,6 +7,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key, this.initialEmail});
@@ -61,6 +62,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
@@ -96,7 +98,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 26),
                         Text(
-                          'Check your email',
+                          l10n.authCheckEmailTitle,
                           textAlign: TextAlign.center,
                           style: theme.textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.w700,
@@ -104,7 +106,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'If an account exists with ${_emailController.text.trim()}, you will receive a password reset link shortly.',
+                          l10n.authCheckEmailBody(_emailController.text.trim()),
                           textAlign: TextAlign.center,
                           style: AppTypography.bodyMedium.copyWith(
                             color: isDark
@@ -114,7 +116,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 32),
                         GradientButton(
-                          label: 'Return to Login',
+                          label: l10n.authReturnToLogin,
                           onPressed: () => context.go('/login'),
                           icon: Icons.login_rounded,
                         ),
@@ -150,7 +152,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 26),
                           Text(
-                            'Forgot Password?',
+                            l10n.authForgotPasswordTitle,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w700,
@@ -158,7 +160,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Enter your registered email and we will send you instructions to reset your password.',
+                            l10n.authForgotPasswordSubtitle,
                             textAlign: TextAlign.center,
                             style: AppTypography.bodyMedium.copyWith(
                               color: isDark
@@ -188,8 +190,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           ],
                           TextFormField(
                             controller: _emailController,
-                            decoration: const InputDecoration(
-                              labelText: 'Email Address',
+                            decoration: InputDecoration(
+                              labelText: l10n.authEmailAddressLabel,
                               prefixIcon: Icon(Icons.email_outlined),
                             ),
                             keyboardType: TextInputType.emailAddress,
@@ -199,7 +201,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 24),
                           GradientButton(
-                            label: 'Send Reset Link',
+                            label: l10n.authSendResetLink,
                             loading: _loading,
                             onPressed: _submit,
                             icon: Icons.send_rounded,

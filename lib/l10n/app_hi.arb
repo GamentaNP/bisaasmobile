@@ -6,17 +6,17 @@
   "quiz": "क्विज़",
   "practice": "अभ्यास",
   "calculators": "कैलकुलेटर",
-  "courses": "पाठ्यक्रम",
+  "courses": "कोर्स",
   "continueAsGuest": "अतिथि के रूप में जारी रखें",
   "backend": "बैकएंड",
-  "env": "पर्यावरण",
+  "env": "एनवी",
   "home": "होम",
   "profile": "प्रोफ़ाइल",
-  "settings": "सेटिंग्स",
+  "settings": "सेटिंग",
   "offline": "ऑफ़लाइन",
-  "retry": "पुनः प्रयास करें",
-  "error": "कुछ गलत हो गया",
-  "streakDays": "लगातार: {days} दिन",
+  "retry": "फिर से प्रयास करें",
+  "error": "कुछ गड़बड़ हो गई",
+  "streakDays": "स्ट्रीक: {days} दिन",
   "@streakDays": {
     "placeholders": {
       "days": {
@@ -24,7 +24,7 @@
       }
     }
   },
-  "coinsBalance": "{count} सिक्के",
+  "coinsBalance": "{count} कॉइन",
   "@coinsBalance": {
     "placeholders": {
       "count": {
@@ -33,6 +33,509 @@
     }
   },
   "appLocked": "CivilCal लॉक है",
-  "unlock": "अनलॉक करें",
-  "unlockCivilCal": "CivilCal अनलॉक करें"
+  "unlock": "खोलें",
+  "unlockCivilCal": "CivilCal खोलें",
+  "commonCancel": "रद्द करें",
+  "commonSave": "सहेजें",
+  "commonClose": "बंद करें",
+  "commonGoBack": "वापस जाएं",
+  "commonStay": "यहीं रहें",
+  "commonExit": "बाहर निकलें",
+  "commonEmail": "ईमेल",
+  "commonPassword": "पासवर्ड",
+  "commonContinueWithGoogle": "Google के साथ जारी रखें",
+  "commonContinueWithApple": "Apple के साथ जारी रखें",
+  "commonOr": "या",
+  "commonSkip": "छोड़ें",
+  "commonCheckAgain": "फिर से जांचें",
+  "commonContactSupport": "सहायता से संपर्क करें",
+  "commonShareResult": "परिणाम साझा करें",
+  "commonPoints": "{count} अंक",
+  "@commonPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonPercent": "{value}%",
+  "@commonPercent": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonXpGained": "+{amount} XP",
+  "@commonXpGained": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "authWelcomeBackTitle": "फिर से स्वागत है",
+  "authWelcomeBackSubtitle": "अपने क्विज़, सूत्र और रैंक देखने के लिए साइन इन करें",
+  "authForgotPasswordTitle": "पासवर्ड भूल गए?",
+  "authForgotPasswordSubtitle": "अपना पंजीकृत ईमेल दर्ज करें, हम आपको पासवर्ड रीसेट करने के निर्देश भेजेंगे।",
+  "authEmailAddressLabel": "ईमेल पता",
+  "authSendResetLink": "रीसेट लिंक भेजें",
+  "authCheckEmailTitle": "अपना ईमेल देखें",
+  "authCheckEmailBody": "यदि {email} के साथ खाता मौजूद है, तो हम जल्द ही पासवर्ड रीसेट लिंक भेजेंगे।",
+  "@authCheckEmailBody": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "authReturnToLogin": "लॉगिन पर लौटें",
+  "authJoinTitle": "CivilCal से जुड़ें",
+  "authJoinSubtitle": "इंजीनियरिंग परीक्षा और गणना के लिए आपका साथी",
+  "authFullNameLabel": "पूरा नाम",
+  "authConfirmPasswordLabel": "पासवर्ड की पुष्टि करें",
+  "authCreateAccount": "खाता बनाएं",
+  "authAlreadyHaveAccount": "पहले से खाता है?",
+  "authNoAccount": "खाता नहीं है?",
+  "authSetNewPasswordTitle": "नया पासवर्ड रखें",
+  "authResetTitle": "नया पासवर्ड चुनें",
+  "authResetSubtitle": "आप हर जगह, इस डिवाइस सहित, साइन आउट हो जाएंगे।",
+  "authResetMissingToken": "इस लिंक में रीसेट टोकन नहीं है। ईमेल से भेजा गया लिंक खोलें, या नया लिंक मांगें।",
+  "authRequestNewLink": "नया लिंक मांगें",
+  "authRequestNewLinkInstead": "इसके बजाय नया लिंक मांगें",
+  "authNewPasswordLabel": "नया पासवर्ड",
+  "authConfirmNewPasswordLabel": "नए पासवर्ड की पुष्टि करें",
+  "authMinChars": "कम से कम {count} अक्षर",
+  "@authMinChars": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "authVerifyEmailBanner": "सभी सुविधाएं खोलने के लिए अपना ईमेल सत्यापित करें।",
+  "authSplashTagline": "बिसास इंजीनियरिंग लर्निंग इकोसिस्टम",
+  "authInvalidEmail": "मान्य ईमेल दर्ज करें",
+  "authPasswordRequired": "कृपया अपना पासवर्ड दर्ज करें",
+  "onboardingStepOf": "चरण {current} / {total}",
+  "@onboardingStepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingTargetExamTitle": "लक्षित परीक्षा",
+  "onboardingTargetExamBody": "यह तय करता है कि यह खाता किस पाठ्यक्रम की ओर पढ़ेगा।",
+  "onboardingDailyGoalTitle": "दैनिक अभ्यास का लक्ष्य",
+  "onboardingDailyGoalBody": "आप रोज़ाना कितना समय देना चाहेंगे? आप कभी भी बदल सकते हैं।",
+  "onboardingMinutesPerDay": "{minutes} मिनट / दिन — {label}",
+  "@onboardingMinutesPerDay": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      },
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "onboardingCurrentLevelTitle": "आपका वर्तमान स्तर",
+  "onboardingCurrentLevelBody": "यह तय करता है कि आपकी स्ट्रीक और दोहराव कहाँ से शुरू होगी।",
+  "quizHomeTitle": "अभ्यास और क्विज़",
+  "quizHomeLoadError": "क्विज़ लोड नहीं हो सका",
+  "quizHomeEmptyTitle": "अभी तक कोई क्विज़ नहीं",
+  "quizHomeEmptyBody": "आपकी परीक्षा के प्रश्न तैयार किए जा रहे हैं। जल्द ही फिर देखें।",
+  "quizPlayWorlds": "वर्ल्ड खेलें",
+  "quizPlayWorldsSubtitle": "अध्याय, स्तर और बॉस — आगे बढ़ते सितारे कमाएं",
+  "quizPracticeDrill": "अभ्यास ड्रिल",
+  "quizPracticeDrillSubtitle": "अपने बुकमार्क और कमजोर विषय दोहराएं — समय-सीमित नहीं, रैंक पर असर नहीं",
+  "quizIntroDetailsTitle": "क्विज़ का विवरण",
+  "quizIntroLoadFailed": "क्विज़ लोड नहीं हो सका: {reason}",
+  "@quizIntroLoadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizIntroQuestions": "प्रश्न",
+  "quizIntroMinutes": "मिनट",
+  "quizIntroStart": "क्विज़ शुरू करें",
+  "quizIntroHowItWorks": "यह कैसे काम करता है",
+  "quizAttemptLoadError": "क्विज़ लोड नहीं हो सका",
+  "quizAttemptOfflineNotice": "ऑफ़लाइन अभ्यास — आधिकारिक नहीं। इंटरनेट लौटने पर XP/कॉइन मिला दिए जाएंगे।",
+  "quizAttemptUnsupportedEffect": "{effect} उपयोग हुआ — सर्वर ने ऐसा इफ़ेक्ट लौटाया जिसे यह ऐप अभी नहीं दिखा सकता।",
+  "@quizAttemptUnsupportedEffect": {
+    "placeholders": {
+      "effect": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizAttemptCombo": "×{count} कॉम्बो!",
+  "@quizAttemptCombo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizAttemptExitTitle": "क्विज़ से बाहर निकलें?",
+  "quizAttemptExitBody": "आपकी अभी की प्रगति चली जाएगी। क्या आप वाकई बाहर निकलना चाहते हैं?",
+  "quizResultTitle": "क्विज़ पूरा हुआ!",
+  "quizResultAccuracy": "शुद्धता",
+  "quizResultCorrectOf": "{total} में से {correct} सही",
+  "@quizResultCorrectOf": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "quizResultCorrect": "सही",
+  "quizResultXpEarned": "अर्जित XP",
+  "quizResultCoins": "कॉइन",
+  "quizResultAnswerReview": "उत्तर समीक्षा",
+  "quizResultBackToHome": "होम पर लौटें",
+  "quizResultReviewAll": "सभी उत्तर देखें",
+  "quizResultMorePractice": "और अभ्यास",
+  "quizResultShareFailed": "साझा करना उपलब्ध नहीं: {reason}",
+  "@quizResultShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReviewTitle": "उत्तर देखें",
+  "quizReviewLoadFailed": "समीक्षा लोड नहीं हो सकी: {reason}",
+  "@quizReviewLoadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReviewEmpty": "देखने के लिए कोई उत्तर नहीं",
+  "quizReviewYourAnswer": "आपका उत्तर",
+  "quizReviewNotAnswered": "उत्तर नहीं दिया गया",
+  "quizReviewQuestionNumber": "प्रश्न {number}",
+  "@quizReviewQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFunnelTryItOut": "आजमाकर देखें",
+  "quizFunnelSampleTitle": "नमूना प्रश्न",
+  "quizFunnelShown": "{count} दिखाए गए",
+  "@quizFunnelShown": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizFunnelEmptyTitle": "अभी तक कोई नमूना प्रश्न नहीं",
+  "quizFunnelEmptyBody": "इस समय कैटलॉग में कोई सार्वजनिक प्रश्न नहीं है। साइन अप करें, आप सब कुछ देखेंगे।",
+  "quizFunnelCreateAccount": "खेलने के लिए मुफ़्त खाता बनाएं",
+  "quizFunnelPlayGraded": "अंक वाला क्विज़ खेलें",
+  "quizFunnelPracticeNote": "अभ्यास मोड कभी रैंक, XP या स्ट्रीक को प्रभावित नहीं करता।",
+  "quizOfflinePractice": "ऑफ़लाइन अभ्यास — {subject}",
+  "@quizOfflinePractice": {
+    "placeholders": {
+      "subject": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFinishFailed": "क्विज़ पूरा नहीं हो सका। कृपया फिर से कोशिश करें।",
+  "quizCountUnavailable": "संख्या उपलब्ध नहीं",
+  "calcBrowserEmpty": "कोई कैलकुलेटर प्रकाशित नहीं",
+  "calcBrowserCount": "{count} कैलकुलेटर • {domains} क्षेत्र",
+  "@calcBrowserCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "domains": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcBrowserLoadError": "कैलकुलेटर लोड नहीं हो सके",
+  "calcShareFailed": "यह परिणाम साझा नहीं हो सका: {reason}",
+  "@calcShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcNoInputNamed": "इस कैलकुलेटर में \"{name}\" नाम का इनपुट नहीं है",
+  "@calcNoInputNamed": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcAddInput": "कम से कम एक इनपुट जोड़ें",
+  "calcInputsLabel": "इनपुट · {label}",
+  "@calcInputsLabel": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcInputsLegacy": "इनपुट (पुराना)",
+  "calcKeyLabel": "कुंजी",
+  "calcKeyExample": "जैसे: लंबाई",
+  "calcValueLabel": "मान",
+  "calcValueExample": "जैसे: 12.5",
+  "calcAssistantTitle": "सहायक से पूछें",
+  "calcAssistantExample": "जैसे: 25 MPa मिक्स के लिए 3 मीटर चौड़ा, 4 मीटर गहरा स्लैब",
+  "calcAssistantSuggested": "सुझाए गए मान",
+  "calcAssistantAlso": "आप यह भी पूछ सकते हैं",
+  "calcHistoryTitle": "{subject} · इतिहास",
+  "@calcHistoryTitle": {
+    "placeholders": {
+      "subject": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcHistoryEmpty": "अभी तक कोई गणना सहेजी नहीं गई",
+  "calcStepByStep": "चरणबद्ध",
+  "calcShareResult": "परिणाम साझा करें",
+  "calcPracticeRelated": "संबंधित प्रश्न अभ्यास करें",
+  "calcViewHistory": "इतिहास देखें",
+  "calcNoSchema": "सर्वर ने फ़ील्ड स्कीमा नहीं दी। सामान्य कुंजी/मान संपादक पर वापस जा रहे हैं।",
+  "calcAddField": "फ़ील्ड जोड़ें",
+  "calcInputsCount": "इनपुट: {count}",
+  "@calcInputsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "calcAsk": "पूछें",
+  "calcApply": "लागू करें",
+  "calcAssistantDisclaimer": "सहायक सुझाव देता है, निर्णय आपका है। गणना हमेशा सर्वर करता है।",
+  "homeGreeting": "नमस्ते, {name} 👋",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeLevel": "स्तर {level} • {xp} XP",
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeDaily": "दैनिक",
+  "homeBattle": "बैटल",
+  "homeBrowse": "ब्राउज़ करें",
+  "homeExplore": "एक्सप्लोर करें",
+  "homeCurrentCourse": "वर्तमान कोर्स",
+  "homePercentDone": "{percent}% पूरा",
+  "@homePercentDone": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeMissionsUnavailable": "मिशन उपलब्ध नहीं",
+  "homeWorldsLoadError": "आपके वर्ल्ड लोड नहीं हो सके",
+  "homeWorldsEmpty": "अभी तक कोई वर्ल्ड प्रकाशित नहीं — अभ्यास जारी रखने के लिए विषय देखें।",
+  "homeYourWorlds": "आपके वर्ल्ड",
+  "homeStars": "{earned} / {total} ⭐",
+  "@homeStars": {
+    "placeholders": {
+      "earned": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "homeContinue": "जारी रखें: {title}",
+  "@homeContinue": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeDashboardLoadError": "आपका डैशबोर्ड लोड नहीं हो सका",
+  "homeDashboardEmpty": "अनुमान लगाने के बजाय कुछ नहीं दिखाया गया। खींचें, या नीचे फिर से प्रयास करें।",
+  "homeDashboardUnreachable": "सर्वर तक नहीं पहुँच सके, इसलिए डैशबोर्ड नहीं दिखाया जा सका।",
+  "consentTitle": "गोपनीयता विकल्प",
+  "consentIntro": "आपका खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप Settings → Privacy में जाकर कभी भी इसे बदल सकते हैं।",
+  "consentNecessary": "आवश्यक",
+  "consentNecessaryBody": "साइन इन और आपका सहेजा काम, आपका पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच। ऐप चलने के लिए आवश्यक।",
+  "consentFunctional": "कार्यक्षम",
+  "consentFunctionalBody": "आपकी भाषा और फ़िल्टर जैसे सेटिंग इस डिवाइस पर याद रखें।",
+  "consentAnalytics": "विश्लेषण",
+  "consentAnalyticsBody": "उपयोग घटनाएं जो बताती हैं कि कौन-सी सुविधाएं उपयोगी हैं। वे आपके खाते से नहीं, डिवाइस पहचान से जुड़ी होती हैं। प्रश्न का सामग्री कभी शामिल नहीं होता।",
+  "consentMarketing": "प्रचार",
+  "consentMarketingBody": "ऑफ़र और प्रचार। जब तक आप न कहें, बंद रहता है।",
+  "consentSaveChoices": "विकल्प सहेजें",
+  "consentNecessaryOnly": "केवल आवश्यक के साथ जारी रखें",
+  "consentLoadError": "आपके विकल्प लोड नहीं हो सके",
+  "consentNecessaryAlwaysOn": "हमेशा चालू। आपका खाता, सहेजा काम, पुश टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच।",
+  "consentDataStored": "इस डिवाइस के बारे में सहेजा डेटा",
+  "consentDataStoredSubtitle": "अनाम प्रोफ़ाइल देखें और मिटाएं",
+  "consentFootnote": "कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@bisaas.com पर संपर्क करें।",
+  "privacyTitle": "आपका डेटा",
+  "privacyAnonymousProfile": "अनाम प्रोफ़ाइल",
+  "privacyReference": "संदर्भ {reference}",
+  "@privacyReference": {
+    "placeholders": {
+      "reference": {
+        "type": "Object"
+      }
+    }
+  },
+  "privacyEraseData": "सहेजा डेटा मिटाएं",
+  "privacyLocalChoices": "इस डिवाइस के विकल्प",
+  "privacyEraseTitle": "सहेजा डेटा मिटाएं?",
+  "privacyEraseBody": "यह अनाम प्रोफ़ाइल और इस डिवाइस के लिए सहेजे गए सभी इंटेंट घटनाएं मिटा देता है। इसे पूर्ववत नहीं किया जा सकता।",
+  "privacyErased": "सहेजा डेटा मिटा दिया गया",
+  "privacyEraseFailed": "डेटा मिटा नहीं सका। फिर से कोशिश करें।",
+  "privacyEraseConfirm": "मिटाएं",
+  "privacyMenu": "गोपनीयता",
+  "notificationDailyTitle": "दैनिक स्प्रिंट तैयार है ⚡",
+  "notificationDailyBody": "आपके दैनिक बहुविकल्पीय प्रश्न तैयार हैं — स्ट्रीक जारी रखें!",
+  "forceUpdateTitle": "अपडेट आवश्यक",
+  "forceUpdateYourVersion": "आपका संस्करण: {version}",
+  "@forceUpdateYourVersion": {
+    "placeholders": {
+      "version": {
+        "type": "Object"
+      }
+    }
+  },
+  "forceUpdateNow": "अभी अपडेट करें",
+  "forceUpdateReassurance": "आपका खाता और प्रगति सुरक्षित है — अपडेट करने से कुछ नहीं खोता।",
+  "forceUpdateStoreFailed": "स्टोर नहीं खुल सका। {url} पर जाएं",
+  "@forceUpdateStoreFailed": {
+    "placeholders": {
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "maintenanceTitle": "हम जल्द ही वापस आ रहे हैं",
+  "maintenanceBody": "CivilCal संक्षिप्त रखरखाव के लिए बंद है। आपका खाता, कॉइन और प्रगति सुरक्षित है — कुछ नहीं खोया गया है।",
+  "versionUnsupported": "यह ऐप संस्करण अब समर्थित नहीं है।",
+  "authUpdating": "अपडेट हो रहा है…",
+  "authUpdatePassword": "पासवर्ड अपडेट करें",
+  "authVerificationResentBody": "यदि वह पता अभी सत्यापित करना है, तो नया लिंक भेजा जा रहा है। अपना इनबॉक्स और स्पैम फ़ोल्डर देखें।",
+  "authVerificationResentHint": "हम आपके खाते के पते पर एक टैप का सत्यापन लिंक भेजते हैं।",
+  "authVerificationSent": "सत्यापन भेजा गया",
+  "authResendVerification": "सत्यापन ईमेल फिर से भेजें",
+  "calcSearchInDomain": "{scope} कैलकुलेटर खोजें…",
+  "@calcSearchInDomain": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcSearchPlaceholder": "कैलकुलेटर खोजें…",
+  "calcCalculating": "गणना हो रही है…",
+  "calcCalculateServer": "गणना करें (सर्वर)",
+  "calcVia": "{source} के ज़रिए",
+  "@calcVia": {
+    "placeholders": {
+      "source": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeMissionsReady": "{count} मिशन दावा करने के लिए तैयार",
+  "@homeMissionsReady": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeMissionsActive": "मिशन — {count} सक्रिय",
+  "@homeMissionsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingStartLearning": "सीखना शुरू करें",
+  "onboardingContinue": "जारी रखें",
+  "privacyLinkedToAccount": "यह प्रोफ़ाइल आपके खाते से जुड़ा है। सब कुछ मिटाने के लिए खाता ही हटाएं।",
+  "quizSeeResults": "परिणाम देखें",
+  "quizNextQuestion": "अगला प्रश्न",
+  "quizAnswerSubmitted": "उत्तर जमा हुआ",
+  "quizBrowseQuizzes": "क्विज़ ब्राउज़ करें",
+  "quizPickTopic": "विषय चुनें",
+  "quizSearchCourses": "कोर्स खोजें…",
+  "quizSearchTopics": "विषय खोजें…",
+  "quizNoCoursesYet": "अभी तक कोई कोर्स नहीं",
+  "quizNoMatches": "कोई मिलान नहीं",
+  "quizSetsBeingPrepared": "आपकी परीक्षा के प्रश्न तैयार किए जा रहे हैं।",
+  "quizTryDifferentSearch": "कोई दूसरी खोज आज़माएं",
+  "quizNoTopicsYet": "अभी तक कोई विषय नहीं",
+  "quizCourseNoActiveTopics": "इस कोर्स में अभी तक कोई सक्रिय विषय नहीं है।",
+  "quizFunnelSampleBody": "हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए Quiz टैब खोलें।",
+  "quizFunnelPublicBody": "हमारे कैटलॉग से सार्वजनिक प्रश्न। मुफ़्त खाता बनाने पर उत्तर खुलते हैं।",
+  "quizFreshQuestions": "हाल ही में नए प्रश्न जोड़े गए हैं।",
+  "quizNewIn": "{scope} में नया",
+  "@quizNewIn": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizNoQuestionText": "इस प्रश्न का सर्वर पर कोई टेक्स्ट नहीं है।",
+  "quizGraded": "अंक वाला",
+  "quizXp": "XP",
+  "quizByServer": "सर्वर द्वारा",
+  "forceUpdateUnsupportedLatest": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।",
+  "forceUpdateUnsupportedVersion": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया {version} या उससे नए संस्करण पर अपडेट करें।",
+  "@forceUpdateUnsupportedVersion": {
+    "placeholders": {
+      "version": {
+        "type": "Object"
+      }
+    }
+  },
+  "routeNotFound": "रूट नहीं मिला: {path}",
+  "@routeNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "Object"
+      }
+    }
+  }
 }

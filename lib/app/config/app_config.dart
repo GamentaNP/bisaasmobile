@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/network/app_update_gate.dart';
 import '../../core/network/install_identity_interceptor.dart';
+import '../localization/l10n.dart';
 
 /// Operator configuration served by `GET /api/v1/app/config`.
 ///
@@ -152,7 +153,7 @@ void applyAppConfig(AppConfig? config) {
     ApiException(
       statusCode: 426,
       code: ApiErrorCode.upgradeRequired,
-      message: 'This app version is no longer supported.',
+      message: appL10n().versionUnsupported,
       details: <String, dynamic>{
         'min_version': floor,
         'platform':

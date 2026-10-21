@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
@@ -53,6 +54,7 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(quizFunnelControllerProvider);
     final theme = Theme.of(context);
     final funnel = state.funnel;
@@ -60,12 +62,12 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Try it out'),
+        title: Text(l10n.quizFunnelTryItOut),
         actions: [
           if (!signedIn)
             TextButton(
               onPressed: () => context.go('/login'),
-              child: const Text('Sign in'),
+              child: Text(l10n.signIn),
             ),
         ],
       ),
@@ -96,13 +98,13 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                       Row(
                         children: [
                           Text(
-                            'Sample questions',
+                            l10n.quizFunnelSampleTitle,
                             style: theme.textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const Spacer(),
                           Text(
-                            '${funnel?.items.length ?? 0} shown',
+                            l10n.quizFunnelShown(funnel?.items.length ?? 0),
                             style: const TextStyle(fontSize: 11, color: Colors.grey),
                           ),
                         ],
@@ -110,21 +112,18 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                       const SizedBox(height: 4),
                       Text(
                         signedIn
-                            ? 'Sample questions from our catalogue. Open the Quiz '
-                                'tab to play a full graded session.'
-                            : 'Public questions from our catalogue. Answers unlock '
-                                'when you create a free account.',
+                            ? l10n.quizFunnelSampleBody
+                            : l10n.quizFunnelPublicBody,
                         style: const TextStyle(fontSize: 11, color: Colors.grey),
                       ),
                       const SizedBox(height: 12),
                       if (funnel?.items.isEmpty ?? true)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(vertical: 24),
                           child: EmptyState(
-                            title: 'No sample questions yet',
+                            title: l10n.quizFunnelEmptyTitle,
                             subtitle:
-                                'The catalogue has no public questions published '
-                                'right now. Sign up and you will see everything.',
+                                l10n.quizFunnelEmptyBody,
                             icon: Icons.quiz_outlined,
                           ),
                         )
@@ -135,7 +134,7 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                         FilledButton.icon(
                           onPressed: () => context.go('/register'),
                           icon: const Icon(Icons.person_add_alt_rounded),
-                          label: const Text('Create a free account to play'),
+                          label: Text(l10n.quizFunnelCreateAccount),
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                           ),
@@ -144,15 +143,15 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                         FilledButton.icon(
                           onPressed: () => context.go('/quiz'),
                           icon: const Icon(Icons.play_arrow_rounded),
-                          label: const Text('Play a graded quiz'),
+                          label: Text(l10n.quizFunnelPlayGraded),
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                           ),
                         ),
 
                       const SizedBox(height: 10),
-                      const Text(
-                        'Practice mode never affects rank, XP or streak.',
+                      Text(
+                        l10n.quizFunnelPracticeNote,
                         style: TextStyle(fontSize: 11, color: Colors.grey),
                         textAlign: TextAlign.center,
                       ),
@@ -216,6 +215,7 @@ class _Promo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final latest = promo.latestCourse ?? promo.latestCategory;
     if (latest == null && !promo.hasFresh) return const SizedBox.shrink();
     return Container(
@@ -232,8 +232,8 @@ class _Promo extends StatelessWidget {
           Expanded(
             child: Text(
               latest == null
-                  ? 'Fresh questions were added recently.'
-                  : 'New in $latest',
+                  ? l10n.quizFreshQuestions
+                  : l10n.quizNewIn(latest),
               style: const TextStyle(fontSize: 12, color: AppColors.correctGreen),
             ),
           ),
@@ -249,6 +249,7 @@ class _FunnelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -289,7 +290,7 @@ class _FunnelCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               item.questionText.isEmpty
-                  ? 'This question has no text on the server.'
+                  ? l10n.quizNoQuestionText
                   : item.questionText,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -349,7 +350,7 @@ class _FunnelCard extends StatelessWidget {
                 ],
                 const Spacer(),
                 Text(
-                  '${item.points} pts',
+                  l10n.commonPoints(item.points),
                   style: const TextStyle(fontSize: 10, color: Colors.grey),
                 ),
               ],

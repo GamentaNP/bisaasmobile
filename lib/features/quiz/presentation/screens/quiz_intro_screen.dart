@@ -13,6 +13,7 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../widgets/difficulty_badge.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'quiz_browser_screen.dart'
     show QuizCourseEntry, QuizListEntry;
 
@@ -41,6 +42,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
   }
 
   Future<QuizListEntry> _load() async {
+    final l10n = AppLocalizations.of(context)!;
     final dio = DioClient.instance.dio;
     // Course metadata: find the course in the active catalog.
     final coursesRes =
@@ -61,7 +63,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
     final course = courses.firstWhere(
       (c) => c.id == widget.quizId,
       orElse: () => QuizCourseEntry(
-          id: widget.quizId, title: 'Quiz', description: ''),
+          id: widget.quizId, title: l10n.quiz, description: ''),
     );
 
     // Live question count (and category name when drilling into one topic).
@@ -119,8 +121,9 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeAreaScaffold(
-      appBar: CivilAppBar(title: 'Quiz Details'),
+      appBar: CivilAppBar(title: l10n.quizIntroDetailsTitle),
       body: FutureBuilder<QuizListEntry>(
         future: _future,
         builder: (context, snap) {
@@ -131,7 +134,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('Failed to load quiz: ${snap.error}', textAlign: TextAlign.center),
+                child: Text(l10n.quizIntroLoadFailed(snap.error.toString()), textAlign: TextAlign.center),
               ),
             );
           }
@@ -167,7 +170,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                         icon: Icons.help_outline_rounded,
                         // "100+" when the page was truncated, never a fake total.
                         label: q.hasMoreQuestions ? '${q.questionCount}+' : '${q.questionCount}',
-                        caption: 'Questions',
+                        caption: l10n.quizIntroQuestions,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -175,7 +178,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                       child: _StatTile(
                         icon: Icons.timer_rounded,
                         label: '${q.durationMinutes}',
-                        caption: 'min',
+                        caption: l10n.quizIntroMinutes,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -185,8 +188,8 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                       // questionCount * 10.
                       child: _StatTile(
                         icon: Icons.bolt_rounded,
-                        label: (q.xpReward ?? 0) > 0 ? '+${q.xpReward}' : 'Graded',
-                        caption: (q.xpReward ?? 0) > 0 ? 'XP' : 'by server',
+                        label: (q.xpReward ?? 0) > 0 ? '+${q.xpReward}' : l10n.quizGraded,
+                        caption: (q.xpReward ?? 0) > 0 ? l10n.quizXp : l10n.quizByServer,
                         isMuted: (q.xpReward ?? 0) <= 0,
                       ),
                     ),
@@ -198,7 +201,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
                 const _InstructionsCard(),
                 const SizedBox(height: 24),
                 GradientButton(
-                  label: 'Start Quiz',
+                  label: l10n.quizIntroStart,
                   icon: Icons.play_arrow_rounded,
                   onPressed: _start,
                 ),
@@ -255,12 +258,13 @@ class _InstructionsCard extends StatelessWidget {
   const _InstructionsCard();
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GlassmorphicCard(
       padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text('How it works', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
+        children: [
+          Text(l10n.quizIntroHowItWorks, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
           SizedBox(height: 8),
           _Bullet('Server grades your answer instantly.'),
           _Bullet('Correct: +10 XP, streak combo bonus.'),

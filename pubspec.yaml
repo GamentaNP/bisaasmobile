@@ -115,6 +115,12 @@ dev_dependencies:
   # The on-device tests therefore live in their own package: `device_tests/`,
   # which depends on this app by path and gets the plugin for itself.
   flutter_launcher_icons: ^0.14.1
+  # The Dart analyzer, used by `tool/localization_coverage.dart` to measure
+  # how much of the interface is actually translated, and by
+  # `test/app/localization_coverage_test.dart` to enforce the boundary. It
+  # was already in the tree transitively through `build_runner`; it is
+  # declared here because the test imports it directly.
+  analyzer: ^13.3.0
 
 flutter:
   generate: true

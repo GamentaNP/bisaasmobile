@@ -1,3 +1,5 @@
+import '../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -46,6 +48,7 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
@@ -55,7 +58,7 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Text(
-                'Practice & Quiz',
+                l10n.quizHomeTitle,
                 style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
@@ -83,18 +86,18 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
                   if (snapshot.hasError) {
                     return _QuizEmpty(
                       icon: Icons.error_outline_rounded,
-                      title: 'Could not load quiz',
+                      title: l10n.quizHomeLoadError,
                       message: ErrorHandler.handle(snapshot.error!).message,
-                      actionLabel: 'Retry',
+                      actionLabel: l10n.retry,
                       onAction: _reload,
                     );
                   }
                   final topics = snapshot.data ?? const [];
                   if (topics.isEmpty) {
-                    return const _QuizEmpty(
+                    return _QuizEmpty(
                       icon: Icons.quiz_outlined,
-                      title: 'No quizzes yet',
-                      message: 'Question sets for your exam are being prepared. Check back soon.',
+                      title: l10n.quizHomeEmptyTitle,
+                      message: l10n.quizHomeEmptyBody,
                     );
                   }
                   return ListView.builder(
@@ -184,6 +187,7 @@ class _WorldsBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Material(
       color: AppColors.brand,
       borderRadius: BorderRadius.circular(16),
@@ -197,7 +201,7 @@ class _WorldsBanner extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.public_rounded, color: Colors.white, size: 28),
                 SizedBox(width: 14),
@@ -206,12 +210,12 @@ class _WorldsBanner extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Play Worlds',
+                        l10n.quizPlayWorlds,
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 17),
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'Chapters, levels and bosses — earn stars as you go',
+                        l10n.quizPlayWorldsSubtitle,
                         style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                     ],
@@ -238,6 +242,7 @@ class _PracticeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Material(
       color: AppColors.brand.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(16),
@@ -246,7 +251,7 @@ class _PracticeBanner extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: const Row(
+          child: Row(
             children: [
               Icon(Icons.edit_note_rounded, color: AppColors.brand, size: 24),
               SizedBox(width: 12),
@@ -255,7 +260,7 @@ class _PracticeBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Practice drill',
+                      l10n.quizPracticeDrill,
                       style: TextStyle(
                         color: AppColors.brand,
                         fontWeight: FontWeight.w800,
@@ -264,7 +269,7 @@ class _PracticeBanner extends StatelessWidget {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Drill your bookmarks and weak topics — untimed, no rank effect',
+                      l10n.quizPracticeDrillSubtitle,
                       style: TextStyle(color: AppColors.textTertiaryDark, fontSize: 12),
                     ),
                   ],

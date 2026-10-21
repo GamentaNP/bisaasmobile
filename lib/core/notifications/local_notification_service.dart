@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import '../../app/localization/l10n.dart';
 
 class LocalNotificationService {
   LocalNotificationService(this._plugin);
@@ -56,8 +57,8 @@ class LocalNotificationService {
   Future<void> scheduleDailyQuizReminder() async {
     await _plugin.zonedSchedule(
       id: 1001,
-      title: 'Daily Sprint ready ⚡',
-      body: 'Your daily MCQs are waiting — keep the streak alive!',
+      title: appL10n().notificationDailyTitle,
+      body: appL10n().notificationDailyBody,
       scheduledDate: _nextInstanceOfTime(8, 0),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(

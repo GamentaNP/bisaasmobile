@@ -79,6 +79,7 @@ import 'deep_link_handler.dart';
 import 'route_guards.dart';
 import 'route_names.dart';
 import 'shell_router.dart';
+import '../../l10n/app_localizations.dart';
 
 class AppRouter {
   AppRouter(this._tokens);
@@ -518,7 +519,9 @@ class AppRouter {
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
-      body: Center(child: Text('Route not found: ${state.uri}')),
+      body: Center(
+        child: Text(AppLocalizations.of(context)!.routeNotFound(state.uri)),
+      ),
     ),
   );
 

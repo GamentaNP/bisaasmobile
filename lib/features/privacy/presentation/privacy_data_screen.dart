@@ -8,6 +8,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_client.dart';
 import '../data/datasources/privacy_remote_data_source.dart';
 import '../domain/entities/visitor_data.dart';
+import '../../../l10n/app_localizations.dart';
 
 final privacyRemoteDataSourceProvider = Provider<PrivacyRemoteDataSource>(
   (ref) => PrivacyRemoteDataSource(DioClient.instance.dio),
@@ -27,11 +28,12 @@ class PrivacyDataScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final data = ref.watch(visitorDataProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your data')),
+      appBar: AppBar(title: Text(l10n.privacyTitle)),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(visitorDataProvider),
         child: data.when(
@@ -46,7 +48,7 @@ class PrivacyDataScreen extends ConsumerWidget {
               Center(
                 child: FilledButton.tonal(
                   onPressed: () => ref.invalidate(visitorDataProvider),
-                  child: const Text('Retry'),
+                  child: Text(l10n.retry),
                 ),
               ),
             ],
@@ -64,17 +66,17 @@ class PrivacyDataScreen extends ConsumerWidget {
                     Center(
                       child: FilledButton.tonal(
                         onPressed: () => ref.invalidate(visitorDataProvider),
-                        child: const Text('Retry'),
+                        child: Text(l10n.retry),
                       ),
                     ),
                   ],
                 )
               : _List(
                   children: [
-                    Text('Anonymous profile', style: theme.textTheme.titleMedium),
+                    Text(l10n.privacyAnonymousProfile, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 4),
                     Text(
-                      'Reference ${visitor.visitorId}',
+                      l10n.privacyReference(visitor.visitorId),
                       style: theme.textTheme.bodySmall,
                     ),
                     const SizedBox(height: 12),
@@ -93,7 +95,7 @@ class PrivacyDataScreen extends ConsumerWidget {
                       OutlinedButton.icon(
                         onPressed: () => _confirmErase(context, ref),
                         icon: const Icon(Icons.delete_outline),
-                        label: const Text('Erase stored data'),
+                        label: Text(l10n.privacyEraseData),
                       )
                     else
                       const _Note(
@@ -102,7 +104,7 @@ class PrivacyDataScreen extends ConsumerWidget {
                         'in Settings to remove everything.',
                       ),
                     const SizedBox(height: 16),
-                    Text('Local choices', style: theme.textTheme.titleMedium),
+                    Text(l10n.privacyLocalChoices, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     const _Note(
                       'Analytics, functional and marketing consent are stored on '
@@ -120,22 +122,22 @@ class PrivacyDataScreen extends ConsumerWidget {
   }
 
   Future<void> _confirmErase(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Erase stored data?'),
-        content: const Text(
-          'This deletes the anonymous profile and every intent event stored for '
-          'this device. It cannot be undone.',
+        title: Text(l10n.privacyEraseTitle),
+        content: Text(
+          l10n.privacyEraseBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Erase'),
+            child: Text(l10n.privacyEraseConfirm),
           ),
         ],
       ),
@@ -147,7 +149,7 @@ class PrivacyDataScreen extends ConsumerWidget {
       ref.invalidate(visitorDataProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Stored data erased')),
+          SnackBar(content: Text(l10n.privacyErased)),
         );
       }
     } on ApiException catch (e) {
@@ -158,8 +160,7 @@ class PrivacyDataScreen extends ConsumerWidget {
         SnackBar(
           content: Text(
             e.code == ApiErrorCode.erasureRequiresAccount
-                ? 'This profile is linked to your account. Delete the account to '
-                    'erase everything.'
+                ? l10n.privacyLinkedToAccount
                 : e.message,
           ),
         ),
@@ -168,7 +169,7 @@ class PrivacyDataScreen extends ConsumerWidget {
       AppLogger.w('erase visitor data failed: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not erase your data. Try again.')),
+          SnackBar(content: Text(l10n.privacyEraseFailed)),
         );
       }
     }

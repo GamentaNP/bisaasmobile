@@ -20,6 +20,7 @@ import '../../data/repositories/quiz_repository_impl.dart';
 import '../../domain/entities/attempt_result.dart';
 import '../../domain/repositories/quiz_repository.dart';
 import '../state/quiz_state.dart';
+import '../../../../app/localization/l10n.dart';
 
 // ── Providers ──────────────────────────────────────────────────────────────
 
@@ -392,7 +393,7 @@ class QuizController extends Notifier<QuizState> {
     } catch (e) {
       state = state.copyWith(
         phase: QuizPhase.error,
-        errorMessage: 'Could not finish the quiz. Please try again.',
+        errorMessage: appL10n().quizFinishFailed,
       );
       AppLogger.w('quiz completion failed for $attemptId: $e');
       return;

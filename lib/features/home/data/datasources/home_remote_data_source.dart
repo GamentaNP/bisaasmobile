@@ -7,6 +7,7 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/dashboard_dto.dart';
+import '../../../../app/localization/l10n.dart';
 
 /// Aggregates Home dashboard from multiple authoritative endpoints.
 ///
@@ -52,11 +53,11 @@ class HomeRemoteDataSource {
     // offline treatment instead of inventing a plausible-looking home.
     if (results.every((p) => p.failed)) {
       AppLogger.w('Home dashboard: every endpoint failed → surfacing the error');
-      throw const ApiException(
+      throw ApiException(
         statusCode: 0,
         code: ApiErrorCode.serviceUnavailable,
         message:
-            'Could not reach the server, so the dashboard cannot be shown.',
+            appL10n().homeDashboardUnreachable,
       );
     }
 

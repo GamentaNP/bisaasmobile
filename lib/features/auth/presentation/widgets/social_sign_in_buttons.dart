@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -24,6 +26,7 @@ class SocialSignInButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final availability = ref.watch(socialProvidersAvailableProvider);
     final theme = Theme.of(context);
 
@@ -41,7 +44,7 @@ class SocialSignInButtons extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Text(
-                    'or',
+                    l10n.commonOr,
                     style: TextStyle(
                       fontSize: 12,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -108,6 +111,7 @@ class _GoogleButtonState extends ConsumerState<_GoogleButton> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return OutlinedButton.icon(
       key: const Key('social_google'),
       onPressed: _busy ? null : _signIn,
@@ -118,7 +122,7 @@ class _GoogleButtonState extends ConsumerState<_GoogleButton> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : const Icon(Icons.g_mobiledata_rounded, size: 22),
-      label: const Text('Continue with Google'),
+      label: Text(l10n.commonContinueWithGoogle),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
@@ -172,12 +176,13 @@ class _AppleButtonState extends ConsumerState<_AppleButton> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       height: 50,
       child: SignInWithAppleButton(
         key: const Key('social_apple'),
         onPressed: _busy ? null : _signIn,
-        text: 'Continue with Apple',
+        text: l10n.commonContinueWithApple,
         height: 50,
         borderRadius: BorderRadius.circular(12),
         style: SignInWithAppleButtonStyle.black,

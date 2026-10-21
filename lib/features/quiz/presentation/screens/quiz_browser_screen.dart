@@ -14,6 +14,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// A question count read from a cursor-paginated endpoint.
 ///
@@ -182,9 +183,10 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeAreaScaffold(
       appBar: CivilAppBar(
-        title: _course == null ? 'Browse Quizzes' : 'Pick a Topic',
+        title: _course == null ? l10n.quizBrowseQuizzes : l10n.quizPickTopic,
         leading: _course == null
             ? null
             : IconButton(
@@ -201,8 +203,8 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: _course == null
-                    ? 'Search courses…'
-                    : 'Search topics…',
+                    ? l10n.quizSearchCourses
+                    : l10n.quizSearchTopics,
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _query.isEmpty
                     ? null
@@ -257,10 +259,10 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
                           .toList();
                   if (filtered.isEmpty) {
                     return EmptyState(
-                      title: query.isEmpty ? 'No courses yet' : 'No matches',
+                      title: query.isEmpty ? l10n.quizNoCoursesYet : l10n.quizNoMatches,
                       subtitle: query.isEmpty
-                          ? 'Question sets for your exam are being prepared.'
-                          : 'Try a different search',
+                          ? l10n.quizSetsBeingPrepared
+                          : l10n.quizTryDifferentSearch,
                       icon: Icons.search_off_rounded,
                     );
                   }
@@ -281,10 +283,10 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
                     : cats.where((c) => c.name.toLowerCase().contains(query)).toList();
                 if (filtered.isEmpty) {
                   return EmptyState(
-                    title: query.isEmpty ? 'No topics yet' : 'No matches',
+                    title: query.isEmpty ? l10n.quizNoTopicsYet : l10n.quizNoMatches,
                     subtitle: query.isEmpty
-                        ? 'This course has no active topics yet.'
-                        : 'Try a different search',
+                        ? l10n.quizCourseNoActiveTopics
+                        : l10n.quizTryDifferentSearch,
                     icon: Icons.category_rounded,
                   );
                 }
@@ -467,6 +469,7 @@ class _CategoryCardState extends State<_CategoryCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final idx = widget.entry.id.hashCode.abs();
     final tileColor = _kCategoryColors[idx % _kCategoryColors.length];
     final icon = _kCategoryIcons[idx % _kCategoryIcons.length];
@@ -514,8 +517,8 @@ class _CategoryCardState extends State<_CategoryCard> {
                       return const Text('', style: TextStyle(fontSize: 12));
                     }
                     if (snap.hasError || !snap.hasData || snap.data == null) {
-                      return const Text(
-                        'Count unavailable',
+                      return Text(
+                        l10n.quizCountUnavailable,
                         style: TextStyle(fontSize: 11, color: AppColors.textTertiaryLight),
                       );
                     }

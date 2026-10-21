@@ -5,6 +5,8 @@ import 'package:bisaasmobile/core/storage/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/localized_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Widget tests for the consent UI.
@@ -26,8 +28,8 @@ void main() {
   Future<void> pump(WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
-        child: const MaterialApp(
-          home: Scaffold(body: ConsentSheet()),
+        child: localizedApp(
+          child: const Scaffold(body: ConsentSheet()),
         ),
       ),
     );
@@ -118,8 +120,8 @@ void main() {
         '{"decided":true,"functional":true,"analytics":false,"marketing":false}',
       );
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: PrivacySettingsScreen()),
+        ProviderScope(
+          child: localizedApp(child: const PrivacySettingsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -132,8 +134,8 @@ void main() {
 
     testWidgets('links to the stored-data screen', (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: PrivacySettingsScreen()),
+        ProviderScope(
+          child: localizedApp(child: const PrivacySettingsScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -143,8 +145,8 @@ void main() {
     testWidgets('the erasure note points at the data screen, not just an email',
         (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(home: PrivacySettingsScreen()),
+        ProviderScope(
+          child: localizedApp(child: const PrivacySettingsScreen()),
         ),
       );
       await tester.pumpAndSettle();

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'consent_controller.dart';
 import 'consent_state.dart';
+import '../../l10n/app_localizations.dart';
 
 /// The consent sheet.
 ///
@@ -43,6 +44,7 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return SafeArea(
@@ -67,7 +69,7 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Privacy choices', style: theme.textTheme.headlineSmall),
+                    Text(l10n.consentTitle, style: theme.textTheme.headlineSmall),
                     const SizedBox(height: 8),
                     Text(
                       // The wording has to survive a review. The previous
@@ -78,46 +80,32 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
                       // made. Guideline 5.1.1 and the Play Data Safety form
                       // both require the disclosure to name what is actually
                       // transmitted, so this paragraph lists it.
-                      'Your account and quiz progress are stored on our '
-                      'servers so you can sign in on any device. To make that '
-                      'work and to keep the app stable we also send a device '
-                      'identifier, a push-notification token, crash reports '
-                      'and a device security check. With your permission we '
-                      'also send anonymous usage events. You can change this '
-                      'at any time in Settings → Privacy.',
+                      l10n.consentIntro,
                       style: theme.textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 16),
                     _Row(
-                      title: 'Necessary',
-                      subtitle: 'Sign-in and your saved work, your '
-                          'push-notification token, crash reports, and a '
-                          'device security check. Required for the app to '
-                          'work.',
+                      title: l10n.consentNecessary,
+                      subtitle: l10n.consentNecessaryBody,
                       value: true,
                       enabled: false,
                       onChanged: null,
                     ),
                     _Row(
-                      title: 'Functional',
-                      subtitle: 'Remember settings such as your language and '
-                          'filters on this device.',
+                      title: l10n.consentFunctional,
+                      subtitle: l10n.consentFunctionalBody,
                       value: _functional,
                       onChanged: (v) => setState(() => _functional = v),
                     ),
                     _Row(
-                      title: 'Analytics',
-                      subtitle: 'Usage events that tell us which features are '
-                          'useful. They are tied to a device identifier rather '
-                          'than to your account. No question content is ever '
-                          'included.',
+                      title: l10n.consentAnalytics,
+                      subtitle: l10n.consentAnalyticsBody,
                       value: _analytics,
                       onChanged: (v) => setState(() => _analytics = v),
                     ),
                     _Row(
-                      title: 'Marketing',
-                      subtitle: 'Offers and promotions. Off unless you ask for '
-                          'it.',
+                      title: l10n.consentMarketing,
+                      subtitle: l10n.consentMarketingBody,
                       value: _marketing,
                       onChanged: (v) => setState(() => _marketing = v),
                     ),
@@ -136,7 +124,7 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
                         width: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save choices'),
+                    : Text(l10n.consentSaveChoices),
               ),
             ),
             const SizedBox(height: 8),
@@ -144,7 +132,7 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
               width: double.infinity,
               child: TextButton(
                 onPressed: _saving ? null : _saveEssentialOnly,
-                child: const Text('Continue with necessary only'),
+                child: Text(l10n.consentNecessaryOnly),
               ),
             ),
           ],
@@ -214,20 +202,20 @@ class PrivacySettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final consent = ref.watch(consentProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Privacy')),
+      appBar: AppBar(title: Text(l10n.privacyMenu)),
       body: consent.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(child: Text('Could not load your choices')),
+        error: (_, __) => Center(child: Text(l10n.consentLoadError)),
         data: (state) => ListView(
           children: [
             ListTile(
-              title: const Text('Necessary'),
-              subtitle: const Text('Always on. Your account, saved work, push '
-                  'token, crash reports and device security check.'),
+              title: Text(l10n.consentNecessary),
+              subtitle: Text(l10n.consentNecessaryAlwaysOn),
               trailing: const Icon(Icons.lock_outline),
               enabled: false,
             ),
@@ -248,8 +236,8 @@ class PrivacySettingsScreen extends ConsumerWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.storage_outlined),
-              title: const Text('Data stored about this device'),
-              subtitle: const Text('View, and erase, the anonymous profile'),
+              title: Text(l10n.consentDataStored),
+              subtitle: Text(l10n.consentDataStoredSubtitle),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
               onTap: () => context.push('/privacy/data'),
             ),
@@ -257,9 +245,7 @@ class PrivacySettingsScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                'Turning off a category stops that collection from that moment. '
-                'It does not delete data already collected — for that, use the '
-                'link above or contact privacy@bisaas.com.',
+                l10n.consentFootnote,
                 style: theme.textTheme.bodySmall,
               ),
             ),

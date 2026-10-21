@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/calculator_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Catalog browser — `GET /calculators` (cached, public).
 /// Groups 232 calculators by domain; search local; tap → dynamic form.
@@ -28,13 +29,14 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final catalogAsync = ref.watch(calculatorCatalogProvider);
     final theme = Theme.of(context);
     final total = catalogAsync.value?.totalCalculators ?? 0;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calculators'),
+        title: Text(l10n.calculators),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
@@ -42,7 +44,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
             child: TextField(
               controller: _searchCtrl,
               decoration: InputDecoration(
-                hintText: total > 0 ? 'Search $total calculators…' : 'Search calculators…',
+                hintText: total > 0 ? l10n.calcSearchInDomain(total) : l10n.calcSearchPlaceholder,
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _query.isEmpty
                     ? null
@@ -66,7 +68,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
       body: catalogAsync.when(
         data: (catalog) {
           if (catalog.domains.isEmpty) {
-            return const Center(child: Text('No calculators published'));
+            return Center(child: Text(l10n.calcBrowserEmpty));
           }
           final total = catalog.totalCalculators;
           return RefreshIndicator(
@@ -77,7 +79,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                     child: Text(
-                      '$total calculators • ${catalog.domains.length} domains',
+                      l10n.calcBrowserCount(total, catalog.domains.length),
                       style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                     ),
                   ),
@@ -110,11 +112,11 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
               children: [
                 const Icon(Icons.error_outline_rounded, size: 40, color: AppColors.wrongRed),
                 const SizedBox(height: 12),
-                Text('Could not load calculators', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(l10n.calcBrowserLoadError, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(e.toString(), textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 const SizedBox(height: 16),
-                FilledButton(onPressed: () => ref.invalidate(calculatorCatalogProvider), child: const Text('Retry')),
+                FilledButton(onPressed: () => ref.invalidate(calculatorCatalogProvider), child: Text(l10n.retry)),
               ],
             ),
           ),

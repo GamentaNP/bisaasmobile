@@ -34,5 +34,508 @@
   },
   "appLocked": "CivilCal is locked",
   "unlock": "Unlock",
-  "unlockCivilCal": "Unlock CivilCal"
+  "unlockCivilCal": "Unlock CivilCal",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonClose": "Close",
+  "commonGoBack": "Go Back",
+  "commonStay": "Stay",
+  "commonExit": "Exit",
+  "commonEmail": "Email",
+  "commonPassword": "Password",
+  "commonContinueWithGoogle": "Continue with Google",
+  "commonContinueWithApple": "Continue with Apple",
+  "commonOr": "or",
+  "commonSkip": "Skip",
+  "commonCheckAgain": "Check again",
+  "commonContactSupport": "Contact support",
+  "commonShareResult": "Share Result",
+  "commonPoints": "{count} pts",
+  "@commonPoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonPercent": "{value}%",
+  "@commonPercent": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonXpGained": "+{amount} XP",
+  "@commonXpGained": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "authWelcomeBackTitle": "Welcome back",
+  "authWelcomeBackSubtitle": "Sign in to access your quizzes, formulas, and ranking",
+  "authForgotPasswordTitle": "Forgot Password?",
+  "authForgotPasswordSubtitle": "Enter your registered email and we will send you instructions to reset your password.",
+  "authEmailAddressLabel": "Email Address",
+  "authSendResetLink": "Send Reset Link",
+  "authCheckEmailTitle": "Check your email",
+  "authCheckEmailBody": "If an account exists with {email}, you will receive a password reset link shortly.",
+  "@authCheckEmailBody": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "authReturnToLogin": "Return to Login",
+  "authJoinTitle": "Join CivilCal",
+  "authJoinSubtitle": "Your companion for engineering exams and calculations",
+  "authFullNameLabel": "Full Name",
+  "authConfirmPasswordLabel": "Confirm Password",
+  "authCreateAccount": "Create Account",
+  "authAlreadyHaveAccount": "Already have an account?",
+  "authNoAccount": "Don't have an account?",
+  "authSetNewPasswordTitle": "Set a new password",
+  "authResetTitle": "Choose a new password",
+  "authResetSubtitle": "You will be signed out everywhere, including this device.",
+  "authResetMissingToken": "This link is missing its reset token. Open the link from your email, or request a new one.",
+  "authRequestNewLink": "Request a new link",
+  "authRequestNewLinkInstead": "Request a new link instead",
+  "authNewPasswordLabel": "New password",
+  "authConfirmNewPasswordLabel": "Confirm new password",
+  "authMinChars": "At least {count} characters",
+  "@authMinChars": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "authVerifyEmailBanner": "Verify your email to unlock every feature.",
+  "authSplashTagline": "BiSaaS Engineering Learning Ecosystem",
+  "authInvalidEmail": "Enter a valid email",
+  "authPasswordRequired": "Please enter your password",
+  "onboardingStepOf": "Step {current} of {total}",
+  "@onboardingStepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingTargetExamTitle": "Target Examination",
+  "onboardingTargetExamBody": "Sets the syllabus this account studies towards.",
+  "onboardingDailyGoalTitle": "Daily Practice Goal",
+  "onboardingDailyGoalBody": "How much time would you like to dedicate each day? You can change this anytime.",
+  "onboardingMinutesPerDay": "{minutes} mins / day — {label}",
+  "@onboardingMinutesPerDay": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      },
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "onboardingCurrentLevelTitle": "Your Current Level",
+  "onboardingCurrentLevelBody": "Sets where your streak and revision queue start from.",
+  "quizHomeTitle": "Practice & Quiz",
+  "quizHomeLoadError": "Could not load quiz",
+  "quizHomeEmptyTitle": "No quizzes yet",
+  "quizHomeEmptyBody": "Question sets for your exam are being prepared. Check back soon.",
+  "quizPlayWorlds": "Play Worlds",
+  "quizPlayWorldsSubtitle": "Chapters, levels and bosses — earn stars as you go",
+  "quizPracticeDrill": "Practice drill",
+  "quizPracticeDrillSubtitle": "Drill your bookmarks and weak topics — untimed, no rank effect",
+  "quizIntroDetailsTitle": "Quiz Details",
+  "quizIntroLoadFailed": "Failed to load quiz: {reason}",
+  "@quizIntroLoadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizIntroQuestions": "Questions",
+  "quizIntroMinutes": "min",
+  "quizIntroStart": "Start Quiz",
+  "quizIntroHowItWorks": "How it works",
+  "quizAttemptLoadError": "Could not load quiz",
+  "quizAttemptOfflineNotice": "Offline practice — not official. XP/coins will reconcile when back online.",
+  "quizAttemptUnsupportedEffect": "{effect} used — the server returned an effect this app cannot show yet.",
+  "@quizAttemptUnsupportedEffect": {
+    "placeholders": {
+      "effect": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizAttemptCombo": "×{count} Combo!",
+  "@quizAttemptCombo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizAttemptExitTitle": "Exit Quiz?",
+  "quizAttemptExitBody": "Your current progress will be lost. Are you sure you want to exit?",
+  "quizResultTitle": "Quiz Complete!",
+  "quizResultAccuracy": "Accuracy",
+  "quizResultCorrectOf": "{correct} of {total} correct",
+  "@quizResultCorrectOf": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "quizResultCorrect": "Correct",
+  "quizResultXpEarned": "XP Earned",
+  "quizResultCoins": "Coins",
+  "quizResultAnswerReview": "Answer Review",
+  "quizResultBackToHome": "Back to Home",
+  "quizResultReviewAll": "Review All Answers",
+  "quizResultMorePractice": "More Practice",
+  "quizResultShareFailed": "Share unavailable: {reason}",
+  "@quizResultShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReviewTitle": "Review Answers",
+  "quizReviewLoadFailed": "Failed to load review: {reason}",
+  "@quizReviewLoadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReviewEmpty": "No answers to review",
+  "quizReviewYourAnswer": "Your answer",
+  "quizReviewNotAnswered": "Not answered",
+  "quizReviewQuestionNumber": "Q{number}",
+  "@quizReviewQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFunnelTryItOut": "Try it out",
+  "quizFunnelSampleTitle": "Sample questions",
+  "quizFunnelShown": "{count} shown",
+  "@quizFunnelShown": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizFunnelEmptyTitle": "No sample questions yet",
+  "quizFunnelEmptyBody": "The catalogue has no public questions published right now. Sign up and you will see everything.",
+  "quizFunnelCreateAccount": "Create a free account to play",
+  "quizFunnelPlayGraded": "Play a graded quiz",
+  "quizFunnelPracticeNote": "Practice mode never affects rank, XP or streak.",
+  "quizOfflinePractice": "Offline Practice — {subject}",
+  "@quizOfflinePractice": {
+    "placeholders": {
+      "subject": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFinishFailed": "Could not finish the quiz. Please try again.",
+  "quizCountUnavailable": "Count unavailable",
+  "calcBrowserEmpty": "No calculators published",
+  "calcBrowserCount": "{count} calculators • {domains} domains",
+  "@calcBrowserCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "domains": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcBrowserLoadError": "Could not load calculators",
+  "calcShareFailed": "Could not share this result: {reason}",
+  "@calcShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcNoInputNamed": "No input named \"{name}\" on this calculator",
+  "@calcNoInputNamed": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcAddInput": "Add at least one input",
+  "calcInputsLabel": "Inputs · {label}",
+  "@calcInputsLabel": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcInputsLegacy": "Inputs (legacy)",
+  "calcKeyLabel": "key",
+  "calcKeyExample": "e.g. length",
+  "calcValueLabel": "value",
+  "calcValueExample": "e.g. 12.5",
+  "calcAssistantTitle": "Ask the assistant",
+  "calcAssistantExample": "e.g. a 3 m wide, 4 m deep slab for a 25 MPa mix",
+  "calcAssistantSuggested": "Suggested values",
+  "calcAssistantAlso": "You could also ask",
+  "calcHistoryTitle": "{subject} · history",
+  "@calcHistoryTitle": {
+    "placeholders": {
+      "subject": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcHistoryEmpty": "No saved calculations yet",
+  "calcStepByStep": "Step-by-step",
+  "calcShareResult": "Share result",
+  "calcPracticeRelated": "Practice related questions",
+  "calcViewHistory": "View history",
+  "calcNoSchema": "Server did not return a field schema. Falling back to generic key/value editor.",
+  "calcAddField": "Add field",
+  "calcInputsCount": "inputs: {count}",
+  "@calcInputsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "calcAsk": "Ask",
+  "calcApply": "Apply",
+  "calcAssistantDisclaimer": "The assistant suggests; you decide. Calculations are always performed by the server.",
+  "homeGreeting": "Hi, {name} 👋",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeLevel": "Level {level} • {xp} XP",
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeDaily": "Daily",
+  "homeBattle": "Battle",
+  "homeBrowse": "Browse",
+  "homeExplore": "Explore",
+  "homeCurrentCourse": "CURRENT COURSE",
+  "homePercentDone": "{percent}% Done",
+  "@homePercentDone": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeMissionsUnavailable": "Missions unavailable",
+  "homeWorldsLoadError": "Could not load your worlds",
+  "homeWorldsEmpty": "No worlds published yet — browse topics to keep practising.",
+  "homeYourWorlds": "Your worlds",
+  "homeStars": "{earned} / {total} ⭐",
+  "@homeStars": {
+    "placeholders": {
+      "earned": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "homeContinue": "Continue: {title}",
+  "@homeContinue": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeDashboardLoadError": "Could not load your dashboard",
+  "homeDashboardEmpty": "Nothing is shown rather than guessing. Pull to refresh, or retry below.",
+  "homeDashboardUnreachable": "Could not reach the server, so the dashboard cannot be shown.",
+  "consentTitle": "Privacy choices",
+  "consentIntro": "Your account and quiz progress are stored on our servers so you can sign in on any device. To make that work and to keep the app stable we also send a device identifier, a push-notification token, crash reports and a device security check. With your permission we also send anonymous usage events. You can change this at any time in Settings → Privacy.",
+  "consentNecessary": "Necessary",
+  "consentNecessaryBody": "Sign-in and your saved work, your push-notification token, crash reports, and a device security check. Required for the app to work.",
+  "consentFunctional": "Functional",
+  "consentFunctionalBody": "Remember settings such as your language and filters on this device.",
+  "consentAnalytics": "Analytics",
+  "consentAnalyticsBody": "Usage events that tell us which features are useful. They are tied to a device identifier rather than to your account. No question content is ever included.",
+  "consentMarketing": "Marketing",
+  "consentMarketingBody": "Offers and promotions. Off unless you ask for it.",
+  "consentSaveChoices": "Save choices",
+  "consentNecessaryOnly": "Continue with necessary only",
+  "consentLoadError": "Could not load your choices",
+  "consentNecessaryAlwaysOn": "Always on. Your account, saved work, push token, crash reports and device security check.",
+  "consentDataStored": "Data stored about this device",
+  "consentDataStoredSubtitle": "View, and erase, the anonymous profile",
+  "consentFootnote": "Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@bisaas.com.",
+  "privacyTitle": "Your data",
+  "privacyAnonymousProfile": "Anonymous profile",
+  "privacyReference": "Reference {reference}",
+  "@privacyReference": {
+    "placeholders": {
+      "reference": {
+        "type": "Object"
+      }
+    }
+  },
+  "privacyEraseData": "Erase stored data",
+  "privacyLocalChoices": "Local choices",
+  "privacyEraseTitle": "Erase stored data?",
+  "privacyEraseBody": "This deletes the anonymous profile and every intent event stored for this device. It cannot be undone.",
+  "privacyErased": "Stored data erased",
+  "privacyEraseFailed": "Could not erase your data. Try again.",
+  "privacyEraseConfirm": "Erase",
+  "privacyMenu": "Privacy",
+  "notificationDailyTitle": "Daily Sprint ready ⚡",
+  "notificationDailyBody": "Your daily MCQs are waiting — keep the streak alive!",
+  "forceUpdateTitle": "Update required",
+  "forceUpdateYourVersion": "Your version: {version}",
+  "@forceUpdateYourVersion": {
+    "placeholders": {
+      "version": {
+        "type": "Object"
+      }
+    }
+  },
+  "forceUpdateNow": "Update now",
+  "forceUpdateReassurance": "Your account and progress are safe — nothing is lost by updating.",
+  "forceUpdateStoreFailed": "Could not open the store. Visit {url}",
+  "@forceUpdateStoreFailed": {
+    "placeholders": {
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "maintenanceTitle": "We'll be right back",
+  "maintenanceBody": "CivilCal is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.",
+  "versionUnsupported": "This app version is no longer supported.",
+  "authUpdating": "Updating…",
+  "authUpdatePassword": "Update password",
+  "authVerificationResentBody": "If that address still needs verifying, a new link is on its way. Check your inbox and spam folder.",
+  "authVerificationResentHint": "We send a one-tap verification link to the address on your account.",
+  "authVerificationSent": "Verification sent",
+  "authResendVerification": "Resend verification email",
+  "calcSearchInDomain": "Search {scope} calculators…",
+  "@calcSearchInDomain": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcSearchPlaceholder": "Search calculators…",
+  "calcCalculating": "Calculating…",
+  "calcCalculateServer": "Calculate (server)",
+  "calcVia": "via {source}",
+  "@calcVia": {
+    "placeholders": {
+      "source": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeMissionsReady": "{count} missions ready to claim",
+  "@homeMissionsReady": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeMissionsActive": "Missions — {count} active",
+  "@homeMissionsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingStartLearning": "Start Learning",
+  "onboardingContinue": "Continue",
+  "privacyLinkedToAccount": "This profile is linked to your account. Delete the account to erase everything.",
+  "quizSeeResults": "See Results",
+  "quizNextQuestion": "Next Question",
+  "quizAnswerSubmitted": "Answer submitted",
+  "quizBrowseQuizzes": "Browse Quizzes",
+  "quizPickTopic": "Pick a Topic",
+  "quizSearchCourses": "Search courses…",
+  "quizSearchTopics": "Search topics…",
+  "quizNoCoursesYet": "No courses yet",
+  "quizNoMatches": "No matches",
+  "quizSetsBeingPrepared": "Question sets for your exam are being prepared.",
+  "quizTryDifferentSearch": "Try a different search",
+  "quizNoTopicsYet": "No topics yet",
+  "quizCourseNoActiveTopics": "This course has no active topics yet.",
+  "quizFunnelSampleBody": "Sample questions from our catalogue. Open the Quiz tab to play a full graded session.",
+  "quizFunnelPublicBody": "Public questions from our catalogue. Answers unlock when you create a free account.",
+  "quizFreshQuestions": "Fresh questions were added recently.",
+  "quizNewIn": "New in {scope}",
+  "@quizNewIn": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizNoQuestionText": "This question has no text on the server.",
+  "quizGraded": "Graded",
+  "quizXp": "XP",
+  "quizByServer": "by server",
+  "forceUpdateUnsupportedLatest": "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
+  "forceUpdateUnsupportedVersion": "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
+  "@forceUpdateUnsupportedVersion": {
+    "placeholders": {
+      "version": {
+        "type": "Object"
+      }
+    }
+  },
+  "routeNotFound": "Route not found: {path}",
+  "@routeNotFound": {
+    "placeholders": {
+      "path": {
+        "type": "Object"
+      }
+    }
+  }
 }

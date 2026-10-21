@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Renders a list of step objects `{label, formula, result}` as
 /// expandable cards. The formula field, if present, is rendered with
@@ -14,6 +15,7 @@ class StepByStepSolution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (steps.isEmpty) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.all(14),
@@ -26,10 +28,10 @@ class StepByStepSolution extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
+            children: [
               Icon(Icons.list_alt_rounded, size: 18, color: AppColors.brand),
               SizedBox(width: 6),
-              Text('Step-by-step', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
+              Text(l10n.calcStepByStep, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
             ],
           ),
           const SizedBox(height: 8),

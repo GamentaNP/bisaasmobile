@@ -10,6 +10,7 @@ import '../../../shared/widgets/gradient_button.dart';
 import 'controllers/auth_controller.dart';
 import 'widgets/email_verification_banner.dart';
 import 'widgets/social_sign_in_buttons.dart';
+import '../../../l10n/app_localizations.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key, this.notice});
@@ -59,6 +60,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
@@ -127,7 +129,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(height: 26),
                     Text(
-                      'Welcome back',
+                      l10n.authWelcomeBackTitle,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
@@ -135,7 +137,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to access your quizzes, formulas, and ranking',
+                      l10n.authWelcomeBackSubtitle,
                       textAlign: TextAlign.center,
                       style: AppTypography.bodyMedium.copyWith(
                         color: isDark
@@ -187,8 +189,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ],
                     TextFormField(
                       controller: _email,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
+                      decoration: InputDecoration(
+                        labelText: l10n.commonEmail,
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -199,7 +201,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     TextFormField(
                       controller: _pass,
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: l10n.commonPassword,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -220,12 +222,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () => context.go('/forgot-password'),
-                        child: const Text('Forgot Password?'),
+                        child: Text(l10n.authForgotPasswordTitle),
                       ),
                     ),
                     const SizedBox(height: 14),
                     GradientButton(
-                      label: 'Sign in',
+                      label: l10n.signIn,
                       loading: _loading,
                       onPressed: _login,
                       icon: Icons.login_rounded,
@@ -246,14 +248,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15),
                       ),
-                      child: const Text('Continue as Guest'),
+                      child: Text(l10n.continueAsGuest),
                     ),
                     const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Don't have an account?",
+                          l10n.authNoAccount,
                           style: AppTypography.bodyMedium.copyWith(
                             color: isDark
                                 ? AppColors.textSecondaryDark
@@ -262,7 +264,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         TextButton(
                           onPressed: () => context.go('/register'),
-                          child: const Text('Register'),
+                          child: Text(l10n.register),
                         ),
                       ],
                     ),

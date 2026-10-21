@@ -10,6 +10,7 @@ import '../../../../shared/widgets/app_bar.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../widgets/difficulty_badge.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Post-quiz review. Calls `GET /api/v1/quiz/attempts/{id}/results` (the
 /// bare `GET /quiz/attempts/{id}` route does not exist) and renders every
@@ -42,9 +43,10 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeAreaScaffold(
       appBar: CivilAppBar(
-        title: 'Review Answers',
+        title: l10n.quizReviewTitle,
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
       ),
       body: FutureBuilder<AttemptReviewDto>(
@@ -66,14 +68,14 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
                         size: 40, color: Colors.grey),
                     const SizedBox(height: 12),
                     Text(
-                      'Failed to load review: ${snap.error}',
+                      l10n.quizReviewLoadFailed(snap.error.toString()),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     FilledButton.icon(
                       onPressed: () => setState(() => _future = _load()),
                       icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: const Text('Retry'),
+                      label: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -83,7 +85,7 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
           final data = snap.data!;
           final entries = data.entries;
           if (entries.isEmpty) {
-            return const Center(child: Text('No answers to review'));
+            return Center(child: Text(l10n.quizReviewEmpty));
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -109,6 +111,7 @@ class _ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final color = isCorrect ? AppColors.correctGreen : AppColors.wrongRed;
     return GlassmorphicCard(
       padding: const EdgeInsets.all(14),
@@ -124,7 +127,7 @@ class _ReviewCard extends StatelessWidget {
                 child: Icon(isCorrect ? Icons.check : Icons.close, color: color, size: 14),
               ),
               const SizedBox(width: 8),
-              Text('Q$index', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(l10n.quizReviewQuestionNumber(index), style: const TextStyle(fontWeight: FontWeight.bold)),
               const Spacer(),
               if (entry.difficulty != null) DifficultyBadge(difficulty: entry.difficulty!, compact: true),
             ],
@@ -134,21 +137,21 @@ class _ReviewCard extends StatelessWidget {
           const SizedBox(height: 10),
           if (entry.userOptionId != null)
             _OptionRow(
-              label: 'Your answer',
+              label: l10n.quizReviewYourAnswer,
               text: entry.userOptionText ?? entry.userOptionId!,
               color: color,
             )
           else
-            const _OptionRow(
-              label: 'Your answer',
-              text: 'Not answered',
+            _OptionRow(
+              label: l10n.quizReviewYourAnswer,
+              text: l10n.quizReviewNotAnswered,
               color: Colors.grey,
             ),
           // The results endpoint withholds answer keys — show the key row
           // only when the server actually sent one.
           if (entry.correctOptionText != null || entry.correctOptionId != null)
             _OptionRow(
-              label: 'Correct',
+              label: l10n.quizResultCorrect,
               text: entry.correctOptionText ?? entry.correctOptionId ?? '—',
               color: AppColors.correctGreen,
             ),

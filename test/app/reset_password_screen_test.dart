@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../support/localized_app.dart';
+
 class MockAuthRepository extends Mock implements AuthRepository {}
 
 /// The screen must reach the server with the token, not merely display fields.
@@ -55,7 +57,9 @@ void main() {
 
   Widget host({String? token, String? email}) => ProviderScope(
         overrides: [authRepositoryProvider.overrideWithValue(repo)],
-        child: MaterialApp(home: ResetPasswordScreen(token: token, email: email)),
+        child: localizedApp(
+          child: ResetPasswordScreen(token: token, email: email),
+        ),
       );
 
   Future<void> submitWith(WidgetTester tester, String pass, String confirm) async {

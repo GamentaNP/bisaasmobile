@@ -6,6 +6,7 @@ import '../../../../core/logging/app_logger.dart';
 import '../../../../core/storage/database/app_database.dart';
 import '../../../../core/storage/database/daos/quiz_dao.dart';
 import '../models/quiz_dto.dart';
+import '../../../../app/localization/l10n.dart';
 
 /// Drift-backed offline cache for quiz questions.
 ///
@@ -107,7 +108,7 @@ class QuizLocalDataSource {
 
       return QuizSessionDto(
         id: quizId,
-        title: 'Offline Practice — ${quizId.replaceAll('-', ' ')}',
+        title: appL10n().quizOfflinePractice(quizId.replaceAll('-', ' ')),
         questions: questions,
         durationSeconds: questions.length * 60, // 1 min / Q fallback
       );

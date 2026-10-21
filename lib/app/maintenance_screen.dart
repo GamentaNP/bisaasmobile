@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'theme/app_colors.dart';
 import 'providers.dart';
+import '../l10n/app_localizations.dart';
 
 /// Blocking screen for `maintenance: true` from `GET /app/config`.
 ///
@@ -22,6 +23,7 @@ class MaintenanceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
@@ -47,7 +49,7 @@ class MaintenanceScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  "We'll be right back",
+                  l10n.maintenanceTitle,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -55,8 +57,7 @@ class MaintenanceScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'CivilCal is down for a short maintenance. Your account, '
-                  'coins and progress are safe — nothing has been lost.',
+                  l10n.maintenanceBody,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                 ),
@@ -64,12 +65,12 @@ class MaintenanceScreen extends ConsumerWidget {
                 FilledButton.icon(
                   onPressed: () => ref.invalidate(appConfigProvider),
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Check again'),
+                  label: Text(l10n.commonCheckAgain),
                 ),
                 const SizedBox(height: 10),
                 TextButton(
                   onPressed: () => _openSupport(context),
-                  child: const Text('Contact support'),
+                  child: Text(l10n.commonContactSupport),
                 ),
               ],
             ),

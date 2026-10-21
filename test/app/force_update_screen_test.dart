@@ -4,6 +4,8 @@ import 'package:bisaasmobile/core/network/app_update_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/localized_app.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -27,8 +29,10 @@ void main() {
 
   testWidgets('gate is transparent while the build is supported', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: ForceUpdateGate(child: Scaffold(body: Text('home content'))),
+      localizedApp(
+        child: const ForceUpdateGate(
+          child: Scaffold(body: Text('home content')),
+        ),
       ),
     );
     expect(find.text('home content'), findsOneWidget);
@@ -37,8 +41,10 @@ void main() {
 
   testWidgets('gate takes over the surface on a 426', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: ForceUpdateGate(child: Scaffold(body: Text('home content'))),
+      localizedApp(
+        child: const ForceUpdateGate(
+          child: Scaffold(body: Text('home content')),
+        ),
       ),
     );
     latch();
@@ -51,7 +57,7 @@ void main() {
   testWidgets('states the minimum version the server demands', (tester) async {
     latch(min: '3.1.4');
     await tester.pumpWidget(
-      const MaterialApp(home: ForceUpdateGate(child: SizedBox.shrink())),
+      localizedApp(child: const ForceUpdateGate(child: SizedBox.shrink())),
     );
     expect(find.textContaining('3.1.4'), findsOneWidget);
   });
@@ -59,7 +65,7 @@ void main() {
   testWidgets('offers no Retry — retrying cannot succeed', (tester) async {
     latch();
     await tester.pumpWidget(
-      const MaterialApp(home: ForceUpdateGate(child: SizedBox.shrink())),
+      localizedApp(child: const ForceUpdateGate(child: SizedBox.shrink())),
     );
     expect(find.text('Retry'), findsNothing);
     expect(find.text('Update now'), findsOneWidget);
@@ -70,7 +76,7 @@ void main() {
   ) async {
     latch(current: '1.4.0');
     await tester.pumpWidget(
-      const MaterialApp(home: ForceUpdateGate(child: SizedBox.shrink())),
+      localizedApp(child: const ForceUpdateGate(child: SizedBox.shrink())),
     );
     expect(find.textContaining('1.4.0'), findsOneWidget);
   });
@@ -78,7 +84,7 @@ void main() {
   testWidgets('reassures the user that progress is safe', (tester) async {
     latch();
     await tester.pumpWidget(
-      const MaterialApp(home: ForceUpdateGate(child: SizedBox.shrink())),
+      localizedApp(child: const ForceUpdateGate(child: SizedBox.shrink())),
     );
     expect(find.textContaining('nothing is lost'), findsOneWidget);
   });

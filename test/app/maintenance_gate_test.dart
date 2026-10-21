@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/localized_app.dart';
+
 /// The maintenance switch is the operator's kill-switch. It was never
 /// reachable because `GET /app/config` was never called.
 void main() {
@@ -14,8 +16,10 @@ void main() {
             (ref) async => config,
           ),
         ],
-        child: const MaterialApp(
-          home: MaintenanceGate(child: Scaffold(body: Text('app content'))),
+        child: localizedApp(
+          child: const MaintenanceGate(
+            child: Scaffold(body: Text('app content')),
+          ),
         ),
       );
 

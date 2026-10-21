@@ -7,6 +7,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -59,6 +60,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
@@ -98,7 +100,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 26),
                     Text(
-                      'Join CivilCal',
+                      l10n.authJoinTitle,
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
@@ -106,7 +108,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Your companion for engineering exams and calculations',
+                      l10n.authJoinSubtitle,
                       textAlign: TextAlign.center,
                       style: AppTypography.bodyMedium.copyWith(
                         color: isDark
@@ -136,8 +138,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ],
                     TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Full Name',
+                      decoration: InputDecoration(
+                        labelText: l10n.authFullNameLabel,
                         prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (v) =>
@@ -146,8 +148,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     const SizedBox(height: 14),
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
+                      decoration: InputDecoration(
+                        labelText: l10n.commonEmail,
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -159,7 +161,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: l10n.commonPassword,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -178,8 +180,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     TextFormField(
                       controller: _confirmPasswordController,
                       obscureText: _obscurePassword,
-                      decoration: const InputDecoration(
-                        labelText: 'Confirm Password',
+                      decoration: InputDecoration(
+                        labelText: l10n.authConfirmPasswordLabel,
                         prefixIcon: Icon(Icons.lock_outline),
                       ),
                       validator: (v) => v != _passwordController.text
@@ -188,7 +190,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 24),
                     GradientButton(
-                      label: 'Create Account',
+                      label: l10n.authCreateAccount,
                       loading: _loading,
                       onPressed: _submit,
                       icon: Icons.person_add_alt_1_rounded,
@@ -198,7 +200,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Already have an account?',
+                          l10n.authAlreadyHaveAccount,
                           style: AppTypography.bodyMedium.copyWith(
                             color: isDark
                                 ? AppColors.textSecondaryDark
@@ -207,7 +209,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                         TextButton(
                           onPressed: () => context.pop(),
-                          child: const Text('Sign in'),
+                          child: Text(l10n.signIn),
                         ),
                       ],
                     ),

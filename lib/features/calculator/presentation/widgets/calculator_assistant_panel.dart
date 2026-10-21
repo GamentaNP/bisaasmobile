@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../domain/entities/calculator_assistant.dart';
 import '../controllers/calculator_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// The calculator assistant panel.
 ///
@@ -89,6 +90,7 @@ class _CalculatorAssistantPanelState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final assistant = _assistant;
 
@@ -108,7 +110,7 @@ class _CalculatorAssistantPanelState
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Ask the assistant',
+                      l10n.calcAssistantTitle,
                       style: theme.textTheme.titleSmall
                           ?.copyWith(fontWeight: FontWeight.w700),
                     ),
@@ -126,9 +128,9 @@ class _CalculatorAssistantPanelState
                 controller: _controller,
                 maxLines: 3,
                 minLines: 1,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText:
-                      'e.g. a 3 m wide, 4 m deep slab for a 25 MPa mix',
+                      l10n.calcAssistantExample,
                   isDense: true,
                   border: OutlineInputBorder(),
                 ),
@@ -145,14 +147,14 @@ class _CalculatorAssistantPanelState
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.send_rounded, size: 16),
-                    label: const Text('Ask'),
+                    label: Text(l10n.calcAsk),
                   ),
                   const Spacer(),
                   if (assistant != null)
                     Text(
                       assistant.model == null
                           ? ''
-                          : 'via ${assistant.model}',
+                          : l10n.calcVia(assistant.model!),
                       style: const TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                 ],
@@ -194,7 +196,7 @@ class _CalculatorAssistantPanelState
                 if (assistant.hasFieldMappings) ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Suggested values',
+                    l10n.calcAssistantSuggested,
                     style: theme.textTheme.labelMedium
                         ?.copyWith(fontWeight: FontWeight.w700),
                   ),
@@ -251,7 +253,7 @@ class _CalculatorAssistantPanelState
                                     horizontal: 8,
                                   ),
                                 ),
-                                child: const Text('Apply',
+                                child: Text(l10n.calcApply,
                                     style: TextStyle(fontSize: 11)),
                               ),
                             ],
@@ -262,7 +264,7 @@ class _CalculatorAssistantPanelState
                 if (assistant.followUpQuestions.isNotEmpty) ...[
                   const SizedBox(height: 10),
                   Text(
-                    'You could also ask',
+                    l10n.calcAssistantAlso,
                     style: theme.textTheme.labelMedium
                         ?.copyWith(fontWeight: FontWeight.w700),
                   ),
@@ -286,9 +288,8 @@ class _CalculatorAssistantPanelState
                 ],
               ],
               const SizedBox(height: 6),
-              const Text(
-                'The assistant suggests; you decide. Calculations are always '
-                'performed by the server.',
+              Text(
+                l10n.calcAssistantDisclaimer,
                 style: TextStyle(fontSize: 10, color: Colors.grey),
               ),
             ],

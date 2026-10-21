@@ -6,6 +6,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/storage/preferences.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -114,6 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
@@ -129,7 +131,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Step ${_currentPage + 1} of 3',
+                      l10n.onboardingStepOf(_currentPage + 1, 3),
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: AppColors.brand,
                         fontWeight: FontWeight.bold,
@@ -137,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     TextButton(
                       onPressed: _completeOnboarding,
-                      child: const Text('Skip'),
+                      child: Text(l10n.commonSkip),
                     ),
                   ],
                 ),
@@ -178,7 +180,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Padding(
                 padding: const EdgeInsets.all(24),
                 child: GradientButton(
-                  label: _currentPage == 2 ? 'Start Learning' : 'Continue',
+                  label: _currentPage == 2 ? l10n.onboardingStartLearning : l10n.onboardingContinue,
                   onPressed: _nextPage,
                   icon: _currentPage == 2
                       ? Icons.rocket_launch_rounded
@@ -193,16 +195,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildExamStep(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       children: [
         Text(
-          'Target Examination',
+          l10n.onboardingTargetExamTitle,
           style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
-          'Sets the syllabus this account studies towards.',
+          l10n.onboardingTargetExamBody,
           style: AppTypography.bodyMedium.copyWith(
             color: theme.brightness == Brightness.dark
                 ? AppColors.textSecondaryDark
@@ -272,16 +275,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildGoalStep(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       children: [
         Text(
-          'Daily Practice Goal',
+          l10n.onboardingDailyGoalTitle,
           style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
-          'How much time would you like to dedicate each day? You can change this anytime.',
+          l10n.onboardingDailyGoalBody,
           style: AppTypography.bodyMedium.copyWith(
             color: theme.brightness == Brightness.dark
                 ? AppColors.textSecondaryDark
@@ -320,7 +324,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${goal['minutes']} mins / day — ${goal['label']}',
+                          l10n.onboardingMinutesPerDay(goal['minutes']! as int, goal['label']! as String),
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -349,11 +353,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildLevelStep(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       children: [
         Text(
-          'Your Current Level',
+          l10n.onboardingCurrentLevelTitle,
           style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -362,7 +367,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // difficulty to your stage." Nothing reads this answer back —
           // PATCH /me accepts only name/username/email, so there is nowhere on
           // the server to persist it and nothing consumes it locally either.
-          'Sets where your streak and revision queue start from.',
+          l10n.onboardingCurrentLevelBody,
           style: AppTypography.bodyMedium.copyWith(
             color: theme.brightness == Brightness.dark
                 ? AppColors.textSecondaryDark

@@ -106,6 +106,7 @@ Rules:
 - Before adding a calculation, confirm the backend is source of truth — do not duplicate calculator math on-device except for offline preview (and then reconcile with server on sync).
 - Every network call honors `X-Request-Id` logging, `X-RateLimit-*` backoff, and `Retry-After` on 429.
 - No `env()`-style secrets in committed code; flavor config lives in `lib/app/config/env.dart` + `--dart-define`.
+- **Do not add a hardcoded user-facing string.** The app offers English, Nepali and Hindi, and a string that is not in `lib/l10n/app_*.arb` reaches a Nepali reader in English. Add the key to `tool/generate_arb.py` (English, Nepali and Hindi on one line each), run `python tool/generate_arb.py && flutter gen-l10n`, and read it through `AppLocalizations.of(context)!` — or `appL10n()` outside a widget. `test/app/localization_coverage_test.dart` enforces this for the core journey and ratchets the rest. See `docs/localization.md`.
 
 ## Runbook
 
