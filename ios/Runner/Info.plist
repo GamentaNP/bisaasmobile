@@ -67,6 +67,26 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>CivilCal uses Face ID to securely unlock the app when you have App Lock enabled.</string>
+	<!-- The avatar flow reads one image the user picks from their library.
+	     iOS terminates an app that touches the photo library without this
+	     string, so it is required even though no other photo access
+	     happens. The app never opens the camera. -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>CivilCal lets you choose a profile picture from your photo library.</string>
+	<!-- Background delivery for Firebase Cloud Messaging.
+
+	     Without `remote-notification`, iOS never wakes the app for a data
+	     message: FCM only delivers while the app is in the foreground, so
+	     every background push — a new leaderboard position, an achievement
+	     unlock, a battle invitation — was silently dropped on iOS while
+	     working fine on Android.
+
+	     `remote-notification` is the only mode this app needs: it does no
+	     background transfers and no VoIP. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

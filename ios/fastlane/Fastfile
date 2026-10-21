@@ -21,7 +21,9 @@ platform :ios do
     # build machine except as a private CI artifact.
     sh("flutter build ipa --release --dart-define=ENV=prod --dart-define=APP_VERSION=#{version} --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=../build/symbols/ios")
     upload_to_testflight(
-      ipa: "../build/ios/ipa/CivilCal.ipa",
+      # `flutter build ipa` names the archive after the Xcode *scheme/target*,
+      # which is `Runner` — not after the product name shown on the store.
+      ipa: "../build/ios/ipa/Runner.ipa",
       skip_waiting_for_build_processing: true,
       distribute_external: false
     )
@@ -33,7 +35,7 @@ platform :ios do
     version = ENV["APP_VERSION"] || sh("grep -E '^version:' ../pubspec.yaml | awk '{print $2}' | cut -d '+' -f1").strip
     sh("flutter build ipa --release --dart-define=ENV=prod --dart-define=APP_VERSION=#{version} --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=../build/symbols/ios")
     deliver(
-      ipa: "../build/ios/ipa/CivilCal.ipa",
+      ipa: "../build/ios/ipa/Runner.ipa",
       force: true,
       skip_screenshots: false,
       skip_metadata: false

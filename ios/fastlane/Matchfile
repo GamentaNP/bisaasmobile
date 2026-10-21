@@ -8,6 +8,6 @@ storage_mode("git")
 
 type("appstore")
 
-app_identifier(["com.bisaas.civilcal"])
+app_identifier(["com.bisaas.bisaasmobile"])
 
 readonly(true)

@@ -1,4 +1,10 @@
-app_identifier("com.bisaas.civilcal")
+# The bundle identifier is owned by the Xcode project
+# (`PRODUCT_BUNDLE_IDENTIFIER` in `ios/Runner.xcodeproj/project.pbxproj`).
+# It MUST match it exactly: `match` provisions a profile for this id, and
+# `deliver`/`upload_to_testflight` upload the signed bundle under the id it
+# was signed with. A mismatch fails at signing time with a misleading
+# "no profile found" error.
+app_identifier("com.bisaas.bisaasmobile")
 apple_id(ENV["APP_STORE_CONNECT_EMAIL"]) # set in CI secrets
 itc_team_id(ENV["APP_STORE_CONNECT_TEAM_ID"])
 team_id(ENV["DEVELOPER_TEAM_ID"])
