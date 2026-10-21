@@ -172,8 +172,16 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo_icon.svg"
-  adaptive_icon_background: "#0B0F17"
+  # The legacy / iOS icon: an opaque full-bleed square. iOS masks the corners
+  # itself and rejects an icon that carries an alpha channel.
+  image_path: "assets/images/logo_icon.png"
+  # The Android adaptive foreground: the glyph alone on a transparent canvas,
+  # scaled into the central 66% safe zone. The plate colour comes from
+  # `adaptive_icon_background`.
   adaptive_icon_foreground: "assets/images/logo_icon_foreground.png"
+  adaptive_icon_background: "#0B0F17"
   remove_alpha_ios: true
-  min_sdk_android: 29
+  # Must track `minSdk` in `android/app/build.gradle.kts`. It was 29 while the
+  # real floor is 28, so the generator would have emitted the wrong adaptive
+  # resources for the 32-bit devices this app is built for.
+  min_sdk_android: 28
