@@ -187,7 +187,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ]),
                     ]),
                   ),
-                  IconButton(icon: const Icon(Icons.camera_alt_rounded, size: 20), onPressed: _uploading ? null : _pickAndUploadAvatar, tooltip: 'Change avatar'),
+                  IconButton(icon: const Icon(Icons.photo_library_rounded, size: 20), onPressed: _uploading ? null : _pickAndUploadAvatar, tooltip: 'Change avatar'),
                 ],
               ),
             ),
