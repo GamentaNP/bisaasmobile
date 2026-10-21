@@ -1,4 +1,4 @@
-﻿{
+{
   "ENV": "prod",
   "API_HOST": "https://bisaas.com",
   "API_BASE_URL": "https://bisaas.com/api/v1",

@@ -76,6 +76,8 @@ SKIP_TEXTS = {
     # An email address, not copy.
     "support@bisaas.com",
     "privacy@bisaas.com",
+    # The avatar fallback: the first letter of the display name.
+    "C",
 }
 
 # The core journey: the screens a user walks from install to finished quiz.
@@ -125,6 +127,12 @@ SCOPE = {
     "lib/app/config/app_config.dart",
     "lib/app/router/app_router.dart",
     "lib/app/app.dart",
+    # tier 2 — the daily loop
+    "lib/features/profile/presentation/screens/profile_screen.dart",
+    "lib/features/profile/presentation/widgets/skill_radar_chart.dart",
+    "lib/features/settings/presentation/screens/settings_screen.dart",
+    "lib/features/streak/presentation/screens/streak_screen.dart",
+    "lib/features/streak/presentation/widgets/streak_calendar.dart",
 }
 
 

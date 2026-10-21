@@ -60,6 +60,12 @@ const coreJourneyFiles = <String>{
   'lib/app/config/app_config.dart',
   'lib/app/router/app_router.dart',
   'lib/app/app.dart',
+  // tier 2 — the daily loop
+  'lib/features/profile/presentation/screens/profile_screen.dart',
+  'lib/features/profile/presentation/widgets/skill_radar_chart.dart',
+  'lib/features/settings/presentation/screens/settings_screen.dart',
+  'lib/features/streak/presentation/screens/streak_screen.dart',
+  'lib/features/streak/presentation/widgets/streak_calendar.dart',
 };
 
 /// Literals that are deliberately not translated.
@@ -71,6 +77,8 @@ const allowedLiterals = <String>{
   'support@bisaas.com',
   'privacy@bisaas.com',
   '⚡ Debug Auto-Login (user@bisaas.test)',
+  // The avatar fallback: the first letter of the display name.
+  'C',
 };
 
 /// The number of user-facing strings outside the core journey.
@@ -78,7 +86,7 @@ const allowedLiterals = <String>{
 /// This is a ratchet, not a target: it may go down, never up. It exists so
 /// that adding a screen in English is a deliberate act — the count changes
 /// in the diff and the reviewer sees it — rather than an invisible drift.
-const maxUntranslatedOutsideCoreJourney = 893;
+const maxUntranslatedOutsideCoreJourney = 765;
 
 void main() {
   late List<Hit> hits;

@@ -521,6 +521,234 @@
   "quizGraded": "अंक वाला",
   "quizXp": "XP",
   "quizByServer": "सर्वर द्वारा",
+  "profileAvatarUploaded": "अवतार अपलोड हो गया",
+  "profileAvatarUpdated": "अवतार अपडेट हो गया",
+  "profileUploadFailed": "अपलोड विफल: {reason}",
+  "@profileUploadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileEditName": "नाम संपादित करें",
+  "profileDisplayName": "प्रदर्शित नाम",
+  "profileUpdated": "प्रोफ़ाइल अपडेट हो गया",
+  "profileUpdateFailed": "अपडेट विफल: {reason}",
+  "@profileUpdateFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareCardText": "मेरा CivilCal प्रोफ़ाइल — स्तर {level} इंजीनियर। https://bisaas.com",
+  "@profileShareCardText": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareFailed": "साझा करना विफल: {reason}",
+  "@profileShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareCard": "कार्ड साझा करें",
+  "profileLevel": "स्तर {level}",
+  "@profileLevel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileChangeAvatar": "अवतार बदलें",
+  "profileEditAvatar": "अवतार संपादित करें",
+  "profileStreak": "स्ट्रीक",
+  "profileSkillRadar": "स्किल रडार",
+  "profileSkillsFailed": "स्किल लोड विफल: {reason}",
+  "@profileSkillsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileAchievements": "उपलब्धियां",
+  "profileAchievementsLoadFailed": "उपलब्धियां लोड नहीं हो सकीं",
+  "profileNoBadges": "अभी तक कोई बैज नहीं — क्विज़ पूरे करके कमाएं!",
+  "profileUnlocked": "अनलॉक",
+  "profileSkillRadarEmpty": "अपना स्किल रडार देखने के लिए क्विज़ खेलें।",
+  "profileSkillRadarEmptyHint": "अपना स्किल रडार देखने के लिए अधिक श्रेणियों के प्रश्नों के उत्तर दें।",
+  "profileLearning": "सीखना — ट्रैक और AI ट्यूटर",
+  "profileLearningSub": "अध्ययन योजना • दोहराव • ट्यूटर",
+  "profileEice": "परीक्षा बुद्धि (EICE)",
+  "profileEiceSub": "कोच • ट्रायेज • स्प्रिंट",
+  "profilePsc": "PSC / लोकसेवा",
+  "profilePscSub": "परीक्षा ढांचा और पाठ्यक्रम",
+  "profilePracticeSub": "बुकमार्क ड्रिल • कमजोर विषय",
+  "profileLeaderboard": "लीडरबोर्ड",
+  "profileLeaderboardSub": "विश्व • दोस्त • लीग",
+  "profileContests": "प्रतियोगिताएं",
+  "profileContestsSub": "लाइव क्विज़ और लीडरबोर्ड",
+  "profileLiveEvents": "लाइव कार्यक्रम",
+  "profileLiveEventsSub": "निर्धारित सत्र और चेक-इन",
+  "profileCoaching": "कोचिंग",
+  "profileCoachingSub": "कमजोर क्षेत्र • तैयारी • स्प्रिंट",
+  "profileSearch": "खोजें",
+  "profileSearchSub": "कोई भी प्रश्न खोजें",
+  "profileNotifications": "सूचनाएं",
+  "profileNotificationsSub": "गतिविधि और याद दिलाना",
+  "profileSocial": "सोशल और रेफरल",
+  "profileSocialSub": "साझा • स्ट्रीक • लीडरबोर्ड",
+  "profileWallet": "वॉलेट",
+  "profileWalletSub": "कॉइन और बही",
+  "profileAchievementsSub": "स्ट्रीक + बैज",
+  "profileOffline": "ऑफ़लाइन सामग्री",
+  "profileOfflineSub": "कैश किए गए पैक + प्रीफ़ेच",
+  "profileCalculatorsSub": "सिविल फ़ॉर्मूला इंजन",
+  "profileSettingsSub": "भाषा • बायोमेट्रिक • लॉगआउट",
+  "settingsSubscriptionActive": "खाता मिटाने से पहले सदस्यता रद्द करनी होगी",
+  "settingsDeleteFailed": "खाता मिटा नहीं सका — कृपया फिर से कोशिश करें",
+  "settingsAccountDeleted": "आपका खाता मिटा दिया गया है",
+  "settingsNoBiometrics": "इस डिवाइस पर कोई बायोमेट्रिक दर्ज नहीं है",
+  "settingsLanguageLocalOnly": "भाषा केवल इस डिवाइस पर सहेजी गई — सर्वर तक नहीं पहुँच सके।",
+  "settingsSystemDefault": "सिस्टम डिफ़ॉल्ट",
+  "settingsAppLanguage": "ऐप की भाषा",
+  "settingsBiometricLock": "बायोमेट्रिक ऐप लॉक",
+  "settingsBiometricLockSub": "बैकग्राउंड में 30 सेकंड बाद बायोमेट्रिक माँगें",
+  "settingsPrivacySub": "विश्लेषण, कार्यक्षम और प्रचार की सहमति",
+  "settingsAiUsage": "आपका AI का उपयोग",
+  "settingsAiUsageSub": "आपकी ओर से AI ने क्या इस्तेमाल किया, सुविधा के अनुसार",
+  "settingsAiKeys": "आपकी AI कुंजियां",
+  "settingsAiKeysSub": "AI सुविधाएं अपने प्रोवाइडर के कोटे पर चलाएं",
+  "settingsLogOut": "लॉग आउट",
+  "settingsDeleteAccount": "खाता मिटाएं",
+  "settingsDeleteAccountSub": "आपका खाता, प्रयास और खरीद स्थायी रूप से मिटाएं",
+  "settingsDeleteAccountTitle": "खाता मिटाएं?",
+  "settingsDeleteAccountBody": "यह आपका खाता, क्विज़ इतिहास, कॉइन और खरीद स्थायी रूप से मिटा देता है। इसे पूर्ववत नहीं किया जा सकता।",
+  "settingsTypeDeleteToConfirm": "पुष्टि करने के लिए 'DELETE' लिखें",
+  "settingsDeleteConfirm": "मिटाएं",
+  "streakRefresh": "रिफ्रेश करें",
+  "streakNoneTitle": "अभी तक कोई स्ट्रीक नहीं",
+  "streakNoneBody": "अपनी स्ट्रीक शुरू करने के लिए एक क्विज़ पूरा करें।",
+  "streakCalendar": "कैलेंडर",
+  "streakOnFire": "आज आपकी स्ट्रीक जोश में है — ऐसे ही बनाए रखें!",
+  "streakProtect": "अपनी स्ट्रीक बचाएं",
+  "streakFrozen": "स्ट्रीक 30 दिन के लिए फ्रीज़ हो गई!",
+  "streakCurrent": "वर्तमान स्ट्रीक",
+  "streakDaysUnit": "दिन",
+  "streakBest": "सर्वश्रेष्ठ: {count} दिन",
+  "@streakBest": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMultiplier": "गुणक",
+  "streakMaxMultiplier": "अधिकतम गुणक प्राप्त — किंवदंती!",
+  "streakDaysToNextTier": "अगले स्तर तक {current} / {total} दिन",
+  "@streakDaysToNextTier": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "streakTiers": "1–6 दिन → 1.0× • 7–29 दिन → 1.5× • 30–99 दिन → 2.0× • 100+ दिन → 3.0×",
+  "streakFreezeSection": "स्ट्रीक फ्रीज़",
+  "streakFreezeLeft": "{count} बचे",
+  "@streakFreezeLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakFrozenUntil": "{date} तक फ्रीज़",
+  "@streakFrozenUntil": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakFreezeHint": "खेल न पाएँदा 30 दिनका लिए स्ट्रीक फ्रीज़ गर्न 50 कॉइन खर्च्नुहोस्। दानकर्ता बैज आवश्यक।",
+  "streakExtendFreeze": "फ्रीज़ बढाउनुहोस्",
+  "streakFreezeAction": "स्ट्रीक फ्रीज़ करें (50 कॉइन)",
+  "streakRepairTitle": "छूटे दिन को मरम्मत करें",
+  "streakRepairAction": "स्ट्रीक मरम्मत करें",
+  "streakInsurance": "स्ट्रीक बीमा",
+  "streakInsuranceChecking": "बीमा जांच रहे हैं…",
+  "streakBuy": "खरीदें",
+  "streakUseNow": "अभी उपयोग करें",
+  "streakWager": "स्ट्रीक वेजर",
+  "streakWagerDescription": "लक्ष्य स्ट्रीक तक पहुँचने के लिए कॉइन लगाएं। पहुँच गए तो ब्याज सहित पूरी जैसी वापस, नहीं पहुँचे तो कॉइन चले जाएंगे।",
+  "streakWagerDay": "{total} में से {current} दिन — {reward} कॉइन जीतने के लिए खेलते रहें।",
+  "@streakWagerDay": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "reward": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakWagerStart": "वेजर शुरू करें",
+  "streakWagerInProgress": "वेजर चल रहा है",
+  "streakWagerStartTitle": "स्ट्रीक वेजर शुरू करें",
+  "streakWagerStartBody": "दुगना जीतने के लिए लक्ष्य स्ट्रीक तक पहुँचें। नहीं पहुँचे तो लगाई गई रकम चली जाएगी।",
+  "streakWagerStake": "लगाने वाले कॉइन",
+  "streakWagerDays": "बनाए रखने वाले दिन",
+  "streakXpMultiplier": "×{value} XP",
+  "@streakXpMultiplier": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakWagerProgress": "{percent}% पूरा",
+  "@streakWagerProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakFreezeDuration": "30 दिन",
+  "streakWagerDaysCount": "{count} दिन",
+  "@streakWagerDaysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakWagerSummary": "{days} दिन के लिए {coins} कॉइन का वेजर",
+  "@streakWagerSummary": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "forceUpdateUnsupportedLatest": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।",
   "forceUpdateUnsupportedVersion": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया {version} या उससे नए संस्करण पर अपडेट करें।",
   "@forceUpdateUnsupportedVersion": {

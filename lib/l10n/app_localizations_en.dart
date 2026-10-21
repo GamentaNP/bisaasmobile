@@ -857,6 +857,383 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizByServer => 'by server';
 
   @override
+  String get profileAvatarUploaded => 'Avatar uploaded';
+
+  @override
+  String get profileAvatarUpdated => 'Avatar updated';
+
+  @override
+  String profileUploadFailed(Object reason) {
+    return 'Upload failed: $reason';
+  }
+
+  @override
+  String get profileEditName => 'Edit name';
+
+  @override
+  String get profileDisplayName => 'Display name';
+
+  @override
+  String get profileUpdated => 'Profile updated';
+
+  @override
+  String profileUpdateFailed(Object reason) {
+    return 'Update failed: $reason';
+  }
+
+  @override
+  String profileShareCardText(Object level) {
+    return 'My CivilCal profile — Level $level Engineer. https://bisaas.com';
+  }
+
+  @override
+  String profileShareFailed(Object reason) {
+    return 'Share failed: $reason';
+  }
+
+  @override
+  String get profileShareCard => 'Share card';
+
+  @override
+  String profileLevel(Object level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String get profileChangeAvatar => 'Change avatar';
+
+  @override
+  String get profileEditAvatar => 'Edit avatar';
+
+  @override
+  String get profileStreak => 'Streak';
+
+  @override
+  String get profileSkillRadar => 'Skill Radar';
+
+  @override
+  String profileSkillsFailed(Object reason) {
+    return 'Skills failed: $reason';
+  }
+
+  @override
+  String get profileAchievements => 'Achievements';
+
+  @override
+  String get profileAchievementsLoadFailed => 'Could not load achievements';
+
+  @override
+  String get profileNoBadges =>
+      'No badges yet — complete quizzes to earn them!';
+
+  @override
+  String get profileUnlocked => 'Unlocked';
+
+  @override
+  String get profileSkillRadarEmpty =>
+      'Take quizzes to reveal your skill radar.';
+
+  @override
+  String get profileSkillRadarEmptyHint =>
+      'Answer more categories to reveal your skill radar.';
+
+  @override
+  String get profileLearning => 'Learning — tracks & AI tutor';
+
+  @override
+  String get profileLearningSub => 'study plans • revisions • tutor';
+
+  @override
+  String get profileEice => 'Exam Intelligence (EICE)';
+
+  @override
+  String get profileEiceSub => 'coach • triage • sprint';
+
+  @override
+  String get profilePsc => 'PSC / Loksewa';
+
+  @override
+  String get profilePscSub => 'exam blueprints & syllabus';
+
+  @override
+  String get profilePracticeSub => 'drill bookmarks • weak topics';
+
+  @override
+  String get profileLeaderboard => 'Leaderboard';
+
+  @override
+  String get profileLeaderboardSub => 'global • friends • league';
+
+  @override
+  String get profileContests => 'Contests';
+
+  @override
+  String get profileContestsSub => 'live quizzes & leaderboards';
+
+  @override
+  String get profileLiveEvents => 'Live events';
+
+  @override
+  String get profileLiveEventsSub => 'scheduled sessions & check-in';
+
+  @override
+  String get profileCoaching => 'Coaching';
+
+  @override
+  String get profileCoachingSub => 'weak areas • readiness • sprint';
+
+  @override
+  String get profileSearch => 'Search';
+
+  @override
+  String get profileSearchSub => 'find any question';
+
+  @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profileNotificationsSub => 'activity & reminders';
+
+  @override
+  String get profileSocial => 'Social & Referral';
+
+  @override
+  String get profileSocialSub => 'share • streak • leaderboard';
+
+  @override
+  String get profileWallet => 'Wallet';
+
+  @override
+  String get profileWalletSub => 'coins & ledger';
+
+  @override
+  String get profileAchievementsSub => 'streak + badges';
+
+  @override
+  String get profileOffline => 'Offline content';
+
+  @override
+  String get profileOfflineSub => 'cached packs + prefetch';
+
+  @override
+  String get profileCalculatorsSub => 'Civil formula engines';
+
+  @override
+  String get profileSettingsSub => 'language • biometrics • logout';
+
+  @override
+  String get settingsSubscriptionActive =>
+      'Subscription must be cancelled before deletion';
+
+  @override
+  String get settingsDeleteFailed =>
+      'Could not delete account — please try again';
+
+  @override
+  String get settingsAccountDeleted => 'Your account has been deleted';
+
+  @override
+  String get settingsNoBiometrics => 'No biometrics enrolled on this device';
+
+  @override
+  String get settingsLanguageLocalOnly =>
+      'Language saved on this device only — could not reach the server.';
+
+  @override
+  String get settingsSystemDefault => 'System default';
+
+  @override
+  String get settingsAppLanguage => 'App language';
+
+  @override
+  String get settingsBiometricLock => 'Biometric app lock';
+
+  @override
+  String get settingsBiometricLockSub =>
+      'Require biometrics after 30s in background';
+
+  @override
+  String get settingsPrivacySub =>
+      'Analytics, functional and marketing consent';
+
+  @override
+  String get settingsAiUsage => 'Your AI usage';
+
+  @override
+  String get settingsAiUsageSub => 'What AI used on your behalf, by feature';
+
+  @override
+  String get settingsAiKeys => 'Your AI keys';
+
+  @override
+  String get settingsAiKeysSub => 'Run AI features on your own provider quota';
+
+  @override
+  String get settingsLogOut => 'Log out';
+
+  @override
+  String get settingsDeleteAccount => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountSub =>
+      'Permanently erase your account, attempts and purchases';
+
+  @override
+  String get settingsDeleteAccountTitle => 'Delete account?';
+
+  @override
+  String get settingsDeleteAccountBody =>
+      'This permanently deletes your account, quiz history, coins and purchases. This cannot be undone.';
+
+  @override
+  String get settingsTypeDeleteToConfirm => 'Type \'DELETE\' to confirm';
+
+  @override
+  String get settingsDeleteConfirm => 'Delete';
+
+  @override
+  String get streakRefresh => 'Refresh';
+
+  @override
+  String get streakNoneTitle => 'No streak yet';
+
+  @override
+  String get streakNoneBody => 'Complete a quiz to start your fire streak.';
+
+  @override
+  String get streakCalendar => 'Calendar';
+
+  @override
+  String get streakOnFire => 'You are on fire today — keep it up!';
+
+  @override
+  String get streakProtect => 'Protect your streak';
+
+  @override
+  String get streakFrozen => 'Streak frozen for 30 days!';
+
+  @override
+  String get streakCurrent => 'Current streak';
+
+  @override
+  String get streakDaysUnit => 'days';
+
+  @override
+  String streakBest(int count) {
+    return 'Best: $count days';
+  }
+
+  @override
+  String get streakMultiplier => 'multiplier';
+
+  @override
+  String get streakMaxMultiplier => 'Max multiplier reached — legendary!';
+
+  @override
+  String streakDaysToNextTier(int current, int total) {
+    return '$current / $total days to next tier';
+  }
+
+  @override
+  String get streakTiers =>
+      '1–6d → 1.0× • 7–29d → 1.5× • 30–99d → 2.0× • 100+d → 3.0×';
+
+  @override
+  String get streakFreezeSection => 'Streak freeze';
+
+  @override
+  String streakFreezeLeft(int count) {
+    return '$count left';
+  }
+
+  @override
+  String streakFrozenUntil(Object date) {
+    return 'Frozen until $date';
+  }
+
+  @override
+  String get streakFreezeHint =>
+      'Spend 50 coins to freeze streak for 30 days when you cannot play. Donor badge required.';
+
+  @override
+  String get streakExtendFreeze => 'Extend freeze';
+
+  @override
+  String get streakFreezeAction => 'Freeze streak (50 coins)';
+
+  @override
+  String get streakRepairTitle => 'Repair a missed day';
+
+  @override
+  String get streakRepairAction => 'Repair streak';
+
+  @override
+  String get streakInsurance => 'Streak insurance';
+
+  @override
+  String get streakInsuranceChecking => 'Checking insurance…';
+
+  @override
+  String get streakBuy => 'Buy';
+
+  @override
+  String get streakUseNow => 'Use now';
+
+  @override
+  String get streakWager => 'Streak wager';
+
+  @override
+  String get streakWagerDescription =>
+      'Stake coins on hitting a target streak. Meet it and you win the pot back with interest — miss and the coins are gone.';
+
+  @override
+  String streakWagerDay(int current, int total, Object reward) {
+    return 'Day $current of $total — keep playing to win $reward coins.';
+  }
+
+  @override
+  String get streakWagerStart => 'Start a wager';
+
+  @override
+  String get streakWagerInProgress => 'Wager in progress';
+
+  @override
+  String get streakWagerStartTitle => 'Start a streak wager';
+
+  @override
+  String get streakWagerStartBody =>
+      'Hit the target streak to win double. Miss it and the stake is gone.';
+
+  @override
+  String get streakWagerStake => 'Stake (coins)';
+
+  @override
+  String get streakWagerDays => 'Days to sustain';
+
+  @override
+  String streakXpMultiplier(Object value) {
+    return '×$value XP';
+  }
+
+  @override
+  String streakWagerProgress(Object percent) {
+    return '$percent% complete';
+  }
+
+  @override
+  String get streakFreezeDuration => '30 days';
+
+  @override
+  String streakWagerDaysCount(int count) {
+    return '$count days';
+  }
+
+  @override
+  String streakWagerSummary(Object coins, int days) {
+    return 'Wager $coins coins for $days days';
+  }
+
+  @override
   String get forceUpdateUnsupportedLatest =>
       'This version of CivilCal is no longer supported. Please update to the latest version to continue.';
 

@@ -521,6 +521,234 @@
   "quizGraded": "Graded",
   "quizXp": "XP",
   "quizByServer": "by server",
+  "profileAvatarUploaded": "Avatar uploaded",
+  "profileAvatarUpdated": "Avatar updated",
+  "profileUploadFailed": "Upload failed: {reason}",
+  "@profileUploadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileEditName": "Edit name",
+  "profileDisplayName": "Display name",
+  "profileUpdated": "Profile updated",
+  "profileUpdateFailed": "Update failed: {reason}",
+  "@profileUpdateFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareCardText": "My CivilCal profile — Level {level} Engineer. https://bisaas.com",
+  "@profileShareCardText": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareFailed": "Share failed: {reason}",
+  "@profileShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareCard": "Share card",
+  "profileLevel": "Lv {level}",
+  "@profileLevel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileChangeAvatar": "Change avatar",
+  "profileEditAvatar": "Edit avatar",
+  "profileStreak": "Streak",
+  "profileSkillRadar": "Skill Radar",
+  "profileSkillsFailed": "Skills failed: {reason}",
+  "@profileSkillsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileAchievements": "Achievements",
+  "profileAchievementsLoadFailed": "Could not load achievements",
+  "profileNoBadges": "No badges yet — complete quizzes to earn them!",
+  "profileUnlocked": "Unlocked",
+  "profileSkillRadarEmpty": "Take quizzes to reveal your skill radar.",
+  "profileSkillRadarEmptyHint": "Answer more categories to reveal your skill radar.",
+  "profileLearning": "Learning — tracks & AI tutor",
+  "profileLearningSub": "study plans • revisions • tutor",
+  "profileEice": "Exam Intelligence (EICE)",
+  "profileEiceSub": "coach • triage • sprint",
+  "profilePsc": "PSC / Loksewa",
+  "profilePscSub": "exam blueprints & syllabus",
+  "profilePracticeSub": "drill bookmarks • weak topics",
+  "profileLeaderboard": "Leaderboard",
+  "profileLeaderboardSub": "global • friends • league",
+  "profileContests": "Contests",
+  "profileContestsSub": "live quizzes & leaderboards",
+  "profileLiveEvents": "Live events",
+  "profileLiveEventsSub": "scheduled sessions & check-in",
+  "profileCoaching": "Coaching",
+  "profileCoachingSub": "weak areas • readiness • sprint",
+  "profileSearch": "Search",
+  "profileSearchSub": "find any question",
+  "profileNotifications": "Notifications",
+  "profileNotificationsSub": "activity & reminders",
+  "profileSocial": "Social & Referral",
+  "profileSocialSub": "share • streak • leaderboard",
+  "profileWallet": "Wallet",
+  "profileWalletSub": "coins & ledger",
+  "profileAchievementsSub": "streak + badges",
+  "profileOffline": "Offline content",
+  "profileOfflineSub": "cached packs + prefetch",
+  "profileCalculatorsSub": "Civil formula engines",
+  "profileSettingsSub": "language • biometrics • logout",
+  "settingsSubscriptionActive": "Subscription must be cancelled before deletion",
+  "settingsDeleteFailed": "Could not delete account — please try again",
+  "settingsAccountDeleted": "Your account has been deleted",
+  "settingsNoBiometrics": "No biometrics enrolled on this device",
+  "settingsLanguageLocalOnly": "Language saved on this device only — could not reach the server.",
+  "settingsSystemDefault": "System default",
+  "settingsAppLanguage": "App language",
+  "settingsBiometricLock": "Biometric app lock",
+  "settingsBiometricLockSub": "Require biometrics after 30s in background",
+  "settingsPrivacySub": "Analytics, functional and marketing consent",
+  "settingsAiUsage": "Your AI usage",
+  "settingsAiUsageSub": "What AI used on your behalf, by feature",
+  "settingsAiKeys": "Your AI keys",
+  "settingsAiKeysSub": "Run AI features on your own provider quota",
+  "settingsLogOut": "Log out",
+  "settingsDeleteAccount": "Delete account",
+  "settingsDeleteAccountSub": "Permanently erase your account, attempts and purchases",
+  "settingsDeleteAccountTitle": "Delete account?",
+  "settingsDeleteAccountBody": "This permanently deletes your account, quiz history, coins and purchases. This cannot be undone.",
+  "settingsTypeDeleteToConfirm": "Type 'DELETE' to confirm",
+  "settingsDeleteConfirm": "Delete",
+  "streakRefresh": "Refresh",
+  "streakNoneTitle": "No streak yet",
+  "streakNoneBody": "Complete a quiz to start your fire streak.",
+  "streakCalendar": "Calendar",
+  "streakOnFire": "You are on fire today — keep it up!",
+  "streakProtect": "Protect your streak",
+  "streakFrozen": "Streak frozen for 30 days!",
+  "streakCurrent": "Current streak",
+  "streakDaysUnit": "days",
+  "streakBest": "Best: {count} days",
+  "@streakBest": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMultiplier": "multiplier",
+  "streakMaxMultiplier": "Max multiplier reached — legendary!",
+  "streakDaysToNextTier": "{current} / {total} days to next tier",
+  "@streakDaysToNextTier": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "streakTiers": "1–6d → 1.0× • 7–29d → 1.5× • 30–99d → 2.0× • 100+d → 3.0×",
+  "streakFreezeSection": "Streak freeze",
+  "streakFreezeLeft": "{count} left",
+  "@streakFreezeLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakFrozenUntil": "Frozen until {date}",
+  "@streakFrozenUntil": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakFreezeHint": "Spend 50 coins to freeze streak for 30 days when you cannot play. Donor badge required.",
+  "streakExtendFreeze": "Extend freeze",
+  "streakFreezeAction": "Freeze streak (50 coins)",
+  "streakRepairTitle": "Repair a missed day",
+  "streakRepairAction": "Repair streak",
+  "streakInsurance": "Streak insurance",
+  "streakInsuranceChecking": "Checking insurance…",
+  "streakBuy": "Buy",
+  "streakUseNow": "Use now",
+  "streakWager": "Streak wager",
+  "streakWagerDescription": "Stake coins on hitting a target streak. Meet it and you win the pot back with interest — miss and the coins are gone.",
+  "streakWagerDay": "Day {current} of {total} — keep playing to win {reward} coins.",
+  "@streakWagerDay": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "reward": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakWagerStart": "Start a wager",
+  "streakWagerInProgress": "Wager in progress",
+  "streakWagerStartTitle": "Start a streak wager",
+  "streakWagerStartBody": "Hit the target streak to win double. Miss it and the stake is gone.",
+  "streakWagerStake": "Stake (coins)",
+  "streakWagerDays": "Days to sustain",
+  "streakXpMultiplier": "×{value} XP",
+  "@streakXpMultiplier": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakWagerProgress": "{percent}% complete",
+  "@streakWagerProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakFreezeDuration": "30 days",
+  "streakWagerDaysCount": "{count} days",
+  "@streakWagerDaysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakWagerSummary": "Wager {coins} coins for {days} days",
+  "@streakWagerSummary": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "forceUpdateUnsupportedLatest": "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
   "forceUpdateUnsupportedVersion": "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
   "@forceUpdateUnsupportedVersion": {

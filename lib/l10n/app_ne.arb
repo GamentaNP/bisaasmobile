@@ -521,6 +521,234 @@
   "quizGraded": "अंकयुक्त",
   "quizXp": "XP",
   "quizByServer": "सर्भरद्वारा",
+  "profileAvatarUploaded": "अवतार अपलोड भयो",
+  "profileAvatarUpdated": "अवतार अद्यावधिक भयो",
+  "profileUploadFailed": "अपलोड असफल: {reason}",
+  "@profileUploadFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileEditName": "नाम सम्पादन गर्नुहोस्",
+  "profileDisplayName": "प्रदर्शित नाम",
+  "profileUpdated": "प्रोफाइल अद्यावधिक भयो",
+  "profileUpdateFailed": "अद्यावधिक असफल: {reason}",
+  "@profileUpdateFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareCardText": "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://bisaas.com",
+  "@profileShareCardText": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareFailed": "साझेदारी असफल: {reason}",
+  "@profileShareFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileShareCard": "कार्ड साझेदार गर्नुहोस्",
+  "profileLevel": "तह {level}",
+  "@profileLevel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileChangeAvatar": "अवतार परिवर्तन गर्नुहोस्",
+  "profileEditAvatar": "अवतार सम्पादन गर्नुहोस्",
+  "profileStreak": "स्ट्रिक",
+  "profileSkillRadar": "सीप रेडार",
+  "profileSkillsFailed": "सीप लोड असफल: {reason}",
+  "@profileSkillsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileAchievements": "उपलब्धि",
+  "profileAchievementsLoadFailed": "उपलब्धि लोड गर्न सकिएन",
+  "profileNoBadges": "अहिलेसम्म कुनै ब्याज छैन — क्विज पूरा गरेर कमाउनुहोस्!",
+  "profileUnlocked": "खुला",
+  "profileSkillRadarEmpty": "आफ्नो सीप रेडार देख्न क्विज खेल्नुहोस्।",
+  "profileSkillRadarEmptyHint": "आफ्नो सीप रेडार देख्न थप श्रेणीहरूमा उत्तर दिनुहोस्।",
+  "profileLearning": "सिकाइ — ट्र्याक र AI ट्युटर",
+  "profileLearningSub": "अध्ययन योजना • दोहोराइ • ट्युटर",
+  "profileEice": "परीक्षा बुद्धि (EICE)",
+  "profileEiceSub": "कोच • त्रायज • स्प्रिन्ट",
+  "profilePsc": "PSC / लोकसेवा",
+  "profilePscSub": "परीक्षा ढाँचा र पाठ्यक्रम",
+  "profilePracticeSub": "बुकमार्क ड्रिल • कमजोर विषय",
+  "profileLeaderboard": "लिडरबोर्ड",
+  "profileLeaderboardSub": "विश्व • साथी • लिग",
+  "profileContests": "प्रतियोगिता",
+  "profileContestsSub": "प्रत्यक्ष क्विज र लिडरबोर्ड",
+  "profileLiveEvents": "प्रत्यक्ष कार्यक्रम",
+  "profileLiveEventsSub": "तोकिएका सत्र र चेक-इन",
+  "profileCoaching": "कोचिङ",
+  "profileCoachingSub": "कमजोर क्षेत्र • तयारी • स्प्रिन्ट",
+  "profileSearch": "खोज्नुहोस्",
+  "profileSearchSub": "कुनै पनि प्रश्न खोज्नुहोस्",
+  "profileNotifications": "सूचनाहरू",
+  "profileNotificationsSub": "गतिविधि र सम्झना",
+  "profileSocial": "सामाजिक र रेफरल",
+  "profileSocialSub": "साझेदारी • स्ट्रिक • लिडरबोर्ड",
+  "profileWallet": "वालेट",
+  "profileWalletSub": "क्विन र खाता",
+  "profileAchievementsSub": "स्ट्रिक + ब्याज",
+  "profileOffline": "अफलाइन सामग्री",
+  "profileOfflineSub": "क्यास गरिएका प्याक + प्रीफेच",
+  "profileCalculatorsSub": "सिभिल सूत्र इन्जिन",
+  "profileSettingsSub": "भाषा • बायोमेट्रिक • लगआउट",
+  "settingsSubscriptionActive": "खाता मेटाउनुअघि सदस्यता रद्द गर्नुपर्छ",
+  "settingsDeleteFailed": "खाता मेटाउन सकिएन — कृपया फेरि प्रयास गर्नुहोस्",
+  "settingsAccountDeleted": "तपाईंको खाता मेटाइएको छ",
+  "settingsNoBiometrics": "यस यन्त्रमा कुनै बायोमेट्रिक दर्ता छैन",
+  "settingsLanguageLocalOnly": "भाषा यस यन्त्रमा मात्र सुरक्षित भयो — सर्भरसम्म पुग्न सकिएन।",
+  "settingsSystemDefault": "प्रणालीको सान्दर्भ",
+  "settingsAppLanguage": "एपको भाषा",
+  "settingsBiometricLock": "बायोमेट्रिक एप लक",
+  "settingsBiometricLockSub": "पृष्ठभूमिमा ३० सेकेन्डपछि बायोमेट्रिक माग्नुहोस्",
+  "settingsPrivacySub": "विश्लेषण, कार्यक्षम र प्रचारको सहमति",
+  "settingsAiUsage": "तपाईंको AI प्रयोग",
+  "settingsAiUsageSub": "तपाईंको तर्फमा AI ले के प्रयोग गर्यो, सुविधाअनुसार",
+  "settingsAiKeys": "तपाईंका AI कुञ्जीहरू",
+  "settingsAiKeysSub": "AI सुविधाहरू आफ्नै प्रोभाइडरको कोटामा चलाउनुहोस्",
+  "settingsLogOut": "लगआउट",
+  "settingsDeleteAccount": "खाता मेटाउनुहोस्",
+  "settingsDeleteAccountSub": "तपाईंको खाता, प्रयास र खरोद स्थायी रूपमा मेटाउनुहोस्",
+  "settingsDeleteAccountTitle": "खाता मेटाउने?",
+  "settingsDeleteAccountBody": "यसले तपाईंको खाता, क्विज इतिहास, क्विन र खरोद स्थायी रूपमा मेटाउँछ। यो पूर्ववत् हुँदैन।",
+  "settingsTypeDeleteToConfirm": "पुष्टि गर्न 'DELETE' लेख्नुहोस्",
+  "settingsDeleteConfirm": "मेटाउनुहोस्",
+  "streakRefresh": "ताजा गर्नुहोस्",
+  "streakNoneTitle": "अहिलेसम्म कुनै स्ट्रिक छैन",
+  "streakNoneBody": "आफ्नो स्ट्रिक सुरु गर्न एउटा क्विज पूरा गर्नुहोस्।",
+  "streakCalendar": "पात्रो",
+  "streakOnFire": "आज तपाईंको स्ट्रिक उत्कर्ष छ — यसै गरिरहनुहोस्!",
+  "streakProtect": "आफ्नो स्ट्रिक जोगाउनुहोस्",
+  "streakFrozen": "स्ट्रिक ३० दिनका लागि फ्रिज गरियो!",
+  "streakCurrent": "हालको स्ट्रिक",
+  "streakDaysUnit": "दिन",
+  "streakBest": "उत्कृष्ट: {count} दिन",
+  "@streakBest": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakMultiplier": "गुणक",
+  "streakMaxMultiplier": "अधिकतम गुणक प्राप्त — किंवदन्ती!",
+  "streakDaysToNextTier": "अर्को तहसम्म {current} / {total} दिन",
+  "@streakDaysToNextTier": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "streakTiers": "१–६ दिन → १.०× • ७–२९ दिन → १.५× • ३०–९९ दिन → २.०× • १००+ दिन → ३.०×",
+  "streakFreezeSection": "स्ट्रिक फ्रिज",
+  "streakFreezeLeft": "{count} बाँकी",
+  "@streakFreezeLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakFrozenUntil": "{date} सम्म फ्रिज",
+  "@streakFrozenUntil": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakFreezeHint": "खेल्न नसक्दा ३० दिनका लागि स्ट्रिक फ्रिज गर्न ५० क्विन खर्च्नुहोस्। दानकार ब्याज आवश्यक।",
+  "streakExtendFreeze": "फ्रिज थप्नुहोस्",
+  "streakFreezeAction": "स्ट्रिक फ्रिज गर्नुहोस् (५० क्विन)",
+  "streakRepairTitle": "छुटेको दिन मर्मत गर्नुहोस्",
+  "streakRepairAction": "स्ट्रिक मर्मत गर्नुहोस्",
+  "streakInsurance": "स्ट्रिक बीमा",
+  "streakInsuranceChecking": "बीमा जाँच्दै…",
+  "streakBuy": "किन्नुहोस्",
+  "streakUseNow": "अहिले प्रयोग गर्नुहोस्",
+  "streakWager": "स्ट्रिक वागर",
+  "streakWagerDescription": "लक्ष्य स्ट्रिक पुग्न क्विन लगाउनुहोस्। पुगेमा ब्याजसहित पुरोट फर्कन्छ, नपुगे क्विन गुम्छ।",
+  "streakWagerDay": "{total} मध्येको {current} दिन — {reward} क्विन जित्न खेलिरहनुहोस्।",
+  "@streakWagerDay": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "reward": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakWagerStart": "वागर सुरु गर्नुहोस्",
+  "streakWagerInProgress": "वागर चलिरहेको छ",
+  "streakWagerStartTitle": "स्ट्रिक वागर सुरु गर्नुहोस्",
+  "streakWagerStartBody": "दुब्बे जित्न लक्ष्य स्ट्रिक पुग्नुहोस्। नपुगे लगाइएको क्विन गुम्छ।",
+  "streakWagerStake": "लगाउने क्विन",
+  "streakWagerDays": "कायम राख्ने दिन",
+  "streakXpMultiplier": "×{value} XP",
+  "@streakXpMultiplier": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakWagerProgress": "{percent}% पूरा",
+  "@streakWagerProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakFreezeDuration": "३० दिन",
+  "streakWagerDaysCount": "{count} दिन",
+  "@streakWagerDaysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakWagerSummary": "{days} दिनका लागि {coins} क्विनको वागर",
+  "@streakWagerSummary": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "forceUpdateUnsupportedLatest": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
   "forceUpdateUnsupportedVersion": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
   "@forceUpdateUnsupportedVersion": {

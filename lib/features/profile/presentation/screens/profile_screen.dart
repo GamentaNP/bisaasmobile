@@ -20,6 +20,7 @@ import '../../../gamification/presentation/screens/achievements_screen.dart';
 import '../../../gamification/presentation/widgets/xp_progress_bar.dart';
 import '../controllers/profile_skills_controller.dart';
 import '../widgets/skill_radar_chart.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -32,6 +33,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _uploading = false;
 
   Future<void> _pickAndUploadAvatar() async {
+    final l10n = AppLocalizations.of(context)!;
     final picker = ImagePicker();
     final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 800, imageQuality: 85);
     if (file == null) return;
@@ -39,39 +41,40 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     try {
       final url = await ref.read(profileRemoteDataSourceProvider).uploadAvatar(file);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(url.isEmpty ? 'Avatar uploaded' : 'Avatar updated')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(url.isEmpty ? l10n.profileAvatarUploaded : l10n.profileAvatarUpdated)));
       ref.invalidate(authControllerProvider);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.profileUploadFailed(e))));
     } finally {
       if (mounted) setState(() => _uploading = false);
     }
   }
 
   Future<void> _editName(String current) async {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: current);
     final newName = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Edit name'),
+        title: Text(l10n.profileEditName),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Display name',
+          decoration: InputDecoration(
+            labelText: l10n.profileDisplayName,
             border: OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(controller.text),
-            child: const Text('Save'),
+            child: Text(l10n.commonSave),
           ),
         ],
       ),
@@ -82,16 +85,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await ref.read(profileRemoteDataSourceProvider).updateProfile(name: newName);
       if (!mounted) return;
       ref.invalidate(authControllerProvider);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.profileUpdated)));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.profileUpdateFailed(e))));
     } finally {
       if (mounted) setState(() => _uploading = false);
     }
   }
 
   Future<void> _shareCard() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final boundary = _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return;
@@ -100,26 +104,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (byteData == null) return;
       final bytes = byteData.buffer.asUint8List();
       await SharePlus.instance.share(ShareParams(
-        text: 'My CivilCal profile — Level ${ref.read(authControllerProvider).value?.level ?? 1} Engineer. https://bisaas.com',
+        text: l10n.profileShareCardText(ref.read(authControllerProvider).value?.level ?? 1),
         files: [XFile.fromData(bytes, name: 'civilcal-profile.png', mimeType: 'image/png')],
       ));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Share failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.profileShareFailed(e))));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(authControllerProvider).value;
     final skillsAsync = ref.watch(profileSkillsProvider);
     final achievementsAsync = ref.watch(achievementsDataProvider);
     final theme = Theme.of(context);
     return SafeAreaScaffold(
       appBar: CivilAppBar(
-        title: 'Profile',
+        title: l10n.profile,
         actions: [
-          IconButton(icon: const Icon(Icons.share_rounded), onPressed: _shareCard, tooltip: 'Share card'),
+          IconButton(icon: const Icon(Icons.share_rounded), onPressed: _shareCard, tooltip: l10n.profileShareCard),
           // go, not push — shell routes require go() on web
           IconButton(icon: const Icon(Icons.settings_rounded), onPressed: () => context.go('/settings')),
         ],
@@ -170,7 +175,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
                           icon: const Icon(Icons.edit_rounded, size: 16),
-                          tooltip: 'Edit name',
+                          tooltip: l10n.profileEditName,
                           onPressed: _uploading ? null : () => _editName(user?.name ?? ''),
                         ),
                       ]),
@@ -180,37 +185,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.15), borderRadius: AppRadii.smAll),
-                          child: Text('Lv ${user?.level ?? 1}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
+                          child: Text(l10n.profileLevel(user?.level ?? 1), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
                         ),
                         const SizedBox(width: 8),
                         CoinChip(coins: user?.coins ?? 0),
                       ]),
                     ]),
                   ),
-                  IconButton(icon: const Icon(Icons.photo_library_rounded, size: 20), onPressed: _uploading ? null : _pickAndUploadAvatar, tooltip: 'Change avatar'),
+                  IconButton(icon: const Icon(Icons.photo_library_rounded, size: 20), onPressed: _uploading ? null : _pickAndUploadAvatar, tooltip: l10n.profileChangeAvatar),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 12),
           Row(children: [
-            Expanded(child: OutlinedButton.icon(onPressed: _shareCard, icon: const Icon(Icons.share_rounded, size: 16), label: const Text('Share card'))),
+            Expanded(child: OutlinedButton.icon(onPressed: _shareCard, icon: const Icon(Icons.share_rounded, size: 16), label: Text(l10n.profileShareCard))),
             const SizedBox(width: 10),
-            Expanded(child: GradientButton(label: 'Edit avatar', icon: Icons.photo_rounded, onPressed: _uploading ? null : _pickAndUploadAvatar)),
+            Expanded(child: GradientButton(label: l10n.profileEditAvatar, icon: Icons.photo_rounded, onPressed: _uploading ? null : _pickAndUploadAvatar)),
           ]),
           const SizedBox(height: 16),
           // Stats grid — Streak (not quiz count), XP, Coins
           Row(
             children: [
-              _StatChip(label: 'Streak', value: '${user?.streakDays ?? 0}d', icon: Icons.local_fire_department_rounded, color: AppColors.streakOrange),
+              _StatChip(label: l10n.profileStreak, value: '${user?.streakDays ?? 0}d', icon: Icons.local_fire_department_rounded, color: AppColors.streakOrange),
               const SizedBox(width: 8),
-              _StatChip(label: 'XP', value: '${user?.xp ?? 0}', icon: Icons.bolt_rounded, color: AppColors.xpGold),
+              _StatChip(label: l10n.quizXp, value: '${user?.xp ?? 0}', icon: Icons.bolt_rounded, color: AppColors.xpGold),
               const SizedBox(width: 8),
-              _StatChip(label: 'Coins', value: '${user?.coins ?? 0}', icon: Icons.monetization_on_rounded, color: AppColors.coinYellow),
+              _StatChip(label: l10n.quizResultCoins, value: '${user?.coins ?? 0}', icon: Icons.monetization_on_rounded, color: AppColors.coinYellow),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Skill Radar', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.profileSkillRadar, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           skillsAsync.when(
             data: (axes) => SkillRadarChart(axes: axes),
@@ -218,12 +223,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             error: (e, _) => Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: AppRadii.smAll),
-              child: Text('Skills failed: $e', style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)),
+              child: Text(l10n.profileSkillsFailed(e), style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)),
             ),
           ),
           const SizedBox(height: 16),
           // Achievement gallery — live from /economy/achievements + /me/achievements/progress
-          Text('Achievements', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.profileAchievements, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           achievementsAsync.when(
             loading: () => const SizedBox(height: 96, child: Center(child: CircularProgressIndicator())),
@@ -232,7 +237,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               height: 56,
               child: Center(
                 child: Text(
-                  'Could not load achievements',
+                  l10n.profileAchievementsLoadFailed,
                   style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                 ),
               ),
@@ -240,9 +245,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             data: (data) {
               final recent = data.achievements.where((a) => a.isCompleted).take(8).toList();
               if (recent.isEmpty) {
-                return const SizedBox(
+                return SizedBox(
                   height: 64,
-                  child: Center(child: Text('No badges yet — complete quizzes to earn them!', style: TextStyle(color: Colors.grey, fontSize: 12))),
+                  child: Center(child: Text(l10n.profileNoBadges, style: TextStyle(color: Colors.grey, fontSize: 12))),
                 );
               }
               return SizedBox(
@@ -261,7 +266,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Icon(Icons.verified_rounded, color: color, size: 22),
                         const SizedBox(height: 6),
                         Text(a.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-                        Text('Unlocked', style: TextStyle(fontSize: 9, color: AppColors.correctGreen)),
+                        Text(l10n.profileUnlocked, style: TextStyle(fontSize: 9, color: AppColors.correctGreen)),
                       ]),
                     );
                   },
@@ -273,23 +278,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const Divider(),
           // Subtitles used to be raw endpoint paths ('GET /psc/blueprints'),
           // which is documentation leaking into the UI.
-          _Tile(icon: Icons.school_rounded, title: 'Learning — tracks & AI tutor', subtitle: 'study plans • revisions • tutor', onTapRoute: '/learning'),
-          _Tile(icon: Icons.psychology_rounded, title: 'Exam Intelligence (EICE)', subtitle: 'coach • triage • sprint', onTapRoute: '/eice'),
-          _Tile(icon: Icons.account_balance_rounded, title: 'PSC / Loksewa', subtitle: 'exam blueprints & syllabus', onTapRoute: '/psc'),
-          _Tile(icon: Icons.edit_note_rounded, title: 'Practice', subtitle: 'drill bookmarks • weak topics', onTapRoute: '/practice'),
-          _Tile(icon: Icons.leaderboard_rounded, title: 'Leaderboard', subtitle: 'global • friends • league', onTapRoute: '/leaderboard'),
-          _Tile(icon: Icons.emoji_events_rounded, title: 'Contests', subtitle: 'live quizzes & leaderboards', onTapRoute: '/contests'),
-          _Tile(icon: Icons.sensors_rounded, title: 'Live events', subtitle: 'scheduled sessions & check-in', onTapRoute: '/live-events'),
-          _Tile(icon: Icons.insights_rounded, title: 'Coaching', subtitle: 'weak areas • readiness • sprint', onTapRoute: '/coaching'),
-          _Tile(icon: Icons.search_rounded, title: 'Search', subtitle: 'find any question', onTapRoute: '/search'),
-          _Tile(icon: Icons.notifications_rounded, title: 'Notifications', subtitle: 'activity & reminders', onTapRoute: '/notifications'),
-          _Tile(icon: Icons.share_rounded, title: 'Social & Referral', subtitle: 'share • streak • leaderboard', onTapRoute: '/social'),
+          _Tile(icon: Icons.school_rounded, title: l10n.profileLearning, subtitle: l10n.profileLearningSub, onTapRoute: '/learning'),
+          _Tile(icon: Icons.psychology_rounded, title: l10n.profileEice, subtitle: l10n.profileEiceSub, onTapRoute: '/eice'),
+          _Tile(icon: Icons.account_balance_rounded, title: l10n.profilePsc, subtitle: l10n.profilePscSub, onTapRoute: '/psc'),
+          _Tile(icon: Icons.edit_note_rounded, title: l10n.practice, subtitle: l10n.profilePracticeSub, onTapRoute: '/practice'),
+          _Tile(icon: Icons.leaderboard_rounded, title: l10n.profileLeaderboard, subtitle: l10n.profileLeaderboardSub, onTapRoute: '/leaderboard'),
+          _Tile(icon: Icons.emoji_events_rounded, title: l10n.profileContests, subtitle: l10n.profileContestsSub, onTapRoute: '/contests'),
+          _Tile(icon: Icons.sensors_rounded, title: l10n.profileLiveEvents, subtitle: l10n.profileLiveEventsSub, onTapRoute: '/live-events'),
+          _Tile(icon: Icons.insights_rounded, title: l10n.profileCoaching, subtitle: l10n.profileCoachingSub, onTapRoute: '/coaching'),
+          _Tile(icon: Icons.search_rounded, title: l10n.profileSearch, subtitle: l10n.profileSearchSub, onTapRoute: '/search'),
+          _Tile(icon: Icons.notifications_rounded, title: l10n.profileNotifications, subtitle: l10n.profileNotificationsSub, onTapRoute: '/notifications'),
+          _Tile(icon: Icons.share_rounded, title: l10n.profileSocial, subtitle: l10n.profileSocialSub, onTapRoute: '/social'),
 
-          _Tile(icon: Icons.account_balance_wallet_rounded, title: 'Wallet', subtitle: 'coins & ledger', onTapRoute: '/economy'),
-          _Tile(icon: Icons.emoji_events_rounded, title: 'Achievements', subtitle: 'streak + badges', onTapRoute: '/achievements'),
-          _Tile(icon: Icons.download_for_offline_rounded, title: 'Offline content', subtitle: 'cached packs + prefetch', onTapRoute: '/downloads'),
-          _Tile(icon: Icons.calculate_rounded, title: 'Calculators', subtitle: 'Civil formula engines', onTapRoute: '/calculators'),
-          _Tile(icon: Icons.settings_rounded, title: 'Settings', subtitle: 'language • biometrics • logout', onTapRoute: '/settings'),
+          _Tile(icon: Icons.account_balance_wallet_rounded, title: l10n.profileWallet, subtitle: l10n.profileWalletSub, onTapRoute: '/economy'),
+          _Tile(icon: Icons.emoji_events_rounded, title: l10n.profileAchievements, subtitle: l10n.profileAchievementsSub, onTapRoute: '/achievements'),
+          _Tile(icon: Icons.download_for_offline_rounded, title: l10n.profileOffline, subtitle: l10n.profileOfflineSub, onTapRoute: '/downloads'),
+          _Tile(icon: Icons.calculate_rounded, title: l10n.calculators, subtitle: l10n.profileCalculatorsSub, onTapRoute: '/calculators'),
+          _Tile(icon: Icons.settings_rounded, title: l10n.settings, subtitle: l10n.profileSettingsSub, onTapRoute: '/settings'),
           const SizedBox(height: 24),
         ],
       ),

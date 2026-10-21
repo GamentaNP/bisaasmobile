@@ -18,6 +18,7 @@ import '../../../../core/logging/app_logger.dart';
 import '../../../../core/security/biometric_auth.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/profile/presentation/controllers/profile_skills_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -44,6 +45,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// erasure), then clear local token + session. Confirmation requires
   /// typing DELETE to prevent accidental taps.
   Future<void> _deleteAccount() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -62,8 +64,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         SnackBar(
           content: Text(
             status == 403
-                ? 'Subscription must be cancelled before deletion'
-                : 'Could not delete account — please try again',
+                ? l10n.settingsSubscriptionActive
+                : l10n.settingsDeleteFailed,
           ),
         ),
       );
@@ -72,7 +74,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (!mounted) return;
       setState(() => _deleting = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not delete account — please try again')),
+        SnackBar(content: Text(l10n.settingsDeleteFailed)),
       );
       return;
     }
@@ -86,19 +88,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Your account has been deleted')),
+      SnackBar(content: Text(l10n.settingsAccountDeleted)),
     );
     context.go('/login');
   }
 
   Future<void> _toggleAppLock(bool value) async {
+    final l10n = AppLocalizations.of(context)!;
     if (value) {
       final can = await BiometricAuth(LocalAuthentication()).canCheck;
       if (!can) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No biometrics enrolled on this device'),
+          SnackBar(
+            content: Text(l10n.settingsNoBiometrics),
           ),
         );
         return;
@@ -109,6 +112,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _pickLocale(Locale? current) async {
+    final l10n = AppLocalizations.of(context)!;
     final selected = await showModalBottomSheet<Locale?>(
       context: context,
       showDragHandle: true,
@@ -143,8 +147,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         } catch (_) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Language saved on this device only — could not reach the server.'),
+            SnackBar(
+              content: Text(l10n.settingsLanguageLocalOnly),
             ),
           );
         }
@@ -155,9 +159,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   /// cannot read English can still find their language. The previous list was
   /// four hardcoded strings (and two of those labels were mojibake in source).
   static List<Widget> _pickerRows(BuildContext context, Locale? current) {
+    final l10n = AppLocalizations.of(context)!;
     return [
       ListTile(
-        title: const Text('System default'),
+        title: Text(l10n.settingsSystemDefault),
         trailing: current == null ? const Icon(Icons.check_rounded) : null,
         onTap: () => Navigator.of(context).pop<Locale?>(null),
       ),
@@ -190,16 +195,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider);
     final lock = ref.watch(appLockProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
           const _SectionHeader('Language'),
           ListTile(
             leading: const Icon(Icons.language_rounded),
-            title: const Text('App language'),
+            title: Text(l10n.settingsAppLanguage),
             subtitle: Text(_localeLabel(locale)),
             trailing: const Icon(Icons.arrow_drop_down_rounded),
             onTap: () => unawaited(_pickLocale(locale)),
@@ -208,8 +214,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader('Security'),
           SwitchListTile(
             secondary: const Icon(Icons.fingerprint_rounded),
-            title: const Text('Biometric app lock'),
-            subtitle: const Text('Require biometrics after 30s in background'),
+            title: Text(l10n.settingsBiometricLock),
+            subtitle: Text(l10n.settingsBiometricLockSub),
             value: lock.enabled,
             onChanged: (v) => unawaited(_toggleAppLock(v)),
           ),
@@ -217,8 +223,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader('Privacy'),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('Privacy choices'),
-            subtitle: const Text('Analytics, functional and marketing consent'),
+            title: Text(l10n.consentTitle),
+            subtitle: Text(l10n.settingsPrivacySub),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/privacy'),
           ),
@@ -226,15 +232,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader('AI'),
           ListTile(
             leading: const Icon(Icons.insights_rounded),
-            title: const Text('Your AI usage'),
-            subtitle: const Text('What AI used on your behalf, by feature'),
+            title: Text(l10n.settingsAiUsage),
+            subtitle: Text(l10n.settingsAiUsageSub),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/ai/usage'),
           ),
           ListTile(
             leading: const Icon(Icons.key_rounded),
-            title: const Text('Your AI keys'),
-            subtitle: const Text('Run AI features on your own provider quota'),
+            title: Text(l10n.settingsAiKeys),
+            subtitle: Text(l10n.settingsAiKeysSub),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/ai/keys'),
           ),
@@ -242,7 +248,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader('Account'),
           ListTile(
             leading: const Icon(Icons.logout_rounded),
-            title: const Text('Log out'),
+            title: Text(l10n.settingsLogOut),
             onTap: () => unawaited(_logout()),
           ),
           ListTile(
@@ -257,9 +263,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   )
                 : const Icon(Icons.delete_forever_rounded,
                     color: Colors.redAccent),
-            title: const Text('Delete account'),
-            subtitle: const Text(
-              'Permanently erase your account, attempts and purchases',
+            title: Text(l10n.settingsDeleteAccount),
+            subtitle: Text(
+              l10n.settingsDeleteAccountSub,
             ),
             enabled: !_deleting,
             onTap: () => unawaited(_deleteAccount()),
@@ -290,23 +296,23 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final canConfirm = _controller.text.trim().toUpperCase() == 'DELETE';
     return AlertDialog(
-      title: const Text('Delete account?'),
+      title: Text(l10n.settingsDeleteAccountTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'This permanently deletes your account, quiz history, coins and '
-            'purchases. This cannot be undone.',
+          Text(
+            l10n.settingsDeleteAccountBody,
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _controller,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: "Type 'DELETE' to confirm",
+            decoration: InputDecoration(
+              labelText: l10n.settingsTypeDeleteToConfirm,
               border: OutlineInputBorder(),
             ),
             onChanged: (_) => setState(() {}),
@@ -316,12 +322,12 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
           onPressed: canConfirm ? () => Navigator.of(context).pop(true) : null,
-          child: const Text('Delete'),
+          child: Text(l10n.settingsDeleteConfirm),
         ),
       ],
     );

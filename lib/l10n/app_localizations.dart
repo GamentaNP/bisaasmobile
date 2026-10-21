@@ -1564,6 +1564,672 @@ abstract class AppLocalizations {
   /// **'by server'**
   String get quizByServer;
 
+  /// No description provided for @profileAvatarUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar uploaded'**
+  String get profileAvatarUploaded;
+
+  /// No description provided for @profileAvatarUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar updated'**
+  String get profileAvatarUpdated;
+
+  /// No description provided for @profileUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed: {reason}'**
+  String profileUploadFailed(Object reason);
+
+  /// No description provided for @profileEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get profileEditName;
+
+  /// No description provided for @profileDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get profileDisplayName;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get profileUpdated;
+
+  /// No description provided for @profileUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update failed: {reason}'**
+  String profileUpdateFailed(Object reason);
+
+  /// No description provided for @profileShareCardText.
+  ///
+  /// In en, this message translates to:
+  /// **'My CivilCal profile — Level {level} Engineer. https://bisaas.com'**
+  String profileShareCardText(Object level);
+
+  /// No description provided for @profileShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Share failed: {reason}'**
+  String profileShareFailed(Object reason);
+
+  /// No description provided for @profileShareCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Share card'**
+  String get profileShareCard;
+
+  /// No description provided for @profileLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String profileLevel(Object level);
+
+  /// No description provided for @profileChangeAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Change avatar'**
+  String get profileChangeAvatar;
+
+  /// No description provided for @profileEditAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit avatar'**
+  String get profileEditAvatar;
+
+  /// No description provided for @profileStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get profileStreak;
+
+  /// No description provided for @profileSkillRadar.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill Radar'**
+  String get profileSkillRadar;
+
+  /// No description provided for @profileSkillsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills failed: {reason}'**
+  String profileSkillsFailed(Object reason);
+
+  /// No description provided for @profileAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get profileAchievements;
+
+  /// No description provided for @profileAchievementsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load achievements'**
+  String get profileAchievementsLoadFailed;
+
+  /// No description provided for @profileNoBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges yet — complete quizzes to earn them!'**
+  String get profileNoBadges;
+
+  /// No description provided for @profileUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked'**
+  String get profileUnlocked;
+
+  /// No description provided for @profileSkillRadarEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Take quizzes to reveal your skill radar.'**
+  String get profileSkillRadarEmpty;
+
+  /// No description provided for @profileSkillRadarEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer more categories to reveal your skill radar.'**
+  String get profileSkillRadarEmptyHint;
+
+  /// No description provided for @profileLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning — tracks & AI tutor'**
+  String get profileLearning;
+
+  /// No description provided for @profileLearningSub.
+  ///
+  /// In en, this message translates to:
+  /// **'study plans • revisions • tutor'**
+  String get profileLearningSub;
+
+  /// No description provided for @profileEice.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Intelligence (EICE)'**
+  String get profileEice;
+
+  /// No description provided for @profileEiceSub.
+  ///
+  /// In en, this message translates to:
+  /// **'coach • triage • sprint'**
+  String get profileEiceSub;
+
+  /// No description provided for @profilePsc.
+  ///
+  /// In en, this message translates to:
+  /// **'PSC / Loksewa'**
+  String get profilePsc;
+
+  /// No description provided for @profilePscSub.
+  ///
+  /// In en, this message translates to:
+  /// **'exam blueprints & syllabus'**
+  String get profilePscSub;
+
+  /// No description provided for @profilePracticeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'drill bookmarks • weak topics'**
+  String get profilePracticeSub;
+
+  /// No description provided for @profileLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get profileLeaderboard;
+
+  /// No description provided for @profileLeaderboardSub.
+  ///
+  /// In en, this message translates to:
+  /// **'global • friends • league'**
+  String get profileLeaderboardSub;
+
+  /// No description provided for @profileContests.
+  ///
+  /// In en, this message translates to:
+  /// **'Contests'**
+  String get profileContests;
+
+  /// No description provided for @profileContestsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'live quizzes & leaderboards'**
+  String get profileContestsSub;
+
+  /// No description provided for @profileLiveEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Live events'**
+  String get profileLiveEvents;
+
+  /// No description provided for @profileLiveEventsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'scheduled sessions & check-in'**
+  String get profileLiveEventsSub;
+
+  /// No description provided for @profileCoaching.
+  ///
+  /// In en, this message translates to:
+  /// **'Coaching'**
+  String get profileCoaching;
+
+  /// No description provided for @profileCoachingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'weak areas • readiness • sprint'**
+  String get profileCoachingSub;
+
+  /// No description provided for @profileSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get profileSearch;
+
+  /// No description provided for @profileSearchSub.
+  ///
+  /// In en, this message translates to:
+  /// **'find any question'**
+  String get profileSearchSub;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profileNotificationsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'activity & reminders'**
+  String get profileNotificationsSub;
+
+  /// No description provided for @profileSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social & Referral'**
+  String get profileSocial;
+
+  /// No description provided for @profileSocialSub.
+  ///
+  /// In en, this message translates to:
+  /// **'share • streak • leaderboard'**
+  String get profileSocialSub;
+
+  /// No description provided for @profileWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get profileWallet;
+
+  /// No description provided for @profileWalletSub.
+  ///
+  /// In en, this message translates to:
+  /// **'coins & ledger'**
+  String get profileWalletSub;
+
+  /// No description provided for @profileAchievementsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'streak + badges'**
+  String get profileAchievementsSub;
+
+  /// No description provided for @profileOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline content'**
+  String get profileOffline;
+
+  /// No description provided for @profileOfflineSub.
+  ///
+  /// In en, this message translates to:
+  /// **'cached packs + prefetch'**
+  String get profileOfflineSub;
+
+  /// No description provided for @profileCalculatorsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil formula engines'**
+  String get profileCalculatorsSub;
+
+  /// No description provided for @profileSettingsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'language • biometrics • logout'**
+  String get profileSettingsSub;
+
+  /// No description provided for @settingsSubscriptionActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription must be cancelled before deletion'**
+  String get settingsSubscriptionActive;
+
+  /// No description provided for @settingsDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete account — please try again'**
+  String get settingsDeleteFailed;
+
+  /// No description provided for @settingsAccountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted'**
+  String get settingsAccountDeleted;
+
+  /// No description provided for @settingsNoBiometrics.
+  ///
+  /// In en, this message translates to:
+  /// **'No biometrics enrolled on this device'**
+  String get settingsNoBiometrics;
+
+  /// No description provided for @settingsLanguageLocalOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Language saved on this device only — could not reach the server.'**
+  String get settingsLanguageLocalOnly;
+
+  /// No description provided for @settingsSystemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get settingsSystemDefault;
+
+  /// No description provided for @settingsAppLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'App language'**
+  String get settingsAppLanguage;
+
+  /// No description provided for @settingsBiometricLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric app lock'**
+  String get settingsBiometricLock;
+
+  /// No description provided for @settingsBiometricLockSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Require biometrics after 30s in background'**
+  String get settingsBiometricLockSub;
+
+  /// No description provided for @settingsPrivacySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics, functional and marketing consent'**
+  String get settingsPrivacySub;
+
+  /// No description provided for @settingsAiUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI usage'**
+  String get settingsAiUsage;
+
+  /// No description provided for @settingsAiUsageSub.
+  ///
+  /// In en, this message translates to:
+  /// **'What AI used on your behalf, by feature'**
+  String get settingsAiUsageSub;
+
+  /// No description provided for @settingsAiKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI keys'**
+  String get settingsAiKeys;
+
+  /// No description provided for @settingsAiKeysSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Run AI features on your own provider quota'**
+  String get settingsAiKeysSub;
+
+  /// No description provided for @settingsLogOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get settingsLogOut;
+
+  /// No description provided for @settingsDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get settingsDeleteAccount;
+
+  /// No description provided for @settingsDeleteAccountSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently erase your account, attempts and purchases'**
+  String get settingsDeleteAccountSub;
+
+  /// No description provided for @settingsDeleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get settingsDeleteAccountTitle;
+
+  /// No description provided for @settingsDeleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your account, quiz history, coins and purchases. This cannot be undone.'**
+  String get settingsDeleteAccountBody;
+
+  /// No description provided for @settingsTypeDeleteToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Type \'DELETE\' to confirm'**
+  String get settingsTypeDeleteToConfirm;
+
+  /// No description provided for @settingsDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get settingsDeleteConfirm;
+
+  /// No description provided for @streakRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get streakRefresh;
+
+  /// No description provided for @streakNoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No streak yet'**
+  String get streakNoneTitle;
+
+  /// No description provided for @streakNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a quiz to start your fire streak.'**
+  String get streakNoneBody;
+
+  /// No description provided for @streakCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get streakCalendar;
+
+  /// No description provided for @streakOnFire.
+  ///
+  /// In en, this message translates to:
+  /// **'You are on fire today — keep it up!'**
+  String get streakOnFire;
+
+  /// No description provided for @streakProtect.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect your streak'**
+  String get streakProtect;
+
+  /// No description provided for @streakFrozen.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak frozen for 30 days!'**
+  String get streakFrozen;
+
+  /// No description provided for @streakCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current streak'**
+  String get streakCurrent;
+
+  /// No description provided for @streakDaysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get streakDaysUnit;
+
+  /// No description provided for @streakBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Best: {count} days'**
+  String streakBest(int count);
+
+  /// No description provided for @streakMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'multiplier'**
+  String get streakMultiplier;
+
+  /// No description provided for @streakMaxMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Max multiplier reached — legendary!'**
+  String get streakMaxMultiplier;
+
+  /// No description provided for @streakDaysToNextTier.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {total} days to next tier'**
+  String streakDaysToNextTier(int current, int total);
+
+  /// No description provided for @streakTiers.
+  ///
+  /// In en, this message translates to:
+  /// **'1–6d → 1.0× • 7–29d → 1.5× • 30–99d → 2.0× • 100+d → 3.0×'**
+  String get streakTiers;
+
+  /// No description provided for @streakFreezeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak freeze'**
+  String get streakFreezeSection;
+
+  /// No description provided for @streakFreezeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String streakFreezeLeft(int count);
+
+  /// No description provided for @streakFrozenUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Frozen until {date}'**
+  String streakFrozenUntil(Object date);
+
+  /// No description provided for @streakFreezeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend 50 coins to freeze streak for 30 days when you cannot play. Donor badge required.'**
+  String get streakFreezeHint;
+
+  /// No description provided for @streakExtendFreeze.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend freeze'**
+  String get streakExtendFreeze;
+
+  /// No description provided for @streakFreezeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze streak (50 coins)'**
+  String get streakFreezeAction;
+
+  /// No description provided for @streakRepairTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair a missed day'**
+  String get streakRepairTitle;
+
+  /// No description provided for @streakRepairAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair streak'**
+  String get streakRepairAction;
+
+  /// No description provided for @streakInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak insurance'**
+  String get streakInsurance;
+
+  /// No description provided for @streakInsuranceChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking insurance…'**
+  String get streakInsuranceChecking;
+
+  /// No description provided for @streakBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get streakBuy;
+
+  /// No description provided for @streakUseNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Use now'**
+  String get streakUseNow;
+
+  /// No description provided for @streakWager.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak wager'**
+  String get streakWager;
+
+  /// No description provided for @streakWagerDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Stake coins on hitting a target streak. Meet it and you win the pot back with interest — miss and the coins are gone.'**
+  String get streakWagerDescription;
+
+  /// No description provided for @streakWagerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {current} of {total} — keep playing to win {reward} coins.'**
+  String streakWagerDay(int current, int total, Object reward);
+
+  /// No description provided for @streakWagerStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a wager'**
+  String get streakWagerStart;
+
+  /// No description provided for @streakWagerInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Wager in progress'**
+  String get streakWagerInProgress;
+
+  /// No description provided for @streakWagerStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a streak wager'**
+  String get streakWagerStartTitle;
+
+  /// No description provided for @streakWagerStartBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hit the target streak to win double. Miss it and the stake is gone.'**
+  String get streakWagerStartBody;
+
+  /// No description provided for @streakWagerStake.
+  ///
+  /// In en, this message translates to:
+  /// **'Stake (coins)'**
+  String get streakWagerStake;
+
+  /// No description provided for @streakWagerDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days to sustain'**
+  String get streakWagerDays;
+
+  /// No description provided for @streakXpMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'×{value} XP'**
+  String streakXpMultiplier(Object value);
+
+  /// No description provided for @streakWagerProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% complete'**
+  String streakWagerProgress(Object percent);
+
+  /// No description provided for @streakFreezeDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get streakFreezeDuration;
+
+  /// No description provided for @streakWagerDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String streakWagerDaysCount(int count);
+
+  /// No description provided for @streakWagerSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Wager {coins} coins for {days} days'**
+  String streakWagerSummary(Object coins, int days);
+
   /// No description provided for @forceUpdateUnsupportedLatest.
   ///
   /// In en, this message translates to:

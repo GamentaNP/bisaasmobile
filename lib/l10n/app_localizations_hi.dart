@@ -856,6 +856,385 @@ class AppLocalizationsHi extends AppLocalizations {
   String get quizByServer => 'सर्वर द्वारा';
 
   @override
+  String get profileAvatarUploaded => 'अवतार अपलोड हो गया';
+
+  @override
+  String get profileAvatarUpdated => 'अवतार अपडेट हो गया';
+
+  @override
+  String profileUploadFailed(Object reason) {
+    return 'अपलोड विफल: $reason';
+  }
+
+  @override
+  String get profileEditName => 'नाम संपादित करें';
+
+  @override
+  String get profileDisplayName => 'प्रदर्शित नाम';
+
+  @override
+  String get profileUpdated => 'प्रोफ़ाइल अपडेट हो गया';
+
+  @override
+  String profileUpdateFailed(Object reason) {
+    return 'अपडेट विफल: $reason';
+  }
+
+  @override
+  String profileShareCardText(Object level) {
+    return 'मेरा CivilCal प्रोफ़ाइल — स्तर $level इंजीनियर। https://bisaas.com';
+  }
+
+  @override
+  String profileShareFailed(Object reason) {
+    return 'साझा करना विफल: $reason';
+  }
+
+  @override
+  String get profileShareCard => 'कार्ड साझा करें';
+
+  @override
+  String profileLevel(Object level) {
+    return 'स्तर $level';
+  }
+
+  @override
+  String get profileChangeAvatar => 'अवतार बदलें';
+
+  @override
+  String get profileEditAvatar => 'अवतार संपादित करें';
+
+  @override
+  String get profileStreak => 'स्ट्रीक';
+
+  @override
+  String get profileSkillRadar => 'स्किल रडार';
+
+  @override
+  String profileSkillsFailed(Object reason) {
+    return 'स्किल लोड विफल: $reason';
+  }
+
+  @override
+  String get profileAchievements => 'उपलब्धियां';
+
+  @override
+  String get profileAchievementsLoadFailed => 'उपलब्धियां लोड नहीं हो सकीं';
+
+  @override
+  String get profileNoBadges => 'अभी तक कोई बैज नहीं — क्विज़ पूरे करके कमाएं!';
+
+  @override
+  String get profileUnlocked => 'अनलॉक';
+
+  @override
+  String get profileSkillRadarEmpty =>
+      'अपना स्किल रडार देखने के लिए क्विज़ खेलें।';
+
+  @override
+  String get profileSkillRadarEmptyHint =>
+      'अपना स्किल रडार देखने के लिए अधिक श्रेणियों के प्रश्नों के उत्तर दें।';
+
+  @override
+  String get profileLearning => 'सीखना — ट्रैक और AI ट्यूटर';
+
+  @override
+  String get profileLearningSub => 'अध्ययन योजना • दोहराव • ट्यूटर';
+
+  @override
+  String get profileEice => 'परीक्षा बुद्धि (EICE)';
+
+  @override
+  String get profileEiceSub => 'कोच • ट्रायेज • स्प्रिंट';
+
+  @override
+  String get profilePsc => 'PSC / लोकसेवा';
+
+  @override
+  String get profilePscSub => 'परीक्षा ढांचा और पाठ्यक्रम';
+
+  @override
+  String get profilePracticeSub => 'बुकमार्क ड्रिल • कमजोर विषय';
+
+  @override
+  String get profileLeaderboard => 'लीडरबोर्ड';
+
+  @override
+  String get profileLeaderboardSub => 'विश्व • दोस्त • लीग';
+
+  @override
+  String get profileContests => 'प्रतियोगिताएं';
+
+  @override
+  String get profileContestsSub => 'लाइव क्विज़ और लीडरबोर्ड';
+
+  @override
+  String get profileLiveEvents => 'लाइव कार्यक्रम';
+
+  @override
+  String get profileLiveEventsSub => 'निर्धारित सत्र और चेक-इन';
+
+  @override
+  String get profileCoaching => 'कोचिंग';
+
+  @override
+  String get profileCoachingSub => 'कमजोर क्षेत्र • तैयारी • स्प्रिंट';
+
+  @override
+  String get profileSearch => 'खोजें';
+
+  @override
+  String get profileSearchSub => 'कोई भी प्रश्न खोजें';
+
+  @override
+  String get profileNotifications => 'सूचनाएं';
+
+  @override
+  String get profileNotificationsSub => 'गतिविधि और याद दिलाना';
+
+  @override
+  String get profileSocial => 'सोशल और रेफरल';
+
+  @override
+  String get profileSocialSub => 'साझा • स्ट्रीक • लीडरबोर्ड';
+
+  @override
+  String get profileWallet => 'वॉलेट';
+
+  @override
+  String get profileWalletSub => 'कॉइन और बही';
+
+  @override
+  String get profileAchievementsSub => 'स्ट्रीक + बैज';
+
+  @override
+  String get profileOffline => 'ऑफ़लाइन सामग्री';
+
+  @override
+  String get profileOfflineSub => 'कैश किए गए पैक + प्रीफ़ेच';
+
+  @override
+  String get profileCalculatorsSub => 'सिविल फ़ॉर्मूला इंजन';
+
+  @override
+  String get profileSettingsSub => 'भाषा • बायोमेट्रिक • लॉगआउट';
+
+  @override
+  String get settingsSubscriptionActive =>
+      'खाता मिटाने से पहले सदस्यता रद्द करनी होगी';
+
+  @override
+  String get settingsDeleteFailed =>
+      'खाता मिटा नहीं सका — कृपया फिर से कोशिश करें';
+
+  @override
+  String get settingsAccountDeleted => 'आपका खाता मिटा दिया गया है';
+
+  @override
+  String get settingsNoBiometrics =>
+      'इस डिवाइस पर कोई बायोमेट्रिक दर्ज नहीं है';
+
+  @override
+  String get settingsLanguageLocalOnly =>
+      'भाषा केवल इस डिवाइस पर सहेजी गई — सर्वर तक नहीं पहुँच सके।';
+
+  @override
+  String get settingsSystemDefault => 'सिस्टम डिफ़ॉल्ट';
+
+  @override
+  String get settingsAppLanguage => 'ऐप की भाषा';
+
+  @override
+  String get settingsBiometricLock => 'बायोमेट्रिक ऐप लॉक';
+
+  @override
+  String get settingsBiometricLockSub =>
+      'बैकग्राउंड में 30 सेकंड बाद बायोमेट्रिक माँगें';
+
+  @override
+  String get settingsPrivacySub => 'विश्लेषण, कार्यक्षम और प्रचार की सहमति';
+
+  @override
+  String get settingsAiUsage => 'आपका AI का उपयोग';
+
+  @override
+  String get settingsAiUsageSub =>
+      'आपकी ओर से AI ने क्या इस्तेमाल किया, सुविधा के अनुसार';
+
+  @override
+  String get settingsAiKeys => 'आपकी AI कुंजियां';
+
+  @override
+  String get settingsAiKeysSub => 'AI सुविधाएं अपने प्रोवाइडर के कोटे पर चलाएं';
+
+  @override
+  String get settingsLogOut => 'लॉग आउट';
+
+  @override
+  String get settingsDeleteAccount => 'खाता मिटाएं';
+
+  @override
+  String get settingsDeleteAccountSub =>
+      'आपका खाता, प्रयास और खरीद स्थायी रूप से मिटाएं';
+
+  @override
+  String get settingsDeleteAccountTitle => 'खाता मिटाएं?';
+
+  @override
+  String get settingsDeleteAccountBody =>
+      'यह आपका खाता, क्विज़ इतिहास, कॉइन और खरीद स्थायी रूप से मिटा देता है। इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String get settingsTypeDeleteToConfirm =>
+      'पुष्टि करने के लिए \'DELETE\' लिखें';
+
+  @override
+  String get settingsDeleteConfirm => 'मिटाएं';
+
+  @override
+  String get streakRefresh => 'रिफ्रेश करें';
+
+  @override
+  String get streakNoneTitle => 'अभी तक कोई स्ट्रीक नहीं';
+
+  @override
+  String get streakNoneBody =>
+      'अपनी स्ट्रीक शुरू करने के लिए एक क्विज़ पूरा करें।';
+
+  @override
+  String get streakCalendar => 'कैलेंडर';
+
+  @override
+  String get streakOnFire => 'आज आपकी स्ट्रीक जोश में है — ऐसे ही बनाए रखें!';
+
+  @override
+  String get streakProtect => 'अपनी स्ट्रीक बचाएं';
+
+  @override
+  String get streakFrozen => 'स्ट्रीक 30 दिन के लिए फ्रीज़ हो गई!';
+
+  @override
+  String get streakCurrent => 'वर्तमान स्ट्रीक';
+
+  @override
+  String get streakDaysUnit => 'दिन';
+
+  @override
+  String streakBest(int count) {
+    return 'सर्वश्रेष्ठ: $count दिन';
+  }
+
+  @override
+  String get streakMultiplier => 'गुणक';
+
+  @override
+  String get streakMaxMultiplier => 'अधिकतम गुणक प्राप्त — किंवदंती!';
+
+  @override
+  String streakDaysToNextTier(int current, int total) {
+    return 'अगले स्तर तक $current / $total दिन';
+  }
+
+  @override
+  String get streakTiers =>
+      '1–6 दिन → 1.0× • 7–29 दिन → 1.5× • 30–99 दिन → 2.0× • 100+ दिन → 3.0×';
+
+  @override
+  String get streakFreezeSection => 'स्ट्रीक फ्रीज़';
+
+  @override
+  String streakFreezeLeft(int count) {
+    return '$count बचे';
+  }
+
+  @override
+  String streakFrozenUntil(Object date) {
+    return '$date तक फ्रीज़';
+  }
+
+  @override
+  String get streakFreezeHint =>
+      'खेल न पाएँदा 30 दिनका लिए स्ट्रीक फ्रीज़ गर्न 50 कॉइन खर्च्नुहोस्। दानकर्ता बैज आवश्यक।';
+
+  @override
+  String get streakExtendFreeze => 'फ्रीज़ बढाउनुहोस्';
+
+  @override
+  String get streakFreezeAction => 'स्ट्रीक फ्रीज़ करें (50 कॉइन)';
+
+  @override
+  String get streakRepairTitle => 'छूटे दिन को मरम्मत करें';
+
+  @override
+  String get streakRepairAction => 'स्ट्रीक मरम्मत करें';
+
+  @override
+  String get streakInsurance => 'स्ट्रीक बीमा';
+
+  @override
+  String get streakInsuranceChecking => 'बीमा जांच रहे हैं…';
+
+  @override
+  String get streakBuy => 'खरीदें';
+
+  @override
+  String get streakUseNow => 'अभी उपयोग करें';
+
+  @override
+  String get streakWager => 'स्ट्रीक वेजर';
+
+  @override
+  String get streakWagerDescription =>
+      'लक्ष्य स्ट्रीक तक पहुँचने के लिए कॉइन लगाएं। पहुँच गए तो ब्याज सहित पूरी जैसी वापस, नहीं पहुँचे तो कॉइन चले जाएंगे।';
+
+  @override
+  String streakWagerDay(int current, int total, Object reward) {
+    return '$total में से $current दिन — $reward कॉइन जीतने के लिए खेलते रहें।';
+  }
+
+  @override
+  String get streakWagerStart => 'वेजर शुरू करें';
+
+  @override
+  String get streakWagerInProgress => 'वेजर चल रहा है';
+
+  @override
+  String get streakWagerStartTitle => 'स्ट्रीक वेजर शुरू करें';
+
+  @override
+  String get streakWagerStartBody =>
+      'दुगना जीतने के लिए लक्ष्य स्ट्रीक तक पहुँचें। नहीं पहुँचे तो लगाई गई रकम चली जाएगी।';
+
+  @override
+  String get streakWagerStake => 'लगाने वाले कॉइन';
+
+  @override
+  String get streakWagerDays => 'बनाए रखने वाले दिन';
+
+  @override
+  String streakXpMultiplier(Object value) {
+    return '×$value XP';
+  }
+
+  @override
+  String streakWagerProgress(Object percent) {
+    return '$percent% पूरा';
+  }
+
+  @override
+  String get streakFreezeDuration => '30 दिन';
+
+  @override
+  String streakWagerDaysCount(int count) {
+    return '$count दिन';
+  }
+
+  @override
+  String streakWagerSummary(Object coins, int days) {
+    return '$days दिन के लिए $coins कॉइन का वेजर';
+  }
+
+  @override
   String get forceUpdateUnsupportedLatest =>
       'यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।';
 

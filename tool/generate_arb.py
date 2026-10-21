@@ -476,6 +476,257 @@ add("quizNoQuestionText", "This question has no text on the server.", "यो �
 add("quizGraded", "Graded", "अंकयुक्त", "अंक वाला")
 add("quizXp", "XP", "XP", "XP")
 add("quizByServer", "by server", "सर्भरद्वारा", "सर्वर द्वारा")
+
+# ── profile ──────────────────────────────────────────────────────────────────
+add("profileAvatarUploaded", "Avatar uploaded", "अवतार अपलोड भयो", "अवतार अपलोड हो गया")
+add("profileAvatarUpdated", "Avatar updated", "अवतार अद्यावधिक भयो", "अवतार अपडेट हो गया")
+add("profileUploadFailed", "Upload failed: {reason}", "अपलोड असफल: {reason}", "अपलोड विफल: {reason}", ["reason"])
+add("profileEditName", "Edit name", "नाम सम्पादन गर्नुहोस्", "नाम संपादित करें")
+add("profileDisplayName", "Display name", "प्रदर्शित नाम", "प्रदर्शित नाम")
+add("profileUpdated", "Profile updated", "प्रोफाइल अद्यावधिक भयो", "प्रोफ़ाइल अपडेट हो गया")
+add("profileUpdateFailed", "Update failed: {reason}", "अद्यावधिक असफल: {reason}", "अपडेट विफल: {reason}", ["reason"])
+add(
+    "profileShareCardText",
+    "My CivilCal profile — Level {level} Engineer. https://bisaas.com",
+    "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://bisaas.com",
+    "मेरा CivilCal प्रोफ़ाइल — स्तर {level} इंजीनियर। https://bisaas.com",
+    ["level"],
+)
+add("profileShareFailed", "Share failed: {reason}", "साझेदारी असफल: {reason}", "साझा करना विफल: {reason}", ["reason"])
+add("profileShareCard", "Share card", "कार्ड साझेदार गर्नुहोस्", "कार्ड साझा करें")
+add("profileLevel", "Lv {level}", "तह {level}", "स्तर {level}", ["level"])
+add("profileChangeAvatar", "Change avatar", "अवतार परिवर्तन गर्नुहोस्", "अवतार बदलें")
+add("profileEditAvatar", "Edit avatar", "अवतार सम्पादन गर्नुहोस्", "अवतार संपादित करें")
+add("profileStreak", "Streak", "स्ट्रिक", "स्ट्रीक")
+add("profileSkillRadar", "Skill Radar", "सीप रेडार", "स्किल रडार")
+add("profileSkillsFailed", "Skills failed: {reason}", "सीप लोड असफल: {reason}", "स्किल लोड विफल: {reason}", ["reason"])
+add("profileAchievements", "Achievements", "उपलब्धि", "उपलब्धियां")
+add("profileAchievementsLoadFailed", "Could not load achievements", "उपलब्धि लोड गर्न सकिएन", "उपलब्धियां लोड नहीं हो सकीं")
+add(
+    "profileNoBadges",
+    "No badges yet — complete quizzes to earn them!",
+    "अहिलेसम्म कुनै ब्याज छैन — क्विज पूरा गरेर कमाउनुहोस्!",
+    "अभी तक कोई बैज नहीं — क्विज़ पूरे करके कमाएं!",
+)
+add("profileUnlocked", "Unlocked", "खुला", "अनलॉक")
+add(
+    "profileSkillRadarEmpty",
+    "Take quizzes to reveal your skill radar.",
+    "आफ्नो सीप रेडार देख्न क्विज खेल्नुहोस्।",
+    "अपना स्किल रडार देखने के लिए क्विज़ खेलें।",
+)
+add(
+    "profileSkillRadarEmptyHint",
+    "Answer more categories to reveal your skill radar.",
+    "आफ्नो सीप रेडार देख्न थप श्रेणीहरूमा उत्तर दिनुहोस्।",
+    "अपना स्किल रडार देखने के लिए अधिक श्रेणियों के प्रश्नों के उत्तर दें।",
+)
+add("profileLearning", "Learning — tracks & AI tutor", "सिकाइ — ट्र्याक र AI ट्युटर", "सीखना — ट्रैक और AI ट्यूटर")
+add("profileLearningSub", "study plans • revisions • tutor", "अध्ययन योजना • दोहोराइ • ट्युटर", "अध्ययन योजना • दोहराव • ट्यूटर")
+add("profileEice", "Exam Intelligence (EICE)", "परीक्षा बुद्धि (EICE)", "परीक्षा बुद्धि (EICE)")
+add("profileEiceSub", "coach • triage • sprint", "कोच • त्रायज • स्प्रिन्ट", "कोच • ट्रायेज • स्प्रिंट")
+add("profilePsc", "PSC / Loksewa", "PSC / लोकसेवा", "PSC / लोकसेवा")
+add("profilePscSub", "exam blueprints & syllabus", "परीक्षा ढाँचा र पाठ्यक्रम", "परीक्षा ढांचा और पाठ्यक्रम")
+add("profilePracticeSub", "drill bookmarks • weak topics", "बुकमार्क ड्रिल • कमजोर विषय", "बुकमार्क ड्रिल • कमजोर विषय")
+add("profileLeaderboard", "Leaderboard", "लिडरबोर्ड", "लीडरबोर्ड")
+add("profileLeaderboardSub", "global • friends • league", "विश्व • साथी • लिग", "विश्व • दोस्त • लीग")
+add("profileContests", "Contests", "प्रतियोगिता", "प्रतियोगिताएं")
+add("profileContestsSub", "live quizzes & leaderboards", "प्रत्यक्ष क्विज र लिडरबोर्ड", "लाइव क्विज़ और लीडरबोर्ड")
+add("profileLiveEvents", "Live events", "प्रत्यक्ष कार्यक्रम", "लाइव कार्यक्रम")
+add("profileLiveEventsSub", "scheduled sessions & check-in", "तोकिएका सत्र र चेक-इन", "निर्धारित सत्र और चेक-इन")
+add("profileCoaching", "Coaching", "कोचिङ", "कोचिंग")
+add("profileCoachingSub", "weak areas • readiness • sprint", "कमजोर क्षेत्र • तयारी • स्प्रिन्ट", "कमजोर क्षेत्र • तैयारी • स्प्रिंट")
+add("profileSearch", "Search", "खोज्नुहोस्", "खोजें")
+add("profileSearchSub", "find any question", "कुनै पनि प्रश्न खोज्नुहोस्", "कोई भी प्रश्न खोजें")
+add("profileNotifications", "Notifications", "सूचनाहरू", "सूचनाएं")
+add("profileNotificationsSub", "activity & reminders", "गतिविधि र सम्झना", "गतिविधि और याद दिलाना")
+add("profileSocial", "Social & Referral", "सामाजिक र रेफरल", "सोशल और रेफरल")
+add("profileSocialSub", "share • streak • leaderboard", "साझेदारी • स्ट्रिक • लिडरबोर्ड", "साझा • स्ट्रीक • लीडरबोर्ड")
+add("profileWallet", "Wallet", "वालेट", "वॉलेट")
+add("profileWalletSub", "coins & ledger", "क्विन र खाता", "कॉइन और बही")
+add("profileAchievementsSub", "streak + badges", "स्ट्रिक + ब्याज", "स्ट्रीक + बैज")
+add("profileOffline", "Offline content", "अफलाइन सामग्री", "ऑफ़लाइन सामग्री")
+add("profileOfflineSub", "cached packs + prefetch", "क्यास गरिएका प्याक + प्रीफेच", "कैश किए गए पैक + प्रीफ़ेच")
+add("profileCalculatorsSub", "Civil formula engines", "सिभिल सूत्र इन्जिन", "सिविल फ़ॉर्मूला इंजन")
+add("profileSettingsSub", "language • biometrics • logout", "भाषा • बायोमेट्रिक • लगआउट", "भाषा • बायोमेट्रिक • लॉगआउट")
+
+# ── settings ────────────────────────────────────────────────────────────────
+add(
+    "settingsSubscriptionActive",
+    "Subscription must be cancelled before deletion",
+    "खाता मेटाउनुअघि सदस्यता रद्द गर्नुपर्छ",
+    "खाता मिटाने से पहले सदस्यता रद्द करनी होगी",
+)
+add(
+    "settingsDeleteFailed",
+    "Could not delete account — please try again",
+    "खाता मेटाउन सकिएन — कृपया फेरि प्रयास गर्नुहोस्",
+    "खाता मिटा नहीं सका — कृपया फिर से कोशिश करें",
+)
+add("settingsAccountDeleted", "Your account has been deleted", "तपाईंको खाता मेटाइएको छ", "आपका खाता मिटा दिया गया है")
+add(
+    "settingsNoBiometrics",
+    "No biometrics enrolled on this device",
+    "यस यन्त्रमा कुनै बायोमेट्रिक दर्ता छैन",
+    "इस डिवाइस पर कोई बायोमेट्रिक दर्ज नहीं है",
+)
+add(
+    "settingsLanguageLocalOnly",
+    "Language saved on this device only — could not reach the server.",
+    "भाषा यस यन्त्रमा मात्र सुरक्षित भयो — सर्भरसम्म पुग्न सकिएन।",
+    "भाषा केवल इस डिवाइस पर सहेजी गई — सर्वर तक नहीं पहुँच सके।",
+)
+add("settingsSystemDefault", "System default", "प्रणालीको सान्दर्भ", "सिस्टम डिफ़ॉल्ट")
+add("settingsAppLanguage", "App language", "एपको भाषा", "ऐप की भाषा")
+add("settingsBiometricLock", "Biometric app lock", "बायोमेट्रिक एप लक", "बायोमेट्रिक ऐप लॉक")
+add(
+    "settingsBiometricLockSub",
+    "Require biometrics after 30s in background",
+    "पृष्ठभूमिमा ३० सेकेन्डपछि बायोमेट्रिक माग्नुहोस्",
+    "बैकग्राउंड में 30 सेकंड बाद बायोमेट्रिक माँगें",
+)
+add(
+    "settingsPrivacySub",
+    "Analytics, functional and marketing consent",
+    "विश्लेषण, कार्यक्षम र प्रचारको सहमति",
+    "विश्लेषण, कार्यक्षम और प्रचार की सहमति",
+)
+add("settingsAiUsage", "Your AI usage", "तपाईंको AI प्रयोग", "आपका AI का उपयोग")
+add(
+    "settingsAiUsageSub",
+    "What AI used on your behalf, by feature",
+    "तपाईंको तर्फमा AI ले के प्रयोग गर्यो, सुविधाअनुसार",
+    "आपकी ओर से AI ने क्या इस्तेमाल किया, सुविधा के अनुसार",
+)
+add("settingsAiKeys", "Your AI keys", "तपाईंका AI कुञ्जीहरू", "आपकी AI कुंजियां")
+add(
+    "settingsAiKeysSub",
+    "Run AI features on your own provider quota",
+    "AI सुविधाहरू आफ्नै प्रोभाइडरको कोटामा चलाउनुहोस्",
+    "AI सुविधाएं अपने प्रोवाइडर के कोटे पर चलाएं",
+)
+add("settingsLogOut", "Log out", "लगआउट", "लॉग आउट")
+add("settingsDeleteAccount", "Delete account", "खाता मेटाउनुहोस्", "खाता मिटाएं")
+add(
+    "settingsDeleteAccountSub",
+    "Permanently erase your account, attempts and purchases",
+    "तपाईंको खाता, प्रयास र खरोद स्थायी रूपमा मेटाउनुहोस्",
+    "आपका खाता, प्रयास और खरीद स्थायी रूप से मिटाएं",
+)
+add("settingsDeleteAccountTitle", "Delete account?", "खाता मेटाउने?", "खाता मिटाएं?")
+add(
+    "settingsDeleteAccountBody",
+    "This permanently deletes your account, quiz history, coins and purchases. This cannot be undone.",
+    "यसले तपाईंको खाता, क्विज इतिहास, क्विन र खरोद स्थायी रूपमा मेटाउँछ। यो पूर्ववत् हुँदैन।",
+    "यह आपका खाता, क्विज़ इतिहास, कॉइन और खरीद स्थायी रूप से मिटा देता है। इसे पूर्ववत नहीं किया जा सकता।",
+)
+add(
+    "settingsTypeDeleteToConfirm",
+    "Type 'DELETE' to confirm",
+    "पुष्टि गर्न 'DELETE' लेख्नुहोस्",
+    "पुष्टि करने के लिए 'DELETE' लिखें",
+)
+add("settingsDeleteConfirm", "Delete", "मेटाउनुहोस्", "मिटाएं")
+
+# ── streak ──────────────────────────────────────────────────────────────────
+add("streakRefresh", "Refresh", "ताजा गर्नुहोस्", "रिफ्रेश करें")
+add("streakNoneTitle", "No streak yet", "अहिलेसम्म कुनै स्ट्रिक छैन", "अभी तक कोई स्ट्रीक नहीं")
+add(
+    "streakNoneBody",
+    "Complete a quiz to start your fire streak.",
+    "आफ्नो स्ट्रिक सुरु गर्न एउटा क्विज पूरा गर्नुहोस्।",
+    "अपनी स्ट्रीक शुरू करने के लिए एक क्विज़ पूरा करें।",
+)
+add("streakCalendar", "Calendar", "पात्रो", "कैलेंडर")
+add(
+    "streakOnFire",
+    "You are on fire today — keep it up!",
+    "आज तपाईंको स्ट्रिक उत्कर्ष छ — यसै गरिरहनुहोस्!",
+    "आज आपकी स्ट्रीक जोश में है — ऐसे ही बनाए रखें!",
+)
+add("streakProtect", "Protect your streak", "आफ्नो स्ट्रिक जोगाउनुहोस्", "अपनी स्ट्रीक बचाएं")
+add("streakFrozen", "Streak frozen for 30 days!", "स्ट्रिक ३० दिनका लागि फ्रिज गरियो!", "स्ट्रीक 30 दिन के लिए फ्रीज़ हो गई!")
+add("streakCurrent", "Current streak", "हालको स्ट्रिक", "वर्तमान स्ट्रीक")
+add("streakDaysUnit", "days", "दिन", "दिन")
+add("streakBest", "Best: {count} days", "उत्कृष्ट: {count} दिन", "सर्वश्रेष्ठ: {count} दिन", ["count"])
+add("streakMultiplier", "multiplier", "गुणक", "गुणक")
+add(
+    "streakMaxMultiplier",
+    "Max multiplier reached — legendary!",
+    "अधिकतम गुणक प्राप्त — किंवदन्ती!",
+    "अधिकतम गुणक प्राप्त — किंवदंती!",
+)
+add(
+    "streakDaysToNextTier",
+    "{current} / {total} days to next tier",
+    "अर्को तहसम्म {current} / {total} दिन",
+    "अगले स्तर तक {current} / {total} दिन",
+    ["current", "total"],
+)
+add(
+    "streakTiers",
+    "1–6d → 1.0× • 7–29d → 1.5× • 30–99d → 2.0× • 100+d → 3.0×",
+    "१–६ दिन → १.०× • ७–२९ दिन → १.५× • ३०–९९ दिन → २.०× • १००+ दिन → ३.०×",
+    "1–6 दिन → 1.0× • 7–29 दिन → 1.5× • 30–99 दिन → 2.0× • 100+ दिन → 3.0×",
+)
+add("streakFreezeSection", "Streak freeze", "स्ट्रिक फ्रिज", "स्ट्रीक फ्रीज़")
+add("streakFreezeLeft", "{count} left", "{count} बाँकी", "{count} बचे", ["count"])
+add("streakFrozenUntil", "Frozen until {date}", "{date} सम्म फ्रिज", "{date} तक फ्रीज़", ["date"])
+add(
+    "streakFreezeHint",
+    "Spend 50 coins to freeze streak for 30 days when you cannot play. Donor badge required.",
+    "खेल्न नसक्दा ३० दिनका लागि स्ट्रिक फ्रिज गर्न ५० क्विन खर्च्नुहोस्। दानकार ब्याज आवश्यक।",
+    "खेल न पाएँदा 30 दिनका लिए स्ट्रीक फ्रीज़ गर्न 50 कॉइन खर्च्नुहोस्। दानकर्ता बैज आवश्यक।",
+)
+add("streakExtendFreeze", "Extend freeze", "फ्रिज थप्नुहोस्", "फ्रीज़ बढाउनुहोस्")
+add(
+    "streakFreezeAction",
+    "Freeze streak (50 coins)",
+    "स्ट्रिक फ्रिज गर्नुहोस् (५० क्विन)",
+    "स्ट्रीक फ्रीज़ करें (50 कॉइन)",
+)
+add("streakRepairTitle", "Repair a missed day", "छुटेको दिन मर्मत गर्नुहोस्", "छूटे दिन को मरम्मत करें")
+add("streakRepairAction", "Repair streak", "स्ट्रिक मर्मत गर्नुहोस्", "स्ट्रीक मरम्मत करें")
+add("streakInsurance", "Streak insurance", "स्ट्रिक बीमा", "स्ट्रीक बीमा")
+add("streakInsuranceChecking", "Checking insurance…", "बीमा जाँच्दै…", "बीमा जांच रहे हैं…")
+add("streakBuy", "Buy", "किन्नुहोस्", "खरीदें")
+add("streakUseNow", "Use now", "अहिले प्रयोग गर्नुहोस्", "अभी उपयोग करें")
+add("streakWager", "Streak wager", "स्ट्रिक वागर", "स्ट्रीक वेजर")
+add(
+    "streakWagerDescription",
+    "Stake coins on hitting a target streak. Meet it and you win the pot back with interest — miss and the coins are gone.",
+    "लक्ष्य स्ट्रिक पुग्न क्विन लगाउनुहोस्। पुगेमा ब्याजसहित पुरोट फर्कन्छ, नपुगे क्विन गुम्छ।",
+    "लक्ष्य स्ट्रीक तक पहुँचने के लिए कॉइन लगाएं। पहुँच गए तो ब्याज सहित पूरी जैसी वापस, नहीं पहुँचे तो कॉइन चले जाएंगे।",
+)
+add(
+    "streakWagerDay",
+    "Day {current} of {total} — keep playing to win {reward} coins.",
+    "{total} मध्येको {current} दिन — {reward} क्विन जित्न खेलिरहनुहोस्।",
+    "{total} में से {current} दिन — {reward} कॉइन जीतने के लिए खेलते रहें।",
+    ["current", "total", "reward"],
+)
+add("streakWagerStart", "Start a wager", "वागर सुरु गर्नुहोस्", "वेजर शुरू करें")
+add("streakWagerInProgress", "Wager in progress", "वागर चलिरहेको छ", "वेजर चल रहा है")
+add("streakWagerStartTitle", "Start a streak wager", "स्ट्रिक वागर सुरु गर्नुहोस्", "स्ट्रीक वेजर शुरू करें")
+add(
+    "streakWagerStartBody",
+    "Hit the target streak to win double. Miss it and the stake is gone.",
+    "दुब्बे जित्न लक्ष्य स्ट्रिक पुग्नुहोस्। नपुगे लगाइएको क्विन गुम्छ।",
+    "दुगना जीतने के लिए लक्ष्य स्ट्रीक तक पहुँचें। नहीं पहुँचे तो लगाई गई रकम चली जाएगी।",
+)
+add("streakWagerStake", "Stake (coins)", "लगाउने क्विन", "लगाने वाले कॉइन")
+add("streakWagerDays", "Days to sustain", "कायम राख्ने दिन", "बनाए रखने वाले दिन")
+add("streakXpMultiplier", "×{value} XP", "×{value} XP", "×{value} XP", ["value"])
+add("streakWagerProgress", "{percent}% complete", "{percent}% पूरा", "{percent}% पूरा", ["percent"])
+add("streakFreezeDuration", "30 days", "३० दिन", "30 दिन")
+add("streakWagerDaysCount", "{count} days", "{count} दिन", "{count} दिन", ["count"])
+add(
+    "streakWagerSummary",
+    "Wager {coins} coins for {days} days",
+    "{days} दिनका लागि {coins} क्विनको वागर",
+    "{days} दिन के लिए {coins} कॉइन का वेजर",
+    ["coins", "days"],
+)
 add(
     "forceUpdateUnsupportedLatest",
     "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
