@@ -50,20 +50,50 @@ class AppUpdateGate extends ChangeNotifier {
   }
 }
 
-/// Where to send a user who must update. The numeric Play applicationId is not
-/// committed here (it is issued by Play Console at first publish), so the
-/// package-name lookup URL is used — it resolves by package and keeps working
-/// without a code change.
+/// Where to send a user who must update.
+///
+/// The Play URL resolves by package name and needs nothing else.
+///
+/// The App Store does **not** have a package-name lookup: `apps.apple.com/app/id…`
+/// takes the *numeric* App Store ID that Apple issues at first publish, so
+/// `idcom.bisaas.bisaasmobile` is not a URL — it is a 404. The numeric ID is
+/// a deployment value (like the certificate pins), so it arrives as
+/// `--dart-define=APP_STORE_ID=…` and is read from the build.
+///
+/// Until the app is published there is no numeric ID yet. Rather than shipping
+/// a link that cannot work, the fallback is the public support page, which
+/// always resolves and always reaches a human who can point the user at the
+/// right build.
 class StoreLinks {
   const StoreLinks._();
 
   static const packageId = 'com.bisaas.bisaasmobile';
 
-  static String forPlatform({String? platform, TargetPlatform? fallback}) {
+  /// Where the support page lives. Used as the iOS fallback before the app
+  /// has a numeric App Store ID.
+  static const supportUrl = 'https://bisaas.com/support';
+
+  /// The numeric App Store ID, e.g. `1234567890`. Supplied at build time by
+  /// `dart_defines/production.json` once the app has been published.
+  static const defaultAppStoreId = String.fromEnvironment('APP_STORE_ID');
+
+  static bool get hasAppStoreId => defaultAppStoreId.trim().isNotEmpty;
+
+  /// [appStoreId] overrides the compiled-in ID. It exists so the behaviour is
+  /// testable — `String.fromEnvironment` is fixed at compile time.
+  static String forPlatform({
+    String? platform,
+    TargetPlatform? fallback,
+    String? appStoreId,
+  }) {
     final isIos = (platform ?? '').toLowerCase() == 'ios' ||
         fallback == TargetPlatform.iOS;
-    return isIos
-        ? 'https://apps.apple.com/app/id$packageId'
-        : 'https://play.google.com/store/apps/details?id=$packageId';
+    if (!isIos) {
+      return 'https://play.google.com/store/apps/details?id=$packageId';
+    }
+    final id = (appStoreId ?? defaultAppStoreId).trim();
+    return id.isEmpty
+        ? supportUrl
+        : 'https://apps.apple.com/app/id$id';
   }
 }

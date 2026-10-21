@@ -169,18 +169,43 @@ void main() {
         StoreLinks.forPlatform(platform: 'android', fallback: TargetPlatform.android),
         contains('play.google.com'),
       );
+      expect(
+        StoreLinks.forPlatform(platform: 'android'),
+        'https://play.google.com/store/apps/details?id=com.bisaas.bisaasmobile',
+      );
     });
 
-    test('sends iOS builds to the App Store', () {
+    test('sends iOS builds to the App Store when a numeric ID is known', () {
       expect(
-        StoreLinks.forPlatform(platform: 'ios', fallback: TargetPlatform.iOS),
-        contains('apps.apple.com'),
+        StoreLinks.forPlatform(
+          platform: 'ios',
+          fallback: TargetPlatform.iOS,
+          appStoreId: '1234567890',
+        ),
+        'https://apps.apple.com/app/id1234567890',
       );
+    });
+
+    test('never builds an App Store URL out of the bundle id', () {
+      // `apps.apple.com/app/idcom.bisaas.bisaasmobile` is not a URL — the
+      // App Store takes a numeric ID and has no package-name lookup. Without
+      // an ID the link must go somewhere that actually resolves.
+      final url = StoreLinks.forPlatform(
+        platform: 'ios',
+        fallback: TargetPlatform.iOS,
+        appStoreId: '',
+      );
+      expect(url, isNot(contains('idcom.bisaas.bisaasmobile')));
+      expect(url, StoreLinks.supportUrl);
+      expect(url, startsWith('https://'));
     });
 
     test('falls back to the running platform when the server sent none', () {
       expect(
-        StoreLinks.forPlatform(fallback: TargetPlatform.iOS),
+        StoreLinks.forPlatform(
+          fallback: TargetPlatform.iOS,
+          appStoreId: '1234567890',
+        ),
         contains('apps.apple.com'),
       );
     });
