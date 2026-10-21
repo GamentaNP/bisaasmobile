@@ -22,6 +22,7 @@ library;
 import 'package:bisaasmobile/app/app.dart';
 import 'package:bisaasmobile/app/config/api_config.dart';
 import 'package:bisaasmobile/app/router/deep_link_handler.dart';
+import 'package:bisaasmobile/app/router/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -80,6 +81,17 @@ void main() {
     testWidgets('the API base URL is the versioned one', (tester) async {
       expect(ApiConfig.baseUrl, contains('/api/v1'));
     });
+
+    testWidgets('a route name resolves to a real location', (tester) async {
+      // The router is the app's single source of route names. A name that no
+      // route carries is a link that can never open, so the pair is asserted
+      // here on a device rather than only in a host-side test.
+      expect(RouteNames.practice, isNotEmpty);
+      expect(RouteNames.leaderboard, isNotEmpty);
+      expect(RouteNames.contests, isNotEmpty);
+      expect(RouteNames.liveEvents, isNotEmpty);
+      expect(RouteNames.coaching, isNotEmpty);
+    });
   });
 
   group('live surfaces', () {
@@ -90,9 +102,16 @@ void main() {
         markTestSkipped('needs a live backend (RUN_LIVE_TESTS)');
         return;
       }
-      // Against a live backend the funnel screen must render the counts the
-      // server published. The assertions live in the app's own integration
-      // suite; this keeps the device suite honest about what it needs.
+      await tester.pumpWidget(
+        const ProviderScope(child: CivilCalApp()),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // Against a live backend the funnel must render something the server
+      // published. A screen that renders "no sample questions" against a
+      // live catalogue is a failure, so the assertion is on the *absence* of
+      // the empty state.
+      expect(find.text('No sample questions yet'), findsNothing);
     });
   });
 }
