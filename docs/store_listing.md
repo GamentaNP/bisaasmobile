@@ -74,7 +74,7 @@ transliterations as often as the Devanagari forms.
 | "Your sign-in token is kept in the device's secure keystore, and the app's data is excluded from backups" | `flutter_secure_storage` + `android:allowBackup="false"` + `res/xml/backup_rules.xml` + `res/xml/data_extraction_rules.xml`. |
 | "no in-app purchases" | The store sells **cosmetic assets bought with in-app coins** — avatar frames, badges, themes, titles — priced in coins (`StoreAsset.priceCoins`), with a player-to-player trading market (`lib/features/store/domain/entities/store.dart:30`). There is **no real-money purchase**: no billing library is in the dependency tree. The earlier wording ("some study packs and AI usage are optional extras") was wrong on both counts and has been removed. |
 | "trade them with other students" | The market listing on the store screen — `MarketListing` (`lib/features/store/domain/entities/store.dart:67`). |
-| "Nepali, Hindi and English" | The interface is translated into all three for the **core journey** — sign-up, sign-in, onboarding, the quiz, the calculator, the dashboard, privacy. The secondary screens are still English; see `docs/localization.md` for the exact boundary and for the measurement that keeps it from widening. The *question content* is localised by the server through `Accept-Language`, so a Nepali user gets Nepali questions even where the chrome is English. |
+| "Nepali, Hindi and English" | The **whole interface** is translated into all three — 993 messages, every screen. `test/app/localization_coverage_test.dart` asserts that the app contains no hardcoded user-facing string, so the promise cannot quietly narrow. The *question content* is localised separately by the server through `Accept-Language`. See `docs/localization.md`. |
 
 ---
 

@@ -65,6 +65,20 @@
 	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- The languages the app's interface is available in.
+	     iOS reads this to populate the per-app language list in
+	     Settings → General → Language & Region → CivilCal. Without it
+	     the app is not offered there, so a user who wants Nepali has to
+	     find the picker inside the app.
+
+	     The list matches the ARB files in `lib/l10n/`, which are the
+	     source of truth — every locale here must have one. -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>ne</string>
+		<string>hi</string>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>CivilCal uses Face ID to securely unlock the app when you have App Lock enabled.</string>
 	<!-- The avatar flow reads one image the user picks from their library.

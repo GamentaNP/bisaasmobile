@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The languages the app's interface is available in.
+
+  Android 13 (API 33) reads this to populate the per-app language list in
+  Settings → Apps → CivilCal → Language. Without it the app is not offered
+  there at all, so a user who wants Nepali has to find the picker *inside*
+  the app — and a user who has set their phone to Nepali gets the app in
+  Nepali only if the system locale is on this list.
+
+  The list is the one in `lib/l10n/` — the ARB files are the source of
+  truth, and every locale here must have one. Adding a language therefore
+  means three things: the ARB, this file, and the registry entry in
+  `lib/app/localization/app_languages.dart`.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="ne" />
+    <locale android:name="hi" />
+</locale-config>

@@ -1,7 +1,8 @@
 # Localisation — CivilCal
 
 The app ships **English, Nepali and Hindi**. This document says exactly
-what is translated, what is not, and how the gap is kept honest.
+what is translated, how the copy is kept honest, and where the boundary
+is.
 
 ---
 
@@ -27,55 +28,57 @@ half-happen.
 
 ## 2. What is translated today
 
-**The core journey** — the path from install to a finished quiz — is
-translated into all three languages:
+**Everything.** 993 messages, in English, Nepali and Hindi, covering
+every screen in the app:
 
-| Area | Files |
+| Area | Screens |
 |---|---|
-| Sign-up, sign-in, password reset, email verification | `lib/features/auth/presentation/` |
-| Onboarding (target exam, daily goal, current level) | `lib/features/onboarding/` |
-| Quiz browse, intro, attempt, result, review, guest funnel | `lib/features/quiz/presentation/` |
-| Calculator browse, detail, history, assistant, worked solution | `lib/features/calculator/presentation/` |
-| Home dashboard | `lib/features/home/` |
-| Privacy choices and the stored-data screen | `lib/core/consent/`, `lib/features/privacy/` |
-| The daily study reminder notification | `lib/core/notifications/` |
-| Force-update, maintenance, unsupported version, unknown route | `lib/app/` |
+| First run | onboarding, target exam, daily goal, current level |
+| Auth | sign-up, sign-in, forgot password, reset password, email verification, social sign-in |
+| The study loop | quiz browse, intro, attempt, result, review, guest funnel, practice drill, self-challenge, numericals |
+| The AI | tutor chat, tutor onboarding, study plan, insights, revisions, weekly report, AI usage, AI keys |
+| Content | library browser and detail, books and the reader, syllabus tree and blueprints, courses, learning tracks, today plan, reviews due, goals, downloads |
+| Progress | home dashboard, profile, streak (freeze, repair, insurance, wager), rewards, achievements, leaderboard, gamification |
+| Competition | contests, live events, battle, coaching, EICE, game worlds, missions |
+| Money | wallet, ledger, coin shop, inventory, donations, premium store, wardrobe, referral |
+| Social | invite friends, referral codes, shared challenges, notifications, search |
+| The app itself | privacy choices, stored data, settings, force update, maintenance, offline banner, error and empty states |
 
-247 messages, each written in English, Nepali and Hindi.
+**Four strings in the whole of `lib/` are not translated**, and all four
+are correct:
 
-**Everything else** — the tutor, the coaching dashboard, live events,
-the leaderboard, the economy and store, the library, the syllabus tree,
-the AI settings, the book reader, the game worlds — is still English.
-
-That is **893 user-facing strings** out of 1140.
+| String | Why |
+|---|---|
+| `support@bisaas.com` | An email address, not copy. Translating it would break it. |
+| `OK (cached)` | A synthetic HTTP status message. It is never shown to a user. |
+| The debug auto-login button | It only exists in a `kDebugMode` build, so it is compiled out of a release. |
+| `C` | The avatar fallback: the first letter of the display name. |
 
 ---
 
-## 3. How the gap is kept honest
+## 3. How it is kept honest
 
-Three tools, all checked in:
+Four tools, all checked in:
 
 | Tool | What it does |
 |---|---|
-| `tool/localization_coverage.dart` | Parses every file under `lib/` with the Dart analyzer, finds the string literals that reach the user, and reports which come from the ARB and which are hardcoded English. |
-| `tool/apply_localization.py` | Rewrites the hardcoded literals to `l10n.<key>`, mapping each English string to its ARB key. |
+| `tool/generate_arb.py` | The master copy table. English, Nepali and Hindi sit side by side in one file and the script writes the three ARB files from it, so the locales cannot drift apart. It also **validates** that every `{placeholder}` in a message is declared — a mismatch is a build-time error, not a screen that quietly stayed English. |
+| `tool/localization_coverage.dart` | Parses every file under `lib/` with the Dart analyzer and reports the string literals that reach the user. A literal with no letter in it — a counter, a separator — is skipped, because a screen full of numbers is not untranslated copy. |
+| `tool/apply_localization.py` | Rewrites those literals to `l10n.<key>`. It removes the `const` chain the literal sat in (a getter call is not a constant expression) and calls the generated member with the original interpolated expressions, because a message with placeholders is a method and not a getter. |
 | `tool/apply_localization_plumbing.py` | Adds the import and the `l10n` binding the rewritten strings need. |
-| `tool/generate_arb.py` | The master copy table. English, Nepali and Hindi live side by side in one file, and the script writes the three ARB files from it — so the three locales cannot drift apart. |
 
 And the test that holds the line:
 
-**`test/app/localization_coverage_test.dart`** asserts that the core
-journey contains **zero** hardcoded user-facing strings, and that the
-number outside it does not grow (a ratchet at 893). Adding a screen in
-English changes that number in the diff, so it is a decision rather than
-an invisible drift.
+**`test/app/localization_coverage_test.dart`** asserts that **the whole
+app** contains no hardcoded user-facing string, apart from the four
+documented exceptions. There is no ratchet to widen and no tier to
+finish: the boundary is the edge of the app.
 
 Run the measurement by hand:
 
 ```bash
 dart run tool/localization_coverage.dart            # summary per file
 dart run tool/localization_coverage.dart --verbose  # every string, with a line number
-dart run tool/localization_coverage.dart --keys     # the distinct strings
 ```
 
 ---
@@ -93,37 +96,31 @@ dart run tool/localization_coverage.dart --keys     # the distinct strings
    ```
 
    Outside a widget — a service, a controller, a data source — use
-   `appL10n()` from `lib/app/localization/l10n.dart`, which looks the
-   locale up without a `BuildContext`.
+   `appL10n()` from `lib/app/localization/l10n.dart`, which resolves the
+   locale without a `BuildContext` and cannot throw.
 
 4. If the message has placeholders, the generated member is a **method**,
    not a getter: `l10n.quizResultCorrectOf(correct, total)`.
 
----
-
-## 5. The bits that are not translated, and why
-
-| String | Why |
-|---|---|
-| `support@bisaas.com`, `privacy@bisaas.com` | An address, not copy. Translating it would break it. |
-| The debug auto-login button | Only exists in a `kDebugMode` build. It never reaches a user. |
-| Numbers, separators, counters (`12/20`, `•`, `+50 XP`) | A literal with no word in it cannot be translated. The measurement skips them, so a screen full of counters is not counted as untranslated copy. |
+5. The placeholder types are all `Object`. A narrower type makes the
+   *client* the place where a mismatch is found, and the mismatch is a
+   compile error in a screen that was correct the moment the server
+   changed a field from a count to a label. `Object` accepts whatever
+   the caller has; a nullable value is coalesced at the call site, where
+   the screen knows what to show.
 
 ---
 
-## 6. Known gaps
+## 5. Known gaps
 
-- **The rest of the app is English.** 893 strings across 30-odd screens.
-  The tutor and the coaching dashboard are the largest, and both are
-  secondary to the study loop.
-- **`hi` is offered but thinner than `ne`.** Both have the same 247
-  messages, so the coverage is identical — but the Hindi copy has had
-  less review. If the launch market is Nepal, `hi` could be dropped from
-  the picker until someone has checked it.
+- **`hi` has had less review than `ne`.** Both have the same 993
+  messages, so the coverage is identical, but the launch market is
+  Nepal and the Hindi copy has not been read by a Hindi speaker. If the
+  launch is Nepal-only, dropping `hi` from the picker until someone has
+  checked it is the honest option.
 - **The `zh` locale is deliberately absent.** The server has no `zh`
   row, so offering it would promise translated questions that do not
   exist.
 - **The server drives the question language**, not the client. The
   `Accept-Language` header carries the user's choice, so the *content*
-  is localised even where the *chrome* is not. That is why the picker is
-  worth having even before the chrome is finished.
+  is localised independently of the chrome.
