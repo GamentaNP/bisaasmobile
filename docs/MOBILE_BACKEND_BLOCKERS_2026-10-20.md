@@ -1,5 +1,12 @@
 # Mobile → Backend blocker list (2026-10-20)
 
+> **The actionable version of this document is
+> [`MOBILE_BACKEND_PHASE_PLAN_2026-10-20.md`](MOBILE_BACKEND_PHASE_PLAN_2026-10-20.md)** —
+> it orders the same work into phases the `bisaas` agent can execute one after
+> another, with an acceptance test for each. This file stays as the evidence
+> appendix: every claim below is anchored to a file and line in
+> `C:\laragon\www\bisaas`.
+
 Everything on this list is a **server-side** gap. The Flutter client at
 `C:\laragon\www\bisaasmobile` is correct and ready for each of these; until
 the server changes, the corresponding mobile surface is degraded or blocked.
