@@ -191,7 +191,10 @@ android {
         // native library — filtering cannot produce a half-linked APK.
         if (buildingRelease) {
             ndk {
-                abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+                // `clear()` first: the set is authoritative here, so a slice
+                // added by anything else cannot sneak back in.
+                abiFilters.clear()
+                abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
             }
         }
     }

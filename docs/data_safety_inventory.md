@@ -25,6 +25,7 @@ signal all leave the device before the user has chosen anything.
 | Do you provide a way for users to request that their data is deleted? | **Yes** | in-app erasure at Settings → Privacy → Data stored about this device (`lib/features/privacy/presentation/privacy_data_screen.dart`), plus `DELETE /api/v1/visitor-data` and account deletion by email |
 | Is the data collected shared with third parties? | **Yes, limited** | Firebase (Google) — crash reporting, analytics, push. No data is shared for advertising. |
 | Is data collected used for tracking? | **No** | no advertising SDK, no cross-app tracking, `NSPrivacyTracking = false` |
+| Does the app collect the **Advertising ID**? | **No** | The advertising-id permissions that Firebase's measurement libraries merge in are removed at manifest-merge time (`tools:node="remove"` in `android/app/src/main/AndroidManifest.xml`). Without them the Firebase installation id is a random UUID rather than a value derived from the advertising id, so the app cannot identify a user across apps. See §3.3. |
 | Do you offer a way to opt out of analytics? | **Yes** | Settings → Privacy → Analytics, and the consent sheet on first launch |
 
 **Data is not sold, and it is not used for advertising or advertising
@@ -81,6 +82,7 @@ breaking the product. It is deleted when you delete your account.
 | Data | Exact form | Where it is produced | Play category |
 |---|---|---|---|
 | **Install id** | A random UUID v4 generated on the device and kept in the platform keystore/keychain. It is not derived from hardware, so it cannot be used to fingerprint a device, and it resets when the app is uninstalled. | `X-Install-Id` on every request — `lib/core/network/install_identity_interceptor.dart:77` | Identifiers → Device ID |
+| **Firebase installation id** | Firebase's own per-install identifier. With the advertising-id permissions removed it is a random UUID, not a value derived from the user's advertising id — so it identifies this install and nothing else. | Firebase Analytics / Crashlytics | Identifiers → Device ID |
 | **Push token** | The Firebase Cloud Messaging registration token for this install | `POST /api/v1/device-tokens` — `lib/core/notifications/push_notification_service.dart:197`; deleted on logout via `DELETE /api/v1/device-tokens/{token}` (`:226`) | Identifiers → Device ID |
 | **Device name** | A stable, human-readable name for this install (e.g. "Redmi 6A") | `X-Device-Name` on login and token refresh — `lib/core/network/auth_interceptor.dart:30` | Identifiers → Device ID |
 | **App version, platform** | `1.0.2`, `android` / `ios` | `X-App-Version`, `X-Platform` — `install_identity_interceptor.dart:82` | Diagnostics |
@@ -116,6 +118,10 @@ account — at which point the account-level deletion applies instead.
   rules exclude everything, so the bearer token and the cached quiz
   answers never leave the device — not even through a device-to-device
   transfer on an OEM build that ignores the manifest flag.
+- It does **not** read the advertising id. `com.google.android.gms.permission.AD_ID`
+  and `android.permission.ACCESS_ADSERVICES_AD_ID` arrive with Firebase's
+  measurement libraries and are removed at manifest-merge time, so the
+  app cannot link a user across apps even by accident.
 
 ---
 

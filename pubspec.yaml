@@ -57,6 +57,14 @@ dependencies:
   cached_network_image: ^4.0.0
   image_picker: ^1.1.2
 
+  # The Cupertino icon font. The app does not use a Cupertino widget, but
+  # `GlobalCupertinoLocalizations.delegate` — which the generated
+  # localisations always register — makes the icon tree-shaker look for
+  # `packages/cupertino_icons/CupertinoIcons` and warn that the font is
+  # missing on every build. The font is tree-shaken back down to the icons
+  # that are actually referenced.
+  cupertino_icons: ^1.0.8
+
   # === CONNECTIVITY ===
   connectivity_plus: ^7.3.1
 
