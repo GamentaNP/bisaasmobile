@@ -1,5 +1,25 @@
 # Backend phase plan — mobile parity (bisaas)
 
+> **Status: EXECUTED 2026-10-20.** Every phase below was closed by the
+> `bisaas` agent and the client work that was waiting on them has been
+> finished. This document is kept as the record of *what was asked for and
+> why*, so the reasoning survives even though the plan is done.
+>
+> What the server changes enabled on the client:
+>
+> | Phase | Client work it unblocked |
+> |---|---|
+> | 0.1 `ai:chat` + 0.2 `quiz_gateway` | the calculator assistant panel now gets answers instead of a 403 |
+> | 1.1 sandbox questions + 1.2 the flag | the guest share challenge is **playable** — questions, answers, verdicts, result |
+> | 2 bookmark `options` | a bookmark drill grades **the user's own bookmarks** |
+> | 3 `GET /quiz/attempts/{attempt}` | a drill can be resumed from an attempt id |
+> | 4 `topic_id` filter | a topic drill returns topic-scoped questions, not text-matched ones |
+> | 5.1 hourly rollup | "Your AI usage" is meaningful within the hour, not the next day |
+> | 5.2 `tutor_conversations` scope | the stat is labelled for what it is |
+> | 5.3 daily report card | the weekly card exists within a day |
+> | 6 the three share kinds | the client can render achievement, calculator and challenge moments |
+> | 7.1 the permalink route | a calculator result shares through the canonical route |
+
 **Audience:** the `bisaas` (Laravel) agent.
 **Requester:** the Flutter client at `C:\laragon\www\bisaasmobile`.
 **Date:** 2026-10-20.
