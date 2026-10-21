@@ -8,6 +8,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../domain/entities/leaderboard.dart';
 import '../controllers/leaderboard_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Leaderboard — global/friends/league + my-rank + donors.
 /// Uses `GET /quiz/leaderboards/{id}`, `GET /quiz/leaderboards/my-rank`,
@@ -61,24 +62,25 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> with Sing
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(leaderboardControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Leaderboard'),
+        title: Text(l10n.commonLeaderboard),
         bottom: TabBar(
           controller: _tab,
           isScrollable: false,
-          tabs: const [
-            Tab(text: 'Global'),
-            Tab(text: 'Friends'),
-            Tab(text: 'League'),
-            Tab(text: 'Donors'),
+          tabs: [
+            Tab(text: l10n.leaderboardGlobal),
+            Tab(text: l10n.leaderboardFriends),
+            Tab(text: l10n.leaderboardLeague),
+            Tab(text: l10n.leaderboardDonors),
           ],
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => _onRefresh(), tooltip: 'Refresh'),
+          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => _onRefresh(), tooltip: l10n.streakRefresh),
         ],
       ),
       body: RefreshIndicator(
@@ -104,16 +106,17 @@ class _MyRankCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (myRanks.isEmpty) {
       return Container(
         margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3))),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.emoji_events_rounded, color: AppColors.xpGold),
             SizedBox(width: 10),
-            Expanded(child: Text('No rank yet — complete a quiz to enter the leaderboard.', style: TextStyle(fontSize: 12))),
+            Expanded(child: Text(l10n.leaderboardNoRank, style: TextStyle(fontSize: 12))),
           ],
         ),
       );
@@ -151,9 +154,9 @@ class _MyRankCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('MY RANK', style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.8)),
-                Text(rank != null ? '#$rank in ${display.leaderboard.name}' : 'Unranked in ${display.leaderboard.name}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
-                if (display.score != null) Text('Score: ${display.score!.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600)),
+                Text(l10n.leaderboardMyRank, style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.8)),
+                Text(rank != null ? l10n.leaderboardRankIn(rank, display.leaderboard.name) : l10n.leaderboardUnrankedIn(display.leaderboard.name), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+                if (display.score != null) Text(l10n.leaderboardScore(display.score!.toStringAsFixed(0)), style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600)),
               ],
             ),
           ),
@@ -172,6 +175,7 @@ class _GlobalTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Filter global leaderboards for picker
     final globalRanks = state.myRanks.where((r) => r.leaderboard.scope == 'global').toList();
     final leaderboardOptions = globalRanks.isNotEmpty ? globalRanks.map((r) => r.leaderboard).toList() : state.myRanks.map((r) => r.leaderboard).toList();
@@ -203,9 +207,9 @@ class _GlobalTab extends ConsumerWidget {
         if (state.isLoading) const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
         if (state.error != null) Padding(padding: const EdgeInsets.all(16), child: ErrorView(message: state.error!, onRetry: () => state.selectedLeaderboardId != null ? ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(state.selectedLeaderboardId!) : ref.read(leaderboardControllerProvider.notifier).fetchMyRanks())),
         if (!state.isLoading && state.entries.isEmpty && state.error == null)
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(16),
-            child: EmptyState(title: 'No entries yet', subtitle: 'Be the first to claim the top spot!', icon: Icons.leaderboard_rounded),
+            child: EmptyState(title: l10n.leaderboardNoEntries, subtitle: l10n.leaderboardBeFirst, icon: Icons.leaderboard_rounded),
           ),
         ...state.entries.map((e) => _EntryTile(entry: e, myRank: state.myRank)),
         const SizedBox(height: 24),
@@ -222,6 +226,7 @@ class _FriendsLeagueTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final filtered = state.myRanks.where((r) => r.leaderboard.scope == scope).toList();
     if (filtered.isEmpty && !state.isMyRankLoading) {
       return ListView(
@@ -230,8 +235,8 @@ class _FriendsLeagueTab extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(24),
             child: EmptyState(
-              title: scope == 'friends' ? 'Friends leaderboard' : 'League leaderboard',
-              subtitle: scope == 'friends' ? 'Add friends to compete — server segments friends automatically.' : 'League is seasonal — join via events/contests to qualify.',
+              title: scope == 'friends' ? l10n.leaderboardFriendsTitle : l10n.leaderboardLeagueTitle,
+              subtitle: scope == 'friends' ? l10n.leaderboardFriendsHint : l10n.leaderboardLeagueHint,
               icon: scope == 'friends' ? Icons.group_rounded : Icons.shield_rounded,
             ),
           ),
@@ -262,7 +267,7 @@ class _FriendsLeagueTab extends ConsumerWidget {
         if (state.isLoading) const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
         if (state.error != null) Padding(padding: const EdgeInsets.all(16), child: ErrorView(message: state.error!, onRetry: () => state.selectedLeaderboardId != null ? ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(state.selectedLeaderboardId!) : null)),
         if (!state.isLoading && entriesToShow.isEmpty && state.error == null && filtered.isNotEmpty)
-          const Padding(padding: EdgeInsets.all(16), child: EmptyState(title: 'No entries', subtitle: 'Compete to appear here.', icon: Icons.leaderboard_outlined)),
+          Padding(padding: EdgeInsets.all(16), child: EmptyState(title: l10n.leaderboardNoEntriesShort, subtitle: l10n.leaderboardCompeteToAppear, icon: Icons.leaderboard_outlined)),
         ...entriesToShow.map((e) => _EntryTile(entry: e, myRank: state.myRank)),
         const SizedBox(height: 24),
       ],
@@ -277,6 +282,7 @@ class _DonorsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isDonorLoading && state.donorEntries.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -284,7 +290,7 @@ class _DonorsTab extends ConsumerWidget {
       return ListView(children: [const SizedBox(height: 80), ErrorView(message: state.donorError!, onRetry: () => ref.read(leaderboardControllerProvider.notifier).fetchDonationLeaderboard())]);
     }
     if (state.donorEntries.isEmpty) {
-      return const Center(child: EmptyState(title: 'No donors yet', subtitle: 'Support the platform to appear here.', icon: Icons.favorite_rounded));
+      return Center(child: EmptyState(title: l10n.leaderboardNoDonors, subtitle: l10n.leaderboardSupportToAppear, icon: Icons.favorite_rounded));
     }
     return ListView.separated(
       padding: const EdgeInsets.all(12),
@@ -331,7 +337,7 @@ class _DonorsTab extends ConsumerWidget {
                         if (d.streakMonths > 0) ...[
                           const SizedBox(width: 6),
                           const Icon(Icons.local_fire_department_rounded, size: 14, color: AppColors.streakOrange),
-                          Text('${d.streakMonths}m', style: const TextStyle(fontSize: 11, color: AppColors.streakOrange)),
+                          Text(l10n.leaderboardMonthsShort(d.streakMonths), style: const TextStyle(fontSize: 11, color: AppColors.streakOrange)),
                         ],
                       ],
                     ),
@@ -354,6 +360,7 @@ class _EntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isMe = entry.isMe || (myRank != null && entry.rank == myRank);
@@ -438,7 +445,7 @@ class _EntryTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Score ${entry.score.toStringAsFixed(0)} • ${entry.attemptsCount} attempts',
+                  l10n.leaderboardScoreAttempts(entry.score.toStringAsFixed(0), entry.attemptsCount),
                   style: TextStyle(fontSize: 12, color: isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight, fontWeight: FontWeight.w600),
                 ),
               ],

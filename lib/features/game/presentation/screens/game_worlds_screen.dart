@@ -10,6 +10,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../data/models/game_models.dart';
 import '../../game_providers.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// World picker — `GET /api/v1/quiz/game/worlds`.
 ///
@@ -21,23 +22,24 @@ class GameWorldsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final worldsAsync = ref.watch(gameWorldsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Worlds')),
+      appBar: AppBar(title: Text(l10n.gameWorldsTitle)),
       body: worldsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
-          title: 'Could not load worlds',
+          title: l10n.gameWorldsLoadFailed,
           message: '$e',
           onRetry: () => ref.invalidate(gameWorldsProvider),
         ),
         data: (worlds) {
           if (worlds.isEmpty) {
-            return const Center(
+            return Center(
               child: EmptyState(
-                title: 'No worlds yet',
-                subtitle: 'The server has not published any game worlds.',
+                title: l10n.gameNoWorlds,
+                subtitle: l10n.gameNoWorldsBody,
                 icon: Icons.public_rounded,
               ),
             );
@@ -64,6 +66,7 @@ class _WorldCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final locked = !world.isUnlocked;
     final muted = isDark ? AppColors.textTertiaryDark : AppColors.textSecondaryLight;
@@ -160,7 +163,7 @@ class _WorldCard extends StatelessWidget {
                 ],
                 if (locked && world.accessMode == 'plan_required') ...[
                   const SizedBox(height: 8),
-                  Text('Requires a subscription plan.', style: AppTypography.bodySmall.copyWith(color: muted)),
+                  Text(l10n.gameNeedsSubscription, style: AppTypography.bodySmall.copyWith(color: muted)),
                 ],
               ],
             ),

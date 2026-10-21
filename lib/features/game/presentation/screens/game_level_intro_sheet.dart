@@ -7,6 +7,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../shared/widgets/chunky/chunky_button.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../data/models/game_models.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Pre-level briefing sheet for a world-map level node.
 ///
@@ -38,6 +39,7 @@ class GameLevelIntroSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final face = isDark ? AppColors.cardDark : AppColors.surfaceLight;
     final side = isDark ? AppColors.dividerDark : AppColors.dividerLight;
@@ -81,12 +83,12 @@ class GameLevelIntroSheet extends StatelessWidget {
                         Text(
                           level.title?.trim().isNotEmpty == true
                               ? level.title!.trim()
-                              : 'Level ${level.levelNumber}',
+                              : l10n.gameLevelLabel(level.levelNumber),
                           style: AppTypography.titleLarge.copyWith(color: heading),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          level.isBoss ? 'Boss level' : 'Chapter level',
+                          level.isBoss ? l10n.gameBossLevel : l10n.gameChapterLevel,
                           style: AppTypography.bodySmall.copyWith(
                             color: level.isBoss ? AppColors.streakOrange : muted,
                             fontWeight: FontWeight.w700,
@@ -113,7 +115,7 @@ class GameLevelIntroSheet extends StatelessWidget {
                       child: _StatTile(
                         icon: Icons.help_outline_rounded,
                         label: '${level.questionCount}',
-                        caption: 'Questions',
+                        caption: l10n.quizIntroQuestions,
                         color: AppColors.brandAccent,
                       ),
                     ),
@@ -124,7 +126,7 @@ class GameLevelIntroSheet extends StatelessWidget {
                       child: _StatTile(
                         icon: Icons.bolt,
                         label: '${level.xpReward}',
-                        caption: 'XP',
+                        caption: l10n.quizXp,
                         color: AppColors.xpGold,
                       ),
                     ),
@@ -135,7 +137,7 @@ class GameLevelIntroSheet extends StatelessWidget {
                       child: _StatTile(
                         icon: Icons.monetization_on,
                         label: '${level.coinReward}',
-                        caption: 'Coins',
+                        caption: l10n.quizResultCoins,
                         color: AppColors.coinYellow,
                       ),
                     ),
@@ -145,7 +147,7 @@ class GameLevelIntroSheet extends StatelessWidget {
                   level.xpReward <= 0 &&
                   level.coinReward <= 0)
                 Text(
-                  'The server sent no reward data for this level yet.',
+                  l10n.gameNoRewardData,
                   style: AppTypography.bodySmall.copyWith(color: muted),
                 ),
               if (level.difficultyBand != null || level.timeLimitSeconds != null) ...[
@@ -161,7 +163,7 @@ class GameLevelIntroSheet extends StatelessWidget {
                       ),
                     if (level.timeLimitSeconds != null && level.timeLimitSeconds! > 0)
                       _Chip(
-                        text: '${level.timeLimitSeconds}s per question',
+                        text: l10n.gameSecondsPerQuestion(level.timeLimitSeconds ?? 0),
                         color: AppColors.lifelineCyan,
                       ),
                   ],
@@ -191,15 +193,15 @@ class GameLevelIntroSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (level.bestScore != null)
-                        _BestStat(label: 'Best score', value: level.bestScore!.toStringAsFixed(1)),
+                        _BestStat(label: l10n.gameBestScore, value: level.bestScore!.toStringAsFixed(1)),
                       if (level.bestAccuracyPct != null)
                         _BestStat(
-                          label: 'Best accuracy',
+                          label: l10n.gameBestAccuracy,
                           value: '${level.bestAccuracyPct!.toStringAsFixed(0)}%',
                         ),
                       if (level.bestTimeSeconds != null)
                         _BestStat(
-                          label: 'Best time',
+                          label: l10n.gameBestTime,
                           value: '${level.bestTimeSeconds}s',
                         ),
                     ],
@@ -208,7 +210,7 @@ class GameLevelIntroSheet extends StatelessWidget {
               ],
               const SizedBox(height: 20),
               ChunkyButton(
-                label: playable ? 'Start level' : 'Not playable yet',
+                label: playable ? l10n.gameStartLevel : l10n.gameNotPlayable,
                 icon: playable ? Icons.play_arrow_rounded : Icons.lock_rounded,
                 variant: level.isBoss ? ChunkyVariant.warning : ChunkyVariant.primary,
                 onPressed: playable ? () => _start(context) : null,
@@ -216,8 +218,7 @@ class GameLevelIntroSheet extends StatelessWidget {
               if (!playable) ...[
                 const SizedBox(height: 10),
                 Text(
-                  'This world has no quiz course linked to it yet, so there is '
-                  "nothing to play. Ask an admin to set the world's course.",
+                  l10n.gameWorldNoCourse,
                   textAlign: TextAlign.center,
                   style: AppTypography.bodySmall.copyWith(color: muted),
                 ),

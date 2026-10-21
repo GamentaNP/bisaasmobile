@@ -950,9 +950,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileEiceSub => 'coach • triage • sprint';
 
   @override
-  String get profilePsc => 'PSC / Loksewa';
-
-  @override
   String get profilePscSub => 'exam blueprints & syllabus';
 
   @override
@@ -980,13 +977,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileCoachingSub => 'weak areas • readiness • sprint';
 
   @override
-  String get profileSearch => 'Search';
-
-  @override
   String get profileSearchSub => 'find any question';
-
-  @override
-  String get profileNotifications => 'Notifications';
 
   @override
   String get profileNotificationsSub => 'activity & reminders';
@@ -2135,6 +2126,1442 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get practiceNoEffectNote =>
       'Practice is untimed and carries no score, XP, coins or streak effect.';
+
+  @override
+  String get liveEventNotFound => 'Live event not found';
+
+  @override
+  String liveEventParticipant(Object number, Object status, Object score) {
+    return 'Participant #$number • $status • Score $score';
+  }
+
+  @override
+  String get liveEventSnapshot => 'Snapshot';
+
+  @override
+  String get liveEventNoSnapshot =>
+      'No snapshot yet — register and check in to load current question.';
+
+  @override
+  String get liveEventAnswer => 'Answer';
+
+  @override
+  String get liveEventQIndex => 'Q index';
+
+  @override
+  String get liveEventSubmitAnswer => 'Submit Answer';
+
+  @override
+  String get liveEventNoLeaderboard => 'No leaderboard yet.';
+
+  @override
+  String get liveEventRegistered => 'Registered!';
+
+  @override
+  String get liveEventRegisterFailed => 'Register failed';
+
+  @override
+  String get liveEventUnregistered => 'Unregistered';
+
+  @override
+  String get liveEventUnregisterFailed => 'Unregister failed';
+
+  @override
+  String get liveEventCheckedIn => 'Checked in!';
+
+  @override
+  String get liveEventCheckInFailed => 'Check-in failed';
+
+  @override
+  String get liveEventEnterAnswer => 'Enter an answer';
+
+  @override
+  String liveEventAnswerRecorded(Object score) {
+    return 'Answer recorded — score $score';
+  }
+
+  @override
+  String liveEventQuestionsEach(Object questions, Object seconds) {
+    return '$questions Qs • ${seconds}s each';
+  }
+
+  @override
+  String liveEventActive(Object count) {
+    return '$count active';
+  }
+
+  @override
+  String liveEventWaitlisted(Object count) {
+    return '$count waitlisted';
+  }
+
+  @override
+  String liveEventStarts(Object date, Object hour, Object minute) {
+    return 'Starts $date $hour:$minute';
+  }
+
+  @override
+  String liveEventEnds(Object date) {
+    return 'Ends $date';
+  }
+
+  @override
+  String liveEventEntryFee(Object coins) {
+    return '$coins entry';
+  }
+
+  @override
+  String liveEventPrize(Object coins) {
+    return '$coins prize';
+  }
+
+  @override
+  String get liveEventLeave => 'Leave';
+
+  @override
+  String get liveEventCheckIn => 'Check-in';
+
+  @override
+  String liveEventScoreMeta(Object score, Object correct, Object total) {
+    return 'Score $score • $correct/$total';
+  }
+
+  @override
+  String liveEventQuestionPoints(Object number, Object points) {
+    return 'Q$number • $points pts';
+  }
+
+  @override
+  String liveEventRemaining(Object seconds, Object locks) {
+    return 'Remaining: ${seconds}s • Locks at $locks';
+  }
+
+  @override
+  String get liveEventWaitingForHost =>
+      'No current question — waiting for host.';
+
+  @override
+  String liveEventRawKeys(Object keys) {
+    return 'Raw keys: $keys';
+  }
+
+  @override
+  String get coachingTutorChat => 'Tutor chat';
+
+  @override
+  String get coachingStudyPlan => 'Study plan';
+
+  @override
+  String get coachingTutorOnboarding => 'Tutor onboarding';
+
+  @override
+  String get coachingGoalIdHint => 'Goal ID for readiness (e.g., psc-civil)';
+
+  @override
+  String get coachingLoad => 'Load';
+
+  @override
+  String get coachingNoData =>
+      'No coaching data yet — complete onboarding or chat with tutor to seed.';
+
+  @override
+  String get coachingPartial =>
+      'Some coaching surfaces are temporarily unavailable — showing available data.';
+
+  @override
+  String get coachingNoReadinessForGoal =>
+      'Readiness: no data for this goal yet.';
+
+  @override
+  String get coachingAskTutor => 'Ask tutor';
+
+  @override
+  String get coachingOnboarding => 'Onboarding';
+
+  @override
+  String get coachingReadinessExplained =>
+      'Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.';
+
+  @override
+  String get coachingReadiness => 'Readiness';
+
+  @override
+  String get coachingFocusNext => 'Focus next:';
+
+  @override
+  String get coachingNoReadiness =>
+      'No readiness yet — attempt a few quizzes under this goal.';
+
+  @override
+  String coachingGoalLabel(Object goal) {
+    return 'Goal $goal';
+  }
+
+  @override
+  String coachingMore(Object count) {
+    return '+ $count more';
+  }
+
+  @override
+  String get coachingNoTasksToday => 'No tasks today';
+
+  @override
+  String coachingConfidence(Object confidence) {
+    return 'Confidence $confidence%';
+  }
+
+  @override
+  String get coachingLearningTracks => 'Learning tracks';
+
+  @override
+  String get coachingThisWeek => 'This week';
+
+  @override
+  String coachingWeekTasks(Object done, Object total, Object average) {
+    return '$done/$total tasks • avg $average';
+  }
+
+  @override
+  String get coachingNoRevisions => 'No revisions due';
+
+  @override
+  String coachingRevisionsDue(Object count) {
+    return '$count revisions due';
+  }
+
+  @override
+  String get socialInviteFriends => 'Invite friends';
+
+  @override
+  String get socialReferralUnavailable =>
+      'Referral information is unavailable right now.';
+
+  @override
+  String socialEarnCoins(Object coins) {
+    return 'Earn $coins coins';
+  }
+
+  @override
+  String get socialNo => 'No';
+
+  @override
+  String get socialYourInviteCode => 'Your invite code';
+
+  @override
+  String get socialShareInviteLink => 'Share invite link';
+
+  @override
+  String get socialCopyCode => 'Copy code';
+
+  @override
+  String get socialRewards => 'Rewards';
+
+  @override
+  String get socialRewardPerSignup => 'You earn per friend who signs up';
+
+  @override
+  String get socialTheyEarn => 'They earn when they sign up';
+
+  @override
+  String get socialBonusFirstQuiz => 'Bonus when they finish their first quiz';
+
+  @override
+  String get socialYourReferrals => 'Your referrals';
+
+  @override
+  String get socialInvited => 'invited';
+
+  @override
+  String get socialRewarded => 'rewarded';
+
+  @override
+  String get socialCoinsEarned => 'coins earned';
+
+  @override
+  String get socialNoReferralsYet => 'No one has used your code yet.';
+
+  @override
+  String socialRewardPaid(Object coins) {
+    return 'Reward paid: $coins coins';
+  }
+
+  @override
+  String socialStatus(Object status) {
+    return 'Status: $status';
+  }
+
+  @override
+  String get socialGotCode => 'Got a code from a friend?';
+
+  @override
+  String get socialReferralCode => 'Referral code';
+
+  @override
+  String get socialApplyCode => 'Apply code';
+
+  @override
+  String get socialShareSheetFailed => 'Could not open the share sheet';
+
+  @override
+  String get socialCodeCopied => 'Code copied';
+
+  @override
+  String get socialSharedChallenge => 'Shared challenge';
+
+  @override
+  String get socialSomeoneShared => 'Someone shared a challenge with you';
+
+  @override
+  String socialSharedBy(Object name) {
+    return 'Shared by $name';
+  }
+
+  @override
+  String get socialLinkExpired => 'This link has expired.';
+
+  @override
+  String get socialNoPlayableChallenge => 'No playable challenge here';
+
+  @override
+  String get socialNotPlayable =>
+      'This link does not offer a playable challenge. You can still browse the public catalogue.';
+
+  @override
+  String get socialPlayChallenge => 'Play the challenge';
+
+  @override
+  String get socialGuestNeverAwards =>
+      'A guest challenge never awards coins, XP or streak. Create a free account to keep your progress.';
+
+  @override
+  String get socialChallengeNoQuestions => 'This challenge has no questions';
+
+  @override
+  String get socialChallengeEmpty =>
+      'The server opened the attempt without sending any questions, so there is nothing to play.';
+
+  @override
+  String socialQuestionOf(Object current, Object total) {
+    return 'Question $current of $total';
+  }
+
+  @override
+  String get socialCorrect => 'Correct.';
+
+  @override
+  String get socialNotThisTime => 'Not this time — the server has marked it.';
+
+  @override
+  String get socialSubmitAnswer => 'Submit answer';
+
+  @override
+  String get socialFinish => 'Finish';
+
+  @override
+  String get socialNext => 'Next';
+
+  @override
+  String get socialChallengeComplete => 'Challenge complete';
+
+  @override
+  String socialYouScored(Object score) {
+    return 'You scored $score';
+  }
+
+  @override
+  String socialChallengeSummary(
+    Object correct,
+    Object wrong,
+    Object skipped,
+    Object questions,
+  ) {
+    return '$correct correct • $wrong wrong • $skipped skipped • $questions questions';
+  }
+
+  @override
+  String get socialGuestChallengeNote =>
+      'A guest challenge never awards coins, XP or streak.';
+
+  @override
+  String socialNiceOne(Object name) {
+    return 'Nice one — that was $name\'s challenge. A guest challenge never awards coins, XP or streak.';
+  }
+
+  @override
+  String get socialCreateAccount => 'Create a free account';
+
+  @override
+  String get socialBrowseSamples => 'Browse sample questions';
+
+  @override
+  String get contestNotFound => 'Contest not found';
+
+  @override
+  String contestAttemptStarted(Object number, Object expires) {
+    return 'Attempt #$number started. Expires: $expires';
+  }
+
+  @override
+  String get contestNoLeaderboard =>
+      'No leaderboard entries yet — be the first!';
+
+  @override
+  String contestGeneratedMeta(Object generated, Object budget, Object mode) {
+    return 'Generated: $generated • Refresh budget: $budget • $mode';
+  }
+
+  @override
+  String get contestRecap => 'Recap';
+
+  @override
+  String get contestWinners => 'Winners';
+
+  @override
+  String contestRawStats(Object count) {
+    return 'Raw stats: $count keys';
+  }
+
+  @override
+  String get contestRecapPending => 'Recap available after contest ends.';
+
+  @override
+  String get contestJoined => 'Joined contest!';
+
+  @override
+  String get contestJoinFailed => 'Join failed';
+
+  @override
+  String get contestLeft => 'Left contest';
+
+  @override
+  String get contestLeaveFailed => 'Leave failed';
+
+  @override
+  String get contestRegisteredBadge => 'REGISTERED';
+
+  @override
+  String contestMax(Object count) {
+    return 'Max $count';
+  }
+
+  @override
+  String contestStarts(Object date) {
+    return 'Starts $date';
+  }
+
+  @override
+  String get contestJoinFree => 'Join (Free)';
+
+  @override
+  String contestJoinCoins(Object coins) {
+    return 'Join ($coins coins)';
+  }
+
+  @override
+  String get contestEnter => 'Enter Contest';
+
+  @override
+  String get leaderboardGlobal => 'Global';
+
+  @override
+  String get leaderboardFriends => 'Friends';
+
+  @override
+  String get leaderboardLeague => 'League';
+
+  @override
+  String get leaderboardDonors => 'Donors';
+
+  @override
+  String get leaderboardNoRank =>
+      'No rank yet — complete a quiz to enter the leaderboard.';
+
+  @override
+  String get leaderboardMyRank => 'MY RANK';
+
+  @override
+  String leaderboardRankIn(Object rank, Object scope) {
+    return '#$rank in $scope';
+  }
+
+  @override
+  String leaderboardUnrankedIn(Object scope) {
+    return 'Unranked in $scope';
+  }
+
+  @override
+  String leaderboardScore(Object score) {
+    return 'Score: $score';
+  }
+
+  @override
+  String get leaderboardNoEntries => 'No entries yet';
+
+  @override
+  String get leaderboardBeFirst => 'Be the first to claim the top spot!';
+
+  @override
+  String get leaderboardFriendsHint =>
+      'Add friends to compete — server segments friends automatically.';
+
+  @override
+  String get leaderboardLeagueHint =>
+      'League is seasonal — join via events/contests to qualify.';
+
+  @override
+  String get leaderboardNoEntriesShort => 'No entries';
+
+  @override
+  String get leaderboardCompeteToAppear => 'Compete to appear here.';
+
+  @override
+  String get leaderboardNoDonors => 'No donors yet';
+
+  @override
+  String get leaderboardSupportToAppear =>
+      'Support the platform to appear here.';
+
+  @override
+  String leaderboardScoreAttempts(Object score, Object attempts) {
+    return 'Score $score • $attempts attempts';
+  }
+
+  @override
+  String learningGoalLabel(Object number) {
+    return 'Goal #$number';
+  }
+
+  @override
+  String get learningToday => 'Today';
+
+  @override
+  String get learningGoalId => 'Goal ID';
+
+  @override
+  String get learningTrackId => 'Track ID';
+
+  @override
+  String get learningTargetDate => 'Target date';
+
+  @override
+  String get learningDailyMinutes => 'Daily minutes';
+
+  @override
+  String get learningIntensity => 'Intensity';
+
+  @override
+  String get learningPlacement => 'Placement';
+
+  @override
+  String learningMastery(Object percent, Object topics) {
+    return '$percent% mastery across $topics topics (MasteryService::computeReadiness)';
+  }
+
+  @override
+  String learningReadinessValue(Object value) {
+    return 'Readiness: $value';
+  }
+
+  @override
+  String get learningDeleteGoalTitle => 'Delete goal?';
+
+  @override
+  String get learningDeleteGoalBody =>
+      'This will permanently delete the goal. Daily plans remain but no new plans will be built.';
+
+  @override
+  String get learningGoalDeleted => 'Goal deleted';
+
+  @override
+  String get learningDeleting => 'Deleting…';
+
+  @override
+  String get learningDeleteGoal => 'Delete goal';
+
+  @override
+  String get learningOpenTodayPlan => 'Open Today plan';
+
+  @override
+  String get learningBackToTracks => 'Back to tracks';
+
+  @override
+  String get learningTodaysPlan => 'Today\'s Plan';
+
+  @override
+  String get learningNoActiveGoal => 'No active goal';
+
+  @override
+  String get learningNoActiveGoalBody =>
+      'Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.';
+
+  @override
+  String get learningBrowseTracks => 'Browse tracks';
+
+  @override
+  String learningPlanLabel(Object number) {
+    return 'Plan #$number';
+  }
+
+  @override
+  String learningPlanGoal(Object meta, Object number) {
+    return '$meta • Goal #$number';
+  }
+
+  @override
+  String learningCompletedCount(Object done, Object total) {
+    return '$done/$total completed';
+  }
+
+  @override
+  String learningMinBudget(Object minutes) {
+    return '$minutes min budget';
+  }
+
+  @override
+  String get learningNoTasksBody =>
+      'Check back tomorrow — daily autopilot builds Review-first + new topics.';
+
+  @override
+  String learningMinutes(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get learningItemCompleted => 'Item completed';
+
+  @override
+  String get learningReviewsDue => 'Reviews due';
+
+  @override
+  String get learningTitle => 'Learning';
+
+  @override
+  String get learningReviewsCountFailed =>
+      'Could not load your reviews due count';
+
+  @override
+  String get learningTracks => 'Tracks';
+
+  @override
+  String get learningNoTracks =>
+      'No tracks yet — they are published by our team as they finish';
+
+  @override
+  String get learningAskAiTutor => 'Ask AI Tutor';
+
+  @override
+  String get learningStreamingNote =>
+      'Answers come back a little at a time rather than all at once, so you can start reading straight away.';
+
+  @override
+  String get learningNoTasks => 'No tasks — check back tomorrow';
+
+  @override
+  String learningReviewsDueSrs(Object count) {
+    return '$count reviews due (SRS)';
+  }
+
+  @override
+  String get learningReviewAction => 'Review';
+
+  @override
+  String learningGoalCreatedForTrack(Object number) {
+    return 'Goal created for track #$number';
+  }
+
+  @override
+  String get learningTracksTitle => 'Learning Tracks';
+
+  @override
+  String get learningTodayPlan => 'Today plan';
+
+  @override
+  String learningNodesCount(Object count) {
+    return '$count nodes';
+  }
+
+  @override
+  String learningGoalsCount(Object count) {
+    return '$count goals';
+  }
+
+  @override
+  String get learningCreating => 'Creating…';
+
+  @override
+  String get learningCreateGoal => 'Create goal';
+
+  @override
+  String get learningReviewsDueTitle => 'Reviews Due';
+
+  @override
+  String get learningAllCaughtUp =>
+      'You are all caught up! FSRS will schedule the next reviews after you master new atoms.';
+
+  @override
+  String learningReviewMeta(Object number, Object atom, Object state) {
+    return 'Review #$number • atom $atom • $state';
+  }
+
+  @override
+  String learningInterval(Object index) {
+    return 'I$index';
+  }
+
+  @override
+  String learningDueDate(Object date) {
+    return 'Due $date';
+  }
+
+  @override
+  String learningLapses(Object count) {
+    return '$count lapses';
+  }
+
+  @override
+  String get learningGradeAgain => 'Again';
+
+  @override
+  String get learningGradeHard => 'Hard';
+
+  @override
+  String get learningGradeGood => 'Good';
+
+  @override
+  String get learningGradeEasy => 'Easy';
+
+  @override
+  String get learningGradingNote =>
+      'Grading is recorded safely, and your next review date is worked out for you. Double-tapping cannot lose your progress.';
+
+  @override
+  String get syllabusTitle => 'Syllabus';
+
+  @override
+  String get syllabusNoNodes => 'This syllabus has no published nodes yet.';
+
+  @override
+  String get syllabusExaminable => 'examinable';
+
+  @override
+  String get syllabusQuestions => 'questions';
+
+  @override
+  String get syllabusPaperBlueprint => 'Paper blueprint';
+
+  @override
+  String syllabusPapersCount(Object count) {
+    return '$count papers';
+  }
+
+  @override
+  String syllabusMarksQuestions(Object marks, Object questions) {
+    return '$marks marks · $questions questions';
+  }
+
+  @override
+  String syllabusNegativeMarking(Object mode) {
+    return 'Negative marking: $mode';
+  }
+
+  @override
+  String syllabusMarks(Object marks) {
+    return '$marks marks';
+  }
+
+  @override
+  String get syllabusBlueprintMismatch =>
+      'The section marks do not add up to the paper total. Treat this blueprint as unverified.';
+
+  @override
+  String syllabusCoversTopics(Object count) {
+    return 'Covers $count syllabus topics';
+  }
+
+  @override
+  String get syllabusSearchTopics => 'Search topics';
+
+  @override
+  String get syllabusNoPublished => 'No syllabus has been published yet.';
+
+  @override
+  String syllabusTopicsCount(Object count) {
+    return '$count topics';
+  }
+
+  @override
+  String get syllabusNotCurrent => 'Not current';
+
+  @override
+  String get booksTitle => 'Books';
+
+  @override
+  String get booksSearch => 'Search books';
+
+  @override
+  String get booksNonePublished => 'No books have been published yet.';
+
+  @override
+  String booksNoMatch(Object query) {
+    return 'No books match \"$query\".';
+  }
+
+  @override
+  String booksProgress(Object percent, Object page) {
+    return '$percent% · page $page';
+  }
+
+  @override
+  String get booksChapters => 'Chapters';
+
+  @override
+  String get booksNoChapters => 'No chapters published yet.';
+
+  @override
+  String get booksChapterTest => 'Chapter test';
+
+  @override
+  String get booksReadChapter => 'Read the chapter';
+
+  @override
+  String booksTakeTest(Object count) {
+    return 'Take test ($count)';
+  }
+
+  @override
+  String get booksNoTopics => 'This chapter has no topics to open yet.';
+
+  @override
+  String get downloadsClearTitle => 'Clear offline content?';
+
+  @override
+  String get downloadsClearBody =>
+      'This removes all cached questions. You can re-download anytime while online.';
+
+  @override
+  String get downloadsClear => 'Clear';
+
+  @override
+  String get downloadsStorageUnreadable => 'Could not read offline storage';
+
+  @override
+  String get downloadsNothingReported =>
+      'Nothing is reported rather than showing a false zero.';
+
+  @override
+  String downloadsCachedQuestions(Object count) {
+    return '$count questions cached';
+  }
+
+  @override
+  String downloadsCacheSize(Object subjects, Object size) {
+    return '$subjects subjects · ~$size KB';
+  }
+
+  @override
+  String get downloadsLastCached => 'Last cached';
+
+  @override
+  String get downloadsAutoDownload => 'Auto-download';
+
+  @override
+  String get downloadsPrefetchNow => 'Prefetch daily pack now';
+
+  @override
+  String get downloadsClearAction => 'Clear offline content';
+
+  @override
+  String get rewardsSpinWheel => 'Spin the wheel';
+
+  @override
+  String get rewardsCheckInUnavailable => 'Check-in unavailable';
+
+  @override
+  String get rewardsDailyCheckIn => 'Daily check-in';
+
+  @override
+  String rewardsDayStreak(Object count) {
+    return 'day $count';
+  }
+
+  @override
+  String get rewardsToday => 'today';
+
+  @override
+  String get rewardsTomorrow => 'tomorrow';
+
+  @override
+  String get rewardsClaimedToday => 'Claimed today';
+
+  @override
+  String rewardsCheckInFor(Object coins) {
+    return 'Check in for $coins coins';
+  }
+
+  @override
+  String get rewardsSpinUnavailable => 'Spin wheel unavailable';
+
+  @override
+  String get rewardsSpin => 'Spin';
+
+  @override
+  String get rewardsComeBackLater => 'Come back later';
+
+  @override
+  String rewardsNextSpin(Object date) {
+    return 'Next spin $date';
+  }
+
+  @override
+  String gameLevelLabel(Object number) {
+    return 'Level $number';
+  }
+
+  @override
+  String get gameBossLevel => 'Boss level';
+
+  @override
+  String get gameChapterLevel => 'Chapter level';
+
+  @override
+  String gameSecondsPerQuestion(Object seconds) {
+    return '${seconds}s per question';
+  }
+
+  @override
+  String get gameBestScore => 'Best score';
+
+  @override
+  String get gameBestAccuracy => 'Best accuracy';
+
+  @override
+  String get gameBestTime => 'Best time';
+
+  @override
+  String get gameStartLevel => 'Start level';
+
+  @override
+  String get gameNotPlayable => 'Not playable yet';
+
+  @override
+  String get gameWorldNoCourse =>
+      'This world has no quiz course linked to it yet, so there is nothing to play. Ask an admin to set the world\'s course.';
+
+  @override
+  String get gameWorldsTitle => 'Worlds';
+
+  @override
+  String get gameWorldsLoadFailed => 'Could not load worlds';
+
+  @override
+  String get gameNoWorlds => 'No worlds yet';
+
+  @override
+  String get gameNoWorldsBody =>
+      'The server has not published any game worlds.';
+
+  @override
+  String get gameNeedsSubscription => 'Requires a subscription plan.';
+
+  @override
+  String get gameWorldNotFound => 'World not found';
+
+  @override
+  String gameStarsProgress(Object earned, Object total) {
+    return '$earned / $total stars';
+  }
+
+  @override
+  String get gameWorldMapFailed => 'Could not load world map';
+
+  @override
+  String get gameMissionsTitle => 'Missions';
+
+  @override
+  String get gameMissionsFailed => 'Could not load missions';
+
+  @override
+  String get gameNoMissions => 'No missions yet';
+
+  @override
+  String get gameNoMissionsBody =>
+      'The server has not published any missions for you.';
+
+  @override
+  String get gameClaimAll => 'Claim all';
+
+  @override
+  String gameClaimCoins(Object coins) {
+    return 'Claim $coins coins';
+  }
+
+  @override
+  String get gameClaimed => 'Claimed';
+
+  @override
+  String get numericalsTitle => 'Numerical';
+
+  @override
+  String get numericalsNew => 'New numbers';
+
+  @override
+  String get numericalsCheck => 'Check answer';
+
+  @override
+  String get numericalsShowSolution => 'Show worked solution';
+
+  @override
+  String numericalsCorrect(Object reason) {
+    return 'Correct$reason';
+  }
+
+  @override
+  String get numericalsNotCorrect =>
+      'Not correct. Try again, or open the worked solution.';
+
+  @override
+  String get numericalsFlagged =>
+      'The server has flagged this problem for review.';
+
+  @override
+  String get numericalsWorkedSolution => 'Worked solution';
+
+  @override
+  String numericalsComputedBy(Object source) {
+    return 'Computed by: $source';
+  }
+
+  @override
+  String get numericalsFlaggedWarning =>
+      'Flagged by the server for review — treat this answer with care.';
+
+  @override
+  String get numericalsOpenInCalculator => 'Open in calculator';
+
+  @override
+  String get storeEquipped => 'Equipped!';
+
+  @override
+  String get storeEquipFailed => 'Could not equip that item.';
+
+  @override
+  String get storeWardrobeTitle => 'Wardrobe';
+
+  @override
+  String get storeEquippedLabel => 'Equipped';
+
+  @override
+  String get storeNothingEquipped => 'Nothing equipped';
+
+  @override
+  String get storeNothingEquippedBody =>
+      'Buy assets in the Premium Store, then equip them here.';
+
+  @override
+  String get storeAvailableToEquip => 'Available to equip';
+
+  @override
+  String get storeEquipHint =>
+      'Tap Equip to try it on. If you tap twice you are never equipped twice.';
+
+  @override
+  String get storeNoAssets => 'No assets yet — visit Premium Store.';
+
+  @override
+  String storeClearSlot(Object slot) {
+    return 'Clear $slot';
+  }
+
+  @override
+  String get storeTitle => 'Premium Store';
+
+  @override
+  String get storeAll => 'All';
+
+  @override
+  String storeAssetsCount(Object count) {
+    return '$count assets';
+  }
+
+  @override
+  String get storeNoAssetsInCategory => 'No assets in this category.';
+
+  @override
+  String get storeTrading => 'Trading';
+
+  @override
+  String get storeTradingExplain =>
+      'Buy resources and bundles with coins, or sell what you no longer need.';
+
+  @override
+  String get storeCoinShop => 'Coin shop';
+
+  @override
+  String get storeSellItems => 'Sell items';
+
+  @override
+  String get storeOwnedBadge => 'OWNED';
+
+  @override
+  String get storeOwned => 'Owned';
+
+  @override
+  String get storeEmptyEquip => 'Empty - equip from store';
+
+  @override
+  String get eiceTitle => 'Exam Intelligence';
+
+  @override
+  String get eiceExplain =>
+      'Everything here is worked out on our servers from your real answer history, so nothing is shown unless it is true.';
+
+  @override
+  String get eiceCoach => 'Coach — your plan';
+
+  @override
+  String get eiceSprint => 'Sprint — 7-day recall queue';
+
+  @override
+  String get eiceWeeklyReport => 'Weekly report';
+
+  @override
+  String get eiceTriage => 'Triage — cover or skip';
+
+  @override
+  String get battleArena => 'Battle Arena';
+
+  @override
+  String get battleNoActiveMatch => 'No active match';
+
+  @override
+  String get battleFindMatch => 'Find a Match';
+
+  @override
+  String get battleNoQuestions => 'This match has no questions';
+
+  @override
+  String battleQuestionCounter(Object current, Object total) {
+    return 'Battle · Q$current/$total';
+  }
+
+  @override
+  String get battleOpponentAnswered => 'Opponent answered!';
+
+  @override
+  String get battleResultTitle => 'Battle Result';
+
+  @override
+  String get battleNoMatchToDisplay => 'No match to display';
+
+  @override
+  String get battleVs => 'VS';
+
+  @override
+  String get battleRematch => 'Rematch';
+
+  @override
+  String get battleYou => 'You';
+
+  @override
+  String get liveEventsTitle => 'Live Events';
+
+  @override
+  String get liveEventsNone => 'No live events';
+
+  @override
+  String get liveEventsNoneBody =>
+      'Scheduled and live events will appear here.';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all read';
+
+  @override
+  String get notificationsNone => 'No notifications';
+
+  @override
+  String get notificationsNoneBody => 'Nothing new right now.';
+
+  @override
+  String get notificationsLoadFailed => 'Could not load notifications';
+
+  @override
+  String get notificationsMarkFailed =>
+      'Could not mark that as read. Try again.';
+
+  @override
+  String get notificationsMarkAllFailed => 'Could not mark everything as read.';
+
+  @override
+  String get coursesLoadFailed => 'Could not load courses. Check connection.';
+
+  @override
+  String get coursesNone => 'No courses available';
+
+  @override
+  String get coursesNoneBody =>
+      'Civil engineering syllabi will appear here once published.';
+
+  @override
+  String coursesTracksCount(Object count) {
+    return '$count syllabus tracks';
+  }
+
+  @override
+  String get coursesBrowseQuestions => 'Browse questions';
+
+  @override
+  String get pscTitle => 'PSC / Loksewa';
+
+  @override
+  String pscBlueprintsFailed(Object reason) {
+    return 'Could not load the PSC blueprints.\n$reason';
+  }
+
+  @override
+  String get pscNoBlueprints =>
+      'No blueprints are published yet. Pull down to retry.';
+
+  @override
+  String pscBlueprintMeta(Object id, Object questions) {
+    return 'id: $id • $questions Qs';
+  }
+
+  @override
+  String get pscStartFailed => 'Start exam failed (offline or 404)';
+
+  @override
+  String pscStarted(Object id) {
+    return 'Exam started: $id';
+  }
+
+  @override
+  String get achievementsBadges => 'Badges';
+
+  @override
+  String achievementsFailed(Object reason) {
+    return 'Could not load achievements: $reason';
+  }
+
+  @override
+  String get achievementsNone => 'No achievements yet — start quizzing!';
+
+  @override
+  String get searchTitle => 'Search';
+
+  @override
+  String get searchHint => 'Search questions, calculators, courses…';
+
+  @override
+  String get searchTry => 'Try: levelling, RCC, Bernoulli';
+
+  @override
+  String get searchNoResults => 'No results';
+
+  @override
+  String searchFailed(Object reason) {
+    return 'Search failed: $reason';
+  }
+
+  @override
+  String xpLevelLabel(Object level) {
+    return 'LVL $level';
+  }
+
+  @override
+  String xpProgress(Object current, Object total) {
+    return '$current / $total XP';
+  }
+
+  @override
+  String xpTotal(Object amount) {
+    return '$amount XP';
+  }
+
+  @override
+  String xpToNext(Object amount) {
+    return '$amount to next';
+  }
+
+  @override
+  String xpDayStreak(Object count) {
+    return '$count day streak';
+  }
+
+  @override
+  String get lottieOverlay => 'lottie-overlay';
+
+  @override
+  String get lottieTapToDismiss => 'Tap to dismiss';
+
+  @override
+  String lifelineCost(Object name, Object coins) {
+    return '$name lifeline, $coins coins';
+  }
+
+  @override
+  String lifelineUnavailable(Object name, Object reason) {
+    return '$name lifeline unavailable: $reason';
+  }
+
+  @override
+  String get offlineCannotReach =>
+      'Can\'t reach our servers — progress syncs when the connection is back';
+
+  @override
+  String get offlineBackOnline => 'Back online — syncing your queued activity';
+
+  @override
+  String get learningNoResponse => 'No response (tutor offline).';
+
+  @override
+  String get socialApplyFailed => 'Could not apply that code';
+
+  @override
+  String get responseCached => 'OK (cached)';
+
+  @override
+  String battleTimer(Object seconds, Object current, Object total) {
+    return '${seconds}s · $current/$total';
+  }
+
+  @override
+  String get battleShareUnavailable => 'Share unavailable';
+
+  @override
+  String bookPageLabel(Object number) {
+    return 'Page $number';
+  }
+
+  @override
+  String get bookMyHighlights => 'My highlights';
+
+  @override
+  String get bookNoExtractableText =>
+      'This page has no extractable text. It may be an image-only scan.';
+
+  @override
+  String get bookPreviousPage => 'Previous page';
+
+  @override
+  String get bookNextPage => 'Next page';
+
+  @override
+  String get bookYourHighlights => 'Your highlights';
+
+  @override
+  String get bookNoHighlights => 'You have not highlighted anything yet.';
+
+  @override
+  String get bookImageNotText => 'Image or diagram (not available as text)';
+
+  @override
+  String bookValueNotText(Object value) {
+    return '$value (not available as text)';
+  }
+
+  @override
+  String get contestsNone => 'No contests yet';
+
+  @override
+  String get contestsNoneBody =>
+      'Active and upcoming contests will appear here.';
+
+  @override
+  String get eiceNoData => 'No data available yet.';
+
+  @override
+  String get eiceNoDetails => 'No details available yet.';
+
+  @override
+  String get eiceNothingHere => 'Nothing here yet.';
+
+  @override
+  String eiceAndMore(Object count) {
+    return 'and $count more…';
+  }
+
+  @override
+  String get gameNoRewardData =>
+      'The server sent no reward data for this level yet.';
+
+  @override
+  String gameMissionsReady(Object count) {
+    return '$count missions ready to claim';
+  }
+
+  @override
+  String gameRewardsWaiting(Object count) {
+    return '$count rewards waiting';
+  }
+
+  @override
+  String get leaderboardFriendsTitle => 'Friends leaderboard';
+
+  @override
+  String get leaderboardLeagueTitle => 'League leaderboard';
+
+  @override
+  String leaderboardMonthsShort(Object months) {
+    return '${months}m';
+  }
+
+  @override
+  String get learningNoTracksTitle => 'No tracks yet';
+
+  @override
+  String get learningTracksBody =>
+      'Tracks will appear here as they are published. Check back soon.';
+
+  @override
+  String learningGradedNextDue(Object grade, Object date) {
+    return 'Graded as $grade — next due $date';
+  }
+
+  @override
+  String get learningNoReviewsDue => 'No reviews due';
+
+  @override
+  String liveEventsActive(Object count, Object capacity) {
+    return '$count$capacity active';
+  }
+
+  @override
+  String liveEventsQuestions(Object count) {
+    return '$count Qs';
+  }
+
+  @override
+  String liveEventsSecondsPerQuestion(Object seconds) {
+    return '${seconds}s / Q';
+  }
+
+  @override
+  String liveEventsJoined(Object count, Object capacity) {
+    return '$count$capacity joined';
+  }
+
+  @override
+  String numericalsAnswer(Object value, Object unit) {
+    return 'Answer: $value$unit';
+  }
+
+  @override
+  String storeAssetMeta(Object rarity, Object slot, Object coins) {
+    return '$rarity • $slot • $coins coins';
+  }
+
+  @override
+  String syllabusNoTopicMatch(Object query) {
+    return 'No topic matches \"$query\".';
+  }
+
+  @override
+  String syllabusExaminableCount(Object count) {
+    return '$count examinable';
+  }
 
   @override
   String get forceUpdateUnsupportedLatest =>

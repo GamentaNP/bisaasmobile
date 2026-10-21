@@ -8,6 +8,8 @@ import '../../data/repositories/social_repository_impl.dart';
 import '../../domain/entities/social.dart';
 import '../../domain/repositories/social_repository.dart';
 
+import '../../../../app/localization/l10n.dart';
+
 final socialRemoteDataSourceProvider = Provider<SocialRemoteDataSource>(
   (ref) => SocialRemoteDataSource(DioClient.instance.dio),
 );
@@ -119,7 +121,7 @@ class SocialController extends Notifier<SocialState> {
       AppLogger.w('referral claim failed: $e');
       state = state.copyWith(
         claimInFlight: false,
-        claimMessage: e is ApiException ? e.message : 'Could not apply that code',
+        claimMessage: e is ApiException ? e.message : appL10n().socialApplyFailed,
       );
     }
   }

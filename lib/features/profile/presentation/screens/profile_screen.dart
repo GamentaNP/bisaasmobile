@@ -280,14 +280,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // which is documentation leaking into the UI.
           _Tile(icon: Icons.school_rounded, title: l10n.profileLearning, subtitle: l10n.profileLearningSub, onTapRoute: '/learning'),
           _Tile(icon: Icons.psychology_rounded, title: l10n.profileEice, subtitle: l10n.profileEiceSub, onTapRoute: '/eice'),
-          _Tile(icon: Icons.account_balance_rounded, title: l10n.profilePsc, subtitle: l10n.profilePscSub, onTapRoute: '/psc'),
+          _Tile(icon: Icons.account_balance_rounded, title: l10n.pscTitle, subtitle: l10n.profilePscSub, onTapRoute: '/psc'),
           _Tile(icon: Icons.edit_note_rounded, title: l10n.practice, subtitle: l10n.profilePracticeSub, onTapRoute: '/practice'),
           _Tile(icon: Icons.leaderboard_rounded, title: l10n.commonLeaderboard, subtitle: l10n.profileLeaderboardSub, onTapRoute: '/leaderboard'),
           _Tile(icon: Icons.emoji_events_rounded, title: l10n.profileContests, subtitle: l10n.profileContestsSub, onTapRoute: '/contests'),
           _Tile(icon: Icons.sensors_rounded, title: l10n.profileLiveEvents, subtitle: l10n.profileLiveEventsSub, onTapRoute: '/live-events'),
           _Tile(icon: Icons.insights_rounded, title: l10n.profileCoaching, subtitle: l10n.profileCoachingSub, onTapRoute: '/coaching'),
-          _Tile(icon: Icons.search_rounded, title: l10n.profileSearch, subtitle: l10n.profileSearchSub, onTapRoute: '/search'),
-          _Tile(icon: Icons.notifications_rounded, title: l10n.profileNotifications, subtitle: l10n.profileNotificationsSub, onTapRoute: '/notifications'),
+          _Tile(icon: Icons.search_rounded, title: l10n.searchTitle, subtitle: l10n.profileSearchSub, onTapRoute: '/search'),
+          _Tile(icon: Icons.notifications_rounded, title: l10n.notificationsTitle, subtitle: l10n.profileNotificationsSub, onTapRoute: '/notifications'),
           _Tile(icon: Icons.share_rounded, title: l10n.profileSocial, subtitle: l10n.profileSocialSub, onTapRoute: '/social'),
 
           _Tile(icon: Icons.account_balance_wallet_rounded, title: l10n.commonWallet, subtitle: l10n.profileWalletSub, onTapRoute: '/economy'),

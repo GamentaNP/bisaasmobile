@@ -6,6 +6,7 @@ import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/theme/script_fonts.dart';
 import '../../domain/entities/syllabus.dart';
 import '../controllers/syllabus_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Version picker — the entry point to the syllabus feature.
 ///
@@ -17,13 +18,14 @@ class SyllabusVersionsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(syllabusVersionsControllerProvider);
     // Titles arrive in the syllabus's own language from the server. Resolving the
     // font from the text rather than the active locale is what lets a Nepali
     // title render inside an English interface.
     final preferNative = ref.watch(_preferNativeProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Syllabus')),
+      appBar: AppBar(title: Text(l10n.syllabusTitle)),
       body: RefreshIndicator(
         onRefresh: () => ref.read(syllabusVersionsControllerProvider.notifier).refresh(),
         child: _body(context, ref, state, preferNative),
@@ -37,6 +39,7 @@ class SyllabusVersionsScreen extends ConsumerWidget {
     SyllabusVersionsState state,
     bool preferNative,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && state.versions.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -49,9 +52,9 @@ class SyllabusVersionsScreen extends ConsumerWidget {
     }
 
     if (state.isEmpty) {
-      return const _EmptyView(
+      return _EmptyView(
         icon: Icons.account_tree_outlined,
-        message: 'No syllabus has been published yet.',
+        message: l10n.syllabusNoPublished,
       );
     }
 
@@ -88,6 +91,7 @@ class _VersionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final title = version.titleFor(preferNative: preferNative);
     final base = theme.textTheme.titleMedium;
@@ -122,18 +126,18 @@ class _VersionCard extends StatelessWidget {
                   ),
                   if (version.nodeCount > 0)
                     _Chip(
-                      label: '${version.nodeCount} topics',
+                      label: l10n.syllabusTopicsCount(version.nodeCount),
                       icon: Icons.account_tree_outlined,
                     ),
                   if (version.examinableNodeCount > 0)
                     _Chip(
-                      label: '${version.examinableNodeCount} examinable',
+                      label: l10n.syllabusExaminableCount(version.examinableNodeCount),
                       icon: Icons.verified_outlined,
                     ),
                   if (version.effectiveWindow != null)
                     _Chip(label: version.effectiveWindow!, icon: Icons.event_outlined),
                   if (!version.isEffectiveNow)
-                    _Chip(label: 'Not current', icon: Icons.history, warn: true),
+                    _Chip(label: l10n.syllabusNotCurrent, icon: Icons.history, warn: true),
                 ],
               ),
             ],
@@ -182,6 +186,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -194,7 +199,7 @@ class _ErrorView extends StatelessWidget {
           child: FilledButton.tonalIcon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
+            label: Text(l10n.retry),
           ),
         ),
       ],

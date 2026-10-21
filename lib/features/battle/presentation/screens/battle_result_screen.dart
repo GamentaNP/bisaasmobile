@@ -12,6 +12,7 @@ import '../../data/datasources/battle_remote_data_source.dart';
 import '../../domain/battle_outcome.dart';
 import '../../domain/entities/battle.dart';
 import '../controllers/battle_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Fetches the authoritative outcome.
 ///
@@ -36,12 +37,13 @@ class BattleResultScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(battleControllerProvider);
     final m = state.match;
     if (m == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Battle Result')),
-        body: const Center(child: Text('No match to display')),
+        appBar: AppBar(title: Text(l10n.battleResultTitle)),
+        body: Center(child: Text(l10n.battleNoMatchToDisplay)),
       );
     }
 
@@ -98,7 +100,7 @@ class BattleResultScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _ResultColumn(player: me, isWinner: isWin, isMe: true),
-                  const Text('VS', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                  Text(l10n.battleVs, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
                   _ResultColumn(player: opp, isWinner: !isWin, isMe: false),
                 ],
               ),
@@ -106,14 +108,14 @@ class BattleResultScreen extends ConsumerWidget {
               FilledButton.icon(
                 onPressed: () => context.go('/battle/matchmaking'),
                 icon: const Icon(Icons.replay_rounded),
-                label: const Text('Rematch'),
+                label: Text(l10n.battleRematch),
                 style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () => _share(context, isWin, me, opp),
                 icon: const Icon(Icons.share_rounded),
-                label: const Text('Share Result'),
+                label: Text(l10n.commonShareResult),
                 style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
               ),
               const SizedBox(height: 8),
@@ -122,7 +124,7 @@ class BattleResultScreen extends ConsumerWidget {
                   ref.read(battleControllerProvider.notifier).reset();
                   context.go('/home');
                 },
-                child: const Text('Back to Home'),
+                child: Text(l10n.quizResultBackToHome),
               ),
             ],
           ),
@@ -132,11 +134,12 @@ class BattleResultScreen extends ConsumerWidget {
   }
 
   Future<void> _share(BuildContext context, bool isWin, BattlePlayer me, BattlePlayer opp) async {
+    final l10n = AppLocalizations.of(context)!;
     final msg = 'I just ${isWin ? "won" : "fought"} a battle on CivilCal: ${me.score}-${opp.score} vs ${opp.displayName}! Try me: https://bisaas.com';
     try {
       await SharePlus.instance.share(ShareParams(text: msg, subject: 'CivilCal Battle Result'));
     } catch (_) {
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share unavailable')));
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.battleShareUnavailable)));
     }
   }
 }
@@ -148,6 +151,7 @@ class _ResultColumn extends StatelessWidget {
   final bool isMe;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Stack(
@@ -171,8 +175,8 @@ class _ResultColumn extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        Text(isMe ? 'You' : player.displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text('${player.score} pts', style: TextStyle(color: isWinner ? AppColors.xpGold : null, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(isMe ? l10n.battleYou : player.displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(l10n.commonPoints(player.score), style: TextStyle(color: isWinner ? AppColors.xpGold : null, fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     );
   }

@@ -6,6 +6,7 @@ import '../../../../shared/widgets/cached_remote_image.dart';
 import '../../game_providers.dart';
 import '../../data/models/game_models.dart';
 import 'game_level_intro_sheet.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Duolingo-style zig-zag world map screen.
 ///
@@ -17,6 +18,7 @@ class GameWorldMapScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final mapAsync = ref.watch(gameWorldMapProvider(worldSlug));
 
     return Scaffold(
@@ -25,7 +27,7 @@ class GameWorldMapScreen extends ConsumerWidget {
         error: (e, _) => _ErrorBody(error: e, onRetry: () => ref.invalidate(gameWorldMapProvider(worldSlug))),
         data: (map) {
           if (map == null) {
-            return const Center(child: Text('World not found'));
+            return Center(child: Text(l10n.gameWorldNotFound));
           }
           return _WorldMapBody(map: map);
         },
@@ -40,6 +42,7 @@ class _WorldMapBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final chapters = map.chapters;
 
     return CustomScrollView(
@@ -93,7 +96,7 @@ class _WorldMapBody extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${map.totalStarsEarned} / ${map.totalMaxStars} stars',
+                  Text(l10n.gameStarsProgress(map.totalStarsEarned, map.totalMaxStars),
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
@@ -410,6 +413,7 @@ class _ErrorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -418,11 +422,11 @@ class _ErrorBody extends StatelessWidget {
           children: [
             const Icon(Icons.wifi_off_rounded, size: 48, color: Colors.grey),
             const SizedBox(height: 12),
-            const Text('Could not load world map', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.gameWorldMapFailed, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text('$error', style: const TextStyle(color: Colors.grey, fontSize: 12)),
             const SizedBox(height: 16),
-            FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh_rounded), label: const Text('Retry')),
+            FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh_rounded), label: Text(l10n.retry)),
           ],
         ),
       ),

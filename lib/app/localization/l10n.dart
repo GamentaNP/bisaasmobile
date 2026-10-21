@@ -17,7 +17,17 @@ import '../../l10n/app_localizations.dart';
 /// because the locale controller writes the choice to the preferences store
 /// and the device locale is what Material falls back to.
 AppLocalizations appL10n() {
-  final saved = Preferences.instance.locale;
+  // A copy lookup must never be able to fail. The preferences store is
+  // initialised by the bootstrap, but a service can be reached before it —
+  // or in a test that never calls it — and a `StateError` from here would
+  // take down whatever the caller was doing.
+  String? saved;
+  try {
+    saved = Preferences.instance.locale;
+  } catch (_) {
+    saved = null;
+  }
+
   final code = saved ?? PlatformDispatcher.instance.locale.languageCode;
   if (!AppLocalizations.supportedLocales
       .any((locale) => locale.languageCode == code)) {

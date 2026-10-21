@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:vibration/vibration.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Triggers a brief Lottie at a given position (default = top of screen)
 /// to celebrate a correct answer. Auto-removes after 600ms.
@@ -120,6 +121,7 @@ class _XpFloatState extends State<XpFloat> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return FadeTransition(
       opacity: _opacity,
       child: SlideTransition(
@@ -136,7 +138,7 @@ class _XpFloatState extends State<XpFloat> with SingleTickerProviderStateMixin {
               children: [
                 const Icon(Icons.bolt_rounded, color: Colors.white, size: 12),
                 Text(
-                  '+${widget.amount} XP',
+                  l10n.commonXpGained(widget.amount),
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                 ),
               ],

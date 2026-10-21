@@ -948,9 +948,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profileEiceSub => 'कोच • ट्रायेज • स्प्रिंट';
 
   @override
-  String get profilePsc => 'PSC / लोकसेवा';
-
-  @override
   String get profilePscSub => 'परीक्षा ढांचा और पाठ्यक्रम';
 
   @override
@@ -978,13 +975,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profileCoachingSub => 'कमजोर क्षेत्र • तैयारी • स्प्रिंट';
 
   @override
-  String get profileSearch => 'खोजें';
-
-  @override
   String get profileSearchSub => 'कोई भी प्रश्न खोजें';
-
-  @override
-  String get profileNotifications => 'सूचनाएं';
 
   @override
   String get profileNotificationsSub => 'गतिविधि और याद दिलाना';
@@ -2135,6 +2126,1448 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get practiceNoEffectNote =>
       'अभ्यास समय-सीमित नहीं है और इसका अंक, XP, कॉइन या स्ट्रीक पर कोई प्रभाव नहीं पड़ता।';
+
+  @override
+  String get liveEventNotFound => 'लाइव कार्यक्रम नहीं मिला';
+
+  @override
+  String liveEventParticipant(Object number, Object status, Object score) {
+    return 'प्रतिभागी #$number • $status • अंक $score';
+  }
+
+  @override
+  String get liveEventSnapshot => 'स्नैपशॉट';
+
+  @override
+  String get liveEventNoSnapshot =>
+      'अभी तक स्नैपशॉट नहीं — रजिस्टर करके चेक-इन करें, मौजूदा प्रश्न आएगा।';
+
+  @override
+  String get liveEventAnswer => 'उत्तर';
+
+  @override
+  String get liveEventQIndex => 'प्रश्न क्रमांक';
+
+  @override
+  String get liveEventSubmitAnswer => 'उत्तर जमा करें';
+
+  @override
+  String get liveEventNoLeaderboard => 'अभी तक कोई लीडरबोर्ड नहीं।';
+
+  @override
+  String get liveEventRegistered => 'रजिस्टर हो गया!';
+
+  @override
+  String get liveEventRegisterFailed => 'रजिस्टर करना विफल';
+
+  @override
+  String get liveEventUnregistered => 'रजिस्टर हटाया';
+
+  @override
+  String get liveEventUnregisterFailed => 'रजिस्टर हटाना विफल';
+
+  @override
+  String get liveEventCheckedIn => 'चेक-इन हो गया!';
+
+  @override
+  String get liveEventCheckInFailed => 'चेक-इन विफल';
+
+  @override
+  String get liveEventEnterAnswer => 'उत्तर दर्ज करें';
+
+  @override
+  String liveEventAnswerRecorded(Object score) {
+    return 'उत्तर दर्ज हुआ — अंक $score';
+  }
+
+  @override
+  String liveEventQuestionsEach(Object questions, Object seconds) {
+    return '$questions प्रश्न • प्रत्येक ${seconds}s';
+  }
+
+  @override
+  String liveEventActive(Object count) {
+    return '$count सक्रिय';
+  }
+
+  @override
+  String liveEventWaitlisted(Object count) {
+    return '$count प्रतीक्षा में';
+  }
+
+  @override
+  String liveEventStarts(Object date, Object hour, Object minute) {
+    return '$date $hour:$minute पर शुरू';
+  }
+
+  @override
+  String liveEventEnds(Object date) {
+    return '$date पर समाप्त';
+  }
+
+  @override
+  String liveEventEntryFee(Object coins) {
+    return '$coins प्रवेश शुल्क';
+  }
+
+  @override
+  String liveEventPrize(Object coins) {
+    return '$coins पुरस्कार';
+  }
+
+  @override
+  String get liveEventLeave => 'छोड़ें';
+
+  @override
+  String get liveEventCheckIn => 'चेक-इन';
+
+  @override
+  String liveEventScoreMeta(Object score, Object correct, Object total) {
+    return 'अंक $score • $correct/$total';
+  }
+
+  @override
+  String liveEventQuestionPoints(Object number, Object points) {
+    return 'प्रश्न$number • $points अंक';
+  }
+
+  @override
+  String liveEventRemaining(Object seconds, Object locks) {
+    return 'शेष: ${seconds}s • $locks पर बंद';
+  }
+
+  @override
+  String get liveEventWaitingForHost =>
+      'मौजूदा प्रश्न नहीं — आयोजक की प्रतीक्षा।';
+
+  @override
+  String liveEventRawKeys(Object keys) {
+    return 'कच्ची कुंजियां: $keys';
+  }
+
+  @override
+  String get coachingTutorChat => 'ट्यूटर चैट';
+
+  @override
+  String get coachingStudyPlan => 'अध्ययन योजना';
+
+  @override
+  String get coachingTutorOnboarding => 'ट्यूटर ऑनबोर्डिंग';
+
+  @override
+  String get coachingGoalIdHint => 'तैयारी के लिए Goal ID (जैसे: psc-civil)';
+
+  @override
+  String get coachingLoad => 'लोड करें';
+
+  @override
+  String get coachingNoData =>
+      'अभी तक कोई कोचिंग डेटा नहीं — ऑनबोर्डिंग पूरा करें या ट्यूटर से चैट करें।';
+
+  @override
+  String get coachingPartial =>
+      'कुछ कोचिंग स्क्रीन अस्थायी रूप से उपलब्ध नहीं — उपलब्ध डेटा दिखा रहे हैं।';
+
+  @override
+  String get coachingNoReadinessForGoal =>
+      'तैयारी: इस लक्ष्य के लिए अभी तक डेटा नहीं।';
+
+  @override
+  String get coachingAskTutor => 'ट्यूटर से पूछें';
+
+  @override
+  String get coachingOnboarding => 'ऑनबोर्डिंग';
+
+  @override
+  String get coachingReadinessExplained =>
+      'तैयारी आपके लक्ष्य, ट्रैक और ट्यूटर गतिविधि से निकाली जाती है। कुछ हिस्से उपयोग करने तक छिपे रहते हैं।';
+
+  @override
+  String get coachingReadiness => 'तैयारी';
+
+  @override
+  String get coachingFocusNext => 'अगला ध्यान दें:';
+
+  @override
+  String get coachingNoReadiness =>
+      'अभी तक तैयारी नहीं — इस लक्ष्य के तहत कुछ क्विज़ खेलें।';
+
+  @override
+  String coachingGoalLabel(Object goal) {
+    return 'लक्ष्य $goal';
+  }
+
+  @override
+  String coachingMore(Object count) {
+    return '+ $count और';
+  }
+
+  @override
+  String get coachingNoTasksToday => 'आज कोई काम नहीं';
+
+  @override
+  String coachingConfidence(Object confidence) {
+    return 'विश्वास $confidence%';
+  }
+
+  @override
+  String get coachingLearningTracks => 'सीखने के ट्रैक';
+
+  @override
+  String get coachingThisWeek => 'इस सप्ताह';
+
+  @override
+  String coachingWeekTasks(Object done, Object total, Object average) {
+    return '$done/$total काम • औसत $average';
+  }
+
+  @override
+  String get coachingNoRevisions => 'कोई दोहराव बाकी नहीं';
+
+  @override
+  String coachingRevisionsDue(Object count) {
+    return '$count दोहराव बाकी';
+  }
+
+  @override
+  String get socialInviteFriends => 'दोस्तों को बुलाएं';
+
+  @override
+  String get socialReferralUnavailable => 'रेफ़रल जानकारी अभी उपलब्ध नहीं है।';
+
+  @override
+  String socialEarnCoins(Object coins) {
+    return '$coins कॉइन कमाएं';
+  }
+
+  @override
+  String get socialNo => 'नहीं';
+
+  @override
+  String get socialYourInviteCode => 'आपका आमंत्रण कोड';
+
+  @override
+  String get socialShareInviteLink => 'आमंत्रण लिंक साझा करें';
+
+  @override
+  String get socialCopyCode => 'कोड कॉपी करें';
+
+  @override
+  String get socialRewards => 'पुरस्कार';
+
+  @override
+  String get socialRewardPerSignup => 'हर दाखिल करने दोस्त के लिए आपको इनाम';
+
+  @override
+  String get socialTheyEarn => 'दाखिल करते ही वे भी कमाते हैं';
+
+  @override
+  String get socialBonusFirstQuiz => 'उनका पहले क्विज़ के बाद बोनस';
+
+  @override
+  String get socialYourReferrals => 'आपके रेफ़रल';
+
+  @override
+  String get socialInvited => 'बुलाए';
+
+  @override
+  String get socialRewarded => 'इनाम पाए';
+
+  @override
+  String get socialCoinsEarned => 'कॉइन कमाए';
+
+  @override
+  String get socialNoReferralsYet =>
+      'अभी तक किसी ने आपका कोड इस्तेमाल नहीं किया।';
+
+  @override
+  String socialRewardPaid(Object coins) {
+    return 'इनाम भुगतान: $coins कॉइन';
+  }
+
+  @override
+  String socialStatus(Object status) {
+    return 'स्थिति: $status';
+  }
+
+  @override
+  String get socialGotCode => 'दोस्त से कोड मिला?';
+
+  @override
+  String get socialReferralCode => 'रेफ़रल कोड';
+
+  @override
+  String get socialApplyCode => 'कोड लागू करें';
+
+  @override
+  String get socialShareSheetFailed => 'शेयर शीट नहीं खुल सका';
+
+  @override
+  String get socialCodeCopied => 'कोड कॉपी हो गया';
+
+  @override
+  String get socialSharedChallenge => 'साझा चुनौती';
+
+  @override
+  String get socialSomeoneShared => 'किसी ने आपके साथ चुनौती साझा की';
+
+  @override
+  String socialSharedBy(Object name) {
+    return '$name ने साझा किया';
+  }
+
+  @override
+  String get socialLinkExpired => 'इस लिंक की मियाद समाप्त हो गई।';
+
+  @override
+  String get socialNoPlayableChallenge => 'यहाँ कोई खेलने योग्य चुनौती नहीं';
+
+  @override
+  String get socialNotPlayable =>
+      'यह लिंक कोई खेलने योग्य चुनौती नहीं देता। आप सार्वजनिक कैटलॉग देख सकते हैं।';
+
+  @override
+  String get socialPlayChallenge => 'चुनौती खेलें';
+
+  @override
+  String get socialGuestNeverAwards =>
+      'अतिथि चुनौती कभी कॉइन, XP या स्ट्रीक नहीं देती। अपनी प्रगति रखने के लिए मुफ़्त खाता बनाएं।';
+
+  @override
+  String get socialChallengeNoQuestions => 'इस चुनौती में कोई प्रश्न नहीं';
+
+  @override
+  String get socialChallengeEmpty =>
+      'सर्वर ने बिना कोई प्रश्न भेजे प्रयास शुरू किया, इसलिए खेलने को कुछ नहीं है।';
+
+  @override
+  String socialQuestionOf(Object current, Object total) {
+    return '$total में से $current प्रश्न';
+  }
+
+  @override
+  String get socialCorrect => 'सही।';
+
+  @override
+  String get socialNotThisTime => 'इस बार नहीं — सर्वर ने ऐसा चिह्नित किया है।';
+
+  @override
+  String get socialSubmitAnswer => 'उत्तर जमा करें';
+
+  @override
+  String get socialFinish => 'समाप्त';
+
+  @override
+  String get socialNext => 'अगला';
+
+  @override
+  String get socialChallengeComplete => 'चुनौती पूरी हुई';
+
+  @override
+  String socialYouScored(Object score) {
+    return 'आपने $score अंक किए';
+  }
+
+  @override
+  String socialChallengeSummary(
+    Object correct,
+    Object wrong,
+    Object skipped,
+    Object questions,
+  ) {
+    return '$correct सही • $wrong गलत • $skipped छोड़े • $questions प्रश्न';
+  }
+
+  @override
+  String get socialGuestChallengeNote =>
+      'अतिथि चुनौती कभी कॉइन, XP या स्ट्रीक नहीं देती।';
+
+  @override
+  String socialNiceOne(Object name) {
+    return 'बढ़िया — यह $name की चुनौती थी। अतिथि चुनौती कभी कॉइन, XP या स्ट्रीक नहीं देती।';
+  }
+
+  @override
+  String get socialCreateAccount => 'मुफ़्त खाता बनाएं';
+
+  @override
+  String get socialBrowseSamples => 'नमूना प्रश्न देखें';
+
+  @override
+  String get contestNotFound => 'प्रतियोगिता नहीं मिली';
+
+  @override
+  String contestAttemptStarted(Object number, Object expires) {
+    return 'प्रयास #$number शुरू हुआ। मियाद: $expires';
+  }
+
+  @override
+  String get contestNoLeaderboard =>
+      'अभी तक लीडरबोर्ड में कोई प्रविष्टि नहीं — पहले बनें!';
+
+  @override
+  String contestGeneratedMeta(Object generated, Object budget, Object mode) {
+    return 'बनाया: $generated • रीफ़्रेश बजट: $budget • $mode';
+  }
+
+  @override
+  String get contestRecap => 'समीक्षा';
+
+  @override
+  String get contestWinners => 'विजेता';
+
+  @override
+  String contestRawStats(Object count) {
+    return 'कच्चे आँकड़े: $count कुंजियां';
+  }
+
+  @override
+  String get contestRecapPending =>
+      'प्रतियोगिता समाप्त होने के बाद समीक्षा उपलब्ध होगी।';
+
+  @override
+  String get contestJoined => 'प्रतियोगिता में शामिल हो गए!';
+
+  @override
+  String get contestJoinFailed => 'शामिल होना विफल';
+
+  @override
+  String get contestLeft => 'प्रतियोगिता छोड़ दी';
+
+  @override
+  String get contestLeaveFailed => 'छोड़ना विफल';
+
+  @override
+  String get contestRegisteredBadge => 'रजिस्टर्ड';
+
+  @override
+  String contestMax(Object count) {
+    return 'अधिकतम $count';
+  }
+
+  @override
+  String contestStarts(Object date) {
+    return '$date पर शुरू';
+  }
+
+  @override
+  String get contestJoinFree => 'शामिल हों (मुफ़्त)';
+
+  @override
+  String contestJoinCoins(Object coins) {
+    return 'शामिल हों ($coins कॉइन)';
+  }
+
+  @override
+  String get contestEnter => 'प्रतियोगिता में शामिल हों';
+
+  @override
+  String get leaderboardGlobal => 'विश्व';
+
+  @override
+  String get leaderboardFriends => 'दोस्त';
+
+  @override
+  String get leaderboardLeague => 'लीग';
+
+  @override
+  String get leaderboardDonors => 'दानकर्ता';
+
+  @override
+  String get leaderboardNoRank =>
+      'अभी तक कोई रैंक नहीं — लीडरबोर्ड में आने के लिए एक क्विज़ पूरा करें।';
+
+  @override
+  String get leaderboardMyRank => 'मेरा रैंक';
+
+  @override
+  String leaderboardRankIn(Object rank, Object scope) {
+    return '$scope में #$rank';
+  }
+
+  @override
+  String leaderboardUnrankedIn(Object scope) {
+    return '$scope में अनरैंक';
+  }
+
+  @override
+  String leaderboardScore(Object score) {
+    return 'अंक: $score';
+  }
+
+  @override
+  String get leaderboardNoEntries => 'अभी तक कोई प्रविष्टि नहीं';
+
+  @override
+  String get leaderboardBeFirst => 'पहला स्थान लेने वाले बनें!';
+
+  @override
+  String get leaderboardFriendsHint =>
+      'प्रतिस्पर्धा के लिए दोस्त जोड़ें — सर्वर दोस्तों को अपने आप अलग करता है।';
+
+  @override
+  String get leaderboardLeagueHint =>
+      'लीग मौसमी है — योग्य होने के लिए कार्यक्रम/प्रतियोगिता में शामिल हों।';
+
+  @override
+  String get leaderboardNoEntriesShort => 'कोई प्रविष्टि नहीं';
+
+  @override
+  String get leaderboardCompeteToAppear =>
+      'यहाँ दिखने के लिए प्रतिस्पर्धा करें।';
+
+  @override
+  String get leaderboardNoDonors => 'अभी तक कोई दानकर्ता नहीं';
+
+  @override
+  String get leaderboardSupportToAppear =>
+      'यहाँ दिखने के लिए प्लेटफ़ॉर्म का समर्थन करें।';
+
+  @override
+  String leaderboardScoreAttempts(Object score, Object attempts) {
+    return 'अंक $score • $attempts प्रयास';
+  }
+
+  @override
+  String learningGoalLabel(Object number) {
+    return 'लक्ष्य #$number';
+  }
+
+  @override
+  String get learningToday => 'आज';
+
+  @override
+  String get learningGoalId => 'लक्ष्य ID';
+
+  @override
+  String get learningTrackId => 'ट्रैक ID';
+
+  @override
+  String get learningTargetDate => 'लक्ष्य तिथि';
+
+  @override
+  String get learningDailyMinutes => 'दैनिक मिनट';
+
+  @override
+  String get learningIntensity => 'तीव्रता';
+
+  @override
+  String get learningPlacement => 'स्थान';
+
+  @override
+  String learningMastery(Object percent, Object topics) {
+    return '$topics विषयों में $percent% दक्षता (MasteryService::computeReadiness)';
+  }
+
+  @override
+  String learningReadinessValue(Object value) {
+    return 'तैयारी: $value';
+  }
+
+  @override
+  String get learningDeleteGoalTitle => 'लक्ष्य मिटाएं?';
+
+  @override
+  String get learningDeleteGoalBody =>
+      'यह लक्ष्य स्थायी रूप से मिटा देता है। दैनिक योजनाएं बनी रहती हैं पर नई योजनाएं नहीं बनेंगी।';
+
+  @override
+  String get learningGoalDeleted => 'लक्ष्य मिटा दिया गया';
+
+  @override
+  String get learningDeleting => 'मिटा रहे हैं…';
+
+  @override
+  String get learningDeleteGoal => 'लक्ष्य मिटाएं';
+
+  @override
+  String get learningOpenTodayPlan => 'आज की योजना खोलें';
+
+  @override
+  String get learningBackToTracks => 'ट्रैक पर लौटें';
+
+  @override
+  String get learningTodaysPlan => 'आज की योजना';
+
+  @override
+  String get learningNoActiveGoal => 'कोई सक्रिय लक्ष्य नहीं';
+
+  @override
+  String get learningNoActiveGoalBody =>
+      'आज की योजना पाने के लिए ट्रैक से सीखने का लक्ष्य बनाएं। पहले से है तो यहाँ दिखेगा।';
+
+  @override
+  String get learningBrowseTracks => 'ट्रैक ब्राउज़ करें';
+
+  @override
+  String learningPlanLabel(Object number) {
+    return 'योजना #$number';
+  }
+
+  @override
+  String learningPlanGoal(Object meta, Object number) {
+    return '$meta • लक्ष्य #$number';
+  }
+
+  @override
+  String learningCompletedCount(Object done, Object total) {
+    return '$done/$total पूरे';
+  }
+
+  @override
+  String learningMinBudget(Object minutes) {
+    return '$minutes मिनट बजट';
+  }
+
+  @override
+  String get learningNoTasksBody =>
+      'कल देखें — दैनिक ऑटोपायलट समीक्षा-पहले + नए विषय बनाता है।';
+
+  @override
+  String learningMinutes(Object minutes) {
+    return '$minutes मिनट';
+  }
+
+  @override
+  String get learningItemCompleted => 'कार्य पूरा हुआ';
+
+  @override
+  String get learningReviewsDue => 'दोहराव बाकी';
+
+  @override
+  String get learningTitle => 'सीखना';
+
+  @override
+  String get learningReviewsCountFailed =>
+      'आपके दोहराव की संख्या लोड नहीं हो सकी';
+
+  @override
+  String get learningTracks => 'ट्रैक';
+
+  @override
+  String get learningNoTracks =>
+      'अभी तक कोई ट्रैक नहीं — हमारी टीम तैयार होने पर प्रकाशित करती है';
+
+  @override
+  String get learningAskAiTutor => 'AI ट्यूटर से पूछें';
+
+  @override
+  String get learningStreamingNote =>
+      'उत्तर एक साथ नहीं, थोर-थोरकर आते हैं, इसलिए आप तुरंत पढ़ना शुरू कर सकते हैं।';
+
+  @override
+  String get learningNoTasks => 'कोई काम नहीं — कल देखें';
+
+  @override
+  String learningReviewsDueSrs(Object count) {
+    return '$count दोहराव बाकी (SRS)';
+  }
+
+  @override
+  String get learningReviewAction => 'दोहराएं';
+
+  @override
+  String learningGoalCreatedForTrack(Object number) {
+    return 'ट्रैक #$number के लिए लक्ष्य बनाया गया';
+  }
+
+  @override
+  String get learningTracksTitle => 'सीखने के ट्रैक';
+
+  @override
+  String get learningTodayPlan => 'आज की योजना';
+
+  @override
+  String learningNodesCount(Object count) {
+    return '$count नोड';
+  }
+
+  @override
+  String learningGoalsCount(Object count) {
+    return '$count लक्ष्य';
+  }
+
+  @override
+  String get learningCreating => 'बना रहे हैं…';
+
+  @override
+  String get learningCreateGoal => 'लक्ष्य बनाएं';
+
+  @override
+  String get learningReviewsDueTitle => 'दोहराव बाकी';
+
+  @override
+  String get learningAllCaughtUp =>
+      'आप सब पूरा कर चुके हैं! नए अणु सीखने के बाद FSRS अगली समीक्षा तय करेगा।';
+
+  @override
+  String learningReviewMeta(Object number, Object atom, Object state) {
+    return 'दोहराव #$number • अणु $atom • $state';
+  }
+
+  @override
+  String learningInterval(Object index) {
+    return 'I$index';
+  }
+
+  @override
+  String learningDueDate(Object date) {
+    return '$date तक';
+  }
+
+  @override
+  String learningLapses(Object count) {
+    return '$count बार छूटे';
+  }
+
+  @override
+  String get learningGradeAgain => 'फिर';
+
+  @override
+  String get learningGradeHard => 'कठिन';
+
+  @override
+  String get learningGradeGood => 'अच्छा';
+
+  @override
+  String get learningGradeEasy => 'आसान';
+
+  @override
+  String get learningGradingNote =>
+      'अंक सुरक्षित रूप से दर्ज होता है और अगली समीक्षा तिथि आपके लिए निकाली जाती है। दो बार दबाने से भी प्रगति नहीं जाती।';
+
+  @override
+  String get syllabusTitle => 'पाठ्यक्रम';
+
+  @override
+  String get syllabusNoNodes =>
+      'इस पाठ्यक्रम में अभी तक कोई नोड प्रकाशित नहीं है।';
+
+  @override
+  String get syllabusExaminable => 'परीक्षा में';
+
+  @override
+  String get syllabusQuestions => 'प्रश्न';
+
+  @override
+  String get syllabusPaperBlueprint => 'प्रश्नपत्र ढांचा';
+
+  @override
+  String syllabusPapersCount(Object count) {
+    return '$count प्रश्नपत्र';
+  }
+
+  @override
+  String syllabusMarksQuestions(Object marks, Object questions) {
+    return '$marks अंक · $questions प्रश्न';
+  }
+
+  @override
+  String syllabusNegativeMarking(Object mode) {
+    return 'नकारात्मक अंक: $mode';
+  }
+
+  @override
+  String syllabusMarks(Object marks) {
+    return '$marks अंक';
+  }
+
+  @override
+  String get syllabusBlueprintMismatch =>
+      'खंडों के अंक प्रश्नपत्र के कुल के बराबर नहीं हैं। इस ढांच को असत्यापित मानें।';
+
+  @override
+  String syllabusCoversTopics(Object count) {
+    return '$count पाठ्यक्रम विषय कवर करता है';
+  }
+
+  @override
+  String get syllabusSearchTopics => 'विषय खोजें';
+
+  @override
+  String get syllabusNoPublished =>
+      'अभी तक कोई पाठ्यक्रम प्रकाशित नहीं हुआ है।';
+
+  @override
+  String syllabusTopicsCount(Object count) {
+    return '$count विषय';
+  }
+
+  @override
+  String get syllabusNotCurrent => 'वर्तमान नहीं';
+
+  @override
+  String get booksTitle => 'किताबें';
+
+  @override
+  String get booksSearch => 'किताबें खोजें';
+
+  @override
+  String get booksNonePublished => 'अभी तक कोई किताब प्रकाशित नहीं हुई है।';
+
+  @override
+  String booksNoMatch(Object query) {
+    return '\"$query\" से मेल खाने कोई किताब नहीं।';
+  }
+
+  @override
+  String booksProgress(Object percent, Object page) {
+    return '$percent% · पृष्ठ $page';
+  }
+
+  @override
+  String get booksChapters => 'अध्याय';
+
+  @override
+  String get booksNoChapters => 'अभी तक कोई अध्याय प्रकाशित नहीं हुआ।';
+
+  @override
+  String get booksChapterTest => 'अध्याय का टेस्ट';
+
+  @override
+  String get booksReadChapter => 'अध्याय पढ़ें';
+
+  @override
+  String booksTakeTest(Object count) {
+    return 'टेस्ट दें ($count)';
+  }
+
+  @override
+  String get booksNoTopics => 'इस अध्याय में अभी तक खोलने को कोई विषय नहीं है।';
+
+  @override
+  String get downloadsClearTitle => 'ऑफ़लाइन सामग्री मिटाएं?';
+
+  @override
+  String get downloadsClearBody =>
+      'यह कैश किए सभी प्रश्न हटा देता है। इंटरनेट होने पर आप कभी भी फिर से डाउनलोड कर सकते हैं।';
+
+  @override
+  String get downloadsClear => 'हटाएं';
+
+  @override
+  String get downloadsStorageUnreadable => 'ऑफ़लाइन स्टोरेज नहीं पढ़ा जा सका';
+
+  @override
+  String get downloadsNothingReported =>
+      'झूठा जीरो दिखाने के बजाय कुछ भी नहीं दिखाया जाता।';
+
+  @override
+  String downloadsCachedQuestions(Object count) {
+    return '$count प्रश्न कैश हैं';
+  }
+
+  @override
+  String downloadsCacheSize(Object subjects, Object size) {
+    return '$subjects विषय · ~$size KB';
+  }
+
+  @override
+  String get downloadsLastCached => 'अंतिम कैश';
+
+  @override
+  String get downloadsAutoDownload => 'स्वतः डाउनलोड';
+
+  @override
+  String get downloadsPrefetchNow => 'दैनिक पैक अभी प्रीफ़ेच करें';
+
+  @override
+  String get downloadsClearAction => 'ऑफ़लाइन सामग्री मिटाएं';
+
+  @override
+  String get rewardsSpinWheel => 'चक्र घुमाएं';
+
+  @override
+  String get rewardsCheckInUnavailable => 'चेक-इन उपलब्ध नहीं';
+
+  @override
+  String get rewardsDailyCheckIn => 'दैनिक चेक-इन';
+
+  @override
+  String rewardsDayStreak(Object count) {
+    return '$count दिन';
+  }
+
+  @override
+  String get rewardsToday => 'आज';
+
+  @override
+  String get rewardsTomorrow => 'कल';
+
+  @override
+  String get rewardsClaimedToday => 'आज दावा किया गया';
+
+  @override
+  String rewardsCheckInFor(Object coins) {
+    return '$coins कॉइन के लिए चेक-इन करें';
+  }
+
+  @override
+  String get rewardsSpinUnavailable => 'चक्र उपलब्ध नहीं';
+
+  @override
+  String get rewardsSpin => 'घुमाएं';
+
+  @override
+  String get rewardsComeBackLater => 'बाद में आएं';
+
+  @override
+  String rewardsNextSpin(Object date) {
+    return 'अगली बार $date';
+  }
+
+  @override
+  String gameLevelLabel(Object number) {
+    return 'स्तर $number';
+  }
+
+  @override
+  String get gameBossLevel => 'बॉस स्तर';
+
+  @override
+  String get gameChapterLevel => 'अध्याय स्तर';
+
+  @override
+  String gameSecondsPerQuestion(Object seconds) {
+    return 'प्रति प्रश्न ${seconds}s';
+  }
+
+  @override
+  String get gameBestScore => 'सर्वश्रेष्ठ अंक';
+
+  @override
+  String get gameBestAccuracy => 'सर्वश्रेष्ठ शुद्धता';
+
+  @override
+  String get gameBestTime => 'सर्वश्रेष्ठ समय';
+
+  @override
+  String get gameStartLevel => 'स्तर शुरू करें';
+
+  @override
+  String get gameNotPlayable => 'अभी खेलने योग्य नहीं';
+
+  @override
+  String get gameWorldNoCourse =>
+      'इस वर्ल्ड से अभी तक कोई क्विज़ कोर्स नहीं जुड़ा है, इसलिए खेलने को कुछ नहीं है। एडमिन से वर्ल्ड का कोर्स सेट करवाएं।';
+
+  @override
+  String get gameWorldsTitle => 'वर्ल्ड';
+
+  @override
+  String get gameWorldsLoadFailed => 'वर्ल्ड लोड नहीं हो सके';
+
+  @override
+  String get gameNoWorlds => 'अभी तक कोई वर्ल्ड नहीं';
+
+  @override
+  String get gameNoWorldsBody =>
+      'सर्वर ने अभी तक कोई वर्ल्ड प्रकाशित नहीं किया है।';
+
+  @override
+  String get gameNeedsSubscription => 'सदस्यता योजना आवश्यक है।';
+
+  @override
+  String get gameWorldNotFound => 'वर्ल्ड नहीं मिला';
+
+  @override
+  String gameStarsProgress(Object earned, Object total) {
+    return '$earned / $total सितारे';
+  }
+
+  @override
+  String get gameWorldMapFailed => 'वर्ल्ड मैप लोड नहीं हो सका';
+
+  @override
+  String get gameMissionsTitle => 'मिशन';
+
+  @override
+  String get gameMissionsFailed => 'मिशन लोड नहीं हो सके';
+
+  @override
+  String get gameNoMissions => 'अभी तक कोई मिशन नहीं';
+
+  @override
+  String get gameNoMissionsBody =>
+      'सर्वर ने आपके लिए कोई मिशन प्रकाशित नहीं किया है।';
+
+  @override
+  String get gameClaimAll => 'सभी दावा करें';
+
+  @override
+  String gameClaimCoins(Object coins) {
+    return '$coins कॉइन दावा करें';
+  }
+
+  @override
+  String get gameClaimed => 'दावा किया';
+
+  @override
+  String get numericalsTitle => 'संख्यात्मक';
+
+  @override
+  String get numericalsNew => 'नए अंक';
+
+  @override
+  String get numericalsCheck => 'उत्तर जांचें';
+
+  @override
+  String get numericalsShowSolution => 'चरणबद्ध हल देखें';
+
+  @override
+  String numericalsCorrect(Object reason) {
+    return 'सही$reason';
+  }
+
+  @override
+  String get numericalsNotCorrect =>
+      'गलत है। फिर से कोशिश करें, या चरणबद्ध हल देखें।';
+
+  @override
+  String get numericalsFlagged =>
+      'सर्वर ने यह प्रश्न समीक्षा के लिए चिह्नित किया है।';
+
+  @override
+  String get numericalsWorkedSolution => 'चरणबद्ध हल';
+
+  @override
+  String numericalsComputedBy(Object source) {
+    return 'गणना करने वाला: $source';
+  }
+
+  @override
+  String get numericalsFlaggedWarning =>
+      'सर्वर ने समीक्षा के लिए चिह्नित किया है — इस उत्तर को सावधानी से देखें।';
+
+  @override
+  String get numericalsOpenInCalculator => 'कैलकुलेटर में खोलें';
+
+  @override
+  String get storeEquipped => 'लगा लिया गया!';
+
+  @override
+  String get storeEquipFailed => 'वह आइटम लगा नहीं सका।';
+
+  @override
+  String get storeWardrobeTitle => 'वॉर्डरोब';
+
+  @override
+  String get storeEquippedLabel => 'लगाया गया';
+
+  @override
+  String get storeNothingEquipped => 'कुछ भी लगाया नहीं है';
+
+  @override
+  String get storeNothingEquippedBody =>
+      'प्रीमियम स्टोर से एसेट खरीदें, फिर यहाँ लगाएं।';
+
+  @override
+  String get storeAvailableToEquip => 'लगाने योग्य';
+
+  @override
+  String get storeEquipHint =>
+      'लगाने के लिए Equip दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।';
+
+  @override
+  String get storeNoAssets => 'अभी तक कोई एसेट नहीं — प्रीमियम स्टोर देखें।';
+
+  @override
+  String storeClearSlot(Object slot) {
+    return '$slot हटाएं';
+  }
+
+  @override
+  String get storeTitle => 'प्रीमियम स्टोर';
+
+  @override
+  String get storeAll => 'सभी';
+
+  @override
+  String storeAssetsCount(Object count) {
+    return '$count एसेट';
+  }
+
+  @override
+  String get storeNoAssetsInCategory => 'इस श्रेणी में कोई एसेट नहीं है।';
+
+  @override
+  String get storeTrading => 'व्यापार';
+
+  @override
+  String get storeTradingExplain =>
+      'कॉइन से संसाधन और बंडल खरीदें, या अब ज़रूरी नहीं वस्तु बेचें।';
+
+  @override
+  String get storeCoinShop => 'कॉइन शॉप';
+
+  @override
+  String get storeSellItems => 'आइटम बेचें';
+
+  @override
+  String get storeOwnedBadge => 'आपके पास';
+
+  @override
+  String get storeOwned => 'आपका';
+
+  @override
+  String get storeEmptyEquip => 'खाली — स्टोर से लगाएं';
+
+  @override
+  String get eiceTitle => 'परीक्षा बुद्धि';
+
+  @override
+  String get eiceExplain =>
+      'यहाँ की हर चीज़ आपके असली उत्तर इतिहास से हमारे सर्वर पर निकाली जाती है, इसलिए सच न हो तो कुछ नहीं दिखाया जाता।';
+
+  @override
+  String get eiceCoach => 'कोच — आपकी योजना';
+
+  @override
+  String get eiceSprint => 'स्प्रिंट — 7-दिन की समीक्षा कतार';
+
+  @override
+  String get eiceWeeklyReport => 'साप्ताहिक रिपोर्ट';
+
+  @override
+  String get eiceTriage => 'ट्रायेज — कवर करें या छोड़ें';
+
+  @override
+  String get battleArena => 'बैटल अरेना';
+
+  @override
+  String get battleNoActiveMatch => 'कोई सक्रिय मैच नहीं';
+
+  @override
+  String get battleFindMatch => 'मैच खोजें';
+
+  @override
+  String get battleNoQuestions => 'इस मैच में कोई प्रश्न नहीं है';
+
+  @override
+  String battleQuestionCounter(Object current, Object total) {
+    return 'बैटल · प्रश्न$current/$total';
+  }
+
+  @override
+  String get battleOpponentAnswered => 'विपक्षी ने उत्तर दिया!';
+
+  @override
+  String get battleResultTitle => 'बैटल परिणाम';
+
+  @override
+  String get battleNoMatchToDisplay => 'दिखाने कोई मैच नहीं';
+
+  @override
+  String get battleVs => 'बनाम';
+
+  @override
+  String get battleRematch => 'रीमैच';
+
+  @override
+  String get battleYou => 'आप';
+
+  @override
+  String get liveEventsTitle => 'लाइव कार्यक्रम';
+
+  @override
+  String get liveEventsNone => 'कोई लाइव कार्यक्रम नहीं';
+
+  @override
+  String get liveEventsNoneBody => 'निर्धारित और लाइव कार्यक्रम यहाँ दिखेंगे।';
+
+  @override
+  String get notificationsTitle => 'सूचनाएं';
+
+  @override
+  String get notificationsMarkAllRead => 'सभी पढ़े हुए चिह्नित करें';
+
+  @override
+  String get notificationsNone => 'कोई सूचना नहीं';
+
+  @override
+  String get notificationsNoneBody => 'अभी कुछ नया नहीं है।';
+
+  @override
+  String get notificationsLoadFailed => 'सूचनाएं लोड नहीं हो सकीं';
+
+  @override
+  String get notificationsMarkFailed =>
+      'उसे पढ़ा हुआ चिह्नित नहीं कर सके। फिर से कोशिश करें।';
+
+  @override
+  String get notificationsMarkAllFailed =>
+      'सब कुछ पढ़ा हुआ चिह्नित नहीं कर सका।';
+
+  @override
+  String get coursesLoadFailed => 'कोर्स लोड नहीं हो सके। कनेक्शन जांचें।';
+
+  @override
+  String get coursesNone => 'कोई कोर्स उपलब्ध नहीं';
+
+  @override
+  String get coursesNoneBody =>
+      'सिविल इंजीनियरिंग के पाठ्यक्रम प्रकाशित होने पर यहाँ दिखेंगे।';
+
+  @override
+  String coursesTracksCount(Object count) {
+    return '$count पाठ्यक्रम ट्रैक';
+  }
+
+  @override
+  String get coursesBrowseQuestions => 'प्रश्न ब्राउज़ करें';
+
+  @override
+  String get pscTitle => 'PSC / लोकसेवा';
+
+  @override
+  String pscBlueprintsFailed(Object reason) {
+    return 'PSC के ब्लूप्रिन्ट लोड नहीं हो सके।\n$reason';
+  }
+
+  @override
+  String get pscNoBlueprints =>
+      'अभी तक कोई ब्लूप्रिन्ट प्रकाशित नहीं। नीचे खींचकर फिर से कोशिश करें।';
+
+  @override
+  String pscBlueprintMeta(Object id, Object questions) {
+    return 'id: $id • $questions प्रश्न';
+  }
+
+  @override
+  String get pscStartFailed => 'परीक्षा शुरू विफल (ऑफ़लाइन या 404)';
+
+  @override
+  String pscStarted(Object id) {
+    return 'परीक्षा शुरू हुई: $id';
+  }
+
+  @override
+  String get achievementsBadges => 'बैज';
+
+  @override
+  String achievementsFailed(Object reason) {
+    return 'उपलब्धियां लोड नहीं हो सकीं: $reason';
+  }
+
+  @override
+  String get achievementsNone =>
+      'अभी तक कोई उपलब्धि नहीं — क्विज़ खेलना शुरू करें!';
+
+  @override
+  String get searchTitle => 'खोज';
+
+  @override
+  String get searchHint => 'प्रश्न, कैलकुलेटर, कोर्स खोजें…';
+
+  @override
+  String get searchTry => 'जैसे: levelling, RCC, Bernoulli';
+
+  @override
+  String get searchNoResults => 'कोई परिणाम नहीं';
+
+  @override
+  String searchFailed(Object reason) {
+    return 'खोज विफल: $reason';
+  }
+
+  @override
+  String xpLevelLabel(Object level) {
+    return 'स्तर $level';
+  }
+
+  @override
+  String xpProgress(Object current, Object total) {
+    return '$current / $total XP';
+  }
+
+  @override
+  String xpTotal(Object amount) {
+    return '$amount XP';
+  }
+
+  @override
+  String xpToNext(Object amount) {
+    return 'अगले स्तर तक $amount';
+  }
+
+  @override
+  String xpDayStreak(Object count) {
+    return '$count दिन की स्ट्रीक';
+  }
+
+  @override
+  String get lottieOverlay => 'lottie-overlay';
+
+  @override
+  String get lottieTapToDismiss => 'हटाने के लिए दबाएं';
+
+  @override
+  String lifelineCost(Object name, Object coins) {
+    return '$name lifeline, $coins कॉइन';
+  }
+
+  @override
+  String lifelineUnavailable(Object name, Object reason) {
+    return '$name lifeline उपलब्ध नहीं: $reason';
+  }
+
+  @override
+  String get offlineCannotReach =>
+      'हमारे सर्वर तक नहीं पहुँच सके — कनेक्शन लौटने पर प्रगति सिंक होगी';
+
+  @override
+  String get offlineBackOnline =>
+      'इंटरनेट वापस आ गया — आपकी कतार की गतिविधि सिंक हो रही है';
+
+  @override
+  String get learningNoResponse => 'कोई उत्तर नहीं (ट्यूटर ऑफ़लाइन)।';
+
+  @override
+  String get socialApplyFailed => 'वह कोड लागू नहीं कर सका';
+
+  @override
+  String get responseCached => 'ठीक है (कैश)';
+
+  @override
+  String battleTimer(Object seconds, Object current, Object total) {
+    return '${seconds}s · $current/$total';
+  }
+
+  @override
+  String get battleShareUnavailable => 'साझा करना उपलब्ध नहीं';
+
+  @override
+  String bookPageLabel(Object number) {
+    return 'पृष्ठ $number';
+  }
+
+  @override
+  String get bookMyHighlights => 'मेरे हाइलाइट';
+
+  @override
+  String get bookNoExtractableText =>
+      'इस पृष्ठ में निकालने योग्य टेक्स्ट नहीं है। यह केवल छवि वाला स्कैन हो सकता है।';
+
+  @override
+  String get bookPreviousPage => 'पिछला पृष्ठ';
+
+  @override
+  String get bookNextPage => 'अगला पृष्ठ';
+
+  @override
+  String get bookYourHighlights => 'आपके हाइलाइट';
+
+  @override
+  String get bookNoHighlights => 'आपने अभी तक कुछ हाइलाइट नहीं किया है।';
+
+  @override
+  String get bookImageNotText => 'छवि या आरेख (टेक्स्ट के रूप में उपलब्ध नहीं)';
+
+  @override
+  String bookValueNotText(Object value) {
+    return '$value (टेक्स्ट के रूप में उपलब्ध नहीं)';
+  }
+
+  @override
+  String get contestsNone => 'अभी तक कोई प्रतियोगिता नहीं';
+
+  @override
+  String get contestsNoneBody =>
+      'सक्रिय और आने वाली प्रतियोगिताएं यहाँ दिखेंगी।';
+
+  @override
+  String get eiceNoData => 'अभी तक कोई डेटा उपलब्ध नहीं है।';
+
+  @override
+  String get eiceNoDetails => 'अभी तक कोई विवरण उपलब्ध नहीं है।';
+
+  @override
+  String get eiceNothingHere => 'यहाँ अभी तक कुछ नहीं है।';
+
+  @override
+  String eiceAndMore(Object count) {
+    return 'और $count…';
+  }
+
+  @override
+  String get gameNoRewardData =>
+      'सर्वर ने अभी तक इस स्तर के लिए इनाम डेटा नहीं भेजा है।';
+
+  @override
+  String gameMissionsReady(Object count) {
+    return '$count मिशन दावा करने के लिए तैयार';
+  }
+
+  @override
+  String gameRewardsWaiting(Object count) {
+    return '$count इनाम बाकी';
+  }
+
+  @override
+  String get leaderboardFriendsTitle => 'दोस्तों का लीडरबोर्ड';
+
+  @override
+  String get leaderboardLeagueTitle => 'लीग का लीडरबोर्ड';
+
+  @override
+  String leaderboardMonthsShort(Object months) {
+    return '$months म.';
+  }
+
+  @override
+  String get learningNoTracksTitle => 'अभी तक कोई ट्रैक नहीं';
+
+  @override
+  String get learningTracksBody =>
+      'ट्रैक प्रकाशित होने पर यहाँ दिखेंगे। जल्द ही फिर देखें।';
+
+  @override
+  String learningGradedNextDue(Object grade, Object date) {
+    return '$grade के रूप में अंकित — अगली बार $date तक';
+  }
+
+  @override
+  String get learningNoReviewsDue => 'कोई दोहराव बाकी नहीं';
+
+  @override
+  String liveEventsActive(Object count, Object capacity) {
+    return '$count$capacity सक्रिय';
+  }
+
+  @override
+  String liveEventsQuestions(Object count) {
+    return '$count प्रश्न';
+  }
+
+  @override
+  String liveEventsSecondsPerQuestion(Object seconds) {
+    return '${seconds}s / प्रश्न';
+  }
+
+  @override
+  String liveEventsJoined(Object count, Object capacity) {
+    return '$count$capacity शामिल';
+  }
+
+  @override
+  String numericalsAnswer(Object value, Object unit) {
+    return 'उत्तर: $value$unit';
+  }
+
+  @override
+  String storeAssetMeta(Object rarity, Object slot, Object coins) {
+    return '$rarity • $slot • $coins कॉइन';
+  }
+
+  @override
+  String syllabusNoTopicMatch(Object query) {
+    return '\"$query\" से मेल खाने कोई विषय नहीं।';
+  }
+
+  @override
+  String syllabusExaminableCount(Object count) {
+    return '$count परीक्षा में';
+  }
 
   @override
   String get forceUpdateUnsupportedLatest =>

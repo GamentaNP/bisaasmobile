@@ -7,6 +7,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../controllers/contests_controller.dart';
 import '../../domain/entities/contest.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ContestDetailScreen extends ConsumerStatefulWidget {
   const ContestDetailScreen({super.key, required this.contestId});
@@ -42,6 +43,7 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
   }
 
   Widget _buildBody(BuildContext context, ThemeData theme, ContestDetailState state) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && state.detail == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -50,7 +52,7 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
     }
     final detail = state.detail;
     if (detail == null) {
-      return Center(child: ErrorView(message: 'Contest not found', onRetry: () => ref.read(contestDetailControllerProvider.notifier).fetchDetail(_id)));
+      return Center(child: ErrorView(message: l10n.contestNotFound, onRetry: () => ref.read(contestDetailControllerProvider.notifier).fetchDetail(_id)));
     }
     final contest = detail.contest;
 
@@ -80,11 +82,11 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.correctGreen.withValues(alpha: 0.2))),
-              child: Text('Attempt #${state.lastAttempt!.attemptId} started. Expires: ${state.lastAttempt!.expiresAt?.toLocal().toString().split('.').first ?? '—'}', style: const TextStyle(fontSize: 12, color: AppColors.correctGreen)),
+              child: Text(l10n.contestAttemptStarted(state.lastAttempt!.attemptId, state.lastAttempt!.expiresAt?.toLocal().toString().split('.').first ?? '—'), style: const TextStyle(fontSize: 12, color: AppColors.correctGreen)),
             ),
           ],
           const SizedBox(height: 20),
-          Text('Leaderboard', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.commonLeaderboard, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (state.isLeaderboardLoading) const LinearProgressIndicator(),
           if (state.leaderboardError != null) ErrorView(message: state.leaderboardError!, onRetry: () => ref.read(contestDetailControllerProvider.notifier).fetchLeaderboard(_id)),
@@ -92,15 +94,15 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(12)),
-              child: const Text('No leaderboard entries yet — be the first!', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.contestNoLeaderboard, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
             ),
           ...state.leaderboard.map((e) => _LeaderTile(entry: e)),
           if (detail.leaderboardMeta != null) ...[
             const SizedBox(height: 6),
-            Text('Generated: ${detail.leaderboardMeta!.generatedAt?.toLocal().toString().split('.').first ?? '—'} • Refresh budget: ${detail.leaderboardMeta!.refreshBudgetRemaining} • ${detail.leaderboardMeta!.cached ? 'cached' : 'live'}', style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+            Text(l10n.contestGeneratedMeta(detail.leaderboardMeta!.generatedAt?.toLocal().toString().split('.').first ?? '—', detail.leaderboardMeta!.refreshBudgetRemaining, detail.leaderboardMeta!.cached ? 'cached' : 'live'), style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
           ],
           const SizedBox(height: 20),
-          Text('Recap', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.contestRecap, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (state.isRecapLoading) const LinearProgressIndicator(),
           if (state.recapError != null) ErrorView(message: state.recapError!, onRetry: () => ref.read(contestDetailControllerProvider.notifier).fetchRecap(_id)),
@@ -118,13 +120,13 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
                   ],
                   if (state.recap!.winners.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    const Text('Winners', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    Text(l10n.contestWinners, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                     const SizedBox(height: 6),
                     ...state.recap!.winners.take(5).map((w) => Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: Text('#${w.rank ?? '-'} ${w.displayName ?? 'User #${w.userId}'} — ${w.score.toStringAsFixed(0)}', style: const TextStyle(fontSize: 12)))),
                   ],
                   if (state.recap!.stats.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    Text('Raw stats: ${state.recap!.stats.length} keys', style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+                    Text(l10n.contestRawStats(state.recap!.stats.length), style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
                   ],
                 ],
               ),
@@ -133,7 +135,7 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
-              child: const Text('Recap available after contest ends.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.contestRecapPending, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
             ),
           const SizedBox(height: 24),
         ],
@@ -142,9 +144,10 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
   }
 
   Future<void> _join() async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await ref.read(contestDetailControllerProvider.notifier).join(_id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Joined contest!' : 'Join failed'), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? l10n.contestJoined : l10n.contestJoinFailed), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
   }
 
   Future<void> _enter() async {
@@ -157,9 +160,10 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
   }
 
   Future<void> _leave() async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await ref.read(contestDetailControllerProvider.notifier).leave(_id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Left contest' : 'Leave failed'), backgroundColor: ok ? AppColors.brand : AppColors.wrongRed));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? l10n.contestLeft : l10n.contestLeaveFailed), backgroundColor: ok ? AppColors.brand : AppColors.wrongRed));
   }
 }
 
@@ -170,6 +174,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final c = detail.contest;
     final color = switch (c.status.toLowerCase()) { 'active' => AppColors.correctGreen, 'upcoming' => AppColors.brand, 'ended' => Colors.grey, _ => AppColors.streakOrange };
     return Container(
@@ -182,7 +187,7 @@ class _Header extends StatelessWidget {
             children: [
               Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: Text(c.status.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color))),
               const Spacer(),
-              if (c.isRegistered) Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.check_circle_rounded, size: 12, color: AppColors.correctGreen), SizedBox(width: 4), Text('REGISTERED', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen))])),
+              if (c.isRegistered) Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.check_circle_rounded, size: 12, color: AppColors.correctGreen), SizedBox(width: 4), Text(l10n.contestRegisteredBadge, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen))])),
             ],
           ),
           const SizedBox(height: 10),
@@ -196,11 +201,11 @@ class _Header extends StatelessWidget {
             spacing: 10,
             runSpacing: 8,
             children: [
-              _StatChip(icon: Icons.monetization_on_rounded, label: c.isFree ? 'FREE' : '${c.entryFeeCoins} coins', color: c.isFree ? AppColors.correctGreen : AppColors.coinYellow),
-              _StatChip(icon: Icons.card_giftcard_rounded, label: '${c.prizePoolCoins} prize', color: AppColors.xpGold),
-              if (c.maxParticipants != null) _StatChip(icon: Icons.group_rounded, label: 'Max ${c.maxParticipants}', color: AppColors.brand),
-              if (c.startsAt != null) _StatChip(icon: Icons.schedule_rounded, label: 'Starts ${c.startsAt!.toLocal().toString().split(' ').first}', color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-              if (c.endsAt != null) _StatChip(icon: Icons.flag_rounded, label: 'Ends ${c.endsAt!.toLocal().toString().split(' ').first}', color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              _StatChip(icon: Icons.monetization_on_rounded, label: c.isFree ? l10n.libraryFree : l10n.coinsBalance(c.entryFeeCoins), color: c.isFree ? AppColors.correctGreen : AppColors.coinYellow),
+              _StatChip(icon: Icons.card_giftcard_rounded, label: l10n.liveEventPrize(c.prizePoolCoins), color: AppColors.xpGold),
+              if (c.maxParticipants != null) _StatChip(icon: Icons.group_rounded, label: l10n.contestMax(c.maxParticipants!), color: AppColors.brand),
+              if (c.startsAt != null) _StatChip(icon: Icons.schedule_rounded, label: l10n.contestStarts(c.startsAt!.toLocal().toString().split(' ').first), color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              if (c.endsAt != null) _StatChip(icon: Icons.flag_rounded, label: l10n.liveEventEnds(c.endsAt!.toLocal().toString().split(' ').first), color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ],
           ),
         ],
@@ -236,6 +241,7 @@ class _ActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isRegistered = state.detail?.isRegistered ?? contest.isRegistered;
     return Row(
       children: [
@@ -244,7 +250,7 @@ class _ActionBar extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: state.isJoining ? null : onJoin,
               icon: state.isJoining ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.how_to_reg_rounded, size: 18),
-              label: Text(contest.isFree ? 'Join (Free)' : 'Join (${contest.entryFeeCoins} coins)'),
+              label: Text(contest.isFree ? l10n.contestJoinFree : l10n.contestJoinCoins(contest.entryFeeCoins)),
             ),
           )
         else
@@ -252,20 +258,20 @@ class _ActionBar extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: state.isEntering ? null : onEnter,
               icon: state.isEntering ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.play_arrow_rounded, size: 18),
-              label: const Text('Enter Contest'),
+              label: Text(l10n.contestEnter),
             ),
           ),
         const SizedBox(width: 10),
         if (isRegistered && contest.isUpcoming)
           OutlinedButton(
             onPressed: onLeave,
-            child: const Text('Leave'),
+            child: Text(l10n.liveEventLeave),
           )
         else
           OutlinedButton.icon(
             onPressed: onRefresh,
             icon: const Icon(Icons.leaderboard_rounded, size: 18),
-            label: const Text('Refresh'),
+            label: Text(l10n.streakRefresh),
           ),
       ],
     );

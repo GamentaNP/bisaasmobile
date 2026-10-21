@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Renders an API payload as readable label/value rows.
 ///
@@ -18,18 +19,19 @@ class PayloadView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final payload = data;
 
     if (payload == null) {
-      return Text('No data available yet.', style: theme.textTheme.bodySmall);
+      return Text(l10n.eiceNoData, style: theme.textTheme.bodySmall);
     }
 
     if (payload is Map) {
       final entries =
           payload.entries.where((e) => !skipKeys.contains(e.key.toString())).toList();
       if (entries.isEmpty) {
-        return Text('No details available yet.', style: theme.textTheme.bodySmall);
+        return Text(l10n.eiceNoDetails, style: theme.textTheme.bodySmall);
       }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +52,7 @@ class PayloadView extends StatelessWidget {
     if (payload is List) {
       final list = payload;
       if (list.isEmpty) {
-        return Text('Nothing here yet.', style: theme.textTheme.bodySmall);
+        return Text(l10n.eiceNothingHere, style: theme.textTheme.bodySmall);
       }
       const maxShown = 8;
       return Column(
@@ -76,7 +78,7 @@ class PayloadView extends StatelessWidget {
             ),
           if (list.length > maxShown)
             Text(
-              'and ${list.length - maxShown} more…',
+              l10n.eiceAndMore(list.length - maxShown),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),

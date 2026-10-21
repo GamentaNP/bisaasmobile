@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import '../support/localized_app.dart';
 
 class _MockConnectivity extends Mock implements Connectivity {}
 
@@ -38,8 +39,8 @@ void main() {
           connectivityProvider.overrideWithValue(ConnectivityService(connectivity)),
           apiReachabilityProvider.overrideWithValue(reachability),
         ],
-        child: const MaterialApp(
-          home: Scaffold(body: Column(children: [OfflineStateBanner()])),
+        child: localizedApp(
+          child: const Scaffold(body: Column(children: [OfflineStateBanner()])),
         ),
       );
 

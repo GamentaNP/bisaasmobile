@@ -1,3 +1,5 @@
+import '../../../l10n/app_localizations.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(socialControllerProvider);
     final notifier = ref.read(socialControllerProvider.notifier);
 
@@ -45,7 +48,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Invite friends')),
+      appBar: AppBar(title: Text(l10n.socialInviteFriends)),
       body: RefreshIndicator(
         onRefresh: notifier.refresh,
         child: _body(context, state, notifier),
@@ -54,6 +57,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
   }
 
   Widget _body(BuildContext context, SocialState state, SocialController notifier) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && !state.hasLoaded) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -62,7 +66,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
       return _Message(
         icon: Icons.cloud_off,
         text: state.error!,
-        actionLabel: 'Retry',
+        actionLabel: l10n.retry,
         onAction: notifier.refresh,
       );
     }
@@ -73,8 +77,8 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
       // payload was not understood, which is not the same as an empty one.
       return _Message(
         icon: Icons.help_outline,
-        text: 'Referral information is unavailable right now.',
-        actionLabel: 'Retry',
+        text: l10n.socialReferralUnavailable,
+        actionLabel: l10n.retry,
         onAction: notifier.refresh,
       );
     }
@@ -88,14 +92,14 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
             child: ListTile(
               title: Text(state.moment!.title ?? state.moment!.ctaLabel),
               subtitle: state.moment!.hasReward
-                  ? Text('Earn ${state.moment!.rewardCoins} coins')
+                  ? Text(l10n.socialEarnCoins(state.moment!.rewardCoins))
                   : null,
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextButton(
                     onPressed: () => notifier.dismiss(state.moment!),
-                    child: const Text('No'),
+                    child: Text(l10n.socialNo),
                   ),
                   FilledButton(
                     onPressed: () => _shareMoment(context, state.moment!),
@@ -113,7 +117,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Your invite code', style: theme.textTheme.titleMedium),
+                Text(l10n.socialYourInviteCode, style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
                 SelectableText(
                   dash.code,
@@ -125,7 +129,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
                   child: FilledButton.icon(
                     onPressed: () => _share(context, dash),
                     icon: const Icon(Icons.share_outlined),
-                    label: const Text('Share invite link'),
+                    label: Text(l10n.socialShareInviteLink),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -134,7 +138,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => _copy(context, dash.code),
                     icon: const Icon(Icons.copy_all_outlined),
-                    label: const Text('Copy code'),
+                    label: Text(l10n.socialCopyCode),
                   ),
                 ),
               ],
@@ -142,37 +146,37 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        Text('Rewards', style: theme.textTheme.titleMedium),
+        Text(l10n.socialRewards, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         _RewardRow(
-          label: 'You earn per friend who signs up',
+          label: l10n.socialRewardPerSignup,
           value: dash.referrerRewardCoins,
         ),
         _RewardRow(
-          label: 'They earn when they sign up',
+          label: l10n.socialTheyEarn,
           value: dash.referredRewardCoins,
         ),
         _RewardRow(
-          label: 'Bonus when they finish their first quiz',
+          label: l10n.socialBonusFirstQuiz,
           value: dash.firstQuizRewardCoins,
         ),
         const Divider(height: 24),
-        Text('Your referrals', style: theme.textTheme.titleMedium),
+        Text(l10n.socialYourReferrals, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         Row(
           children: [
-            _Stat(value: '${dash.stats.totalReferrals}', label: 'invited'),
+            _Stat(value: '${dash.stats.totalReferrals}', label: l10n.socialInvited),
             const SizedBox(width: 20),
-            _Stat(value: '${dash.stats.rewardedReferrals}', label: 'rewarded'),
+            _Stat(value: '${dash.stats.rewardedReferrals}', label: l10n.socialRewarded),
             const SizedBox(width: 20),
-            _Stat(value: '${dash.stats.coinsEarned}', label: 'coins earned'),
+            _Stat(value: '${dash.stats.coinsEarned}', label: l10n.socialCoinsEarned),
           ],
         ),
         if (dash.referrals.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Text(
-              'No one has used your code yet.',
+              l10n.socialNoReferralsYet,
               style: theme.textTheme.bodySmall,
             ),
           )
@@ -190,23 +194,23 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
               title: Text(r.displayName),
               subtitle: Text(
                 r.isRewarded
-                    ? 'Reward paid: ${r.referrerRewardCoins} coins'
+                    ? l10n.socialRewardPaid(r.referrerRewardCoins)
                     // The server distinguishes pending states; do not collapse
                     // them into one word it did not use.
-                    : 'Status: ${r.status}',
+                    : l10n.socialStatus(r.status),
               ),
             ),
           ),
         const Divider(height: 24),
-        Text('Got a code from a friend?', style: theme.textTheme.titleMedium),
+        Text(l10n.socialGotCode, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         TextField(
           controller: _codeController,
           textCapitalization: TextCapitalization.characters,
           autocorrect: false,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             border: OutlineInputBorder(),
-            labelText: 'Referral code',
+            labelText: l10n.socialReferralCode,
             isDense: true,
           ),
           onSubmitted: (v) => notifier.claimCode(v),
@@ -224,7 +228,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
                     width: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Apply code'),
+                : Text(l10n.socialApplyCode),
           ),
         ),
       ],
@@ -232,6 +236,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
   }
 
   Future<void> _share(BuildContext context, ReferralDashboard dash) async {
+    final l10n = AppLocalizations.of(context)!;
     // The URL is server-built, so it already points at the right host. The
     // referral URL is always included — the previous version omitted it for
     // the plain "share invite link" button, so the recipient got a bare code
@@ -246,7 +251,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
       AppLogger.w('share failed: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open the share sheet')),
+          SnackBar(content: Text(l10n.socialShareSheetFailed)),
         );
       }
     }
@@ -258,6 +263,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
   /// can attribute the share. When the server declines to mint one the
   /// referral URL is shared instead — never a fabricated tracked URL.
   Future<void> _shareMoment(BuildContext context, ShareMoment moment) async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(socialControllerProvider.notifier);
     ShareLink? link;
     try {
@@ -286,17 +292,18 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
       AppLogger.w('share failed: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open the share sheet')),
+          SnackBar(content: Text(l10n.socialShareSheetFailed)),
         );
       }
     }
   }
 
   Future<void> _copy(BuildContext context, String code) async {
+    final l10n = AppLocalizations.of(context)!;
     await Clipboard.setData(ClipboardData(text: code));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Code copied')),
+        SnackBar(content: Text(l10n.socialCodeCopied)),
       );
     }
   }
@@ -329,12 +336,13 @@ class _RewardRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Expanded(child: Text(label)),
-          Text('$value coins', style: Theme.of(context).textTheme.bodyMedium),
+          Text(l10n.coinsBalance(value), style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
     );

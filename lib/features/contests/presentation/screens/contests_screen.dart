@@ -7,6 +7,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../controllers/contests_controller.dart';
 import '../../domain/entities/contest.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ContestsScreen extends ConsumerStatefulWidget {
   const ContestsScreen({super.key});
@@ -28,12 +29,13 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(contestsControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contests'),
+        title: Text(l10n.profileContests),
         actions: [
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: state.isLoading ? null : _onRefresh),
         ],
@@ -46,6 +48,7 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
   }
 
   Widget _buildBody(BuildContext context, ThemeData theme, ContestsState state) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && state.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -59,9 +62,9 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
     }
     if (state.items.isEmpty) {
       return ListView(
-        children: const [
+        children: [
           SizedBox(height: 80),
-          EmptyState(title: 'No contests yet', subtitle: 'Active and upcoming contests will appear here.', icon: Icons.emoji_events_outlined),
+          EmptyState(title: l10n.contestsNone, subtitle: l10n.contestsNoneBody, icon: Icons.emoji_events_outlined),
         ],
       );
     }
@@ -79,7 +82,7 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
                   : OutlinedButton.icon(
                       onPressed: () => ref.read(contestsControllerProvider.notifier).fetchContests(page: state.currentPage + 1, append: true),
                       icon: const Icon(Icons.expand_more_rounded),
-                      label: const Text('Load more'),
+                      label: Text(l10n.commonLoadMore),
                     ),
             ),
           );
@@ -116,6 +119,7 @@ class _ContestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final color = _statusColor(contest.status);
     return InkWell(
@@ -168,13 +172,13 @@ class _ContestCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                    child: const Text('FREE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
+                    child: Text(l10n.libraryFree, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
                   ),
                 const Spacer(),
                 if (contest.prizePoolCoins > 0) ...[
                   const Icon(Icons.card_giftcard_rounded, size: 12, color: AppColors.xpGold),
                   const SizedBox(width: 2),
-                  Text('${contest.prizePoolCoins} prize', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.xpGold)),
+                  Text(l10n.liveEventPrize(contest.prizePoolCoins), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.xpGold)),
                 ],
               ],
             ),

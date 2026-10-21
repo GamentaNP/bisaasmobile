@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +23,7 @@ class LearningGoalDetailScreen extends ConsumerStatefulWidget {
 class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final goalIdInt = int.tryParse(widget.goalId) ?? 0;
     final goalAsync = ref.watch(learningGoalDetailProvider(goalIdInt));
     final readinessAsync = ref.watch(learningGoalReadinessProvider(goalIdInt));
@@ -29,9 +32,9 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Goal #${widget.goalId}'),
+        title: Text(l10n.learningGoalLabel(widget.goalId)),
         actions: [
-          IconButton(icon: const Icon(Icons.today_rounded), tooltip: 'Today', onPressed: () => context.go('/learning/today')),
+          IconButton(icon: const Icon(Icons.today_rounded), tooltip: l10n.learningToday, onPressed: () => context.go('/learning/today')),
         ],
       ),
       body: goalAsync.when(
@@ -80,12 +83,12 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                         ],
                       ),
                       const SizedBox(height: 10),
-                      _Row(label: 'Goal ID', value: '${goal.id}'),
-                      _Row(label: 'Track ID', value: '${goal.trackId}'),
-                      if (goal.targetDate != null) _Row(label: 'Target date', value: DateFormat.yMMMEd().format(goal.targetDate!.toLocal())),
-                      if (goal.dailyMinutes != null) _Row(label: 'Daily minutes', value: '${goal.dailyMinutes}'),
-                      if (goal.intensity != null) _Row(label: 'Intensity', value: goal.intensity!),
-                      if (goal.placementMeta != null && goal.placementMeta!.isNotEmpty) _Row(label: 'Placement', value: goal.placementMeta.toString()),
+                      _Row(label: l10n.learningGoalId, value: '${goal.id}'),
+                      _Row(label: l10n.learningTrackId, value: '${goal.trackId}'),
+                      if (goal.targetDate != null) _Row(label: l10n.learningTargetDate, value: DateFormat.yMMMEd().format(goal.targetDate!.toLocal())),
+                      if (goal.dailyMinutes != null) _Row(label: l10n.learningDailyMinutes, value: '${goal.dailyMinutes}'),
+                      if (goal.intensity != null) _Row(label: l10n.learningIntensity, value: goal.intensity!),
+                      if (goal.placementMeta != null && goal.placementMeta!.isNotEmpty) _Row(label: l10n.learningPlacement, value: goal.placementMeta.toString()),
                       const SizedBox(height: 12),
                       readinessAsync.when(
                         data: (r) => Container(
@@ -98,7 +101,7 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                                 children: [
                                   const Icon(Icons.insights_rounded, size: 18, color: AppColors.xpGold),
                                   const SizedBox(width: 6),
-                                  Text('Readiness', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: AppColors.xpGold)),
+                                  Text(l10n.coachingReadiness, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: AppColors.xpGold)),
                                   const Spacer(),
                                   Text('${r.readiness}%', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.xpGold)),
                                 ],
@@ -106,12 +109,12 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                               const SizedBox(height: 8),
                               ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: r.readinessFraction, minHeight: 8, backgroundColor: Colors.white, color: AppColors.xpGold)),
                               const SizedBox(height: 6),
-                              Text('${r.readiness}% mastery across ${r.topicCount} topics (MasteryService::computeReadiness)', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text(l10n.learningMastery(r.readiness, r.topicCount), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                             ],
                           ),
                         ),
                         loading: () => const LinearProgressIndicator(),
-                        error: (e, _) => Text('Readiness: $e', style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
+                        error: (e, _) => Text(l10n.learningReadinessValue(e), style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
                       ),
                     ],
                   ),
@@ -121,7 +124,7 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
-                    child: Row(children: [Expanded(child: Text(ctrl.deleteGoalError!, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: () => ref.read(learningControllerProvider.notifier).clearErrors(), child: const Text('Dismiss'))]),
+                    child: Row(children: [Expanded(child: Text(ctrl.deleteGoalError!, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: () => ref.read(learningControllerProvider.notifier).clearErrors(), child: Text(l10n.tutorDismiss))]),
                   ),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
@@ -131,26 +134,26 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (c) => AlertDialog(
-                              title: const Text('Delete goal?'),
-                              content: const Text('This will permanently delete the goal. Daily plans remain but no new plans will be built.'),
-                              actions: [TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')), FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Delete'))],
+                              title: Text(l10n.learningDeleteGoalTitle),
+                              content: Text(l10n.learningDeleteGoalBody),
+                              actions: [TextButton(onPressed: () => Navigator.pop(c, false), child: Text(l10n.commonCancel)), FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(l10n.settingsDeleteConfirm))],
                             ),
                           );
                           if (confirm != true || !context.mounted) return;
                           final ok = await ref.read(learningControllerProvider.notifier).deleteGoal(goal.id);
                           if (ok && context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Goal deleted'), backgroundColor: AppColors.correctGreen));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.learningGoalDeleted), backgroundColor: AppColors.correctGreen));
                             context.pop();
                           }
                         },
                   icon: ctrl.isDeletingGoal ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.delete_rounded, color: AppColors.wrongRed),
-                  label: Text(ctrl.isDeletingGoal ? 'Deleting…' : 'Delete goal', style: const TextStyle(color: AppColors.wrongRed)),
+                  label: Text(ctrl.isDeletingGoal ? l10n.learningDeleting : l10n.learningDeleteGoal, style: const TextStyle(color: AppColors.wrongRed)),
                   style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.wrongRed)),
                 ),
                 const SizedBox(height: 16),
-                FilledButton.icon(onPressed: () => context.go('/learning/today'), icon: const Icon(Icons.calendar_today_rounded), label: const Text('Open Today plan')),
+                FilledButton.icon(onPressed: () => context.go('/learning/today'), icon: const Icon(Icons.calendar_today_rounded), label: Text(l10n.learningOpenTodayPlan)),
                 const SizedBox(height: 8),
-                FilledButton.tonalIcon(onPressed: () => context.go('/learning/tracks'), icon: const Icon(Icons.track_changes_rounded), label: const Text('Back to tracks')),
+                FilledButton.tonalIcon(onPressed: () => context.go('/learning/tracks'), icon: const Icon(Icons.track_changes_rounded), label: Text(l10n.learningBackToTracks)),
               ],
             ),
           );

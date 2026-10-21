@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +39,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(coachingControllerProvider);
     final dashboard = state.dashboard;
     final theme = Theme.of(context);
@@ -44,7 +47,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Coaching'),
+        title: Text(l10n.profileCoaching),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -56,10 +59,10 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
               if (v == 'tutor_plan') context.go('/tutor/plan');
               if (v == 'tutor_onboarding') context.go('/tutor/onboarding');
             },
-            itemBuilder: (c) => const [
-              PopupMenuItem(value: 'tutor_chat', child: Text('Tutor chat')),
-              PopupMenuItem(value: 'tutor_plan', child: Text('Study plan')),
-              PopupMenuItem(value: 'tutor_onboarding', child: Text('Tutor onboarding')),
+            itemBuilder: (c) => [
+              PopupMenuItem(value: 'tutor_chat', child: Text(l10n.coachingTutorChat)),
+              PopupMenuItem(value: 'tutor_plan', child: Text(l10n.coachingStudyPlan)),
+              PopupMenuItem(value: 'tutor_onboarding', child: Text(l10n.coachingTutorOnboarding)),
             ],
           ),
         ],
@@ -80,8 +83,8 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                           children: [
                             Expanded(
                               child: TextField(
-                                decoration: const InputDecoration(
-                                  hintText: 'Goal ID for readiness (e.g., psc-civil)',
+                                decoration: InputDecoration(
+                                  hintText: l10n.coachingGoalIdHint,
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                   prefixIcon: Icon(Icons.flag_rounded),
@@ -99,7 +102,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                               if (g.isEmpty) return;
                               ref.read(coachingControllerProvider.notifier).setGoal(g);
                               ref.read(coachingControllerProvider.notifier).load(goalId: g);
-                            }, child: const Text('Load')),
+                            }, child: Text(l10n.coachingLoad)),
                           ],
                         ),
                       ),
@@ -109,12 +112,12 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12)),
-                      child: Row(children: [const Icon(Icons.error_outline_rounded, color: AppColors.wrongRed, size: 16), const SizedBox(width: 8), Expanded(child: Text(state.error!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(coachingControllerProvider.notifier).clearError(), child: const Text('Dismiss'))]),
+                      child: Row(children: [const Icon(Icons.error_outline_rounded, color: AppColors.wrongRed, size: 16), const SizedBox(width: 8), Expanded(child: Text(state.error!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(coachingControllerProvider.notifier).clearError(), child: Text(l10n.tutorDismiss))]),
                     ),
                   if (dashboard == null)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(24),
-                      child: Center(child: Text('No coaching data yet — complete onboarding or chat with tutor to seed.', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
+                      child: Center(child: Text(l10n.coachingNoData, style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
                     )
                   else ...[
                     if (dashboard.isDegraded)
@@ -122,10 +125,10 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.xpGold.withValues(alpha: 0.2))),
-                        child: const Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.xpGold), SizedBox(width: 8), Expanded(child: Text('Some coaching surfaces are temporarily unavailable — showing available data.', style: TextStyle(fontSize: 12, color: AppColors.xpGold)))]),
+                        child: Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.xpGold), SizedBox(width: 8), Expanded(child: Text(l10n.coachingPartial, style: TextStyle(fontSize: 12, color: AppColors.xpGold)))]),
                       ),
                     // Readiness
-                    if (dashboard.readiness != null) _ReadinessCard(readiness: dashboard.readiness!) else if (state.selectedGoalId != null && state.selectedGoalId!.isNotEmpty) const Padding(padding: EdgeInsets.only(bottom: 12), child: Text('Readiness: no data for this goal yet.', style: TextStyle(fontSize: 12, color: Colors.grey))),
+                    if (dashboard.readiness != null) _ReadinessCard(readiness: dashboard.readiness!) else if (state.selectedGoalId != null && state.selectedGoalId!.isNotEmpty) Padding(padding: EdgeInsets.only(bottom: 12), child: Text(l10n.coachingNoReadinessForGoal, style: TextStyle(fontSize: 12, color: Colors.grey))),
                     // Today
                     if (dashboard.today != null) _TodayCard(today: dashboard.today!),
                     // Projected score inline
@@ -143,13 +146,13 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        FilledButton.icon(onPressed: () => context.go('/tutor/chat'), icon: const Icon(Icons.smart_toy_rounded, size: 16), label: const Text('Ask tutor')),
-                        OutlinedButton.icon(onPressed: () => context.go('/tutor/plan'), icon: const Icon(Icons.assignment_rounded, size: 16), label: const Text('Study plan')),
-                        OutlinedButton.icon(onPressed: () => context.go('/tutor/onboarding'), icon: const Icon(Icons.auto_awesome_rounded, size: 16), label: const Text('Onboarding')),
+                        FilledButton.icon(onPressed: () => context.go('/tutor/chat'), icon: const Icon(Icons.smart_toy_rounded, size: 16), label: Text(l10n.coachingAskTutor)),
+                        OutlinedButton.icon(onPressed: () => context.go('/tutor/plan'), icon: const Icon(Icons.assignment_rounded, size: 16), label: Text(l10n.coachingStudyPlan)),
+                        OutlinedButton.icon(onPressed: () => context.go('/tutor/onboarding'), icon: const Icon(Icons.auto_awesome_rounded, size: 16), label: Text(l10n.coachingOnboarding)),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text('Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.', style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)),
+                    Text(l10n.coachingReadinessExplained, style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)),
                   ],
                   if (state.isRefreshing) const Padding(padding: EdgeInsets.only(top: 12), child: LinearProgressIndicator()),
                 ],
@@ -165,6 +168,7 @@ class _ReadinessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final pct = readiness.percentage;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -175,7 +179,7 @@ class _ReadinessCard extends StatelessWidget {
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.verified_rounded, color: AppColors.brand, size: 18)), const SizedBox(width: 10), const Text('Readiness', style: TextStyle(fontWeight: FontWeight.bold)), const Spacer(), if (readiness.level != null) Chip(label: Text(readiness.level!, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact)]),
+        Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.verified_rounded, color: AppColors.brand, size: 18)), const SizedBox(width: 10), Text(l10n.coachingReadiness, style: TextStyle(fontWeight: FontWeight.bold)), const Spacer(), if (readiness.level != null) Chip(label: Text(readiness.level!, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact)]),
         const SizedBox(height: 10),
         if (readiness.hasData) ...[
           Text('${pct.toStringAsFixed(0)}%', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: AppColors.brandDark)),
@@ -183,7 +187,7 @@ class _ReadinessCard extends StatelessWidget {
           LinearProgressIndicator(value: pct / 100, color: AppColors.brand, backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest),
           if (readiness.missingTopics.isNotEmpty) ...[
             const SizedBox(height: 10),
-            const Text('Focus next:', style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600)),
+            Text(l10n.coachingFocusNext, style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             ...readiness.missingTopics.take(3).map((t) => Padding(padding: const EdgeInsets.only(bottom: 2), child: Row(children: [const Icon(Icons.arrow_right_rounded, size: 14, color: Colors.grey), const SizedBox(width: 4), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
           ],
@@ -192,9 +196,9 @@ class _ReadinessCard extends StatelessWidget {
             ...readiness.nextSteps.take(2).map((s) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_rounded, size: 12, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(s, style: const TextStyle(fontSize: 12)))]))),
           ],
         ] else
-          const Text('No readiness yet — attempt a few quizzes under this goal.', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(l10n.coachingNoReadiness, style: TextStyle(fontSize: 12, color: Colors.grey)),
         const SizedBox(height: 6),
-        Text('Goal ${readiness.goalId}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(l10n.coachingGoalLabel(readiness.goalId), style: const TextStyle(fontSize: 11, color: Colors.grey)),
       ]),
     );
   }
@@ -206,6 +210,7 @@ class _TodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -217,9 +222,9 @@ class _TodayCard extends StatelessWidget {
         if (today.tasks.isNotEmpty) ...[
           const SizedBox(height: 8),
           ...today.tasks.take(3).map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
-          if (today.tasks.length > 3) Text('+ ${today.tasks.length - 3} more', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          if (today.tasks.length > 3) Text(l10n.coachingMore(today.tasks.length - 3), style: const TextStyle(fontSize: 11, color: Colors.grey)),
         ] else
-          const Text('No tasks today', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(l10n.coachingNoTasksToday, style: TextStyle(fontSize: 12, color: Colors.grey)),
       ]),
     );
   }
@@ -230,6 +235,7 @@ class _ProjectedScoreCard extends StatelessWidget {
   final ProjectedScore score;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -239,9 +245,9 @@ class _ProjectedScoreCard extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Projected score', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            Text(l10n.tutorProjectedScore, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             Text('${score.score.toStringAsFixed(1)} / ${score.maxScore.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.xpGold)),
-            if (score.confidence != null) Text('Confidence ${(score.confidence! * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            if (score.confidence != null) Text(l10n.coachingConfidence((score.confidence! * 100).toStringAsFixed(0)), style: const TextStyle(fontSize: 11, color: Colors.grey)),
           ]),
         ),
         if (score.trend != null) Chip(label: Text(score.trend!, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact),
@@ -255,12 +261,13 @@ class _WeakAreasCard extends StatelessWidget {
   final List<WeakArea> areas;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.25))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [const Icon(Icons.warning_amber_rounded, color: AppColors.wrongRed, size: 18), const SizedBox(width: 8), const Text('Weak areas', style: TextStyle(fontWeight: FontWeight.bold)), const Spacer(), Text('${areas.length}', style: const TextStyle(fontSize: 12, color: Colors.grey))]),
+        Row(children: [const Icon(Icons.warning_amber_rounded, color: AppColors.wrongRed, size: 18), const SizedBox(width: 8), Text(l10n.tutorWeakAreas, style: TextStyle(fontWeight: FontWeight.bold)), const Spacer(), Text('${areas.length}', style: const TextStyle(fontSize: 12, color: Colors.grey))]),
         const SizedBox(height: 8),
         ...areas.take(3).map((a) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -279,15 +286,16 @@ class _TracksCard extends StatelessWidget {
   final List<CoachingTrack> tracks;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(14)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Learning tracks', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+        Text(l10n.coachingLearningTracks, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
         const SizedBox(height: 8),
         Wrap(spacing: 6, runSpacing: 6, children: tracks.take(6).map((t) => Chip(label: Text(t.name, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact)).toList()),
-        if (tracks.length > 6) Padding(padding: const EdgeInsets.only(top: 6), child: Text('+ ${tracks.length - 6} more', style: const TextStyle(fontSize: 11, color: Colors.grey))),
+        if (tracks.length > 6) Padding(padding: const EdgeInsets.only(top: 6), child: Text(l10n.coachingMore(tracks.length - 6), style: const TextStyle(fontSize: 11, color: Colors.grey))),
       ]),
     );
   }
@@ -298,14 +306,15 @@ class _WeeklySnippet extends StatelessWidget {
   final WeeklyReport report;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: AppColors.brandDark.withValues(alpha: 0.04), borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.brandDark.withValues(alpha: 0.08))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Row(children: [Icon(Icons.calendar_view_week_rounded, size: 16, color: AppColors.brandDark), SizedBox(width: 6), Text('This week', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))]),
+        Row(children: [Icon(Icons.calendar_view_week_rounded, size: 16, color: AppColors.brandDark), SizedBox(width: 6), Text(l10n.coachingThisWeek, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))]),
         const SizedBox(height: 6),
-        Text('${report.tasksCompleted}/${report.tasksPlanned} tasks • avg ${report.averageScore?.toStringAsFixed(1) ?? '—'}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(l10n.coachingWeekTasks(report.tasksCompleted, report.tasksPlanned, report.averageScore?.toStringAsFixed(1) ?? '—'), style: const TextStyle(fontSize: 12, color: Colors.grey)),
         if (report.summary != null) Padding(padding: const EdgeInsets.only(top: 6), child: Text(report.summary!, style: const TextStyle(fontSize: 12, height: 1.3), maxLines: 2, overflow: TextOverflow.ellipsis)),
       ]),
     );
@@ -319,6 +328,7 @@ class _RevisionsSnippet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -328,7 +338,7 @@ class _RevisionsSnippet extends StatelessWidget {
         child: Row(children: [
           Icon(count == 0 ? Icons.check_circle_rounded : Icons.repeat_rounded, color: count == 0 ? AppColors.correctGreen : AppColors.xpGold, size: 18),
           const SizedBox(width: 10),
-          Expanded(child: Text(count == 0 ? 'No revisions due' : '$count revisions due', style: TextStyle(fontWeight: FontWeight.bold, color: count == 0 ? AppColors.correctGreen : AppColors.xpGold))),
+          Expanded(child: Text(count == 0 ? l10n.coachingNoRevisions : l10n.coachingRevisionsDue(count), style: TextStyle(fontWeight: FontWeight.bold, color: count == 0 ? AppColors.correctGreen : AppColors.xpGold))),
           const Icon(Icons.chevron_right_rounded, size: 18, color: Colors.grey),
         ]),
       ),

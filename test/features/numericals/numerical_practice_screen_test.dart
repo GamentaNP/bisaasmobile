@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import '../../support/localized_app.dart';
 
 class MockNumericalRemote extends Mock implements NumericalRemoteDataSource {}
 
@@ -32,7 +33,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [numericalRemoteDataSourceProvider.overrideWithValue(remote)],
-        child: const MaterialApp(home: NumericalPracticeScreen(numericalId: 5)),
+        child: localizedApp(child: const NumericalPracticeScreen(numericalId: 5)),
       ),
     );
     await tester.pumpAndSettle();

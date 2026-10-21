@@ -11,6 +11,7 @@ import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../data/datasources/rewards_remote_data_source.dart';
 import '../../data/models/rewards_dto.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Rewards — daily check-in and the spin wheel.
 ///
@@ -92,13 +93,14 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rewards'),
+        title: Text(l10n.socialRewards),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Refresh',
+            tooltip: l10n.streakRefresh,
             onPressed: () {
               ref.invalidate(checkInStatusProvider);
               ref.invalidate(spinStatusProvider);
@@ -126,7 +128,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
               onClaim: _claimCheckIn,
             ),
             const SizedBox(height: 20),
-            Text('Spin the wheel', style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w800)),
+            Text(l10n.rewardsSpinWheel, style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w800)),
             const SizedBox(height: 10),
             _SpinCard(
               status: ref.watch(spinStatusProvider),
@@ -149,13 +151,14 @@ class _CheckInCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return status.when(
       loading: () => const ChunkyCard(
         padding: EdgeInsets.all(20),
         child: Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => ErrorView(
-        title: 'Check-in unavailable',
+        title: l10n.rewardsCheckInUnavailable,
         message: '$e',
         onRetry: onClaim,
       ),
@@ -172,13 +175,13 @@ class _CheckInCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Daily check-in',
+                      l10n.rewardsDailyCheckIn,
                       style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
                   if (data.streakDay > 0)
                     Text(
-                      'day ${data.streakDay}',
+                      l10n.rewardsDayStreak(data.streakDay),
                       style: AppTypography.titleSmall.copyWith(color: AppColors.streakOrange),
                     ),
                 ],
@@ -186,14 +189,14 @@ class _CheckInCard extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  _Pill(coins: data.todayReward, label: 'today'),
+                  _Pill(coins: data.todayReward, label: l10n.rewardsToday),
                   const SizedBox(width: 10),
-                  if (data.nextReward > 0) _Pill(coins: data.nextReward, label: 'tomorrow'),
+                  if (data.nextReward > 0) _Pill(coins: data.nextReward, label: l10n.rewardsTomorrow),
                 ],
               ),
               const SizedBox(height: 14),
               ChunkyButton(
-                label: data.claimedToday ? 'Claimed today' : 'Check in for ${data.todayReward} coins',
+                label: data.claimedToday ? l10n.rewardsClaimedToday : l10n.rewardsCheckInFor(data.todayReward),
                 icon: data.claimedToday ? Icons.check_rounded : Icons.card_giftcard_rounded,
                 variant: data.claimedToday ? ChunkyVariant.muted : ChunkyVariant.primary,
                 loading: busy,
@@ -216,13 +219,14 @@ class _SpinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return status.when(
       loading: () => const ChunkyCard(
         padding: EdgeInsets.all(20),
         child: Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => ErrorView(
-        title: 'Spin wheel unavailable',
+        title: l10n.rewardsSpinUnavailable,
         message: '$e',
         onRetry: onSpin,
       ),
@@ -260,7 +264,7 @@ class _SpinCard extends StatelessWidget {
                 ),
               const SizedBox(height: 14),
               ChunkyButton(
-                label: data.canSpin ? 'Spin' : 'Come back later',
+                label: data.canSpin ? l10n.rewardsSpin : l10n.rewardsComeBackLater,
                 icon: Icons.casino_rounded,
                 variant: data.canSpin ? ChunkyVariant.warning : ChunkyVariant.muted,
                 loading: busy,
@@ -269,7 +273,7 @@ class _SpinCard extends StatelessWidget {
               if (!data.canSpin && data.nextSpinAt != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Next spin ${data.nextSpinAt!.toLocal().toString().split('.').first}',
+                  l10n.rewardsNextSpin(data.nextSpinAt!.toLocal().toString().split('.').first),
                   textAlign: TextAlign.center,
                   style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiaryLight),
                 ),

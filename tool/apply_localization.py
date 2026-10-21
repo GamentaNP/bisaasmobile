@@ -42,33 +42,38 @@ BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # (file, line) -> key. Used where the English wording is shared but the
 # meaning — and therefore the key — is not.
 OVERRIDES = {
-    ("lib/features/quiz/presentation/quiz_home_page.dart", 86): "quizHomeLoadError",
-    ("lib/features/quiz/presentation/screens/quiz_attempt_screen.dart", 142): "quizAttemptLoadError",
+    ("lib/features/quiz/presentation/quiz_home_page.dart", "Could not load quiz"): "quizHomeLoadError",
+    ("lib/features/quiz/presentation/screens/quiz_attempt_screen.dart", "Could not load quiz"): "quizAttemptLoadError",
     # The source capitalises "Guest"; the ARB entry is the shared one.
-    ("lib/features/auth/presentation/login_page.dart", 249): "continueAsGuest",
+    ("lib/features/auth/presentation/login_page.dart", "Continue as Guest"): "continueAsGuest",
     # The source hard-codes the total as "3" and interpolates only the step.
-    ("lib/features/onboarding/presentation/screens/onboarding_screen.dart", 132): "onboardingStepOf",
-    # The source pluralises inline (`mission` / `missions`), so the text does
-    # not match any ARB value; the call is given explicitly below.
-    ("lib/features/home/presentation/screens/home_screen.dart", 449): "homeMissionsReady",
+    ("lib/features/onboarding/presentation/screens/onboarding_screen.dart", "Step {…} of 3"): "onboardingStepOf",
+    # The source pluralises inline, so the text matches no ARB value.
+    ("lib/features/home/presentation/screens/home_screen.dart", "{…} mission{…} ready to claim"): "homeMissionsReady",
+    ("lib/features/game/presentation/screens/missions_screen.dart", "{…} mission{…} ready to claim"): "gameMissionsReady",
+    ("lib/features/game/presentation/screens/missions_screen.dart", "{…} reward{…} waiting"): "gameRewardsWaiting",
 }
 
-# (file, line) -> the exact call to write, for the cases the argument
+# (file, visible text) -> the exact call to write, for the cases the argument
 # mapping cannot work out on its own.
 CALL_OVERRIDES = {
     (
         "lib/features/onboarding/presentation/screens/onboarding_screen.dart",
-        132,
+        "Step {…} of 3",
     ): "l10n.onboardingStepOf(_currentPage + 1, 3)",
-    # The source pluralises inline (`mission` / `missions`). Nepali and Hindi
-    # do not inflect for number, so the ARB key takes the count and the
-    # English text says "missions" for both.
     (
         "lib/features/home/presentation/screens/home_screen.dart",
-        449,
+        "{…} mission{…} ready to claim",
     ): "l10n.homeMissionsReady(claimable)",
+    (
+        "lib/features/game/presentation/screens/missions_screen.dart",
+        "{…} mission{…} ready to claim",
+    ): "l10n.gameMissionsReady(claimable.length)",
+    (
+        "lib/features/game/presentation/screens/missions_screen.dart",
+        "{…} reward{…} waiting",
+    ): "l10n.gameRewardsWaiting(claimable.length)",
 }
-
 # Debug-only affordances. The `kDebugMode` guard compiles them out of a
 # release build, so they never reach a user and do not need a translation.
 SKIP_TEXTS = {
@@ -78,6 +83,8 @@ SKIP_TEXTS = {
     "privacy@bisaas.com",
     # The avatar fallback: the first letter of the display name.
     "C",
+    # A synthetic HTTP status message, not copy: it is never shown to a user.
+    "OK (cached)",
 }
 
 # The core journey: the screens a user walks from install to finished quiz.
@@ -148,6 +155,52 @@ SCOPE = {
     "lib/features/economy/presentation/economy_screen.dart",
     "lib/features/library/presentation/screens/library_detail_screen.dart",
     "lib/features/library/presentation/screens/library_browser_screen.dart",
+    # tier 4 — everything else
+    "lib/features/live_events/presentation/screens/live_event_detail_screen.dart",
+    "lib/features/live_events/presentation/screens/live_events_screen.dart",
+    "lib/features/coaching/presentation/screens/coaching_dashboard_screen.dart",
+    "lib/features/social/presentation/social_screen.dart",
+    "lib/features/social/presentation/screens/social_share_screen.dart",
+    "lib/features/social/presentation/controllers/social_controller.dart",
+    "lib/features/contests/presentation/screens/contest_detail_screen.dart",
+    "lib/features/contests/presentation/screens/contests_screen.dart",
+    "lib/features/leaderboard/presentation/screens/leaderboard_screen.dart",
+    "lib/features/learning/presentation/screens/learning_goal_detail_screen.dart",
+    "lib/features/learning/presentation/screens/learning_today_screen.dart",
+    "lib/features/learning/presentation/screens/learning_home_screen.dart",
+    "lib/features/learning/presentation/screens/reviews_due_screen.dart",
+    "lib/features/learning/presentation/screens/learning_tracks_screen.dart",
+    "lib/features/learning/presentation/controllers/learning_controller.dart",
+    "lib/features/syllabus/presentation/screens/syllabus_tree_screen.dart",
+    "lib/features/syllabus/presentation/screens/syllabus_versions_screen.dart",
+    "lib/features/book/presentation/screens/book_screens.dart",
+    "lib/features/book/presentation/screens/book_reader_screen.dart",
+    "lib/features/downloads/presentation/screens/downloads_screen.dart",
+    "lib/features/gamification/presentation/screens/rewards_screen.dart",
+    "lib/features/gamification/presentation/screens/achievements_screen.dart",
+    "lib/features/gamification/presentation/widgets/xp_progress_bar.dart",
+    "lib/features/gamification/presentation/widgets/lottie_overlay.dart",
+    "lib/features/gamification/presentation/widgets/answer_feedback_lottie.dart",
+    "lib/features/game/presentation/screens/game_level_intro_sheet.dart",
+    "lib/features/game/presentation/screens/missions_screen.dart",
+    "lib/features/game/presentation/screens/game_worlds_screen.dart",
+    "lib/features/game/presentation/screens/game_world_map_screen.dart",
+    "lib/features/numericals/presentation/numerical_practice_screen.dart",
+    "lib/features/store/presentation/screens/wardrobe_screen.dart",
+    "lib/features/store/presentation/screens/premium_store_screen.dart",
+    "lib/features/eice/presentation/eice_screen.dart",
+    "lib/features/eice/presentation/widgets/payload_view.dart",
+    "lib/features/battle/presentation/screens/battle_arena_screen.dart",
+    "lib/features/battle/presentation/screens/battle_result_screen.dart",
+    "lib/features/battle/presentation/screens/battle_matchmaking_screen.dart",
+    "lib/features/notifications/presentation/notifications_screen.dart",
+    "lib/features/courses/presentation/screens/courses_screen.dart",
+    "lib/features/psc/presentation/psc_screen.dart",
+    "lib/features/search/presentation/search_screen.dart",
+    "lib/features/quiz/presentation/widgets/lifeline_bar.dart",
+    "lib/shared/widgets/offline_state_banner.dart",
+    "lib/shared/widgets/error_view.dart",
+    "lib/core/network/response_cache_interceptor.dart",
 }
 
 
@@ -206,7 +259,7 @@ def load_hits():
 def resolve(hit, arb):
     if hit["text"] in SKIP_TEXTS:
         return None
-    key = OVERRIDES.get((hit["file"], hit["line"]))
+    key = OVERRIDES.get((hit["file"], normalise(hit["text"])))
     if key:
         return key
     needle = normalise(hit["text"])
@@ -220,7 +273,7 @@ def resolve(hit, arb):
 
 def build_call(hit, key, arb):
     """The replacement text for one literal."""
-    explicit = CALL_OVERRIDES.get((hit["file"], hit["line"]))
+    explicit = CALL_OVERRIDES.get((hit["file"], normalise(hit["text"])))
     if explicit:
         return explicit
     placeholders = arb[key]["placeholders"]

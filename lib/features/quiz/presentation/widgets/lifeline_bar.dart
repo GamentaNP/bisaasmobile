@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../data/models/lifeline_dto.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Attempt lifelines, rendered from the server's own catalogue.
 ///
@@ -87,6 +88,7 @@ class _LifelineChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final reason = _blockedReason;
     final usable = reason == null;
     // A banked token covers the cost regardless of wallet balance.
@@ -97,8 +99,8 @@ class _LifelineChip extends StatelessWidget {
       button: true,
       enabled: usable && !busy,
       label: usable
-          ? '${lifeline.name} lifeline, ${lifeline.costCoins} coins'
-          : '${lifeline.name} lifeline unavailable: $reason',
+          ? l10n.lifelineCost(lifeline.name, lifeline.costCoins)
+          : l10n.lifelineUnavailable(lifeline.name, reason),
       child: Tooltip(
         message: reason ?? '${lifeline.name} · ${lifeline.costCoins} coins',
         child: InkWell(

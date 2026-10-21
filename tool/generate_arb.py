@@ -14,6 +14,7 @@ so the three files can never fall out of step.
 import io
 import json
 import os
+import re
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 L10N = os.path.join(BASE, "lib", "l10n")
@@ -25,6 +26,44 @@ T = {}
 def add(key, en, ne, hi, placeholders=None):
     assert key not in T, "duplicate key: %s" % key
     T[key] = (en, ne, hi, placeholders or [])
+
+
+def _declared(value):
+    """The placeholder names a message uses, e.g. `{count}` -> `count`."""
+    return set(re.findall(r"\{(\w+)", value))
+
+
+def validate():
+    """Every placeholder in a message must be declared, in all three locales.
+
+    A message with `{query}` but no placeholder metadata generates a getter
+    with no argument, and the call site then has nothing to pass — the
+    rewrite cannot complete and the string stays English. Catching it here
+    means the mistake is a build-time error rather than a silently
+    untranslated screen.
+    """
+    problems = []
+    for key, (en, ne, hi, placeholders) in T.items():
+        declared = set(placeholders)
+        for locale, value in (("en", en), ("ne", ne), ("hi", hi)):
+            used = _declared(value)
+            missing = used - declared
+            extra = declared - used
+            if missing:
+                problems.append(
+                    "%s [%s]: uses %s but declares %s"
+                    % (key, locale, sorted(missing), sorted(declared))
+                )
+            if extra:
+                problems.append(
+                    "%s [%s]: declares %s but does not use %s"
+                    % (key, locale, sorted(extra), sorted(used))
+                )
+    if problems:
+        raise SystemExit(
+            "placeholder declarations do not match the messages:\n  "
+            + "\n  ".join(problems)
+        )
 
 
 # ── existing keys ────────────────────────────────────────────────────────────
@@ -525,7 +564,6 @@ add("profileLearning", "Learning — tracks & AI tutor", "सिकाइ — �
 add("profileLearningSub", "study plans • revisions • tutor", "अध्ययन योजना • दोहोराइ • ट्युटर", "अध्ययन योजना • दोहराव • ट्यूटर")
 add("profileEice", "Exam Intelligence (EICE)", "परीक्षा बुद्धि (EICE)", "परीक्षा बुद्धि (EICE)")
 add("profileEiceSub", "coach • triage • sprint", "कोच • त्रायज • स्प्रिन्ट", "कोच • ट्रायेज • स्प्रिंट")
-add("profilePsc", "PSC / Loksewa", "PSC / लोकसेवा", "PSC / लोकसेवा")
 add("profilePscSub", "exam blueprints & syllabus", "परीक्षा ढाँचा र पाठ्यक्रम", "परीक्षा ढांचा और पाठ्यक्रम")
 add("profilePracticeSub", "drill bookmarks • weak topics", "बुकमार्क ड्रिल • कमजोर विषय", "बुकमार्क ड्रिल • कमजोर विषय")
 add("profileLeaderboardSub", "global • friends • league", "विश्व • साथी • लिग", "विश्व • दोस्त • लीग")
@@ -535,9 +573,7 @@ add("profileLiveEvents", "Live events", "प्रत्यक्ष कार�
 add("profileLiveEventsSub", "scheduled sessions & check-in", "तोकिएका सत्र र चेक-इन", "निर्धारित सत्र और चेक-इन")
 add("profileCoaching", "Coaching", "कोचिङ", "कोचिंग")
 add("profileCoachingSub", "weak areas • readiness • sprint", "कमजोर क्षेत्र • तयारी • स्प्रिन्ट", "कमजोर क्षेत्र • तैयारी • स्प्रिंट")
-add("profileSearch", "Search", "खोज्नुहोस्", "खोजें")
 add("profileSearchSub", "find any question", "कुनै पनि प्रश्न खोज्नुहोस्", "कोई भी प्रश्न खोजें")
-add("profileNotifications", "Notifications", "सूचनाहरू", "सूचनाएं")
 add("profileNotificationsSub", "activity & reminders", "गतिविधि र सम्झना", "गतिविधि और याद दिलाना")
 add("profileSocial", "Social & Referral", "सामाजिक र रेफरल", "सोशल और रेफरल")
 add("profileSocialSub", "share • streak • leaderboard", "साझेदारी • स्ट्रिक • लिडरबोर्ड", "साझा • स्ट्रीक • लीडरबोर्ड")
@@ -1231,6 +1267,821 @@ add(
     "अभ्यासमा समयसीमा छैन र यसले अंक, XP, क्विन वा स्ट्रिकमा कुनै असर गर्दैन।",
     "अभ्यास समय-सीमित नहीं है और इसका अंक, XP, कॉइन या स्ट्रीक पर कोई प्रभाव नहीं पड़ता।",
 )
+
+# ── live events ─────────────────────────────────────────────────────────────
+add("liveEventNotFound", "Live event not found", "प्रत्यक्ष कार्यक्रम भेटिएन", "लाइव कार्यक्रम नहीं मिला")
+add(
+    "liveEventParticipant",
+    "Participant #{number} • {status} • Score {score}",
+    "सहभागी #{number} • {status} • अंक {score}",
+    "प्रतिभागी #{number} • {status} • अंक {score}",
+    ["number", "status", "score"],
+)
+add("liveEventSnapshot", "Snapshot", "स्न्यापसट", "स्नैपशॉट")
+add(
+    "liveEventNoSnapshot",
+    "No snapshot yet — register and check in to load current question.",
+    "अहिलेसम्म स्न्यापसट छैन — दर्ता गरेर चेक-इन गर्नुहोस्, हालको प्रश्न आउनेछ।",
+    "अभी तक स्नैपशॉट नहीं — रजिस्टर करके चेक-इन करें, मौजूदा प्रश्न आएगा।",
+)
+add("liveEventAnswer", "Answer", "उत्तर", "उत्तर")
+add("liveEventQIndex", "Q index", "प्रश्न क्रमाङ्क", "प्रश्न क्रमांक")
+add("liveEventSubmitAnswer", "Submit Answer", "उत्तर पेश गर्नुहोस्", "उत्तर जमा करें")
+add("liveEventNoLeaderboard", "No leaderboard yet.", "अहिलेसम्म लिडरबोर्ड छैन।", "अभी तक कोई लीडरबोर्ड नहीं।")
+add("liveEventRegistered", "Registered!", "दर्ता भयो!", "रजिस्टर हो गया!")
+add("liveEventRegisterFailed", "Register failed", "दर्ता असफल", "रजिस्टर करना विफल")
+add("liveEventUnregistered", "Unregistered", "दर्ता रद्द", "रजिस्टर हटाया")
+add("liveEventUnregisterFailed", "Unregister failed", "दर्ता रद्द गर्न असफल", "रजिस्टर हटाना विफल")
+add("liveEventCheckedIn", "Checked in!", "चेक-इन भयो!", "चेक-इन हो गया!")
+add("liveEventCheckInFailed", "Check-in failed", "चेक-इन असफल", "चेक-इन विफल")
+add("liveEventEnterAnswer", "Enter an answer", "उत्तर लेख्नुहोस्", "उत्तर दर्ज करें")
+add(
+    "liveEventAnswerRecorded",
+    "Answer recorded — score {score}",
+    "उत्तर दर्ता भयो — अंक {score}",
+    "उत्तर दर्ज हुआ — अंक {score}",
+    ["score"],
+)
+add(
+    "liveEventQuestionsEach",
+    "{questions} Qs • {seconds}s each",
+    "{questions} प्रश्न • प्रत्येक {seconds}s",
+    "{questions} प्रश्न • प्रत्येक {seconds}s",
+    ["questions", "seconds"],
+)
+add("liveEventActive", "{count} active", "{count} सक्रिय", "{count} सक्रिय", ["count"])
+add("liveEventWaitlisted", "{count} waitlisted", "{count} प्रतिक्षामा", "{count} प्रतीक्षा में", ["count"])
+add(
+    "liveEventStarts",
+    "Starts {date} {hour}:{minute}",
+    "{date} {hour}:{minute} मा सुरु",
+    "{date} {hour}:{minute} पर शुरू",
+    ["date", "hour", "minute"],
+)
+add("liveEventEnds", "Ends {date}", "{date} मा समाप्त", "{date} पर समाप्त", ["date"])
+add("liveEventEntryFee", "{coins} entry", "{coins} प्रवेश शुल्क", "{coins} प्रवेश शुल्क", ["coins"])
+add("liveEventPrize", "{coins} prize", "{coins} पुरस्कार", "{coins} पुरस्कार", ["coins"])
+add("liveEventLeave", "Leave", "छोड्नुहोस्", "छोड़ें")
+add("liveEventCheckIn", "Check-in", "चेक-इन", "चेक-इन")
+add(
+    "liveEventScoreMeta",
+    "Score {score} • {correct}/{total}",
+    "अंक {score} • {correct}/{total}",
+    "अंक {score} • {correct}/{total}",
+    ["score", "correct", "total"],
+)
+add(
+    "liveEventQuestionPoints",
+    "Q{number} • {points} pts",
+    "प्रश्न{number} • {points} अंक",
+    "प्रश्न{number} • {points} अंक",
+    ["number", "points"],
+)
+add(
+    "liveEventRemaining",
+    "Remaining: {seconds}s • Locks at {locks}",
+    "बाँकी: {seconds}s • {locks} मा बन्द",
+    "शेष: {seconds}s • {locks} पर बंद",
+    ["seconds", "locks"],
+)
+add("liveEventWaitingForHost", "No current question — waiting for host.", "हालको प्रश्न छैन — आयोजकको प्रतीक्षा।", "मौजूदा प्रश्न नहीं — आयोजक की प्रतीक्षा।")
+add("liveEventRawKeys", "Raw keys: {keys}", "कच्चा कुञ्जी: {keys}", "कच्ची कुंजियां: {keys}", ["keys"])
+
+# ── coaching ────────────────────────────────────────────────────────────────
+add("coachingTutorChat", "Tutor chat", "ट्युटर कुराकानी", "ट्यूटर चैट")
+add("coachingStudyPlan", "Study plan", "अध्ययन योजना", "अध्ययन योजना")
+add("coachingTutorOnboarding", "Tutor onboarding", "ट्युटर onboarding", "ट्यूटर ऑनबोर्डिंग")
+add(
+    "coachingGoalIdHint",
+    "Goal ID for readiness (e.g., psc-civil)",
+    "तयारीका लागि Goal ID (जस्तै: psc-civil)",
+    "तैयारी के लिए Goal ID (जैसे: psc-civil)",
+)
+add("coachingLoad", "Load", "लोड गर्नुहोस्", "लोड करें")
+add("coachingNoData", "No coaching data yet — complete onboarding or chat with tutor to seed.", "अहिलेसम्म कुनै कोचिङ डाटा छैन — onboarding पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।", "अभी तक कोई कोचिंग डेटा नहीं — ऑनबोर्डिंग पूरा करें या ट्यूटर से चैट करें।")
+add(
+    "coachingPartial",
+    "Some coaching surfaces are temporarily unavailable — showing available data.",
+    "केही कोचिङ स्क्रिन अस्थायी रूपमा उपलब्ध छैनन् — उपलब्ध डाटा देखाइदैछौं।",
+    "कुछ कोचिंग स्क्रीन अस्थायी रूप से उपलब्ध नहीं — उपलब्ध डेटा दिखा रहे हैं।",
+)
+add("coachingNoReadinessForGoal", "Readiness: no data for this goal yet.", "तयारी: यो लक्ष्यका लागि अहिलेसम्म डाटा छैन।", "तैयारी: इस लक्ष्य के लिए अभी तक डेटा नहीं।")
+add("coachingAskTutor", "Ask tutor", "ट्युटरलाई सोध्नुहोस्", "ट्यूटर से पूछें")
+add("coachingOnboarding", "Onboarding", "Onboarding", "ऑनबोर्डिंग")
+add(
+    "coachingReadinessExplained",
+    "Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.",
+    "तयारी तपाईंका लक्ष्य, ट्र्याक र ट्युटर गतिविधिबाट निकालिन्छ। केही खण्ड प्रयोग नगरेसम्म लुकाइन्छन्।",
+    "तैयारी आपके लक्ष्य, ट्रैक और ट्यूटर गतिविधि से निकाली जाती है। कुछ हिस्से उपयोग करने तक छिपे रहते हैं।",
+)
+add("coachingReadiness", "Readiness", "तयारी", "तैयारी")
+add("coachingFocusNext", "Focus next:", "अर्को केन्द्रमा:", "अगला ध्यान दें:")
+add("coachingNoReadiness", "No readiness yet — attempt a few quizzes under this goal.", "अहिलेसम्म तयारी छैन — यो लक्ष्य अन्तर्गत केही क्विज खेल्नुहोस्।", "अभी तक तैयारी नहीं — इस लक्ष्य के तहत कुछ क्विज़ खेलें।")
+add("coachingGoalLabel", "Goal {goal}", "लक्ष्य {goal}", "लक्ष्य {goal}", ["goal"])
+add("coachingMore", "+ {count} more", "+ {count} थप", "+ {count} और", ["count"])
+add("coachingNoTasksToday", "No tasks today", "आज कुनै काम छैन", "आज कोई काम नहीं")
+add("coachingConfidence", "Confidence {confidence}%", "विश्वास {confidence}%", "विश्वास {confidence}%", ["confidence"])
+add("coachingLearningTracks", "Learning tracks", "सिकाइका ट्र्याक", "सीखने के ट्रैक")
+add("coachingThisWeek", "This week", "यो हप्ता", "इस सप्ताह")
+add(
+    "coachingWeekTasks",
+    "{done}/{total} tasks • avg {average}",
+    "{done}/{total} काम • औसत {average}",
+    "{done}/{total} काम • औसत {average}",
+    ["done", "total", "average"],
+)
+add("coachingNoRevisions", "No revisions due", "कुनै दोहोराइ बाँकी छैन", "कोई दोहराव बाकी नहीं")
+add("coachingRevisionsDue", "{count} revisions due", "{count} दोहोराइ बाँकी", "{count} दोहराव बाकी", ["count"])
+
+# ── social ──────────────────────────────────────────────────────────────────
+add("socialInviteFriends", "Invite friends", "साथीहरूलाई आमन्त्रित गर्नुहोस्", "दोस्तों को बुलाएं")
+add("socialReferralUnavailable", "Referral information is unavailable right now.", "रेफरल जानकारी अहिले उपलब्ध छैन।", "रेफ़रल जानकारी अभी उपलब्ध नहीं है।")
+add("socialEarnCoins", "Earn {coins} coins", "{coins} क्विन कमाउनुहोस्", "{coins} कॉइन कमाएं", ["coins"])
+add("socialNo", "No", "होइन", "नहीं")
+add("socialYourInviteCode", "Your invite code", "तपाईंको निमन्त्रणा कोड", "आपका आमंत्रण कोड")
+add("socialShareInviteLink", "Share invite link", "निमन्त्रणा लिंक साझेदार गर्नुहोस्", "आमंत्रण लिंक साझा करें")
+add("socialCopyCode", "Copy code", "कोड प्रतिलिपि गर्नुहोस्", "कोड कॉपी करें")
+add("socialRewards", "Rewards", "पुरस्कार", "पुरस्कार")
+add("socialRewardPerSignup", "You earn per friend who signs up", "दर्ता गर्ने हरेक साथीका लागि तपाईंले कमाउनुहुन्छ", "हर दाखिल करने दोस्त के लिए आपको इनाम")
+add("socialTheyEarn", "They earn when they sign up", "दर्ता गर्दा उनले पनि कमाउँछन्", "दाखिल करते ही वे भी कमाते हैं")
+add("socialBonusFirstQuiz", "Bonus when they finish their first quiz", "उनको पहिलो क्विज पूरा भएपछि बोनस", "उनका पहले क्विज़ के बाद बोनस")
+add("socialYourReferrals", "Your referrals", "तपाईंका रेफरल", "आपके रेफ़रल")
+add("socialInvited", "invited", "आमन्त्रित", "बुलाए")
+add("socialRewarded", "rewarded", "पुरस्कृत", "इनाम पाए")
+add("socialCoinsEarned", "coins earned", "क्विन कमाए", "कॉइन कमाए")
+add("socialNoReferralsYet", "No one has used your code yet.", "अहिलेसम्म कसैले तपाईंको कोड प्रयोग गरेको छैन।", "अभी तक किसी ने आपका कोड इस्तेमाल नहीं किया।")
+add("socialRewardPaid", "Reward paid: {coins} coins", "पुरस्कार भुक्तानी: {coins} क्विन", "इनाम भुगतान: {coins} कॉइन", ["coins"])
+add("socialStatus", "Status: {status}", "स्थिति: {status}", "स्थिति: {status}", ["status"])
+add("socialGotCode", "Got a code from a friend?", "साथीबाट कोड पाउनुभयो?", "दोस्त से कोड मिला?")
+add("socialReferralCode", "Referral code", "रेफरल कोड", "रेफ़रल कोड")
+add("socialApplyCode", "Apply code", "कोड लागू गर्नुहोस्", "कोड लागू करें")
+add("socialShareSheetFailed", "Could not open the share sheet", "साझेदारी पत्रक खोल्न सकिएन", "शेयर शीट नहीं खुल सका")
+add("socialCodeCopied", "Code copied", "कोड प्रतिलिपि भयो", "कोड कॉपी हो गया")
+
+# ── shared challenge ────────────────────────────────────────────────────────
+add("socialSharedChallenge", "Shared challenge", "साझेदार चुनौती", "साझा चुनौती")
+add("socialSomeoneShared", "Someone shared a challenge with you", "कसैले तपाईंसँग चुनौती साझेदार गर्यो", "किसी ने आपके साथ चुनौती साझा की")
+add("socialSharedBy", "Shared by {name}", "{name} ले साझेदार गर्यो", "{name} ने साझा किया", ["name"])
+add("socialLinkExpired", "This link has expired.", "यो लिंकको म्याद सकियो।", "इस लिंक की मियाद समाप्त हो गई।")
+add("socialNoPlayableChallenge", "No playable challenge here", "यहाँ खेल्न मिल्ने चुनौती छैन", "यहाँ कोई खेलने योग्य चुनौती नहीं")
+add(
+    "socialNotPlayable",
+    "This link does not offer a playable challenge. You can still browse the public catalogue.",
+    "यो लिंकले खेल्न मिल्ने चुनौती दिँदैन। तपाईं सार्वजनिक सङ्ग्रह हेर्न सक्नुहुन्छ।",
+    "यह लिंक कोई खेलने योग्य चुनौती नहीं देता। आप सार्वजनिक कैटलॉग देख सकते हैं।",
+)
+add("socialPlayChallenge", "Play the challenge", "चुनौती खेल्नुहोस्", "चुनौती खेलें")
+add(
+    "socialGuestNeverAwards",
+    "A guest challenge never awards coins, XP or streak. Create a free account to keep your progress.",
+    "अतिथिको चुनौतीले कहिल्यै क्विन, XP वा स्ट्रिक दिँदैन। आफ्नो प्रगति राख्न निःशुल्क खाता खोल्नुहोस्।",
+    "अतिथि चुनौती कभी कॉइन, XP या स्ट्रीक नहीं देती। अपनी प्रगति रखने के लिए मुफ़्त खाता बनाएं।",
+)
+add("socialChallengeNoQuestions", "This challenge has no questions", "यो चुनौतीमा कुनै प्रश्न छैन", "इस चुनौती में कोई प्रश्न नहीं")
+add(
+    "socialChallengeEmpty",
+    "The server opened the attempt without sending any questions, so there is nothing to play.",
+    "सर्भरले कुनै प्रश्न नपठाई प्रयास सुरु गर्‍यो, त्यसैले खेल्नुपर्ने केही छैन।",
+    "सर्वर ने बिना कोई प्रश्न भेजे प्रयास शुरू किया, इसलिए खेलने को कुछ नहीं है।",
+)
+add(
+    "socialQuestionOf",
+    "Question {current} of {total}",
+    "{total} मध्येको {current} प्रश्न",
+    "{total} में से {current} प्रश्न",
+    ["current", "total"],
+)
+add("socialCorrect", "Correct.", "सही।", "सही।")
+add("socialNotThisTime", "Not this time — the server has marked it.", "यो पटक होइन — सर्भरले यसरी चिन्हित गरेको छ।", "इस बार नहीं — सर्वर ने ऐसा चिह्नित किया है।")
+add("socialSubmitAnswer", "Submit answer", "उत्तर पेश गर्नुहोस्", "उत्तर जमा करें")
+add("socialFinish", "Finish", "समाप्त", "समाप्त")
+add("socialNext", "Next", "अर्को", "अगला")
+add("socialChallengeComplete", "Challenge complete", "चुनौती पूरा भयो", "चुनौती पूरी हुई")
+add("socialYouScored", "You scored {score}", "तपाईंले {score} अंक गर्नुभयो", "आपने {score} अंक किए", ["score"])
+add(
+    "socialChallengeSummary",
+    "{correct} correct • {wrong} wrong • {skipped} skipped • {questions} questions",
+    "{correct} सही • {wrong} गलत • {skipped} छाडिएको • {questions} प्रश्न",
+    "{correct} सही • {wrong} गलत • {skipped} छोड़े • {questions} प्रश्न",
+    ["correct", "wrong", "skipped", "questions"],
+)
+add("socialGuestChallengeNote", "A guest challenge never awards coins, XP or streak.", "अतिथिको चुनौतीले कहिल्यै क्विन, XP वा स्ट्रिक दिँदैन।", "अतिथि चुनौती कभी कॉइन, XP या स्ट्रीक नहीं देती।")
+add(
+    "socialNiceOne",
+    "Nice one — that was {name}'s challenge. A guest challenge never awards coins, XP or streak.",
+    "राम्रो — यो {name} को चुनौती थियो। अतिथिको चुनौतीले कहिल्यै क्विन, XP वा स्ट्रिक दिँदैन।",
+    "बढ़िया — यह {name} की चुनौती थी। अतिथि चुनौती कभी कॉइन, XP या स्ट्रीक नहीं देती।",
+    ["name"],
+)
+add("socialCreateAccount", "Create a free account", "निःशुल्क खाता खोल्नुहोस्", "मुफ़्त खाता बनाएं")
+add("socialBrowseSamples", "Browse sample questions", "नमुना प्रश्नहरू हेर्नुहोस्", "नमूना प्रश्न देखें")
+
+# ── contests ────────────────────────────────────────────────────────────────
+add("contestNotFound", "Contest not found", "प्रतियोगिता भेटिएन", "प्रतियोगिता नहीं मिली")
+add(
+    "contestAttemptStarted",
+    "Attempt #{number} started. Expires: {expires}",
+    "प्रयास #{number} सुरु भयो। म्याद: {expires}",
+    "प्रयास #{number} शुरू हुआ। मियाद: {expires}",
+    ["number", "expires"],
+)
+add("contestNoLeaderboard", "No leaderboard entries yet — be the first!", "अहिलेसम्म लिडरबोर्डमा कुनै प्रविष्टि छैन — पहिलो बन्नुहोस्!", "अभी तक लीडरबोर्ड में कोई प्रविष्टि नहीं — पहले बनें!")
+add(
+    "contestGeneratedMeta",
+    "Generated: {generated} • Refresh budget: {budget} • {mode}",
+    "बनाइएको: {generated} • ताजा बनाउने बजट: {budget} • {mode}",
+    "बनाया: {generated} • रीफ़्रेश बजट: {budget} • {mode}",
+    ["generated", "budget", "mode"],
+)
+add("contestRecap", "Recap", "समीक्षा", "समीक्षा")
+add("contestWinners", "Winners", "विजेता", "विजेता")
+add("contestRawStats", "Raw stats: {count} keys", "कच्चा तथ्य: {count} कुञ्जी", "कच्चे आँकड़े: {count} कुंजियां", ["count"])
+add("contestRecapPending", "Recap available after contest ends.", "प्रतियोगिता सकिएपछि समीक्षा उपलब्ध हुन्छ।", "प्रतियोगिता समाप्त होने के बाद समीक्षा उपलब्ध होगी।")
+add("contestJoined", "Joined contest!", "प्रतियोगितामा सामेल भयो!", "प्रतियोगिता में शामिल हो गए!")
+add("contestJoinFailed", "Join failed", "सामेल हुन असफल", "शामिल होना विफल")
+add("contestLeft", "Left contest", "प्रतियोगिता छोडियो", "प्रतियोगिता छोड़ दी")
+add("contestLeaveFailed", "Leave failed", "छोड्न असफल", "छोड़ना विफल")
+add("contestRegisteredBadge", "REGISTERED", "दर्ता भयो", "रजिस्टर्ड")
+add("contestMax", "Max {count}", "बढीमा {count}", "अधिकतम {count}", ["count"])
+add("contestStarts", "Starts {date}", "{date} मा सुरु", "{date} पर शुरू", ["date"])
+add("contestJoinFree", "Join (Free)", "सामेल हुनुहोस् (निःशुल्क)", "शामिल हों (मुफ़्त)")
+add(
+    "contestJoinCoins",
+    "Join ({coins} coins)",
+    "सामेल हुनुहोस् ({coins} क्विन)",
+    "शामिल हों ({coins} कॉइन)",
+    ["coins"],
+)
+add("contestEnter", "Enter Contest", "प्रतियोगितामा सामेल हुनुहोस्", "प्रतियोगिता में शामिल हों")
+add("leaderboardGlobal", "Global", "विश्व", "विश्व")
+add("leaderboardFriends", "Friends", "साथी", "दोस्त")
+add("leaderboardLeague", "League", "लिग", "लीग")
+add("leaderboardDonors", "Donors", "दानकर्ता", "दानकर्ता")
+add("leaderboardNoRank", "No rank yet — complete a quiz to enter the leaderboard.", "अहिलेसम्म कुनो अंक छैन — लिडरबोर्डमा पर्न एउटा क्विज पूरा गर्नुहोस्।", "अभी तक कोई रैंक नहीं — लीडरबोर्ड में आने के लिए एक क्विज़ पूरा करें।")
+add("leaderboardMyRank", "MY RANK", "मेरो अंक", "मेरा रैंक")
+add(
+    "leaderboardRankIn",
+    "#{rank} in {scope}",
+    "{scope} मा #{rank}",
+    "{scope} में #{rank}",
+    ["rank", "scope"],
+)
+add(
+    "leaderboardUnrankedIn",
+    "Unranked in {scope}",
+    "{scope} मा अंक छैन",
+    "{scope} में अनरैंक",
+    ["scope"],
+)
+add("leaderboardScore", "Score: {score}", "अंक: {score}", "अंक: {score}", ["score"])
+add("leaderboardNoEntries", "No entries yet", "अहिलेसम्म कुनै प्रविष्टि छैन", "अभी तक कोई प्रविष्टि नहीं")
+add("leaderboardBeFirst", "Be the first to claim the top spot!", "पहिलो स्थान ओगट्ने पहिलो बन्नुहोस्!", "पहला स्थान लेने वाले बनें!")
+add(
+    "leaderboardFriendsHint",
+    "Add friends to compete — server segments friends automatically.",
+    "प्रतिस्पर्धाका लागि साथी थप्नुहोस् — सर्भरले साथीहरू आफैँ छुट्याउँछ।",
+    "प्रतिस्पर्धा के लिए दोस्त जोड़ें — सर्वर दोस्तों को अपने आप अलग करता है।",
+)
+add(
+    "leaderboardLeagueHint",
+    "League is seasonal — join via events/contests to qualify.",
+    "लिग मौसमिक हो — योग्य हुन कार्यक्रम/प्रतियोगितामा सामेल हुनुहोस्।",
+    "लीग मौसमी है — योग्य होने के लिए कार्यक्रम/प्रतियोगिता में शामिल हों।",
+)
+add("leaderboardNoEntriesShort", "No entries", "कुनै प्रविष्टि छैन", "कोई प्रविष्टि नहीं")
+add("leaderboardCompeteToAppear", "Compete to appear here.", "यहाँ देखिन प्रतिस्पर्धा गर्नुहोस्।", "यहाँ दिखने के लिए प्रतिस्पर्धा करें।")
+add("leaderboardNoDonors", "No donors yet", "अहिलेसम्म कुनै दानकर्ता छैन", "अभी तक कोई दानकर्ता नहीं")
+add("leaderboardSupportToAppear", "Support the platform to appear here.", "यहाँ देखिन प्लेटफर्म सहयोग गर्नुहोस्।", "यहाँ दिखने के लिए प्लेटफ़ॉर्म का समर्थन करें।")
+add(
+    "leaderboardScoreAttempts",
+    "Score {score} • {attempts} attempts",
+    "अंक {score} • {attempts} प्रयास",
+    "अंक {score} • {attempts} प्रयास",
+    ["score", "attempts"],
+)
+
+# ── learning ────────────────────────────────────────────────────────────────
+add("learningGoalLabel", "Goal #{number}", "लक्ष्य #{number}", "लक्ष्य #{number}", ["number"])
+add("learningToday", "Today", "आज", "आज")
+add("learningGoalId", "Goal ID", "लक्ष्य ID", "लक्ष्य ID")
+add("learningTrackId", "Track ID", "ट्र्याक ID", "ट्रैक ID")
+add("learningTargetDate", "Target date", "लक्ष्य मिति", "लक्ष्य तिथि")
+add("learningDailyMinutes", "Daily minutes", "दैनिक मिनेट", "दैनिक मिनट")
+add("learningIntensity", "Intensity", "तीव्रता", "तीव्रता")
+add("learningPlacement", "Placement", "स्थान", "स्थान")
+add(
+    "learningMastery",
+    "{percent}% mastery across {topics} topics (MasteryService::computeReadiness)",
+    "{topics} विषयमा {percent}% दक्षता (MasteryService::computeReadiness)",
+    "{topics} विषयों में {percent}% दक्षता (MasteryService::computeReadiness)",
+    ["percent", "topics"],
+)
+add("learningReadinessValue", "Readiness: {value}", "तयारी: {value}", "तैयारी: {value}", ["value"])
+add("learningDeleteGoalTitle", "Delete goal?", "लक्ष्य मेटाउने?", "लक्ष्य मिटाएं?")
+add(
+    "learningDeleteGoalBody",
+    "This will permanently delete the goal. Daily plans remain but no new plans will be built.",
+    "यसले लक्ष्य स्थायी रूपमा मेटाउँछ। दैनिक योजनाहरू रहन्छन् तर नयाँ योजना बनाइँदैन।",
+    "यह लक्ष्य स्थायी रूप से मिटा देता है। दैनिक योजनाएं बनी रहती हैं पर नई योजनाएं नहीं बनेंगी।",
+)
+add("learningGoalDeleted", "Goal deleted", "लक्ष्य मेटाइयो", "लक्ष्य मिटा दिया गया")
+add("learningDeleting", "Deleting…", "मेटाउँदै…", "मिटा रहे हैं…")
+add("learningDeleteGoal", "Delete goal", "लक्ष्य मेटाउनुहोस्", "लक्ष्य मिटाएं")
+add("learningOpenTodayPlan", "Open Today plan", "आजको योजना खोल्नुहोस्", "आज की योजना खोलें")
+add("learningBackToTracks", "Back to tracks", "ट्र्याकमा फर्कनुहोस्", "ट्रैक पर लौटें")
+add("learningTodaysPlan", "Today's Plan", "आजको योजना", "आज की योजना")
+add("learningNoActiveGoal", "No active goal", "कुनै सक्रिय लक्ष्य छैन", "कोई सक्रिय लक्ष्य नहीं")
+add(
+    "learningNoActiveGoalBody",
+    "Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.",
+    "आजको योजना पाउन Tracks बाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।",
+    "आज की योजना पाने के लिए ट्रैक से सीखने का लक्ष्य बनाएं। पहले से है तो यहाँ दिखेगा।",
+)
+add("learningBrowseTracks", "Browse tracks", "ट्र्याकहरू हेर्नुहोस्", "ट्रैक ब्राउज़ करें")
+add("learningPlanLabel", "Plan #{number}", "योजना #{number}", "योजना #{number}", ["number"])
+add("learningPlanGoal", "{meta} • Goal #{number}", "{meta} • लक्ष्य #{number}", "{meta} • लक्ष्य #{number}", ["meta", "number"])
+add(
+    "learningCompletedCount",
+    "{done}/{total} completed",
+    "{done}/{total} पूरा",
+    "{done}/{total} पूरे",
+    ["done", "total"],
+)
+add("learningMinBudget", "{minutes} min budget", "{minutes} मिनेट बजट", "{minutes} मिनट बजट", ["minutes"])
+add(
+    "learningNoTasksBody",
+    "Check back tomorrow — daily autopilot builds Review-first + new topics.",
+    "भोलि हेर्नुहोस् — दैनिक स्वचालनले दोहोराइ-पहिले + नयाँ विषय बनाउँछ।",
+    "कल देखें — दैनिक ऑटोपायलट समीक्षा-पहले + नए विषय बनाता है।",
+)
+add("learningMinutes", "{minutes} min", "{minutes} मिनेट", "{minutes} मिनट", ["minutes"])
+add("learningItemCompleted", "Item completed", "काम पूरा भयो", "कार्य पूरा हुआ")
+add("learningReviewsDue", "Reviews due", "दोहोराइ बाँकी", "दोहराव बाकी")
+add("learningTitle", "Learning", "सिकाइ", "सीखना")
+add("learningReviewsCountFailed", "Could not load your reviews due count", "तपाईंका दोहोराइको संख्या लोड गर्न सकिएन", "आपके दोहराव की संख्या लोड नहीं हो सकी")
+add("learningTracks", "Tracks", "ट्र्याक", "ट्रैक")
+add(
+    "learningNoTracks",
+    "No tracks yet — they are published by our team as they finish",
+    "अहिलेसम्म कुनै ट्र्याक छैन — हाम्रो टोलीले तयार भएपछि प्रकाशित गर्छ",
+    "अभी तक कोई ट्रैक नहीं — हमारी टीम तैयार होने पर प्रकाशित करती है",
+)
+add("learningAskAiTutor", "Ask AI Tutor", "AI ट्युटरलाई सोध्नुहोस्", "AI ट्यूटर से पूछें")
+add(
+    "learningStreamingNote",
+    "Answers come back a little at a time rather than all at once, so you can start reading straight away.",
+    "उत्तर एकैपटक होइन, बिस्तारै आउँछन्, त्यसैले तपाईं तुरुन्तै पढ्न सक्नुहुन्छ।",
+    "उत्तर एक साथ नहीं, थोर-थोरकर आते हैं, इसलिए आप तुरंत पढ़ना शुरू कर सकते हैं।",
+)
+add("learningNoTasks", "No tasks — check back tomorrow", "कुनै काम छैन — भोलि हेर्नुहोस्", "कोई काम नहीं — कल देखें")
+add(
+    "learningReviewsDueSrs",
+    "{count} reviews due (SRS)",
+    "{count} दोहोराइ बाँकी (SRS)",
+    "{count} दोहराव बाकी (SRS)",
+    ["count"],
+)
+add("learningReviewAction", "Review", "दोहोराउनुहोस्", "दोहराएं")
+add("learningGoalCreatedForTrack", "Goal created for track #{number}", "ट्र्याक #{number} का लागि लक्ष्य बनाइयो", "ट्रैक #{number} के लिए लक्ष्य बनाया गया", ["number"])
+add("learningTracksTitle", "Learning Tracks", "सिकाइका ट्र्याक", "सीखने के ट्रैक")
+add("learningTodayPlan", "Today plan", "आजको योजना", "आज की योजना")
+add("learningNodesCount", "{count} nodes", "{count} नोड", "{count} नोड", ["count"])
+add("learningGoalsCount", "{count} goals", "{count} लक्ष्य", "{count} लक्ष्य", ["count"])
+add("learningCreating", "Creating…", "बनाउँदै…", "बना रहे हैं…")
+add("learningCreateGoal", "Create goal", "लक्ष्य बनाउनुहोस्", "लक्ष्य बनाएं")
+add("learningReviewsDueTitle", "Reviews Due", "दोहोराइ बाँकी", "दोहराव बाकी")
+add(
+    "learningAllCaughtUp",
+    "You are all caught up! FSRS will schedule the next reviews after you master new atoms.",
+    "तपाईं सबै पूरा गर्नुभयो! नयाँ कण सिकाएपछि FSRS ले अर्को दोहोराइ तोक्नेछ।",
+    "आप सब पूरा कर चुके हैं! नए अणु सीखने के बाद FSRS अगली समीक्षा तय करेगा।",
+)
+add(
+    "learningReviewMeta",
+    "Review #{number} • atom {atom} • {state}",
+    "दोहोराइ #{number} • कण {atom} • {state}",
+    "दोहराव #{number} • अणु {atom} • {state}",
+    ["number", "atom", "state"],
+)
+add("learningInterval", "I{index}", "I{index}", "I{index}", ["index"])
+add("learningDueDate", "Due {date}", "{date} सम्म", "{date} तक", ["date"])
+add("learningLapses", "{count} lapses", "{count} पटक छुटे", "{count} बार छूटे", ["count"])
+add("learningGradeAgain", "Again", "फेरि", "फिर")
+add("learningGradeHard", "Hard", "गाह्रो", "कठिन")
+add("learningGradeGood", "Good", "राम्रो", "अच्छा")
+add("learningGradeEasy", "Easy", "सजिलो", "आसान")
+add(
+    "learningGradingNote",
+    "Grading is recorded safely, and your next review date is worked out for you. Double-tapping cannot lose your progress.",
+    "अंक सुरक्षित रूपमा दर्ता हुन्छ अनि अर्को दोहोराइको मिति तपाईंका लागि निकालिन्छ। दुई पटक थिचे पनि प्रगति हराइँदैन।",
+    "अंक सुरक्षित रूप से दर्ज होता है और अगली समीक्षा तिथि आपके लिए निकाली जाती है। दो बार दबाने से भी प्रगति नहीं जाती।",
+)
+
+# ── syllabus ────────────────────────────────────────────────────────────────
+add("syllabusTitle", "Syllabus", "पाठ्यक्रम", "पाठ्यक्रम")
+add(
+    "syllabusNoNodes",
+    "This syllabus has no published nodes yet.",
+    "यो पाठ्यक्रममा अहिलेसम्म कुनै नोड प्रकाशित छैन।",
+    "इस पाठ्यक्रम में अभी तक कोई नोड प्रकाशित नहीं है।",
+)
+add("syllabusExaminable", "examinable", "परीक्षामा", "परीक्षा में")
+add("syllabusQuestions", "questions", "प्रश्न", "प्रश्न")
+add("syllabusPaperBlueprint", "Paper blueprint", "प्रश्नपत्रको ढाँचा", "प्रश्नपत्र ढांचा")
+add("syllabusPapersCount", "{count} papers", "{count} प्रश्नपत्र", "{count} प्रश्नपत्र", ["count"])
+add(
+    "syllabusMarksQuestions",
+    "{marks} marks · {questions} questions",
+    "{marks} अंक · {questions} प्रश्न",
+    "{marks} अंक · {questions} प्रश्न",
+    ["marks", "questions"],
+)
+add("syllabusNegativeMarking", "Negative marking: {mode}", "नकारात्मक अंक: {mode}", "नकारात्मक अंक: {mode}", ["mode"])
+add("syllabusMarks", "{marks} marks", "{marks} अंक", "{marks} अंक", ["marks"])
+add(
+    "syllabusBlueprintMismatch",
+    "The section marks do not add up to the paper total. Treat this blueprint as unverified.",
+    "खण्डका अंकहरू प्रश्नपत्रको कुलसँग बराबर छैनन्। यो ढाँचलाई प्रमाणित नमुनेर लिनुहोस्।",
+    "खंडों के अंक प्रश्नपत्र के कुल के बराबर नहीं हैं। इस ढांच को असत्यापित मानें।",
+)
+add("syllabusCoversTopics", "Covers {count} syllabus topics", "{count} पाठ्यक्रम विषय ओगट्छ", "{count} पाठ्यक्रम विषय कवर करता है", ["count"])
+add("syllabusSearchTopics", "Search topics", "विषय खोज्नुहोस्", "विषय खोजें")
+add("syllabusNoPublished", "No syllabus has been published yet.", "अहिलेसम्म कुनै पाठ्यक्रम प्रकाशित भएको छैन।", "अभी तक कोई पाठ्यक्रम प्रकाशित नहीं हुआ है।")
+add("syllabusTopicsCount", "{count} topics", "{count} विषय", "{count} विषय", ["count"])
+add("syllabusNotCurrent", "Not current", "हालकै होइन", "वर्तमान नहीं")
+
+# ── books ───────────────────────────────────────────────────────────────────
+add("booksTitle", "Books", "पुस्तकहरू", "किताबें")
+add("booksSearch", "Search books", "पुस्तक खोज्नुहोस्", "किताबें खोजें")
+add("booksNonePublished", "No books have been published yet.", "अहिलेसम्म कुनै पुस्तक प्रकाशित भएको छैन।", "अभी तक कोई किताब प्रकाशित नहीं हुई है।")
+add("booksNoMatch", "No books match \"{query}\".", "\"{query}\" सँग मिल्ने कुनै पुस्तक छैन।", "\"{query}\" से मेल खाने कोई किताब नहीं।", ["query"])
+add(
+    "booksProgress",
+    "{percent}% · page {page}",
+    "{percent}% · पृष्ठ {page}",
+    "{percent}% · पृष्ठ {page}",
+    ["percent", "page"],
+)
+add("booksChapters", "Chapters", "अध्यायहरू", "अध्याय")
+add("booksNoChapters", "No chapters published yet.", "अहिलेसम्म कुनै अध्याय प्रकाशित भएको छैन।", "अभी तक कोई अध्याय प्रकाशित नहीं हुआ।")
+add("booksChapterTest", "Chapter test", "अध्यायको परीक्षा", "अध्याय का टेस्ट")
+add("booksReadChapter", "Read the chapter", "अध्याय पढ्नुहोस्", "अध्याय पढ़ें")
+add("booksTakeTest", "Take test ({count})", "परीक्षा दिनुहोस् ({count})", "टेस्ट दें ({count})", ["count"])
+add("booksNoTopics", "This chapter has no topics to open yet.", "यो अध्यायमा अहिलेसम्म खोल्नुपर्ने कुनै विषय छैन।", "इस अध्याय में अभी तक खोलने को कोई विषय नहीं है।")
+
+# ── downloads ───────────────────────────────────────────────────────────────
+add("downloadsClearTitle", "Clear offline content?", "अफलाइन सामग्री मेटाउने?", "ऑफ़लाइन सामग्री मिटाएं?")
+add(
+    "downloadsClearBody",
+    "This removes all cached questions. You can re-download anytime while online.",
+    "यसले क्यास गरिएका सबै प्रश्न हटाउँछ। इन्टरनेट भएको बेला जुनसुकै बेला पुनः डाउनलोड गर्न सकिन्छ।",
+    "यह कैश किए सभी प्रश्न हटा देता है। इंटरनेट होने पर आप कभी भी फिर से डाउनलोड कर सकते हैं।",
+)
+add("downloadsClear", "Clear", "हटाउनुहोस्", "हटाएं")
+add("downloadsStorageUnreadable", "Could not read offline storage", "अफलाइन भण्डारण पढ्न सकिएन", "ऑफ़लाइन स्टोरेज नहीं पढ़ा जा सका")
+add(
+    "downloadsNothingReported",
+    "Nothing is reported rather than showing a false zero.",
+    "झुटो शून्य देखाउनेभन्दा केही पनि देखाइँदैन।",
+    "झूठा जीरो दिखाने के बजाय कुछ भी नहीं दिखाया जाता।",
+)
+add("downloadsCachedQuestions", "{count} questions cached", "{count} प्रश्न क्यास भयो", "{count} प्रश्न कैश हैं", ["count"])
+add(
+    "downloadsCacheSize",
+    "{subjects} subjects · ~{size} KB",
+    "{subjects} विषय · ~{size} KB",
+    "{subjects} विषय · ~{size} KB",
+    ["subjects", "size"],
+)
+add("downloadsLastCached", "Last cached", "अन्तिम क्यास", "अंतिम कैश")
+add("downloadsAutoDownload", "Auto-download", "स्वतः डाउनलोड", "स्वतः डाउनलोड")
+add("downloadsPrefetchNow", "Prefetch daily pack now", "दैनिक प्याक अहिले नै ल्याउनुहोस्", "दैनिक पैक अभी प्रीफ़ेच करें")
+add("downloadsClearAction", "Clear offline content", "अफलाइन सामग्री मेटाउनुहोस्", "ऑफ़लाइन सामग्री मिटाएं")
+
+# ── rewards ─────────────────────────────────────────────────────────────────
+add("rewardsSpinWheel", "Spin the wheel", "चक्र घुमाउनुहोस्", "चक्र घुमाएं")
+add("rewardsCheckInUnavailable", "Check-in unavailable", "चेक-इन उपलब्ध छैन", "चेक-इन उपलब्ध नहीं")
+add("rewardsDailyCheckIn", "Daily check-in", "दैनिक चेक-इन", "दैनिक चेक-इन")
+add("rewardsDayStreak", "day {count}", "{count} दिन", "{count} दिन", ["count"])
+add("rewardsToday", "today", "आज", "आज")
+add("rewardsTomorrow", "tomorrow", "भोलि", "कल")
+add("rewardsClaimedToday", "Claimed today", "आज दावी गरियो", "आज दावा किया गया")
+add("rewardsCheckInFor", "Check in for {coins} coins", "{coins} क्विनका लागि चेक-इन गर्नुहोस्", "{coins} कॉइन के लिए चेक-इन करें", ["coins"])
+add("rewardsSpinUnavailable", "Spin wheel unavailable", "चक्र उपलब्ध छैन", "चक्र उपलब्ध नहीं")
+add("rewardsSpin", "Spin", "घुमाउनुहोस्", "घुमाएं")
+add("rewardsComeBackLater", "Come back later", "पछि आउनुहोस्", "बाद में आएं")
+add("rewardsNextSpin", "Next spin {date}", "अर्को पटक {date}", "अगली बार {date}", ["date"])
+
+# ── game ────────────────────────────────────────────────────────────────────
+add("gameLevelLabel", "Level {number}", "तह {number}", "स्तर {number}", ["number"])
+add("gameBossLevel", "Boss level", "बड तह", "बॉस स्तर")
+add("gameChapterLevel", "Chapter level", "अध्याय तह", "अध्याय स्तर")
+add("gameSecondsPerQuestion", "{seconds}s per question", "प्रति प्रश्न {seconds}s", "प्रति प्रश्न {seconds}s", ["seconds"])
+add("gameBestScore", "Best score", "उत्कृष्ट अंक", "सर्वश्रेष्ठ अंक")
+add("gameBestAccuracy", "Best accuracy", "उत्कृष्ट शुद्धता", "सर्वश्रेष्ठ शुद्धता")
+add("gameBestTime", "Best time", "उत्कृष्ट समय", "सर्वश्रेष्ठ समय")
+add("gameStartLevel", "Start level", "तह सुरु गर्नुहोस्", "स्तर शुरू करें")
+add("gameNotPlayable", "Not playable yet", "अहिले खेल्न मिल्दैन", "अभी खेलने योग्य नहीं")
+add(
+    "gameWorldNoCourse",
+    "This world has no quiz course linked to it yet, so there is nothing to play. Ask an admin to set the world's course.",
+    "यो वर्ल्डसँग अहिलेसम्म कुनै क्विज कोर्स जोडिएको छैन, त्यसैले खेल्नुपर्ने केही छैन। प्रशासकलाई वर्ल्डको कोर्स सेट गर्न भन्नुहोस्।",
+    "इस वर्ल्ड से अभी तक कोई क्विज़ कोर्स नहीं जुड़ा है, इसलिए खेलने को कुछ नहीं है। एडमिन से वर्ल्ड का कोर्स सेट करवाएं।",
+)
+add("gameWorldsTitle", "Worlds", "वर्ल्डहरू", "वर्ल्ड")
+add("gameWorldsLoadFailed", "Could not load worlds", "वर्ल्डहरू लोड गर्न सकिएन", "वर्ल्ड लोड नहीं हो सके")
+add("gameNoWorlds", "No worlds yet", "अहिलेसम्म कुनै वर्ल्ड छैन", "अभी तक कोई वर्ल्ड नहीं")
+add(
+    "gameNoWorldsBody",
+    "The server has not published any game worlds.",
+    "सर्भरले अहिलेसम्म कुनै वर्ल्ड प्रकाशित गरेको छैन।",
+    "सर्वर ने अभी तक कोई वर्ल्ड प्रकाशित नहीं किया है।",
+)
+add("gameNeedsSubscription", "Requires a subscription plan.", "सदस्यता योजना चाहिन्छ।", "सदस्यता योजना आवश्यक है।")
+add("gameWorldNotFound", "World not found", "वर्ल्ड भेटिएन", "वर्ल्ड नहीं मिला")
+add("gameStarsProgress", "{earned} / {total} stars", "{earned} / {total} स्टार", "{earned} / {total} सितारे", ["earned", "total"])
+add("gameWorldMapFailed", "Could not load world map", "वर्ल्ड नक्सा लोड गर्न सकिएन", "वर्ल्ड मैप लोड नहीं हो सका")
+add("gameMissionsTitle", "Missions", "मिसन", "मिशन")
+add("gameMissionsFailed", "Could not load missions", "मिसनहरू लोड गर्न सकिएन", "मिशन लोड नहीं हो सके")
+add("gameNoMissions", "No missions yet", "अहिलेसम्म कुनै मिसन छैन", "अभी तक कोई मिशन नहीं")
+add("gameNoMissionsBody", "The server has not published any missions for you.", "सर्भरले तपाईंका लागि कुनै मिसन प्रकाशित गरेको छैन।", "सर्वर ने आपके लिए कोई मिशन प्रकाशित नहीं किया है।")
+add("gameClaimAll", "Claim all", "सबै दावी गर्नुहोस्", "सभी दावा करें")
+add("gameClaimCoins", "Claim {coins} coins", "{coins} क्विन दावी गर्नुहोस्", "{coins} कॉइन दावा करें", ["coins"])
+add("gameClaimed", "Claimed", "दावी गरियो", "दावा किया")
+
+# ── numericals ──────────────────────────────────────────────────────────────
+add("numericalsTitle", "Numerical", "सङ्ख्यात्मक", "संख्यात्मक")
+add("numericalsNew", "New numbers", "नयाँ सङ्ख्या", "नए अंक")
+add("numericalsCheck", "Check answer", "उत्तर जाँच्नुहोस्", "उत्तर जांचें")
+add("numericalsShowSolution", "Show worked solution", "चरणबद्ध समाधान हेर्नुहोस्", "चरणबद्ध हल देखें")
+add("numericalsCorrect", "Correct{reason}", "सही{reason}", "सही{reason}", ["reason"])
+add(
+    "numericalsNotCorrect",
+    "Not correct. Try again, or open the worked solution.",
+    "गलत छ। फेरि प्रयास गर्नुहोस्, वा चरणबद्ध समाधान हेर्नुहोस्।",
+    "गलत है। फिर से कोशिश करें, या चरणबद्ध हल देखें।",
+)
+add("numericalsFlagged", "The server has flagged this problem for review.", "सर्भरले यो प्रश्न पुनरावलोकनका लागि चिन्हित गरेको छ।", "सर्वर ने यह प्रश्न समीक्षा के लिए चिह्नित किया है।")
+add("numericalsWorkedSolution", "Worked solution", "चरणबद्ध समाधान", "चरणबद्ध हल")
+add("numericalsComputedBy", "Computed by: {source}", "गणना गर्ने: {source}", "गणना करने वाला: {source}", ["source"])
+add(
+    "numericalsFlaggedWarning",
+    "Flagged by the server for review — treat this answer with care.",
+    "सर्भरले पुनरावलोकनका लागि चिन्हित गरेको छ — यो उत्तर सावधानीले हेर्नुहोस्।",
+    "सर्वर ने समीक्षा के लिए चिह्नित किया है — इस उत्तर को सावधानी से देखें।",
+)
+add("numericalsOpenInCalculator", "Open in calculator", "क्यालकुलेटरमा खोल्नुहोस्", "कैलकुलेटर में खोलें")
+
+# ── store ───────────────────────────────────────────────────────────────────
+add("storeEquipped", "Equipped!", "लगाइयो!", "लगा लिया गया!")
+add("storeEquipFailed", "Could not equip that item.", "त्यो वस्तु लगाउन सकिएन।", "वह आइटम लगा नहीं सका।")
+add("storeWardrobeTitle", "Wardrobe", "वार्डरोब", "वॉर्डरोब")
+add("storeEquippedLabel", "Equipped", "लगाइएको", "लगाया गया")
+add("storeNothingEquipped", "Nothing equipped", "केही पनि लगाइएको छैन", "कुछ भी लगाया नहीं है")
+add(
+    "storeNothingEquippedBody",
+    "Buy assets in the Premium Store, then equip them here.",
+    "प्रिमियम स्टोरबाट एसेट किन्नुहोस्, अनि यहाँ लगाउनुहोस्।",
+    "प्रीमियम स्टोर से एसेट खरीदें, फिर यहाँ लगाएं।",
+)
+add("storeAvailableToEquip", "Available to equip", "लगाउन मिल्ने", "लगाने योग्य")
+add(
+    "storeEquipHint",
+    "Tap Equip to try it on. If you tap twice you are never equipped twice.",
+    "लगाउन Equip थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।",
+    "लगाने के लिए Equip दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।",
+)
+add("storeNoAssets", "No assets yet — visit Premium Store.", "अहिलेसम्म कुनै एसेट छैन — प्रिमियम स्टोर हेर्नुहोस्।", "अभी तक कोई एसेट नहीं — प्रीमियम स्टोर देखें।")
+add("storeClearSlot", "Clear {slot}", "{slot} हटाउनुहोस्", "{slot} हटाएं", ["slot"])
+add("storeTitle", "Premium Store", "प्रिमियम स्टोर", "प्रीमियम स्टोर")
+add("storeAll", "All", "सबै", "सभी")
+add("storeAssetsCount", "{count} assets", "{count} एसेट", "{count} एसेट", ["count"])
+add("storeNoAssetsInCategory", "No assets in this category.", "यस श्रेणीमा कुनै एसेट छैन।", "इस श्रेणी में कोई एसेट नहीं है।")
+add("storeTrading", "Trading", "व्यापार", "व्यापार")
+add(
+    "storeTradingExplain",
+    "Buy resources and bundles with coins, or sell what you no longer need.",
+    "क्विनबाट स्रोत र बन्डल किन्नुहोस्, वा अब चाहिएको वस्तु बेच्नुहोस्।",
+    "कॉइन से संसाधन और बंडल खरीदें, या अब ज़रूरी नहीं वस्तु बेचें।",
+)
+add("storeCoinShop", "Coin shop", "क्विन शप", "कॉइन शॉप")
+add("storeSellItems", "Sell items", "वस्तु बेच्नुहोस्", "आइटम बेचें")
+add("storeOwnedBadge", "OWNED", "आफूले भएको", "आपके पास")
+add("storeOwned", "Owned", "आफ्नो", "आपका")
+add("storeEmptyEquip", "Empty - equip from store", "खाली — स्टोरबाट लगाउनुहोस्", "खाली — स्टोर से लगाएं")
+
+# ── EICE ────────────────────────────────────────────────────────────────────
+add("eiceTitle", "Exam Intelligence", "परीक्षा बुद्धि", "परीक्षा बुद्धि")
+add(
+    "eiceExplain",
+    "Everything here is worked out on our servers from your real answer history, so nothing is shown unless it is true.",
+    "यहाँ भएको सबै कुरा तपाईंको वास्तविक उत्तर इतिहासबाट हाम्रो सर्भरमा निकालिन्छ, त्यसैले सत्य नभएसम्म केही देखाइँदैन।",
+    "यहाँ की हर चीज़ आपके असली उत्तर इतिहास से हमारे सर्वर पर निकाली जाती है, इसलिए सच न हो तो कुछ नहीं दिखाया जाता।",
+)
+add("eiceCoach", "Coach — your plan", "कोच — तपाईंको योजना", "कोच — आपकी योजना")
+add("eiceSprint", "Sprint — 7-day recall queue", "स्प्रिन्ट — ७ दिनेको दोहोराइ क्यु", "स्प्रिंट — 7-दिन की समीक्षा कतार")
+add("eiceWeeklyReport", "Weekly report", "साप्ताहिक प्रतिवेदन", "साप्ताहिक रिपोर्ट")
+add("eiceTriage", "Triage — cover or skip", "त्रायज — ओगट्ने वा छाड्ने", "ट्रायेज — कवर करें या छोड़ें")
+
+# ── battle ──────────────────────────────────────────────────────────────────
+add("battleArena", "Battle Arena", "ब्याटल रिङ", "बैटल अरेना")
+add("battleNoActiveMatch", "No active match", "कुनै सक्रिय म्याच छैन", "कोई सक्रिय मैच नहीं")
+add("battleFindMatch", "Find a Match", "म्याच खोज्नुहोस्", "मैच खोजें")
+add("battleNoQuestions", "This match has no questions", "यो म्याचमा कुनै प्रश्न छैन", "इस मैच में कोई प्रश्न नहीं है")
+add("battleQuestionCounter", "Battle · Q{current}/{total}", "ब्याटल · प्रश्न{current}/{total}", "बैटल · प्रश्न{current}/{total}", ["current", "total"])
+add("battleOpponentAnswered", "Opponent answered!", "प्रतिद्वन्द्वीले उत्तर दियो!", "विपक्षी ने उत्तर दिया!")
+add("battleResultTitle", "Battle Result", "ब्याटल नतिजा", "बैटल परिणाम")
+add("battleNoMatchToDisplay", "No match to display", "देखाउनुपर्ने कुनै म्याच छैन", "दिखाने कोई मैच नहीं")
+add("battleVs", "VS", "विरुद्ध", "बनाम")
+add("battleRematch", "Rematch", "पुनः भिडन्त", "रीमैच")
+add("battleYou", "You", "तपाईं", "आप")
+
+# ── misc ────────────────────────────────────────────────────────────────────
+add("liveEventsTitle", "Live Events", "प्रत्यक्ष कार्यक्रम", "लाइव कार्यक्रम")
+add("liveEventsNone", "No live events", "कुनै प्रत्यक्ष कार्यक्रम छैन", "कोई लाइव कार्यक्रम नहीं")
+add(
+    "liveEventsNoneBody",
+    "Scheduled and live events will appear here.",
+    "तोकिएका र प्रत्यक्ष कार्यक्रमहरू यहाँ देखिन्छन्।",
+    "निर्धारित और लाइव कार्यक्रम यहाँ दिखेंगे।",
+)
+add("notificationsTitle", "Notifications", "सूचनाहरू", "सूचनाएं")
+add("notificationsMarkAllRead", "Mark all read", "सबै पढियो भनी जनाउनुहोस्", "सभी पढ़े हुए चिह्नित करें")
+add("notificationsNone", "No notifications", "कुनै सूचना छैन", "कोई सूचना नहीं")
+add("notificationsNoneBody", "Nothing new right now.", "अहिले नयाँ केही छैन।", "अभी कुछ नया नहीं है।")
+add("notificationsLoadFailed", "Could not load notifications", "सूचनाहरू लोड गर्न सकिएन", "सूचनाएं लोड नहीं हो सकीं")
+add("notificationsMarkFailed", "Could not mark that as read. Try again.", "त्यसलाई पढियो जनाउन सकिएन। फेरि प्रयास गर्नुहोस्।", "उसे पढ़ा हुआ चिह्नित नहीं कर सके। फिर से कोशिश करें।")
+add("notificationsMarkAllFailed", "Could not mark everything as read.", "सबैलाई पढियो जनाउन सकिएन।", "सब कुछ पढ़ा हुआ चिह्नित नहीं कर सका।")
+add("coursesLoadFailed", "Could not load courses. Check connection.", "कोर्सहरू लोड गर्न सकिएन। जडान जाँच्नुहोस्।", "कोर्स लोड नहीं हो सके। कनेक्शन जांचें।")
+add("coursesNone", "No courses available", "कुनै कोर्स उपलब्ध छैन", "कोई कोर्स उपलब्ध नहीं")
+add(
+    "coursesNoneBody",
+    "Civil engineering syllabi will appear here once published.",
+    "सिभिल इन्जिनियरिङका पाठ्यक्रम प्रकाशित भएपछि यहाँ देखिन्छन्।",
+    "सिविल इंजीनियरिंग के पाठ्यक्रम प्रकाशित होने पर यहाँ दिखेंगे।",
+)
+add("coursesTracksCount", "{count} syllabus tracks", "{count} पाठ्यक्रम ट्र्याक", "{count} पाठ्यक्रम ट्रैक", ["count"])
+add("coursesBrowseQuestions", "Browse questions", "प्रश्नहरू हेर्नुहोस्", "प्रश्न ब्राउज़ करें")
+add("pscTitle", "PSC / Loksewa", "PSC / लोकसेवा", "PSC / लोकसेवा")
+add(
+    "pscBlueprintsFailed",
+    "Could not load the PSC blueprints.\n{reason}",
+    "PSC का ढाँचा लोड गर्न सकिएन।\n{reason}",
+    "PSC के ब्लूप्रिन्ट लोड नहीं हो सके।\n{reason}",
+    ["reason"],
+)
+add(
+    "pscNoBlueprints",
+    "No blueprints are published yet. Pull down to retry.",
+    "अहिलेसम्म कुनै ढाँचा प्रकाशित छैन। तान्नुहोस् र फेरि प्रयास गर्नुहोस्।",
+    "अभी तक कोई ब्लूप्रिन्ट प्रकाशित नहीं। नीचे खींचकर फिर से कोशिश करें।",
+)
+add("pscBlueprintMeta", "id: {id} • {questions} Qs", "id: {id} • {questions} प्रश्न", "id: {id} • {questions} प्रश्न", ["id", "questions"])
+add("pscStartFailed", "Start exam failed (offline or 404)", "परीक्षा सुरु असफल (अफलाइन वा 404)", "परीक्षा शुरू विफल (ऑफ़लाइन या 404)")
+add("pscStarted", "Exam started: {id}", "परीक्षा सुरु भयो: {id}", "परीक्षा शुरू हुई: {id}", ["id"])
+add("achievementsBadges", "Badges", "ब्याज", "बैज")
+add(
+    "achievementsFailed",
+    "Could not load achievements: {reason}",
+    "उपलब्धि लोड गर्न सकिएन: {reason}",
+    "उपलब्धियां लोड नहीं हो सकीं: {reason}",
+    ["reason"],
+)
+add("achievementsNone", "No achievements yet — start quizzing!", "अहिलेसम्म कुनै उपलब्धि छैन — क्विज खेल्न सुरु गर्नुहोस्!", "अभी तक कोई उपलब्धि नहीं — क्विज़ खेलना शुरू करें!")
+add("searchTitle", "Search", "खोज", "खोज")
+add("searchHint", "Search questions, calculators, courses…", "प्रश्न, क्यालकुलेटर, कोर्स खोज्नुहोस्…", "प्रश्न, कैलकुलेटर, कोर्स खोजें…")
+add("searchTry", "Try: levelling, RCC, Bernoulli", "जस्तै: levelling, RCC, Bernoulli", "जैसे: levelling, RCC, Bernoulli")
+add("searchNoResults", "No results", "कुनै नतिजा छैन", "कोई परिणाम नहीं")
+add("searchFailed", "Search failed: {reason}", "खोज असफल: {reason}", "खोज विफल: {reason}", ["reason"])
+add("xpLevelLabel", "LVL {level}", "तह {level}", "स्तर {level}", ["level"])
+add("xpProgress", "{current} / {total} XP", "{current} / {total} XP", "{current} / {total} XP", ["current", "total"])
+add("xpTotal", "{amount} XP", "{amount} XP", "{amount} XP", ["amount"])
+add("xpToNext", "{amount} to next", "अर्को तहसम्म {amount}", "अगले स्तर तक {amount}", ["amount"])
+add("xpDayStreak", "{count} day streak", "{count} दिनको स्ट्रिक", "{count} दिन की स्ट्रीक", ["count"])
+add("lottieOverlay", "lottie-overlay", "lottie-overlay", "lottie-overlay")
+add("lottieTapToDismiss", "Tap to dismiss", "हटाउन थिच्नुहोस्", "हटाने के लिए दबाएं")
+add(
+    "lifelineCost",
+    "{name} lifeline, {coins} coins",
+    "{name} lifeline, {coins} क्विन",
+    "{name} lifeline, {coins} कॉइन",
+    ["name", "coins"],
+)
+add(
+    "lifelineUnavailable",
+    "{name} lifeline unavailable: {reason}",
+    "{name} lifeline उपलब्ध छैन: {reason}",
+    "{name} lifeline उपलब्ध नहीं: {reason}",
+    ["name", "reason"],
+)
+add(
+    "offlineCannotReach",
+    "Can't reach our servers — progress syncs when the connection is back",
+    "हाम्रो सर्भरसम्म पुग्न सकिएन — जडान फर्केपछि प्रगति सिंक हुन्छ",
+    "हमारे सर्वर तक नहीं पहुँच सके — कनेक्शन लौटने पर प्रगति सिंक होगी",
+)
+add(
+    "offlineBackOnline",
+    "Back online — syncing your queued activity",
+    "इन्टरनेट फर्कियो — तपाईंको कतारको गतिविधि सिंक हुँदैछ",
+    "इंटरनेट वापस आ गया — आपकी कतार की गतिविधि सिंक हो रही है",
+)
+add("learningNoResponse", "No response (tutor offline).", "कुनै जवाफ छैन (ट्युटर अफलाइन)।", "कोई उत्तर नहीं (ट्यूटर ऑफ़लाइन)।")
+add("socialApplyFailed", "Could not apply that code", "त्यो कोड लागू गर्न सकिएन", "वह कोड लागू नहीं कर सका")
+add("responseCached", "OK (cached)", "ठीक छ (क्यास)", "ठीक है (कैश)")
+
+# ── the last of tier 4 ──────────────────────────────────────────────────────
+add(
+    "battleTimer",
+    "{seconds}s · {current}/{total}",
+    "{seconds}s · {current}/{total}",
+    "{seconds}s · {current}/{total}",
+    ["seconds", "current", "total"],
+)
+add("battleShareUnavailable", "Share unavailable", "साझेदारी उपलब्ध छैन", "साझा करना उपलब्ध नहीं")
+add("bookPageLabel", "Page {number}", "पृष्ठ {number}", "पृष्ठ {number}", ["number"])
+add("bookMyHighlights", "My highlights", "मेरा हाइलाइट", "मेरे हाइलाइट")
+add(
+    "bookNoExtractableText",
+    "This page has no extractable text. It may be an image-only scan.",
+    "यो पृष्ठमा निकाल्न मिल्ने पाठ छैन। यो तस्बिर मात्र भएको स्क्यान हुन सक्छ।",
+    "इस पृष्ठ में निकालने योग्य टेक्स्ट नहीं है। यह केवल छवि वाला स्कैन हो सकता है।",
+)
+add("bookPreviousPage", "Previous page", "अघिल्लो पृष्ठ", "पिछला पृष्ठ")
+add("bookNextPage", "Next page", "अर्को पृष्ठ", "अगला पृष्ठ")
+add("bookYourHighlights", "Your highlights", "तपाईंका हाइलाइट", "आपके हाइलाइट")
+add("bookNoHighlights", "You have not highlighted anything yet.", "तपाईंले अझै केही हाइलाइट गर्नुभएको छैन।", "आपने अभी तक कुछ हाइलाइट नहीं किया है।")
+add("bookImageNotText", "Image or diagram (not available as text)", "तस्बिर वा रेखाचित्र (पाठको रूपमा उपलब्ध छैन)", "छवि या आरेख (टेक्स्ट के रूप में उपलब्ध नहीं)")
+add(
+    "bookValueNotText",
+    "{value} (not available as text)",
+    "{value} (पाठको रूपमा उपलब्ध छैन)",
+    "{value} (टेक्स्ट के रूप में उपलब्ध नहीं)",
+    ["value"],
+)
+add("contestsNone", "No contests yet", "अहिलेसम्म कुनै प्रतियोगिता छैन", "अभी तक कोई प्रतियोगिता नहीं")
+add(
+    "contestsNoneBody",
+    "Active and upcoming contests will appear here.",
+    "सक्रिय र आउने प्रतियोगिताहरू यहाँ देखिन्छन्।",
+    "सक्रिय और आने वाली प्रतियोगिताएं यहाँ दिखेंगी।",
+)
+add("eiceNoData", "No data available yet.", "अहिलेसम्म कुनै डाटा उपलब्ध छैन।", "अभी तक कोई डेटा उपलब्ध नहीं है।")
+add("eiceNoDetails", "No details available yet.", "अहिलेसम्म कुनै विवरण उपलब्ध छैन।", "अभी तक कोई विवरण उपलब्ध नहीं है।")
+add("eiceNothingHere", "Nothing here yet.", "यहाँ अहिलेसम्म केही छैन।", "यहाँ अभी तक कुछ नहीं है।")
+add("eiceAndMore", "and {count} more…", "र {count} थप…", "और {count}…", ["count"])
+add(
+    "gameNoRewardData",
+    "The server sent no reward data for this level yet.",
+    "सर्भरले यो तहका लागि अझै पुरस्कारको डाटा पठायो छैन।",
+    "सर्वर ने अभी तक इस स्तर के लिए इनाम डेटा नहीं भेजा है।",
+)
+add("gameMissionsReady", "{count} missions ready to claim", "{count} मिसन दावी गर्न तयार", "{count} मिशन दावा करने के लिए तैयार", ["count"])
+add("gameRewardsWaiting", "{count} rewards waiting", "{count} पुरस्कार बाँकी", "{count} इनाम बाकी", ["count"])
+add("leaderboardFriendsTitle", "Friends leaderboard", "साथीको लिडरबोर्ड", "दोस्तों का लीडरबोर्ड")
+add("leaderboardLeagueTitle", "League leaderboard", "लिगको लिडरबोर्ड", "लीग का लीडरबोर्ड")
+add("leaderboardMonthsShort", "{months}m", "{months} म.", "{months} म.", ["months"])
+add("learningNoTracksTitle", "No tracks yet", "अहिलेसम्म कुनै ट्र्याक छैन", "अभी तक कोई ट्रैक नहीं")
+add(
+    "learningTracksBody",
+    "Tracks will appear here as they are published. Check back soon.",
+    "ट्र्याकहरू प्रकाशित भएपछि यहाँ देखिन्छन्। छिट्टै फेरि जाँच्नुहोस्।",
+    "ट्रैक प्रकाशित होने पर यहाँ दिखेंगे। जल्द ही फिर देखें।",
+)
+add(
+    "learningGradedNextDue",
+    "Graded as {grade} — next due {date}",
+    "{grade} भएर अंकित — अर्को {date} सम्म",
+    "{grade} के रूप में अंकित — अगली बार {date} तक",
+    ["grade", "date"],
+)
+add("learningNoReviewsDue", "No reviews due", "कुनै दोहोराइ बाँकी छैन", "कोई दोहराव बाकी नहीं")
+add("liveEventsActive", "{count}{capacity} active", "{count}{capacity} सक्रिय", "{count}{capacity} सक्रिय", ["count", "capacity"])
+add("liveEventsQuestions", "{count} Qs", "{count} प्रश्न", "{count} प्रश्न", ["count"])
+add("liveEventsSecondsPerQuestion", "{seconds}s / Q", "{seconds}s / प्रश्न", "{seconds}s / प्रश्न", ["seconds"])
+add("liveEventsJoined", "{count}{capacity} joined", "{count}{capacity} सामेल", "{count}{capacity} शामिल", ["count", "capacity"])
+add(
+    "numericalsAnswer",
+    "Answer: {value}{unit}",
+    "उत्तर: {value}{unit}",
+    "उत्तर: {value}{unit}",
+    ["value", "unit"],
+)
+add(
+    "storeAssetMeta",
+    "{rarity} • {slot} • {coins} coins",
+    "{rarity} • {slot} • {coins} क्विन",
+    "{rarity} • {slot} • {coins} कॉइन",
+    ["rarity", "slot", "coins"],
+)
+add(
+    "syllabusNoTopicMatch",
+    "No topic matches \"{query}\".",
+    "\"{query}\" सँग मिल्ने कुनै विषय छैन।",
+    "\"{query}\" से मेल खाने कोई विषय नहीं।",
+    ["query"],
+)
+add("syllabusExaminableCount", "{count} examinable", "{count} परीक्षामा", "{count} परीक्षा में", ["count"])
 add(
     "forceUpdateUnsupportedLatest",
     "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
@@ -1284,6 +2135,8 @@ def write(locale_index, locale):
         fh.write("\n")
     print("wrote %s (%d keys)" % (os.path.relpath(path, BASE), len(data) - 1))
 
+
+validate()
 
 write(0, "en")
 write(1, "ne")

@@ -589,7 +589,6 @@
   "profileLearningSub": "अध्ययन योजना • दोहोराइ • ट्युटर",
   "profileEice": "परीक्षा बुद्धि (EICE)",
   "profileEiceSub": "कोच • त्रायज • स्प्रिन्ट",
-  "profilePsc": "PSC / लोकसेवा",
   "profilePscSub": "परीक्षा ढाँचा र पाठ्यक्रम",
   "profilePracticeSub": "बुकमार्क ड्रिल • कमजोर विषय",
   "profileLeaderboardSub": "विश्व • साथी • लिग",
@@ -599,9 +598,7 @@
   "profileLiveEventsSub": "तोकिएका सत्र र चेक-इन",
   "profileCoaching": "कोचिङ",
   "profileCoachingSub": "कमजोर क्षेत्र • तयारी • स्प्रिन्ट",
-  "profileSearch": "खोज्नुहोस्",
   "profileSearchSub": "कुनै पनि प्रश्न खोज्नुहोस्",
-  "profileNotifications": "सूचनाहरू",
   "profileNotificationsSub": "गतिविधि र सम्झना",
   "profileSocial": "सामाजिक र रेफरल",
   "profileSocialSub": "साझेदारी • स्ट्रिक • लिडरबोर्ड",
@@ -1443,6 +1440,1252 @@
   "practicePrev": "अघिल्लो",
   "practiceGrading": "अंक गरिँदै…",
   "practiceNoEffectNote": "अभ्यासमा समयसीमा छैन र यसले अंक, XP, क्विन वा स्ट्रिकमा कुनै असर गर्दैन।",
+  "liveEventNotFound": "प्रत्यक्ष कार्यक्रम भेटिएन",
+  "liveEventParticipant": "सहभागी #{number} • {status} • अंक {score}",
+  "@liveEventParticipant": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "status": {
+        "type": "Object"
+      },
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventSnapshot": "स्न्यापसट",
+  "liveEventNoSnapshot": "अहिलेसम्म स्न्यापसट छैन — दर्ता गरेर चेक-इन गर्नुहोस्, हालको प्रश्न आउनेछ।",
+  "liveEventAnswer": "उत्तर",
+  "liveEventQIndex": "प्रश्न क्रमाङ्क",
+  "liveEventSubmitAnswer": "उत्तर पेश गर्नुहोस्",
+  "liveEventNoLeaderboard": "अहिलेसम्म लिडरबोर्ड छैन।",
+  "liveEventRegistered": "दर्ता भयो!",
+  "liveEventRegisterFailed": "दर्ता असफल",
+  "liveEventUnregistered": "दर्ता रद्द",
+  "liveEventUnregisterFailed": "दर्ता रद्द गर्न असफल",
+  "liveEventCheckedIn": "चेक-इन भयो!",
+  "liveEventCheckInFailed": "चेक-इन असफल",
+  "liveEventEnterAnswer": "उत्तर लेख्नुहोस्",
+  "liveEventAnswerRecorded": "उत्तर दर्ता भयो — अंक {score}",
+  "@liveEventAnswerRecorded": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventQuestionsEach": "{questions} प्रश्न • प्रत्येक {seconds}s",
+  "@liveEventQuestionsEach": {
+    "placeholders": {
+      "questions": {
+        "type": "Object"
+      },
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventActive": "{count} सक्रिय",
+  "@liveEventActive": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventWaitlisted": "{count} प्रतिक्षामा",
+  "@liveEventWaitlisted": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventStarts": "{date} {hour}:{minute} मा सुरु",
+  "@liveEventStarts": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      },
+      "hour": {
+        "type": "Object"
+      },
+      "minute": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventEnds": "{date} मा समाप्त",
+  "@liveEventEnds": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventEntryFee": "{coins} प्रवेश शुल्क",
+  "@liveEventEntryFee": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventPrize": "{coins} पुरस्कार",
+  "@liveEventPrize": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventLeave": "छोड्नुहोस्",
+  "liveEventCheckIn": "चेक-इन",
+  "liveEventScoreMeta": "अंक {score} • {correct}/{total}",
+  "@liveEventScoreMeta": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      },
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventQuestionPoints": "प्रश्न{number} • {points} अंक",
+  "@liveEventQuestionPoints": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "points": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventRemaining": "बाँकी: {seconds}s • {locks} मा बन्द",
+  "@liveEventRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      },
+      "locks": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventWaitingForHost": "हालको प्रश्न छैन — आयोजकको प्रतीक्षा।",
+  "liveEventRawKeys": "कच्चा कुञ्जी: {keys}",
+  "@liveEventRawKeys": {
+    "placeholders": {
+      "keys": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingTutorChat": "ट्युटर कुराकानी",
+  "coachingStudyPlan": "अध्ययन योजना",
+  "coachingTutorOnboarding": "ट्युटर onboarding",
+  "coachingGoalIdHint": "तयारीका लागि Goal ID (जस्तै: psc-civil)",
+  "coachingLoad": "लोड गर्नुहोस्",
+  "coachingNoData": "अहिलेसम्म कुनै कोचिङ डाटा छैन — onboarding पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।",
+  "coachingPartial": "केही कोचिङ स्क्रिन अस्थायी रूपमा उपलब्ध छैनन् — उपलब्ध डाटा देखाइदैछौं।",
+  "coachingNoReadinessForGoal": "तयारी: यो लक्ष्यका लागि अहिलेसम्म डाटा छैन।",
+  "coachingAskTutor": "ट्युटरलाई सोध्नुहोस्",
+  "coachingOnboarding": "Onboarding",
+  "coachingReadinessExplained": "तयारी तपाईंका लक्ष्य, ट्र्याक र ट्युटर गतिविधिबाट निकालिन्छ। केही खण्ड प्रयोग नगरेसम्म लुकाइन्छन्।",
+  "coachingReadiness": "तयारी",
+  "coachingFocusNext": "अर्को केन्द्रमा:",
+  "coachingNoReadiness": "अहिलेसम्म तयारी छैन — यो लक्ष्य अन्तर्गत केही क्विज खेल्नुहोस्।",
+  "coachingGoalLabel": "लक्ष्य {goal}",
+  "@coachingGoalLabel": {
+    "placeholders": {
+      "goal": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingMore": "+ {count} थप",
+  "@coachingMore": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingNoTasksToday": "आज कुनै काम छैन",
+  "coachingConfidence": "विश्वास {confidence}%",
+  "@coachingConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingLearningTracks": "सिकाइका ट्र्याक",
+  "coachingThisWeek": "यो हप्ता",
+  "coachingWeekTasks": "{done}/{total} काम • औसत {average}",
+  "@coachingWeekTasks": {
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      },
+      "average": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingNoRevisions": "कुनै दोहोराइ बाँकी छैन",
+  "coachingRevisionsDue": "{count} दोहोराइ बाँकी",
+  "@coachingRevisionsDue": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialInviteFriends": "साथीहरूलाई आमन्त्रित गर्नुहोस्",
+  "socialReferralUnavailable": "रेफरल जानकारी अहिले उपलब्ध छैन।",
+  "socialEarnCoins": "{coins} क्विन कमाउनुहोस्",
+  "@socialEarnCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialNo": "होइन",
+  "socialYourInviteCode": "तपाईंको निमन्त्रणा कोड",
+  "socialShareInviteLink": "निमन्त्रणा लिंक साझेदार गर्नुहोस्",
+  "socialCopyCode": "कोड प्रतिलिपि गर्नुहोस्",
+  "socialRewards": "पुरस्कार",
+  "socialRewardPerSignup": "दर्ता गर्ने हरेक साथीका लागि तपाईंले कमाउनुहुन्छ",
+  "socialTheyEarn": "दर्ता गर्दा उनले पनि कमाउँछन्",
+  "socialBonusFirstQuiz": "उनको पहिलो क्विज पूरा भएपछि बोनस",
+  "socialYourReferrals": "तपाईंका रेफरल",
+  "socialInvited": "आमन्त्रित",
+  "socialRewarded": "पुरस्कृत",
+  "socialCoinsEarned": "क्विन कमाए",
+  "socialNoReferralsYet": "अहिलेसम्म कसैले तपाईंको कोड प्रयोग गरेको छैन।",
+  "socialRewardPaid": "पुरस्कार भुक्तानी: {coins} क्विन",
+  "@socialRewardPaid": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialStatus": "स्थिति: {status}",
+  "@socialStatus": {
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialGotCode": "साथीबाट कोड पाउनुभयो?",
+  "socialReferralCode": "रेफरल कोड",
+  "socialApplyCode": "कोड लागू गर्नुहोस्",
+  "socialShareSheetFailed": "साझेदारी पत्रक खोल्न सकिएन",
+  "socialCodeCopied": "कोड प्रतिलिपि भयो",
+  "socialSharedChallenge": "साझेदार चुनौती",
+  "socialSomeoneShared": "कसैले तपाईंसँग चुनौती साझेदार गर्यो",
+  "socialSharedBy": "{name} ले साझेदार गर्यो",
+  "@socialSharedBy": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialLinkExpired": "यो लिंकको म्याद सकियो।",
+  "socialNoPlayableChallenge": "यहाँ खेल्न मिल्ने चुनौती छैन",
+  "socialNotPlayable": "यो लिंकले खेल्न मिल्ने चुनौती दिँदैन। तपाईं सार्वजनिक सङ्ग्रह हेर्न सक्नुहुन्छ।",
+  "socialPlayChallenge": "चुनौती खेल्नुहोस्",
+  "socialGuestNeverAwards": "अतिथिको चुनौतीले कहिल्यै क्विन, XP वा स्ट्रिक दिँदैन। आफ्नो प्रगति राख्न निःशुल्क खाता खोल्नुहोस्।",
+  "socialChallengeNoQuestions": "यो चुनौतीमा कुनै प्रश्न छैन",
+  "socialChallengeEmpty": "सर्भरले कुनै प्रश्न नपठाई प्रयास सुरु गर्‍यो, त्यसैले खेल्नुपर्ने केही छैन।",
+  "socialQuestionOf": "{total} मध्येको {current} प्रश्न",
+  "@socialQuestionOf": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialCorrect": "सही।",
+  "socialNotThisTime": "यो पटक होइन — सर्भरले यसरी चिन्हित गरेको छ।",
+  "socialSubmitAnswer": "उत्तर पेश गर्नुहोस्",
+  "socialFinish": "समाप्त",
+  "socialNext": "अर्को",
+  "socialChallengeComplete": "चुनौती पूरा भयो",
+  "socialYouScored": "तपाईंले {score} अंक गर्नुभयो",
+  "@socialYouScored": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialChallengeSummary": "{correct} सही • {wrong} गलत • {skipped} छाडिएको • {questions} प्रश्न",
+  "@socialChallengeSummary": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "wrong": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialGuestChallengeNote": "अतिथिको चुनौतीले कहिल्यै क्विन, XP वा स्ट्रिक दिँदैन।",
+  "socialNiceOne": "राम्रो — यो {name} को चुनौती थियो। अतिथिको चुनौतीले कहिल्यै क्विन, XP वा स्ट्रिक दिँदैन।",
+  "@socialNiceOne": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialCreateAccount": "निःशुल्क खाता खोल्नुहोस्",
+  "socialBrowseSamples": "नमुना प्रश्नहरू हेर्नुहोस्",
+  "contestNotFound": "प्रतियोगिता भेटिएन",
+  "contestAttemptStarted": "प्रयास #{number} सुरु भयो। म्याद: {expires}",
+  "@contestAttemptStarted": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "expires": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestNoLeaderboard": "अहिलेसम्म लिडरबोर्डमा कुनै प्रविष्टि छैन — पहिलो बन्नुहोस्!",
+  "contestGeneratedMeta": "बनाइएको: {generated} • ताजा बनाउने बजट: {budget} • {mode}",
+  "@contestGeneratedMeta": {
+    "placeholders": {
+      "generated": {
+        "type": "Object"
+      },
+      "budget": {
+        "type": "Object"
+      },
+      "mode": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestRecap": "समीक्षा",
+  "contestWinners": "विजेता",
+  "contestRawStats": "कच्चा तथ्य: {count} कुञ्जी",
+  "@contestRawStats": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestRecapPending": "प्रतियोगिता सकिएपछि समीक्षा उपलब्ध हुन्छ।",
+  "contestJoined": "प्रतियोगितामा सामेल भयो!",
+  "contestJoinFailed": "सामेल हुन असफल",
+  "contestLeft": "प्रतियोगिता छोडियो",
+  "contestLeaveFailed": "छोड्न असफल",
+  "contestRegisteredBadge": "दर्ता भयो",
+  "contestMax": "बढीमा {count}",
+  "@contestMax": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestStarts": "{date} मा सुरु",
+  "@contestStarts": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestJoinFree": "सामेल हुनुहोस् (निःशुल्क)",
+  "contestJoinCoins": "सामेल हुनुहोस् ({coins} क्विन)",
+  "@contestJoinCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestEnter": "प्रतियोगितामा सामेल हुनुहोस्",
+  "leaderboardGlobal": "विश्व",
+  "leaderboardFriends": "साथी",
+  "leaderboardLeague": "लिग",
+  "leaderboardDonors": "दानकर्ता",
+  "leaderboardNoRank": "अहिलेसम्म कुनो अंक छैन — लिडरबोर्डमा पर्न एउटा क्विज पूरा गर्नुहोस्।",
+  "leaderboardMyRank": "मेरो अंक",
+  "leaderboardRankIn": "{scope} मा #{rank}",
+  "@leaderboardRankIn": {
+    "placeholders": {
+      "rank": {
+        "type": "Object"
+      },
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardUnrankedIn": "{scope} मा अंक छैन",
+  "@leaderboardUnrankedIn": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardScore": "अंक: {score}",
+  "@leaderboardScore": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardNoEntries": "अहिलेसम्म कुनै प्रविष्टि छैन",
+  "leaderboardBeFirst": "पहिलो स्थान ओगट्ने पहिलो बन्नुहोस्!",
+  "leaderboardFriendsHint": "प्रतिस्पर्धाका लागि साथी थप्नुहोस् — सर्भरले साथीहरू आफैँ छुट्याउँछ।",
+  "leaderboardLeagueHint": "लिग मौसमिक हो — योग्य हुन कार्यक्रम/प्रतियोगितामा सामेल हुनुहोस्।",
+  "leaderboardNoEntriesShort": "कुनै प्रविष्टि छैन",
+  "leaderboardCompeteToAppear": "यहाँ देखिन प्रतिस्पर्धा गर्नुहोस्।",
+  "leaderboardNoDonors": "अहिलेसम्म कुनै दानकर्ता छैन",
+  "leaderboardSupportToAppear": "यहाँ देखिन प्लेटफर्म सहयोग गर्नुहोस्।",
+  "leaderboardScoreAttempts": "अंक {score} • {attempts} प्रयास",
+  "@leaderboardScoreAttempts": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      },
+      "attempts": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningGoalLabel": "लक्ष्य #{number}",
+  "@learningGoalLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningToday": "आज",
+  "learningGoalId": "लक्ष्य ID",
+  "learningTrackId": "ट्र्याक ID",
+  "learningTargetDate": "लक्ष्य मिति",
+  "learningDailyMinutes": "दैनिक मिनेट",
+  "learningIntensity": "तीव्रता",
+  "learningPlacement": "स्थान",
+  "learningMastery": "{topics} विषयमा {percent}% दक्षता (MasteryService::computeReadiness)",
+  "@learningMastery": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      },
+      "topics": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningReadinessValue": "तयारी: {value}",
+  "@learningReadinessValue": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningDeleteGoalTitle": "लक्ष्य मेटाउने?",
+  "learningDeleteGoalBody": "यसले लक्ष्य स्थायी रूपमा मेटाउँछ। दैनिक योजनाहरू रहन्छन् तर नयाँ योजना बनाइँदैन।",
+  "learningGoalDeleted": "लक्ष्य मेटाइयो",
+  "learningDeleting": "मेटाउँदै…",
+  "learningDeleteGoal": "लक्ष्य मेटाउनुहोस्",
+  "learningOpenTodayPlan": "आजको योजना खोल्नुहोस्",
+  "learningBackToTracks": "ट्र्याकमा फर्कनुहोस्",
+  "learningTodaysPlan": "आजको योजना",
+  "learningNoActiveGoal": "कुनै सक्रिय लक्ष्य छैन",
+  "learningNoActiveGoalBody": "आजको योजना पाउन Tracks बाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।",
+  "learningBrowseTracks": "ट्र्याकहरू हेर्नुहोस्",
+  "learningPlanLabel": "योजना #{number}",
+  "@learningPlanLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningPlanGoal": "{meta} • लक्ष्य #{number}",
+  "@learningPlanGoal": {
+    "placeholders": {
+      "meta": {
+        "type": "Object"
+      },
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningCompletedCount": "{done}/{total} पूरा",
+  "@learningCompletedCount": {
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningMinBudget": "{minutes} मिनेट बजट",
+  "@learningMinBudget": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningNoTasksBody": "भोलि हेर्नुहोस् — दैनिक स्वचालनले दोहोराइ-पहिले + नयाँ विषय बनाउँछ।",
+  "learningMinutes": "{minutes} मिनेट",
+  "@learningMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningItemCompleted": "काम पूरा भयो",
+  "learningReviewsDue": "दोहोराइ बाँकी",
+  "learningTitle": "सिकाइ",
+  "learningReviewsCountFailed": "तपाईंका दोहोराइको संख्या लोड गर्न सकिएन",
+  "learningTracks": "ट्र्याक",
+  "learningNoTracks": "अहिलेसम्म कुनै ट्र्याक छैन — हाम्रो टोलीले तयार भएपछि प्रकाशित गर्छ",
+  "learningAskAiTutor": "AI ट्युटरलाई सोध्नुहोस्",
+  "learningStreamingNote": "उत्तर एकैपटक होइन, बिस्तारै आउँछन्, त्यसैले तपाईं तुरुन्तै पढ्न सक्नुहुन्छ।",
+  "learningNoTasks": "कुनै काम छैन — भोलि हेर्नुहोस्",
+  "learningReviewsDueSrs": "{count} दोहोराइ बाँकी (SRS)",
+  "@learningReviewsDueSrs": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningReviewAction": "दोहोराउनुहोस्",
+  "learningGoalCreatedForTrack": "ट्र्याक #{number} का लागि लक्ष्य बनाइयो",
+  "@learningGoalCreatedForTrack": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningTracksTitle": "सिकाइका ट्र्याक",
+  "learningTodayPlan": "आजको योजना",
+  "learningNodesCount": "{count} नोड",
+  "@learningNodesCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningGoalsCount": "{count} लक्ष्य",
+  "@learningGoalsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningCreating": "बनाउँदै…",
+  "learningCreateGoal": "लक्ष्य बनाउनुहोस्",
+  "learningReviewsDueTitle": "दोहोराइ बाँकी",
+  "learningAllCaughtUp": "तपाईं सबै पूरा गर्नुभयो! नयाँ कण सिकाएपछि FSRS ले अर्को दोहोराइ तोक्नेछ।",
+  "learningReviewMeta": "दोहोराइ #{number} • कण {atom} • {state}",
+  "@learningReviewMeta": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "atom": {
+        "type": "Object"
+      },
+      "state": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningInterval": "I{index}",
+  "@learningInterval": {
+    "placeholders": {
+      "index": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningDueDate": "{date} सम्म",
+  "@learningDueDate": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningLapses": "{count} पटक छुटे",
+  "@learningLapses": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningGradeAgain": "फेरि",
+  "learningGradeHard": "गाह्रो",
+  "learningGradeGood": "राम्रो",
+  "learningGradeEasy": "सजिलो",
+  "learningGradingNote": "अंक सुरक्षित रूपमा दर्ता हुन्छ अनि अर्को दोहोराइको मिति तपाईंका लागि निकालिन्छ। दुई पटक थिचे पनि प्रगति हराइँदैन।",
+  "syllabusTitle": "पाठ्यक्रम",
+  "syllabusNoNodes": "यो पाठ्यक्रममा अहिलेसम्म कुनै नोड प्रकाशित छैन।",
+  "syllabusExaminable": "परीक्षामा",
+  "syllabusQuestions": "प्रश्न",
+  "syllabusPaperBlueprint": "प्रश्नपत्रको ढाँचा",
+  "syllabusPapersCount": "{count} प्रश्नपत्र",
+  "@syllabusPapersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusMarksQuestions": "{marks} अंक · {questions} प्रश्न",
+  "@syllabusMarksQuestions": {
+    "placeholders": {
+      "marks": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusNegativeMarking": "नकारात्मक अंक: {mode}",
+  "@syllabusNegativeMarking": {
+    "placeholders": {
+      "mode": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusMarks": "{marks} अंक",
+  "@syllabusMarks": {
+    "placeholders": {
+      "marks": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusBlueprintMismatch": "खण्डका अंकहरू प्रश्नपत्रको कुलसँग बराबर छैनन्। यो ढाँचलाई प्रमाणित नमुनेर लिनुहोस्।",
+  "syllabusCoversTopics": "{count} पाठ्यक्रम विषय ओगट्छ",
+  "@syllabusCoversTopics": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusSearchTopics": "विषय खोज्नुहोस्",
+  "syllabusNoPublished": "अहिलेसम्म कुनै पाठ्यक्रम प्रकाशित भएको छैन।",
+  "syllabusTopicsCount": "{count} विषय",
+  "@syllabusTopicsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusNotCurrent": "हालकै होइन",
+  "booksTitle": "पुस्तकहरू",
+  "booksSearch": "पुस्तक खोज्नुहोस्",
+  "booksNonePublished": "अहिलेसम्म कुनै पुस्तक प्रकाशित भएको छैन।",
+  "booksNoMatch": "\"{query}\" सँग मिल्ने कुनै पुस्तक छैन।",
+  "@booksNoMatch": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "booksProgress": "{percent}% · पृष्ठ {page}",
+  "@booksProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      },
+      "page": {
+        "type": "Object"
+      }
+    }
+  },
+  "booksChapters": "अध्यायहरू",
+  "booksNoChapters": "अहिलेसम्म कुनै अध्याय प्रकाशित भएको छैन।",
+  "booksChapterTest": "अध्यायको परीक्षा",
+  "booksReadChapter": "अध्याय पढ्नुहोस्",
+  "booksTakeTest": "परीक्षा दिनुहोस् ({count})",
+  "@booksTakeTest": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "booksNoTopics": "यो अध्यायमा अहिलेसम्म खोल्नुपर्ने कुनै विषय छैन।",
+  "downloadsClearTitle": "अफलाइन सामग्री मेटाउने?",
+  "downloadsClearBody": "यसले क्यास गरिएका सबै प्रश्न हटाउँछ। इन्टरनेट भएको बेला जुनसुकै बेला पुनः डाउनलोड गर्न सकिन्छ।",
+  "downloadsClear": "हटाउनुहोस्",
+  "downloadsStorageUnreadable": "अफलाइन भण्डारण पढ्न सकिएन",
+  "downloadsNothingReported": "झुटो शून्य देखाउनेभन्दा केही पनि देखाइँदैन।",
+  "downloadsCachedQuestions": "{count} प्रश्न क्यास भयो",
+  "@downloadsCachedQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "downloadsCacheSize": "{subjects} विषय · ~{size} KB",
+  "@downloadsCacheSize": {
+    "placeholders": {
+      "subjects": {
+        "type": "Object"
+      },
+      "size": {
+        "type": "Object"
+      }
+    }
+  },
+  "downloadsLastCached": "अन्तिम क्यास",
+  "downloadsAutoDownload": "स्वतः डाउनलोड",
+  "downloadsPrefetchNow": "दैनिक प्याक अहिले नै ल्याउनुहोस्",
+  "downloadsClearAction": "अफलाइन सामग्री मेटाउनुहोस्",
+  "rewardsSpinWheel": "चक्र घुमाउनुहोस्",
+  "rewardsCheckInUnavailable": "चेक-इन उपलब्ध छैन",
+  "rewardsDailyCheckIn": "दैनिक चेक-इन",
+  "rewardsDayStreak": "{count} दिन",
+  "@rewardsDayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "rewardsToday": "आज",
+  "rewardsTomorrow": "भोलि",
+  "rewardsClaimedToday": "आज दावी गरियो",
+  "rewardsCheckInFor": "{coins} क्विनका लागि चेक-इन गर्नुहोस्",
+  "@rewardsCheckInFor": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "rewardsSpinUnavailable": "चक्र उपलब्ध छैन",
+  "rewardsSpin": "घुमाउनुहोस्",
+  "rewardsComeBackLater": "पछि आउनुहोस्",
+  "rewardsNextSpin": "अर्को पटक {date}",
+  "@rewardsNextSpin": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameLevelLabel": "तह {number}",
+  "@gameLevelLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameBossLevel": "बड तह",
+  "gameChapterLevel": "अध्याय तह",
+  "gameSecondsPerQuestion": "प्रति प्रश्न {seconds}s",
+  "@gameSecondsPerQuestion": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameBestScore": "उत्कृष्ट अंक",
+  "gameBestAccuracy": "उत्कृष्ट शुद्धता",
+  "gameBestTime": "उत्कृष्ट समय",
+  "gameStartLevel": "तह सुरु गर्नुहोस्",
+  "gameNotPlayable": "अहिले खेल्न मिल्दैन",
+  "gameWorldNoCourse": "यो वर्ल्डसँग अहिलेसम्म कुनै क्विज कोर्स जोडिएको छैन, त्यसैले खेल्नुपर्ने केही छैन। प्रशासकलाई वर्ल्डको कोर्स सेट गर्न भन्नुहोस्।",
+  "gameWorldsTitle": "वर्ल्डहरू",
+  "gameWorldsLoadFailed": "वर्ल्डहरू लोड गर्न सकिएन",
+  "gameNoWorlds": "अहिलेसम्म कुनै वर्ल्ड छैन",
+  "gameNoWorldsBody": "सर्भरले अहिलेसम्म कुनै वर्ल्ड प्रकाशित गरेको छैन।",
+  "gameNeedsSubscription": "सदस्यता योजना चाहिन्छ।",
+  "gameWorldNotFound": "वर्ल्ड भेटिएन",
+  "gameStarsProgress": "{earned} / {total} स्टार",
+  "@gameStarsProgress": {
+    "placeholders": {
+      "earned": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameWorldMapFailed": "वर्ल्ड नक्सा लोड गर्न सकिएन",
+  "gameMissionsTitle": "मिसन",
+  "gameMissionsFailed": "मिसनहरू लोड गर्न सकिएन",
+  "gameNoMissions": "अहिलेसम्म कुनै मिसन छैन",
+  "gameNoMissionsBody": "सर्भरले तपाईंका लागि कुनै मिसन प्रकाशित गरेको छैन।",
+  "gameClaimAll": "सबै दावी गर्नुहोस्",
+  "gameClaimCoins": "{coins} क्विन दावी गर्नुहोस्",
+  "@gameClaimCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameClaimed": "दावी गरियो",
+  "numericalsTitle": "सङ्ख्यात्मक",
+  "numericalsNew": "नयाँ सङ्ख्या",
+  "numericalsCheck": "उत्तर जाँच्नुहोस्",
+  "numericalsShowSolution": "चरणबद्ध समाधान हेर्नुहोस्",
+  "numericalsCorrect": "सही{reason}",
+  "@numericalsCorrect": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalsNotCorrect": "गलत छ। फेरि प्रयास गर्नुहोस्, वा चरणबद्ध समाधान हेर्नुहोस्।",
+  "numericalsFlagged": "सर्भरले यो प्रश्न पुनरावलोकनका लागि चिन्हित गरेको छ।",
+  "numericalsWorkedSolution": "चरणबद्ध समाधान",
+  "numericalsComputedBy": "गणना गर्ने: {source}",
+  "@numericalsComputedBy": {
+    "placeholders": {
+      "source": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalsFlaggedWarning": "सर्भरले पुनरावलोकनका लागि चिन्हित गरेको छ — यो उत्तर सावधानीले हेर्नुहोस्।",
+  "numericalsOpenInCalculator": "क्यालकुलेटरमा खोल्नुहोस्",
+  "storeEquipped": "लगाइयो!",
+  "storeEquipFailed": "त्यो वस्तु लगाउन सकिएन।",
+  "storeWardrobeTitle": "वार्डरोब",
+  "storeEquippedLabel": "लगाइएको",
+  "storeNothingEquipped": "केही पनि लगाइएको छैन",
+  "storeNothingEquippedBody": "प्रिमियम स्टोरबाट एसेट किन्नुहोस्, अनि यहाँ लगाउनुहोस्।",
+  "storeAvailableToEquip": "लगाउन मिल्ने",
+  "storeEquipHint": "लगाउन Equip थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।",
+  "storeNoAssets": "अहिलेसम्म कुनै एसेट छैन — प्रिमियम स्टोर हेर्नुहोस्।",
+  "storeClearSlot": "{slot} हटाउनुहोस्",
+  "@storeClearSlot": {
+    "placeholders": {
+      "slot": {
+        "type": "Object"
+      }
+    }
+  },
+  "storeTitle": "प्रिमियम स्टोर",
+  "storeAll": "सबै",
+  "storeAssetsCount": "{count} एसेट",
+  "@storeAssetsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "storeNoAssetsInCategory": "यस श्रेणीमा कुनै एसेट छैन।",
+  "storeTrading": "व्यापार",
+  "storeTradingExplain": "क्विनबाट स्रोत र बन्डल किन्नुहोस्, वा अब चाहिएको वस्तु बेच्नुहोस्।",
+  "storeCoinShop": "क्विन शप",
+  "storeSellItems": "वस्तु बेच्नुहोस्",
+  "storeOwnedBadge": "आफूले भएको",
+  "storeOwned": "आफ्नो",
+  "storeEmptyEquip": "खाली — स्टोरबाट लगाउनुहोस्",
+  "eiceTitle": "परीक्षा बुद्धि",
+  "eiceExplain": "यहाँ भएको सबै कुरा तपाईंको वास्तविक उत्तर इतिहासबाट हाम्रो सर्भरमा निकालिन्छ, त्यसैले सत्य नभएसम्म केही देखाइँदैन।",
+  "eiceCoach": "कोच — तपाईंको योजना",
+  "eiceSprint": "स्प्रिन्ट — ७ दिनेको दोहोराइ क्यु",
+  "eiceWeeklyReport": "साप्ताहिक प्रतिवेदन",
+  "eiceTriage": "त्रायज — ओगट्ने वा छाड्ने",
+  "battleArena": "ब्याटल रिङ",
+  "battleNoActiveMatch": "कुनै सक्रिय म्याच छैन",
+  "battleFindMatch": "म्याच खोज्नुहोस्",
+  "battleNoQuestions": "यो म्याचमा कुनै प्रश्न छैन",
+  "battleQuestionCounter": "ब्याटल · प्रश्न{current}/{total}",
+  "@battleQuestionCounter": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "battleOpponentAnswered": "प्रतिद्वन्द्वीले उत्तर दियो!",
+  "battleResultTitle": "ब्याटल नतिजा",
+  "battleNoMatchToDisplay": "देखाउनुपर्ने कुनै म्याच छैन",
+  "battleVs": "विरुद्ध",
+  "battleRematch": "पुनः भिडन्त",
+  "battleYou": "तपाईं",
+  "liveEventsTitle": "प्रत्यक्ष कार्यक्रम",
+  "liveEventsNone": "कुनै प्रत्यक्ष कार्यक्रम छैन",
+  "liveEventsNoneBody": "तोकिएका र प्रत्यक्ष कार्यक्रमहरू यहाँ देखिन्छन्।",
+  "notificationsTitle": "सूचनाहरू",
+  "notificationsMarkAllRead": "सबै पढियो भनी जनाउनुहोस्",
+  "notificationsNone": "कुनै सूचना छैन",
+  "notificationsNoneBody": "अहिले नयाँ केही छैन।",
+  "notificationsLoadFailed": "सूचनाहरू लोड गर्न सकिएन",
+  "notificationsMarkFailed": "त्यसलाई पढियो जनाउन सकिएन। फेरि प्रयास गर्नुहोस्।",
+  "notificationsMarkAllFailed": "सबैलाई पढियो जनाउन सकिएन।",
+  "coursesLoadFailed": "कोर्सहरू लोड गर्न सकिएन। जडान जाँच्नुहोस्।",
+  "coursesNone": "कुनै कोर्स उपलब्ध छैन",
+  "coursesNoneBody": "सिभिल इन्जिनियरिङका पाठ्यक्रम प्रकाशित भएपछि यहाँ देखिन्छन्।",
+  "coursesTracksCount": "{count} पाठ्यक्रम ट्र्याक",
+  "@coursesTracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "coursesBrowseQuestions": "प्रश्नहरू हेर्नुहोस्",
+  "pscTitle": "PSC / लोकसेवा",
+  "pscBlueprintsFailed": "PSC का ढाँचा लोड गर्न सकिएन।\n{reason}",
+  "@pscBlueprintsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "pscNoBlueprints": "अहिलेसम्म कुनै ढाँचा प्रकाशित छैन। तान्नुहोस् र फेरि प्रयास गर्नुहोस्।",
+  "pscBlueprintMeta": "id: {id} • {questions} प्रश्न",
+  "@pscBlueprintMeta": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "pscStartFailed": "परीक्षा सुरु असफल (अफलाइन वा 404)",
+  "pscStarted": "परीक्षा सुरु भयो: {id}",
+  "@pscStarted": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "achievementsBadges": "ब्याज",
+  "achievementsFailed": "उपलब्धि लोड गर्न सकिएन: {reason}",
+  "@achievementsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "achievementsNone": "अहिलेसम्म कुनै उपलब्धि छैन — क्विज खेल्न सुरु गर्नुहोस्!",
+  "searchTitle": "खोज",
+  "searchHint": "प्रश्न, क्यालकुलेटर, कोर्स खोज्नुहोस्…",
+  "searchTry": "जस्तै: levelling, RCC, Bernoulli",
+  "searchNoResults": "कुनै नतिजा छैन",
+  "searchFailed": "खोज असफल: {reason}",
+  "@searchFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpLevelLabel": "तह {level}",
+  "@xpLevelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpProgress": "{current} / {total} XP",
+  "@xpProgress": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpTotal": "{amount} XP",
+  "@xpTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpToNext": "अर्को तहसम्म {amount}",
+  "@xpToNext": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpDayStreak": "{count} दिनको स्ट्रिक",
+  "@xpDayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "lottieOverlay": "lottie-overlay",
+  "lottieTapToDismiss": "हटाउन थिच्नुहोस्",
+  "lifelineCost": "{name} lifeline, {coins} क्विन",
+  "@lifelineCost": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineUnavailable": "{name} lifeline उपलब्ध छैन: {reason}",
+  "@lifelineUnavailable": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "offlineCannotReach": "हाम्रो सर्भरसम्म पुग्न सकिएन — जडान फर्केपछि प्रगति सिंक हुन्छ",
+  "offlineBackOnline": "इन्टरनेट फर्कियो — तपाईंको कतारको गतिविधि सिंक हुँदैछ",
+  "learningNoResponse": "कुनै जवाफ छैन (ट्युटर अफलाइन)।",
+  "socialApplyFailed": "त्यो कोड लागू गर्न सकिएन",
+  "responseCached": "ठीक छ (क्यास)",
+  "battleTimer": "{seconds}s · {current}/{total}",
+  "@battleTimer": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      },
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "battleShareUnavailable": "साझेदारी उपलब्ध छैन",
+  "bookPageLabel": "पृष्ठ {number}",
+  "@bookPageLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookMyHighlights": "मेरा हाइलाइट",
+  "bookNoExtractableText": "यो पृष्ठमा निकाल्न मिल्ने पाठ छैन। यो तस्बिर मात्र भएको स्क्यान हुन सक्छ।",
+  "bookPreviousPage": "अघिल्लो पृष्ठ",
+  "bookNextPage": "अर्को पृष्ठ",
+  "bookYourHighlights": "तपाईंका हाइलाइट",
+  "bookNoHighlights": "तपाईंले अझै केही हाइलाइट गर्नुभएको छैन।",
+  "bookImageNotText": "तस्बिर वा रेखाचित्र (पाठको रूपमा उपलब्ध छैन)",
+  "bookValueNotText": "{value} (पाठको रूपमा उपलब्ध छैन)",
+  "@bookValueNotText": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestsNone": "अहिलेसम्म कुनै प्रतियोगिता छैन",
+  "contestsNoneBody": "सक्रिय र आउने प्रतियोगिताहरू यहाँ देखिन्छन्।",
+  "eiceNoData": "अहिलेसम्म कुनै डाटा उपलब्ध छैन।",
+  "eiceNoDetails": "अहिलेसम्म कुनै विवरण उपलब्ध छैन।",
+  "eiceNothingHere": "यहाँ अहिलेसम्म केही छैन।",
+  "eiceAndMore": "र {count} थप…",
+  "@eiceAndMore": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameNoRewardData": "सर्भरले यो तहका लागि अझै पुरस्कारको डाटा पठायो छैन।",
+  "gameMissionsReady": "{count} मिसन दावी गर्न तयार",
+  "@gameMissionsReady": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameRewardsWaiting": "{count} पुरस्कार बाँकी",
+  "@gameRewardsWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardFriendsTitle": "साथीको लिडरबोर्ड",
+  "leaderboardLeagueTitle": "लिगको लिडरबोर्ड",
+  "leaderboardMonthsShort": "{months} म.",
+  "@leaderboardMonthsShort": {
+    "placeholders": {
+      "months": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningNoTracksTitle": "अहिलेसम्म कुनै ट्र्याक छैन",
+  "learningTracksBody": "ट्र्याकहरू प्रकाशित भएपछि यहाँ देखिन्छन्। छिट्टै फेरि जाँच्नुहोस्।",
+  "learningGradedNextDue": "{grade} भएर अंकित — अर्को {date} सम्म",
+  "@learningGradedNextDue": {
+    "placeholders": {
+      "grade": {
+        "type": "Object"
+      },
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningNoReviewsDue": "कुनै दोहोराइ बाँकी छैन",
+  "liveEventsActive": "{count}{capacity} सक्रिय",
+  "@liveEventsActive": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "capacity": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventsQuestions": "{count} प्रश्न",
+  "@liveEventsQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventsSecondsPerQuestion": "{seconds}s / प्रश्न",
+  "@liveEventsSecondsPerQuestion": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventsJoined": "{count}{capacity} सामेल",
+  "@liveEventsJoined": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "capacity": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalsAnswer": "उत्तर: {value}{unit}",
+  "@numericalsAnswer": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "storeAssetMeta": "{rarity} • {slot} • {coins} क्विन",
+  "@storeAssetMeta": {
+    "placeholders": {
+      "rarity": {
+        "type": "Object"
+      },
+      "slot": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusNoTopicMatch": "\"{query}\" सँग मिल्ने कुनै विषय छैन।",
+  "@syllabusNoTopicMatch": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusExaminableCount": "{count} परीक्षामा",
+  "@syllabusExaminableCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "forceUpdateUnsupportedLatest": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
   "forceUpdateUnsupportedVersion": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
   "@forceUpdateUnsupportedVersion": {

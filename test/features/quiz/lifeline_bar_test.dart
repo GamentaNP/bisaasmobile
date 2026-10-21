@@ -2,6 +2,7 @@ import 'package:bisaasmobile/features/quiz/data/models/lifeline_dto.dart';
 import 'package:bisaasmobile/features/quiz/presentation/widgets/lifeline_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../support/localized_app.dart';
 
 /// Widget-level proof that the lifeline bar renders the **server's** catalogue.
 ///
@@ -64,8 +65,8 @@ void main() {
 
   Future<void> pump(WidgetTester tester, LifelineCatalogueDto dto, {String? busySlug}) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
+      localizedApp(
+        child: Scaffold(
           body: LifelineBar(
             lifelines: dto.lifelines,
             walletBalance: dto.walletBalance,
@@ -103,8 +104,8 @@ void main() {
     // Tapping must reach the callback.
     final used = <String>[];
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
+      localizedApp(
+        child: Scaffold(
           body: LifelineBar(
             lifelines: dto.lifelines,
             walletBalance: dto.walletBalance,
@@ -147,8 +148,8 @@ void main() {
     });
     final used = <String>[];
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
+      localizedApp(
+        child: Scaffold(
           body: LifelineBar(
             lifelines: dto.lifelines,
             walletBalance: dto.walletBalance,
@@ -181,8 +182,8 @@ void main() {
     });
     final used = <String>[];
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
+      localizedApp(
+        child: Scaffold(
           body: LifelineBar(
             lifelines: dto.lifelines,
             walletBalance: dto.walletBalance,

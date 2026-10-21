@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/storage/database/daos/quiz_dao.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Offline content manager. Surfaces what the app has cached locally for
 /// offline practice (question count, distinct subjects, rough size), lets the
@@ -60,14 +61,15 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
   }
 
   Future<void> _clear() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Clear offline content?'),
-        content: const Text('This removes all cached questions. You can re-download anytime while online.'),
+        title: Text(l10n.downloadsClearTitle),
+        content: Text(l10n.downloadsClearBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Clear')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.downloadsClear)),
         ],
       ),
     );
@@ -83,8 +85,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Offline content')),
+      appBar: AppBar(title: Text(l10n.profileOffline)),
       body: FutureBuilder<_OfflineStats?>(
         future: _statsFuture,
         builder: (context, snap) {
@@ -103,13 +106,13 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                   children: [
                     const Icon(Icons.storage_rounded, size: 40, color: Colors.grey),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Could not read offline storage',
+                    Text(
+                      l10n.downloadsStorageUnreadable,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Nothing is reported rather than showing a false zero.',
+                    Text(
+                      l10n.downloadsNothingReported,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
@@ -117,7 +120,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     OutlinedButton.icon(
                       onPressed: _reload,
                       icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: const Text('Retry'),
+                      label: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -129,20 +132,20 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
             children: [
               _StatCard(
                 icon: Icons.quiz_rounded,
-                title: '${stats?.questions ?? 0} questions cached',
-                subtitle: '${stats?.subjects ?? 0} subjects · ~${stats?.approxKb ?? 0} KB',
+                title: l10n.downloadsCachedQuestions(stats?.questions ?? 0),
+                subtitle: l10n.downloadsCacheSize(stats?.subjects ?? 0, stats?.approxKb ?? 0),
               ),
               const SizedBox(height: 12),
               _InfoRow(
                 icon: Icons.schedule_rounded,
-                label: 'Last cached',
+                label: l10n.downloadsLastCached,
                 value: stats?.lastCached == null
                     ? 'Never'
                     : _fmt(stats!.lastCached!),
               ),
               _InfoRow(
                 icon: Icons.nights_stay_rounded,
-                label: 'Auto-download',
+                label: l10n.downloadsAutoDownload,
                 value: 'Daily at midnight (while app open)',
               ),
               if (_message != null) ...[
@@ -162,13 +165,13 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 icon: _busy
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.download_rounded),
-                label: const Text('Prefetch daily pack now'),
+                label: Text(l10n.downloadsPrefetchNow),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _busy ? null : _clear,
                 icon: const Icon(Icons.delete_outline_rounded),
-                label: const Text('Clear offline content'),
+                label: Text(l10n.downloadsClearAction),
               ),
             ],
           );

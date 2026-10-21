@@ -6,6 +6,7 @@ import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/theme/script_fonts.dart';
 import '../../domain/entities/syllabus.dart';
 import '../controllers/syllabus_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// The syllabus tree for one version.
 ///
@@ -29,16 +30,17 @@ class _SyllabusTreeScreenState extends ConsumerState<SyllabusTreeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(syllabusTreeControllerProvider(widget.versionPublicId));
     final notifier = ref.read(syllabusTreeControllerProvider(widget.versionPublicId).notifier);
     final preferNative = _preferNative(ref);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Syllabus'),
+        title: Text(l10n.syllabusTitle),
         actions: [
           IconButton(
-            tooltip: 'Refresh',
+            tooltip: l10n.streakRefresh,
             onPressed: notifier.refresh,
             icon: const Icon(Icons.refresh),
           ),
@@ -61,16 +63,17 @@ class _SyllabusTreeScreenState extends ConsumerState<SyllabusTreeScreen> {
   }
 
   Widget _body(BuildContext context, SyllabusTreeState state, bool preferNative) {
+    final l10n = AppLocalizations.of(context)!;
     final tree = state.tree;
     if (tree == null || tree.isEmpty) {
-      return const _EmptyView(message: 'This syllabus has no published nodes yet.');
+      return _EmptyView(message: l10n.syllabusNoNodes);
     }
 
     final matches = _query.trim().isEmpty ? null : tree.search(_query);
 
     if (matches != null) {
       if (matches.isEmpty) {
-        return _EmptyView(message: 'No topic matches "$_query".');
+        return _EmptyView(message: l10n.syllabusNoTopicMatch(_query));
       }
       return ListView.builder(
         padding: const EdgeInsets.all(16),
@@ -119,6 +122,7 @@ class _Summary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // The version card advertises the full topic count while a depth-scoped tree
     // request returns only what it fetched, so the label says which it is rather
     // than letting the two numbers appear to contradict each other.
@@ -129,9 +133,9 @@ class _Summary extends StatelessWidget {
         children: [
           _Stat(value: '${tree.nodeCount}', label: topicsLabel),
           const SizedBox(width: 24),
-          _Stat(value: '${tree.examinableNodeCount}', label: 'examinable'),
+          _Stat(value: '${tree.examinableNodeCount}', label: l10n.syllabusExaminable),
           const SizedBox(width: 24),
-          _Stat(value: '${tree.totalQuestionCount}', label: 'questions'),
+          _Stat(value: '${tree.totalQuestionCount}', label: l10n.syllabusQuestions),
         ],
       ),
     );
@@ -171,13 +175,14 @@ class _BlueprintPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return ExpansionTile(
-      title: Text('Paper blueprint', style: theme.textTheme.titleSmall),
+      title: Text(l10n.syllabusPaperBlueprint, style: theme.textTheme.titleSmall),
       subtitle: Text(
         blueprints.length == 1
             ? blueprints.first.name
-            : '${blueprints.length} papers',
+            : l10n.syllabusPapersCount(blueprints.length),
         style: theme.textTheme.labelSmall,
       ),
       children: [
@@ -198,16 +203,17 @@ class _PaperBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${_num(paper.totalMarks)} marks · ${paper.totalQuestions} questions',
+          l10n.syllabusMarksQuestions(_num(paper.totalMarks), paper.totalQuestions),
           style: theme.textTheme.bodyMedium,
         ),
         if (paper.negativeMarkingMode != null && paper.negativeMarkingMode != 'none')
-          Text('Negative marking: ${paper.negativeMarkingMode}', style: theme.textTheme.labelSmall),
+          Text(l10n.syllabusNegativeMarking(paper.negativeMarkingMode ?? '—'), style: theme.textTheme.labelSmall),
         const SizedBox(height: 8),
         for (final s in paper.sections)
           Padding(
@@ -222,7 +228,7 @@ class _PaperBody extends StatelessWidget {
                     style: theme.textTheme.bodySmall,
                   ),
                 ),
-                Text('${_num(s.marks)} marks', style: theme.textTheme.bodySmall),
+                Text(l10n.syllabusMarks(_num(s.marks)), style: theme.textTheme.bodySmall),
               ],
             ),
           ),
@@ -230,14 +236,13 @@ class _PaperBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 6),
             child: Text(
-              'The section marks do not add up to the paper total. Treat this '
-              'blueprint as unverified.',
+              l10n.syllabusBlueprintMismatch,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error),
             ),
           ),
         if (paper.rules.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Text('Covers ${paper.rules.length} syllabus topics', style: theme.textTheme.labelSmall),
+          Text(l10n.syllabusCoversTopics(paper.rules.length), style: theme.textTheme.labelSmall),
         ],
       ],
     );
@@ -265,6 +270,7 @@ class _NodeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final title = _title(preferNative);
     final indent = 16.0 + (node.depth.clamp(0, 5) * 14);
@@ -312,7 +318,7 @@ class _NodeRow extends StatelessWidget {
                 if (node.questionCount > 0)
                   TextButton(
                     onPressed: onOpen,
-                    child: const Text('Practice'),
+                    child: Text(l10n.practice),
                   ),
               ],
             ),
@@ -359,15 +365,16 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
         child: TextField(
           onChanged: onChanged,
           textInputAction: TextInputAction.search,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             prefixIcon: Icon(Icons.search),
-            hintText: 'Search topics',
+            hintText: l10n.syllabusSearchTopics,
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -385,6 +392,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -397,7 +405,7 @@ class _ErrorView extends StatelessWidget {
           child: FilledButton.tonalIcon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
+            label: Text(l10n.retry),
           ),
         ),
       ],

@@ -8,6 +8,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../domain/entities/social.dart';
 import '../controllers/social_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// The guest share flow — the destination of a `https://bisaas.com/s/{token}`
 /// share link.
@@ -190,10 +191,11 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final link = _link;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Shared challenge')),
+      appBar: AppBar(title: Text(l10n.socialSharedChallenge)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _result != null
@@ -245,6 +247,7 @@ class _LinkHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
@@ -257,19 +260,19 @@ class _LinkHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Someone shared a challenge with you',
+            l10n.socialSomeoneShared,
             style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           if (link.creatorName != null)
             Text(
-              'Shared by ${link.creatorName}',
+              l10n.socialSharedBy(link.creatorName!),
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           if (link.isExpired) ...[
             const SizedBox(height: 6),
-            const Text(
-              'This link has expired.',
+            Text(
+              l10n.socialLinkExpired,
               style: TextStyle(fontSize: 12, color: AppColors.wrongRed),
             ),
           ],
@@ -293,12 +296,12 @@ class _StartPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (!available) {
-      return const EmptyState(
-        title: 'No playable challenge here',
+      return EmptyState(
+        title: l10n.socialNoPlayableChallenge,
         subtitle:
-            'This link does not offer a playable challenge. You can still '
-            'browse the public catalogue.',
+            l10n.socialNotPlayable,
         icon: Icons.link_off_rounded,
       );
     }
@@ -314,13 +317,12 @@ class _StartPrompt extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                 )
               : const Icon(Icons.play_arrow_rounded),
-          label: Text(busy ? 'Starting…' : 'Play the challenge'),
+          label: Text(busy ? l10n.practiceStarting : l10n.socialPlayChallenge),
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
         ),
         const SizedBox(height: 12),
-        const Text(
-          'A guest challenge never awards coins, XP or streak. Create a free '
-          'account to keep your progress.',
+        Text(
+          l10n.socialGuestNeverAwards,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
         ),
@@ -355,15 +357,15 @@ class _PlayView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final q = question;
 
     if (q == null) {
-      return const EmptyState(
-        title: 'This challenge has no questions',
+      return EmptyState(
+        title: l10n.socialChallengeNoQuestions,
         subtitle:
-            'The server opened the attempt without sending any questions, so '
-            'there is nothing to play.',
+            l10n.socialChallengeEmpty,
         icon: Icons.quiz_outlined,
       );
     }
@@ -383,7 +385,7 @@ class _PlayView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                'Question ${index + 1} of ${attempt.questions.length}',
+                l10n.socialQuestionOf(index + 1, attempt.questions.length),
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -411,7 +413,7 @@ class _PlayView extends StatelessWidget {
           ),
           child: Text(
             q.questionText.isEmpty
-                ? 'This question has no text on the server.'
+                ? l10n.quizNoQuestionText
                 : q.questionText,
             style: theme.textTheme.titleSmall
                 ?.copyWith(fontWeight: FontWeight.w600, height: 1.4),
@@ -504,8 +506,8 @@ class _PlayView extends StatelessWidget {
                 Expanded(
                   child: Text(
                     isCorrect == true
-                        ? 'Correct.'
-                        : 'Not this time — the server has marked it.',
+                        ? l10n.socialCorrect
+                        : l10n.socialNotThisTime,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -533,7 +535,7 @@ class _PlayView extends StatelessWidget {
                     ),
                   )
                 : const Icon(Icons.send_rounded, size: 18),
-            label: const Text('Submit answer'),
+            label: Text(l10n.socialSubmitAnswer),
             style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
           )
         else
@@ -552,7 +554,7 @@ class _PlayView extends StatelessWidget {
                     isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded,
                     size: 18,
                   ),
-            label: Text(isLast ? 'Finish' : 'Next'),
+            label: Text(isLast ? l10n.socialFinish : l10n.socialNext),
             style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
           ),
       ],
@@ -568,6 +570,7 @@ class _ResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -576,13 +579,13 @@ class _ResultView extends StatelessWidget {
         const Icon(Icons.emoji_events_rounded, size: 56, color: AppColors.coinYellow),
         const SizedBox(height: 12),
         Text(
-          'Challenge complete',
+          l10n.socialChallengeComplete,
           textAlign: TextAlign.center,
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
         Text(
-          'You scored ${result.score.toStringAsFixed(0)}',
+          l10n.socialYouScored(result.score.toStringAsFixed(0)),
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 28,
@@ -592,16 +595,15 @@ class _ResultView extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          '${result.correct} correct • ${result.wrong} wrong • ${result.skipped} skipped • ${result.total} questions',
+          l10n.socialChallengeSummary(result.correct, result.wrong, result.skipped, result.total),
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 8),
         Text(
           creatorName == null
-              ? 'A guest challenge never awards coins, XP or streak.'
-              : "Nice one — that was $creatorName's challenge. A guest challenge "
-                  'never awards coins, XP or streak.',
+              ? l10n.socialGuestChallengeNote
+              : l10n.socialNiceOne(creatorName!),
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
         ),
@@ -609,14 +611,14 @@ class _ResultView extends StatelessWidget {
         FilledButton.icon(
           onPressed: () => context.go('/register'),
           icon: const Icon(Icons.person_add_alt_rounded),
-          label: const Text('Create a free account'),
+          label: Text(l10n.socialCreateAccount),
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
         ),
         const SizedBox(height: 10),
         OutlinedButton.icon(
           onPressed: () => context.go('/quiz/funnel'),
           icon: const Icon(Icons.explore_outlined),
-          label: const Text('Browse sample questions'),
+          label: Text(l10n.socialBrowseSamples),
         ),
       ],
     );

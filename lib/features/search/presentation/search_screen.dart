@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/network/api_response.dart';
+import '../../../l10n/app_localizations.dart';
 
 final _searchProvider = FutureProvider.family<List<Map<String, dynamic>>, String>((ref, q) async {
   if (q.trim().isEmpty) return [];
@@ -34,26 +35,27 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void dispose() { _ctrl.dispose(); super.dispose(); }
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final results = _q.isEmpty ? null : ref.watch(_searchProvider(_q));
     return Scaffold(
-      appBar: AppBar(title: const Text('Search')),
+      appBar: AppBar(title: Text(l10n.searchTitle)),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
               controller: _ctrl,
-              decoration: InputDecoration(hintText: 'Search questions, calculators, courses…', prefixIcon: const Icon(Icons.search_rounded), suffixIcon: IconButton(icon: const Icon(Icons.clear_rounded), onPressed: () => setState(() { _q = ''; _ctrl.clear(); })), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+              decoration: InputDecoration(hintText: l10n.searchHint, prefixIcon: const Icon(Icons.search_rounded), suffixIcon: IconButton(icon: const Icon(Icons.clear_rounded), onPressed: () => setState(() { _q = ''; _ctrl.clear(); })), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
               onSubmitted: (v) => setState(() => _q = v.trim()),
             ),
           ),
-          if (_q.isEmpty) const Padding(padding: EdgeInsets.all(24), child: Text('Try: levelling, RCC, Bernoulli', style: TextStyle(color: Colors.grey))),
+          if (_q.isEmpty) Padding(padding: EdgeInsets.all(24), child: Text(l10n.searchTry, style: TextStyle(color: Colors.grey))),
           if (results != null)
             Expanded(
               child: results.when(
-                data: (list) => list.isEmpty ? const Center(child: Text('No results')) : ListView.separated(padding: const EdgeInsets.all(12), itemCount: list.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (context, i) => Card(child: ListTile(title: Text((list[i]['body'] ?? list[i]['title'] ?? '').toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)), subtitle: Text((list[i]['subject_slug'] ?? '').toString(), style: const TextStyle(fontSize: 11, color: Colors.grey))))),
+                data: (list) => list.isEmpty ? Center(child: Text(l10n.searchNoResults)) : ListView.separated(padding: const EdgeInsets.all(12), itemCount: list.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (context, i) => Card(child: ListTile(title: Text((list[i]['body'] ?? list[i]['title'] ?? '').toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)), subtitle: Text((list[i]['subject_slug'] ?? '').toString(), style: const TextStyle(fontSize: 11, color: Colors.grey))))),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Search failed: $e', style: const TextStyle(color: Colors.red, fontSize: 12))),
+                error: (e, _) => Center(child: Text(l10n.searchFailed(e), style: const TextStyle(color: Colors.red, fontSize: 12))),
               ),
             ),
         ],

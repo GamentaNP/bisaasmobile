@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../app/theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// App-wide connectivity banner. Quiet when online; shows an amber strip when
 /// the API is genuinely unreachable, and a brief green "back online / syncing"
@@ -47,6 +48,7 @@ class _OfflineStateBannerState extends ConsumerState<OfflineStateBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     ref.listen(apiReachableProvider, (p, n) => _onOnlineChanged(p?.value, n.value));
     final reachable = ref.watch(apiReachableProvider).value;
 
@@ -78,8 +80,8 @@ class _OfflineStateBannerState extends ConsumerState<OfflineStateBanner> {
                   Expanded(
                     child: Text(
                       offline
-                          ? "Can't reach our servers — progress syncs when the connection is back"
-                          : 'Back online — syncing your queued activity',
+                          ? l10n.offlineCannotReach
+                          : l10n.offlineBackOnline,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: offline
                                 ? AppColors.streakOrange

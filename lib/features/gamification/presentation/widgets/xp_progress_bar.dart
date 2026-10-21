@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// XP progress bar — server-authoritative, never computes level locally.
 ///
@@ -25,6 +26,7 @@ class XpProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final threshold = nextLevelXp;
     final hasThreshold = threshold != null && threshold > 0;
@@ -49,12 +51,12 @@ class XpProgressBar extends StatelessWidget {
                   color: AppColors.xpGold.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text('LVL $level', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
+                child: Text(l10n.xpLevelLabel(level), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  hasThreshold ? '$currentXp / $threshold XP' : '$currentXp XP',
+                  hasThreshold ? l10n.xpProgress(currentXp, threshold) : l10n.xpTotal(currentXp),
                   style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                 ),
               ),
@@ -64,7 +66,7 @@ class XpProgressBar extends StatelessWidget {
                   children: [
                     const Icon(Icons.bolt_rounded, size: 14, color: AppColors.xpGold),
                     const SizedBox(width: 4),
-                    Text('$remaining to next', style: const TextStyle(fontSize: 11, color: AppColors.xpGold, fontWeight: FontWeight.w600)),
+                    Text(l10n.xpToNext(remaining), style: const TextStyle(fontSize: 11, color: AppColors.xpGold, fontWeight: FontWeight.w600)),
                   ],
                 ),
             ],
@@ -118,6 +120,7 @@ class StreakFire extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (days <= 0) return const SizedBox.shrink();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 12, vertical: compact ? 4 : 6),
@@ -129,7 +132,7 @@ class StreakFire extends StatelessWidget {
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         const Icon(Icons.local_fire_department_rounded, size: 16, color: AppColors.streakOrange),
         const SizedBox(width: 4),
-        Text('$days day streak', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.streakOrange, fontSize: compact ? 11 : 13)),
+        Text(l10n.xpDayStreak(days), style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.streakOrange, fontSize: compact ? 11 : 13)),
       ]),
     );
   }

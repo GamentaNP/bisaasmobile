@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../shared/widgets/error_view.dart';
 import '../data/psc_remote_data_source.dart';
+import '../../../l10n/app_localizations.dart';
 
 final pscRemoteProvider = Provider<PscRemoteDataSource>(
   (ref) => PscRemoteDataSource(DioClient.instance.dio),
@@ -20,24 +21,25 @@ class PscScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final blueprints = ref.watch(pscBlueprintsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('PSC / Loksewa')),
+      appBar: AppBar(title: Text(l10n.pscTitle)),
       body: blueprints.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         // A failure is an error, not an empty catalogue. The data source
         // throws rather than collapsing a transport error into "no
         // blueprints", so it has to be rendered as an error.
         error: (e, _) => ErrorView(
-          message: 'Could not load the PSC blueprints.\n$e',
+          message: l10n.pscBlueprintsFailed(e),
           onRetry: () => ref.invalidate(pscBlueprintsProvider),
         ),
         data: (list) {
           if (list.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                'No blueprints are published yet. Pull down to retry.',
+                l10n.pscNoBlueprints,
                 textAlign: TextAlign.center,
               ),
             );
@@ -55,7 +57,10 @@ class PscScreen extends ConsumerWidget {
                     style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                   ),
                   subtitle: Text(
-                    'id: ${m['id'] ?? ''} • ${m['question_count'] ?? m['questions_count'] ?? ''} Qs',
+                    l10n.pscBlueprintMeta(
+          (m['id'] ?? '') as String,
+          (m['question_count'] ?? m['questions_count'] ?? '') as String,
+        ),
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
                   ),
                   trailing: const Icon(Icons.arrow_forward_rounded),
@@ -68,8 +73,8 @@ class PscScreen extends ConsumerWidget {
                       SnackBar(
                         content: Text(
                           exam == null
-                              ? 'Start exam failed (offline or 404)'
-                              : 'Exam started: ${exam['id'] ?? ''}',
+                              ? l10n.pscStartFailed
+                              : l10n.pscStarted((exam['id'] ?? '') as String),
                         ),
                       ),
                     );

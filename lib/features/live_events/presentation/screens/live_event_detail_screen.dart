@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../domain/entities/live_event.dart';
 import '../controllers/live_events_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class LiveEventDetailScreen extends ConsumerStatefulWidget {
   const LiveEventDetailScreen({super.key, required this.eventId});
@@ -46,6 +47,7 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
   }
 
   Widget _buildBody(BuildContext context, ThemeData theme, LiveEventDetailState state) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && state.detail == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -54,7 +56,7 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
     }
     final detail = state.detail;
     if (detail == null) {
-      return Center(child: ErrorView(message: 'Live event not found', onRetry: () => ref.read(liveEventDetailControllerProvider.notifier).fetchDetail(_id)));
+      return Center(child: ErrorView(message: l10n.liveEventNotFound, onRetry: () => ref.read(liveEventDetailControllerProvider.notifier).fetchDetail(_id)));
     }
     final event = detail.event;
 
@@ -81,11 +83,11 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.correctGreen.withValues(alpha: 0.2))),
-              child: Text('Participant #${state.lastParticipant!.id} • ${state.lastParticipant!.status} • Score ${state.lastParticipant!.score}', style: const TextStyle(fontSize: 12, color: AppColors.correctGreen)),
+              child: Text(l10n.liveEventParticipant(state.lastParticipant!.id, state.lastParticipant!.status, state.lastParticipant!.score), style: const TextStyle(fontSize: 12, color: AppColors.correctGreen)),
             ),
           ],
           const SizedBox(height: 20),
-          Text('Snapshot', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.liveEventSnapshot, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (state.isSnapshotLoading) const LinearProgressIndicator(),
           if (state.snapshotError != null) ErrorView(message: state.snapshotError!, onRetry: _refreshSnapshot),
@@ -95,18 +97,18 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
-              child: const Text('No snapshot yet — register and check in to load current question.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.liveEventNoSnapshot, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
             ),
           const SizedBox(height: 16),
           // Answer form
-          Text('Answer', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.liveEventAnswer, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Row(
             children: [
               SizedBox(
                 width: 90,
                 child: TextField(
-                  decoration: const InputDecoration(labelText: 'Q index', isDense: true, border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: l10n.liveEventQIndex, isDense: true, border: OutlineInputBorder()),
                   keyboardType: TextInputType.number,
                   controller: TextEditingController(text: '$_questionIndex'),
                   onChanged: (v) => _questionIndex = int.tryParse(v) ?? 0,
@@ -116,7 +118,7 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
               Expanded(
                 child: TextField(
                   controller: _answerCtrl,
-                  decoration: const InputDecoration(hintText: 'Your answer', isDense: true, border: OutlineInputBorder()),
+                  decoration: InputDecoration(hintText: l10n.quizReviewYourAnswer, isDense: true, border: OutlineInputBorder()),
                 ),
               ),
             ],
@@ -127,7 +129,7 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
             child: FilledButton.icon(
               onPressed: state.isAnswering ? null : _submitAnswer,
               icon: state.isAnswering ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.send_rounded, size: 18),
-              label: const Text('Submit Answer'),
+              label: Text(l10n.liveEventSubmitAnswer),
             ),
           ),
           if (state.answerError != null) ...[
@@ -135,13 +137,13 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
             Text(state.answerError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed)),
           ],
           const SizedBox(height: 20),
-          Text('Leaderboard', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.commonLeaderboard, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (detail.leaderboard.isEmpty)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
-              child: const Text('No leaderboard yet.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.liveEventNoLeaderboard, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
             )
           else
             ...detail.leaderboard.take(10).map((row) {
@@ -162,21 +164,24 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
   }
 
   Future<void> _register() async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await ref.read(liveEventDetailControllerProvider.notifier).register(_id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Registered!' : 'Register failed'), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? l10n.liveEventRegistered : l10n.liveEventRegisterFailed), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
   }
 
   Future<void> _unregister() async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await ref.read(liveEventDetailControllerProvider.notifier).unregister(_id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Unregistered' : 'Unregister failed'), backgroundColor: ok ? AppColors.brand : AppColors.wrongRed));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? l10n.liveEventUnregistered : l10n.liveEventUnregisterFailed), backgroundColor: ok ? AppColors.brand : AppColors.wrongRed));
   }
 
   Future<void> _checkIn() async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await ref.read(liveEventDetailControllerProvider.notifier).checkIn(_id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? 'Checked in!' : 'Check-in failed'), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ok ? l10n.liveEventCheckedIn : l10n.liveEventCheckInFailed), backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed));
   }
 
   Future<void> _refreshSnapshot() async {
@@ -184,16 +189,17 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
   }
 
   Future<void> _submitAnswer() async {
+    final l10n = AppLocalizations.of(context)!;
     final ans = _answerCtrl.text.trim();
     if (ans.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter an answer')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.liveEventEnterAnswer)));
       return;
     }
     final p = await ref.read(liveEventDetailControllerProvider.notifier).submitAnswer(_id, questionIndex: _questionIndex, answer: ans);
     if (!mounted) return;
     if (p != null) {
       _answerCtrl.clear();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Answer recorded — score ${p.score}'), backgroundColor: AppColors.correctGreen));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.liveEventAnswerRecorded(p.score)), backgroundColor: AppColors.correctGreen));
     }
   }
 }
@@ -205,6 +211,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final color = switch (event.status) { 'live' => AppColors.wrongRed, 'countdown' => AppColors.streakOrange, 'scheduled' => AppColors.brand, 'finished' => Colors.grey, _ => AppColors.brandDark };
     return Container(
       padding: const EdgeInsets.all(16),
@@ -216,7 +223,7 @@ class _Header extends StatelessWidget {
             children: [
               Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: Text(event.status.toUpperCase(), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color))),
               const Spacer(),
-              Text('${event.questionCount} Qs • ${event.questionDurationSeconds}s each', style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+              Text(l10n.liveEventQuestionsEach(event.questionCount, event.questionDurationSeconds), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
             ],
           ),
           const SizedBox(height: 10),
@@ -230,12 +237,12 @@ class _Header extends StatelessWidget {
             spacing: 8,
             runSpacing: 6,
             children: [
-              _MetaChip(icon: Icons.group_rounded, label: '${event.activeParticipantCount}${event.maxParticipants != null ? '/${event.maxParticipants}' : ''} active'),
-              if (event.waitlistedParticipantCount > 0) _MetaChip(icon: Icons.hourglass_empty_rounded, label: '${event.waitlistedParticipantCount} waitlisted'),
-              _MetaChip(icon: Icons.schedule_rounded, label: 'Starts ${event.startsAt.toLocal().toString().split(' ').first} ${event.startsAt.toLocal().hour}:${event.startsAt.toLocal().minute.toString().padLeft(2, '0')}'),
-              if (event.endsAt != null) _MetaChip(icon: Icons.flag_rounded, label: 'Ends ${event.endsAt!.toLocal().toString().split(' ').first}'),
-              if (event.entryFeeCoins > 0) _MetaChip(icon: Icons.monetization_on_rounded, label: '${event.entryFeeCoins} entry'),
-              _MetaChip(icon: Icons.card_giftcard_rounded, label: '${event.prizePoolCoins} prize'),
+              _MetaChip(icon: Icons.group_rounded, label: l10n.liveEventsActive(event.activeParticipantCount, event.maxParticipants != null ? '/${event.maxParticipants}' : '')),
+              if (event.waitlistedParticipantCount > 0) _MetaChip(icon: Icons.hourglass_empty_rounded, label: l10n.liveEventWaitlisted(event.waitlistedParticipantCount)),
+              _MetaChip(icon: Icons.schedule_rounded, label: l10n.liveEventStarts(event.startsAt.toLocal().toString().split(' ').first, event.startsAt.toLocal().hour, event.startsAt.toLocal().minute.toString().padLeft(2, '0'))),
+              if (event.endsAt != null) _MetaChip(icon: Icons.flag_rounded, label: l10n.liveEventEnds(event.endsAt!.toLocal().toString().split(' ').first)),
+              if (event.entryFeeCoins > 0) _MetaChip(icon: Icons.monetization_on_rounded, label: l10n.liveEventEntryFee(event.entryFeeCoins)),
+              _MetaChip(icon: Icons.card_giftcard_rounded, label: l10n.liveEventPrize(event.prizePoolCoins)),
             ],
           ),
           if (event.commentatorMessage != null && event.commentatorMessage!.isNotEmpty) ...[
@@ -278,6 +285,7 @@ class _ActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Wrap(
       spacing: 10,
       runSpacing: 10,
@@ -286,11 +294,11 @@ class _ActionBar extends StatelessWidget {
           FilledButton.icon(
             onPressed: state.isRegistering ? null : onRegister,
             icon: state.isRegistering ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.how_to_reg_rounded, size: 18),
-            label: const Text('Register'),
+            label: Text(l10n.register),
           ),
-        OutlinedButton.icon(onPressed: onUnregister, icon: const Icon(Icons.person_remove_rounded, size: 18), label: const Text('Leave')),
-        FilledButton.tonalIcon(onPressed: state.isCheckingIn ? null : onCheckIn, icon: const Icon(Icons.check_circle_rounded, size: 18), label: const Text('Check-in')),
-        OutlinedButton.icon(onPressed: onRefreshSnapshot, icon: const Icon(Icons.refresh_rounded, size: 18), label: const Text('Snapshot')),
+        OutlinedButton.icon(onPressed: onUnregister, icon: const Icon(Icons.person_remove_rounded, size: 18), label: Text(l10n.liveEventLeave)),
+        FilledButton.tonalIcon(onPressed: state.isCheckingIn ? null : onCheckIn, icon: const Icon(Icons.check_circle_rounded, size: 18), label: Text(l10n.liveEventCheckIn)),
+        OutlinedButton.icon(onPressed: onRefreshSnapshot, icon: const Icon(Icons.refresh_rounded, size: 18), label: Text(l10n.liveEventSnapshot)),
       ],
     );
   }
@@ -303,6 +311,7 @@ class _SnapshotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cq = snapshot.currentQuestion;
     final p = snapshot.participant;
     return Container(
@@ -316,13 +325,16 @@ class _SnapshotCard extends StatelessWidget {
               children: [
                 Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: Text(p.status.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.brand))),
                 const Spacer(),
-                Text('Score ${p.score} • ${p.correctCount}/${p.answeredCount}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                Text(l10n.liveEventScoreMeta(p.score, p.correctCount, p.answeredCount), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               ],
             ),
             const SizedBox(height: 10),
           ],
           if (cq != null) ...[
-            Text('Q${cq['index'] ?? cq['question_index'] ?? ''} • ${cq['points'] ?? ''} pts', style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600)),
+            Text(l10n.liveEventQuestionPoints(
+          (cq['index'] ?? cq['question_index'] ?? '') as String,
+          (cq['points'] ?? '') as String,
+        ), style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             Text((cq['question_text'] ?? cq['questionText'] ?? cq['text'] ?? 'Question').toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             if (cq['options'] is List) ...[
@@ -336,12 +348,15 @@ class _SnapshotCard extends StatelessWidget {
             ],
             if (cq['remaining_seconds'] != null) ...[
               const SizedBox(height: 8),
-              Text('Remaining: ${cq['remaining_seconds']}s • Locks at ${cq['locks_at'] ?? ''}', style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
+              Text(l10n.liveEventRemaining(
+          (cq['remaining_seconds'] ?? '') as String,
+          (cq['locks_at'] ?? '') as String,
+        ), style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
             ],
           ] else ...[
-            const Text('No current question — waiting for host.', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.liveEventWaitingForHost, style: TextStyle(fontSize: 12, color: Colors.grey)),
             const SizedBox(height: 6),
-            Text('Raw keys: ${snapshot.raw.keys.take(8).join(', ')}', style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
+            Text(l10n.liveEventRawKeys(snapshot.raw.keys.take(8).join(', ')), style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
           ],
         ],
       ),

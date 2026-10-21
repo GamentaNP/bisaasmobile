@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_dynamic_calls, body_might_complete_normally_catch_error
 
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,13 +14,14 @@ class LearningHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final tracksAsync = ref.watch(learningTracksProvider);
     final todayAsync = ref.watch(todayPlanProvider);
     final reviewsAsync = ref.watch(reviewsDueProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Learning')),
+      appBar: AppBar(title: Text(l10n.learningTitle)),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(learningTracksProvider);
@@ -41,16 +44,16 @@ class LearningHomeScreen extends ConsumerWidget {
               // A failed SRS read means the learner does not know whether they
               // have reviews due. Say so instead of silently hiding the card.
               error: (e, _) => _InlineNotice(
-                message: 'Could not load your reviews due count',
+                message: l10n.learningReviewsCountFailed,
                 onRetry: () => ref.invalidate(reviewsDueProvider),
               ),
             ),
             const SizedBox(height: 16),
-            Text('Tracks', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(l10n.learningTracks, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             tracksAsync.when(
               data: (tracks) => tracks.isEmpty
-                  ? const Text('No tracks yet — they are published by our team as they finish', style: TextStyle(color: Colors.grey, fontSize: 12))
+                  ? Text(l10n.learningNoTracks, style: TextStyle(color: Colors.grey, fontSize: 12))
                   : Column(
                       children: tracks
                           .map((t) => Card(
@@ -75,10 +78,10 @@ class LearningHomeScreen extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => context.go('/tutor/chat'),
               icon: const Icon(Icons.smart_toy_rounded),
-              label: const Text('Ask AI Tutor'),
+              label: Text(l10n.learningAskAiTutor),
             ),
             const SizedBox(height: 8),
-            const Text('Answers come back a little at a time rather than all at once, so you can start reading straight away.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.learningStreamingNote, style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         ),
       ),
@@ -91,6 +94,7 @@ class _TodayCard extends StatelessWidget {
   final dynamic plan;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Tolerant: plan may be DailyPlan (new) or TodayPlan (legacy) or null
     if (plan == null) {
       return Container(
@@ -100,7 +104,7 @@ class _TodayCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
         ),
-        child: const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        child: Text(l10n.learningNoTasks, style: TextStyle(fontSize: 12, color: Colors.grey)),
       );
     }
     var tasks = <String>[];
@@ -131,14 +135,14 @@ class _TodayCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Today', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.learningToday, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
           Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
           if (tasks.isNotEmpty) ...[
             const SizedBox(height: 8),
             ...tasks.map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
           ] else
-            const Text('No tasks — check back tomorrow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.learningNoTasks, style: TextStyle(fontSize: 12, color: Colors.grey)),
         ],
       ),
     );
@@ -151,6 +155,7 @@ class _ReviewsCard extends StatelessWidget {
   final VoidCallback onOpen;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.xpGold.withValues(alpha: 0.2))),
@@ -158,8 +163,8 @@ class _ReviewsCard extends StatelessWidget {
         children: [
           const Icon(Icons.repeat_rounded, color: AppColors.xpGold),
           const SizedBox(width: 10),
-          Expanded(child: Text('$count reviews due (SRS)', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.xpGold))),
-          TextButton(onPressed: onOpen, child: const Text('Review')),
+          Expanded(child: Text(l10n.learningReviewsDueSrs(count), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.xpGold))),
+          TextButton(onPressed: onOpen, child: Text(l10n.learningReviewAction)),
         ],
       ),
     );
@@ -172,10 +177,11 @@ class _ErrorCard extends StatelessWidget {
   final VoidCallback onRetry;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
-      child: Row(children: [Expanded(child: Text(msg, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: onRetry, child: const Text('Retry'))]),
+      child: Row(children: [Expanded(child: Text(msg, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: onRetry, child: Text(l10n.retry))]),
     );
   }
 }
@@ -190,6 +196,7 @@ class _InlineNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
@@ -208,7 +215,7 @@ class _InlineNotice extends StatelessWidget {
             ),
           ),
           if (onRetry != null)
-            TextButton(onPressed: onRetry, child: const Text('Retry')),
+            TextButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

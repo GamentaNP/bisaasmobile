@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,11 +23,12 @@ class LearningTodayScreen extends ConsumerStatefulWidget {
 class _LearningTodayScreenState extends ConsumerState<LearningTodayScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final todayAsync = ref.watch(todayPlanProvider);
     final ctrl = ref.watch(learningControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Today's Plan"),
+        title: Text(l10n.learningTodaysPlan),
         actions: [
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => ref.invalidate(todayPlanProvider)),
         ],
@@ -43,13 +46,13 @@ class _LearningTodayScreenState extends ConsumerState<LearningTodayScreen> {
               return ListView(
                 padding: const EdgeInsets.all(24),
                 children: [
-                  const EmptyState(
-                    title: 'No active goal',
-                    subtitle: 'Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.',
+                  EmptyState(
+                    title: l10n.learningNoActiveGoal,
+                    subtitle: l10n.learningNoActiveGoalBody,
                     icon: Icons.flag_outlined,
                   ),
                   const SizedBox(height: 16),
-                  FilledButton.icon(onPressed: () => context.go('/learning/tracks'), icon: const Icon(Icons.track_changes_rounded), label: const Text('Browse tracks')),
+                  FilledButton.icon(onPressed: () => context.go('/learning/tracks'), icon: const Icon(Icons.track_changes_rounded), label: Text(l10n.learningBrowseTracks)),
                 ],
               );
             }
@@ -71,6 +74,7 @@ class _TodayPlanView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final progress = plan.progress;
     return ListView(
@@ -96,8 +100,8 @@ class _TodayPlanView extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Plan #${plan.id}', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                      Text('${plan.planDate.toLocal().toIso8601String().split('T').first} • Goal #${plan.goalId}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                      Text(l10n.learningPlanLabel(plan.id), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                      Text(l10n.learningPlanGoal(plan.planDate.toLocal().toIso8601String().split('T').first, plan.goalId), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                     ]),
                   ),
                   if (plan.status != null)
@@ -116,10 +120,10 @@ class _TodayPlanView extends ConsumerWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Text('${plan.completedItems}/${plan.totalItems} completed', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  Text(l10n.learningCompletedCount(plan.completedItems, plan.totalItems), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                   const Spacer(),
                   if (plan.minutesBudget != null)
-                    Row(children: [const Icon(Icons.timer_outlined, size: 14, color: Colors.grey), const SizedBox(width: 4), Text('${plan.minutesBudget} min budget', style: const TextStyle(fontSize: 11, color: Colors.grey))]),
+                    Row(children: [const Icon(Icons.timer_outlined, size: 14, color: Colors.grey), const SizedBox(width: 4), Text(l10n.learningMinBudget(plan.minutesBudget ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey))]),
                 ],
               ),
               if (error != null) ...[
@@ -127,7 +131,7 @@ class _TodayPlanView extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
-                  child: Row(children: [Expanded(child: Text(error!, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: () => ref.read(learningControllerProvider.notifier).clearErrors(), child: const Text('Dismiss'))]),
+                  child: Row(children: [Expanded(child: Text(error!, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12))), TextButton(onPressed: () => ref.read(learningControllerProvider.notifier).clearErrors(), child: Text(l10n.tutorDismiss))]),
                 ),
               ],
             ],
@@ -135,7 +139,7 @@ class _TodayPlanView extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
         if (plan.items.isEmpty)
-          const EmptyState(title: 'No tasks today', subtitle: 'Check back tomorrow — daily autopilot builds Review-first + new topics.', icon: Icons.check_circle_outline_rounded)
+          EmptyState(title: l10n.coachingNoTasksToday, subtitle: l10n.learningNoTasksBody, icon: Icons.check_circle_outline_rounded)
         else
           ...plan.items.asMap().entries.map((entry) {
             final idx = entry.key;
@@ -159,7 +163,7 @@ class _TodayPlanView extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     if (item.estimatedMinutes > 0)
-                      Text('${item.estimatedMinutes} min', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                      Text(l10n.learningMinutes(item.estimatedMinutes), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                   ],
                 ),
                 trailing: completed
@@ -172,7 +176,7 @@ class _TodayPlanView extends ConsumerWidget {
                               final notifier = ref.read(learningControllerProvider.notifier);
                               final updated = await notifier.completeItem(plan.id, idx);
                               if (updated != null && context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item completed'), backgroundColor: AppColors.correctGreen));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.learningItemCompleted), backgroundColor: AppColors.correctGreen));
                               }
                             },
                           )),
@@ -181,7 +185,7 @@ class _TodayPlanView extends ConsumerWidget {
             );
           }),
         const SizedBox(height: 16),
-        FilledButton.tonalIcon(onPressed: () => context.go('/learning/reviews'), icon: const Icon(Icons.repeat_rounded), label: const Text('Reviews due')),
+        FilledButton.tonalIcon(onPressed: () => context.go('/learning/reviews'), icon: const Icon(Icons.repeat_rounded), label: Text(l10n.learningReviewsDue)),
       ],
     );
   }

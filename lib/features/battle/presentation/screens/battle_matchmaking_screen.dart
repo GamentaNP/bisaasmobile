@@ -10,6 +10,7 @@ import 'package:vibration/vibration.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/battle_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Matchmaking screen with 3-2-1 countdown on opponent found.
 class BattleMatchmakingScreen extends ConsumerStatefulWidget {
@@ -68,13 +69,14 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(battleControllerProvider);
     if (state.phase == BattlePhase.countdown || _countdownTimer?.isActive == true) {
       return Scaffold(body: Center(child: Text('$_countdown', style: const TextStyle(fontSize: 96, fontWeight: FontWeight.bold, color: AppColors.brand))));
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find a Match'),
+        title: Text(l10n.battleFindMatch),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () {

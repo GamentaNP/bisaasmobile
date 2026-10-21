@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/store_controller.dart';
 import '../../domain/entities/store.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Premium store — assets and skins from `GET /api/v1/store/assets`.
 ///
@@ -47,6 +48,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(storeControllerProvider);
     final catalog = state.catalog;
     final theme = Theme.of(context);
@@ -60,7 +62,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
     final categories = (catalog?.assets ?? []).map((a) => a.category).whereType<String>().toSet().toList()..sort();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Premium Store')),
+      appBar: AppBar(title: Text(l10n.storeTitle)),
       body: RefreshIndicator(
         onRefresh: () => Future.wait([ref.read(storeControllerProvider.notifier).fetchCatalog()]),
         child: ListView(
@@ -71,7 +73,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
             if (state.catalogError != null)
               Card(
                 color: AppColors.wrongRed.withValues(alpha: 0.08),
-                child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.catalogError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(storeControllerProvider.notifier).fetchCatalog(), child: const Text('Retry'))])),
+                child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.catalogError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(storeControllerProvider.notifier).fetchCatalog(), child: Text(l10n.retry))])),
               ),
             if (catalog != null && categories.isNotEmpty) ...[
               const SizedBox(height: 12),
@@ -79,7 +81,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    ChoiceChip(label: const Text('All', style: TextStyle(fontSize: 12)), selected: _selectedCategory == null, onSelected: (_) => setState(() => _selectedCategory = null)),
+                    ChoiceChip(label: Text(l10n.storeAll, style: TextStyle(fontSize: 12)), selected: _selectedCategory == null, onSelected: (_) => setState(() => _selectedCategory = null)),
                     const SizedBox(width: 8),
                     for (final c in categories) ...[
                       ChoiceChip(label: Text(c, style: const TextStyle(fontSize: 12)), selected: _selectedCategory == c, onSelected: (v) => setState(() => _selectedCategory = v ? c : null)),
@@ -91,10 +93,10 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
             ],
             if (catalog != null) ...[
               const SizedBox(height: 14),
-              Text('${assets.length} assets', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.storeAssetsCount(assets.length), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (assets.isEmpty)
-                const Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: Text('No assets in this category.', style: TextStyle(fontSize: 11, color: Colors.grey))))
+                Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: Text(l10n.storeNoAssetsInCategory, style: TextStyle(fontSize: 11, color: Colors.grey))))
               else
                 GridView.builder(
                   shrinkWrap: true,
@@ -120,7 +122,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
                               append: true,
                             ),
                     icon: const Icon(Icons.expand_more_rounded),
-                    label: const Text('Load more'),
+                    label: Text(l10n.commonLoadMore),
                   ),
                 ),
             ],
@@ -137,10 +139,10 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
             // There is no community resale marketplace: GET /store/market has
             // never existed on the server. Point at the real coin-trading
             // surface (the economy shop) instead of a permanent placeholder.
-            Text('Trading', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(l10n.storeTrading, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            const Text(
-              'Buy resources and bundles with coins, or sell what you no longer need.',
+            Text(
+              l10n.storeTradingExplain,
               style: TextStyle(fontSize: 11, color: Colors.grey),
             ),
             const SizedBox(height: 10),
@@ -150,7 +152,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => context.go('/economy/shop'),
                     icon: const Icon(Icons.storefront_rounded, size: 18),
-                    label: const Text('Coin shop'),
+                    label: Text(l10n.storeCoinShop),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -158,7 +160,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => context.go('/economy/inventory'),
                     icon: const Icon(Icons.sell_rounded, size: 18),
-                    label: const Text('Sell items'),
+                    label: Text(l10n.storeSellItems),
                   ),
                 ),
               ],
@@ -191,6 +193,7 @@ class _AssetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final rarityColor = _rarityColor(asset.rarity);
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: rarityColor.withValues(alpha: 0.35)), color: Theme.of(context).colorScheme.surface),
@@ -206,7 +209,7 @@ class _AssetCard extends StatelessWidget {
             Text(asset.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
             Text(asset.category ?? asset.slug, style: const TextStyle(fontSize: 10, color: Colors.grey)),
             const Spacer(),
-            Row(children: [const Icon(Icons.monetization_on_rounded, size: 14, color: AppColors.coinYellow), const SizedBox(width: 4), Text('${asset.priceCoins}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.coinYellow)), if (asset.isOwned) Container(margin: const EdgeInsets.only(left: 6), padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2), decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)), child: const Text('OWNED', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: AppColors.correctGreen)))]),
+            Row(children: [const Icon(Icons.monetization_on_rounded, size: 14, color: AppColors.coinYellow), const SizedBox(width: 4), Text('${asset.priceCoins}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.coinYellow)), if (asset.isOwned) Container(margin: const EdgeInsets.only(left: 6), padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2), decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)), child: Text(l10n.storeOwnedBadge, style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: AppColors.correctGreen)))]),
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
@@ -217,7 +220,7 @@ class _AssetCard extends StatelessWidget {
                 style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8), backgroundColor: asset.isOwned ? AppColors.correctGreen : null),
                 child: isPurchasing
                     ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text(asset.isOwned ? 'Owned' : 'Buy', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    : Text(asset.isOwned ? l10n.storeOwned : l10n.streakBuy, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               ),
             ),
           ],

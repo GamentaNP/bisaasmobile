@@ -7,6 +7,7 @@ import '../../../core/logging/app_logger.dart';
 import '../../../core/network/dio_client.dart';
 import '../data/datasources/numerical_remote_data_source.dart';
 import '../domain/entities/numerical.dart';
+import '../../../l10n/app_localizations.dart';
 
 final numericalRemoteDataSourceProvider = Provider<NumericalRemoteDataSource>(
   (ref) => NumericalRemoteDataSource(DioClient.instance.dio),
@@ -171,16 +172,17 @@ class _NumericalPracticeScreenState extends ConsumerState<NumericalPracticeScree
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(numericalControllerProvider(widget.numericalId));
     final notifier = ref.read(numericalControllerProvider(widget.numericalId).notifier);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Numerical'),
+        title: Text(l10n.numericalsTitle),
         actions: [
           IconButton(
-            tooltip: 'New numbers',
+            tooltip: l10n.numericalsNew,
             onPressed: state.isLoading ? null : notifier.randomize,
             icon: const Icon(Icons.refresh),
           ),
@@ -197,7 +199,7 @@ class _NumericalPracticeScreenState extends ConsumerState<NumericalPracticeScree
                       const SizedBox(height: 12),
                       FilledButton.tonal(
                         onPressed: notifier.randomize,
-                        child: const Text('Retry'),
+                        child: Text(l10n.retry),
                       ),
                     ],
                   ),
@@ -221,7 +223,7 @@ class _NumericalPracticeScreenState extends ConsumerState<NumericalPracticeScree
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: 'Your answer',
+                        labelText: l10n.quizReviewYourAnswer,
                         suffixText: state.problem?.unit,
                       ),
                       onSubmitted: notifier.submitAnswer,
@@ -237,7 +239,7 @@ class _NumericalPracticeScreenState extends ConsumerState<NumericalPracticeScree
                               width: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Check answer'),
+                          : Text(l10n.numericalsCheck),
                     ),
                     if (state.check != null) ...[
                       const SizedBox(height: 16),
@@ -248,7 +250,7 @@ class _NumericalPracticeScreenState extends ConsumerState<NumericalPracticeScree
                       OutlinedButton(
                         onPressed:
                             state.submitting || !state.hasAttempted ? null : notifier.showSolution,
-                        child: const Text('Show worked solution'),
+                        child: Text(l10n.numericalsShowSolution),
                       ),
                     ],
                     if (state.solution != null) ...[
@@ -304,6 +306,7 @@ class _Verdict extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
@@ -318,15 +321,15 @@ class _Verdict extends StatelessWidget {
         children: [
           Text(
             check.correct
-                ? 'Correct${check.revealsAnswer ? ' · ${formatNumber(check.finalAnswer!)}${check.unitSuffix}' : ''}'
-                : 'Not correct. Try again, or open the worked solution.',
+                ? l10n.numericalsCorrect(check.revealsAnswer ? ' · ${formatNumber(check.finalAnswer!)}${check.unitSuffix}' : '')
+                : l10n.numericalsNotCorrect,
             style: theme.textTheme.bodyMedium,
           ),
           if (check.needsReview)
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
-                'The server has flagged this problem for review.',
+                l10n.numericalsFlagged,
                 style: theme.textTheme.bodySmall,
               ),
             ),
@@ -343,16 +346,17 @@ class _SolutionBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Worked solution', style: theme.textTheme.titleMedium),
+        Text(l10n.numericalsWorkedSolution, style: theme.textTheme.titleMedium),
         if (solution.computedBy != null)
           Padding(
             padding: const EdgeInsets.only(top: 2, bottom: 8),
             child: Text(
-              'Computed by: ${solution.computedBy}',
+              l10n.numericalsComputedBy(solution.computedBy ?? '—'),
               style: theme.textTheme.labelSmall,
             ),
           ),
@@ -360,7 +364,7 @@ class _SolutionBlock extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              'Flagged by the server for review — treat this answer with care.',
+              l10n.numericalsFlaggedWarning,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error),
             ),
           ),
@@ -377,7 +381,7 @@ class _SolutionBlock extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Answer: ${formatNumber(solution.finalAnswer!)}${solution.unit == null ? '' : ' ${solution.unit}'}',
+              l10n.numericalsAnswer(formatNumber(solution.finalAnswer!), solution.unit == null ? '' : ' ${solution.unit}'),
               style: theme.textTheme.titleMedium,
             ),
           ),
@@ -390,7 +394,7 @@ class _SolutionBlock extends StatelessWidget {
                 if (uri != null) context.push(uri.toString());
               },
               icon: const Icon(Icons.calculate_outlined),
-              label: const Text('Open in calculator'),
+              label: Text(l10n.numericalsOpenInCalculator),
             ),
           ),
       ],

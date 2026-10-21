@@ -10,6 +10,7 @@ import '../../data/corpus_availability.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../quiz/presentation/screens/quiz_browser_screen.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Courses — `GET /api/v1/quiz/courses` (public catalog, no auth required).
 ///
@@ -60,24 +61,25 @@ class CoursesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final coursesAsync = ref.watch(_coursesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Courses')),
+      appBar: AppBar(title: Text(l10n.courses)),
       body: coursesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
-          message: 'Could not load courses. Check connection.',
+          message: l10n.coursesLoadFailed,
           onRetry: () => ref.invalidate(_coursesProvider),
         ),
         data: (courses) {
           if (courses.isEmpty) {
-            return const EmptyState(
+            return EmptyState(
               icon: Icons.menu_book_outlined,
-              title: 'No courses available',
+              title: l10n.coursesNone,
               subtitle:
-                  'Civil engineering syllabi will appear here once published.',
+                  l10n.coursesNoneBody,
             );
           }
           return CustomScrollView(
@@ -109,7 +111,7 @@ class CoursesScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
-                    '${courses.length} syllabus tracks',
+                    l10n.coursesTracksCount(courses.length),
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -167,6 +169,7 @@ class _CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16),
@@ -231,8 +234,8 @@ class _CourseCard extends StatelessWidget {
                 // keyed on the syllabus version's public_id. A button promising a
                 // syllabus and landing on a question list is the same kind of
                 // dishonesty this pass has been removing elsewhere.
-                child: const Text(
-                  'Browse questions',
+                child: Text(
+                  l10n.coursesBrowseQuestions,
                   style: TextStyle(fontSize: 12),
                 ),
               ),

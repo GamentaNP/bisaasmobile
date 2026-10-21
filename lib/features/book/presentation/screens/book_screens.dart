@@ -9,6 +9,7 @@ import '../../../quiz/data/datasources/content_quiz_remote_data_source.dart';
 import '../../../quiz/domain/entities/content_quiz.dart';
 import '../../domain/entities/book.dart';
 import '../controllers/book_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Book catalog. Public server-side, so it must render signed out.
 class BookCatalogScreen extends ConsumerStatefulWidget {
@@ -29,20 +30,21 @@ class _BookCatalogScreenState extends ConsumerState<BookCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(bookCatalogControllerProvider);
     final notifier = ref.read(bookCatalogControllerProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Books')),
+      appBar: AppBar(title: Text(l10n.booksTitle)),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               controller: _search,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
-                hintText: 'Search books',
+                hintText: l10n.booksSearch,
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
@@ -61,22 +63,23 @@ class _BookCatalogScreenState extends ConsumerState<BookCatalogScreen> {
   }
 
   Widget _body(BuildContext context, BookCatalogState state, BookCatalogController notifier) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && state.books.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
     if (state.error != null && state.books.isEmpty) {
       return _Message(
         text: state.error!,
-        actionLabel: 'Retry',
+        actionLabel: l10n.retry,
         onAction: notifier.refresh,
       );
     }
     if (state.isEmpty) {
       return _Message(
         text: state.query.isEmpty
-            ? 'No books have been published yet.'
-            : 'No books match "${state.query}".',
-        actionLabel: state.query.isEmpty ? 'Retry' : 'Clear search',
+            ? l10n.booksNonePublished
+            : l10n.booksNoMatch(state.query),
+        actionLabel: state.query.isEmpty ? l10n.retry : l10n.libraryClearSearch,
         onAction: state.query.isEmpty ? notifier.refresh : () => notifier.search(''),
       );
     }
@@ -143,6 +146,7 @@ class BookDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(bookDetailControllerProvider(slug));
     final notifier = ref.read(bookDetailControllerProvider(slug).notifier);
     final theme = Theme.of(context);
@@ -155,7 +159,7 @@ class BookDetailScreen extends ConsumerWidget {
     if (state.error != null && state.book == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: _Message(text: state.error!, actionLabel: 'Retry', onAction: notifier.load),
+        body: _Message(text: state.error!, actionLabel: l10n.retry, onAction: notifier.load),
       );
     }
 
@@ -195,8 +199,7 @@ class BookDetailScreen extends ConsumerWidget {
               LinearProgressIndicator(value: progress.completionPercentage.clamp(0, 1)),
               const SizedBox(height: 6),
               Text(
-                '${progress.completionPercentage.toStringAsFixed(0)}% · page '
-                '${progress.currentPageNumber ?? '—'}',
+                l10n.booksProgress(progress.completionPercentage.toStringAsFixed(0), progress.currentPageNumber ?? '—'),
                 style: theme.textTheme.bodySmall,
               ),
             ],
@@ -208,10 +211,10 @@ class BookDetailScreen extends ConsumerWidget {
               ),
             ],
             const Divider(height: 32),
-            Text('Chapters', style: theme.textTheme.titleMedium),
+            Text(l10n.booksChapters, style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             if (book.chapters.isEmpty)
-              Text('No chapters published yet.', style: theme.textTheme.bodySmall)
+              Text(l10n.booksNoChapters, style: theme.textTheme.bodySmall)
             else
               ...book.chapters.map(
                 (c) => _ChapterTile(
@@ -230,6 +233,7 @@ class BookDetailScreen extends ConsumerWidget {
   /// Enters the reader at the server's saved position when there is one, so a
   /// returning reader lands where they left off rather than at page 1.
   Future<void> _openChapter(BuildContext context, WidgetRef ref, Book book, BookChapter chapter) async {
+    final l10n = AppLocalizations.of(context)!;
     // The recommended test for a chapter is the payoff for finishing it, so it is
     // offered alongside the reader rather than hidden behind a separate flow.
     // Null is a normal answer: not every chapter has one.
@@ -256,7 +260,7 @@ class BookDetailScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Chapter test', style: Theme.of(context).textTheme.titleLarge),
+                Text(l10n.booksChapterTest, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 8),
                 // The server's own status, not an optimistic "your test is ready".
                 Text(quiz.statusLabel),
@@ -265,7 +269,7 @@ class BookDetailScreen extends ConsumerWidget {
                   children: [
                     FilledButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Read the chapter'),
+                      child: Text(l10n.booksReadChapter),
                     ),
                     if (quiz.canStart) ...[
                       const SizedBox(width: 12),
@@ -274,7 +278,7 @@ class BookDetailScreen extends ConsumerWidget {
                           Navigator.of(context).pop();
                           context.push('/numericals/${chapter.id}/practice');
                         },
-                        child: Text('Take test (${quiz.questionCount})'),
+                        child: Text(l10n.booksTakeTest(quiz.questionCount)),
                       ),
                     ],
                   ],
@@ -292,7 +296,7 @@ class BookDetailScreen extends ConsumerWidget {
     final topicId = progress?.currentTopicId ?? chapter.topics.firstOrNull?.id;
     if (topicId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('This chapter has no topics to open yet.')),
+        SnackBar(content: Text(l10n.booksNoTopics)),
       );
       return;
     }
@@ -319,6 +323,7 @@ class _ChapterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final title = chapter.titleFor(preferNative: preferNative);
     final range = chapter.pageRangeLabel;
@@ -343,7 +348,7 @@ class _ChapterTile extends StatelessWidget {
           : chapter.costsCoins
               ? TextButton(
                   onPressed: onUnlock,
-                  child: Text('${chapter.coinUnlockPrice} coins'),
+                  child: Text(l10n.coinsBalance(chapter.coinUnlockPrice ?? 0)),
                 )
               : const Icon(Icons.chevron_right),
       onTap: chapter.costsCoins ? onUnlock : onOpen,

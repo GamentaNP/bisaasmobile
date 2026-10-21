@@ -1,5 +1,7 @@
 
 
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -140,13 +142,14 @@ class AchievementsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final dash = ref.watch(homeControllerProvider);
     final user = ref.watch(authControllerProvider).value;
     final achievementsAsync = ref.watch(achievementsDataProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Achievements')),
+      appBar: AppBar(title: Text(l10n.profileAchievements)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -169,25 +172,25 @@ class AchievementsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Text('Badges', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.achievementsBadges, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           achievementsAsync.when(
             loading: () => const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator())),
             error: (e, _) => Padding(
               padding: const EdgeInsets.all(16),
-              child: Text('Could not load achievements: $e',
+              child: Text(l10n.achievementsFailed(e),
                   style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)),
             ),
             data: (data) {
               if (data.achievements.isEmpty) {
-                return const Padding(
+                return Padding(
                   padding: EdgeInsets.symmetric(vertical: 32),
                   child: Center(
                     child: Column(
                       children: [
                         Icon(Icons.emoji_events_outlined, size: 48, color: Colors.grey),
                         SizedBox(height: 8),
-                        Text('No achievements yet — start quizzing!',
+                        Text(l10n.achievementsNone,
                             style: TextStyle(color: Colors.grey, fontSize: 13)),
                       ],
                     ),
@@ -221,6 +224,7 @@ class _AchievementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final color = achievement.rarityColor;
     final unlocked = achievement.isCompleted;
@@ -280,11 +284,11 @@ class _AchievementCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             if (unlocked)
-              const Row(
+              Row(
                 children: [
                   Icon(Icons.check_circle_rounded, size: 12, color: AppColors.correctGreen),
                   SizedBox(width: 4),
-                  Text('Unlocked', style: TextStyle(fontSize: 10, color: AppColors.correctGreen, fontWeight: FontWeight.w600)),
+                  Text(l10n.profileUnlocked, style: TextStyle(fontSize: 10, color: AppColors.correctGreen, fontWeight: FontWeight.w600)),
                 ],
               )
             else if (achievement.progressTarget > 1) ...[

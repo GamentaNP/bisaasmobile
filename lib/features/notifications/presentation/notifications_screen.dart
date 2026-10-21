@@ -6,6 +6,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
 import 'controllers/notifications_controller.dart';
 import '../domain/notification_item.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Notifications inbox — `GET /api/v1/notifications`.
 ///
@@ -25,26 +26,27 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final async = ref.watch(notificationsControllerProvider);
     final unreadCount = async.value?.where((n) => n.isUnread).length ?? 0;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(l10n.notificationsTitle),
         actions: [
           if (unreadCount > 0)
             TextButton(
               onPressed: () => _markAllRead(context, ref),
-              child: const Text('Mark all read'),
+              child: Text(l10n.notificationsMarkAllRead),
             ),
         ],
       ),
       body: async.when(
         data: (list) => list.isEmpty
-            ? const Center(
+            ? Center(
                 child: EmptyState(
-                  title: 'No notifications',
-                  subtitle: 'Nothing new right now.',
+                  title: l10n.notificationsNone,
+                  subtitle: l10n.notificationsNoneBody,
                   icon: Icons.notifications_none_rounded,
                 ),
               )
@@ -62,7 +64,7 @@ class NotificationsScreen extends ConsumerWidget {
               ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
-          title: 'Could not load notifications',
+          title: l10n.notificationsLoadFailed,
           message: '$e',
           onRetry: () => ref.invalidate(notificationsControllerProvider),
         ),
@@ -71,6 +73,7 @@ class NotificationsScreen extends ConsumerWidget {
   }
 
   Future<void> _markRead(BuildContext context, WidgetRef ref, NotificationItem item) async {
+    final l10n = AppLocalizations.of(context)!;
     if (!item.isUnread) return;
     final messenger = ScaffoldMessenger.of(context);
     try {
@@ -79,18 +82,19 @@ class NotificationsScreen extends ConsumerWidget {
       // The controller already rolled the row back, so say so rather than
       // letting the notification look like it was cleared.
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not mark that as read. Try again.')),
+        SnackBar(content: Text(l10n.notificationsMarkFailed)),
       );
     }
   }
 
   Future<void> _markAllRead(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(notificationsControllerProvider.notifier).markAllRead();
     } on Object {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Could not mark everything as read.')),
+        SnackBar(content: Text(l10n.notificationsMarkAllFailed)),
       );
     }
   }

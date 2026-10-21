@@ -11,6 +11,8 @@ import '../../data/repositories/learning_repository_impl.dart';
 import '../../domain/entities/learning.dart';
 import '../../domain/repositories/learning_repository.dart';
 
+import '../../../../app/localization/l10n.dart';
+
 // ── Providers ─────────────────────────────────────────────────────────────────
 final learningRemoteDataSourceProvider = Provider<LearningRemoteDataSource>((ref) {
   return LearningRemoteDataSource(DioClient.instance.dio);
@@ -266,7 +268,7 @@ class TutorController extends Notifier<TutorState> {
     try {
       final repo = ref.read(learningRepositoryProvider);
       final answer = await repo.askTutorLegacy(prompt, history: state.messages);
-      final assistant = TutorMessage(role: 'assistant', content: answer.isEmpty ? 'No response (tutor offline).' : answer);
+      final assistant = TutorMessage(role: 'assistant', content: answer.isEmpty ? appL10n().learningNoResponse : answer);
       state = TutorState(messages: [...state.messages, assistant]);
     } catch (e) {
       state = TutorState(messages: state.messages, error: e.toString());

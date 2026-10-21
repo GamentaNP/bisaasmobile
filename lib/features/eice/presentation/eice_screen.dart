@@ -1,3 +1,5 @@
+import '../../../l10n/app_localizations.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,31 +31,31 @@ class EiceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final src = ref.read(eiceRemoteProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Exam Intelligence')),
+      appBar: AppBar(title: Text(l10n.eiceTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'Everything here is worked out on our servers from your real answer '
-            'history, so nothing is shown unless it is true.',
+          Text(
+            l10n.eiceExplain,
             style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
           const SizedBox(height: 12),
           _Card(
-            title: 'Coach — your plan',
+            title: l10n.eiceCoach,
             fetcher: src.getCoach,
           ),
           // Triage has no exam-less route — it needs the numeric exam id that
           // only the coach response carries, so it waits on that.
           _TriageCard(coach: src.getCoach, triage: src.getTriage),
           _CardList(
-            title: 'Sprint — 7-day recall queue',
+            title: l10n.eiceSprint,
             fetcher: src.getSprint,
           ),
           _Card(
-            title: 'Weekly report',
+            title: l10n.eiceWeeklyReport,
             fetcher: src.getWeekly,
           ),
         ],
@@ -109,6 +111,7 @@ class _CardState extends State<_Card> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -134,7 +137,7 @@ class _CardState extends State<_Card> {
                   OutlinedButton.icon(
                     onPressed: _load,
                     icon: const Icon(Icons.refresh_rounded, size: 16),
-                    label: const Text('Retry'),
+                    label: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -144,7 +147,7 @@ class _CardState extends State<_Card> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: loading ? null : _load,
-                child: const Text('Refresh'),
+                child: Text(l10n.streakRefresh),
               ),
             ),
           ],
@@ -199,6 +202,7 @@ class _CardListState extends State<_CardList> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -224,7 +228,7 @@ class _CardListState extends State<_CardList> {
                   OutlinedButton.icon(
                     onPressed: _load,
                     icon: const Icon(Icons.refresh_rounded, size: 16),
-                    label: const Text('Retry'),
+                    label: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -234,7 +238,7 @@ class _CardListState extends State<_CardList> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: loading ? null : _load,
-                child: const Text('Refresh'),
+                child: Text(l10n.streakRefresh),
               ),
             ),
           ],
@@ -313,6 +317,7 @@ class _TriageCardState extends State<_TriageCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -321,7 +326,7 @@ class _TriageCardState extends State<_TriageCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Triage — cover or skip',
+              l10n.eiceTriage,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -338,7 +343,7 @@ class _TriageCardState extends State<_TriageCard> {
                   OutlinedButton.icon(
                     onPressed: _load,
                     icon: const Icon(Icons.refresh_rounded, size: 16),
-                    label: const Text('Retry'),
+                    label: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -348,7 +353,7 @@ class _TriageCardState extends State<_TriageCard> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: loading ? null : _load,
-                child: const Text('Refresh'),
+                child: Text(l10n.streakRefresh),
               ),
             ),
           ],

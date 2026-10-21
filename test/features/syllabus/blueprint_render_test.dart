@@ -1,6 +1,7 @@
 import 'package:bisaasmobile/features/syllabus/domain/entities/syllabus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../support/localized_app.dart';
 
 
 /// The blueprint is the paper's own accounting, so the screen's job is to show
@@ -145,8 +146,8 @@ void main() {
   group('the blueprint renders', () {
     testWidgets('shows every section including the unlettered one', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(body: _BlueprintSummary(paper: paper)),
+        localizedApp(
+          child: Scaffold(body: _BlueprintSummary(paper: paper)),
         ),
       );
 
@@ -175,14 +176,14 @@ void main() {
         ],
       );
       await tester.pumpWidget(
-        MaterialApp(home: Scaffold(body: _BlueprintSummary(paper: bad))),
+        localizedApp(child: Scaffold(body: _BlueprintSummary(paper: bad))),
       );
       expect(find.textContaining('do not add up'), findsOneWidget);
     });
 
     testWidgets('no warning when the paper reconciles', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: Scaffold(body: _BlueprintSummary(paper: paper))),
+        localizedApp(child: Scaffold(body: _BlueprintSummary(paper: paper))),
       );
       expect(find.textContaining('do not add up'), findsNothing);
     });

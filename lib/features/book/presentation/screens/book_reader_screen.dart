@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/script_fonts.dart';
 import '../../domain/entities/book.dart';
 import '../controllers/book_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// The reader.
 ///
@@ -33,6 +34,7 @@ class BookReaderScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final target = (slug: slug, bookId: bookId, topicId: topicId);
     final state = ref.watch(readerControllerProvider(target));
     final notifier = ref.read(readerControllerProvider(target).notifier);
@@ -45,10 +47,10 @@ class BookReaderScreen extends ConsumerWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Page ${state.pageNumber}'),
+          title: Text(l10n.bookPageLabel(state.pageNumber)),
           actions: [
             IconButton(
-              tooltip: 'My highlights',
+              tooltip: l10n.bookMyHighlights,
               onPressed: () {
                 notifier.loadHighlights();
                 _showHighlights(context, state.highlights);
@@ -64,6 +66,7 @@ class BookReaderScreen extends ConsumerWidget {
   }
 
   Widget _body(BuildContext context, ReaderState state, ReaderController notifier) {
+    final l10n = AppLocalizations.of(context)!;
     if (state.isLoading && state.page == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -76,7 +79,7 @@ class BookReaderScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             FilledButton.tonal(
               onPressed: notifier.retry,
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -95,7 +98,7 @@ class BookReaderScreen extends ConsumerWidget {
         ],
         if (page.blocks.isEmpty)
           Text(
-            'This page has no extractable text. It may be an image-only scan.',
+            l10n.bookNoExtractableText,
             style: Theme.of(context).textTheme.bodyMedium,
           )
         else
@@ -109,6 +112,7 @@ class BookReaderScreen extends ConsumerWidget {
   }
 
   Widget _controls(BuildContext context, ReaderState state, ReaderController notifier) {
+    final l10n = AppLocalizations.of(context)!;
     final progress = state.progress;
     return SafeArea(
       child: Padding(
@@ -116,7 +120,7 @@ class BookReaderScreen extends ConsumerWidget {
         child: Row(
           children: [
             IconButton(
-              tooltip: 'Previous page',
+              tooltip: l10n.bookPreviousPage,
               onPressed: state.pageNumber <= 1 ? null : notifier.previousPage,
               icon: const Icon(Icons.chevron_left),
             ),
@@ -131,14 +135,14 @@ class BookReaderScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${progress.completionPercentage.toStringAsFixed(0)}% complete',
+                          l10n.streakWagerProgress(progress.completionPercentage.toStringAsFixed(0)),
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
                       ],
                     ),
             ),
             IconButton(
-              tooltip: 'Next page',
+              tooltip: l10n.bookNextPage,
               onPressed: notifier.nextPage,
               icon: const Icon(Icons.chevron_right),
             ),
@@ -149,6 +153,7 @@ class BookReaderScreen extends ConsumerWidget {
   }
 
   void _showHighlights(BuildContext context, List<BookHighlight> highlights) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet<void>(
       context: context,
       builder: (_) => SafeArea(
@@ -156,10 +161,10 @@ class BookReaderScreen extends ConsumerWidget {
           shrinkWrap: true,
           padding: const EdgeInsets.all(16),
           children: [
-            Text('Your highlights', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.bookYourHighlights, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             if (highlights.isEmpty)
-              const Text('You have not highlighted anything yet.')
+              Text(l10n.bookNoHighlights)
             else
               for (final h in highlights)
                 ListTile(
@@ -182,6 +187,7 @@ class _BlockView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     // A block with no extractable text is a picture or a table the extractor
@@ -196,8 +202,8 @@ class _BlockView extends StatelessWidget {
             Expanded(
               child: Text(
                 block.type == null
-                    ? 'Image or diagram (not available as text)'
-                    : '${block.type} (not available as text)',
+                    ? l10n.bookImageNotText
+                    : l10n.bookValueNotText(block.type ?? '—'),
                 style: theme.textTheme.bodySmall,
               ),
             ),

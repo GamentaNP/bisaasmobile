@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:vibration/vibration.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Centered full-screen Lottie overlay. Auto-dismisses after
 /// [autoDismiss] (default 2.5s). Triggers heavy haptic on appear.
@@ -30,10 +31,11 @@ class LottieOverlay extends StatefulWidget {
 
   /// Helper that pushes the overlay onto the nearest [Navigator].
   static Future<void> show(BuildContext context, LottieOverlay overlay) {
+    final l10n = AppLocalizations.of(context)!;
     return showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
-      barrierLabel: 'lottie-overlay',
+      barrierLabel: l10n.lottieOverlay,
       barrierColor: Colors.black.withValues(alpha: 0.6),
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (ctx, anim, sec) => overlay,
@@ -75,6 +77,7 @@ class _LottieOverlayState extends State<LottieOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Material(
       color: Colors.transparent,
       child: Center(
@@ -116,7 +119,7 @@ class _LottieOverlayState extends State<LottieOverlay> {
                   ),
                 ],
                 const SizedBox(height: 12),
-                const Text('Tap to dismiss', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                Text(l10n.lottieTapToDismiss, style: TextStyle(color: Colors.grey, fontSize: 11)),
               ],
             ),
           ),

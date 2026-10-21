@@ -2,9 +2,11 @@ import 'package:bisaasmobile/features/eice/presentation/widgets/payload_view.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/localized_app.dart';
+
 void main() {
-  Widget host(Object? data) => MaterialApp(
-        home: Scaffold(body: PayloadView(data: data)),
+  Widget host(Object? data) => localizedApp(
+        child: Scaffold(body: PayloadView(data: data)),
       );
 
   group('humaniseKey', () {

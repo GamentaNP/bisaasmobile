@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,12 +24,13 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
   int? _creatingForTrackId;
 
   Future<void> _createGoal(int trackId) async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _creatingForTrackId = trackId);
     final goal = await ref.read(learningControllerProvider.notifier).createGoal(trackId: trackId);
     if (!mounted) return;
     setState(() => _creatingForTrackId = null);
     if (goal != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Goal created for track #$trackId'), backgroundColor: AppColors.correctGreen));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.learningGoalCreatedForTrack(trackId)), backgroundColor: AppColors.correctGreen));
       // Navigate to goal detail
       context.go('/learning/goals/${goal.id}');
     } else {
@@ -38,22 +41,23 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tracksAsync = ref.watch(learningTracksProvider);
     final ctrlState = ref.watch(learningControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Learning Tracks'),
+        title: Text(l10n.learningTracksTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.today_rounded),
-            tooltip: 'Today plan',
+            tooltip: l10n.learningTodayPlan,
             onPressed: () => context.go('/learning/today'),
           ),
           IconButton(
             icon: const Icon(Icons.repeat_rounded),
-            tooltip: 'Reviews due',
+            tooltip: l10n.learningReviewsDue,
             onPressed: () => context.go('/learning/reviews'),
           ),
         ],
@@ -70,8 +74,8 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
             if (tracks.isEmpty) {
               return ListView(
                 padding: const EdgeInsets.all(24),
-                children: const [
-                  EmptyState(title: 'No tracks yet', subtitle: 'Tracks will appear here as they are published. Check back soon.', icon: Icons.school_rounded),
+                children: [
+                  EmptyState(title: l10n.learningNoTracksTitle, subtitle: l10n.learningTracksBody, icon: Icons.school_rounded),
                 ],
               );
             }
@@ -124,19 +128,19 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
                             if (t.syllabusNodesCount != null) ...[
                               const Icon(Icons.account_tree_rounded, size: 14, color: Colors.grey),
                               const SizedBox(width: 4),
-                              Text('${t.syllabusNodesCount} nodes', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text(l10n.learningNodesCount(t.syllabusNodesCount ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                               const SizedBox(width: 12),
                             ],
                             if (t.goalsCount != null) ...[
                               const Icon(Icons.flag_rounded, size: 14, color: Colors.grey),
                               const SizedBox(width: 4),
-                              Text('${t.goalsCount} goals', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text(l10n.learningGoalsCount(t.goalsCount ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                             ],
                             const Spacer(),
                             FilledButton.tonalIcon(
                               onPressed: creating || ctrlState.isCreatingGoal ? null : () => _createGoal(t.id),
                               icon: creating ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.add_rounded, size: 16),
-                              label: Text(creating ? 'Creating…' : 'Create goal', style: const TextStyle(fontSize: 12)),
+                              label: Text(creating ? l10n.learningCreating : l10n.learningCreateGoal, style: const TextStyle(fontSize: 12)),
                             ),
                           ],
                         ),

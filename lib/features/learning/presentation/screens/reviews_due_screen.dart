@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +23,7 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
   final Set<int> _gradingIds = {};
 
   Future<void> _grade(int reviewId, String outcome) async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _gradingIds.add(reviewId));
     final res = await ref.read(learningControllerProvider.notifier).gradeReview(reviewId, outcome);
     if (!mounted) return;
@@ -29,19 +32,20 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
     if (err != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
     } else if (res != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Graded as $outcome — next due ${res.dueAt.toLocal().toIso8601String().split('T').first}'), backgroundColor: AppColors.correctGreen));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.learningGradedNextDue(outcome, res.dueAt.toLocal().toIso8601String().split('T').first)), backgroundColor: AppColors.correctGreen));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final reviewsAsync = ref.watch(reviewsDueProvider);
     final ctrl = ref.watch(learningControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reviews Due'),
+        title: Text(l10n.learningReviewsDueTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => ref.invalidate(reviewsDueProvider)),
         ],
@@ -57,7 +61,7 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
               return ListView(
                 padding: const EdgeInsets.all(24),
                 children: [
-                  const EmptyState(title: 'No reviews due', subtitle: 'You are all caught up! FSRS will schedule the next reviews after you master new atoms.', icon: Icons.check_circle_rounded),
+                  EmptyState(title: l10n.learningNoReviewsDue, subtitle: l10n.learningAllCaughtUp, icon: Icons.check_circle_rounded),
                   if (ctrl.gradeError != null) ...[
                     const SizedBox(height: 12),
                     Container(
@@ -94,14 +98,14 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                             Expanded(
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 Text(r.knowledgeAtom?.title ?? 'Knowledge Atom #${r.knowledgeAtomId}', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                                Text('Review #${r.id} • atom ${r.knowledgeAtomId} • ${r.state ?? 'learning'}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                Text(l10n.learningReviewMeta(r.id, r.knowledgeAtomId, r.state ?? 'learning'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                               ]),
                             ),
                             if (r.intervalIndex != null)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(8)),
-                                child: Text('I${r.intervalIndex}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                                child: Text(l10n.learningInterval(r.intervalIndex ?? 0), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
                               ),
                           ],
                         ),
@@ -113,13 +117,13 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                         Row(children: [
                           const Icon(Icons.event_rounded, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
-                          Text('Due ${r.dueAt.toLocal().toIso8601String().split('T').first}', style: TextStyle(fontSize: 11, color: r.isOverdue ? AppColors.wrongRed : Colors.grey, fontWeight: r.isOverdue ? FontWeight.bold : FontWeight.normal)),
+                          Text(l10n.learningDueDate(r.dueAt.toLocal().toIso8601String().split('T').first), style: TextStyle(fontSize: 11, color: r.isOverdue ? AppColors.wrongRed : Colors.grey, fontWeight: r.isOverdue ? FontWeight.bold : FontWeight.normal)),
                           const Spacer(),
                           if (r.lapses != null && r.lapses! > 0)
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                              child: Text('${r.lapses} lapses', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.wrongRed)),
+                              child: Text(l10n.learningLapses(r.lapses ?? 0), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.wrongRed)),
                             ),
                         ]),
                         const SizedBox(height: 12),
@@ -128,17 +132,17 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                         else
                           Row(
                             children: [
-                              _GradeButton(label: 'Again', color: AppColors.wrongRed, onTap: () => _grade(r.id, 'again')),
+                              _GradeButton(label: l10n.learningGradeAgain, color: AppColors.wrongRed, onTap: () => _grade(r.id, 'again')),
                               const SizedBox(width: 6),
-                              _GradeButton(label: 'Hard', color: AppColors.streakOrange, onTap: () => _grade(r.id, 'hard')),
+                              _GradeButton(label: l10n.learningGradeHard, color: AppColors.streakOrange, onTap: () => _grade(r.id, 'hard')),
                               const SizedBox(width: 6),
-                              _GradeButton(label: 'Good', color: AppColors.correctGreen, onTap: () => _grade(r.id, 'good')),
+                              _GradeButton(label: l10n.learningGradeGood, color: AppColors.correctGreen, onTap: () => _grade(r.id, 'good')),
                               const SizedBox(width: 6),
-                              _GradeButton(label: 'Easy', color: AppColors.brand, onTap: () => _grade(r.id, 'easy')),
+                              _GradeButton(label: l10n.learningGradeEasy, color: AppColors.brand, onTap: () => _grade(r.id, 'easy')),
                             ],
                           ),
                         const SizedBox(height: 6),
-                        const Text('Grading is recorded safely, and your next review date is worked out for you. Double-tapping cannot lose your progress.', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        Text(l10n.learningGradingNote, style: TextStyle(fontSize: 10, color: Colors.grey)),
                       ],
                     ),
                   ),

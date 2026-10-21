@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../support/localized_app.dart';
+
 class _MockDio extends Mock implements Dio {}
 
 Response<Map<String, dynamic>> ok(Map<String, dynamic>? data) =>
@@ -25,7 +27,7 @@ void main() {
 
   Widget host() => ProviderScope(
         overrides: [eiceRemoteProvider.overrideWithValue(EiceRemoteDataSource(dio))],
-        child: const MaterialApp(home: EiceScreen()),
+        child: localizedApp(child: const EiceScreen()),
       );
 
   // The screen is a ListView of four cards; the default 800x600 test surface

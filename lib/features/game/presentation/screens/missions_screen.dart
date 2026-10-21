@@ -9,6 +9,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../data/models/mission_dto.dart';
 import '../../game_providers.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Missions — `GET /api/v1/quiz/game/missions/dashboard`.
 ///
@@ -76,15 +77,16 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final missionsAsync = ref.watch(gameMissionsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Missions'),
+        title: Text(l10n.gameMissionsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Refresh',
+            tooltip: l10n.streakRefresh,
             onPressed: () => ref.invalidate(gameMissionsProvider),
           ),
         ],
@@ -92,16 +94,16 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
       body: missionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
-          title: 'Could not load missions',
+          title: l10n.gameMissionsFailed,
           message: '$e',
           onRetry: () => ref.invalidate(gameMissionsProvider),
         ),
         data: (missions) {
           if (missions.isEmpty) {
-            return const Center(
+            return Center(
               child: EmptyState(
-                title: 'No missions yet',
-                subtitle: 'The server has not published any missions for you.',
+                title: l10n.gameNoMissions,
+                subtitle: l10n.gameNoMissionsBody,
                 icon: Icons.flag_outlined,
               ),
             );
@@ -127,19 +129,19 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          '${claimable.length} mission${claimable.length == 1 ? '' : 's'} ready to claim',
+                          l10n.gameMissionsReady(claimable.length),
                           style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${claimable.length} reward${claimable.length == 1 ? '' : 's'} waiting',
+                          l10n.gameRewardsWaiting(claimable.length),
                           style: AppTypography.bodySmall.copyWith(
                             color: AppColors.textSecondaryLight,
                           ),
                         ),
                         const SizedBox(height: 10),
                         ChunkyButton(
-                          label: 'Claim all',
+                          label: l10n.gameClaimAll,
                           icon: Icons.redeem_rounded,
                           loading: _bulkClaiming,
                           onPressed: _bulkClaiming ? null : _claimAll,
@@ -186,6 +188,7 @@ class _MissionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final claimed = mission.claimed;
     final claimable = mission.isClaimable;
     final accent = claimed
@@ -263,7 +266,7 @@ class _MissionCard extends StatelessWidget {
           if (claimable) ...[
             const SizedBox(height: 12),
             ChunkyButton(
-              label: 'Claim ${mission.rewardCoins} coins',
+              label: l10n.gameClaimCoins(mission.rewardCoins),
               icon: Icons.redeem_rounded,
               size: ChunkySize.sm,
               loading: busy,
@@ -272,7 +275,7 @@ class _MissionCard extends StatelessWidget {
           ] else if (claimed) ...[
             const SizedBox(height: 8),
             Text(
-              'Claimed',
+              l10n.gameClaimed,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.correctGreen,
                 fontWeight: FontWeight.w700,

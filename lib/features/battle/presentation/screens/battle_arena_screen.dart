@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/battle.dart';
 import '../controllers/battle_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Battle Arena — real-time 1v1 quiz.
 ///
@@ -16,12 +17,13 @@ class BattleArenaScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(battleControllerProvider);
     final ctrl = ref.read(battleControllerProvider.notifier);
 
     if (state.match == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Battle Arena')),
+        appBar: AppBar(title: Text(l10n.battleArena)),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -30,12 +32,12 @@ class BattleArenaScreen extends ConsumerWidget {
               children: [
                 const Icon(Icons.sports_kabaddi_rounded, size: 56, color: AppColors.brand),
                 const SizedBox(height: 12),
-                const Text('No active match', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(l10n.battleNoActiveMatch, style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 FilledButton.icon(
                   onPressed: () => context.go('/battle/matchmaking'),
                   icon: const Icon(Icons.search_rounded),
-                  label: const Text('Find a Match'),
+                  label: Text(l10n.battleFindMatch),
                 ),
               ],
             ),
@@ -51,7 +53,7 @@ class BattleArenaScreen extends ConsumerWidget {
     // used to crash the screen during build.
     if (m.questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Battle Arena')),
+        appBar: AppBar(title: Text(l10n.battleArena)),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -61,8 +63,8 @@ class BattleArenaScreen extends ConsumerWidget {
                 const Icon(Icons.error_outline_rounded,
                     size: 48, color: AppColors.wrongRed),
                 const SizedBox(height: 12),
-                const Text(
-                  'This match has no questions',
+                Text(
+                  l10n.battleNoQuestions,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -77,7 +79,7 @@ class BattleArenaScreen extends ConsumerWidget {
                 FilledButton.icon(
                   onPressed: () => context.go('/battle/matchmaking'),
                   icon: const Icon(Icons.search_rounded),
-                  label: const Text('Find a Match'),
+                  label: Text(l10n.battleFindMatch),
                 ),
               ],
             ),
@@ -102,7 +104,7 @@ class BattleArenaScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Battle · Q${index + 1}/${m.questions.length}'),
+        title: Text(l10n.battleQuestionCounter(index + 1, m.questions.length)),
       ),
       body: Column(
         children: [
@@ -115,11 +117,11 @@ class BattleArenaScreen extends ConsumerWidget {
                 color: AppColors.streakOrange.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Row(
+              child: Row(
                 children: [
                   Icon(Icons.bolt_rounded, color: AppColors.streakOrange, size: 14),
                   SizedBox(width: 4),
-                  Text('Opponent answered!', style: TextStyle(color: AppColors.streakOrange, fontWeight: FontWeight.bold, fontSize: 12)),
+                  Text(l10n.battleOpponentAnswered, style: TextStyle(color: AppColors.streakOrange, fontWeight: FontWeight.bold, fontSize: 12)),
                 ],
               ),
             ),
@@ -172,6 +174,7 @@ class _ScoreHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: const BoxDecoration(
@@ -198,7 +201,7 @@ class _ScoreHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text('${secondsLeft}s · ${total - secondsLeft}/$total', style: const TextStyle(fontSize: 11, color: AppColors.textTertiaryDark)),
+          Text(l10n.battleTimer(secondsLeft, total - secondsLeft, total), style: const TextStyle(fontSize: 11, color: AppColors.textTertiaryDark)),
         ],
       ),
     );
@@ -211,6 +214,7 @@ class _ScoreColumn extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         CircleAvatar(
@@ -220,7 +224,7 @@ class _ScoreColumn extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(player.displayName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-        Text('${player.score} pts', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13)),
+        Text(l10n.commonPoints(player.score), style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13)),
       ],
     );
   }

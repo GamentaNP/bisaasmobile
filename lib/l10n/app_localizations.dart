@@ -1720,12 +1720,6 @@ abstract class AppLocalizations {
   /// **'coach • triage • sprint'**
   String get profileEiceSub;
 
-  /// No description provided for @profilePsc.
-  ///
-  /// In en, this message translates to:
-  /// **'PSC / Loksewa'**
-  String get profilePsc;
-
   /// No description provided for @profilePscSub.
   ///
   /// In en, this message translates to:
@@ -1780,23 +1774,11 @@ abstract class AppLocalizations {
   /// **'weak areas • readiness • sprint'**
   String get profileCoachingSub;
 
-  /// No description provided for @profileSearch.
-  ///
-  /// In en, this message translates to:
-  /// **'Search'**
-  String get profileSearch;
-
   /// No description provided for @profileSearchSub.
   ///
   /// In en, this message translates to:
   /// **'find any question'**
   String get profileSearchSub;
-
-  /// No description provided for @profileNotifications.
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications'**
-  String get profileNotifications;
 
   /// No description provided for @profileNotificationsSub.
   ///
@@ -3721,6 +3703,2363 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Practice is untimed and carries no score, XP, coins or streak effect.'**
   String get practiceNoEffectNote;
+
+  /// No description provided for @liveEventNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Live event not found'**
+  String get liveEventNotFound;
+
+  /// No description provided for @liveEventParticipant.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant #{number} • {status} • Score {score}'**
+  String liveEventParticipant(Object number, Object status, Object score);
+
+  /// No description provided for @liveEventSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot'**
+  String get liveEventSnapshot;
+
+  /// No description provided for @liveEventNoSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'No snapshot yet — register and check in to load current question.'**
+  String get liveEventNoSnapshot;
+
+  /// No description provided for @liveEventAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer'**
+  String get liveEventAnswer;
+
+  /// No description provided for @liveEventQIndex.
+  ///
+  /// In en, this message translates to:
+  /// **'Q index'**
+  String get liveEventQIndex;
+
+  /// No description provided for @liveEventSubmitAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Answer'**
+  String get liveEventSubmitAnswer;
+
+  /// No description provided for @liveEventNoLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'No leaderboard yet.'**
+  String get liveEventNoLeaderboard;
+
+  /// No description provided for @liveEventRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered!'**
+  String get liveEventRegistered;
+
+  /// No description provided for @liveEventRegisterFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Register failed'**
+  String get liveEventRegisterFailed;
+
+  /// No description provided for @liveEventUnregistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Unregistered'**
+  String get liveEventUnregistered;
+
+  /// No description provided for @liveEventUnregisterFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unregister failed'**
+  String get liveEventUnregisterFailed;
+
+  /// No description provided for @liveEventCheckedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked in!'**
+  String get liveEventCheckedIn;
+
+  /// No description provided for @liveEventCheckInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in failed'**
+  String get liveEventCheckInFailed;
+
+  /// No description provided for @liveEventEnterAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an answer'**
+  String get liveEventEnterAnswer;
+
+  /// No description provided for @liveEventAnswerRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer recorded — score {score}'**
+  String liveEventAnswerRecorded(Object score);
+
+  /// No description provided for @liveEventQuestionsEach.
+  ///
+  /// In en, this message translates to:
+  /// **'{questions} Qs • {seconds}s each'**
+  String liveEventQuestionsEach(Object questions, Object seconds);
+
+  /// No description provided for @liveEventActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active'**
+  String liveEventActive(Object count);
+
+  /// No description provided for @liveEventWaitlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waitlisted'**
+  String liveEventWaitlisted(Object count);
+
+  /// No description provided for @liveEventStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts {date} {hour}:{minute}'**
+  String liveEventStarts(Object date, Object hour, Object minute);
+
+  /// No description provided for @liveEventEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends {date}'**
+  String liveEventEnds(Object date);
+
+  /// No description provided for @liveEventEntryFee.
+  ///
+  /// In en, this message translates to:
+  /// **'{coins} entry'**
+  String liveEventEntryFee(Object coins);
+
+  /// No description provided for @liveEventPrize.
+  ///
+  /// In en, this message translates to:
+  /// **'{coins} prize'**
+  String liveEventPrize(Object coins);
+
+  /// No description provided for @liveEventLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get liveEventLeave;
+
+  /// No description provided for @liveEventCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get liveEventCheckIn;
+
+  /// No description provided for @liveEventScoreMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score} • {correct}/{total}'**
+  String liveEventScoreMeta(Object score, Object correct, Object total);
+
+  /// No description provided for @liveEventQuestionPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Q{number} • {points} pts'**
+  String liveEventQuestionPoints(Object number, Object points);
+
+  /// No description provided for @liveEventRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining: {seconds}s • Locks at {locks}'**
+  String liveEventRemaining(Object seconds, Object locks);
+
+  /// No description provided for @liveEventWaitingForHost.
+  ///
+  /// In en, this message translates to:
+  /// **'No current question — waiting for host.'**
+  String get liveEventWaitingForHost;
+
+  /// No description provided for @liveEventRawKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw keys: {keys}'**
+  String liveEventRawKeys(Object keys);
+
+  /// No description provided for @coachingTutorChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor chat'**
+  String get coachingTutorChat;
+
+  /// No description provided for @coachingStudyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Study plan'**
+  String get coachingStudyPlan;
+
+  /// No description provided for @coachingTutorOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor onboarding'**
+  String get coachingTutorOnboarding;
+
+  /// No description provided for @coachingGoalIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal ID for readiness (e.g., psc-civil)'**
+  String get coachingGoalIdHint;
+
+  /// No description provided for @coachingLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Load'**
+  String get coachingLoad;
+
+  /// No description provided for @coachingNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No coaching data yet — complete onboarding or chat with tutor to seed.'**
+  String get coachingNoData;
+
+  /// No description provided for @coachingPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Some coaching surfaces are temporarily unavailable — showing available data.'**
+  String get coachingPartial;
+
+  /// No description provided for @coachingNoReadinessForGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness: no data for this goal yet.'**
+  String get coachingNoReadinessForGoal;
+
+  /// No description provided for @coachingAskTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask tutor'**
+  String get coachingAskTutor;
+
+  /// No description provided for @coachingOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding'**
+  String get coachingOnboarding;
+
+  /// No description provided for @coachingReadinessExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.'**
+  String get coachingReadinessExplained;
+
+  /// No description provided for @coachingReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness'**
+  String get coachingReadiness;
+
+  /// No description provided for @coachingFocusNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus next:'**
+  String get coachingFocusNext;
+
+  /// No description provided for @coachingNoReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'No readiness yet — attempt a few quizzes under this goal.'**
+  String get coachingNoReadiness;
+
+  /// No description provided for @coachingGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal {goal}'**
+  String coachingGoalLabel(Object goal);
+
+  /// No description provided for @coachingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'+ {count} more'**
+  String coachingMore(Object count);
+
+  /// No description provided for @coachingNoTasksToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks today'**
+  String get coachingNoTasksToday;
+
+  /// No description provided for @coachingConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence {confidence}%'**
+  String coachingConfidence(Object confidence);
+
+  /// No description provided for @coachingLearningTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning tracks'**
+  String get coachingLearningTracks;
+
+  /// No description provided for @coachingThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get coachingThisWeek;
+
+  /// No description provided for @coachingWeekTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{total} tasks • avg {average}'**
+  String coachingWeekTasks(Object done, Object total, Object average);
+
+  /// No description provided for @coachingNoRevisions.
+  ///
+  /// In en, this message translates to:
+  /// **'No revisions due'**
+  String get coachingNoRevisions;
+
+  /// No description provided for @coachingRevisionsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} revisions due'**
+  String coachingRevisionsDue(Object count);
+
+  /// No description provided for @socialInviteFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite friends'**
+  String get socialInviteFriends;
+
+  /// No description provided for @socialReferralUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral information is unavailable right now.'**
+  String get socialReferralUnavailable;
+
+  /// No description provided for @socialEarnCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn {coins} coins'**
+  String socialEarnCoins(Object coins);
+
+  /// No description provided for @socialNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get socialNo;
+
+  /// No description provided for @socialYourInviteCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite code'**
+  String get socialYourInviteCode;
+
+  /// No description provided for @socialShareInviteLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite link'**
+  String get socialShareInviteLink;
+
+  /// No description provided for @socialCopyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy code'**
+  String get socialCopyCode;
+
+  /// No description provided for @socialRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get socialRewards;
+
+  /// No description provided for @socialRewardPerSignup.
+  ///
+  /// In en, this message translates to:
+  /// **'You earn per friend who signs up'**
+  String get socialRewardPerSignup;
+
+  /// No description provided for @socialTheyEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'They earn when they sign up'**
+  String get socialTheyEarn;
+
+  /// No description provided for @socialBonusFirstQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus when they finish their first quiz'**
+  String get socialBonusFirstQuiz;
+
+  /// No description provided for @socialYourReferrals.
+  ///
+  /// In en, this message translates to:
+  /// **'Your referrals'**
+  String get socialYourReferrals;
+
+  /// No description provided for @socialInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'invited'**
+  String get socialInvited;
+
+  /// No description provided for @socialRewarded.
+  ///
+  /// In en, this message translates to:
+  /// **'rewarded'**
+  String get socialRewarded;
+
+  /// No description provided for @socialCoinsEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'coins earned'**
+  String get socialCoinsEarned;
+
+  /// No description provided for @socialNoReferralsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No one has used your code yet.'**
+  String get socialNoReferralsYet;
+
+  /// No description provided for @socialRewardPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward paid: {coins} coins'**
+  String socialRewardPaid(Object coins);
+
+  /// No description provided for @socialStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status: {status}'**
+  String socialStatus(Object status);
+
+  /// No description provided for @socialGotCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Got a code from a friend?'**
+  String get socialGotCode;
+
+  /// No description provided for @socialReferralCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral code'**
+  String get socialReferralCode;
+
+  /// No description provided for @socialApplyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply code'**
+  String get socialApplyCode;
+
+  /// No description provided for @socialShareSheetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the share sheet'**
+  String get socialShareSheetFailed;
+
+  /// No description provided for @socialCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get socialCodeCopied;
+
+  /// No description provided for @socialSharedChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared challenge'**
+  String get socialSharedChallenge;
+
+  /// No description provided for @socialSomeoneShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone shared a challenge with you'**
+  String get socialSomeoneShared;
+
+  /// No description provided for @socialSharedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared by {name}'**
+  String socialSharedBy(Object name);
+
+  /// No description provided for @socialLinkExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This link has expired.'**
+  String get socialLinkExpired;
+
+  /// No description provided for @socialNoPlayableChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'No playable challenge here'**
+  String get socialNoPlayableChallenge;
+
+  /// No description provided for @socialNotPlayable.
+  ///
+  /// In en, this message translates to:
+  /// **'This link does not offer a playable challenge. You can still browse the public catalogue.'**
+  String get socialNotPlayable;
+
+  /// No description provided for @socialPlayChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the challenge'**
+  String get socialPlayChallenge;
+
+  /// No description provided for @socialGuestNeverAwards.
+  ///
+  /// In en, this message translates to:
+  /// **'A guest challenge never awards coins, XP or streak. Create a free account to keep your progress.'**
+  String get socialGuestNeverAwards;
+
+  /// No description provided for @socialChallengeNoQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'This challenge has no questions'**
+  String get socialChallengeNoQuestions;
+
+  /// No description provided for @socialChallengeEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The server opened the attempt without sending any questions, so there is nothing to play.'**
+  String get socialChallengeEmpty;
+
+  /// No description provided for @socialQuestionOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current} of {total}'**
+  String socialQuestionOf(Object current, Object total);
+
+  /// No description provided for @socialCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct.'**
+  String get socialCorrect;
+
+  /// No description provided for @socialNotThisTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Not this time — the server has marked it.'**
+  String get socialNotThisTime;
+
+  /// No description provided for @socialSubmitAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit answer'**
+  String get socialSubmitAnswer;
+
+  /// No description provided for @socialFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get socialFinish;
+
+  /// No description provided for @socialNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get socialNext;
+
+  /// No description provided for @socialChallengeComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge complete'**
+  String get socialChallengeComplete;
+
+  /// No description provided for @socialYouScored.
+  ///
+  /// In en, this message translates to:
+  /// **'You scored {score}'**
+  String socialYouScored(Object score);
+
+  /// No description provided for @socialChallengeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{correct} correct • {wrong} wrong • {skipped} skipped • {questions} questions'**
+  String socialChallengeSummary(
+    Object correct,
+    Object wrong,
+    Object skipped,
+    Object questions,
+  );
+
+  /// No description provided for @socialGuestChallengeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A guest challenge never awards coins, XP or streak.'**
+  String get socialGuestChallengeNote;
+
+  /// No description provided for @socialNiceOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice one — that was {name}\'s challenge. A guest challenge never awards coins, XP or streak.'**
+  String socialNiceOne(Object name);
+
+  /// No description provided for @socialCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a free account'**
+  String get socialCreateAccount;
+
+  /// No description provided for @socialBrowseSamples.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse sample questions'**
+  String get socialBrowseSamples;
+
+  /// No description provided for @contestNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Contest not found'**
+  String get contestNotFound;
+
+  /// No description provided for @contestAttemptStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt #{number} started. Expires: {expires}'**
+  String contestAttemptStarted(Object number, Object expires);
+
+  /// No description provided for @contestNoLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'No leaderboard entries yet — be the first!'**
+  String get contestNoLeaderboard;
+
+  /// No description provided for @contestGeneratedMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated: {generated} • Refresh budget: {budget} • {mode}'**
+  String contestGeneratedMeta(Object generated, Object budget, Object mode);
+
+  /// No description provided for @contestRecap.
+  ///
+  /// In en, this message translates to:
+  /// **'Recap'**
+  String get contestRecap;
+
+  /// No description provided for @contestWinners.
+  ///
+  /// In en, this message translates to:
+  /// **'Winners'**
+  String get contestWinners;
+
+  /// No description provided for @contestRawStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw stats: {count} keys'**
+  String contestRawStats(Object count);
+
+  /// No description provided for @contestRecapPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Recap available after contest ends.'**
+  String get contestRecapPending;
+
+  /// No description provided for @contestJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined contest!'**
+  String get contestJoined;
+
+  /// No description provided for @contestJoinFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Join failed'**
+  String get contestJoinFailed;
+
+  /// No description provided for @contestLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left contest'**
+  String get contestLeft;
+
+  /// No description provided for @contestLeaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave failed'**
+  String get contestLeaveFailed;
+
+  /// No description provided for @contestRegisteredBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'REGISTERED'**
+  String get contestRegisteredBadge;
+
+  /// No description provided for @contestMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max {count}'**
+  String contestMax(Object count);
+
+  /// No description provided for @contestStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts {date}'**
+  String contestStarts(Object date);
+
+  /// No description provided for @contestJoinFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Join (Free)'**
+  String get contestJoinFree;
+
+  /// No description provided for @contestJoinCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Join ({coins} coins)'**
+  String contestJoinCoins(Object coins);
+
+  /// No description provided for @contestEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Contest'**
+  String get contestEnter;
+
+  /// No description provided for @leaderboardGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Global'**
+  String get leaderboardGlobal;
+
+  /// No description provided for @leaderboardFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get leaderboardFriends;
+
+  /// No description provided for @leaderboardLeague.
+  ///
+  /// In en, this message translates to:
+  /// **'League'**
+  String get leaderboardLeague;
+
+  /// No description provided for @leaderboardDonors.
+  ///
+  /// In en, this message translates to:
+  /// **'Donors'**
+  String get leaderboardDonors;
+
+  /// No description provided for @leaderboardNoRank.
+  ///
+  /// In en, this message translates to:
+  /// **'No rank yet — complete a quiz to enter the leaderboard.'**
+  String get leaderboardNoRank;
+
+  /// No description provided for @leaderboardMyRank.
+  ///
+  /// In en, this message translates to:
+  /// **'MY RANK'**
+  String get leaderboardMyRank;
+
+  /// No description provided for @leaderboardRankIn.
+  ///
+  /// In en, this message translates to:
+  /// **'#{rank} in {scope}'**
+  String leaderboardRankIn(Object rank, Object scope);
+
+  /// No description provided for @leaderboardUnrankedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Unranked in {scope}'**
+  String leaderboardUnrankedIn(Object scope);
+
+  /// No description provided for @leaderboardScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score: {score}'**
+  String leaderboardScore(Object score);
+
+  /// No description provided for @leaderboardNoEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries yet'**
+  String get leaderboardNoEntries;
+
+  /// No description provided for @leaderboardBeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to claim the top spot!'**
+  String get leaderboardBeFirst;
+
+  /// No description provided for @leaderboardFriendsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add friends to compete — server segments friends automatically.'**
+  String get leaderboardFriendsHint;
+
+  /// No description provided for @leaderboardLeagueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'League is seasonal — join via events/contests to qualify.'**
+  String get leaderboardLeagueHint;
+
+  /// No description provided for @leaderboardNoEntriesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries'**
+  String get leaderboardNoEntriesShort;
+
+  /// No description provided for @leaderboardCompeteToAppear.
+  ///
+  /// In en, this message translates to:
+  /// **'Compete to appear here.'**
+  String get leaderboardCompeteToAppear;
+
+  /// No description provided for @leaderboardNoDonors.
+  ///
+  /// In en, this message translates to:
+  /// **'No donors yet'**
+  String get leaderboardNoDonors;
+
+  /// No description provided for @leaderboardSupportToAppear.
+  ///
+  /// In en, this message translates to:
+  /// **'Support the platform to appear here.'**
+  String get leaderboardSupportToAppear;
+
+  /// No description provided for @leaderboardScoreAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score} • {attempts} attempts'**
+  String leaderboardScoreAttempts(Object score, Object attempts);
+
+  /// No description provided for @learningGoalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal #{number}'**
+  String learningGoalLabel(Object number);
+
+  /// No description provided for @learningToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get learningToday;
+
+  /// No description provided for @learningGoalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal ID'**
+  String get learningGoalId;
+
+  /// No description provided for @learningTrackId.
+  ///
+  /// In en, this message translates to:
+  /// **'Track ID'**
+  String get learningTrackId;
+
+  /// No description provided for @learningTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date'**
+  String get learningTargetDate;
+
+  /// No description provided for @learningDailyMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily minutes'**
+  String get learningDailyMinutes;
+
+  /// No description provided for @learningIntensity.
+  ///
+  /// In en, this message translates to:
+  /// **'Intensity'**
+  String get learningIntensity;
+
+  /// No description provided for @learningPlacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Placement'**
+  String get learningPlacement;
+
+  /// No description provided for @learningMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% mastery across {topics} topics (MasteryService::computeReadiness)'**
+  String learningMastery(Object percent, Object topics);
+
+  /// No description provided for @learningReadinessValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness: {value}'**
+  String learningReadinessValue(Object value);
+
+  /// No description provided for @learningDeleteGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete goal?'**
+  String get learningDeleteGoalTitle;
+
+  /// No description provided for @learningDeleteGoalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete the goal. Daily plans remain but no new plans will be built.'**
+  String get learningDeleteGoalBody;
+
+  /// No description provided for @learningGoalDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal deleted'**
+  String get learningGoalDeleted;
+
+  /// No description provided for @learningDeleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting…'**
+  String get learningDeleting;
+
+  /// No description provided for @learningDeleteGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete goal'**
+  String get learningDeleteGoal;
+
+  /// No description provided for @learningOpenTodayPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Today plan'**
+  String get learningOpenTodayPlan;
+
+  /// No description provided for @learningBackToTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to tracks'**
+  String get learningBackToTracks;
+
+  /// No description provided for @learningTodaysPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Plan'**
+  String get learningTodaysPlan;
+
+  /// No description provided for @learningNoActiveGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'No active goal'**
+  String get learningNoActiveGoal;
+
+  /// No description provided for @learningNoActiveGoalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.'**
+  String get learningNoActiveGoalBody;
+
+  /// No description provided for @learningBrowseTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse tracks'**
+  String get learningBrowseTracks;
+
+  /// No description provided for @learningPlanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan #{number}'**
+  String learningPlanLabel(Object number);
+
+  /// No description provided for @learningPlanGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'{meta} • Goal #{number}'**
+  String learningPlanGoal(Object meta, Object number);
+
+  /// No description provided for @learningCompletedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{total} completed'**
+  String learningCompletedCount(Object done, Object total);
+
+  /// No description provided for @learningMinBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min budget'**
+  String learningMinBudget(Object minutes);
+
+  /// No description provided for @learningNoTasksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back tomorrow — daily autopilot builds Review-first + new topics.'**
+  String get learningNoTasksBody;
+
+  /// No description provided for @learningMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String learningMinutes(Object minutes);
+
+  /// No description provided for @learningItemCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Item completed'**
+  String get learningItemCompleted;
+
+  /// No description provided for @learningReviewsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews due'**
+  String get learningReviewsDue;
+
+  /// No description provided for @learningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get learningTitle;
+
+  /// No description provided for @learningReviewsCountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your reviews due count'**
+  String get learningReviewsCountFailed;
+
+  /// No description provided for @learningTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get learningTracks;
+
+  /// No description provided for @learningNoTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracks yet — they are published by our team as they finish'**
+  String get learningNoTracks;
+
+  /// No description provided for @learningAskAiTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI Tutor'**
+  String get learningAskAiTutor;
+
+  /// No description provided for @learningStreamingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers come back a little at a time rather than all at once, so you can start reading straight away.'**
+  String get learningStreamingNote;
+
+  /// No description provided for @learningNoTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks — check back tomorrow'**
+  String get learningNoTasks;
+
+  /// No description provided for @learningReviewsDueSrs.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews due (SRS)'**
+  String learningReviewsDueSrs(Object count);
+
+  /// No description provided for @learningReviewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get learningReviewAction;
+
+  /// No description provided for @learningGoalCreatedForTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal created for track #{number}'**
+  String learningGoalCreatedForTrack(Object number);
+
+  /// No description provided for @learningTracksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Tracks'**
+  String get learningTracksTitle;
+
+  /// No description provided for @learningTodayPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Today plan'**
+  String get learningTodayPlan;
+
+  /// No description provided for @learningNodesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} nodes'**
+  String learningNodesCount(Object count);
+
+  /// No description provided for @learningGoalsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} goals'**
+  String learningGoalsCount(Object count);
+
+  /// No description provided for @learningCreating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating…'**
+  String get learningCreating;
+
+  /// No description provided for @learningCreateGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Create goal'**
+  String get learningCreateGoal;
+
+  /// No description provided for @learningReviewsDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews Due'**
+  String get learningReviewsDueTitle;
+
+  /// No description provided for @learningAllCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'You are all caught up! FSRS will schedule the next reviews after you master new atoms.'**
+  String get learningAllCaughtUp;
+
+  /// No description provided for @learningReviewMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Review #{number} • atom {atom} • {state}'**
+  String learningReviewMeta(Object number, Object atom, Object state);
+
+  /// No description provided for @learningInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'I{index}'**
+  String learningInterval(Object index);
+
+  /// No description provided for @learningDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String learningDueDate(Object date);
+
+  /// No description provided for @learningLapses.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} lapses'**
+  String learningLapses(Object count);
+
+  /// No description provided for @learningGradeAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Again'**
+  String get learningGradeAgain;
+
+  /// No description provided for @learningGradeHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get learningGradeHard;
+
+  /// No description provided for @learningGradeGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get learningGradeGood;
+
+  /// No description provided for @learningGradeEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get learningGradeEasy;
+
+  /// No description provided for @learningGradingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading is recorded safely, and your next review date is worked out for you. Double-tapping cannot lose your progress.'**
+  String get learningGradingNote;
+
+  /// No description provided for @syllabusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Syllabus'**
+  String get syllabusTitle;
+
+  /// No description provided for @syllabusNoNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'This syllabus has no published nodes yet.'**
+  String get syllabusNoNodes;
+
+  /// No description provided for @syllabusExaminable.
+  ///
+  /// In en, this message translates to:
+  /// **'examinable'**
+  String get syllabusExaminable;
+
+  /// No description provided for @syllabusQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'questions'**
+  String get syllabusQuestions;
+
+  /// No description provided for @syllabusPaperBlueprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paper blueprint'**
+  String get syllabusPaperBlueprint;
+
+  /// No description provided for @syllabusPapersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} papers'**
+  String syllabusPapersCount(Object count);
+
+  /// No description provided for @syllabusMarksQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'{marks} marks · {questions} questions'**
+  String syllabusMarksQuestions(Object marks, Object questions);
+
+  /// No description provided for @syllabusNegativeMarking.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative marking: {mode}'**
+  String syllabusNegativeMarking(Object mode);
+
+  /// No description provided for @syllabusMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'{marks} marks'**
+  String syllabusMarks(Object marks);
+
+  /// No description provided for @syllabusBlueprintMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The section marks do not add up to the paper total. Treat this blueprint as unverified.'**
+  String get syllabusBlueprintMismatch;
+
+  /// No description provided for @syllabusCoversTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Covers {count} syllabus topics'**
+  String syllabusCoversTopics(Object count);
+
+  /// No description provided for @syllabusSearchTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Search topics'**
+  String get syllabusSearchTopics;
+
+  /// No description provided for @syllabusNoPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'No syllabus has been published yet.'**
+  String get syllabusNoPublished;
+
+  /// No description provided for @syllabusTopicsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} topics'**
+  String syllabusTopicsCount(Object count);
+
+  /// No description provided for @syllabusNotCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not current'**
+  String get syllabusNotCurrent;
+
+  /// No description provided for @booksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get booksTitle;
+
+  /// No description provided for @booksSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search books'**
+  String get booksSearch;
+
+  /// No description provided for @booksNonePublished.
+  ///
+  /// In en, this message translates to:
+  /// **'No books have been published yet.'**
+  String get booksNonePublished;
+
+  /// No description provided for @booksNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No books match \"{query}\".'**
+  String booksNoMatch(Object query);
+
+  /// No description provided for @booksProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% · page {page}'**
+  String booksProgress(Object percent, Object page);
+
+  /// No description provided for @booksChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get booksChapters;
+
+  /// No description provided for @booksNoChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters published yet.'**
+  String get booksNoChapters;
+
+  /// No description provided for @booksChapterTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter test'**
+  String get booksChapterTest;
+
+  /// No description provided for @booksReadChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the chapter'**
+  String get booksReadChapter;
+
+  /// No description provided for @booksTakeTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Take test ({count})'**
+  String booksTakeTest(Object count);
+
+  /// No description provided for @booksNoTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'This chapter has no topics to open yet.'**
+  String get booksNoTopics;
+
+  /// No description provided for @downloadsClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear offline content?'**
+  String get downloadsClearTitle;
+
+  /// No description provided for @downloadsClearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes all cached questions. You can re-download anytime while online.'**
+  String get downloadsClearBody;
+
+  /// No description provided for @downloadsClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get downloadsClear;
+
+  /// No description provided for @downloadsStorageUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read offline storage'**
+  String get downloadsStorageUnreadable;
+
+  /// No description provided for @downloadsNothingReported.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is reported rather than showing a false zero.'**
+  String get downloadsNothingReported;
+
+  /// No description provided for @downloadsCachedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions cached'**
+  String downloadsCachedQuestions(Object count);
+
+  /// No description provided for @downloadsCacheSize.
+  ///
+  /// In en, this message translates to:
+  /// **'{subjects} subjects · ~{size} KB'**
+  String downloadsCacheSize(Object subjects, Object size);
+
+  /// No description provided for @downloadsLastCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Last cached'**
+  String get downloadsLastCached;
+
+  /// No description provided for @downloadsAutoDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-download'**
+  String get downloadsAutoDownload;
+
+  /// No description provided for @downloadsPrefetchNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefetch daily pack now'**
+  String get downloadsPrefetchNow;
+
+  /// No description provided for @downloadsClearAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear offline content'**
+  String get downloadsClearAction;
+
+  /// No description provided for @rewardsSpinWheel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin the wheel'**
+  String get rewardsSpinWheel;
+
+  /// No description provided for @rewardsCheckInUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in unavailable'**
+  String get rewardsCheckInUnavailable;
+
+  /// No description provided for @rewardsDailyCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily check-in'**
+  String get rewardsDailyCheckIn;
+
+  /// No description provided for @rewardsDayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'day {count}'**
+  String rewardsDayStreak(Object count);
+
+  /// No description provided for @rewardsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get rewardsToday;
+
+  /// No description provided for @rewardsTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'tomorrow'**
+  String get rewardsTomorrow;
+
+  /// No description provided for @rewardsClaimedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed today'**
+  String get rewardsClaimedToday;
+
+  /// No description provided for @rewardsCheckInFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in for {coins} coins'**
+  String rewardsCheckInFor(Object coins);
+
+  /// No description provided for @rewardsSpinUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin wheel unavailable'**
+  String get rewardsSpinUnavailable;
+
+  /// No description provided for @rewardsSpin.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin'**
+  String get rewardsSpin;
+
+  /// No description provided for @rewardsComeBackLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back later'**
+  String get rewardsComeBackLater;
+
+  /// No description provided for @rewardsNextSpin.
+  ///
+  /// In en, this message translates to:
+  /// **'Next spin {date}'**
+  String rewardsNextSpin(Object date);
+
+  /// No description provided for @gameLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {number}'**
+  String gameLevelLabel(Object number);
+
+  /// No description provided for @gameBossLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Boss level'**
+  String get gameBossLevel;
+
+  /// No description provided for @gameChapterLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter level'**
+  String get gameChapterLevel;
+
+  /// No description provided for @gameSecondsPerQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s per question'**
+  String gameSecondsPerQuestion(Object seconds);
+
+  /// No description provided for @gameBestScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Best score'**
+  String get gameBestScore;
+
+  /// No description provided for @gameBestAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Best accuracy'**
+  String get gameBestAccuracy;
+
+  /// No description provided for @gameBestTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Best time'**
+  String get gameBestTime;
+
+  /// No description provided for @gameStartLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start level'**
+  String get gameStartLevel;
+
+  /// No description provided for @gameNotPlayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not playable yet'**
+  String get gameNotPlayable;
+
+  /// No description provided for @gameWorldNoCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'This world has no quiz course linked to it yet, so there is nothing to play. Ask an admin to set the world\'s course.'**
+  String get gameWorldNoCourse;
+
+  /// No description provided for @gameWorldsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worlds'**
+  String get gameWorldsTitle;
+
+  /// No description provided for @gameWorldsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load worlds'**
+  String get gameWorldsLoadFailed;
+
+  /// No description provided for @gameNoWorlds.
+  ///
+  /// In en, this message translates to:
+  /// **'No worlds yet'**
+  String get gameNoWorlds;
+
+  /// No description provided for @gameNoWorldsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The server has not published any game worlds.'**
+  String get gameNoWorldsBody;
+
+  /// No description provided for @gameNeedsSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires a subscription plan.'**
+  String get gameNeedsSubscription;
+
+  /// No description provided for @gameWorldNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'World not found'**
+  String get gameWorldNotFound;
+
+  /// No description provided for @gameStarsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{earned} / {total} stars'**
+  String gameStarsProgress(Object earned, Object total);
+
+  /// No description provided for @gameWorldMapFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load world map'**
+  String get gameWorldMapFailed;
+
+  /// No description provided for @gameMissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Missions'**
+  String get gameMissionsTitle;
+
+  /// No description provided for @gameMissionsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load missions'**
+  String get gameMissionsFailed;
+
+  /// No description provided for @gameNoMissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No missions yet'**
+  String get gameNoMissions;
+
+  /// No description provided for @gameNoMissionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The server has not published any missions for you.'**
+  String get gameNoMissionsBody;
+
+  /// No description provided for @gameClaimAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim all'**
+  String get gameClaimAll;
+
+  /// No description provided for @gameClaimCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim {coins} coins'**
+  String gameClaimCoins(Object coins);
+
+  /// No description provided for @gameClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed'**
+  String get gameClaimed;
+
+  /// No description provided for @numericalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Numerical'**
+  String get numericalsTitle;
+
+  /// No description provided for @numericalsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New numbers'**
+  String get numericalsNew;
+
+  /// No description provided for @numericalsCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check answer'**
+  String get numericalsCheck;
+
+  /// No description provided for @numericalsShowSolution.
+  ///
+  /// In en, this message translates to:
+  /// **'Show worked solution'**
+  String get numericalsShowSolution;
+
+  /// No description provided for @numericalsCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct{reason}'**
+  String numericalsCorrect(Object reason);
+
+  /// No description provided for @numericalsNotCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Not correct. Try again, or open the worked solution.'**
+  String get numericalsNotCorrect;
+
+  /// No description provided for @numericalsFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'The server has flagged this problem for review.'**
+  String get numericalsFlagged;
+
+  /// No description provided for @numericalsWorkedSolution.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked solution'**
+  String get numericalsWorkedSolution;
+
+  /// No description provided for @numericalsComputedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Computed by: {source}'**
+  String numericalsComputedBy(Object source);
+
+  /// No description provided for @numericalsFlaggedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged by the server for review — treat this answer with care.'**
+  String get numericalsFlaggedWarning;
+
+  /// No description provided for @numericalsOpenInCalculator.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in calculator'**
+  String get numericalsOpenInCalculator;
+
+  /// No description provided for @storeEquipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipped!'**
+  String get storeEquipped;
+
+  /// No description provided for @storeEquipFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not equip that item.'**
+  String get storeEquipFailed;
+
+  /// No description provided for @storeWardrobeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wardrobe'**
+  String get storeWardrobeTitle;
+
+  /// No description provided for @storeEquippedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipped'**
+  String get storeEquippedLabel;
+
+  /// No description provided for @storeNothingEquipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing equipped'**
+  String get storeNothingEquipped;
+
+  /// No description provided for @storeNothingEquippedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy assets in the Premium Store, then equip them here.'**
+  String get storeNothingEquippedBody;
+
+  /// No description provided for @storeAvailableToEquip.
+  ///
+  /// In en, this message translates to:
+  /// **'Available to equip'**
+  String get storeAvailableToEquip;
+
+  /// No description provided for @storeEquipHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Equip to try it on. If you tap twice you are never equipped twice.'**
+  String get storeEquipHint;
+
+  /// No description provided for @storeNoAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'No assets yet — visit Premium Store.'**
+  String get storeNoAssets;
+
+  /// No description provided for @storeClearSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear {slot}'**
+  String storeClearSlot(Object slot);
+
+  /// No description provided for @storeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Store'**
+  String get storeTitle;
+
+  /// No description provided for @storeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get storeAll;
+
+  /// No description provided for @storeAssetsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} assets'**
+  String storeAssetsCount(Object count);
+
+  /// No description provided for @storeNoAssetsInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No assets in this category.'**
+  String get storeNoAssetsInCategory;
+
+  /// No description provided for @storeTrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading'**
+  String get storeTrading;
+
+  /// No description provided for @storeTradingExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy resources and bundles with coins, or sell what you no longer need.'**
+  String get storeTradingExplain;
+
+  /// No description provided for @storeCoinShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin shop'**
+  String get storeCoinShop;
+
+  /// No description provided for @storeSellItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell items'**
+  String get storeSellItems;
+
+  /// No description provided for @storeOwnedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'OWNED'**
+  String get storeOwnedBadge;
+
+  /// No description provided for @storeOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'Owned'**
+  String get storeOwned;
+
+  /// No description provided for @storeEmptyEquip.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty - equip from store'**
+  String get storeEmptyEquip;
+
+  /// No description provided for @eiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Intelligence'**
+  String get eiceTitle;
+
+  /// No description provided for @eiceExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything here is worked out on our servers from your real answer history, so nothing is shown unless it is true.'**
+  String get eiceExplain;
+
+  /// No description provided for @eiceCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'Coach — your plan'**
+  String get eiceCoach;
+
+  /// No description provided for @eiceSprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sprint — 7-day recall queue'**
+  String get eiceSprint;
+
+  /// No description provided for @eiceWeeklyReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly report'**
+  String get eiceWeeklyReport;
+
+  /// No description provided for @eiceTriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Triage — cover or skip'**
+  String get eiceTriage;
+
+  /// No description provided for @battleArena.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle Arena'**
+  String get battleArena;
+
+  /// No description provided for @battleNoActiveMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No active match'**
+  String get battleNoActiveMatch;
+
+  /// No description provided for @battleFindMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a Match'**
+  String get battleFindMatch;
+
+  /// No description provided for @battleNoQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'This match has no questions'**
+  String get battleNoQuestions;
+
+  /// No description provided for @battleQuestionCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle · Q{current}/{total}'**
+  String battleQuestionCounter(Object current, Object total);
+
+  /// No description provided for @battleOpponentAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent answered!'**
+  String get battleOpponentAnswered;
+
+  /// No description provided for @battleResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle Result'**
+  String get battleResultTitle;
+
+  /// No description provided for @battleNoMatchToDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'No match to display'**
+  String get battleNoMatchToDisplay;
+
+  /// No description provided for @battleVs.
+  ///
+  /// In en, this message translates to:
+  /// **'VS'**
+  String get battleVs;
+
+  /// No description provided for @battleRematch.
+  ///
+  /// In en, this message translates to:
+  /// **'Rematch'**
+  String get battleRematch;
+
+  /// No description provided for @battleYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get battleYou;
+
+  /// No description provided for @liveEventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Events'**
+  String get liveEventsTitle;
+
+  /// No description provided for @liveEventsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No live events'**
+  String get liveEventsNone;
+
+  /// No description provided for @liveEventsNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled and live events will appear here.'**
+  String get liveEventsNoneBody;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @notificationsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get notificationsNone;
+
+  /// No description provided for @notificationsNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing new right now.'**
+  String get notificationsNoneBody;
+
+  /// No description provided for @notificationsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load notifications'**
+  String get notificationsLoadFailed;
+
+  /// No description provided for @notificationsMarkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not mark that as read. Try again.'**
+  String get notificationsMarkFailed;
+
+  /// No description provided for @notificationsMarkAllFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not mark everything as read.'**
+  String get notificationsMarkAllFailed;
+
+  /// No description provided for @coursesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load courses. Check connection.'**
+  String get coursesLoadFailed;
+
+  /// No description provided for @coursesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses available'**
+  String get coursesNone;
+
+  /// No description provided for @coursesNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil engineering syllabi will appear here once published.'**
+  String get coursesNoneBody;
+
+  /// No description provided for @coursesTracksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} syllabus tracks'**
+  String coursesTracksCount(Object count);
+
+  /// No description provided for @coursesBrowseQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse questions'**
+  String get coursesBrowseQuestions;
+
+  /// No description provided for @pscTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PSC / Loksewa'**
+  String get pscTitle;
+
+  /// No description provided for @pscBlueprintsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the PSC blueprints.\n{reason}'**
+  String pscBlueprintsFailed(Object reason);
+
+  /// No description provided for @pscNoBlueprints.
+  ///
+  /// In en, this message translates to:
+  /// **'No blueprints are published yet. Pull down to retry.'**
+  String get pscNoBlueprints;
+
+  /// No description provided for @pscBlueprintMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'id: {id} • {questions} Qs'**
+  String pscBlueprintMeta(Object id, Object questions);
+
+  /// No description provided for @pscStartFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Start exam failed (offline or 404)'**
+  String get pscStartFailed;
+
+  /// No description provided for @pscStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam started: {id}'**
+  String pscStarted(Object id);
+
+  /// No description provided for @achievementsBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get achievementsBadges;
+
+  /// No description provided for @achievementsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load achievements: {reason}'**
+  String achievementsFailed(Object reason);
+
+  /// No description provided for @achievementsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No achievements yet — start quizzing!'**
+  String get achievementsNone;
+
+  /// No description provided for @searchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchTitle;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search questions, calculators, courses…'**
+  String get searchHint;
+
+  /// No description provided for @searchTry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try: levelling, RCC, Bernoulli'**
+  String get searchTry;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get searchNoResults;
+
+  /// No description provided for @searchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Search failed: {reason}'**
+  String searchFailed(Object reason);
+
+  /// No description provided for @xpLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LVL {level}'**
+  String xpLevelLabel(Object level);
+
+  /// No description provided for @xpProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {total} XP'**
+  String xpProgress(Object current, Object total);
+
+  /// No description provided for @xpTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} XP'**
+  String xpTotal(Object amount);
+
+  /// No description provided for @xpToNext.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} to next'**
+  String xpToNext(Object amount);
+
+  /// No description provided for @xpDayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String xpDayStreak(Object count);
+
+  /// No description provided for @lottieOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'lottie-overlay'**
+  String get lottieOverlay;
+
+  /// No description provided for @lottieTapToDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to dismiss'**
+  String get lottieTapToDismiss;
+
+  /// No description provided for @lifelineCost.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} lifeline, {coins} coins'**
+  String lifelineCost(Object name, Object coins);
+
+  /// No description provided for @lifelineUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} lifeline unavailable: {reason}'**
+  String lifelineUnavailable(Object name, Object reason);
+
+  /// No description provided for @offlineCannotReach.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach our servers — progress syncs when the connection is back'**
+  String get offlineCannotReach;
+
+  /// No description provided for @offlineBackOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Back online — syncing your queued activity'**
+  String get offlineBackOnline;
+
+  /// No description provided for @learningNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'No response (tutor offline).'**
+  String get learningNoResponse;
+
+  /// No description provided for @socialApplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not apply that code'**
+  String get socialApplyFailed;
+
+  /// No description provided for @responseCached.
+  ///
+  /// In en, this message translates to:
+  /// **'OK (cached)'**
+  String get responseCached;
+
+  /// No description provided for @battleTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s · {current}/{total}'**
+  String battleTimer(Object seconds, Object current, Object total);
+
+  /// No description provided for @battleShareUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Share unavailable'**
+  String get battleShareUnavailable;
+
+  /// No description provided for @bookPageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {number}'**
+  String bookPageLabel(Object number);
+
+  /// No description provided for @bookMyHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'My highlights'**
+  String get bookMyHighlights;
+
+  /// No description provided for @bookNoExtractableText.
+  ///
+  /// In en, this message translates to:
+  /// **'This page has no extractable text. It may be an image-only scan.'**
+  String get bookNoExtractableText;
+
+  /// No description provided for @bookPreviousPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get bookPreviousPage;
+
+  /// No description provided for @bookNextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get bookNextPage;
+
+  /// No description provided for @bookYourHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Your highlights'**
+  String get bookYourHighlights;
+
+  /// No description provided for @bookNoHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not highlighted anything yet.'**
+  String get bookNoHighlights;
+
+  /// No description provided for @bookImageNotText.
+  ///
+  /// In en, this message translates to:
+  /// **'Image or diagram (not available as text)'**
+  String get bookImageNotText;
+
+  /// No description provided for @bookValueNotText.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} (not available as text)'**
+  String bookValueNotText(Object value);
+
+  /// No description provided for @contestsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No contests yet'**
+  String get contestsNone;
+
+  /// No description provided for @contestsNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Active and upcoming contests will appear here.'**
+  String get contestsNoneBody;
+
+  /// No description provided for @eiceNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available yet.'**
+  String get eiceNoData;
+
+  /// No description provided for @eiceNoDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'No details available yet.'**
+  String get eiceNoDetails;
+
+  /// No description provided for @eiceNothingHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet.'**
+  String get eiceNothingHere;
+
+  /// No description provided for @eiceAndMore.
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} more…'**
+  String eiceAndMore(Object count);
+
+  /// No description provided for @gameNoRewardData.
+  ///
+  /// In en, this message translates to:
+  /// **'The server sent no reward data for this level yet.'**
+  String get gameNoRewardData;
+
+  /// No description provided for @gameMissionsReady.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} missions ready to claim'**
+  String gameMissionsReady(Object count);
+
+  /// No description provided for @gameRewardsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rewards waiting'**
+  String gameRewardsWaiting(Object count);
+
+  /// No description provided for @leaderboardFriendsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends leaderboard'**
+  String get leaderboardFriendsTitle;
+
+  /// No description provided for @leaderboardLeagueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'League leaderboard'**
+  String get leaderboardLeagueTitle;
+
+  /// No description provided for @leaderboardMonthsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{months}m'**
+  String leaderboardMonthsShort(Object months);
+
+  /// No description provided for @learningNoTracksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracks yet'**
+  String get learningNoTracksTitle;
+
+  /// No description provided for @learningTracksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks will appear here as they are published. Check back soon.'**
+  String get learningTracksBody;
+
+  /// No description provided for @learningGradedNextDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Graded as {grade} — next due {date}'**
+  String learningGradedNextDue(Object grade, Object date);
+
+  /// No description provided for @learningNoReviewsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews due'**
+  String get learningNoReviewsDue;
+
+  /// No description provided for @liveEventsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}{capacity} active'**
+  String liveEventsActive(Object count, Object capacity);
+
+  /// No description provided for @liveEventsQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Qs'**
+  String liveEventsQuestions(Object count);
+
+  /// No description provided for @liveEventsSecondsPerQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s / Q'**
+  String liveEventsSecondsPerQuestion(Object seconds);
+
+  /// No description provided for @liveEventsJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}{capacity} joined'**
+  String liveEventsJoined(Object count, Object capacity);
+
+  /// No description provided for @numericalsAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer: {value}{unit}'**
+  String numericalsAnswer(Object value, Object unit);
+
+  /// No description provided for @storeAssetMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{rarity} • {slot} • {coins} coins'**
+  String storeAssetMeta(Object rarity, Object slot, Object coins);
+
+  /// No description provided for @syllabusNoTopicMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No topic matches \"{query}\".'**
+  String syllabusNoTopicMatch(Object query);
+
+  /// No description provided for @syllabusExaminableCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} examinable'**
+  String syllabusExaminableCount(Object count);
 
   /// No description provided for @forceUpdateUnsupportedLatest.
   ///

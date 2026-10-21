@@ -589,7 +589,6 @@
   "profileLearningSub": "study plans • revisions • tutor",
   "profileEice": "Exam Intelligence (EICE)",
   "profileEiceSub": "coach • triage • sprint",
-  "profilePsc": "PSC / Loksewa",
   "profilePscSub": "exam blueprints & syllabus",
   "profilePracticeSub": "drill bookmarks • weak topics",
   "profileLeaderboardSub": "global • friends • league",
@@ -599,9 +598,7 @@
   "profileLiveEventsSub": "scheduled sessions & check-in",
   "profileCoaching": "Coaching",
   "profileCoachingSub": "weak areas • readiness • sprint",
-  "profileSearch": "Search",
   "profileSearchSub": "find any question",
-  "profileNotifications": "Notifications",
   "profileNotificationsSub": "activity & reminders",
   "profileSocial": "Social & Referral",
   "profileSocialSub": "share • streak • leaderboard",
@@ -1443,6 +1440,1252 @@
   "practicePrev": "Prev",
   "practiceGrading": "Grading…",
   "practiceNoEffectNote": "Practice is untimed and carries no score, XP, coins or streak effect.",
+  "liveEventNotFound": "Live event not found",
+  "liveEventParticipant": "Participant #{number} • {status} • Score {score}",
+  "@liveEventParticipant": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "status": {
+        "type": "Object"
+      },
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventSnapshot": "Snapshot",
+  "liveEventNoSnapshot": "No snapshot yet — register and check in to load current question.",
+  "liveEventAnswer": "Answer",
+  "liveEventQIndex": "Q index",
+  "liveEventSubmitAnswer": "Submit Answer",
+  "liveEventNoLeaderboard": "No leaderboard yet.",
+  "liveEventRegistered": "Registered!",
+  "liveEventRegisterFailed": "Register failed",
+  "liveEventUnregistered": "Unregistered",
+  "liveEventUnregisterFailed": "Unregister failed",
+  "liveEventCheckedIn": "Checked in!",
+  "liveEventCheckInFailed": "Check-in failed",
+  "liveEventEnterAnswer": "Enter an answer",
+  "liveEventAnswerRecorded": "Answer recorded — score {score}",
+  "@liveEventAnswerRecorded": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventQuestionsEach": "{questions} Qs • {seconds}s each",
+  "@liveEventQuestionsEach": {
+    "placeholders": {
+      "questions": {
+        "type": "Object"
+      },
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventActive": "{count} active",
+  "@liveEventActive": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventWaitlisted": "{count} waitlisted",
+  "@liveEventWaitlisted": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventStarts": "Starts {date} {hour}:{minute}",
+  "@liveEventStarts": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      },
+      "hour": {
+        "type": "Object"
+      },
+      "minute": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventEnds": "Ends {date}",
+  "@liveEventEnds": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventEntryFee": "{coins} entry",
+  "@liveEventEntryFee": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventPrize": "{coins} prize",
+  "@liveEventPrize": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventLeave": "Leave",
+  "liveEventCheckIn": "Check-in",
+  "liveEventScoreMeta": "Score {score} • {correct}/{total}",
+  "@liveEventScoreMeta": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      },
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventQuestionPoints": "Q{number} • {points} pts",
+  "@liveEventQuestionPoints": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "points": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventRemaining": "Remaining: {seconds}s • Locks at {locks}",
+  "@liveEventRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      },
+      "locks": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventWaitingForHost": "No current question — waiting for host.",
+  "liveEventRawKeys": "Raw keys: {keys}",
+  "@liveEventRawKeys": {
+    "placeholders": {
+      "keys": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingTutorChat": "Tutor chat",
+  "coachingStudyPlan": "Study plan",
+  "coachingTutorOnboarding": "Tutor onboarding",
+  "coachingGoalIdHint": "Goal ID for readiness (e.g., psc-civil)",
+  "coachingLoad": "Load",
+  "coachingNoData": "No coaching data yet — complete onboarding or chat with tutor to seed.",
+  "coachingPartial": "Some coaching surfaces are temporarily unavailable — showing available data.",
+  "coachingNoReadinessForGoal": "Readiness: no data for this goal yet.",
+  "coachingAskTutor": "Ask tutor",
+  "coachingOnboarding": "Onboarding",
+  "coachingReadinessExplained": "Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.",
+  "coachingReadiness": "Readiness",
+  "coachingFocusNext": "Focus next:",
+  "coachingNoReadiness": "No readiness yet — attempt a few quizzes under this goal.",
+  "coachingGoalLabel": "Goal {goal}",
+  "@coachingGoalLabel": {
+    "placeholders": {
+      "goal": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingMore": "+ {count} more",
+  "@coachingMore": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingNoTasksToday": "No tasks today",
+  "coachingConfidence": "Confidence {confidence}%",
+  "@coachingConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingLearningTracks": "Learning tracks",
+  "coachingThisWeek": "This week",
+  "coachingWeekTasks": "{done}/{total} tasks • avg {average}",
+  "@coachingWeekTasks": {
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      },
+      "average": {
+        "type": "Object"
+      }
+    }
+  },
+  "coachingNoRevisions": "No revisions due",
+  "coachingRevisionsDue": "{count} revisions due",
+  "@coachingRevisionsDue": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialInviteFriends": "Invite friends",
+  "socialReferralUnavailable": "Referral information is unavailable right now.",
+  "socialEarnCoins": "Earn {coins} coins",
+  "@socialEarnCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialNo": "No",
+  "socialYourInviteCode": "Your invite code",
+  "socialShareInviteLink": "Share invite link",
+  "socialCopyCode": "Copy code",
+  "socialRewards": "Rewards",
+  "socialRewardPerSignup": "You earn per friend who signs up",
+  "socialTheyEarn": "They earn when they sign up",
+  "socialBonusFirstQuiz": "Bonus when they finish their first quiz",
+  "socialYourReferrals": "Your referrals",
+  "socialInvited": "invited",
+  "socialRewarded": "rewarded",
+  "socialCoinsEarned": "coins earned",
+  "socialNoReferralsYet": "No one has used your code yet.",
+  "socialRewardPaid": "Reward paid: {coins} coins",
+  "@socialRewardPaid": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialStatus": "Status: {status}",
+  "@socialStatus": {
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialGotCode": "Got a code from a friend?",
+  "socialReferralCode": "Referral code",
+  "socialApplyCode": "Apply code",
+  "socialShareSheetFailed": "Could not open the share sheet",
+  "socialCodeCopied": "Code copied",
+  "socialSharedChallenge": "Shared challenge",
+  "socialSomeoneShared": "Someone shared a challenge with you",
+  "socialSharedBy": "Shared by {name}",
+  "@socialSharedBy": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialLinkExpired": "This link has expired.",
+  "socialNoPlayableChallenge": "No playable challenge here",
+  "socialNotPlayable": "This link does not offer a playable challenge. You can still browse the public catalogue.",
+  "socialPlayChallenge": "Play the challenge",
+  "socialGuestNeverAwards": "A guest challenge never awards coins, XP or streak. Create a free account to keep your progress.",
+  "socialChallengeNoQuestions": "This challenge has no questions",
+  "socialChallengeEmpty": "The server opened the attempt without sending any questions, so there is nothing to play.",
+  "socialQuestionOf": "Question {current} of {total}",
+  "@socialQuestionOf": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialCorrect": "Correct.",
+  "socialNotThisTime": "Not this time — the server has marked it.",
+  "socialSubmitAnswer": "Submit answer",
+  "socialFinish": "Finish",
+  "socialNext": "Next",
+  "socialChallengeComplete": "Challenge complete",
+  "socialYouScored": "You scored {score}",
+  "@socialYouScored": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialChallengeSummary": "{correct} correct • {wrong} wrong • {skipped} skipped • {questions} questions",
+  "@socialChallengeSummary": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "wrong": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialGuestChallengeNote": "A guest challenge never awards coins, XP or streak.",
+  "socialNiceOne": "Nice one — that was {name}'s challenge. A guest challenge never awards coins, XP or streak.",
+  "@socialNiceOne": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialCreateAccount": "Create a free account",
+  "socialBrowseSamples": "Browse sample questions",
+  "contestNotFound": "Contest not found",
+  "contestAttemptStarted": "Attempt #{number} started. Expires: {expires}",
+  "@contestAttemptStarted": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "expires": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestNoLeaderboard": "No leaderboard entries yet — be the first!",
+  "contestGeneratedMeta": "Generated: {generated} • Refresh budget: {budget} • {mode}",
+  "@contestGeneratedMeta": {
+    "placeholders": {
+      "generated": {
+        "type": "Object"
+      },
+      "budget": {
+        "type": "Object"
+      },
+      "mode": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestRecap": "Recap",
+  "contestWinners": "Winners",
+  "contestRawStats": "Raw stats: {count} keys",
+  "@contestRawStats": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestRecapPending": "Recap available after contest ends.",
+  "contestJoined": "Joined contest!",
+  "contestJoinFailed": "Join failed",
+  "contestLeft": "Left contest",
+  "contestLeaveFailed": "Leave failed",
+  "contestRegisteredBadge": "REGISTERED",
+  "contestMax": "Max {count}",
+  "@contestMax": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestStarts": "Starts {date}",
+  "@contestStarts": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestJoinFree": "Join (Free)",
+  "contestJoinCoins": "Join ({coins} coins)",
+  "@contestJoinCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestEnter": "Enter Contest",
+  "leaderboardGlobal": "Global",
+  "leaderboardFriends": "Friends",
+  "leaderboardLeague": "League",
+  "leaderboardDonors": "Donors",
+  "leaderboardNoRank": "No rank yet — complete a quiz to enter the leaderboard.",
+  "leaderboardMyRank": "MY RANK",
+  "leaderboardRankIn": "#{rank} in {scope}",
+  "@leaderboardRankIn": {
+    "placeholders": {
+      "rank": {
+        "type": "Object"
+      },
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardUnrankedIn": "Unranked in {scope}",
+  "@leaderboardUnrankedIn": {
+    "placeholders": {
+      "scope": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardScore": "Score: {score}",
+  "@leaderboardScore": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardNoEntries": "No entries yet",
+  "leaderboardBeFirst": "Be the first to claim the top spot!",
+  "leaderboardFriendsHint": "Add friends to compete — server segments friends automatically.",
+  "leaderboardLeagueHint": "League is seasonal — join via events/contests to qualify.",
+  "leaderboardNoEntriesShort": "No entries",
+  "leaderboardCompeteToAppear": "Compete to appear here.",
+  "leaderboardNoDonors": "No donors yet",
+  "leaderboardSupportToAppear": "Support the platform to appear here.",
+  "leaderboardScoreAttempts": "Score {score} • {attempts} attempts",
+  "@leaderboardScoreAttempts": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      },
+      "attempts": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningGoalLabel": "Goal #{number}",
+  "@learningGoalLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningToday": "Today",
+  "learningGoalId": "Goal ID",
+  "learningTrackId": "Track ID",
+  "learningTargetDate": "Target date",
+  "learningDailyMinutes": "Daily minutes",
+  "learningIntensity": "Intensity",
+  "learningPlacement": "Placement",
+  "learningMastery": "{percent}% mastery across {topics} topics (MasteryService::computeReadiness)",
+  "@learningMastery": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      },
+      "topics": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningReadinessValue": "Readiness: {value}",
+  "@learningReadinessValue": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningDeleteGoalTitle": "Delete goal?",
+  "learningDeleteGoalBody": "This will permanently delete the goal. Daily plans remain but no new plans will be built.",
+  "learningGoalDeleted": "Goal deleted",
+  "learningDeleting": "Deleting…",
+  "learningDeleteGoal": "Delete goal",
+  "learningOpenTodayPlan": "Open Today plan",
+  "learningBackToTracks": "Back to tracks",
+  "learningTodaysPlan": "Today's Plan",
+  "learningNoActiveGoal": "No active goal",
+  "learningNoActiveGoalBody": "Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.",
+  "learningBrowseTracks": "Browse tracks",
+  "learningPlanLabel": "Plan #{number}",
+  "@learningPlanLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningPlanGoal": "{meta} • Goal #{number}",
+  "@learningPlanGoal": {
+    "placeholders": {
+      "meta": {
+        "type": "Object"
+      },
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningCompletedCount": "{done}/{total} completed",
+  "@learningCompletedCount": {
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningMinBudget": "{minutes} min budget",
+  "@learningMinBudget": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningNoTasksBody": "Check back tomorrow — daily autopilot builds Review-first + new topics.",
+  "learningMinutes": "{minutes} min",
+  "@learningMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningItemCompleted": "Item completed",
+  "learningReviewsDue": "Reviews due",
+  "learningTitle": "Learning",
+  "learningReviewsCountFailed": "Could not load your reviews due count",
+  "learningTracks": "Tracks",
+  "learningNoTracks": "No tracks yet — they are published by our team as they finish",
+  "learningAskAiTutor": "Ask AI Tutor",
+  "learningStreamingNote": "Answers come back a little at a time rather than all at once, so you can start reading straight away.",
+  "learningNoTasks": "No tasks — check back tomorrow",
+  "learningReviewsDueSrs": "{count} reviews due (SRS)",
+  "@learningReviewsDueSrs": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningReviewAction": "Review",
+  "learningGoalCreatedForTrack": "Goal created for track #{number}",
+  "@learningGoalCreatedForTrack": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningTracksTitle": "Learning Tracks",
+  "learningTodayPlan": "Today plan",
+  "learningNodesCount": "{count} nodes",
+  "@learningNodesCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningGoalsCount": "{count} goals",
+  "@learningGoalsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningCreating": "Creating…",
+  "learningCreateGoal": "Create goal",
+  "learningReviewsDueTitle": "Reviews Due",
+  "learningAllCaughtUp": "You are all caught up! FSRS will schedule the next reviews after you master new atoms.",
+  "learningReviewMeta": "Review #{number} • atom {atom} • {state}",
+  "@learningReviewMeta": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "atom": {
+        "type": "Object"
+      },
+      "state": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningInterval": "I{index}",
+  "@learningInterval": {
+    "placeholders": {
+      "index": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningDueDate": "Due {date}",
+  "@learningDueDate": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningLapses": "{count} lapses",
+  "@learningLapses": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningGradeAgain": "Again",
+  "learningGradeHard": "Hard",
+  "learningGradeGood": "Good",
+  "learningGradeEasy": "Easy",
+  "learningGradingNote": "Grading is recorded safely, and your next review date is worked out for you. Double-tapping cannot lose your progress.",
+  "syllabusTitle": "Syllabus",
+  "syllabusNoNodes": "This syllabus has no published nodes yet.",
+  "syllabusExaminable": "examinable",
+  "syllabusQuestions": "questions",
+  "syllabusPaperBlueprint": "Paper blueprint",
+  "syllabusPapersCount": "{count} papers",
+  "@syllabusPapersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusMarksQuestions": "{marks} marks · {questions} questions",
+  "@syllabusMarksQuestions": {
+    "placeholders": {
+      "marks": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusNegativeMarking": "Negative marking: {mode}",
+  "@syllabusNegativeMarking": {
+    "placeholders": {
+      "mode": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusMarks": "{marks} marks",
+  "@syllabusMarks": {
+    "placeholders": {
+      "marks": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusBlueprintMismatch": "The section marks do not add up to the paper total. Treat this blueprint as unverified.",
+  "syllabusCoversTopics": "Covers {count} syllabus topics",
+  "@syllabusCoversTopics": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusSearchTopics": "Search topics",
+  "syllabusNoPublished": "No syllabus has been published yet.",
+  "syllabusTopicsCount": "{count} topics",
+  "@syllabusTopicsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusNotCurrent": "Not current",
+  "booksTitle": "Books",
+  "booksSearch": "Search books",
+  "booksNonePublished": "No books have been published yet.",
+  "booksNoMatch": "No books match \"{query}\".",
+  "@booksNoMatch": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "booksProgress": "{percent}% · page {page}",
+  "@booksProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      },
+      "page": {
+        "type": "Object"
+      }
+    }
+  },
+  "booksChapters": "Chapters",
+  "booksNoChapters": "No chapters published yet.",
+  "booksChapterTest": "Chapter test",
+  "booksReadChapter": "Read the chapter",
+  "booksTakeTest": "Take test ({count})",
+  "@booksTakeTest": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "booksNoTopics": "This chapter has no topics to open yet.",
+  "downloadsClearTitle": "Clear offline content?",
+  "downloadsClearBody": "This removes all cached questions. You can re-download anytime while online.",
+  "downloadsClear": "Clear",
+  "downloadsStorageUnreadable": "Could not read offline storage",
+  "downloadsNothingReported": "Nothing is reported rather than showing a false zero.",
+  "downloadsCachedQuestions": "{count} questions cached",
+  "@downloadsCachedQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "downloadsCacheSize": "{subjects} subjects · ~{size} KB",
+  "@downloadsCacheSize": {
+    "placeholders": {
+      "subjects": {
+        "type": "Object"
+      },
+      "size": {
+        "type": "Object"
+      }
+    }
+  },
+  "downloadsLastCached": "Last cached",
+  "downloadsAutoDownload": "Auto-download",
+  "downloadsPrefetchNow": "Prefetch daily pack now",
+  "downloadsClearAction": "Clear offline content",
+  "rewardsSpinWheel": "Spin the wheel",
+  "rewardsCheckInUnavailable": "Check-in unavailable",
+  "rewardsDailyCheckIn": "Daily check-in",
+  "rewardsDayStreak": "day {count}",
+  "@rewardsDayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "rewardsToday": "today",
+  "rewardsTomorrow": "tomorrow",
+  "rewardsClaimedToday": "Claimed today",
+  "rewardsCheckInFor": "Check in for {coins} coins",
+  "@rewardsCheckInFor": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "rewardsSpinUnavailable": "Spin wheel unavailable",
+  "rewardsSpin": "Spin",
+  "rewardsComeBackLater": "Come back later",
+  "rewardsNextSpin": "Next spin {date}",
+  "@rewardsNextSpin": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameLevelLabel": "Level {number}",
+  "@gameLevelLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameBossLevel": "Boss level",
+  "gameChapterLevel": "Chapter level",
+  "gameSecondsPerQuestion": "{seconds}s per question",
+  "@gameSecondsPerQuestion": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameBestScore": "Best score",
+  "gameBestAccuracy": "Best accuracy",
+  "gameBestTime": "Best time",
+  "gameStartLevel": "Start level",
+  "gameNotPlayable": "Not playable yet",
+  "gameWorldNoCourse": "This world has no quiz course linked to it yet, so there is nothing to play. Ask an admin to set the world's course.",
+  "gameWorldsTitle": "Worlds",
+  "gameWorldsLoadFailed": "Could not load worlds",
+  "gameNoWorlds": "No worlds yet",
+  "gameNoWorldsBody": "The server has not published any game worlds.",
+  "gameNeedsSubscription": "Requires a subscription plan.",
+  "gameWorldNotFound": "World not found",
+  "gameStarsProgress": "{earned} / {total} stars",
+  "@gameStarsProgress": {
+    "placeholders": {
+      "earned": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameWorldMapFailed": "Could not load world map",
+  "gameMissionsTitle": "Missions",
+  "gameMissionsFailed": "Could not load missions",
+  "gameNoMissions": "No missions yet",
+  "gameNoMissionsBody": "The server has not published any missions for you.",
+  "gameClaimAll": "Claim all",
+  "gameClaimCoins": "Claim {coins} coins",
+  "@gameClaimCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameClaimed": "Claimed",
+  "numericalsTitle": "Numerical",
+  "numericalsNew": "New numbers",
+  "numericalsCheck": "Check answer",
+  "numericalsShowSolution": "Show worked solution",
+  "numericalsCorrect": "Correct{reason}",
+  "@numericalsCorrect": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalsNotCorrect": "Not correct. Try again, or open the worked solution.",
+  "numericalsFlagged": "The server has flagged this problem for review.",
+  "numericalsWorkedSolution": "Worked solution",
+  "numericalsComputedBy": "Computed by: {source}",
+  "@numericalsComputedBy": {
+    "placeholders": {
+      "source": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalsFlaggedWarning": "Flagged by the server for review — treat this answer with care.",
+  "numericalsOpenInCalculator": "Open in calculator",
+  "storeEquipped": "Equipped!",
+  "storeEquipFailed": "Could not equip that item.",
+  "storeWardrobeTitle": "Wardrobe",
+  "storeEquippedLabel": "Equipped",
+  "storeNothingEquipped": "Nothing equipped",
+  "storeNothingEquippedBody": "Buy assets in the Premium Store, then equip them here.",
+  "storeAvailableToEquip": "Available to equip",
+  "storeEquipHint": "Tap Equip to try it on. If you tap twice you are never equipped twice.",
+  "storeNoAssets": "No assets yet — visit Premium Store.",
+  "storeClearSlot": "Clear {slot}",
+  "@storeClearSlot": {
+    "placeholders": {
+      "slot": {
+        "type": "Object"
+      }
+    }
+  },
+  "storeTitle": "Premium Store",
+  "storeAll": "All",
+  "storeAssetsCount": "{count} assets",
+  "@storeAssetsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "storeNoAssetsInCategory": "No assets in this category.",
+  "storeTrading": "Trading",
+  "storeTradingExplain": "Buy resources and bundles with coins, or sell what you no longer need.",
+  "storeCoinShop": "Coin shop",
+  "storeSellItems": "Sell items",
+  "storeOwnedBadge": "OWNED",
+  "storeOwned": "Owned",
+  "storeEmptyEquip": "Empty - equip from store",
+  "eiceTitle": "Exam Intelligence",
+  "eiceExplain": "Everything here is worked out on our servers from your real answer history, so nothing is shown unless it is true.",
+  "eiceCoach": "Coach — your plan",
+  "eiceSprint": "Sprint — 7-day recall queue",
+  "eiceWeeklyReport": "Weekly report",
+  "eiceTriage": "Triage — cover or skip",
+  "battleArena": "Battle Arena",
+  "battleNoActiveMatch": "No active match",
+  "battleFindMatch": "Find a Match",
+  "battleNoQuestions": "This match has no questions",
+  "battleQuestionCounter": "Battle · Q{current}/{total}",
+  "@battleQuestionCounter": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "battleOpponentAnswered": "Opponent answered!",
+  "battleResultTitle": "Battle Result",
+  "battleNoMatchToDisplay": "No match to display",
+  "battleVs": "VS",
+  "battleRematch": "Rematch",
+  "battleYou": "You",
+  "liveEventsTitle": "Live Events",
+  "liveEventsNone": "No live events",
+  "liveEventsNoneBody": "Scheduled and live events will appear here.",
+  "notificationsTitle": "Notifications",
+  "notificationsMarkAllRead": "Mark all read",
+  "notificationsNone": "No notifications",
+  "notificationsNoneBody": "Nothing new right now.",
+  "notificationsLoadFailed": "Could not load notifications",
+  "notificationsMarkFailed": "Could not mark that as read. Try again.",
+  "notificationsMarkAllFailed": "Could not mark everything as read.",
+  "coursesLoadFailed": "Could not load courses. Check connection.",
+  "coursesNone": "No courses available",
+  "coursesNoneBody": "Civil engineering syllabi will appear here once published.",
+  "coursesTracksCount": "{count} syllabus tracks",
+  "@coursesTracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "coursesBrowseQuestions": "Browse questions",
+  "pscTitle": "PSC / Loksewa",
+  "pscBlueprintsFailed": "Could not load the PSC blueprints.\n{reason}",
+  "@pscBlueprintsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "pscNoBlueprints": "No blueprints are published yet. Pull down to retry.",
+  "pscBlueprintMeta": "id: {id} • {questions} Qs",
+  "@pscBlueprintMeta": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "pscStartFailed": "Start exam failed (offline or 404)",
+  "pscStarted": "Exam started: {id}",
+  "@pscStarted": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "achievementsBadges": "Badges",
+  "achievementsFailed": "Could not load achievements: {reason}",
+  "@achievementsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "achievementsNone": "No achievements yet — start quizzing!",
+  "searchTitle": "Search",
+  "searchHint": "Search questions, calculators, courses…",
+  "searchTry": "Try: levelling, RCC, Bernoulli",
+  "searchNoResults": "No results",
+  "searchFailed": "Search failed: {reason}",
+  "@searchFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpLevelLabel": "LVL {level}",
+  "@xpLevelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpProgress": "{current} / {total} XP",
+  "@xpProgress": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpTotal": "{amount} XP",
+  "@xpTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpToNext": "{amount} to next",
+  "@xpToNext": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "xpDayStreak": "{count} day streak",
+  "@xpDayStreak": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "lottieOverlay": "lottie-overlay",
+  "lottieTapToDismiss": "Tap to dismiss",
+  "lifelineCost": "{name} lifeline, {coins} coins",
+  "@lifelineCost": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineUnavailable": "{name} lifeline unavailable: {reason}",
+  "@lifelineUnavailable": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "offlineCannotReach": "Can't reach our servers — progress syncs when the connection is back",
+  "offlineBackOnline": "Back online — syncing your queued activity",
+  "learningNoResponse": "No response (tutor offline).",
+  "socialApplyFailed": "Could not apply that code",
+  "responseCached": "OK (cached)",
+  "battleTimer": "{seconds}s · {current}/{total}",
+  "@battleTimer": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      },
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "battleShareUnavailable": "Share unavailable",
+  "bookPageLabel": "Page {number}",
+  "@bookPageLabel": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookMyHighlights": "My highlights",
+  "bookNoExtractableText": "This page has no extractable text. It may be an image-only scan.",
+  "bookPreviousPage": "Previous page",
+  "bookNextPage": "Next page",
+  "bookYourHighlights": "Your highlights",
+  "bookNoHighlights": "You have not highlighted anything yet.",
+  "bookImageNotText": "Image or diagram (not available as text)",
+  "bookValueNotText": "{value} (not available as text)",
+  "@bookValueNotText": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestsNone": "No contests yet",
+  "contestsNoneBody": "Active and upcoming contests will appear here.",
+  "eiceNoData": "No data available yet.",
+  "eiceNoDetails": "No details available yet.",
+  "eiceNothingHere": "Nothing here yet.",
+  "eiceAndMore": "and {count} more…",
+  "@eiceAndMore": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameNoRewardData": "The server sent no reward data for this level yet.",
+  "gameMissionsReady": "{count} missions ready to claim",
+  "@gameMissionsReady": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameRewardsWaiting": "{count} rewards waiting",
+  "@gameRewardsWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaderboardFriendsTitle": "Friends leaderboard",
+  "leaderboardLeagueTitle": "League leaderboard",
+  "leaderboardMonthsShort": "{months}m",
+  "@leaderboardMonthsShort": {
+    "placeholders": {
+      "months": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningNoTracksTitle": "No tracks yet",
+  "learningTracksBody": "Tracks will appear here as they are published. Check back soon.",
+  "learningGradedNextDue": "Graded as {grade} — next due {date}",
+  "@learningGradedNextDue": {
+    "placeholders": {
+      "grade": {
+        "type": "Object"
+      },
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "learningNoReviewsDue": "No reviews due",
+  "liveEventsActive": "{count}{capacity} active",
+  "@liveEventsActive": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "capacity": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventsQuestions": "{count} Qs",
+  "@liveEventsQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventsSecondsPerQuestion": "{seconds}s / Q",
+  "@liveEventsSecondsPerQuestion": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventsJoined": "{count}{capacity} joined",
+  "@liveEventsJoined": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "capacity": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalsAnswer": "Answer: {value}{unit}",
+  "@numericalsAnswer": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "storeAssetMeta": "{rarity} • {slot} • {coins} coins",
+  "@storeAssetMeta": {
+    "placeholders": {
+      "rarity": {
+        "type": "Object"
+      },
+      "slot": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusNoTopicMatch": "No topic matches \"{query}\".",
+  "@syllabusNoTopicMatch": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "syllabusExaminableCount": "{count} examinable",
+  "@syllabusExaminableCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "forceUpdateUnsupportedLatest": "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
   "forceUpdateUnsupportedVersion": "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
   "@forceUpdateUnsupportedVersion": {
