@@ -8,7 +8,19 @@ import '../../core/storage/preferences.dart';
 abstract final class RouteGuards {
   /// Browsable without a session (guest mode, `guest_calculator_enabled`).
   /// Server still enforces auth on mutating endpoints.
-  static const guestRoutes = <String>['/quiz', '/calculators', '/courses'];
+  ///
+  /// `/quiz/funnel` is the guest sampler — the destination of "Continue as
+  /// Guest" — and `/social/share` is the guest share flow. Both are public by
+  /// design: a signed-out visitor tapping a share link is exactly the person
+  /// they exist for, and bouncing them to the sign-in form loses the link
+  /// (there is no return-to URL).
+  static const guestRoutes = <String>[
+    '/quiz',
+    '/calculators',
+    '/courses',
+    '/quiz/funnel',
+    '/social/share',
+  ];
 
   static bool _isGuestAllowed(String loc) => guestRoutes
       .any((p) => loc == p || loc.startsWith('$p/'));
@@ -29,8 +41,9 @@ abstract final class RouteGuards {
         loc.startsWith('/forgot-password') ||
         loc.startsWith('/onboarding');
 
-    // Guest mode: /quiz, /calculators, /courses stay browsable without a
-    // token so "Continue as guest" does not loop back to /login.
+    // Guest mode: the browse surfaces stay browsable without a token so
+    // "Continue as Guest" does not loop back to /login. The server still
+    // enforces auth on anything that mutates.
     if (!loggedIn && !isPublic && !_isGuestAllowed(loc)) return '/login';
     if (loggedIn && loc == '/login') return '/home';
 

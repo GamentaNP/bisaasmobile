@@ -38,20 +38,37 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 
 /// Which social providers this build can actually use.
 ///
+/// The result is **per provider**, not a single boolean. A build that has only
+/// a Google client id must not render an Apple button that is guaranteed to
+/// fail — a button that cannot work is worse than no button.
+///
 /// A provider whose client id was never compiled in is hidden rather than
-/// offered as a button that is guaranteed to fail.
-final socialProvidersAvailableProvider = FutureProvider<bool>((ref) async {
+/// offered as a disabled control.
+final socialProvidersAvailableProvider =
+    FutureProvider<Set<SocialProvider>>((ref) async {
   final gateway = ref.watch(socialSignInGatewayProvider);
-  final google = await gateway.isAvailable(SocialProvider.google);
-  final apple = await gateway.isAvailable(SocialProvider.apple);
-  return google || apple;
+  final available = <SocialProvider>{};
+  for (final provider in SocialProvider.values) {
+    if (await gateway.isAvailable(provider)) available.add(provider);
+  }
+  return available;
 });
 
 class AuthNotifier extends AsyncNotifier<User?> {
   @override
   FutureOr<User?> build() async {
     final repo = ref.watch(authRepositoryProvider);
-    return repo.getCurrentUser();
+    try {
+      return await repo.getCurrentUser();
+    } on Object catch (e, st) {
+      // A cold start that cannot reach the server is not the same as being
+      // signed out. The token is still on the device, so the app keeps the
+      // session and surfaces the failure as an error state instead of dumping
+      // the user on the login screen over a dropped connection.
+      AppLogger.w('auth cold start failed: $e');
+      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      return null;
+    }
   }
 
   Future<void> login({
@@ -102,6 +119,11 @@ class AuthNotifier extends AsyncNotifier<User?> {
     });
     if (state.hasError) {
       final err = state.error;
+      // An unverified account is a recoverable state, not a dead end: the
+      // resend action becomes available. Registration can hit it too — a
+      // server that issues a token before the address is verified will
+      // refuse the first protected call.
+      ref.read(emailVerificationRequiredProvider.notifier).observe(err);
       if (err is Exception) {
         throw err;
       }

@@ -2,25 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../domain/entities/quiz_funnel.dart';
 import '../controllers/quiz_funnel_controller.dart';
 
-/// The pre-registration quiz sampler.
+
+/// The quiz sampler.
 ///
 /// `GET /quiz/guest-funnel` (public) or `GET /quiz/funnel` (authenticated) —
 /// both publish the same guest-tier bundle: sampled public questions, live
 /// taxonomy counts and a fresh-content promo. The bundle never contains
 /// answer keys, so the screen never claims an answer was right or wrong.
 ///
-/// This is where "Continue as Guest" lands: a real sampler with real
-/// questions, not a dead-end route into an app that needs an account.
+/// The tier follows the session: a signed-in visitor gets the authenticated
+/// bundle, a signed-out one gets the public one. This is where "Continue as
+/// Guest" lands — a real sampler with real questions, not a dead-end route
+/// into an app that needs an account.
 class QuizFunnelScreen extends ConsumerStatefulWidget {
-  const QuizFunnelScreen({super.key, this.tier = QuizFunnelTier.guest});
+  const QuizFunnelScreen({super.key, this.tier});
 
-  final QuizFunnelTier tier;
+  /// Forces a tier. Null (the default) means "follow the session".
+  final QuizFunnelTier? tier;
 
   @override
   ConsumerState<QuizFunnelScreen> createState() => _QuizFunnelScreenState();
@@ -31,8 +36,19 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(quizFunnelControllerProvider.notifier).load(widget.tier);
+      ref.read(quizFunnelControllerProvider.notifier).load(resolveTier());
     });
+  }
+
+  /// The tier to load: the forced one if there is one, otherwise the one the
+  /// session earns.
+  QuizFunnelTier resolveTier() {
+    final forced = widget.tier;
+    if (forced != null) return forced;
+    final signedIn = ref.read(hasSessionProvider).value ?? false;
+    return signedIn
+        ? QuizFunnelTier.authenticated
+        : QuizFunnelTier.guest;
   }
 
   @override
@@ -40,18 +56,20 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
     final state = ref.watch(quizFunnelControllerProvider);
     final theme = Theme.of(context);
     final funnel = state.funnel;
+    final signedIn = ref.watch(hasSessionProvider).value ?? false;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Try it out'),
         actions: [
-          if (state.tier == QuizFunnelTier.guest)
+          if (!signedIn)
             TextButton(
               onPressed: () => context.go('/login'),
               child: const Text('Sign in'),
             ),
         ],
       ),
+
       body: RefreshIndicator(
         onRefresh: () => ref.read(quizFunnelControllerProvider.notifier).refresh(),
         child: state.isLoading && funnel == null
@@ -90,14 +108,16 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'Public questions from our catalogue. Answers unlock when '
-                        'you create a free account.',
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                      Text(
+                        signedIn
+                            ? 'Sample questions from our catalogue. Open the Quiz '
+                                'tab to play a full graded session.'
+                            : 'Public questions from our catalogue. Answers unlock '
+                                'when you create a free account.',
+                        style: const TextStyle(fontSize: 11, color: Colors.grey),
                       ),
                       const SizedBox(height: 12),
                       if (funnel?.items.isEmpty ?? true)
-
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 24),
                           child: EmptyState(
@@ -111,7 +131,7 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                       else
                         ...funnel!.items.map((i) => _FunnelCard(item: i)),
                       const SizedBox(height: 18),
-                      if (state.tier == QuizFunnelTier.guest)
+                      if (!signedIn)
                         FilledButton.icon(
                           onPressed: () => context.go('/register'),
                           icon: const Icon(Icons.person_add_alt_rounded),
@@ -119,7 +139,17 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                           ),
+                        )
+                      else
+                        FilledButton.icon(
+                          onPressed: () => context.go('/quiz'),
+                          icon: const Icon(Icons.play_arrow_rounded),
+                          label: const Text('Play a graded quiz'),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                          ),
                         ),
+
                       const SizedBox(height: 10),
                       const Text(
                         'Practice mode never affects rank, XP or streak.',

@@ -22,6 +22,7 @@ import 'config/app_config.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../core/security/app_lock.dart';
 import '../core/security/biometric_auth.dart';
+import '../core/security/token_manager.dart';
 import '../core/storage/database/app_database.dart';
 import '../core/storage/database/daos/sync_queue_dao.dart';
 import '../core/storage/preferences.dart';
@@ -31,6 +32,9 @@ import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
 import '../features/quiz/data/datasources/quiz_local_data_source.dart';
+import '../features/social/data/datasources/social_remote_data_source.dart';
+import '../features/social/data/repositories/social_repository_impl.dart';
+import '../features/social/domain/entities/social.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   if (!DioClient.isInitialized) {
@@ -192,6 +196,44 @@ final appLockProvider = Provider<AppLock>((ref) {
 });
 
 final appLinksProvider = Provider<AppLinks>((_) => AppLinks());
+
+// ── Session ────────────────────────────────────────────────────────────────
+// Whether a session token exists on the device.
+//
+// This is the same question the route guard asks
+// (`RouteGuards.authGuard` reads the token, not the loaded user), so the two
+// can never disagree: a cold start that could not reach the server still
+// counts as signed in, because the token is still on the device.
+//
+// It lives here rather than in the auth feature because the calculator
+// screens need it to decide whether to offer the AI assistant, and two
+// features must not import each other directly.
+final hasSessionProvider = FutureProvider<bool>((ref) async {
+  final token = await TokenManager.shared.readToken();
+  return token != null && token.isNotEmpty;
+});
+
+// ── Social proof ───────────────────────────────────────────────────────────
+// `GET /api/v1/social/proof?subject=…&id=…` publishes the server's own
+// shareable copy about a question, course, topic or calculator.
+//
+// The copy is server-authored on purpose: a client that composes its own
+// claim about what the user achieved can make a promise the server has not
+// reviewed. The sharing surfaces read this instead of writing their own
+// line.
+//
+// It lives here rather than in the social feature because the quiz result
+// screen needs it, and two features must not import each other directly —
+// this module is the app-wide glue that both are allowed to reach.
+final socialProofProvider =
+    FutureProvider.family<SocialProof?, ({String subject, int id})>(
+  (ref, key) {
+    final repo = SocialRepositoryImpl(
+      SocialRemoteDataSource(ref.watch(dioProvider)),
+    );
+    return repo.getProof(subject: key.subject, id: key.id);
+  },
+);
 
 // ── Library feature ────────────────────────────────────────────────────────
 // Library providers are defined in

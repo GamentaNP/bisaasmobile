@@ -239,7 +239,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton(
-                      onPressed: () => context.go('/home'),
+                      // The guest sampler, not the home shell: `/home` is
+                      // behind the auth guard, so going there as a guest
+                      // bounced straight back to this form.
+                      onPressed: () => context.go('/quiz/funnel'),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15),
                       ),

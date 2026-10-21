@@ -30,8 +30,8 @@ class SocialSignInButtons extends ConsumerWidget {
     return availability.when(
       loading: () => const SizedBox.shrink(),
       error: (_, __) => const SizedBox.shrink(),
-      data: (anyAvailable) {
-        if (!anyAvailable) return const SizedBox.shrink();
+      data: (available) {
+        if (available.isEmpty) return const SizedBox.shrink();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -52,9 +52,13 @@ class SocialSignInButtons extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const _GoogleButton(),
-            const SizedBox(height: 10),
-            const _AppleButton(),
+            // Each provider is rendered only when it is actually usable.
+            if (available.contains(SocialProvider.google)) ...[
+              const _GoogleButton(),
+              if (available.contains(SocialProvider.apple))
+                const SizedBox(height: 10),
+            ],
+            if (available.contains(SocialProvider.apple)) const _AppleButton(),
             const SizedBox(height: 4),
           ],
         );

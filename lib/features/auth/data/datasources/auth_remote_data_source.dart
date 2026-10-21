@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/auth_response_dto.dart';
 import '../models/user_dto.dart';
@@ -152,6 +153,10 @@ class AuthRemoteDataSource {
       );
       return envelope.data;
     } on DioException catch (e) {
+      // A 401 is a real answer: the token is not (or no longer) valid, so
+      // the caller is signed out. Every other failure is an *unknown*, and an
+      // unknown must not be reported as "signed out" — that dumps the user on
+      // the login screen every time the network hiccups.
       if (e.response?.statusCode == 401) return null;
       if (e.response?.data is Map<String, dynamic>) {
         throw ApiException.fromJson(
@@ -160,7 +165,10 @@ class AuthRemoteDataSource {
           requestId: e.requestOptions.headers['X-Request-Id'] as String?,
         );
       }
-      return null;
+      // No response at all: a transport failure. Surface it as an error so
+      // the app can show the cached session (or a retry) instead of
+      // pretending nobody is signed in.
+      throw toApiException(e);
     }
   }
 
