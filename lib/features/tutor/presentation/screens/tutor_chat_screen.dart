@@ -1,4 +1,5 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -50,12 +51,13 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(tutorChatControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Tutor'),
+        title: Text(l10n.tutorTitle),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) {
@@ -63,8 +65,8 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
               if (v == 'plan') context.go('/tutor/plan');
             },
             itemBuilder: (context) => [
-              PopupMenuItem(value: 'plan', child: Row(children: [const Icon(Icons.assignment_rounded, size: 18), const SizedBox(width: 8), const Text('Study Plan')])),
-              const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 18), SizedBox(width: 8), Text('Clear chat')])),
+              PopupMenuItem(value: 'plan', child: Row(children: [const Icon(Icons.assignment_rounded, size: 18), const SizedBox(width: 8), Text(l10n.tutorStudyPlan)])),
+              PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 18), SizedBox(width: 8), Text(l10n.tutorClearChat)])),
             ],
           ),
         ],
@@ -100,7 +102,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                   Expanded(
                     child: Text(
                       state.isNoData
-                          ? 'Not enough history yet — complete a few quizzes to personalize.'
+                          ? l10n.tutorNotEnoughHistory
                           : state.isRetrievalFailed
                               ? 'Retrieval temporarily failed — showing deterministic plan.'
                               : 'Answers may be less personalized (degraded).',
@@ -128,7 +130,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                   const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed),
                   const SizedBox(width: 8),
                   Expanded(child: Text(state.error!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))),
-                  TextButton(onPressed: () => ref.read(tutorChatControllerProvider.notifier).clearError(), child: const Text('Dismiss')),
+                  TextButton(onPressed: () => ref.read(tutorChatControllerProvider.notifier).clearError(), child: Text(l10n.tutorDismiss)),
                 ],
               ),
             ),
@@ -138,8 +140,8 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-              child: const Text(
-                'The tutor is writing its reply. It can take a moment on longer questions.',
+              child: Text(
+                l10n.tutorWriting,
                 style: TextStyle(fontSize: 11, color: Colors.grey),
               ),
             ),
@@ -157,10 +159,10 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                             child: const Icon(Icons.smart_toy_rounded, size: 32, color: AppColors.brand),
                           ),
                           const SizedBox(height: 16),
-                          Text('Ask anything', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                          Text(l10n.tutorAskAnything, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Exam concepts, beam deflection, soil mechanics — AI answers via Laravel gateway (never direct provider).',
+                          Text(
+                            l10n.tutorChatExplain,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 12, color: Colors.grey, height: 1.4),
                           ),
@@ -170,9 +172,9 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                             runSpacing: 8,
                             alignment: WrapAlignment.center,
                             children: [
-                              _SuggestionChip(label: 'Explain proctor compaction', onTap: () => _fillAndSend('Explain proctor compaction simply')),
-                              _SuggestionChip(label: 'Weekly plan help', onTap: () => _fillAndSend('Help me plan this week')),
-                              _SuggestionChip(label: 'Weak areas?', onTap: () => context.go('/tutor/plan')),
+                              _SuggestionChip(label: l10n.tutorExample1, onTap: () => _fillAndSend('Explain proctor compaction simply')),
+                              _SuggestionChip(label: l10n.tutorExample2, onTap: () => _fillAndSend('Help me plan this week')),
+                              _SuggestionChip(label: l10n.tutorExample3, onTap: () => context.go('/tutor/plan')),
                             ],
                           ),
                         ],
@@ -190,9 +192,9 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                   ),
           ),
           if (state.isSending)
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(children: [SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)), SizedBox(width: 8), Text('Tutor is typing…', style: TextStyle(fontSize: 12, color: Colors.grey))]),
+              child: Row(children: [SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)), SizedBox(width: 8), Text(l10n.tutorTyping, style: TextStyle(fontSize: 12, color: Colors.grey))]),
             ),
           SafeArea(
             child: Padding(
@@ -207,7 +209,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
-                        hintText: 'Ask tutor…',
+                        hintText: l10n.tutorInputHint,
                         hintStyle: const TextStyle(fontSize: 13),
                         filled: true,
                         fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),

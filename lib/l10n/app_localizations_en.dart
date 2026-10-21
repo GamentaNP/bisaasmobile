@@ -58,12 +58,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Something went wrong';
 
   @override
-  String streakDays(int days) {
+  String streakDays(Object days) {
     return 'Streak: $days days';
   }
 
   @override
-  String coinsBalance(int count) {
+  String coinsBalance(Object count) {
     return '$count coins';
   }
 
@@ -122,7 +122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonShareResult => 'Share Result';
 
   @override
-  String commonPoints(int count) {
+  String commonPoints(Object count) {
     return '$count pts';
   }
 
@@ -216,7 +216,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authConfirmNewPasswordLabel => 'Confirm new password';
 
   @override
-  String authMinChars(int count) {
+  String authMinChars(Object count) {
     return 'At least $count characters';
   }
 
@@ -234,7 +234,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPasswordRequired => 'Please enter your password';
 
   @override
-  String onboardingStepOf(int current, int total) {
+  String onboardingStepOf(Object current, Object total) {
     return 'Step $current of $total';
   }
 
@@ -324,7 +324,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String quizAttemptCombo(int count) {
+  String quizAttemptCombo(Object count) {
     return '×$count Combo!';
   }
 
@@ -342,7 +342,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizResultAccuracy => 'Accuracy';
 
   @override
-  String quizResultCorrectOf(Object correct, int total) {
+  String quizResultCorrectOf(Object correct, Object total) {
     return '$correct of $total correct';
   }
 
@@ -401,7 +401,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizFunnelSampleTitle => 'Sample questions';
 
   @override
-  String quizFunnelShown(int count) {
+  String quizFunnelShown(Object count) {
     return '$count shown';
   }
 
@@ -437,7 +437,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calcBrowserEmpty => 'No calculators published';
 
   @override
-  String calcBrowserCount(int count, Object domains) {
+  String calcBrowserCount(Object count, Object domains) {
     return '$count calculators • $domains domains';
   }
 
@@ -518,7 +518,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calcAddField => 'Add field';
 
   @override
-  String calcInputsCount(int count) {
+  String calcInputsCount(Object count) {
     return 'inputs: $count';
   }
 
@@ -576,7 +576,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeYourWorlds => 'Your worlds';
 
   @override
-  String homeStars(Object earned, int total) {
+  String homeStars(Object earned, Object total) {
     return '$earned / $total ⭐';
   }
 
@@ -768,12 +768,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String homeMissionsReady(int count) {
+  String homeMissionsReady(Object count) {
     return '$count missions ready to claim';
   }
 
   @override
-  String homeMissionsActive(int count) {
+  String homeMissionsActive(Object count) {
     return 'Missions — $count active';
   }
 
@@ -959,9 +959,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePracticeSub => 'drill bookmarks • weak topics';
 
   @override
-  String get profileLeaderboard => 'Leaderboard';
-
-  @override
   String get profileLeaderboardSub => 'global • friends • league';
 
   @override
@@ -999,9 +996,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSocialSub => 'share • streak • leaderboard';
-
-  @override
-  String get profileWallet => 'Wallet';
 
   @override
   String get profileWalletSub => 'coins & ledger';
@@ -1057,13 +1051,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Analytics, functional and marketing consent';
 
   @override
-  String get settingsAiUsage => 'Your AI usage';
-
-  @override
   String get settingsAiUsageSub => 'What AI used on your behalf, by feature';
-
-  @override
-  String get settingsAiKeys => 'Your AI keys';
 
   @override
   String get settingsAiKeysSub => 'Run AI features on your own provider quota';
@@ -1119,7 +1107,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get streakDaysUnit => 'days';
 
   @override
-  String streakBest(int count) {
+  String streakBest(Object count) {
     return 'Best: $count days';
   }
 
@@ -1130,7 +1118,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get streakMaxMultiplier => 'Max multiplier reached — legendary!';
 
   @override
-  String streakDaysToNextTier(int current, int total) {
+  String streakDaysToNextTier(Object current, Object total) {
     return '$current / $total days to next tier';
   }
 
@@ -1142,7 +1130,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get streakFreezeSection => 'Streak freeze';
 
   @override
-  String streakFreezeLeft(int count) {
+  String streakFreezeLeft(Object count) {
     return '$count left';
   }
 
@@ -1187,7 +1175,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Stake coins on hitting a target streak. Meet it and you win the pot back with interest — miss and the coins are gone.';
 
   @override
-  String streakWagerDay(int current, int total, Object reward) {
+  String streakWagerDay(Object current, Object total, Object reward) {
     return 'Day $current of $total — keep playing to win $reward coins.';
   }
 
@@ -1224,14 +1212,929 @@ class AppLocalizationsEn extends AppLocalizations {
   String get streakFreezeDuration => '30 days';
 
   @override
-  String streakWagerDaysCount(int count) {
+  String streakWagerDaysCount(Object count) {
     return '$count days';
   }
 
   @override
-  String streakWagerSummary(Object coins, int days) {
+  String streakWagerSummary(Object coins, Object days) {
     return 'Wager $coins coins for $days days';
   }
+
+  @override
+  String get tutorStudyPlan => 'Study Plan';
+
+  @override
+  String get tutorChat => 'Chat';
+
+  @override
+  String get tutorPlanTab => 'Plan';
+
+  @override
+  String get tutorInsights => 'Insights';
+
+  @override
+  String get tutorRevisions => 'Revisions';
+
+  @override
+  String get tutorWeekly => 'Weekly';
+
+  @override
+  String get tutorNoTasksToday => 'No tasks today — check back tomorrow';
+
+  @override
+  String get tutorDone => 'Done';
+
+  @override
+  String tutorTasksDone(Object done, Object total) {
+    return '$done/$total tasks';
+  }
+
+  @override
+  String get tutorDayCompleted => 'Day completed — plan updated.';
+
+  @override
+  String get tutorMarkDayComplete => 'Mark day complete';
+
+  @override
+  String tutorYourPlan(Object title) {
+    return 'Your plan — $title';
+  }
+
+  @override
+  String tutorPlanDays(Object days, Object current) {
+    return '$days days • current $current';
+  }
+
+  @override
+  String get tutorPlanNoDays =>
+      'Plan has no days yet — onboarding will generate it.';
+
+  @override
+  String tutorMoreDays(Object count) {
+    return '+ $count more days';
+  }
+
+  @override
+  String get tutorAdjustPlan => 'Adjust plan';
+
+  @override
+  String get tutorNoPlanYet => 'No plan yet';
+
+  @override
+  String get tutorOnboardingRequired =>
+      'Complete tutor onboarding to generate your personalized study plan.';
+
+  @override
+  String get tutorStartOnboarding => 'Start onboarding';
+
+  @override
+  String get tutorAdjustExample =>
+      'e.g., \"I can do 3h/day\" or \"Focus more on soil mechanics\"';
+
+  @override
+  String get tutorAdjustPrompt => 'How should we adjust?';
+
+  @override
+  String get tutorAdjustRequested => 'Plan adjustment requested.';
+
+  @override
+  String get tutorSubmit => 'Submit';
+
+  @override
+  String get tutorProjectedScore => 'Projected score';
+
+  @override
+  String tutorConfidence(Object confidence, Object trend) {
+    return 'Confidence $confidence% • $trend';
+  }
+
+  @override
+  String get tutorWeakAreas => 'Weak areas';
+
+  @override
+  String get tutorNoWeakAreas =>
+      'No weak areas — great work! Keep practicing to stay sharp.';
+
+  @override
+  String tutorAccuracy(Object accuracy, Object attempts) {
+    return 'Accuracy $accuracy% • $attempts attempts';
+  }
+
+  @override
+  String get tutorNoRevisionsDue => 'No revisions due — you are on track.';
+
+  @override
+  String tutorDueLabel(Object date) {
+    return 'due $date';
+  }
+
+  @override
+  String tutorTopicDue(Object topic, Object date) {
+    return '$topic • due $date';
+  }
+
+  @override
+  String get tutorCompleted => 'Completed';
+
+  @override
+  String get tutorOverdue => 'Overdue';
+
+  @override
+  String get tutorDue => 'Due';
+
+  @override
+  String tutorWeekRange(Object start, Object end) {
+    return 'Week $start → $end';
+  }
+
+  @override
+  String get tutorAvgScore => 'Avg score';
+
+  @override
+  String get tutorHours => 'Hours';
+
+  @override
+  String tutorCompletion(Object percent) {
+    return '$percent% completion';
+  }
+
+  @override
+  String get tutorHighlights => 'Highlights';
+
+  @override
+  String get tutorWeeklyReportPending =>
+      'Weekly report appears after a week of activity.';
+
+  @override
+  String get tutorOnboardingSaved =>
+      'Onboarding saved — plan will generate shortly.';
+
+  @override
+  String get tutorOnboardingTitle => 'Tutor Onboarding';
+
+  @override
+  String get tutorPersonalised => 'Personalized tutor';
+
+  @override
+  String get tutorOnboardingExplain =>
+      'Tell us your goal — the server builds your plan. No user_id required (token-bound).';
+
+  @override
+  String tutorSessionLabel(Object session) {
+    return 'Session: $session';
+  }
+
+  @override
+  String get tutorYourGoal => 'Your goal';
+
+  @override
+  String get tutorGoalExample => 'e.g., Crack PSC Civil in 6 months';
+
+  @override
+  String get tutorCurrentLevel => 'Current level';
+
+  @override
+  String get tutorLevelExample => 'e.g., Final year B.E. Civil';
+
+  @override
+  String get tutorHoursPerDay => 'Hours per day';
+
+  @override
+  String get tutorHoursExample => 'e.g., 2';
+
+  @override
+  String get tutorOnboardingComplete =>
+      'Onboarding complete — your plan is ready.';
+
+  @override
+  String get tutorViewPlan => 'View Plan';
+
+  @override
+  String get tutorCompleteOnboarding => 'Complete onboarding';
+
+  @override
+  String get tutorSkipToChat => 'Skip → Chat with tutor';
+
+  @override
+  String get tutorSavedToAccount =>
+      'Saved to your account. Safe to retry if the connection drops.';
+
+  @override
+  String get tutorTitle => 'AI Tutor';
+
+  @override
+  String get tutorClearChat => 'Clear chat';
+
+  @override
+  String get tutorNotEnoughHistory =>
+      'Not enough history yet — complete a few quizzes to personalize.';
+
+  @override
+  String get tutorDismiss => 'Dismiss';
+
+  @override
+  String get tutorWriting =>
+      'The tutor is writing its reply. It can take a moment on longer questions.';
+
+  @override
+  String get tutorAskAnything => 'Ask anything';
+
+  @override
+  String get tutorChatExplain =>
+      'Exam concepts, beam deflection, soil mechanics — AI answers via Laravel gateway (never direct provider).';
+
+  @override
+  String get tutorExample1 => 'Explain proctor compaction';
+
+  @override
+  String get tutorExample2 => 'Weekly plan help';
+
+  @override
+  String get tutorExample3 => 'Weak areas?';
+
+  @override
+  String get tutorTyping => 'Tutor is typing…';
+
+  @override
+  String get tutorInputHint => 'Ask tutor…';
+
+  @override
+  String get aiUsageTitle => 'Your AI usage';
+
+  @override
+  String get aiUsageOverview => 'Overview';
+
+  @override
+  String get aiUsageRequests => 'requests';
+
+  @override
+  String get aiUsageTokens => 'tokens';
+
+  @override
+  String get aiUsageTutorChats => 'tutor chats (all time)';
+
+  @override
+  String get aiUsageNone => 'No AI features were used in this period.';
+
+  @override
+  String get aiUsageByFeature => 'By feature';
+
+  @override
+  String get aiUsageTutorConversations => 'Tutor conversations';
+
+  @override
+  String get aiUsageNoConversations => 'No tutor conversations yet.';
+
+  @override
+  String get aiUsageLoadMoreConversations => 'Load more conversations';
+
+  @override
+  String get aiUsageWeeklyReport => 'Weekly report card';
+
+  @override
+  String get aiUsageNoWeeks => 'No weekly summaries stored yet.';
+
+  @override
+  String get aiUsageLoadMoreWeeks => 'Load more weeks';
+
+  @override
+  String aiUsageConversationNumber(Object number) {
+    return 'Conversation #$number';
+  }
+
+  @override
+  String aiUsageQuestionNumber(Object number) {
+    return 'Question $number';
+  }
+
+  @override
+  String aiUsageTurns(Object count) {
+    return '$count turns';
+  }
+
+  @override
+  String aiUsageWeekOf(Object date) {
+    return 'Week of $date';
+  }
+
+  @override
+  String aiUsageWeekSummary(
+    Object accuracy,
+    Object xp,
+    Object coins,
+    Object streak,
+  ) {
+    return '$accuracy% accuracy • $xp XP • $coins coins • $streak day streak';
+  }
+
+  @override
+  String aiUsageHoursShort(Object hours) {
+    return '${hours}h';
+  }
+
+  @override
+  String get aiKeysTitle => 'Your AI keys';
+
+  @override
+  String get aiKeysExplain =>
+      'Your key is encrypted on our servers and never shown again. Only the last four characters are ever displayed.';
+
+  @override
+  String get aiKeysAddTitle => 'Add a key';
+
+  @override
+  String get aiKeysNoneYet => 'No keys yet';
+
+  @override
+  String get aiKeysNoneExplain =>
+      'Add a provider key to run AI features on your own quota instead of the shared one.';
+
+  @override
+  String get aiKeysStored => 'Stored keys';
+
+  @override
+  String aiKeysTokensUsed(Object used, Object total) {
+    return '$used of $total daily tokens used';
+  }
+
+  @override
+  String get aiKeysRevoke => 'Revoke';
+
+  @override
+  String get aiKeysTooShort => 'The key must be at least 8 characters';
+
+  @override
+  String get aiKeysAddProvider => 'Add a provider key';
+
+  @override
+  String get aiKeysProvider => 'Provider';
+
+  @override
+  String get aiKeysApiKey => 'API key';
+
+  @override
+  String get aiKeysSentOnce => 'Sent once and never shown again.';
+
+  @override
+  String get aiKeysLabelOptional => 'Label (optional)';
+
+  @override
+  String get aiKeysSaveKey => 'Save key';
+
+  @override
+  String aiKeysSaved(Object name) {
+    return '$name saved. It is encrypted on our servers and never shown again.';
+  }
+
+  @override
+  String get aiKeysRevoked => 'Key revoked.';
+
+  @override
+  String get practiceBookmarks => 'Bookmarks';
+
+  @override
+  String get practiceWeakTopics => 'Weak Topics';
+
+  @override
+  String get practiceSelfChallenge => 'Self Challenge';
+
+  @override
+  String get practiceHistory => 'History';
+
+  @override
+  String get practiceNoBookmarks => 'No bookmarks to practice';
+
+  @override
+  String get practiceBookmarkedPractice => 'Bookmarked Practice';
+
+  @override
+  String practiceBookmarksUnavailable(Object count, Object total) {
+    return '$count of $total bookmarks could not be drilled — the server does not publish their answer options yet.';
+  }
+
+  @override
+  String get practiceDrill => 'Practice Drill';
+
+  @override
+  String practiceDrillCount(Object count) {
+    return 'Drill: $count';
+  }
+
+  @override
+  String get practiceNoBookmarksBody => 'No bookmarks';
+
+  @override
+  String get practiceNoBookmarksHint =>
+      'Bookmark questions while you take a quiz and they will show up here for drilling later.';
+
+  @override
+  String get practiceBrowseQuizzes => 'Browse quizzes';
+
+  @override
+  String practiceBookmarkedCount(Object count) {
+    return '$count bookmarked';
+  }
+
+  @override
+  String get practiceAll => 'Practice all';
+
+  @override
+  String practiceQuestionNumber(Object number) {
+    return 'Question #$number';
+  }
+
+  @override
+  String practiceQuestionMeta(Object meta, Object difficulty, Object points) {
+    return '$meta • difficulty $difficulty • $points pts';
+  }
+
+  @override
+  String get practiceBookmarked => 'Bookmarked';
+
+  @override
+  String get practiceLoadMoreCursor => 'Load more (cursor)';
+
+  @override
+  String get practiceWeakTopicsLoadFailed => 'Could not load your weak topics';
+
+  @override
+  String get practiceWeakTopicsExplained =>
+      'These are worked out from your own answer history. Nothing is shown unless it is real.';
+
+  @override
+  String get practiceNoWeakTopics => 'No weak topics yet';
+
+  @override
+  String get practiceWeakTopicsNeedsAttempts =>
+      'The server needs graded attempts before it can spot weak areas. Take a quiz from the Quiz tab and check back.';
+
+  @override
+  String get practiceWeakTopicsServerNote =>
+      'Weak topics are worked out on our servers from your answer history, so nothing here is guessed.';
+
+  @override
+  String get practiceYourWeakTopics => 'Your weak topics';
+
+  @override
+  String get practiceDrillAction => 'Drill';
+
+  @override
+  String get practiceDrillTen => 'Drill 10 questions (practice mode, untimed)';
+
+  @override
+  String get practiceUntimedNote =>
+      'Practice is untimed and does not affect your rank or coin balance.';
+
+  @override
+  String get practiceSelfChallengeExplain =>
+      'Pick question count & difficulty — mirrors Elite Quiz self-challenge but sourced from adaptive engine.';
+
+  @override
+  String practiceQuestionCount(Object count) {
+    return 'Question count: $count';
+  }
+
+  @override
+  String get practiceDifficulty => 'Difficulty';
+
+  @override
+  String get practiceStarting => 'Starting…';
+
+  @override
+  String practiceStartChallenge(Object count) {
+    return 'Start challenge ($count Qs)';
+  }
+
+  @override
+  String get practiceResultsLabelled =>
+      'Results are labelled as practice, so they never count towards your rank.';
+
+  @override
+  String get practiceNoHistory => 'No history';
+
+  @override
+  String get practiceNoHistoryBody =>
+      'Your completed practice sessions will appear here.';
+
+  @override
+  String practiceAttemptMeta(Object number, Object mode) {
+    return 'Attempt #$number • $mode';
+  }
+
+  @override
+  String practiceAttemptSummary(
+    Object meta,
+    Object score,
+    Object correct,
+    Object wrong,
+    Object skipped,
+    Object questions,
+  ) {
+    return '$meta • score $score • $correct✓ $wrong✗ $skipped– • $questions Qs';
+  }
+
+  @override
+  String get economyInventory => 'Inventory';
+
+  @override
+  String get economyYourResources => 'Your resources';
+
+  @override
+  String economyResourceSummary(Object held, Object catalog, Object recent) {
+    return '$held held • $catalog catalog • $recent recent';
+  }
+
+  @override
+  String get economyNoResources => 'No resources yet';
+
+  @override
+  String get economyResourcesExplain =>
+      'Resources are earned via city / economy flows and quiz rewards. They appear here when available.';
+
+  @override
+  String get economyCatalog => 'Catalog';
+
+  @override
+  String get economyCatalogEmpty =>
+      'Catalog empty — server will populate material list.';
+
+  @override
+  String get economyRecentActivity => 'Recent activity';
+
+  @override
+  String get economyNoRecentActivity => 'No recent activity.';
+
+  @override
+  String get economyDonations => 'Donations';
+
+  @override
+  String get economyDonationsExplain =>
+      'Live leaderboard and feed. Coins can freeze a donor streak.';
+
+  @override
+  String economyLeaderboardFeed(Object status) {
+    return 'Leaderboard/feed: $status';
+  }
+
+  @override
+  String economyStreakMonths(Object name, Object months) {
+    return '$name • $months mo streak';
+  }
+
+  @override
+  String get economyLiveFeed => 'Live feed';
+
+  @override
+  String get economyDonationsEmpty =>
+      'Donation leaderboard and feed are empty.';
+
+  @override
+  String get economySyncing => 'Syncing…';
+
+  @override
+  String get economyLedger => 'Ledger';
+
+  @override
+  String get economyLedgerExplain =>
+      'Grouped by day. Source labels come from credits.description (not metadata.source).';
+
+  @override
+  String get economyWhereCoinsWent => 'Where your coins went';
+
+  @override
+  String economyPeriodSummary(Object days, Object earned, Object spent) {
+    return 'Last $days days • earned $earned • spent $spent';
+  }
+
+  @override
+  String get economyNoActivity => 'No coin activity in this period.';
+
+  @override
+  String get economyHowYouEarn => 'How you earn';
+
+  @override
+  String get economyMintingExplain =>
+      'Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.';
+
+  @override
+  String get economyNoTransactions => 'No transactions yet';
+
+  @override
+  String get economyNoTransactionsBody =>
+      'Complete a quiz to earn coins. Every credit is recorded on our servers.';
+
+  @override
+  String get economyTitle => 'Economy';
+
+  @override
+  String economyXpTotal(Object xp) {
+    return '$xp XP total';
+  }
+
+  @override
+  String get economyLiveExplain =>
+      'Balance, ledger, shop and store are all live. Coins are minted server-side when a graded attempt completes.';
+
+  @override
+  String get economyWalletTile => 'Wallet - balance + ledger by day';
+
+  @override
+  String get economyWalletTileSub =>
+      'Balance, lifetime totals and your coin history';
+
+  @override
+  String get economyShopTile => 'Coin Shop - resources & bundles';
+
+  @override
+  String get economyShopTileSub => 'Spend coins on materials and bundles';
+
+  @override
+  String get economyInventoryTile => 'Inventory — resources + donations';
+
+  @override
+  String get economyInventoryTileSub =>
+      '8 materials + catalog + live donations feed/leaderboard';
+
+  @override
+  String get economyStoreTile => 'Premium Store - assets & skins';
+
+  @override
+  String get economyStoreTileSub => 'Buy frames, themes, badges and avatars';
+
+  @override
+  String get economyWardrobeTile => 'Wardrobe - equip';
+
+  @override
+  String get economyWardrobeTileSub => 'Equip or clear the assets you own';
+
+  @override
+  String get economyShopTitle => 'Coin Shop';
+
+  @override
+  String get economyNothingForSale => 'Nothing for sale yet';
+
+  @override
+  String get economyShopEmpty =>
+      'The shop has no items published on the server right now.';
+
+  @override
+  String get economyBundles => 'Bundles';
+
+  @override
+  String get economyMaterials => 'Materials';
+
+  @override
+  String get economyPurchaseSafe =>
+      'If a purchase does not go through, retrying is safe — you are never charged twice.';
+
+  @override
+  String economySellsBackFor(Object coins) {
+    return 'sells back for $coins';
+  }
+
+  @override
+  String economySave(Object coins) {
+    return 'save $coins';
+  }
+
+  @override
+  String libraryUnlockedCoins(Object coins) {
+    return 'Unlocked! Coins spent: $coins';
+  }
+
+  @override
+  String get libraryDownloadStarted => 'Download started — opening browser';
+
+  @override
+  String libraryDownloadUrl(Object url) {
+    return 'Download URL: $url';
+  }
+
+  @override
+  String get libraryRatingRange => 'Rating must be 1-5';
+
+  @override
+  String get libraryReviewSubmitted => 'Review submitted';
+
+  @override
+  String get libraryAbout => 'About';
+
+  @override
+  String get libraryReviews => 'Reviews';
+
+  @override
+  String get libraryNoReviews =>
+      'No reviews yet — be the first to review after unlocking!';
+
+  @override
+  String get libraryLoadMoreReviews => 'Load more reviews';
+
+  @override
+  String get librarySignedUrls =>
+      'Download URLs are signed and short-lived. If a download fails, tap Download again to get a fresh URL. Respect library-api-download throttle.';
+
+  @override
+  String get libraryFree => 'FREE';
+
+  @override
+  String libraryCoinsLabel(Object count) {
+    return '$count COINS';
+  }
+
+  @override
+  String get libraryFeatured => 'Featured';
+
+  @override
+  String libraryByUploader(Object name) {
+    return 'by $name';
+  }
+
+  @override
+  String libraryUnlockedFor(Object coins) {
+    return 'Unlocked • $coins coins';
+  }
+
+  @override
+  String get libraryUnlocking => 'Unlocking…';
+
+  @override
+  String get libraryGettingLink => 'Getting link…';
+
+  @override
+  String get libraryDownload => 'Download';
+
+  @override
+  String get libraryUnlockNote =>
+      'Unlocking is charged to your coin balance once, even if the tap does not register the first time. You need to unlock a file before you can download it.';
+
+  @override
+  String libraryReviewsCount(Object count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get libraryDownloads => 'downloads';
+
+  @override
+  String get libraryAccess => 'access';
+
+  @override
+  String get libraryWriteReview => 'Write a review (must unlock first)';
+
+  @override
+  String get libraryCommentOptional => 'Comment (optional)';
+
+  @override
+  String get librarySubmitting => 'Submitting…';
+
+  @override
+  String get librarySubmitReview => 'Submit review';
+
+  @override
+  String get libraryReviewVerified =>
+      'Reviews are verified if you have downloaded/unlocked the file.';
+
+  @override
+  String get libraryVerified => 'verified';
+
+  @override
+  String get librarySearchHint => 'Search files, categories…';
+
+  @override
+  String libraryTrendingFailed(Object reason) {
+    return 'Could not load the trending files.\n$reason';
+  }
+
+  @override
+  String get libraryTrending => 'Trending';
+
+  @override
+  String libraryRecommendedFailed(Object reason) {
+    return 'Could not load your recommendations.\n$reason';
+  }
+
+  @override
+  String get libraryRecommendedForYou => 'Recommended for you';
+
+  @override
+  String get libraryFiles => 'Files';
+
+  @override
+  String libraryTotalCount(Object count) {
+    return '$count total';
+  }
+
+  @override
+  String get libraryNoFiles => 'No files yet';
+
+  @override
+  String libraryNoResults(Object query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String get libraryNoFilesBody =>
+      'Library files will appear here once published and approved on the server.';
+
+  @override
+  String get libraryTryDifferentSearch =>
+      'Try a different search term or clear filters.';
+
+  @override
+  String get libraryClearSearch => 'Clear search';
+
+  @override
+  String get libraryNoCategories => 'No categories published';
+
+  @override
+  String get commonLoadMore => 'Load more';
+
+  @override
+  String get commonLeaderboard => 'Leaderboard';
+
+  @override
+  String get commonWallet => 'Wallet';
+
+  @override
+  String get commonLibrary => 'Library';
+
+  @override
+  String get practiceDrillComplete => 'Drill complete';
+
+  @override
+  String get practiceDoesNotAffect =>
+      'Practice — does not affect rank, XP or streak';
+
+  @override
+  String practiceQuestionsCount(Object count) {
+    return '$count questions';
+  }
+
+  @override
+  String practiceAnsweredSkipped(Object answered, Object skipped) {
+    return '$answered answered • $skipped skipped';
+  }
+
+  @override
+  String practiceScore(Object score) {
+    return 'Score $score';
+  }
+
+  @override
+  String get practiceGradedByServer => 'Graded by the server';
+
+  @override
+  String practiceCorrectWrongSkipped(
+    Object correct,
+    Object wrong,
+    Object skipped,
+  ) {
+    return '$correct correct • $wrong wrong • $skipped skipped';
+  }
+
+  @override
+  String practiceGradingFailed(Object reason) {
+    return 'The server could not grade this drill: $reason';
+  }
+
+  @override
+  String get practiceReviewPassNote =>
+      'This was a review pass. No attempt was created, so there is no score to show.';
+
+  @override
+  String get practiceNoQuestionsInSet => 'No questions in this set';
+
+  @override
+  String practiceQuestionCounter(Object current, Object total) {
+    return 'Q $current/$total';
+  }
+
+  @override
+  String get practiceUntimedPractice => 'Untimed • Practice';
+
+  @override
+  String practiceDifficultyLabel(Object difficulty) {
+    return 'Difficulty: $difficulty';
+  }
+
+  @override
+  String get practiceNoOptionsNotice =>
+      'The server sent this question without answer options, so it cannot be drilled here. Try the graded Quiz tab, which loads a full session.';
+
+  @override
+  String get practiceAnswerSentNotice =>
+      'Answer sent to the server. It grades the attempt — this screen never guesses a score.';
+
+  @override
+  String get practicePrev => 'Prev';
+
+  @override
+  String get practiceGrading => 'Grading…';
+
+  @override
+  String get practiceNoEffectNote =>
+      'Practice is untimed and carries no score, XP, coins or streak effect.';
 
   @override
   String get forceUpdateUnsupportedLatest =>

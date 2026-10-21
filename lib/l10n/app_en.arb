@@ -20,7 +20,7 @@
   "@streakDays": {
     "placeholders": {
       "days": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -28,7 +28,7 @@
   "@coinsBalance": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -54,7 +54,7 @@
   "@commonPoints": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -109,7 +109,7 @@
   "@authMinChars": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -121,10 +121,10 @@
   "@onboardingStepOf": {
     "placeholders": {
       "current": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -180,7 +180,7 @@
   "@quizAttemptCombo": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -195,7 +195,7 @@
         "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -240,7 +240,7 @@
   "@quizFunnelShown": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -264,7 +264,7 @@
   "@calcBrowserCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       },
       "domains": {
         "type": "Object"
@@ -325,7 +325,7 @@
   "@calcInputsCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -375,7 +375,7 @@
         "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -478,7 +478,7 @@
   "@homeMissionsReady": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -486,7 +486,7 @@
   "@homeMissionsActive": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -592,7 +592,6 @@
   "profilePsc": "PSC / Loksewa",
   "profilePscSub": "exam blueprints & syllabus",
   "profilePracticeSub": "drill bookmarks • weak topics",
-  "profileLeaderboard": "Leaderboard",
   "profileLeaderboardSub": "global • friends • league",
   "profileContests": "Contests",
   "profileContestsSub": "live quizzes & leaderboards",
@@ -606,7 +605,6 @@
   "profileNotificationsSub": "activity & reminders",
   "profileSocial": "Social & Referral",
   "profileSocialSub": "share • streak • leaderboard",
-  "profileWallet": "Wallet",
   "profileWalletSub": "coins & ledger",
   "profileAchievementsSub": "streak + badges",
   "profileOffline": "Offline content",
@@ -623,9 +621,7 @@
   "settingsBiometricLock": "Biometric app lock",
   "settingsBiometricLockSub": "Require biometrics after 30s in background",
   "settingsPrivacySub": "Analytics, functional and marketing consent",
-  "settingsAiUsage": "Your AI usage",
   "settingsAiUsageSub": "What AI used on your behalf, by feature",
-  "settingsAiKeys": "Your AI keys",
   "settingsAiKeysSub": "Run AI features on your own provider quota",
   "settingsLogOut": "Log out",
   "settingsDeleteAccount": "Delete account",
@@ -647,7 +643,7 @@
   "@streakBest": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -657,10 +653,10 @@
   "@streakDaysToNextTier": {
     "placeholders": {
       "current": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -670,7 +666,7 @@
   "@streakFreezeLeft": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -697,10 +693,10 @@
   "@streakWagerDay": {
     "placeholders": {
       "current": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       },
       "reward": {
         "type": "Object"
@@ -734,7 +730,7 @@
   "@streakWagerDaysCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -745,10 +741,708 @@
         "type": "Object"
       },
       "days": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
+  "tutorStudyPlan": "Study Plan",
+  "tutorChat": "Chat",
+  "tutorPlanTab": "Plan",
+  "tutorInsights": "Insights",
+  "tutorRevisions": "Revisions",
+  "tutorWeekly": "Weekly",
+  "tutorNoTasksToday": "No tasks today — check back tomorrow",
+  "tutorDone": "Done",
+  "tutorTasksDone": "{done}/{total} tasks",
+  "@tutorTasksDone": {
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorDayCompleted": "Day completed — plan updated.",
+  "tutorMarkDayComplete": "Mark day complete",
+  "tutorYourPlan": "Your plan — {title}",
+  "@tutorYourPlan": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPlanDays": "{days} days • current {current}",
+  "@tutorPlanDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "current": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPlanNoDays": "Plan has no days yet — onboarding will generate it.",
+  "tutorMoreDays": "+ {count} more days",
+  "@tutorMoreDays": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorAdjustPlan": "Adjust plan",
+  "tutorNoPlanYet": "No plan yet",
+  "tutorOnboardingRequired": "Complete tutor onboarding to generate your personalized study plan.",
+  "tutorStartOnboarding": "Start onboarding",
+  "tutorAdjustExample": "e.g., \"I can do 3h/day\" or \"Focus more on soil mechanics\"",
+  "tutorAdjustPrompt": "How should we adjust?",
+  "tutorAdjustRequested": "Plan adjustment requested.",
+  "tutorSubmit": "Submit",
+  "tutorProjectedScore": "Projected score",
+  "tutorConfidence": "Confidence {confidence}% • {trend}",
+  "@tutorConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "Object"
+      },
+      "trend": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorWeakAreas": "Weak areas",
+  "tutorNoWeakAreas": "No weak areas — great work! Keep practicing to stay sharp.",
+  "tutorAccuracy": "Accuracy {accuracy}% • {attempts} attempts",
+  "@tutorAccuracy": {
+    "placeholders": {
+      "accuracy": {
+        "type": "Object"
+      },
+      "attempts": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorNoRevisionsDue": "No revisions due — you are on track.",
+  "tutorDueLabel": "due {date}",
+  "@tutorDueLabel": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorTopicDue": "{topic} • due {date}",
+  "@tutorTopicDue": {
+    "placeholders": {
+      "topic": {
+        "type": "Object"
+      },
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorCompleted": "Completed",
+  "tutorOverdue": "Overdue",
+  "tutorDue": "Due",
+  "tutorWeekRange": "Week {start} → {end}",
+  "@tutorWeekRange": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      },
+      "end": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorAvgScore": "Avg score",
+  "tutorHours": "Hours",
+  "tutorCompletion": "{percent}% completion",
+  "@tutorCompletion": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorHighlights": "Highlights",
+  "tutorWeeklyReportPending": "Weekly report appears after a week of activity.",
+  "tutorOnboardingSaved": "Onboarding saved — plan will generate shortly.",
+  "tutorOnboardingTitle": "Tutor Onboarding",
+  "tutorPersonalised": "Personalized tutor",
+  "tutorOnboardingExplain": "Tell us your goal — the server builds your plan. No user_id required (token-bound).",
+  "tutorSessionLabel": "Session: {session}",
+  "@tutorSessionLabel": {
+    "placeholders": {
+      "session": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorYourGoal": "Your goal",
+  "tutorGoalExample": "e.g., Crack PSC Civil in 6 months",
+  "tutorCurrentLevel": "Current level",
+  "tutorLevelExample": "e.g., Final year B.E. Civil",
+  "tutorHoursPerDay": "Hours per day",
+  "tutorHoursExample": "e.g., 2",
+  "tutorOnboardingComplete": "Onboarding complete — your plan is ready.",
+  "tutorViewPlan": "View Plan",
+  "tutorCompleteOnboarding": "Complete onboarding",
+  "tutorSkipToChat": "Skip → Chat with tutor",
+  "tutorSavedToAccount": "Saved to your account. Safe to retry if the connection drops.",
+  "tutorTitle": "AI Tutor",
+  "tutorClearChat": "Clear chat",
+  "tutorNotEnoughHistory": "Not enough history yet — complete a few quizzes to personalize.",
+  "tutorDismiss": "Dismiss",
+  "tutorWriting": "The tutor is writing its reply. It can take a moment on longer questions.",
+  "tutorAskAnything": "Ask anything",
+  "tutorChatExplain": "Exam concepts, beam deflection, soil mechanics — AI answers via Laravel gateway (never direct provider).",
+  "tutorExample1": "Explain proctor compaction",
+  "tutorExample2": "Weekly plan help",
+  "tutorExample3": "Weak areas?",
+  "tutorTyping": "Tutor is typing…",
+  "tutorInputHint": "Ask tutor…",
+  "aiUsageTitle": "Your AI usage",
+  "aiUsageOverview": "Overview",
+  "aiUsageRequests": "requests",
+  "aiUsageTokens": "tokens",
+  "aiUsageTutorChats": "tutor chats (all time)",
+  "aiUsageNone": "No AI features were used in this period.",
+  "aiUsageByFeature": "By feature",
+  "aiUsageTutorConversations": "Tutor conversations",
+  "aiUsageNoConversations": "No tutor conversations yet.",
+  "aiUsageLoadMoreConversations": "Load more conversations",
+  "aiUsageWeeklyReport": "Weekly report card",
+  "aiUsageNoWeeks": "No weekly summaries stored yet.",
+  "aiUsageLoadMoreWeeks": "Load more weeks",
+  "aiUsageConversationNumber": "Conversation #{number}",
+  "@aiUsageConversationNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageQuestionNumber": "Question {number}",
+  "@aiUsageQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageTurns": "{count} turns",
+  "@aiUsageTurns": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageWeekOf": "Week of {date}",
+  "@aiUsageWeekOf": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageWeekSummary": "{accuracy}% accuracy • {xp} XP • {coins} coins • {streak} day streak",
+  "@aiUsageWeekSummary": {
+    "placeholders": {
+      "accuracy": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      },
+      "streak": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageHoursShort": "{hours}h",
+  "@aiUsageHoursShort": {
+    "placeholders": {
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiKeysTitle": "Your AI keys",
+  "aiKeysExplain": "Your key is encrypted on our servers and never shown again. Only the last four characters are ever displayed.",
+  "aiKeysAddTitle": "Add a key",
+  "aiKeysNoneYet": "No keys yet",
+  "aiKeysNoneExplain": "Add a provider key to run AI features on your own quota instead of the shared one.",
+  "aiKeysStored": "Stored keys",
+  "aiKeysTokensUsed": "{used} of {total} daily tokens used",
+  "@aiKeysTokensUsed": {
+    "placeholders": {
+      "used": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiKeysRevoke": "Revoke",
+  "aiKeysTooShort": "The key must be at least 8 characters",
+  "aiKeysAddProvider": "Add a provider key",
+  "aiKeysProvider": "Provider",
+  "aiKeysApiKey": "API key",
+  "aiKeysSentOnce": "Sent once and never shown again.",
+  "aiKeysLabelOptional": "Label (optional)",
+  "aiKeysSaveKey": "Save key",
+  "aiKeysSaved": "{name} saved. It is encrypted on our servers and never shown again.",
+  "@aiKeysSaved": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiKeysRevoked": "Key revoked.",
+  "practiceBookmarks": "Bookmarks",
+  "practiceWeakTopics": "Weak Topics",
+  "practiceSelfChallenge": "Self Challenge",
+  "practiceHistory": "History",
+  "practiceNoBookmarks": "No bookmarks to practice",
+  "practiceBookmarkedPractice": "Bookmarked Practice",
+  "practiceBookmarksUnavailable": "{count} of {total} bookmarks could not be drilled — the server does not publish their answer options yet.",
+  "@practiceBookmarksUnavailable": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceDrill": "Practice Drill",
+  "practiceDrillCount": "Drill: {count}",
+  "@practiceDrillCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceNoBookmarksBody": "No bookmarks",
+  "practiceNoBookmarksHint": "Bookmark questions while you take a quiz and they will show up here for drilling later.",
+  "practiceBrowseQuizzes": "Browse quizzes",
+  "practiceBookmarkedCount": "{count} bookmarked",
+  "@practiceBookmarkedCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceAll": "Practice all",
+  "practiceQuestionNumber": "Question #{number}",
+  "@practiceQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceQuestionMeta": "{meta} • difficulty {difficulty} • {points} pts",
+  "@practiceQuestionMeta": {
+    "placeholders": {
+      "meta": {
+        "type": "Object"
+      },
+      "difficulty": {
+        "type": "Object"
+      },
+      "points": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceBookmarked": "Bookmarked",
+  "practiceLoadMoreCursor": "Load more (cursor)",
+  "practiceWeakTopicsLoadFailed": "Could not load your weak topics",
+  "practiceWeakTopicsExplained": "These are worked out from your own answer history. Nothing is shown unless it is real.",
+  "practiceNoWeakTopics": "No weak topics yet",
+  "practiceWeakTopicsNeedsAttempts": "The server needs graded attempts before it can spot weak areas. Take a quiz from the Quiz tab and check back.",
+  "practiceWeakTopicsServerNote": "Weak topics are worked out on our servers from your answer history, so nothing here is guessed.",
+  "practiceYourWeakTopics": "Your weak topics",
+  "practiceDrillAction": "Drill",
+  "practiceDrillTen": "Drill 10 questions (practice mode, untimed)",
+  "practiceUntimedNote": "Practice is untimed and does not affect your rank or coin balance.",
+  "practiceSelfChallengeExplain": "Pick question count & difficulty — mirrors Elite Quiz self-challenge but sourced from adaptive engine.",
+  "practiceQuestionCount": "Question count: {count}",
+  "@practiceQuestionCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceDifficulty": "Difficulty",
+  "practiceStarting": "Starting…",
+  "practiceStartChallenge": "Start challenge ({count} Qs)",
+  "@practiceStartChallenge": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceResultsLabelled": "Results are labelled as practice, so they never count towards your rank.",
+  "practiceNoHistory": "No history",
+  "practiceNoHistoryBody": "Your completed practice sessions will appear here.",
+  "practiceAttemptMeta": "Attempt #{number} • {mode}",
+  "@practiceAttemptMeta": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "mode": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceAttemptSummary": "{meta} • score {score} • {correct}✓ {wrong}✗ {skipped}– • {questions} Qs",
+  "@practiceAttemptSummary": {
+    "placeholders": {
+      "meta": {
+        "type": "Object"
+      },
+      "score": {
+        "type": "Object"
+      },
+      "correct": {
+        "type": "Object"
+      },
+      "wrong": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyInventory": "Inventory",
+  "economyYourResources": "Your resources",
+  "economyResourceSummary": "{held} held • {catalog} catalog • {recent} recent",
+  "@economyResourceSummary": {
+    "placeholders": {
+      "held": {
+        "type": "Object"
+      },
+      "catalog": {
+        "type": "Object"
+      },
+      "recent": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyNoResources": "No resources yet",
+  "economyResourcesExplain": "Resources are earned via city / economy flows and quiz rewards. They appear here when available.",
+  "economyCatalog": "Catalog",
+  "economyCatalogEmpty": "Catalog empty — server will populate material list.",
+  "economyRecentActivity": "Recent activity",
+  "economyNoRecentActivity": "No recent activity.",
+  "economyDonations": "Donations",
+  "economyDonationsExplain": "Live leaderboard and feed. Coins can freeze a donor streak.",
+  "economyLeaderboardFeed": "Leaderboard/feed: {status}",
+  "@economyLeaderboardFeed": {
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyStreakMonths": "{name} • {months} mo streak",
+  "@economyStreakMonths": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "months": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyLiveFeed": "Live feed",
+  "economyDonationsEmpty": "Donation leaderboard and feed are empty.",
+  "economySyncing": "Syncing…",
+  "economyLedger": "Ledger",
+  "economyLedgerExplain": "Grouped by day. Source labels come from credits.description (not metadata.source).",
+  "economyWhereCoinsWent": "Where your coins went",
+  "economyPeriodSummary": "Last {days} days • earned {earned} • spent {spent}",
+  "@economyPeriodSummary": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "earned": {
+        "type": "Object"
+      },
+      "spent": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyNoActivity": "No coin activity in this period.",
+  "economyHowYouEarn": "How you earn",
+  "economyMintingExplain": "Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.",
+  "economyNoTransactions": "No transactions yet",
+  "economyNoTransactionsBody": "Complete a quiz to earn coins. Every credit is recorded on our servers.",
+  "economyTitle": "Economy",
+  "economyXpTotal": "{xp} XP total",
+  "@economyXpTotal": {
+    "placeholders": {
+      "xp": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyLiveExplain": "Balance, ledger, shop and store are all live. Coins are minted server-side when a graded attempt completes.",
+  "economyWalletTile": "Wallet - balance + ledger by day",
+  "economyWalletTileSub": "Balance, lifetime totals and your coin history",
+  "economyShopTile": "Coin Shop - resources & bundles",
+  "economyShopTileSub": "Spend coins on materials and bundles",
+  "economyInventoryTile": "Inventory — resources + donations",
+  "economyInventoryTileSub": "8 materials + catalog + live donations feed/leaderboard",
+  "economyStoreTile": "Premium Store - assets & skins",
+  "economyStoreTileSub": "Buy frames, themes, badges and avatars",
+  "economyWardrobeTile": "Wardrobe - equip",
+  "economyWardrobeTileSub": "Equip or clear the assets you own",
+  "economyShopTitle": "Coin Shop",
+  "economyNothingForSale": "Nothing for sale yet",
+  "economyShopEmpty": "The shop has no items published on the server right now.",
+  "economyBundles": "Bundles",
+  "economyMaterials": "Materials",
+  "economyPurchaseSafe": "If a purchase does not go through, retrying is safe — you are never charged twice.",
+  "economySellsBackFor": "sells back for {coins}",
+  "@economySellsBackFor": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "economySave": "save {coins}",
+  "@economySave": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlockedCoins": "Unlocked! Coins spent: {coins}",
+  "@libraryUnlockedCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryDownloadStarted": "Download started — opening browser",
+  "libraryDownloadUrl": "Download URL: {url}",
+  "@libraryDownloadUrl": {
+    "placeholders": {
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryRatingRange": "Rating must be 1-5",
+  "libraryReviewSubmitted": "Review submitted",
+  "libraryAbout": "About",
+  "libraryReviews": "Reviews",
+  "libraryNoReviews": "No reviews yet — be the first to review after unlocking!",
+  "libraryLoadMoreReviews": "Load more reviews",
+  "librarySignedUrls": "Download URLs are signed and short-lived. If a download fails, tap Download again to get a fresh URL. Respect library-api-download throttle.",
+  "libraryFree": "FREE",
+  "libraryCoinsLabel": "{count} COINS",
+  "@libraryCoinsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryFeatured": "Featured",
+  "libraryByUploader": "by {name}",
+  "@libraryByUploader": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlockedFor": "Unlocked • {coins} coins",
+  "@libraryUnlockedFor": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlocking": "Unlocking…",
+  "libraryGettingLink": "Getting link…",
+  "libraryDownload": "Download",
+  "libraryUnlockNote": "Unlocking is charged to your coin balance once, even if the tap does not register the first time. You need to unlock a file before you can download it.",
+  "libraryReviewsCount": "{count} reviews",
+  "@libraryReviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryDownloads": "downloads",
+  "libraryAccess": "access",
+  "libraryWriteReview": "Write a review (must unlock first)",
+  "libraryCommentOptional": "Comment (optional)",
+  "librarySubmitting": "Submitting…",
+  "librarySubmitReview": "Submit review",
+  "libraryReviewVerified": "Reviews are verified if you have downloaded/unlocked the file.",
+  "libraryVerified": "verified",
+  "librarySearchHint": "Search files, categories…",
+  "libraryTrendingFailed": "Could not load the trending files.\n{reason}",
+  "@libraryTrendingFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryTrending": "Trending",
+  "libraryRecommendedFailed": "Could not load your recommendations.\n{reason}",
+  "@libraryRecommendedFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryRecommendedForYou": "Recommended for you",
+  "libraryFiles": "Files",
+  "libraryTotalCount": "{count} total",
+  "@libraryTotalCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryNoFiles": "No files yet",
+  "libraryNoResults": "No results for \"{query}\"",
+  "@libraryNoResults": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryNoFilesBody": "Library files will appear here once published and approved on the server.",
+  "libraryTryDifferentSearch": "Try a different search term or clear filters.",
+  "libraryClearSearch": "Clear search",
+  "libraryNoCategories": "No categories published",
+  "commonLoadMore": "Load more",
+  "commonLeaderboard": "Leaderboard",
+  "commonWallet": "Wallet",
+  "commonLibrary": "Library",
+  "practiceDrillComplete": "Drill complete",
+  "practiceDoesNotAffect": "Practice — does not affect rank, XP or streak",
+  "practiceQuestionsCount": "{count} questions",
+  "@practiceQuestionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceAnsweredSkipped": "{answered} answered • {skipped} skipped",
+  "@practiceAnsweredSkipped": {
+    "placeholders": {
+      "answered": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceScore": "Score {score}",
+  "@practiceScore": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceGradedByServer": "Graded by the server",
+  "practiceCorrectWrongSkipped": "{correct} correct • {wrong} wrong • {skipped} skipped",
+  "@practiceCorrectWrongSkipped": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "wrong": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceGradingFailed": "The server could not grade this drill: {reason}",
+  "@practiceGradingFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceReviewPassNote": "This was a review pass. No attempt was created, so there is no score to show.",
+  "practiceNoQuestionsInSet": "No questions in this set",
+  "practiceQuestionCounter": "Q {current}/{total}",
+  "@practiceQuestionCounter": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceUntimedPractice": "Untimed • Practice",
+  "practiceDifficultyLabel": "Difficulty: {difficulty}",
+  "@practiceDifficultyLabel": {
+    "placeholders": {
+      "difficulty": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceNoOptionsNotice": "The server sent this question without answer options, so it cannot be drilled here. Try the graded Quiz tab, which loads a full session.",
+  "practiceAnswerSentNotice": "Answer sent to the server. It grades the attempt — this screen never guesses a score.",
+  "practicePrev": "Prev",
+  "practiceGrading": "Grading…",
+  "practiceNoEffectNote": "Practice is untimed and carries no score, XP, coins or streak effect.",
   "forceUpdateUnsupportedLatest": "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
   "forceUpdateUnsupportedVersion": "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
   "@forceUpdateUnsupportedVersion": {

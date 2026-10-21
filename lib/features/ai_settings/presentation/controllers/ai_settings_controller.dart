@@ -8,6 +8,7 @@ import '../../data/datasources/ai_settings_remote_data_source.dart';
 import '../../data/repositories/ai_settings_repository_impl.dart';
 import '../../domain/entities/ai_settings.dart';
 import '../../domain/repositories/ai_settings_repository.dart';
+import '../../../../app/localization/l10n.dart';
 
 final aiSettingsRemoteDataSourceProvider =
     Provider<AiSettingsRemoteDataSource>((ref) {
@@ -214,7 +215,7 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       state = state.copyWith(
         isSavingKey: false,
         saveKeyMessage:
-            '${key.displayName} saved. It is encrypted on our servers and never shown again.',
+            appL10n().aiKeysSaved(key.displayName),
       );
       await fetchKeys();
       return true;
@@ -233,7 +234,7 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       await _repo.revokeKey(keyId);
       state = state.copyWith(
         isSavingKey: false,
-        saveKeyMessage: 'Key revoked.',
+        saveKeyMessage: appL10n().aiKeysRevoked,
       );
       await fetchKeys();
       return true;

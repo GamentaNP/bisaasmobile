@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,12 +43,13 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
   }
 
   Future<void> _onUnlock() async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(libraryControllerProvider.notifier);
     final res = await notifier.unlock(widget.slug);
     if (!mounted) return;
     if (res != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unlocked! Coins spent: ${res.coinsSpent}')),
+        SnackBar(content: Text(l10n.libraryUnlockedCoins(res.coinsSpent))),
       );
     } else {
       final err = ref.read(libraryControllerProvider).unlockError;
@@ -57,6 +60,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
   }
 
   Future<void> _onDownload() async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(libraryControllerProvider.notifier);
     final url = await notifier.download(widget.slug);
     if (!mounted) return;
@@ -65,10 +69,10 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
       if (uri != null && await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Download started — opening browser')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.libraryDownloadStarted)));
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Download URL: $url')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.libraryDownloadUrl(url))));
       }
     } else {
       final err = ref.read(libraryControllerProvider).downloadError;
@@ -78,8 +82,9 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
   }
 
   Future<void> _onSubmitReview() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_rating < 1 || _rating > 5) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Rating must be 1-5')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.libraryRatingRange)));
       return;
     }
     final notifier = ref.read(libraryControllerProvider.notifier);
@@ -87,7 +92,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
     if (!mounted) return;
     if (review != null) {
       _commentCtrl.clear();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Review submitted')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.libraryReviewSubmitted)));
     } else {
       final err = ref.read(libraryControllerProvider).submitReviewError;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err ?? 'Review failed'), backgroundColor: AppColors.wrongRed));
@@ -96,6 +101,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(libraryControllerProvider);
     final theme = Theme.of(context);
     final file = state.selectedFile;
@@ -147,7 +153,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                   const SizedBox(height: 24),
                   // Description + meta
                   if (file.description != null && file.description!.isNotEmpty) ...[
-                    Text('About', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(l10n.libraryAbout, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     Text(file.description!, style: theme.textTheme.bodySmall?.copyWith(height: 1.5)),
                     const SizedBox(height: 16),
@@ -170,7 +176,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                   // Reviews header
                   Row(
                     children: [
-                      Text('Reviews', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                      Text(l10n.libraryReviews, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -203,9 +209,9 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                   else if (state.reviewsError != null && state.reviews.isEmpty)
                     ErrorView(message: state.reviewsError!, onRetry: () => ref.read(libraryControllerProvider.notifier).fetchReviews(widget.slug))
                   else if (state.reviews.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text('No reviews yet — be the first to review after unlocking!', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                      child: Text(l10n.libraryNoReviews, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
                     )
                   else
                     ...state.reviews.map((r) => _ReviewTile(review: r)),
@@ -219,13 +225,13 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                               final next = (state.reviewsPagination!.currentPage ?? 1) + 1;
                               ref.read(libraryControllerProvider.notifier).fetchReviews(widget.slug, page: next, append: true);
                             },
-                      child: const Text('Load more reviews'),
+                      child: Text(l10n.libraryLoadMoreReviews),
                     ),
                   ],
 
                   const SizedBox(height: 24),
-                  const Text(
-                    'Download URLs are signed and short-lived. If a download fails, tap Download again to get a fresh URL. Respect library-api-download throttle.',
+                  Text(
+                    l10n.librarySignedUrls,
                     style: TextStyle(fontSize: 11, color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
@@ -258,6 +264,7 @@ class _FileHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
@@ -283,13 +290,13 @@ class _FileHeaderCard extends StatelessWidget {
                   color: file.isFree ? AppColors.correctGreen.withValues(alpha: 0.12) : AppColors.coinYellow.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(file.isFree ? 'FREE' : '${file.coinPrice} COINS',
+                child: Text(file.isFree ? l10n.libraryFree : l10n.libraryCoinsLabel(file.coinPrice),
                     style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: file.isFree ? AppColors.correctGreen : AppColors.coinYellow)),
               ),
               const Spacer(),
               if (file.isFeatured) const Icon(Icons.star_rounded, size: 18, color: AppColors.xpGold),
               if (file.isFeatured) const SizedBox(width: 4),
-              if (file.isFeatured) const Text('Featured', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
+              if (file.isFeatured) Text(l10n.libraryFeatured, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
             ],
           ),
           const SizedBox(height: 10),
@@ -314,7 +321,7 @@ class _FileHeaderCard extends StatelessWidget {
               children: [
                 const Icon(Icons.person_rounded, size: 14, color: Colors.grey),
                 const SizedBox(width: 4),
-                Text('by ${file.uploader!.name}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(l10n.libraryByUploader(file.uploader!.name), style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 const Spacer(),
                 if (file.createdAt != null)
                   Text(_formatDate(file.createdAt!), style: const TextStyle(fontSize: 11, color: Colors.grey)),
@@ -352,6 +359,7 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -364,7 +372,7 @@ class _ActionRow extends StatelessWidget {
               children: [
                 const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen, size: 18),
                 const SizedBox(width: 8),
-                Text('Unlocked • ${lastUnlockResult!.coinsSpent} coins', style: const TextStyle(color: AppColors.correctGreen, fontWeight: FontWeight.w600, fontSize: 13)),
+                Text(l10n.libraryUnlockedFor(lastUnlockResult!.coinsSpent), style: const TextStyle(color: AppColors.correctGreen, fontWeight: FontWeight.w600, fontSize: 13)),
               ],
             ),
           ),
@@ -376,7 +384,7 @@ class _ActionRow extends StatelessWidget {
                 icon: isUnlocking
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.lock_open_rounded, size: 18),
-                label: Text(isUnlocking ? 'Unlocking…' : file.isFree ? 'Unlock (Free)' : 'Unlock • ${file.coinPrice} coins'),
+                label: Text(isUnlocking ? l10n.libraryUnlocking : file.isFree ? 'Unlock (Free)' : 'Unlock • ${file.coinPrice} coins'),
               ),
             ),
             const SizedBox(width: 12),
@@ -386,15 +394,15 @@ class _ActionRow extends StatelessWidget {
                 icon: isDownloading
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.download_rounded, size: 18),
-                label: Text(isDownloading ? 'Getting link…' : 'Download'),
+                label: Text(isDownloading ? l10n.libraryGettingLink : l10n.libraryDownload),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.correctGreen),
               ),
             ),
           ],
         ),
         const SizedBox(height: 6),
-        const Text(
-          'Unlocking is charged to your coin balance once, even if the tap does not register the first time. You need to unlock a file before you can download it.',
+        Text(
+          l10n.libraryUnlockNote,
           style: TextStyle(fontSize: 11, color: Colors.grey),
         ),
       ],
@@ -408,13 +416,14 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
-        _Stat(icon: Icons.star_rounded, color: AppColors.xpGold, value: file.averageRating.toStringAsFixed(1), label: '${file.reviewCount} reviews'),
+        _Stat(icon: Icons.star_rounded, color: AppColors.xpGold, value: file.averageRating.toStringAsFixed(1), label: l10n.libraryReviewsCount(file.reviewCount)),
         const SizedBox(width: 12),
-        _Stat(icon: Icons.download_rounded, color: AppColors.brand, value: '${file.downloadCount}', label: 'downloads'),
+        _Stat(icon: Icons.download_rounded, color: AppColors.brand, value: '${file.downloadCount}', label: l10n.libraryDownloads),
         const SizedBox(width: 12),
-        _Stat(icon: Icons.visibility_rounded, color: Colors.grey, value: file.visibility, label: 'access'),
+        _Stat(icon: Icons.visibility_rounded, color: Colors.grey, value: file.visibility, label: l10n.libraryAccess),
       ],
     );
   }
@@ -463,6 +472,7 @@ class _SubmitReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -473,7 +483,7 @@ class _SubmitReviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Write a review (must unlock first)', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.libraryWriteReview, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           Row(
             children: List.generate(5, (i) {
@@ -488,8 +498,8 @@ class _SubmitReviewCard extends StatelessWidget {
           const SizedBox(height: 8),
           TextField(
             controller: commentCtrl,
-            decoration: const InputDecoration(
-              hintText: 'Comment (optional)',
+            decoration: InputDecoration(
+              hintText: l10n.libraryCommentOptional,
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -502,10 +512,10 @@ class _SubmitReviewCard extends StatelessWidget {
             icon: isSubmitting
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.rate_review_rounded, size: 18),
-            label: Text(isSubmitting ? 'Submitting…' : 'Submit review'),
+            label: Text(isSubmitting ? l10n.librarySubmitting : l10n.librarySubmitReview),
           ),
           const SizedBox(height: 4),
-          const Text('Reviews are verified if you have downloaded/unlocked the file.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+          Text(l10n.libraryReviewVerified, style: TextStyle(fontSize: 11, color: Colors.grey)),
         ],
       ),
     );
@@ -518,6 +528,7 @@ class _ReviewTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
@@ -543,9 +554,9 @@ class _ReviewTile extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [Icon(Icons.verified_rounded, size: 12, color: AppColors.correctGreen), SizedBox(width: 2), Text('verified', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen))],
+                    children: [Icon(Icons.verified_rounded, size: 12, color: AppColors.correctGreen), SizedBox(width: 2), Text(l10n.libraryVerified, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen))],
                   ),
                 ),
               const Spacer(),

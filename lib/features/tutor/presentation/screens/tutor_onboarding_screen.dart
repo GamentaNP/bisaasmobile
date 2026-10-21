@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +32,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
   /// Shared by the primary button and the error banner's Retry, so a retry
   /// re-sends the exact same payload instead of a reconstructed one.
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(tutorOnboardingControllerProvider.notifier);
     if (ref.read(tutorOnboardingControllerProvider).session == null) {
       await notifier.start();
@@ -41,7 +44,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
     });
     if (ok && mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Onboarding saved — plan will generate shortly.')));
+          .showSnackBar(SnackBar(content: Text(l10n.tutorOnboardingSaved)));
     }
   }
 
@@ -59,12 +62,13 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(tutorOnboardingControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tutor Onboarding'),
+        title: Text(l10n.tutorOnboardingTitle),
         leading: IconButton(icon: const Icon(Icons.close_rounded), onPressed: () => context.pop()),
       ),
       body: ListView(
@@ -85,11 +89,11 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
                   child: const Icon(Icons.school_rounded, color: AppColors.brandDark, size: 20),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Personalized tutor', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(l10n.tutorPersonalised, style: TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 2),
-                    Text('Tell us your goal — the server builds your plan. No user_id required (token-bound).', style: TextStyle(fontSize: 12, color: Colors.grey, height: 1.3)),
+                    Text(l10n.tutorOnboardingExplain, style: TextStyle(fontSize: 12, color: Colors.grey, height: 1.3)),
                   ]),
                 ),
               ],
@@ -104,7 +108,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(12)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('Session: ${state.session!.sessionId.isEmpty ? '— (offline preview)' : state.session!.sessionId}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                Text(l10n.tutorSessionLabel(state.session!.sessionId.isEmpty ? '— (offline preview)' : state.session!.sessionId), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                 if (state.session!.prompt != null) ...[
                   const SizedBox(height: 8),
                   Text(state.session!.prompt!, style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic)),
@@ -117,37 +121,37 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
             ),
             const SizedBox(height: 16),
           ],
-          Text('Your goal', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.tutorYourGoal, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
             controller: _goalCtrl,
-            decoration: const InputDecoration(
-              hintText: 'e.g., Crack PSC Civil in 6 months',
+            decoration: InputDecoration(
+              hintText: l10n.tutorGoalExample,
               border: OutlineInputBorder(),
               isDense: true,
               prefixIcon: Icon(Icons.flag_rounded),
             ),
           ),
           const SizedBox(height: 12),
-          Text('Current level', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.tutorCurrentLevel, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
             controller: _levelCtrl,
-            decoration: const InputDecoration(
-              hintText: 'e.g., Final year B.E. Civil',
+            decoration: InputDecoration(
+              hintText: l10n.tutorLevelExample,
               border: OutlineInputBorder(),
               isDense: true,
               prefixIcon: Icon(Icons.bar_chart_rounded),
             ),
           ),
           const SizedBox(height: 12),
-          Text('Hours per day', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(l10n.tutorHoursPerDay, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
             controller: _hoursCtrl,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              hintText: 'e.g., 2',
+            decoration: InputDecoration(
+              hintText: l10n.tutorHoursExample,
               border: OutlineInputBorder(),
               isDense: true,
               prefixIcon: Icon(Icons.schedule_rounded),
@@ -163,8 +167,8 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
               child: Row(children: [
                 const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen),
                 const SizedBox(width: 10),
-                const Expanded(child: Text('Onboarding complete — your plan is ready.', style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.correctGreen))),
-                TextButton(onPressed: () => context.go('/tutor/plan'), child: const Text('View Plan')),
+                Expanded(child: Text(l10n.tutorOnboardingComplete, style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.correctGreen))),
+                TextButton(onPressed: () => context.go('/tutor/plan'), child: Text(l10n.tutorViewPlan)),
               ]),
             ),
           const SizedBox(height: 12),
@@ -173,16 +177,16 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
                 ? null
                 : _submit,
             icon: state.isCompleting ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.check_rounded),
-            label: Text(state.isCompleted ? 'Completed' : 'Complete onboarding'),
+            label: Text(state.isCompleted ? l10n.tutorCompleted : l10n.tutorCompleteOnboarding),
           ),
           const SizedBox(height: 8),
           OutlinedButton(
             onPressed: () => context.go('/tutor/chat'),
-            child: const Text('Skip → Chat with tutor'),
+            child: Text(l10n.tutorSkipToChat),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Saved to your account. Safe to retry if the connection drops.',
+          Text(
+            l10n.tutorSavedToAccount,
             style: TextStyle(fontSize: 11, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
@@ -199,6 +203,7 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -208,7 +213,7 @@ class _ErrorBanner extends StatelessWidget {
           const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed),
           const SizedBox(width: 8),
           Expanded(child: Text(message, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))),
-          TextButton(onPressed: onRetry, child: const Text('Retry')),
+          TextButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );

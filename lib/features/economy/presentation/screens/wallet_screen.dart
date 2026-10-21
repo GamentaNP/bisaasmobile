@@ -6,6 +6,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/economy_controller.dart';
 import '../../domain/entities/economy.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Wallet — balance headline + ledger grouped by day.
 ///
@@ -37,6 +38,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(economyControllerProvider);
     final user = ref.watch(authControllerProvider).value;
     final theme = Theme.of(context);
@@ -49,7 +51,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final grouped = _groupByDay(ledger);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Wallet')),
+      appBar: AppBar(title: Text(l10n.commonWallet)),
       body: RefreshIndicator(
         onRefresh: () => Future.wait([
           ref.read(economyControllerProvider.notifier).fetchWallet(),
@@ -91,10 +93,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('$balance coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: AppColors.coinYellow)),
+                        Text(l10n.coinsBalance(balance), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: AppColors.coinYellow)),
                         const SizedBox(height: 2),
                         Text(
-                          state.isWalletLoading ? 'Syncing…' : (state.wallet?.updatedAt != null ? 'Updated ${DateFormat.yMMMd().add_jm().format(state.wallet!.updatedAt!.toLocal())}' : '${user?.xp ?? 0} XP total'),
+                          state.isWalletLoading ? l10n.economySyncing : (state.wallet?.updatedAt != null ? 'Updated ${DateFormat.yMMMd().add_jm().format(state.wallet!.updatedAt!.toLocal())}' : '${user?.xp ?? 0} XP total'),
                           style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                         ),
                       ],
@@ -108,14 +110,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: 18),
             Row(
               children: [
-                Text('Ledger', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(l10n.economyLedger, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 const Spacer(),
                 if (state.isLedgerLoading) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
               ],
             ),
             const SizedBox(height: 4),
-            const Text(
-              'Grouped by day. Source labels come from credits.description (not metadata.source).',
+            Text(
+              l10n.economyLedgerExplain,
               style: TextStyle(fontSize: 11, color: Colors.grey),
             ),
             const SizedBox(height: 12),
@@ -130,7 +132,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed),
                       const SizedBox(width: 8),
                       Expanded(child: Text(state.ledgerError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))),
-                      TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchLedger(), child: const Text('Retry')),
+                      TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchLedger(), child: Text(l10n.retry)),
                     ],
                   ),
                 ),
@@ -156,7 +158,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         ? null
                         : () => ref.read(economyControllerProvider.notifier).fetchLedger(cursor: state.ledgerCursor, append: true),
                     icon: const Icon(Icons.expand_more_rounded),
-                    label: const Text('Load more'),
+                    label: Text(l10n.commonLoadMore),
                   ),
                 ),
             ],
@@ -168,7 +170,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               const SizedBox(height: 20),
               const Divider(),
               const SizedBox(height: 12),
-              Text('Where your coins went',
+              Text(l10n.economyWhereCoinsWent,
                   style: theme.textTheme.titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
@@ -182,15 +184,15 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               const SizedBox(height: 20),
               const Divider(),
               const SizedBox(height: 12),
-              Text('Where your coins went', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyWhereCoinsWent, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text(
-                'Last ${state.walletCategories!.periodDays} days • earned ${state.walletCategories!.earned} • spent ${state.walletCategories!.spentAbsolute}',
+                l10n.economyPeriodSummary(state.walletCategories!.periodDays, state.walletCategories!.earned, state.walletCategories!.spentAbsolute),
                 style: const TextStyle(fontSize: 11, color: Colors.grey),
               ),
               const SizedBox(height: 10),
               if (state.walletCategories!.categories.isEmpty)
-                const Text('No coin activity in this period.', style: TextStyle(fontSize: 11, color: Colors.grey))
+                Text(l10n.economyNoActivity, style: TextStyle(fontSize: 11, color: Colors.grey))
               else
                 ...state.walletCategories!.categories.map((c) => _CategoryTile(category: c)),
             ],
@@ -198,9 +200,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: 20),
             const Divider(),
             const SizedBox(height: 8),
-            const Text('How you earn', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            Text(l10n.economyHowYouEarn, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             const SizedBox(height: 6),
-            const Text('Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.', style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+            Text(l10n.economyMintingExplain, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
           ],
         ),
       ),
@@ -234,6 +236,7 @@ class _ErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -252,7 +255,7 @@ class _ErrorCard extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: AppColors.wrongRed),
             ),
           ),
-          TextButton(onPressed: onRetry, child: const Text('Retry')),
+          TextButton(onPressed: onRetry, child: Text(l10n.retry)),
         ],
       ),
     );
@@ -288,6 +291,7 @@ class _EmptyLedger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4)), borderRadius: BorderRadius.circular(14)),
@@ -295,10 +299,10 @@ class _EmptyLedger extends StatelessWidget {
         children: [
           Icon(Icons.receipt_long_rounded, size: 28, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35)),
           const SizedBox(height: 8),
-          const Text('No transactions yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(l10n.economyNoTransactions, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
           const SizedBox(height: 4),
-          const Text(
-            'Complete a quiz to earn coins. Every credit is recorded on our servers.',
+          Text(
+            l10n.economyNoTransactionsBody,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
           ),

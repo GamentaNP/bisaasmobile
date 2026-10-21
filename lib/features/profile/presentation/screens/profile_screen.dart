@@ -282,7 +282,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _Tile(icon: Icons.psychology_rounded, title: l10n.profileEice, subtitle: l10n.profileEiceSub, onTapRoute: '/eice'),
           _Tile(icon: Icons.account_balance_rounded, title: l10n.profilePsc, subtitle: l10n.profilePscSub, onTapRoute: '/psc'),
           _Tile(icon: Icons.edit_note_rounded, title: l10n.practice, subtitle: l10n.profilePracticeSub, onTapRoute: '/practice'),
-          _Tile(icon: Icons.leaderboard_rounded, title: l10n.profileLeaderboard, subtitle: l10n.profileLeaderboardSub, onTapRoute: '/leaderboard'),
+          _Tile(icon: Icons.leaderboard_rounded, title: l10n.commonLeaderboard, subtitle: l10n.profileLeaderboardSub, onTapRoute: '/leaderboard'),
           _Tile(icon: Icons.emoji_events_rounded, title: l10n.profileContests, subtitle: l10n.profileContestsSub, onTapRoute: '/contests'),
           _Tile(icon: Icons.sensors_rounded, title: l10n.profileLiveEvents, subtitle: l10n.profileLiveEventsSub, onTapRoute: '/live-events'),
           _Tile(icon: Icons.insights_rounded, title: l10n.profileCoaching, subtitle: l10n.profileCoachingSub, onTapRoute: '/coaching'),
@@ -290,7 +290,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _Tile(icon: Icons.notifications_rounded, title: l10n.profileNotifications, subtitle: l10n.profileNotificationsSub, onTapRoute: '/notifications'),
           _Tile(icon: Icons.share_rounded, title: l10n.profileSocial, subtitle: l10n.profileSocialSub, onTapRoute: '/social'),
 
-          _Tile(icon: Icons.account_balance_wallet_rounded, title: l10n.profileWallet, subtitle: l10n.profileWalletSub, onTapRoute: '/economy'),
+          _Tile(icon: Icons.account_balance_wallet_rounded, title: l10n.commonWallet, subtitle: l10n.profileWalletSub, onTapRoute: '/economy'),
           _Tile(icon: Icons.emoji_events_rounded, title: l10n.profileAchievements, subtitle: l10n.profileAchievementsSub, onTapRoute: '/achievements'),
           _Tile(icon: Icons.download_for_offline_rounded, title: l10n.profileOffline, subtitle: l10n.profileOfflineSub, onTapRoute: '/downloads'),
           _Tile(icon: Icons.calculate_rounded, title: l10n.calculators, subtitle: l10n.profileCalculatorsSub, onTapRoute: '/calculators'),

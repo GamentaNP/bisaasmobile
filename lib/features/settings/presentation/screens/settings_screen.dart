@@ -232,14 +232,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const _SectionHeader('AI'),
           ListTile(
             leading: const Icon(Icons.insights_rounded),
-            title: Text(l10n.settingsAiUsage),
+            title: Text(l10n.aiUsageTitle),
             subtitle: Text(l10n.settingsAiUsageSub),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/ai/usage'),
           ),
           ListTile(
             leading: const Icon(Icons.key_rounded),
-            title: Text(l10n.settingsAiKeys),
+            title: Text(l10n.aiKeysTitle),
             subtitle: Text(l10n.settingsAiKeysSub),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/ai/keys'),

@@ -58,12 +58,12 @@ class AppLocalizationsNe extends AppLocalizations {
   String get error => 'केही गडबड भयो';
 
   @override
-  String streakDays(int days) {
+  String streakDays(Object days) {
     return 'स्ट्रिक: $days दिन';
   }
 
   @override
-  String coinsBalance(int count) {
+  String coinsBalance(Object count) {
     return '$count क्विन';
   }
 
@@ -122,7 +122,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get commonShareResult => 'नतिजा साझेदार गर्नुहोस्';
 
   @override
-  String commonPoints(int count) {
+  String commonPoints(Object count) {
     return '$count अंक';
   }
 
@@ -216,7 +216,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get authConfirmNewPasswordLabel => 'नयाँ पासवर्ड पुष्टि गर्नुहोस्';
 
   @override
-  String authMinChars(int count) {
+  String authMinChars(Object count) {
     return 'कम्तीमा $count अक्षर';
   }
 
@@ -234,7 +234,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get authPasswordRequired => 'कृपया आफ्नो पासवर्ड लेख्नुहोस्';
 
   @override
-  String onboardingStepOf(int current, int total) {
+  String onboardingStepOf(Object current, Object total) {
     return 'चरण $current / $total';
   }
 
@@ -324,7 +324,7 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String quizAttemptCombo(int count) {
+  String quizAttemptCombo(Object count) {
     return '×$count कम्बो!';
   }
 
@@ -342,7 +342,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get quizResultAccuracy => 'शुद्धता';
 
   @override
-  String quizResultCorrectOf(Object correct, int total) {
+  String quizResultCorrectOf(Object correct, Object total) {
     return '$total मध्ये $correct सही';
   }
 
@@ -401,7 +401,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get quizFunnelSampleTitle => 'नमुना प्रश्नहरू';
 
   @override
-  String quizFunnelShown(int count) {
+  String quizFunnelShown(Object count) {
     return '$count देखाइएको';
   }
 
@@ -438,7 +438,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get calcBrowserEmpty => 'कुनै क्यालकुलेटर प्रकाशित छैन';
 
   @override
-  String calcBrowserCount(int count, Object domains) {
+  String calcBrowserCount(Object count, Object domains) {
     return '$count क्यालकुलेटर • $domains क्षेत्र';
   }
 
@@ -519,7 +519,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get calcAddField => 'फाँट थप्नुहोस्';
 
   @override
-  String calcInputsCount(int count) {
+  String calcInputsCount(Object count) {
     return 'इनपुट: $count';
   }
 
@@ -577,7 +577,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get homeYourWorlds => 'तपाईंका वर्ल्ड';
 
   @override
-  String homeStars(Object earned, int total) {
+  String homeStars(Object earned, Object total) {
     return '$earned / $total ⭐';
   }
 
@@ -768,12 +768,12 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String homeMissionsReady(int count) {
+  String homeMissionsReady(Object count) {
     return '$count मिसन दावी गर्न तयार';
   }
 
   @override
-  String homeMissionsActive(int count) {
+  String homeMissionsActive(Object count) {
     return 'मिसन — $count सक्रिय';
   }
 
@@ -959,9 +959,6 @@ class AppLocalizationsNe extends AppLocalizations {
   String get profilePracticeSub => 'बुकमार्क ड्रिल • कमजोर विषय';
 
   @override
-  String get profileLeaderboard => 'लिडरबोर्ड';
-
-  @override
   String get profileLeaderboardSub => 'विश्व • साथी • लिग';
 
   @override
@@ -999,9 +996,6 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get profileSocialSub => 'साझेदारी • स्ट्रिक • लिडरबोर्ड';
-
-  @override
-  String get profileWallet => 'वालेट';
 
   @override
   String get profileWalletSub => 'क्विन र खाता';
@@ -1056,14 +1050,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get settingsPrivacySub => 'विश्लेषण, कार्यक्षम र प्रचारको सहमति';
 
   @override
-  String get settingsAiUsage => 'तपाईंको AI प्रयोग';
-
-  @override
   String get settingsAiUsageSub =>
       'तपाईंको तर्फमा AI ले के प्रयोग गर्यो, सुविधाअनुसार';
-
-  @override
-  String get settingsAiKeys => 'तपाईंका AI कुञ्जीहरू';
 
   @override
   String get settingsAiKeysSub =>
@@ -1121,7 +1109,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get streakDaysUnit => 'दिन';
 
   @override
-  String streakBest(int count) {
+  String streakBest(Object count) {
     return 'उत्कृष्ट: $count दिन';
   }
 
@@ -1132,7 +1120,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get streakMaxMultiplier => 'अधिकतम गुणक प्राप्त — किंवदन्ती!';
 
   @override
-  String streakDaysToNextTier(int current, int total) {
+  String streakDaysToNextTier(Object current, Object total) {
     return 'अर्को तहसम्म $current / $total दिन';
   }
 
@@ -1144,7 +1132,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get streakFreezeSection => 'स्ट्रिक फ्रिज';
 
   @override
-  String streakFreezeLeft(int count) {
+  String streakFreezeLeft(Object count) {
     return '$count बाँकी';
   }
 
@@ -1189,7 +1177,7 @@ class AppLocalizationsNe extends AppLocalizations {
       'लक्ष्य स्ट्रिक पुग्न क्विन लगाउनुहोस्। पुगेमा ब्याजसहित पुरोट फर्कन्छ, नपुगे क्विन गुम्छ।';
 
   @override
-  String streakWagerDay(int current, int total, Object reward) {
+  String streakWagerDay(Object current, Object total, Object reward) {
     return '$total मध्येको $current दिन — $reward क्विन जित्न खेलिरहनुहोस्।';
   }
 
@@ -1226,14 +1214,932 @@ class AppLocalizationsNe extends AppLocalizations {
   String get streakFreezeDuration => '३० दिन';
 
   @override
-  String streakWagerDaysCount(int count) {
+  String streakWagerDaysCount(Object count) {
     return '$count दिन';
   }
 
   @override
-  String streakWagerSummary(Object coins, int days) {
+  String streakWagerSummary(Object coins, Object days) {
     return '$days दिनका लागि $coins क्विनको वागर';
   }
+
+  @override
+  String get tutorStudyPlan => 'अध्ययन योजना';
+
+  @override
+  String get tutorChat => 'कुराकानी';
+
+  @override
+  String get tutorPlanTab => 'योजना';
+
+  @override
+  String get tutorInsights => 'विश्लेषण';
+
+  @override
+  String get tutorRevisions => 'दोहोराइ';
+
+  @override
+  String get tutorWeekly => 'साप्ताहिक';
+
+  @override
+  String get tutorNoTasksToday => 'आज कुनै काम छैन — भोलि हेर्नुहोस्';
+
+  @override
+  String get tutorDone => 'पूरा';
+
+  @override
+  String tutorTasksDone(Object done, Object total) {
+    return '$done/$total काम';
+  }
+
+  @override
+  String get tutorDayCompleted => 'दिन पूरा भयो — योजना अद्यावधिक भयो।';
+
+  @override
+  String get tutorMarkDayComplete => 'दिन पूरा भएको जनाउनुहोस्';
+
+  @override
+  String tutorYourPlan(Object title) {
+    return 'तपाईंको योजना — $title';
+  }
+
+  @override
+  String tutorPlanDays(Object days, Object current) {
+    return '$days दिन • हालको $current';
+  }
+
+  @override
+  String get tutorPlanNoDays =>
+      'योजनामा अहिलेसम्म दिन छैनन् — अन onboarding ले बनाउनेछ।';
+
+  @override
+  String tutorMoreDays(Object count) {
+    return '+ $count थप दिन';
+  }
+
+  @override
+  String get tutorAdjustPlan => 'योजना मिलाउनुहोस्';
+
+  @override
+  String get tutorNoPlanYet => 'अहिलेसम्म कुनै योजना छैन';
+
+  @override
+  String get tutorOnboardingRequired =>
+      'तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर onboarding पूरा गर्नुहोस्।';
+
+  @override
+  String get tutorStartOnboarding => 'Onboarding सुरु गर्नुहोस्';
+
+  @override
+  String get tutorAdjustExample =>
+      'जस्तै, \"म दिनमा ३ घण्टा गर्न सक्छु\" वा \"माटोको यान्त्रिकीमा बढी ध्यान दिन्छु\"';
+
+  @override
+  String get tutorAdjustPrompt => 'कसरी मिलाउने?';
+
+  @override
+  String get tutorAdjustRequested => 'योजना मिलाउने अनुरोध भयो।';
+
+  @override
+  String get tutorSubmit => 'पेश गर्नुहोस्';
+
+  @override
+  String get tutorProjectedScore => 'अनुमानित अंक';
+
+  @override
+  String tutorConfidence(Object confidence, Object trend) {
+    return 'विश्वास $confidence% • $trend';
+  }
+
+  @override
+  String get tutorWeakAreas => 'कमजोर क्षेत्र';
+
+  @override
+  String get tutorNoWeakAreas =>
+      'कुनै कमजोर क्षेत्र छैन — उत्कृष्ट काम! तल्कुल तयार रहनुहोस्।';
+
+  @override
+  String tutorAccuracy(Object accuracy, Object attempts) {
+    return 'शुद्धता $accuracy% • $attempts प्रयास';
+  }
+
+  @override
+  String get tutorNoRevisionsDue =>
+      'कुनै दोहोराइ बाँकी छैन — तपाईं कुशलमा हुनुहुन्छ।';
+
+  @override
+  String tutorDueLabel(Object date) {
+    return '$date सम्म';
+  }
+
+  @override
+  String tutorTopicDue(Object topic, Object date) {
+    return '$topic • $date सम्म';
+  }
+
+  @override
+  String get tutorCompleted => 'पूरा भयो';
+
+  @override
+  String get tutorOverdue => 'समय बित्यो';
+
+  @override
+  String get tutorDue => 'बाकी';
+
+  @override
+  String tutorWeekRange(Object start, Object end) {
+    return 'हप्ता $start → $end';
+  }
+
+  @override
+  String get tutorAvgScore => 'औसत अंक';
+
+  @override
+  String get tutorHours => 'घण्टा';
+
+  @override
+  String tutorCompletion(Object percent) {
+    return '$percent% पूरा';
+  }
+
+  @override
+  String get tutorHighlights => 'मुख्य कुराहरू';
+
+  @override
+  String get tutorWeeklyReportPending =>
+      'हप्ताको गतिविधि पछि साप्ताहिक प्रतिवेदन देखिन्छ।';
+
+  @override
+  String get tutorOnboardingSaved =>
+      'Onboarding सुरक्षित भयो — योजना छिट्टै बनाइनेछ।';
+
+  @override
+  String get tutorOnboardingTitle => 'ट्युटर Onboarding';
+
+  @override
+  String get tutorPersonalised => 'व्यक्तिगत ट्युटर';
+
+  @override
+  String get tutorOnboardingExplain =>
+      'आफ्नो लक्ष्य बताउनुहोस् — सर्भरले तपाईंको योजना बनाउँछ। user_id चाहिन्छैन (टोकनबाट)।';
+
+  @override
+  String tutorSessionLabel(Object session) {
+    return 'सत्र: $session';
+  }
+
+  @override
+  String get tutorYourGoal => 'तपाईंको लक्ष्य';
+
+  @override
+  String get tutorGoalExample => 'जस्तै, ६ महिनामा PSC सिभिल क्र्याक गर्ने';
+
+  @override
+  String get tutorCurrentLevel => 'हालको तह';
+
+  @override
+  String get tutorLevelExample => 'जस्तै: B.E. सिभिल अन्तिम वर्ष';
+
+  @override
+  String get tutorHoursPerDay => 'दिनमा घण्टा';
+
+  @override
+  String get tutorHoursExample => 'जस्तै: २';
+
+  @override
+  String get tutorOnboardingComplete =>
+      'Onboarding पूरा भयो — तपाईंको योजना तयार छ।';
+
+  @override
+  String get tutorViewPlan => 'योजना हेर्नुहोस्';
+
+  @override
+  String get tutorCompleteOnboarding => 'Onboarding पूरा गर्नुहोस्';
+
+  @override
+  String get tutorSkipToChat => 'छोड्नुहोस् → ट्युटरसँग कुराकानी';
+
+  @override
+  String get tutorSavedToAccount =>
+      'तपाईंको खातामा सुरक्षित भयो। जडान बिच्छ भने फेरि प्रयास गर्न सकिन्छ।';
+
+  @override
+  String get tutorTitle => 'AI ट्युटर';
+
+  @override
+  String get tutorClearChat => 'कुराकानी हटाउनुहोस्';
+
+  @override
+  String get tutorNotEnoughHistory =>
+      'अहिलेसम्म पर्याप्त इतिहास छैन — व्यक्तिगत बनाउन केही क्विज पूरा गर्नुहोस्।';
+
+  @override
+  String get tutorDismiss => 'हटाउनुहोस्';
+
+  @override
+  String get tutorWriting =>
+      'ट्युटरले आफ्नो जवाफ लेख्दैछ। लामो प्रश्नमा केही समय लाग्न सक्छ।';
+
+  @override
+  String get tutorAskAnything => 'केही पनि सोध्नुहोस्';
+
+  @override
+  String get tutorChatExplain =>
+      'परीक्षाका कन्सेप्ट, बिम डिफ्लेक्सन, माटोको यान्त्रिकी — AI उत्तर Laravel गेटवेबहरूबाट दिन्छ (कहिल्यै सिधै प्रोभाइडरबाट होइन)।';
+
+  @override
+  String get tutorExample1 => 'प्रोक्टर कम्प्याक्सन बुझाउनुहोस्';
+
+  @override
+  String get tutorExample2 => 'साप्ताहिक योजनामा मद्दत';
+
+  @override
+  String get tutorExample3 => 'कमजोर क्षेत्रहरू?';
+
+  @override
+  String get tutorTyping => 'ट्युटर लेख्दैछ…';
+
+  @override
+  String get tutorInputHint => 'ट्युटरलाई सोध्नुहोस्…';
+
+  @override
+  String get aiUsageTitle => 'तपाईंको AI प्रयोग';
+
+  @override
+  String get aiUsageOverview => 'समग्र';
+
+  @override
+  String get aiUsageRequests => 'अनुरोध';
+
+  @override
+  String get aiUsageTokens => 'टोकन';
+
+  @override
+  String get aiUsageTutorChats => 'ट्युटर कुराकानी (सबै समय)';
+
+  @override
+  String get aiUsageNone => 'यो अवधिमा कुनै AI सुविधा प्रयोग भएको छैन।';
+
+  @override
+  String get aiUsageByFeature => 'सुविधाअनुसार';
+
+  @override
+  String get aiUsageTutorConversations => 'ट्युटर कुराकानीहरू';
+
+  @override
+  String get aiUsageNoConversations => 'अहिलेसम्म कुनै ट्युटर कुराकानी छैन।';
+
+  @override
+  String get aiUsageLoadMoreConversations => 'थप कुराकानीहरू हेर्नुहोस्';
+
+  @override
+  String get aiUsageWeeklyReport => 'साप्ताहिक प्रतिवेदन';
+
+  @override
+  String get aiUsageNoWeeks => 'अहिलेसम्म कुनै साप्ताहिक सारांश सुरक्षित छैन।';
+
+  @override
+  String get aiUsageLoadMoreWeeks => 'थप हप्ता हेर्नुहोस्';
+
+  @override
+  String aiUsageConversationNumber(Object number) {
+    return 'कुराकानी #$number';
+  }
+
+  @override
+  String aiUsageQuestionNumber(Object number) {
+    return 'प्रश्न $number';
+  }
+
+  @override
+  String aiUsageTurns(Object count) {
+    return '$count पटक';
+  }
+
+  @override
+  String aiUsageWeekOf(Object date) {
+    return '$date को हप्ता';
+  }
+
+  @override
+  String aiUsageWeekSummary(
+    Object accuracy,
+    Object xp,
+    Object coins,
+    Object streak,
+  ) {
+    return '$accuracy% शुद्धता • $xp XP • $coins क्विन • $streak दिन स्ट्रिक';
+  }
+
+  @override
+  String aiUsageHoursShort(Object hours) {
+    return '$hours घ';
+  }
+
+  @override
+  String get aiKeysTitle => 'तपाईंका AI कुञ्जीहरू';
+
+  @override
+  String get aiKeysExplain =>
+      'तपाईंको कुञ्जी हाम्रो सर्भरमा इन्क्रिप्टेड हुन्छ र पछि कहिल्यै देखाइँदैन। पछिल्लो चार अक्षर मात्र देखिन्छ।';
+
+  @override
+  String get aiKeysAddTitle => 'कुञ्जी थप्नुहोस्';
+
+  @override
+  String get aiKeysNoneYet => 'अहिलेसम्म कुनै कुञ्जी छैन';
+
+  @override
+  String get aiKeysNoneExplain =>
+      'साझा कोटामा होरुनेभन्दा आफ्नै कोटामा AI सुविधाहरू चलाउन प्रोभाइडर कुञ्जी थप्नुहोस्।';
+
+  @override
+  String get aiKeysStored => 'सुरक्षित कुञ्जीहरू';
+
+  @override
+  String aiKeysTokensUsed(Object used, Object total) {
+    return 'दैनिक $total टोकनमध्ये $used प्रयोग भयो';
+  }
+
+  @override
+  String get aiKeysRevoke => 'रद्द गर्नुहोस्';
+
+  @override
+  String get aiKeysTooShort => 'कुञ्जी कम्तीमा ८ अक्षरको हुनुपर्छ';
+
+  @override
+  String get aiKeysAddProvider => 'प्रोभाइडर कुञ्जी थप्नुहोस्';
+
+  @override
+  String get aiKeysProvider => 'प्रोभाइडर';
+
+  @override
+  String get aiKeysApiKey => 'API कुञ्जी';
+
+  @override
+  String get aiKeysSentOnce => 'एक पटक पठाइन्छ अनि कहिल्यै देखाइँदैन।';
+
+  @override
+  String get aiKeysLabelOptional => 'लेबल (वैकल्पिक)';
+
+  @override
+  String get aiKeysSaveKey => 'कुञ्जी सुरक्षित गर्नुहोस्';
+
+  @override
+  String aiKeysSaved(Object name) {
+    return '$name सुरक्षित भयो। यो हाम्रो सर्भरमा इन्क्रिप्टेड हुन्छ अनि कहिल्यै देखाइँदैन।';
+  }
+
+  @override
+  String get aiKeysRevoked => 'कुञ्जी रद्द गरियो।';
+
+  @override
+  String get practiceBookmarks => 'बुकमार्क';
+
+  @override
+  String get practiceWeakTopics => 'कमजोर विषय';
+
+  @override
+  String get practiceSelfChallenge => 'आफैँ चुनौती';
+
+  @override
+  String get practiceHistory => 'इतिहास';
+
+  @override
+  String get practiceNoBookmarks => 'अभ्यास गर्न कुनै बुकमार्क छैन';
+
+  @override
+  String get practiceBookmarkedPractice => 'बुकमार्क अभ्यास';
+
+  @override
+  String practiceBookmarksUnavailable(Object count, Object total) {
+    return '$total मध्ये $count बुकमार्क अभ्यास गर्न सकिएन — सर्भरले तिनका विकल्प अझै प्रकाशित गरेको छैन।';
+  }
+
+  @override
+  String get practiceDrill => 'अभ्यास ड्रिल';
+
+  @override
+  String practiceDrillCount(Object count) {
+    return 'ड्रिल: $count';
+  }
+
+  @override
+  String get practiceNoBookmarksBody => 'कुनै बुकमार्क छैन';
+
+  @override
+  String get practiceNoBookmarksHint =>
+      'क्विज खेल्दा प्रश्न बुकमार्क गर्नुहोस्, पछि तिनीहरू यहाँ ड्रिलका लागि देखिन्छन्।';
+
+  @override
+  String get practiceBrowseQuizzes => 'क्विजहरू हेर्नुहोस्';
+
+  @override
+  String practiceBookmarkedCount(Object count) {
+    return '$count बुकमार्क';
+  }
+
+  @override
+  String get practiceAll => 'सबै अभ्यास गर्नुहोस्';
+
+  @override
+  String practiceQuestionNumber(Object number) {
+    return 'प्रश्न #$number';
+  }
+
+  @override
+  String practiceQuestionMeta(Object meta, Object difficulty, Object points) {
+    return '$meta • कठिनाई $difficulty • $points अंक';
+  }
+
+  @override
+  String get practiceBookmarked => 'बुकमार्क गरिएको';
+
+  @override
+  String get practiceLoadMoreCursor => 'थप हेर्नुहोस् (cursor)';
+
+  @override
+  String get practiceWeakTopicsLoadFailed =>
+      'तपाईंका कमजोर विषय लोड गर्न सकिएन';
+
+  @override
+  String get practiceWeakTopicsExplained =>
+      'यी तपाईंको आफ्नै उत्तर इतिहासबाट निकालिएका हुन्। सत्य नभएसम्म केही देखाइँदैन।';
+
+  @override
+  String get practiceNoWeakTopics => 'अहिलेसम्म कुनै कमजोर विषय छैन';
+
+  @override
+  String get practiceWeakTopicsNeedsAttempts =>
+      'कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। Quiz ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।';
+
+  @override
+  String get practiceWeakTopicsServerNote =>
+      'कमजोर विषयहरू हाम्रो सर्भरले तपाईंको उत्तर इतिहासबाट निकाल्छ, त्यसैले यहाँ केही अनुमान गरिएको हुँदैन।';
+
+  @override
+  String get practiceYourWeakTopics => 'तपाईंका कमजोर विषय';
+
+  @override
+  String get practiceDrillAction => 'ड्रिल गर्नुहोस्';
+
+  @override
+  String get practiceDrillTen =>
+      '१० प्रश्न ड्रिल गर्नुहोस् (अभ्यास मोड, समयसीमा छैन)';
+
+  @override
+  String get practiceUntimedNote =>
+      'अभ्यासमा समयसीमा छैन र यसले तपाईंको अंक वा क्विन बदल्दैन।';
+
+  @override
+  String get practiceSelfChallengeExplain =>
+      'प्रश्न संख्या र कठिनाई छान्नुहोस् — Elite Quiz को आफैँ चुनौतीजस्तै, तर अनुकूली इन्जिनबाट।';
+
+  @override
+  String practiceQuestionCount(Object count) {
+    return 'प्रश्न संख्या: $count';
+  }
+
+  @override
+  String get practiceDifficulty => 'कठिनाई';
+
+  @override
+  String get practiceStarting => 'सुरु हुँदैछ…';
+
+  @override
+  String practiceStartChallenge(Object count) {
+    return 'चुनौती सुरु गर्नुहोस् ($count प्रश्न)';
+  }
+
+  @override
+  String get practiceResultsLabelled =>
+      'नतिजालाई अभ्यासका रूपमा चिन्हित गरिन्छ, त्यसैले तिनले कहिल्यै अंकमा गनिन्छन्।';
+
+  @override
+  String get practiceNoHistory => 'कुनै इतिहास छैन';
+
+  @override
+  String get practiceNoHistoryBody =>
+      'तपाईंका पूरा भएका अभ्यास सत्रहरू यहाँ देखिन्छन्।';
+
+  @override
+  String practiceAttemptMeta(Object number, Object mode) {
+    return 'प्रयास #$number • $mode';
+  }
+
+  @override
+  String practiceAttemptSummary(
+    Object meta,
+    Object score,
+    Object correct,
+    Object wrong,
+    Object skipped,
+    Object questions,
+  ) {
+    return '$meta • अंक $score • $correct✓ $wrong✗ $skipped– • $questions प्रश्न';
+  }
+
+  @override
+  String get economyInventory => 'सामग्री';
+
+  @override
+  String get economyYourResources => 'तपाईंका स्रोतहरू';
+
+  @override
+  String economyResourceSummary(Object held, Object catalog, Object recent) {
+    return '$held सुरक्षित • $catalog सङ्ग्रह • $recent हालैका';
+  }
+
+  @override
+  String get economyNoResources => 'अहिलेसम्म कुनै स्रोत छैन';
+
+  @override
+  String get economyResourcesExplain =>
+      'स्रोतहरू सिटी/अर्थव्यवस्थाको प्रवाह र क्विज पुरस्कारबाट कमाइन्छन्। उपलब्ध भएपछि यहाँ देखिन्छन्।';
+
+  @override
+  String get economyCatalog => 'सङ्ग्रह';
+
+  @override
+  String get economyCatalogEmpty =>
+      'सङ्ग्रह खाली छ — सर्भरले सामग्रीको सूची भर्नेछ।';
+
+  @override
+  String get economyRecentActivity => 'हालैका गतिविधि';
+
+  @override
+  String get economyNoRecentActivity => 'हालै कुनै गतिविधि छैन।';
+
+  @override
+  String get economyDonations => 'दान';
+
+  @override
+  String get economyDonationsExplain =>
+      'प्रत्यक्ष लिडरबोर्ड र फिड। क्विनले दानकर्ताको स्ट्रिक फ्रिज गर्न सक्छ।';
+
+  @override
+  String economyLeaderboardFeed(Object status) {
+    return 'लिडरबोर्ड/फिड: $status';
+  }
+
+  @override
+  String economyStreakMonths(Object name, Object months) {
+    return '$name • $months महिनाको स्ट्रिक';
+  }
+
+  @override
+  String get economyLiveFeed => 'प्रत्यक्ष फिड';
+
+  @override
+  String get economyDonationsEmpty => 'दानको लिडरबोर्ड र फिड खाली छन्।';
+
+  @override
+  String get economySyncing => 'सिंक हुँदैछ…';
+
+  @override
+  String get economyLedger => 'खाता';
+
+  @override
+  String get economyLedgerExplain =>
+      'दिनअनुसार समूहबद्ध। स्रोतका लेबल credits.description बाट आउँछन् (metadata.source बाट होइन)।';
+
+  @override
+  String get economyWhereCoinsWent => 'तपाईंका क्विन कहाँ गए';
+
+  @override
+  String economyPeriodSummary(Object days, Object earned, Object spent) {
+    return 'गत $days दिन • कमाइ $earned • खर्च $spent';
+  }
+
+  @override
+  String get economyNoActivity => 'यो अवधिमा कुनै क्विन गतिविधि छैन।';
+
+  @override
+  String get economyHowYouEarn => 'तपाईं कसरी कमाउनुहुन्छ';
+
+  @override
+  String get economyMintingExplain =>
+      'क्विन हरेक अंकयुक्त क्विज र सर्भरका दैनिक कार्यपछि जम्मा हुन्छन्। तिनीहरू यन्त्रमा कहिल्यै बन्दैनन्, त्यसैले तपाईंको ब्यालेन्स बिग्रिँदैन।';
+
+  @override
+  String get economyNoTransactions => 'अहिलेसम्म कुनै कारोबार छैन';
+
+  @override
+  String get economyNoTransactionsBody =>
+      'क्विन कमाउन एउटा क्विज पूरा गर्नुहोस्। हरेक जम्मा हाम्रो सर्भरमा दर्ज हुन्छ।';
+
+  @override
+  String get economyTitle => 'अर्थव्यवस्था';
+
+  @override
+  String economyXpTotal(Object xp) {
+    return 'जम्मा $xp XP';
+  }
+
+  @override
+  String get economyLiveExplain =>
+      'ब्यालेन्स, खाता, शप र स्टोर सबै प्रत्यक्ष छन्। अंकयुक्त प्रयास पूरा भएपछि क्विन सर्भरमा बन्दैनन्।';
+
+  @override
+  String get economyWalletTile => 'वालेट - ब्यालेन्स + दिनअनुसार खाता';
+
+  @override
+  String get economyWalletTileSub =>
+      'ब्यालेन्स, जीवनभरका जम्मा र तपाईंको क्विन इतिहास';
+
+  @override
+  String get economyShopTile => 'क्विन शप - स्रोत र बन्डल';
+
+  @override
+  String get economyShopTileSub => 'सामग्री र बन्डलमा क्विन खर्च्नुहोस्';
+
+  @override
+  String get economyInventoryTile => 'सामग्री - स्रोत + दान';
+
+  @override
+  String get economyInventoryTileSub =>
+      '८ सामग्री + सङ्ग्रह + प्रत्यक्ष दान फिड/लिडरबोर्ड';
+
+  @override
+  String get economyStoreTile => 'प्रिमियम स्टोर - एसेट र स्किन';
+
+  @override
+  String get economyStoreTileSub => 'फ्रेम, थिम, ब्याज र अवतार किन्नुहोस्';
+
+  @override
+  String get economyWardrobeTile => 'वार्डरोब - लगाउनुहोस्';
+
+  @override
+  String get economyWardrobeTileSub =>
+      'आफूले भएका एसेट लगाउनुहोस् वा हटाउनुहोस्';
+
+  @override
+  String get economyShopTitle => 'क्विन शप';
+
+  @override
+  String get economyNothingForSale => 'अहिलेसम्म बिक्रीका लागि केही छैन';
+
+  @override
+  String get economyShopEmpty =>
+      'सर्भरमा अहिले शपका कुनै वस्तु प्रकाशित छैनन्।';
+
+  @override
+  String get economyBundles => 'बन्डल';
+
+  @override
+  String get economyMaterials => 'सामग्री';
+
+  @override
+  String get economyPurchaseSafe =>
+      'खरिद नभए पुनः प्रयास गर्न सुरक्षित छ — दुब्बे तिरोस् हुँदैन।';
+
+  @override
+  String economySellsBackFor(Object coins) {
+    return '$coins मा फिर्ता बिक्छ';
+  }
+
+  @override
+  String economySave(Object coins) {
+    return '$coins बचत';
+  }
+
+  @override
+  String libraryUnlockedCoins(Object coins) {
+    return 'खुल्यो! खर्च भएको क्विन: $coins';
+  }
+
+  @override
+  String get libraryDownloadStarted => 'डाउनलोड सुरु भयो — ब्राउजर खुल्दै';
+
+  @override
+  String libraryDownloadUrl(Object url) {
+    return 'डाउनलोड URL: $url';
+  }
+
+  @override
+  String get libraryRatingRange => 'रेटिङ १-५ बीच हुनुपर्छ';
+
+  @override
+  String get libraryReviewSubmitted => 'समीक्षा पेश भयो';
+
+  @override
+  String get libraryAbout => 'बारेमा';
+
+  @override
+  String get libraryReviews => 'समीक्षाहरू';
+
+  @override
+  String get libraryNoReviews =>
+      'अहिलेसम्म कुनै समीक्षा छैन — अनलोक गरेपछि पहिलो समीक्षा गर्नुहोस्!';
+
+  @override
+  String get libraryLoadMoreReviews => 'थप समीक्षा हेर्नुहोस्';
+
+  @override
+  String get librarySignedUrls =>
+      'डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि Download थिच्नुहोस्। library-api-download को throttle मान्नुहोस्।';
+
+  @override
+  String get libraryFree => 'निःशुल्क';
+
+  @override
+  String libraryCoinsLabel(Object count) {
+    return '$count क्विन';
+  }
+
+  @override
+  String get libraryFeatured => 'विशेष';
+
+  @override
+  String libraryByUploader(Object name) {
+    return '$name द्वारा';
+  }
+
+  @override
+  String libraryUnlockedFor(Object coins) {
+    return 'खुल्यो • $coins क्विन';
+  }
+
+  @override
+  String get libraryUnlocking => 'खोल्दै…';
+
+  @override
+  String get libraryGettingLink => 'लिंक खोज्दै…';
+
+  @override
+  String get libraryDownload => 'डाउनलोड';
+
+  @override
+  String get libraryUnlockNote =>
+      'अनलोक गर्दा तपाईंको क्विन ब्यालेन्सबाट एक पटक मात्र काटिन्छ, पहिलो थिचाइ नभए पनि। डाउनलोड गर्नुअघि फाइल अनलोक गर्नुपर्छ।';
+
+  @override
+  String libraryReviewsCount(Object count) {
+    return '$count समीक्षा';
+  }
+
+  @override
+  String get libraryDownloads => 'डाउनलोड';
+
+  @override
+  String get libraryAccess => 'पहुँच';
+
+  @override
+  String get libraryWriteReview => 'समीक्षा लेख्नुहोस् (पहिले अनलोक गर्नुपर्छ)';
+
+  @override
+  String get libraryCommentOptional => 'टिप्पणी (वैकल्पिक)';
+
+  @override
+  String get librarySubmitting => 'पेश गर्दै…';
+
+  @override
+  String get librarySubmitReview => 'समीक्षा पेश गर्नुहोस्';
+
+  @override
+  String get libraryReviewVerified =>
+      'तपाईंले फाइल डाउनलोड/अनलोक गरेको भए समीक्षा प्रमाणित हुन्छ।';
+
+  @override
+  String get libraryVerified => 'प्रमाणित';
+
+  @override
+  String get librarySearchHint => 'फाइल, श्रेणी खोज्नुहोस्…';
+
+  @override
+  String libraryTrendingFailed(Object reason) {
+    return 'प्रचलित फाइलहरू लोड गर्न सकिएन।\n$reason';
+  }
+
+  @override
+  String get libraryTrending => 'प्रचलित';
+
+  @override
+  String libraryRecommendedFailed(Object reason) {
+    return 'तपाईंका सुझावहरू लोड गर्न सकिएन।\n$reason';
+  }
+
+  @override
+  String get libraryRecommendedForYou => 'तपाईंका लागि सुझाव';
+
+  @override
+  String get libraryFiles => 'फाइलहरू';
+
+  @override
+  String libraryTotalCount(Object count) {
+    return 'जम्मा $count';
+  }
+
+  @override
+  String get libraryNoFiles => 'अहिलेसम्म कुनै फाइल छैन';
+
+  @override
+  String libraryNoResults(Object query) {
+    return '\"$query\" का कुनै नतिजा छैन';
+  }
+
+  @override
+  String get libraryNoFilesBody =>
+      'सर्भरमा प्रकाशित र स्वीकृत भएपछि लाइब्रेरीका फाइलहरू यहाँ देखिन्छन्।';
+
+  @override
+  String get libraryTryDifferentSearch =>
+      'अर्को शब्द खोज्नुहोस् वा फिल्टर हटाउनुहोस्।';
+
+  @override
+  String get libraryClearSearch => 'खोजी हटाउनुहोस्';
+
+  @override
+  String get libraryNoCategories => 'कुनै श्रेणी प्रकाशित छैन';
+
+  @override
+  String get commonLoadMore => 'थप हेर्नुहोस्';
+
+  @override
+  String get commonLeaderboard => 'लिडरबोर्ड';
+
+  @override
+  String get commonWallet => 'वालेट';
+
+  @override
+  String get commonLibrary => 'लाइब्रेरी';
+
+  @override
+  String get practiceDrillComplete => 'ड्रिल पूरा भयो';
+
+  @override
+  String get practiceDoesNotAffect =>
+      'अभ्यास — अंक, XP वा स्ट्रिकलाई असर गर्दैन';
+
+  @override
+  String practiceQuestionsCount(Object count) {
+    return '$count प्रश्न';
+  }
+
+  @override
+  String practiceAnsweredSkipped(Object answered, Object skipped) {
+    return '$answered उत्तर दिइयो • $skipped छाडियो';
+  }
+
+  @override
+  String practiceScore(Object score) {
+    return 'अंक $score';
+  }
+
+  @override
+  String get practiceGradedByServer => 'सर्भरद्वारा अंकित';
+
+  @override
+  String practiceCorrectWrongSkipped(
+    Object correct,
+    Object wrong,
+    Object skipped,
+  ) {
+    return '$correct सही • $wrong गलत • $skipped छाडिएको';
+  }
+
+  @override
+  String practiceGradingFailed(Object reason) {
+    return 'सर्भरले यो ड्रिल अंकित गर्न सकेन: $reason';
+  }
+
+  @override
+  String get practiceReviewPassNote =>
+      'यो पुनरावलोकन थियो। कुनै प्रयास बनाइएको छैन, त्यसैले देखाउनुपर्ने अंक छैन।';
+
+  @override
+  String get practiceNoQuestionsInSet => 'यस सेटमा कुनै प्रश्न छैन';
+
+  @override
+  String practiceQuestionCounter(Object current, Object total) {
+    return 'प्रश्न $current/$total';
+  }
+
+  @override
+  String get practiceUntimedPractice => 'समयसीमा छैन • अभ्यास';
+
+  @override
+  String practiceDifficultyLabel(Object difficulty) {
+    return 'कठिनाई: $difficulty';
+  }
+
+  @override
+  String get practiceNoOptionsNotice =>
+      'सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त Quiz ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।';
+
+  @override
+  String get practiceAnswerSentNotice =>
+      'उत्तर सर्भरमा पठाइयो। सर्भरले प्रयास अंकित गर्छ — यो स्क्रिनले कहिल्यै अंक अनुमान गर्दैन।';
+
+  @override
+  String get practicePrev => 'अघिल्लो';
+
+  @override
+  String get practiceGrading => 'अंक गरिँदै…';
+
+  @override
+  String get practiceNoEffectNote =>
+      'अभ्यासमा समयसीमा छैन र यसले अंक, XP, क्विन वा स्ट्रिकमा कुनै असर गर्दैन।';
 
   @override
   String get forceUpdateUnsupportedLatest =>

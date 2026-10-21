@@ -7,6 +7,7 @@ import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../controllers/library_controller.dart';
 import '../../domain/entities/library.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Library browser — `GET /library/categories`, `/library/files` (paginated+search),
 /// `/library/trending`, `/library/recommendations`.
@@ -68,12 +69,13 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(libraryControllerProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Library'),
+        title: Text(l10n.commonLibrary),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
@@ -81,7 +83,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
             child: TextField(
               controller: _searchCtrl,
               decoration: InputDecoration(
-                hintText: 'Search files, categories…',
+                hintText: l10n.librarySearchHint,
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _query.isEmpty
                     ? null
@@ -128,7 +130,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: ErrorView(
-                    message: 'Could not load the trending files.\n${state.trendingError}',
+                    message: l10n.libraryTrendingFailed(state.trendingError ?? '—'),
                     onRetry: () =>
                         ref.read(libraryControllerProvider.notifier).fetchTrending(),
                   ),
@@ -137,7 +139,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
             else if (state.trending.isNotEmpty || state.isTrendingLoading)
               SliverToBoxAdapter(
                 child: _HorizontalFileSection(
-                  title: 'Trending',
+                  title: l10n.libraryTrending,
                   icon: Icons.trending_up_rounded,
                   color: AppColors.streakOrange,
                   files: state.trending,
@@ -153,7 +155,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: ErrorView(
                     message:
-                        'Could not load your recommendations.\n${state.recommendationsError}',
+                        l10n.libraryRecommendedFailed(state.recommendationsError ?? '—'),
                     onRetry: () => ref
                         .read(libraryControllerProvider.notifier)
                         .fetchRecommendations(),
@@ -164,7 +166,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                 state.isRecommendationsLoading)
               SliverToBoxAdapter(
                 child: _HorizontalFileSection(
-                  title: 'Recommended for you',
+                  title: l10n.libraryRecommendedForYou,
                   icon: Icons.recommend_rounded,
                   color: AppColors.brand,
                   files: state.recommendations,
@@ -179,13 +181,13 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
                   children: [
-                    Text('Files', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(l10n.libraryFiles, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 8),
                     if (state.filesPagination != null)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                        child: Text('${state.filesPagination!.total ?? state.files.length} total',
+                        child: Text(l10n.libraryTotalCount(state.filesPagination!.total ?? state.files.length),
                             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
                       ),
                     const Spacer(),
@@ -205,10 +207,10 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
             else if (state.files.isEmpty && !state.isFilesLoading)
               SliverToBoxAdapter(
                 child: EmptyState(
-                  title: _query.isEmpty ? 'No files yet' : 'No results for "$_query"',
+                  title: _query.isEmpty ? l10n.libraryNoFiles : l10n.libraryNoResults(_query),
                   subtitle: _query.isEmpty
-                      ? 'Library files will appear here once published and approved on the server.'
-                      : 'Try a different search term or clear filters.',
+                      ? l10n.libraryNoFilesBody
+                      : l10n.libraryTryDifferentSearch,
                   icon: Icons.library_books_rounded,
                   action: _query.isNotEmpty
                       ? FilledButton(
@@ -216,7 +218,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                             _searchCtrl.clear();
                             _onSearchChanged('');
                           },
-                          child: const Text('Clear search'),
+                          child: Text(l10n.libraryClearSearch),
                         )
                       : null,
                 ),
@@ -256,7 +258,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                             ref.read(libraryControllerProvider.notifier).fetchFiles(cursor: next, append: true);
                           },
                     icon: const Icon(Icons.expand_more_rounded),
-                    label: const Text('Load more'),
+                    label: Text(l10n.commonLoadMore),
                   ),
                 ),
               )
@@ -290,6 +292,7 @@ class _CategoriesStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (isLoading && categories.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(16),
@@ -303,9 +306,9 @@ class _CategoriesStrip extends StatelessWidget {
       );
     }
     if (categories.isEmpty) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Text('No categories published', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        child: Text(l10n.libraryNoCategories, style: TextStyle(fontSize: 12, color: Colors.grey)),
       );
     }
 
@@ -449,6 +452,7 @@ class _FileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final color = _colorForType(file.fileType);
     return InkWell(
       borderRadius: BorderRadius.circular(14),
@@ -490,7 +494,7 @@ class _FileCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                    child: const Text('FREE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
+                    child: Text(l10n.libraryFree, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
                   ),
               ],
             ),

@@ -20,7 +20,7 @@
   "@streakDays": {
     "placeholders": {
       "days": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -28,7 +28,7 @@
   "@coinsBalance": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -54,7 +54,7 @@
   "@commonPoints": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -109,7 +109,7 @@
   "@authMinChars": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -121,10 +121,10 @@
   "@onboardingStepOf": {
     "placeholders": {
       "current": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -180,7 +180,7 @@
   "@quizAttemptCombo": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -195,7 +195,7 @@
         "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -240,7 +240,7 @@
   "@quizFunnelShown": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -264,7 +264,7 @@
   "@calcBrowserCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       },
       "domains": {
         "type": "Object"
@@ -325,7 +325,7 @@
   "@calcInputsCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -375,7 +375,7 @@
         "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -478,7 +478,7 @@
   "@homeMissionsReady": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -486,7 +486,7 @@
   "@homeMissionsActive": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -592,7 +592,6 @@
   "profilePsc": "PSC / लोकसेवा",
   "profilePscSub": "परीक्षा ढांचा और पाठ्यक्रम",
   "profilePracticeSub": "बुकमार्क ड्रिल • कमजोर विषय",
-  "profileLeaderboard": "लीडरबोर्ड",
   "profileLeaderboardSub": "विश्व • दोस्त • लीग",
   "profileContests": "प्रतियोगिताएं",
   "profileContestsSub": "लाइव क्विज़ और लीडरबोर्ड",
@@ -606,7 +605,6 @@
   "profileNotificationsSub": "गतिविधि और याद दिलाना",
   "profileSocial": "सोशल और रेफरल",
   "profileSocialSub": "साझा • स्ट्रीक • लीडरबोर्ड",
-  "profileWallet": "वॉलेट",
   "profileWalletSub": "कॉइन और बही",
   "profileAchievementsSub": "स्ट्रीक + बैज",
   "profileOffline": "ऑफ़लाइन सामग्री",
@@ -623,9 +621,7 @@
   "settingsBiometricLock": "बायोमेट्रिक ऐप लॉक",
   "settingsBiometricLockSub": "बैकग्राउंड में 30 सेकंड बाद बायोमेट्रिक माँगें",
   "settingsPrivacySub": "विश्लेषण, कार्यक्षम और प्रचार की सहमति",
-  "settingsAiUsage": "आपका AI का उपयोग",
   "settingsAiUsageSub": "आपकी ओर से AI ने क्या इस्तेमाल किया, सुविधा के अनुसार",
-  "settingsAiKeys": "आपकी AI कुंजियां",
   "settingsAiKeysSub": "AI सुविधाएं अपने प्रोवाइडर के कोटे पर चलाएं",
   "settingsLogOut": "लॉग आउट",
   "settingsDeleteAccount": "खाता मिटाएं",
@@ -647,7 +643,7 @@
   "@streakBest": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -657,10 +653,10 @@
   "@streakDaysToNextTier": {
     "placeholders": {
       "current": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -670,7 +666,7 @@
   "@streakFreezeLeft": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -697,10 +693,10 @@
   "@streakWagerDay": {
     "placeholders": {
       "current": {
-        "type": "int"
+        "type": "Object"
       },
       "total": {
-        "type": "int"
+        "type": "Object"
       },
       "reward": {
         "type": "Object"
@@ -734,7 +730,7 @@
   "@streakWagerDaysCount": {
     "placeholders": {
       "count": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
@@ -745,10 +741,708 @@
         "type": "Object"
       },
       "days": {
-        "type": "int"
+        "type": "Object"
       }
     }
   },
+  "tutorStudyPlan": "अध्ययन योजना",
+  "tutorChat": "चैट",
+  "tutorPlanTab": "योजना",
+  "tutorInsights": "विश्लेषण",
+  "tutorRevisions": "दोहराव",
+  "tutorWeekly": "साप्ताहिक",
+  "tutorNoTasksToday": "आज कोई काम नहीं — कल देखें",
+  "tutorDone": "पूर्ण",
+  "tutorTasksDone": "{done}/{total} काम",
+  "@tutorTasksDone": {
+    "placeholders": {
+      "done": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorDayCompleted": "दिन पूरा हुआ — योजना अपडेट हुई।",
+  "tutorMarkDayComplete": "दिन पूरा चिह्नित करें",
+  "tutorYourPlan": "आपकी योजना — {title}",
+  "@tutorYourPlan": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPlanDays": "{days} दिन • वर्तमान {current}",
+  "@tutorPlanDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "current": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPlanNoDays": "योजना में अभी तक दिन नहीं हैं — ऑनबोर्डिंग इसे बनाएगी।",
+  "tutorMoreDays": "+ {count} और दिन",
+  "@tutorMoreDays": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorAdjustPlan": "योजना बदलें",
+  "tutorNoPlanYet": "अभी तक कोई योजना नहीं",
+  "tutorOnboardingRequired": "आपकी व्यक्तिगत अध्ययन योजना बनाने के लिए ट्यूटर ऑनबोर्डिंग पूरा करें।",
+  "tutorStartOnboarding": "ऑनबोर्डिंग शुरू करें",
+  "tutorAdjustExample": "जैसे, \"मैं रोज़ 3 घंटे कर सकता हूं\" या \"मिट्टी की यांत्रिकी पर अधिक ध्यान दें\"",
+  "tutorAdjustPrompt": "कैसे बदलें?",
+  "tutorAdjustRequested": "योजना बदलने का अनुरोध भेजा गया।",
+  "tutorSubmit": "जमा करें",
+  "tutorProjectedScore": "अनुमानित अंक",
+  "tutorConfidence": "विश्वास {confidence}% • {trend}",
+  "@tutorConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "Object"
+      },
+      "trend": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorWeakAreas": "कमजोर क्षेत्र",
+  "tutorNoWeakAreas": "कोई कमजोर क्षेत्र नहीं — बहुत बढ़िया! तेज़ रहने के लिए अभ्यास जारी रखें।",
+  "tutorAccuracy": "शुद्धता {accuracy}% • {attempts} प्रयास",
+  "@tutorAccuracy": {
+    "placeholders": {
+      "accuracy": {
+        "type": "Object"
+      },
+      "attempts": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorNoRevisionsDue": "कोई दोहराव बाकी नहीं — आप सही रास्ते पर हैं।",
+  "tutorDueLabel": "{date} तक",
+  "@tutorDueLabel": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorTopicDue": "{topic} • {date} तक",
+  "@tutorTopicDue": {
+    "placeholders": {
+      "topic": {
+        "type": "Object"
+      },
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorCompleted": "पूरा हुआ",
+  "tutorOverdue": "समय बीत चुका",
+  "tutorDue": "बाकी",
+  "tutorWeekRange": "सप्ताह {start} → {end}",
+  "@tutorWeekRange": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      },
+      "end": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorAvgScore": "औसत अंक",
+  "tutorHours": "घंटे",
+  "tutorCompletion": "{percent}% पूरा",
+  "@tutorCompletion": {
+    "placeholders": {
+      "percent": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorHighlights": "मुख्य बातें",
+  "tutorWeeklyReportPending": "एक सप्ताह की गतिविधि के बाद साप्ताहिक रिपोर्ट दिखेगी।",
+  "tutorOnboardingSaved": "ऑनबोर्डिंग सहेजी गई — योजना जल्द बनेगी।",
+  "tutorOnboardingTitle": "ट्यूटर ऑनबोर्डिंग",
+  "tutorPersonalised": "व्यक्तिगत ट्यूटर",
+  "tutorOnboardingExplain": "अपना लक्ष्य बताएं — सर्वर आपकी योजना बनाएगा। user_id की ज़रूरत नहीं (टोकन से)।",
+  "tutorSessionLabel": "सत्र: {session}",
+  "@tutorSessionLabel": {
+    "placeholders": {
+      "session": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorYourGoal": "आपका लक्ष्य",
+  "tutorGoalExample": "जैसे, 6 महीने में PSC सिविल क्रैक करना",
+  "tutorCurrentLevel": "वर्तमान स्तर",
+  "tutorLevelExample": "जैसे: B.E. सिविल अंतिम वर्ष",
+  "tutorHoursPerDay": "प्रतिदिन घंटे",
+  "tutorHoursExample": "जैसे: 2",
+  "tutorOnboardingComplete": "ऑनबोर्डिंग पूरा हुई — आपकी योजना तैयार है।",
+  "tutorViewPlan": "योजना देखें",
+  "tutorCompleteOnboarding": "ऑनबोर्डिंग पूरा करें",
+  "tutorSkipToChat": "छोड़ें → ट्यूटर से चैट",
+  "tutorSavedToAccount": "आपके खाते में सहेजा गया। कनेक्शन टूटे तो फिर से कोशिश करना सुरक्षित है।",
+  "tutorTitle": "AI ट्यूटर",
+  "tutorClearChat": "चैट साफ़ करें",
+  "tutorNotEnoughHistory": "अभी पर्याप्त इतिहास नहीं — व्यक्तिगत बनाने के लिए कुछ क्विज़ पूरे करें।",
+  "tutorDismiss": "खारिज करें",
+  "tutorWriting": "ट्यूटर अपना उत्तर लिख रहा है। लंबे प्रश्न में कुछ समय लग सकता है।",
+  "tutorAskAnything": "कुछ भी पूछें",
+  "tutorChatExplain": "परीक्षा के अवधारणाएं, बीम डिफ्लेक्शन, मिट्टी की यांत्रिकी — AI उत्तर Laravel गेटवे से देता है (कभी सीधे प्रोवाइडर से नहीं)।",
+  "tutorExample1": "प्रोक्टर कम्पैक्शन समझाएं",
+  "tutorExample2": "साप्ताहिक योजना में मदद",
+  "tutorExample3": "कमजोर क्षेत्र?",
+  "tutorTyping": "ट्यूटर लिख रहा है…",
+  "tutorInputHint": "ट्यूटर से पूछें…",
+  "aiUsageTitle": "आपका AI का उपयोग",
+  "aiUsageOverview": "अवलोकन",
+  "aiUsageRequests": "अनुरोध",
+  "aiUsageTokens": "टोकन",
+  "aiUsageTutorChats": "ट्यूटर चैट (सभी समय)",
+  "aiUsageNone": "इस अवधि में कोई AI सुविधा उपयोग नहीं हुई।",
+  "aiUsageByFeature": "सुविधा के अनुसार",
+  "aiUsageTutorConversations": "ट्यूटर बातचीत",
+  "aiUsageNoConversations": "अभी तक कोई ट्यूटर बातचीत नहीं।",
+  "aiUsageLoadMoreConversations": "और बातचीत लोड करें",
+  "aiUsageWeeklyReport": "साप्ताहिक रिपोर्ट कार्ड",
+  "aiUsageNoWeeks": "अभी तक कोई साप्ताहिक सारांश सहेजा नहीं गया।",
+  "aiUsageLoadMoreWeeks": "और सप्ताह लोड करें",
+  "aiUsageConversationNumber": "बातचीत #{number}",
+  "@aiUsageConversationNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageQuestionNumber": "प्रश्न {number}",
+  "@aiUsageQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageTurns": "{count} बार",
+  "@aiUsageTurns": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageWeekOf": "{date} का सप्ताह",
+  "@aiUsageWeekOf": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageWeekSummary": "{accuracy}% शुद्धता • {xp} XP • {coins} कॉइन • {streak} दिन स्ट्रीक",
+  "@aiUsageWeekSummary": {
+    "placeholders": {
+      "accuracy": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      },
+      "streak": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiUsageHoursShort": "{hours} घं",
+  "@aiUsageHoursShort": {
+    "placeholders": {
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiKeysTitle": "आपकी AI कुंजियां",
+  "aiKeysExplain": "आपकी कुंजी हमारे सर्वर पर एन्क्रिप्ट होती है और कभी दोबारा नहीं दिखती। केवल अंतिम चार अक्षर दिखते हैं।",
+  "aiKeysAddTitle": "कुंजी जोड़ें",
+  "aiKeysNoneYet": "अभी तक कोई कुंजी नहीं",
+  "aiKeysNoneExplain": "साझा कोटे के बजाय अपने कोटे पर AI सुविधाएं चलाने के लिए प्रोवाइडर कुंजी जोड़ें।",
+  "aiKeysStored": "सहेजी कुंजियां",
+  "aiKeysTokensUsed": "{total} दैनिक टोकन में से {used} उपयोग",
+  "@aiKeysTokensUsed": {
+    "placeholders": {
+      "used": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiKeysRevoke": "रद्द करें",
+  "aiKeysTooShort": "कुंजी कम से कम 8 अक्षर की होनी चाहिए",
+  "aiKeysAddProvider": "प्रोवाइडर कुंजी जोड़ें",
+  "aiKeysProvider": "प्रोवाइडर",
+  "aiKeysApiKey": "API कुंजी",
+  "aiKeysSentOnce": "एक बार भेजा जाता है और कभी दोबारा नहीं दिखता।",
+  "aiKeysLabelOptional": "लेबल (वैकल्पिक)",
+  "aiKeysSaveKey": "कुंजी सहेजें",
+  "aiKeysSaved": "{name} सहेजी गई। यह हमारे सर्वर पर एन्क्रिप्ट है और कभी दोबारा नहीं दिखेगी।",
+  "@aiKeysSaved": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "aiKeysRevoked": "कुंजी रद्द कर दी गई।",
+  "practiceBookmarks": "बुकमार्क",
+  "practiceWeakTopics": "कमजोर विषय",
+  "practiceSelfChallenge": "स्वयं चुनौती",
+  "practiceHistory": "इतिहास",
+  "practiceNoBookmarks": "अभ्यास के लिए कोई बुकमार्क नहीं",
+  "practiceBookmarkedPractice": "बुकमार्क अभ्यास",
+  "practiceBookmarksUnavailable": "{total} में से {count} बुकमार्क अभ्यास नहीं किए जा सके — सर्वर ने अभी तक उनके विकल्प प्रकाशित नहीं किए।",
+  "@practiceBookmarksUnavailable": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceDrill": "अभ्यास ड्रिल",
+  "practiceDrillCount": "ड्रिल: {count}",
+  "@practiceDrillCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceNoBookmarksBody": "कोई बुकमार्क नहीं",
+  "practiceNoBookmarksHint": "क्विज़ खेलते समय प्रश्न बुकमार्क करें, बाद में वे यहाँ अभ्यास के लिए दिखेंगे।",
+  "practiceBrowseQuizzes": "क्विज़ ब्राउज़ करें",
+  "practiceBookmarkedCount": "{count} बुकमार्क",
+  "@practiceBookmarkedCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceAll": "सभी का अभ्यास करें",
+  "practiceQuestionNumber": "प्रश्न #{number}",
+  "@practiceQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceQuestionMeta": "{meta} • कठिनाई {difficulty} • {points} अंक",
+  "@practiceQuestionMeta": {
+    "placeholders": {
+      "meta": {
+        "type": "Object"
+      },
+      "difficulty": {
+        "type": "Object"
+      },
+      "points": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceBookmarked": "बुकमार्क किया गया",
+  "practiceLoadMoreCursor": "और लोड करें (cursor)",
+  "practiceWeakTopicsLoadFailed": "आपके कमजोर विषय लोड नहीं हो सके",
+  "practiceWeakTopicsExplained": "ये आपके अपने उत्तर इतिहास से निकाले गए हैं। जब तक सच न हो, कुछ नहीं दिखाया जाता।",
+  "practiceNoWeakTopics": "अभी तक कोई कमजोर विषय नहीं",
+  "practiceWeakTopicsNeedsAttempts": "कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। Quiz टैब से एक क्विज़ खेलें और फिर देखें।",
+  "practiceWeakTopicsServerNote": "कमजोर विषय हमारे सर्वर आपके उत्तर इतिहास से निकालते हैं, इसलिए यहाँ कुछ भी अनुमानित नहीं है।",
+  "practiceYourWeakTopics": "आपके कमजोर विषय",
+  "practiceDrillAction": "ड्रिल करें",
+  "practiceDrillTen": "10 प्रश्न ड्रिल करें (अभ्यास मोड, समय-सीमित नहीं)",
+  "practiceUntimedNote": "अभ्यास समय-सीमित नहीं है और इससे आपकी रैंक या कॉइन नहीं बदलते।",
+  "practiceSelfChallengeExplain": "प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर adaptive engine से।",
+  "practiceQuestionCount": "प्रश्न संख्या: {count}",
+  "@practiceQuestionCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceDifficulty": "कठिनाई",
+  "practiceStarting": "शुरू हो रहा है…",
+  "practiceStartChallenge": "चुनौती शुरू करें ({count} प्रश्न)",
+  "@practiceStartChallenge": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceResultsLabelled": "परिणाम अभ्यास के रूप में चिह्नित होते हैं, इसलिए वे कभी आपकी रैंक में नहीं गिने जाते।",
+  "practiceNoHistory": "कोई इतिहास नहीं",
+  "practiceNoHistoryBody": "आपके पूरे हुए अभ्यास सत्र यहाँ दिखेंगे।",
+  "practiceAttemptMeta": "प्रयास #{number} • {mode}",
+  "@practiceAttemptMeta": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      },
+      "mode": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceAttemptSummary": "{meta} • अंक {score} • {correct}✓ {wrong}✗ {skipped}– • {questions} प्रश्न",
+  "@practiceAttemptSummary": {
+    "placeholders": {
+      "meta": {
+        "type": "Object"
+      },
+      "score": {
+        "type": "Object"
+      },
+      "correct": {
+        "type": "Object"
+      },
+      "wrong": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      },
+      "questions": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyInventory": "सामग्री",
+  "economyYourResources": "आपके संसाधन",
+  "economyResourceSummary": "{held} सहेजे • {catalog} कैटलॉग • {recent} हाल के",
+  "@economyResourceSummary": {
+    "placeholders": {
+      "held": {
+        "type": "Object"
+      },
+      "catalog": {
+        "type": "Object"
+      },
+      "recent": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyNoResources": "अभी तक कोई संसाधन नहीं",
+  "economyResourcesExplain": "संसाधन शहर/अर्थव्यवस्था के प्रवाह और क्विज़ पुरस्कारों से मिलते हैं। उपलब्ध होने पर यहाँ दिखते हैं।",
+  "economyCatalog": "कैटलॉग",
+  "economyCatalogEmpty": "कैटलॉग खाली है — सर्वर सामग्री की सूची भरेगा।",
+  "economyRecentActivity": "हाल की गतिविधि",
+  "economyNoRecentActivity": "हाल में कोई गतिविधि नहीं।",
+  "economyDonations": "दान",
+  "economyDonationsExplain": "लाइव लीडरबोर्ड और फ़ीड। कॉइन से दानकर्ता की स्ट्रीक फ्रीज़ हो सकती है।",
+  "economyLeaderboardFeed": "लीडरबोर्ड/फ़ीड: {status}",
+  "@economyLeaderboardFeed": {
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyStreakMonths": "{name} • {months} महीने की स्ट्रीक",
+  "@economyStreakMonths": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "months": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyLiveFeed": "लाइव फ़ीड",
+  "economyDonationsEmpty": "दान लीडरबोर्ड और फ़ीड खाली हैं।",
+  "economySyncing": "सिंक हो रहा है…",
+  "economyLedger": "बही",
+  "economyLedgerExplain": "दिन के अनुसार समूहबद्ध। स्रोत लेबल credits.description से आते हैं (metadata.source से नहीं)।",
+  "economyWhereCoinsWent": "आपके कॉइन कहाँ गए",
+  "economyPeriodSummary": "पिछले {days} दिन • कमाए {earned} • खर्च {spent}",
+  "@economyPeriodSummary": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "earned": {
+        "type": "Object"
+      },
+      "spent": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyNoActivity": "इस अवधि में कोई कॉइन गतिविधि नहीं।",
+  "economyHowYouEarn": "आप कैसे कमाते हैं",
+  "economyMintingExplain": "कॉइन हर अंक वाले क्विज़ और सर्वर के दैनिक कार्यों के बाद जमा होते हैं। वे कभी आपके डिवाइस पर नहीं बनते, इसलिए आपका बैलेंस नहीं बिगड़ता।",
+  "economyNoTransactions": "अभी तक कोई लेनदेन नहीं",
+  "economyNoTransactionsBody": "कॉइन कमाने के लिए एक क्विज़ पूरा करें। हर जमा हमारे सर्वर पर दर्ज होता है।",
+  "economyTitle": "अर्थव्यवस्था",
+  "economyXpTotal": "कुल {xp} XP",
+  "@economyXpTotal": {
+    "placeholders": {
+      "xp": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyLiveExplain": "बैलेंस, बही, शॉप और स्टोर सब लाइव हैं। अंक वाला प्रयास पूरा होने पर कॉइन सर्वर पर बनते हैं।",
+  "economyWalletTile": "वॉलेट - बैलेंस + दिन के अनुसार बही",
+  "economyWalletTileSub": "बैलेंस, जीवनभर के कुल और आपका कॉइन इतिहास",
+  "economyShopTile": "कॉइन शॉप - संसाधन और बंडल",
+  "economyShopTileSub": "सामग्री और बंडल पर कॉइन खर्चें",
+  "economyInventoryTile": "सामग्री - संसाधन + दान",
+  "economyInventoryTileSub": "8 सामग्री + कैटलॉग + लाइव दान फ़ीड/लीडरबोर्ड",
+  "economyStoreTile": "प्रीमियम स्टोर - एसेट और स्किन",
+  "economyStoreTileSub": "फ़्रेम, थीम, बैज और अवतार खरीदें",
+  "economyWardrobeTile": "वॉर्डरोब - लगाएं",
+  "economyWardrobeTileSub": "अपने एसेट लगाएं या हटाएं",
+  "economyShopTitle": "कॉइन शॉप",
+  "economyNothingForSale": "अभी तक बिक्री के लिए कुछ नहीं",
+  "economyShopEmpty": "सर्वर पर अभी शॉप की कोई वस्तु प्रकाशित नहीं है।",
+  "economyBundles": "बंडल",
+  "economyMaterials": "सामग्री",
+  "economyPurchaseSafe": "खरीद सफल नहीं हुई तो फिर से कोशिश करना सुरक्षित है — दोबारा शुल्क नहीं लगेगा।",
+  "economySellsBackFor": "{coins} में वापस बिकता है",
+  "@economySellsBackFor": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "economySave": "{coins} की बचत",
+  "@economySave": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlockedCoins": "अनलॉक हो गया! खर्च किए गए कॉइन: {coins}",
+  "@libraryUnlockedCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryDownloadStarted": "डाउनलोड शुरू हुआ — ब्राउज़र खुल रहा है",
+  "libraryDownloadUrl": "डाउनलोड URL: {url}",
+  "@libraryDownloadUrl": {
+    "placeholders": {
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryRatingRange": "रेटिंग 1-5 के बीच होनी चाहिए",
+  "libraryReviewSubmitted": "समीक्षा जमा हुई",
+  "libraryAbout": "परिचय",
+  "libraryReviews": "समीक्षाएं",
+  "libraryNoReviews": "अभी तक कोई समीक्षा नहीं — अनलॉक करने के बाद पहली समीक्षा करें!",
+  "libraryLoadMoreReviews": "और समीक्षाएं लोड करें",
+  "librarySignedUrls": "डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से Download दबाएं। library-api-download की सीमा मानें।",
+  "libraryFree": "मुफ़्त",
+  "libraryCoinsLabel": "{count} कॉइन",
+  "@libraryCoinsLabel": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryFeatured": "विशेष",
+  "libraryByUploader": "{name} द्वारा",
+  "@libraryByUploader": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlockedFor": "अनलॉक • {coins} कॉइन",
+  "@libraryUnlockedFor": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlocking": "अनलॉक हो रहा है…",
+  "libraryGettingLink": "लिंक ला रहे हैं…",
+  "libraryDownload": "डाउनलोड",
+  "libraryUnlockNote": "अनलॉक करने पर आपके कॉइन बैलेंस से एक बार ही कटौती होती है, पहली बार टैप न हो तो भी। डाउनलोड से पहले फ़ाइल अनलॉक करनी होगी।",
+  "libraryReviewsCount": "{count} समीक्षाएं",
+  "@libraryReviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryDownloads": "डाउनलोड",
+  "libraryAccess": "पहुँच",
+  "libraryWriteReview": "समीक्षा लिखें (पहले अनलॉक करना होगा)",
+  "libraryCommentOptional": "टिप्पणी (वैकल्पिक)",
+  "librarySubmitting": "जमा हो रहा है…",
+  "librarySubmitReview": "समीक्षा जमा करें",
+  "libraryReviewVerified": "आपने फ़ाइल डाउनलोड/अनलॉक की है तो समीक्षा सत्यापित होती है।",
+  "libraryVerified": "सत्यापित",
+  "librarySearchHint": "फ़ाइल, श्रेणी खोजें…",
+  "libraryTrendingFailed": "ट्रेंडिंग फ़ाइलें लोड नहीं हो सकीं।\n{reason}",
+  "@libraryTrendingFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryTrending": "ट्रेंडिंग",
+  "libraryRecommendedFailed": "आपके सुझाव लोड नहीं हो सके।\n{reason}",
+  "@libraryRecommendedFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryRecommendedForYou": "आपके लिए सुझाव",
+  "libraryFiles": "फ़ाइलें",
+  "libraryTotalCount": "कुल {count}",
+  "@libraryTotalCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryNoFiles": "अभी तक कोई फ़ाइल नहीं",
+  "libraryNoResults": "\"{query}\" का कोई परिणाम नहीं",
+  "@libraryNoResults": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryNoFilesBody": "सर्वर पर प्रकाशित और स्वीकृत होने के बाद लाइब्रेरी की फ़ाइलें यहाँ दिखेंगी।",
+  "libraryTryDifferentSearch": "कोई दूसरा शब्द खोजें या फ़िल्टर हटाएं।",
+  "libraryClearSearch": "खोज साफ़ करें",
+  "libraryNoCategories": "कोई श्रेणी प्रकाशित नहीं",
+  "commonLoadMore": "और लोड करें",
+  "commonLeaderboard": "लीडरबोर्ड",
+  "commonWallet": "वॉलेट",
+  "commonLibrary": "लाइब्रेरी",
+  "practiceDrillComplete": "ड्रिल पूरा हुआ",
+  "practiceDoesNotAffect": "अभ्यास — रैंक, XP या स्ट्रीक को प्रभावित नहीं करता",
+  "practiceQuestionsCount": "{count} प्रश्न",
+  "@practiceQuestionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceAnsweredSkipped": "{answered} उत्तर दिए • {skipped} छोड़े",
+  "@practiceAnsweredSkipped": {
+    "placeholders": {
+      "answered": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceScore": "अंक {score}",
+  "@practiceScore": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceGradedByServer": "सर्वर द्वारा अंकित",
+  "practiceCorrectWrongSkipped": "{correct} सही • {wrong} गलत • {skipped} छोड़े",
+  "@practiceCorrectWrongSkipped": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "wrong": {
+        "type": "Object"
+      },
+      "skipped": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceGradingFailed": "सर्वर यह ड्रिल अंकित नहीं कर सका: {reason}",
+  "@practiceGradingFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceReviewPassNote": "यह एक दोहराव था। कोई प्रयास नहीं बनाया गया, इसलिए दिखाने कोई अंक नहीं है।",
+  "practiceNoQuestionsInSet": "इस सेट में कोई प्रश्न नहीं",
+  "practiceQuestionCounter": "प्रश्न {current}/{total}",
+  "@practiceQuestionCounter": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceUntimedPractice": "समय-सीमित नहीं • अभ्यास",
+  "practiceDifficultyLabel": "कठिनाई: {difficulty}",
+  "@practiceDifficultyLabel": {
+    "placeholders": {
+      "difficulty": {
+        "type": "Object"
+      }
+    }
+  },
+  "practiceNoOptionsNotice": "सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला Quiz टैब आज़माएं, जो पूरा सत्र लोड करता है।",
+  "practiceAnswerSentNotice": "उत्तर सर्वर को भेजा गया। सर्वर प्रयास को अंकित करता है — यह स्क्रीन कभी अंक का अनुमान नहीं लगाती।",
+  "practicePrev": "पिछला",
+  "practiceGrading": "अंक लगा रहे हैं…",
+  "practiceNoEffectNote": "अभ्यास समय-सीमित नहीं है और इसका अंक, XP, कॉइन या स्ट्रीक पर कोई प्रभाव नहीं पड़ता।",
   "forceUpdateUnsupportedLatest": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।",
   "forceUpdateUnsupportedVersion": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया {version} या उससे नए संस्करण पर अपडेट करें।",
   "@forceUpdateUnsupportedVersion": {

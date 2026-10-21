@@ -133,6 +133,21 @@ SCOPE = {
     "lib/features/settings/presentation/screens/settings_screen.dart",
     "lib/features/streak/presentation/screens/streak_screen.dart",
     "lib/features/streak/presentation/widgets/streak_calendar.dart",
+    # tier 3 — study and AI
+    "lib/features/tutor/presentation/screens/tutor_plan_screen.dart",
+    "lib/features/tutor/presentation/screens/tutor_onboarding_screen.dart",
+    "lib/features/tutor/presentation/screens/tutor_chat_screen.dart",
+    "lib/features/ai_settings/presentation/screens/ai_usage_screen.dart",
+    "lib/features/ai_settings/presentation/screens/ai_keys_screen.dart",
+    "lib/features/ai_settings/presentation/controllers/ai_settings_controller.dart",
+    "lib/features/practice/presentation/screens/practice_browser_screen.dart",
+    "lib/features/practice/presentation/screens/practice_session_screen.dart",
+    "lib/features/economy/presentation/screens/inventory_screen.dart",
+    "lib/features/economy/presentation/screens/wallet_screen.dart",
+    "lib/features/economy/presentation/screens/shop_screen.dart",
+    "lib/features/economy/presentation/economy_screen.dart",
+    "lib/features/library/presentation/screens/library_detail_screen.dart",
+    "lib/features/library/presentation/screens/library_browser_screen.dart",
 }
 
 

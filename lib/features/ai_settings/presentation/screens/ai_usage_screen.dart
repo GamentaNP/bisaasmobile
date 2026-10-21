@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -37,13 +39,14 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(aiSettingsControllerProvider);
     final notifier = ref.read(aiSettingsControllerProvider.notifier);
     final theme = Theme.of(context);
     final usage = state.usage;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your AI usage')),
+      appBar: AppBar(title: Text(l10n.aiUsageTitle)),
       body: RefreshIndicator(
         onRefresh: () async {
           await notifier.fetchUsage();
@@ -81,7 +84,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
               Row(
                 children: [
                   Text(
-                    'Overview',
+                    l10n.aiUsageOverview,
                     style: theme.textTheme.titleSmall
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
@@ -98,12 +101,12 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                 children: [
                   _Stat(
                     value: '${usage.requests}',
-                    label: 'requests',
+                    label: l10n.aiUsageRequests,
                   ),
                   const SizedBox(width: 18),
                   _Stat(
                     value: _compact(usage.totalTokens),
-                    label: 'tokens',
+                    label: l10n.aiUsageTokens,
                   ),
                   const SizedBox(width: 18),
                   _Stat(
@@ -112,19 +115,19 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                     // filter, so this is a lifetime total. Labelling it
                     // "all time" keeps it from reading as a period figure
                     // next to the 7/30/90-day chip.
-                    label: 'tutor chats (all time)',
+                    label: l10n.aiUsageTutorChats,
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               if (usage.features.isEmpty)
-                const Text(
-                  'No AI features were used in this period.',
+                Text(
+                  l10n.aiUsageNone,
                   style: TextStyle(fontSize: 11, color: Colors.grey),
                 )
               else ...[
                 Text(
-                  'By feature',
+                  l10n.aiUsageByFeature,
                   style: theme.textTheme.titleSmall
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
@@ -136,7 +139,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
             // ── Tutor conversations ────────────────────────────────────────
             const SizedBox(height: 24),
             Text(
-              'Tutor conversations',
+              l10n.aiUsageTutorConversations,
               style: theme.textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
@@ -152,8 +155,8 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                 onRetry: notifier.fetchTutorSessions,
               )
             else if (state.tutorSessions.isEmpty)
-              const Text(
-                'No tutor conversations yet.',
+              Text(
+                l10n.aiUsageNoConversations,
                 style: TextStyle(fontSize: 11, color: Colors.grey),
               )
             else
@@ -171,14 +174,14 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                             append: true,
                           ),
                   icon: const Icon(Icons.expand_more_rounded, size: 18),
-                  label: const Text('Load more conversations'),
+                  label: Text(l10n.aiUsageLoadMoreConversations),
                 ),
               ),
 
             // ── Report card trend ─────────────────────────────────────────
             const SizedBox(height: 24),
             Text(
-              'Weekly report card',
+              l10n.aiUsageWeeklyReport,
               style: theme.textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
@@ -194,8 +197,8 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                 onRetry: notifier.fetchReportCardHistory,
               )
             else if (state.reportCard.isEmpty)
-              const Text(
-                'No weekly summaries stored yet.',
+              Text(
+                l10n.aiUsageNoWeeks,
                 style: TextStyle(fontSize: 11, color: Colors.grey),
               )
             else
@@ -212,7 +215,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                             append: true,
                           ),
                   icon: const Icon(Icons.expand_more_rounded, size: 18),
-                  label: const Text('Load more weeks'),
+                  label: Text(l10n.aiUsageLoadMoreWeeks),
                 ),
               ),
           ],
@@ -256,6 +259,7 @@ class _FeatureRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
@@ -275,8 +279,8 @@ class _FeatureRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          const Text(
-            'requests',
+          Text(
+            l10n.aiUsageRequests,
             style: TextStyle(fontSize: 10, color: Colors.grey),
           ),
         ],
@@ -291,6 +295,7 @@ class _SessionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final created = session.createdAt;
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -301,13 +306,13 @@ class _SessionRow extends StatelessWidget {
           Expanded(
             child: Text(
               session.questionId == null
-                  ? 'Conversation #${session.id}'
-                  : 'Question ${session.questionId}',
+                  ? l10n.aiUsageConversationNumber(session.id)
+                  : l10n.aiUsageQuestionNumber(session.questionId ?? 0),
               style: const TextStyle(fontSize: 12),
             ),
           ),
           Text(
-            '${session.turnCount} turns',
+            l10n.aiUsageTurns(session.turnCount),
             style: const TextStyle(fontSize: 11, color: Colors.grey),
           ),
           if (created != null) ...[
@@ -329,20 +334,21 @@ class _WeekRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         dense: true,
         title: Text(
-          'Week of ${week.weekStartDate}',
+          l10n.aiUsageWeekOf(week.weekStartDate),
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          '${week.accuracyPct.toStringAsFixed(0)}% accuracy • ${week.xpEarned} XP • ${week.coinsEarned} coins • ${week.bestStreak} day streak',
+          l10n.aiUsageWeekSummary(week.accuracyPct.toStringAsFixed(0), week.xpEarned, week.coinsEarned, week.bestStreak),
           style: const TextStyle(fontSize: 11, color: Colors.grey),
         ),
         trailing: Text(
-          '${(week.timeSpentSeconds / 3600).toStringAsFixed(1)}h',
+          l10n.aiUsageHoursShort((week.timeSpentSeconds / 3600).toStringAsFixed(1)),
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ),

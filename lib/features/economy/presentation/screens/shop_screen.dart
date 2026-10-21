@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/entities/economy.dart';
 import '../controllers/economy_controller.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Coin shop — materials and bundles bought with coins.
 ///
@@ -55,6 +56,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(economyControllerProvider);
     final user = ref.watch(authControllerProvider).value;
     final theme = Theme.of(context);
@@ -63,7 +65,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final bundles = items.where((i) => i.type == ShopItemType.bundle).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Coin Shop')),
+      appBar: AppBar(title: Text(l10n.economyShopTitle)),
       body: RefreshIndicator(
         onRefresh: () => ref.read(economyControllerProvider.notifier).fetchShopItems(),
         child: ListView(
@@ -76,7 +78,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 children: [
                   const Icon(Icons.monetization_on_rounded, color: AppColors.coinYellow),
                   const SizedBox(width: 10),
-                  Text('${state.wallet?.coins ?? user?.coins ?? 0} coins', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.coinYellow)),
+                  Text(l10n.coinsBalance(state.wallet?.coins ?? user?.coins ?? 0), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.coinYellow)),
                 ],
               ),
             ),
@@ -87,7 +89,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 color: AppColors.wrongRed.withValues(alpha: 0.08),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.shopError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchShopItems(), child: const Text('Retry'))]),
+                  child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.shopError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchShopItems(), child: Text(l10n.retry))]),
                 ),
               ),
             if (!state.isShopLoading && items.isEmpty && state.shopError == null)
@@ -97,15 +99,15 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                   children: [
                     Icon(Icons.store_rounded, size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.35)),
                     const SizedBox(height: 8),
-                    const Text('Nothing for sale yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    Text(l10n.economyNothingForSale, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     const SizedBox(height: 4),
-                    const Text('The shop has no items published on the server right now.', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(l10n.economyShopEmpty, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey)),
                   ],
                 ),
               ),
             if (bundles.isNotEmpty) ...[
               const SizedBox(height: 14),
-              Text('Bundles', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyBundles, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...bundles.map((b) => _ShopRow(
                     item: b,
@@ -115,7 +117,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
             ],
             if (resources.isNotEmpty) ...[
               const SizedBox(height: 14),
-              Text('Materials', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyMaterials, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               GridView.builder(
                 shrinkWrap: true,
@@ -149,7 +151,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               ),
             ],
             const SizedBox(height: 18),
-            const Text('If a purchase does not go through, retrying is safe — you are never charged twice.', style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+            Text(l10n.economyPurchaseSafe, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
           ],
         ),
       ),
@@ -165,6 +167,7 @@ class _MaterialCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
@@ -194,10 +197,10 @@ class _MaterialCard extends StatelessWidget {
               Text(item.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10, color: Colors.grey)),
             ],
             const Spacer(),
-            Text('${item.priceCoins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.coinYellow)),
+            Text(l10n.coinsBalance(item.priceCoins), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.coinYellow)),
             if (item.sellPriceCoins != null) ...[
               const SizedBox(height: 2),
-              Text('sells back for ${item.sellPriceCoins}', style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              Text(l10n.economySellsBackFor(item.sellPriceCoins ?? 0), style: const TextStyle(fontSize: 10, color: Colors.grey)),
             ],
             SizedBox(
               width: double.infinity,
@@ -206,7 +209,7 @@ class _MaterialCard extends StatelessWidget {
                 style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 8)),
                 child: isPurchasing
                     ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Text('Buy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    : Text(l10n.streakBuy, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               ),
             ),
           ],
@@ -224,6 +227,7 @@ class _ShopRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
@@ -244,10 +248,10 @@ class _ShopRow extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Text('${item.priceCoins} coins', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.coinYellow)),
+                      Text(l10n.coinsBalance(item.priceCoins), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.coinYellow)),
                       if (item.discountCoins > 0) ...[
                         const SizedBox(width: 6),
-                        Text('save ${item.discountCoins}', style: const TextStyle(fontSize: 10, color: AppColors.correctGreen, fontWeight: FontWeight.w600)),
+                        Text(l10n.economySave(item.discountCoins), style: const TextStyle(fontSize: 10, color: AppColors.correctGreen, fontWeight: FontWeight.w600)),
                       ],
                     ],
                   ),
@@ -260,7 +264,7 @@ class _ShopRow extends StatelessWidget {
               style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8)),
               child: isPurchasing
                   ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                  : const Text('Buy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  : Text(l10n.streakBuy, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             ),
           ],
         ),

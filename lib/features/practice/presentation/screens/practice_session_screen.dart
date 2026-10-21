@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/practice.dart';
 import '../controllers/practice_controller.dart';
 import '../practice_session_args.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Untimed practice drill, backed by a live server attempt.
 ///
@@ -113,6 +114,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
   }
 
   Future<void> _showResult() async {
+    final l10n = AppLocalizations.of(context)!;
     final attemptId = widget.args.attemptId;
     PracticeResult? result;
 
@@ -132,7 +134,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
       context: context,
       barrierDismissible: false,
       builder: (c) => AlertDialog(
-        title: const Text('Drill complete'),
+        title: Text(l10n.practiceDrillComplete),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,12 +142,12 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
-              child: const Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text('Practice — does not affect rank, XP or streak', style: TextStyle(fontSize: 12, color: AppColors.brand)))]),
+              child: Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text(l10n.practiceDoesNotAffect, style: TextStyle(fontSize: 12, color: AppColors.brand)))]),
             ),
             const SizedBox(height: 12),
-            Text('${widget.args.questions.length} questions', style: const TextStyle(fontSize: 13)),
+            Text(l10n.practiceQuestionsCount(widget.args.questions.length), style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 4),
-            Text('$_answered answered • $_skipped skipped', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: const TextStyle(fontSize: 12, color: Colors.grey)),
             if (result != null) ...[
               const SizedBox(height: 12),
               // The score comes from the server's completion payload. The client
@@ -158,12 +160,12 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      result.score != null ? 'Score ${result.score}' : 'Graded by the server',
+                      result.score != null ? l10n.practiceScore(result.score!) : l10n.practiceGradedByServer,
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.correctGreen),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${result.correctCount} correct • ${result.wrongCount} wrong • ${result.skippedCount} skipped',
+                      l10n.practiceCorrectWrongSkipped(result.correctCount, result.wrongCount, result.skippedCount),
                       style: const TextStyle(fontSize: 12),
                     ),
                   ],
@@ -176,23 +178,22 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                 decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.25)),
                 ),
                 child: Text(
-                  'The server could not grade this drill: $completionError',
+                  l10n.practiceGradingFailed(completionError),
                   style: const TextStyle(fontSize: 12, color: AppColors.wrongRed),
                 ),
               ),
             ] else ...[
               const SizedBox(height: 8),
-              const Text(
-                'This was a review pass. No attempt was created, so there is no '
-                'score to show.',
+              Text(
+                l10n.practiceReviewPassNote,
                 style: TextStyle(fontSize: 11, color: Colors.grey),
               ),
             ],
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(c).pop(), child: const Text('Continue')),
-          FilledButton(onPressed: () { Navigator.of(c).pop(); Navigator.of(context).pop(); }, child: const Text('Done')),
+          TextButton(onPressed: () => Navigator.of(c).pop(), child: Text(l10n.onboardingContinue)),
+          FilledButton(onPressed: () { Navigator.of(c).pop(); Navigator.of(context).pop(); }, child: Text(l10n.tutorDone)),
         ],
       ),
     );
@@ -200,12 +201,13 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final qs = widget.args.questions;
     if (qs.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.args.title)),
-        body: const Center(child: Text('No questions in this set')),
+        body: Center(child: Text(l10n.practiceNoQuestionsInSet)),
       );
     }
 
@@ -230,15 +232,15 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
-                  child: Text('Q ${_index + 1}/${qs.length}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
+                  child: Text(l10n.practiceQuestionCounter(_index + 1, qs.length), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
                 ),
                 const SizedBox(width: 8),
-                Text('$_answered answered • $_skipped skipped', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                  child: const Text('Untimed • Practice', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
+                  child: Text(l10n.practiceUntimedPractice, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.xpGold)),
                 ),
               ],
             ),
@@ -257,7 +259,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                         children: [
                           Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: const Icon(Icons.help_outline_rounded, size: 16, color: AppColors.brand)),
                           const SizedBox(width: 8),
-                          Expanded(child: Text('Question #${_current.id}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey))),
+                          Expanded(child: Text(l10n.practiceQuestionNumber(_current.id), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey))),
                           if (_current.type != null) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(6)), child: Text(_current.type!, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600))),
                         ],
                       ),
@@ -266,13 +268,13 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                         _current.questionText.isEmpty
                             // An empty body is a server gap, not an invitation
                             // to render placeholder prose.
-                            ? 'This question has no text on the server.'
+                            ? l10n.quizNoQuestionText
                             : _current.questionText,
                         style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, height: 1.4),
                       ),
                       if (_current.difficulty != null) ...[
                         const SizedBox(height: 6),
-                        Text('Difficulty: ${_current.difficulty}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                        Text(l10n.practiceDifficultyLabel(_current.difficulty ?? '—'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                       ],
                     ],
                   ),
@@ -321,16 +323,14 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColors.warnAmber.withValues(alpha: 0.35)),
                     ),
-                    child: const Row(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(Icons.report_gmailerrorred_rounded, size: 18, color: AppColors.warningShadow),
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'The server sent this question without answer options, so '
-                            'it cannot be drilled here. Try the graded Quiz tab, which '
-                            'loads a full session.',
+                            l10n.practiceNoOptionsNotice,
                             style: TextStyle(fontSize: 12, color: AppColors.warningShadow),
                           ),
                         ),
@@ -348,27 +348,27 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                       else
                         const Icon(Icons.schedule_rounded, size: 16, color: AppColors.lifelineCyan),
                       const SizedBox(width: 8),
-                      const Expanded(child: Text('Answer sent to the server. It grades the attempt — this screen never guesses a score.', style: TextStyle(fontSize: 11, color: AppColors.lifelineCyan))),
+                      Expanded(child: Text(l10n.practiceAnswerSentNotice, style: TextStyle(fontSize: 11, color: AppColors.lifelineCyan))),
                     ]),
                   ),
                 ],
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    OutlinedButton.icon(onPressed: _index == 0 ? null : _prev, icon: const Icon(Icons.arrow_back_rounded, size: 16), label: const Text('Prev')),
+                    OutlinedButton.icon(onPressed: _index == 0 ? null : _prev, icon: const Icon(Icons.arrow_back_rounded, size: 16), label: Text(l10n.practicePrev)),
                     const Spacer(),
-                    TextButton.icon(onPressed: answered ? null : _skip, icon: const Icon(Icons.skip_next_rounded, size: 16), label: const Text('Skip')),
+                    TextButton.icon(onPressed: answered ? null : _skip, icon: const Icon(Icons.skip_next_rounded, size: 16), label: Text(l10n.commonSkip)),
                     const SizedBox(width: 8),
                     FilledButton.icon(
                       onPressed: _completing ? null : _next,
                       icon: Icon(_isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded, size: 16),
-                      label: Text(_completing ? 'Grading…' : (_isLast ? 'Finish' : 'Next')),
+                      label: Text(_completing ? l10n.practiceGrading : (_isLast ? 'Finish' : 'Next')),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Practice is untimed and carries no score, XP, coins or streak effect.',
+                Text(
+                  l10n.practiceNoEffectNote,
                   style: TextStyle(fontSize: 11, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),

@@ -269,7 +269,17 @@ class _Visitor extends RecursiveAstVisitor<void> {
 }
 
 /// The interpolated expressions of a string literal, in order.
+///
+/// Adjacent string literals — `'${a} of ${b} ' 'drilled'` — are one string
+/// in the source, so their interpolations have to be collected together.
 List<String> interpolationSources(Expression expression) {
+  if (expression is AdjacentStrings) {
+    final sources = <String>[];
+    for (final part in expression.strings) {
+      sources.addAll(interpolationSources(part));
+    }
+    return sources;
+  }
   if (expression is! StringInterpolation) return const <String>[];
   final sources = <String>[];
   for (final element in expression.elements) {

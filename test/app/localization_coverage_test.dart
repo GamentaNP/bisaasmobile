@@ -66,6 +66,21 @@ const coreJourneyFiles = <String>{
   'lib/features/settings/presentation/screens/settings_screen.dart',
   'lib/features/streak/presentation/screens/streak_screen.dart',
   'lib/features/streak/presentation/widgets/streak_calendar.dart',
+  // tier 3 - study and AI
+  'lib/features/tutor/presentation/screens/tutor_plan_screen.dart',
+  'lib/features/tutor/presentation/screens/tutor_onboarding_screen.dart',
+  'lib/features/tutor/presentation/screens/tutor_chat_screen.dart',
+  'lib/features/ai_settings/presentation/screens/ai_usage_screen.dart',
+  'lib/features/ai_settings/presentation/screens/ai_keys_screen.dart',
+  'lib/features/ai_settings/presentation/controllers/ai_settings_controller.dart',
+  'lib/features/practice/presentation/screens/practice_browser_screen.dart',
+  'lib/features/practice/presentation/screens/practice_session_screen.dart',
+  'lib/features/economy/presentation/screens/inventory_screen.dart',
+  'lib/features/economy/presentation/screens/wallet_screen.dart',
+  'lib/features/economy/presentation/screens/shop_screen.dart',
+  'lib/features/economy/presentation/economy_screen.dart',
+  'lib/features/library/presentation/screens/library_detail_screen.dart',
+  'lib/features/library/presentation/screens/library_browser_screen.dart',
 };
 
 /// Literals that are deliberately not translated.
@@ -86,7 +101,7 @@ const allowedLiterals = <String>{
 /// This is a ratchet, not a target: it may go down, never up. It exists so
 /// that adding a screen in English is a deliberate act — the count changes
 /// in the diff and the reviewer sees it — rather than an invisible drift.
-const maxUntranslatedOutsideCoreJourney = 765;
+const maxUntranslatedOutsideCoreJourney = 479;
 
 void main() {
   late List<Hit> hits;

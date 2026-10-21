@@ -43,6 +43,13 @@ TARGETS = {
         "../../../../app/localization/l10n.dart",
         [("l10n.quizFinishFailed", "appL10n().quizFinishFailed")],
     ),
+    "lib/features/ai_settings/presentation/controllers/ai_settings_controller.dart": (
+        "../../../../app/localization/l10n.dart",
+        [
+            ("l10n.aiKeysSaved", "appL10n().aiKeysSaved"),
+            ("l10n.aiKeysRevoked", "appL10n().aiKeysRevoked"),
+        ],
+    ),
 }
 
 

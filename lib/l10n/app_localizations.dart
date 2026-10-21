@@ -200,13 +200,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Streak: {days} days'**
-  String streakDays(int days);
+  String streakDays(Object days);
 
   /// No description provided for @coinsBalance.
   ///
   /// In en, this message translates to:
   /// **'{count} coins'**
-  String coinsBalance(int count);
+  String coinsBalance(Object count);
 
   /// No description provided for @appLocked.
   ///
@@ -320,7 +320,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} pts'**
-  String commonPoints(int count);
+  String commonPoints(Object count);
 
   /// No description provided for @commonPercent.
   ///
@@ -482,7 +482,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'At least {count} characters'**
-  String authMinChars(int count);
+  String authMinChars(Object count);
 
   /// No description provided for @authVerifyEmailBanner.
   ///
@@ -512,7 +512,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Step {current} of {total}'**
-  String onboardingStepOf(int current, int total);
+  String onboardingStepOf(Object current, Object total);
 
   /// No description provided for @onboardingTargetExamTitle.
   ///
@@ -662,7 +662,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'×{count} Combo!'**
-  String quizAttemptCombo(int count);
+  String quizAttemptCombo(Object count);
 
   /// No description provided for @quizAttemptExitTitle.
   ///
@@ -692,7 +692,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{correct} of {total} correct'**
-  String quizResultCorrectOf(Object correct, int total);
+  String quizResultCorrectOf(Object correct, Object total);
 
   /// No description provided for @quizResultCorrect.
   ///
@@ -794,7 +794,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} shown'**
-  String quizFunnelShown(int count);
+  String quizFunnelShown(Object count);
 
   /// No description provided for @quizFunnelEmptyTitle.
   ///
@@ -854,7 +854,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} calculators • {domains} domains'**
-  String calcBrowserCount(int count, Object domains);
+  String calcBrowserCount(Object count, Object domains);
 
   /// No description provided for @calcBrowserLoadError.
   ///
@@ -992,7 +992,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'inputs: {count}'**
-  String calcInputsCount(int count);
+  String calcInputsCount(Object count);
 
   /// No description provided for @calcAsk.
   ///
@@ -1088,7 +1088,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{earned} / {total} ⭐'**
-  String homeStars(Object earned, int total);
+  String homeStars(Object earned, Object total);
 
   /// No description provided for @homeContinue.
   ///
@@ -1412,13 +1412,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} missions ready to claim'**
-  String homeMissionsReady(int count);
+  String homeMissionsReady(Object count);
 
   /// No description provided for @homeMissionsActive.
   ///
   /// In en, this message translates to:
   /// **'Missions — {count} active'**
-  String homeMissionsActive(int count);
+  String homeMissionsActive(Object count);
 
   /// No description provided for @onboardingStartLearning.
   ///
@@ -1738,12 +1738,6 @@ abstract class AppLocalizations {
   /// **'drill bookmarks • weak topics'**
   String get profilePracticeSub;
 
-  /// No description provided for @profileLeaderboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Leaderboard'**
-  String get profileLeaderboard;
-
   /// No description provided for @profileLeaderboardSub.
   ///
   /// In en, this message translates to:
@@ -1821,12 +1815,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'share • streak • leaderboard'**
   String get profileSocialSub;
-
-  /// No description provided for @profileWallet.
-  ///
-  /// In en, this message translates to:
-  /// **'Wallet'**
-  String get profileWallet;
 
   /// No description provided for @profileWalletSub.
   ///
@@ -1924,23 +1912,11 @@ abstract class AppLocalizations {
   /// **'Analytics, functional and marketing consent'**
   String get settingsPrivacySub;
 
-  /// No description provided for @settingsAiUsage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your AI usage'**
-  String get settingsAiUsage;
-
   /// No description provided for @settingsAiUsageSub.
   ///
   /// In en, this message translates to:
   /// **'What AI used on your behalf, by feature'**
   String get settingsAiUsageSub;
-
-  /// No description provided for @settingsAiKeys.
-  ///
-  /// In en, this message translates to:
-  /// **'Your AI keys'**
-  String get settingsAiKeys;
 
   /// No description provided for @settingsAiKeysSub.
   ///
@@ -2048,7 +2024,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Best: {count} days'**
-  String streakBest(int count);
+  String streakBest(Object count);
 
   /// No description provided for @streakMultiplier.
   ///
@@ -2066,7 +2042,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{current} / {total} days to next tier'**
-  String streakDaysToNextTier(int current, int total);
+  String streakDaysToNextTier(Object current, Object total);
 
   /// No description provided for @streakTiers.
   ///
@@ -2084,7 +2060,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} left'**
-  String streakFreezeLeft(int count);
+  String streakFreezeLeft(Object count);
 
   /// No description provided for @streakFrozenUntil.
   ///
@@ -2162,7 +2138,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Day {current} of {total} — keep playing to win {reward} coins.'**
-  String streakWagerDay(int current, int total, Object reward);
+  String streakWagerDay(Object current, Object total, Object reward);
 
   /// No description provided for @streakWagerStart.
   ///
@@ -2222,13 +2198,1529 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} days'**
-  String streakWagerDaysCount(int count);
+  String streakWagerDaysCount(Object count);
 
   /// No description provided for @streakWagerSummary.
   ///
   /// In en, this message translates to:
   /// **'Wager {coins} coins for {days} days'**
-  String streakWagerSummary(Object coins, int days);
+  String streakWagerSummary(Object coins, Object days);
+
+  /// No description provided for @tutorStudyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Plan'**
+  String get tutorStudyPlan;
+
+  /// No description provided for @tutorChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get tutorChat;
+
+  /// No description provided for @tutorPlanTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get tutorPlanTab;
+
+  /// No description provided for @tutorInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get tutorInsights;
+
+  /// No description provided for @tutorRevisions.
+  ///
+  /// In en, this message translates to:
+  /// **'Revisions'**
+  String get tutorRevisions;
+
+  /// No description provided for @tutorWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get tutorWeekly;
+
+  /// No description provided for @tutorNoTasksToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks today — check back tomorrow'**
+  String get tutorNoTasksToday;
+
+  /// No description provided for @tutorDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get tutorDone;
+
+  /// No description provided for @tutorTasksDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{total} tasks'**
+  String tutorTasksDone(Object done, Object total);
+
+  /// No description provided for @tutorDayCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Day completed — plan updated.'**
+  String get tutorDayCompleted;
+
+  /// No description provided for @tutorMarkDayComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark day complete'**
+  String get tutorMarkDayComplete;
+
+  /// No description provided for @tutorYourPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan — {title}'**
+  String tutorYourPlan(Object title);
+
+  /// No description provided for @tutorPlanDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days • current {current}'**
+  String tutorPlanDays(Object days, Object current);
+
+  /// No description provided for @tutorPlanNoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan has no days yet — onboarding will generate it.'**
+  String get tutorPlanNoDays;
+
+  /// No description provided for @tutorMoreDays.
+  ///
+  /// In en, this message translates to:
+  /// **'+ {count} more days'**
+  String tutorMoreDays(Object count);
+
+  /// No description provided for @tutorAdjustPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust plan'**
+  String get tutorAdjustPlan;
+
+  /// No description provided for @tutorNoPlanYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No plan yet'**
+  String get tutorNoPlanYet;
+
+  /// No description provided for @tutorOnboardingRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete tutor onboarding to generate your personalized study plan.'**
+  String get tutorOnboardingRequired;
+
+  /// No description provided for @tutorStartOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Start onboarding'**
+  String get tutorStartOnboarding;
+
+  /// No description provided for @tutorAdjustExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., \"I can do 3h/day\" or \"Focus more on soil mechanics\"'**
+  String get tutorAdjustExample;
+
+  /// No description provided for @tutorAdjustPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'How should we adjust?'**
+  String get tutorAdjustPrompt;
+
+  /// No description provided for @tutorAdjustRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan adjustment requested.'**
+  String get tutorAdjustRequested;
+
+  /// No description provided for @tutorSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get tutorSubmit;
+
+  /// No description provided for @tutorProjectedScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Projected score'**
+  String get tutorProjectedScore;
+
+  /// No description provided for @tutorConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence {confidence}% • {trend}'**
+  String tutorConfidence(Object confidence, Object trend);
+
+  /// No description provided for @tutorWeakAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak areas'**
+  String get tutorWeakAreas;
+
+  /// No description provided for @tutorNoWeakAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'No weak areas — great work! Keep practicing to stay sharp.'**
+  String get tutorNoWeakAreas;
+
+  /// No description provided for @tutorAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy {accuracy}% • {attempts} attempts'**
+  String tutorAccuracy(Object accuracy, Object attempts);
+
+  /// No description provided for @tutorNoRevisionsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'No revisions due — you are on track.'**
+  String get tutorNoRevisionsDue;
+
+  /// No description provided for @tutorDueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'due {date}'**
+  String tutorDueLabel(Object date);
+
+  /// No description provided for @tutorTopicDue.
+  ///
+  /// In en, this message translates to:
+  /// **'{topic} • due {date}'**
+  String tutorTopicDue(Object topic, Object date);
+
+  /// No description provided for @tutorCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get tutorCompleted;
+
+  /// No description provided for @tutorOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get tutorOverdue;
+
+  /// No description provided for @tutorDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get tutorDue;
+
+  /// No description provided for @tutorWeekRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {start} → {end}'**
+  String tutorWeekRange(Object start, Object end);
+
+  /// No description provided for @tutorAvgScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg score'**
+  String get tutorAvgScore;
+
+  /// No description provided for @tutorHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get tutorHours;
+
+  /// No description provided for @tutorCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% completion'**
+  String tutorCompletion(Object percent);
+
+  /// No description provided for @tutorHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlights'**
+  String get tutorHighlights;
+
+  /// No description provided for @tutorWeeklyReportPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly report appears after a week of activity.'**
+  String get tutorWeeklyReportPending;
+
+  /// No description provided for @tutorOnboardingSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding saved — plan will generate shortly.'**
+  String get tutorOnboardingSaved;
+
+  /// No description provided for @tutorOnboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor Onboarding'**
+  String get tutorOnboardingTitle;
+
+  /// No description provided for @tutorPersonalised.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized tutor'**
+  String get tutorPersonalised;
+
+  /// No description provided for @tutorOnboardingExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us your goal — the server builds your plan. No user_id required (token-bound).'**
+  String get tutorOnboardingExplain;
+
+  /// No description provided for @tutorSessionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Session: {session}'**
+  String tutorSessionLabel(Object session);
+
+  /// No description provided for @tutorYourGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Your goal'**
+  String get tutorYourGoal;
+
+  /// No description provided for @tutorGoalExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Crack PSC Civil in 6 months'**
+  String get tutorGoalExample;
+
+  /// No description provided for @tutorCurrentLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current level'**
+  String get tutorCurrentLevel;
+
+  /// No description provided for @tutorLevelExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Final year B.E. Civil'**
+  String get tutorLevelExample;
+
+  /// No description provided for @tutorHoursPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours per day'**
+  String get tutorHoursPerDay;
+
+  /// No description provided for @tutorHoursExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 2'**
+  String get tutorHoursExample;
+
+  /// No description provided for @tutorOnboardingComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding complete — your plan is ready.'**
+  String get tutorOnboardingComplete;
+
+  /// No description provided for @tutorViewPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'View Plan'**
+  String get tutorViewPlan;
+
+  /// No description provided for @tutorCompleteOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete onboarding'**
+  String get tutorCompleteOnboarding;
+
+  /// No description provided for @tutorSkipToChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip → Chat with tutor'**
+  String get tutorSkipToChat;
+
+  /// No description provided for @tutorSavedToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your account. Safe to retry if the connection drops.'**
+  String get tutorSavedToAccount;
+
+  /// No description provided for @tutorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Tutor'**
+  String get tutorTitle;
+
+  /// No description provided for @tutorClearChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear chat'**
+  String get tutorClearChat;
+
+  /// No description provided for @tutorNotEnoughHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough history yet — complete a few quizzes to personalize.'**
+  String get tutorNotEnoughHistory;
+
+  /// No description provided for @tutorDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get tutorDismiss;
+
+  /// No description provided for @tutorWriting.
+  ///
+  /// In en, this message translates to:
+  /// **'The tutor is writing its reply. It can take a moment on longer questions.'**
+  String get tutorWriting;
+
+  /// No description provided for @tutorAskAnything.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything'**
+  String get tutorAskAnything;
+
+  /// No description provided for @tutorChatExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam concepts, beam deflection, soil mechanics — AI answers via Laravel gateway (never direct provider).'**
+  String get tutorChatExplain;
+
+  /// No description provided for @tutorExample1.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain proctor compaction'**
+  String get tutorExample1;
+
+  /// No description provided for @tutorExample2.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly plan help'**
+  String get tutorExample2;
+
+  /// No description provided for @tutorExample3.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak areas?'**
+  String get tutorExample3;
+
+  /// No description provided for @tutorTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor is typing…'**
+  String get tutorTyping;
+
+  /// No description provided for @tutorInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask tutor…'**
+  String get tutorInputHint;
+
+  /// No description provided for @aiUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI usage'**
+  String get aiUsageTitle;
+
+  /// No description provided for @aiUsageOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get aiUsageOverview;
+
+  /// No description provided for @aiUsageRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'requests'**
+  String get aiUsageRequests;
+
+  /// No description provided for @aiUsageTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'tokens'**
+  String get aiUsageTokens;
+
+  /// No description provided for @aiUsageTutorChats.
+  ///
+  /// In en, this message translates to:
+  /// **'tutor chats (all time)'**
+  String get aiUsageTutorChats;
+
+  /// No description provided for @aiUsageNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No AI features were used in this period.'**
+  String get aiUsageNone;
+
+  /// No description provided for @aiUsageByFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'By feature'**
+  String get aiUsageByFeature;
+
+  /// No description provided for @aiUsageTutorConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor conversations'**
+  String get aiUsageTutorConversations;
+
+  /// No description provided for @aiUsageNoConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'No tutor conversations yet.'**
+  String get aiUsageNoConversations;
+
+  /// No description provided for @aiUsageLoadMoreConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more conversations'**
+  String get aiUsageLoadMoreConversations;
+
+  /// No description provided for @aiUsageWeeklyReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly report card'**
+  String get aiUsageWeeklyReport;
+
+  /// No description provided for @aiUsageNoWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'No weekly summaries stored yet.'**
+  String get aiUsageNoWeeks;
+
+  /// No description provided for @aiUsageLoadMoreWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more weeks'**
+  String get aiUsageLoadMoreWeeks;
+
+  /// No description provided for @aiUsageConversationNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation #{number}'**
+  String aiUsageConversationNumber(Object number);
+
+  /// No description provided for @aiUsageQuestionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {number}'**
+  String aiUsageQuestionNumber(Object number);
+
+  /// No description provided for @aiUsageTurns.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} turns'**
+  String aiUsageTurns(Object count);
+
+  /// No description provided for @aiUsageWeekOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Week of {date}'**
+  String aiUsageWeekOf(Object date);
+
+  /// No description provided for @aiUsageWeekSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{accuracy}% accuracy • {xp} XP • {coins} coins • {streak} day streak'**
+  String aiUsageWeekSummary(
+    Object accuracy,
+    Object xp,
+    Object coins,
+    Object streak,
+  );
+
+  /// No description provided for @aiUsageHoursShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h'**
+  String aiUsageHoursShort(Object hours);
+
+  /// No description provided for @aiKeysTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI keys'**
+  String get aiKeysTitle;
+
+  /// No description provided for @aiKeysExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Your key is encrypted on our servers and never shown again. Only the last four characters are ever displayed.'**
+  String get aiKeysExplain;
+
+  /// No description provided for @aiKeysAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a key'**
+  String get aiKeysAddTitle;
+
+  /// No description provided for @aiKeysNoneYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No keys yet'**
+  String get aiKeysNoneYet;
+
+  /// No description provided for @aiKeysNoneExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a provider key to run AI features on your own quota instead of the shared one.'**
+  String get aiKeysNoneExplain;
+
+  /// No description provided for @aiKeysStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored keys'**
+  String get aiKeysStored;
+
+  /// No description provided for @aiKeysTokensUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} of {total} daily tokens used'**
+  String aiKeysTokensUsed(Object used, Object total);
+
+  /// No description provided for @aiKeysRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get aiKeysRevoke;
+
+  /// No description provided for @aiKeysTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'The key must be at least 8 characters'**
+  String get aiKeysTooShort;
+
+  /// No description provided for @aiKeysAddProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a provider key'**
+  String get aiKeysAddProvider;
+
+  /// No description provided for @aiKeysProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get aiKeysProvider;
+
+  /// No description provided for @aiKeysApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API key'**
+  String get aiKeysApiKey;
+
+  /// No description provided for @aiKeysSentOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent once and never shown again.'**
+  String get aiKeysSentOnce;
+
+  /// No description provided for @aiKeysLabelOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Label (optional)'**
+  String get aiKeysLabelOptional;
+
+  /// No description provided for @aiKeysSaveKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Save key'**
+  String get aiKeysSaveKey;
+
+  /// No description provided for @aiKeysSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} saved. It is encrypted on our servers and never shown again.'**
+  String aiKeysSaved(Object name);
+
+  /// No description provided for @aiKeysRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Key revoked.'**
+  String get aiKeysRevoked;
+
+  /// No description provided for @practiceBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get practiceBookmarks;
+
+  /// No description provided for @practiceWeakTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak Topics'**
+  String get practiceWeakTopics;
+
+  /// No description provided for @practiceSelfChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Self Challenge'**
+  String get practiceSelfChallenge;
+
+  /// No description provided for @practiceHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get practiceHistory;
+
+  /// No description provided for @practiceNoBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarks to practice'**
+  String get practiceNoBookmarks;
+
+  /// No description provided for @practiceBookmarkedPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked Practice'**
+  String get practiceBookmarkedPractice;
+
+  /// No description provided for @practiceBookmarksUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {total} bookmarks could not be drilled — the server does not publish their answer options yet.'**
+  String practiceBookmarksUnavailable(Object count, Object total);
+
+  /// No description provided for @practiceDrill.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice Drill'**
+  String get practiceDrill;
+
+  /// No description provided for @practiceDrillCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill: {count}'**
+  String practiceDrillCount(Object count);
+
+  /// No description provided for @practiceNoBookmarksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarks'**
+  String get practiceNoBookmarksBody;
+
+  /// No description provided for @practiceNoBookmarksHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark questions while you take a quiz and they will show up here for drilling later.'**
+  String get practiceNoBookmarksHint;
+
+  /// No description provided for @practiceBrowseQuizzes.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse quizzes'**
+  String get practiceBrowseQuizzes;
+
+  /// No description provided for @practiceBookmarkedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bookmarked'**
+  String practiceBookmarkedCount(Object count);
+
+  /// No description provided for @practiceAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice all'**
+  String get practiceAll;
+
+  /// No description provided for @practiceQuestionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Question #{number}'**
+  String practiceQuestionNumber(Object number);
+
+  /// No description provided for @practiceQuestionMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{meta} • difficulty {difficulty} • {points} pts'**
+  String practiceQuestionMeta(Object meta, Object difficulty, Object points);
+
+  /// No description provided for @practiceBookmarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked'**
+  String get practiceBookmarked;
+
+  /// No description provided for @practiceLoadMoreCursor.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more (cursor)'**
+  String get practiceLoadMoreCursor;
+
+  /// No description provided for @practiceWeakTopicsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your weak topics'**
+  String get practiceWeakTopicsLoadFailed;
+
+  /// No description provided for @practiceWeakTopicsExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'These are worked out from your own answer history. Nothing is shown unless it is real.'**
+  String get practiceWeakTopicsExplained;
+
+  /// No description provided for @practiceNoWeakTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'No weak topics yet'**
+  String get practiceNoWeakTopics;
+
+  /// No description provided for @practiceWeakTopicsNeedsAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'The server needs graded attempts before it can spot weak areas. Take a quiz from the Quiz tab and check back.'**
+  String get practiceWeakTopicsNeedsAttempts;
+
+  /// No description provided for @practiceWeakTopicsServerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak topics are worked out on our servers from your answer history, so nothing here is guessed.'**
+  String get practiceWeakTopicsServerNote;
+
+  /// No description provided for @practiceYourWeakTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weak topics'**
+  String get practiceYourWeakTopics;
+
+  /// No description provided for @practiceDrillAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill'**
+  String get practiceDrillAction;
+
+  /// No description provided for @practiceDrillTen.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill 10 questions (practice mode, untimed)'**
+  String get practiceDrillTen;
+
+  /// No description provided for @practiceUntimedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice is untimed and does not affect your rank or coin balance.'**
+  String get practiceUntimedNote;
+
+  /// No description provided for @practiceSelfChallengeExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick question count & difficulty — mirrors Elite Quiz self-challenge but sourced from adaptive engine.'**
+  String get practiceSelfChallengeExplain;
+
+  /// No description provided for @practiceQuestionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Question count: {count}'**
+  String practiceQuestionCount(Object count);
+
+  /// No description provided for @practiceDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get practiceDifficulty;
+
+  /// No description provided for @practiceStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get practiceStarting;
+
+  /// No description provided for @practiceStartChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Start challenge ({count} Qs)'**
+  String practiceStartChallenge(Object count);
+
+  /// No description provided for @practiceResultsLabelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Results are labelled as practice, so they never count towards your rank.'**
+  String get practiceResultsLabelled;
+
+  /// No description provided for @practiceNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No history'**
+  String get practiceNoHistory;
+
+  /// No description provided for @practiceNoHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your completed practice sessions will appear here.'**
+  String get practiceNoHistoryBody;
+
+  /// No description provided for @practiceAttemptMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt #{number} • {mode}'**
+  String practiceAttemptMeta(Object number, Object mode);
+
+  /// No description provided for @practiceAttemptSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{meta} • score {score} • {correct}✓ {wrong}✗ {skipped}– • {questions} Qs'**
+  String practiceAttemptSummary(
+    Object meta,
+    Object score,
+    Object correct,
+    Object wrong,
+    Object skipped,
+    Object questions,
+  );
+
+  /// No description provided for @economyInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory'**
+  String get economyInventory;
+
+  /// No description provided for @economyYourResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Your resources'**
+  String get economyYourResources;
+
+  /// No description provided for @economyResourceSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{held} held • {catalog} catalog • {recent} recent'**
+  String economyResourceSummary(Object held, Object catalog, Object recent);
+
+  /// No description provided for @economyNoResources.
+  ///
+  /// In en, this message translates to:
+  /// **'No resources yet'**
+  String get economyNoResources;
+
+  /// No description provided for @economyResourcesExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Resources are earned via city / economy flows and quiz rewards. They appear here when available.'**
+  String get economyResourcesExplain;
+
+  /// No description provided for @economyCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalog'**
+  String get economyCatalog;
+
+  /// No description provided for @economyCatalogEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalog empty — server will populate material list.'**
+  String get economyCatalogEmpty;
+
+  /// No description provided for @economyRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent activity'**
+  String get economyRecentActivity;
+
+  /// No description provided for @economyNoRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent activity.'**
+  String get economyNoRecentActivity;
+
+  /// No description provided for @economyDonations.
+  ///
+  /// In en, this message translates to:
+  /// **'Donations'**
+  String get economyDonations;
+
+  /// No description provided for @economyDonationsExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Live leaderboard and feed. Coins can freeze a donor streak.'**
+  String get economyDonationsExplain;
+
+  /// No description provided for @economyLeaderboardFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard/feed: {status}'**
+  String economyLeaderboardFeed(Object status);
+
+  /// No description provided for @economyStreakMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} • {months} mo streak'**
+  String economyStreakMonths(Object name, Object months);
+
+  /// No description provided for @economyLiveFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Live feed'**
+  String get economyLiveFeed;
+
+  /// No description provided for @economyDonationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation leaderboard and feed are empty.'**
+  String get economyDonationsEmpty;
+
+  /// No description provided for @economySyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get economySyncing;
+
+  /// No description provided for @economyLedger.
+  ///
+  /// In en, this message translates to:
+  /// **'Ledger'**
+  String get economyLedger;
+
+  /// No description provided for @economyLedgerExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped by day. Source labels come from credits.description (not metadata.source).'**
+  String get economyLedgerExplain;
+
+  /// No description provided for @economyWhereCoinsWent.
+  ///
+  /// In en, this message translates to:
+  /// **'Where your coins went'**
+  String get economyWhereCoinsWent;
+
+  /// No description provided for @economyPeriodSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {days} days • earned {earned} • spent {spent}'**
+  String economyPeriodSummary(Object days, Object earned, Object spent);
+
+  /// No description provided for @economyNoActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No coin activity in this period.'**
+  String get economyNoActivity;
+
+  /// No description provided for @economyHowYouEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'How you earn'**
+  String get economyHowYouEarn;
+
+  /// No description provided for @economyMintingExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.'**
+  String get economyMintingExplain;
+
+  /// No description provided for @economyNoTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get economyNoTransactions;
+
+  /// No description provided for @economyNoTransactionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a quiz to earn coins. Every credit is recorded on our servers.'**
+  String get economyNoTransactionsBody;
+
+  /// No description provided for @economyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Economy'**
+  String get economyTitle;
+
+  /// No description provided for @economyXpTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP total'**
+  String economyXpTotal(Object xp);
+
+  /// No description provided for @economyLiveExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance, ledger, shop and store are all live. Coins are minted server-side when a graded attempt completes.'**
+  String get economyLiveExplain;
+
+  /// No description provided for @economyWalletTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet - balance + ledger by day'**
+  String get economyWalletTile;
+
+  /// No description provided for @economyWalletTileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance, lifetime totals and your coin history'**
+  String get economyWalletTileSub;
+
+  /// No description provided for @economyShopTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Shop - resources & bundles'**
+  String get economyShopTile;
+
+  /// No description provided for @economyShopTileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend coins on materials and bundles'**
+  String get economyShopTileSub;
+
+  /// No description provided for @economyInventoryTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory — resources + donations'**
+  String get economyInventoryTile;
+
+  /// No description provided for @economyInventoryTileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'8 materials + catalog + live donations feed/leaderboard'**
+  String get economyInventoryTileSub;
+
+  /// No description provided for @economyStoreTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Store - assets & skins'**
+  String get economyStoreTile;
+
+  /// No description provided for @economyStoreTileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy frames, themes, badges and avatars'**
+  String get economyStoreTileSub;
+
+  /// No description provided for @economyWardrobeTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Wardrobe - equip'**
+  String get economyWardrobeTile;
+
+  /// No description provided for @economyWardrobeTileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Equip or clear the assets you own'**
+  String get economyWardrobeTileSub;
+
+  /// No description provided for @economyShopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Shop'**
+  String get economyShopTitle;
+
+  /// No description provided for @economyNothingForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing for sale yet'**
+  String get economyNothingForSale;
+
+  /// No description provided for @economyShopEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The shop has no items published on the server right now.'**
+  String get economyShopEmpty;
+
+  /// No description provided for @economyBundles.
+  ///
+  /// In en, this message translates to:
+  /// **'Bundles'**
+  String get economyBundles;
+
+  /// No description provided for @economyMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials'**
+  String get economyMaterials;
+
+  /// No description provided for @economyPurchaseSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'If a purchase does not go through, retrying is safe — you are never charged twice.'**
+  String get economyPurchaseSafe;
+
+  /// No description provided for @economySellsBackFor.
+  ///
+  /// In en, this message translates to:
+  /// **'sells back for {coins}'**
+  String economySellsBackFor(Object coins);
+
+  /// No description provided for @economySave.
+  ///
+  /// In en, this message translates to:
+  /// **'save {coins}'**
+  String economySave(Object coins);
+
+  /// No description provided for @libraryUnlockedCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked! Coins spent: {coins}'**
+  String libraryUnlockedCoins(Object coins);
+
+  /// No description provided for @libraryDownloadStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Download started — opening browser'**
+  String get libraryDownloadStarted;
+
+  /// No description provided for @libraryDownloadUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Download URL: {url}'**
+  String libraryDownloadUrl(Object url);
+
+  /// No description provided for @libraryRatingRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating must be 1-5'**
+  String get libraryRatingRange;
+
+  /// No description provided for @libraryReviewSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Review submitted'**
+  String get libraryReviewSubmitted;
+
+  /// No description provided for @libraryAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get libraryAbout;
+
+  /// No description provided for @libraryReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get libraryReviews;
+
+  /// No description provided for @libraryNoReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet — be the first to review after unlocking!'**
+  String get libraryNoReviews;
+
+  /// No description provided for @libraryLoadMoreReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more reviews'**
+  String get libraryLoadMoreReviews;
+
+  /// No description provided for @librarySignedUrls.
+  ///
+  /// In en, this message translates to:
+  /// **'Download URLs are signed and short-lived. If a download fails, tap Download again to get a fresh URL. Respect library-api-download throttle.'**
+  String get librarySignedUrls;
+
+  /// No description provided for @libraryFree.
+  ///
+  /// In en, this message translates to:
+  /// **'FREE'**
+  String get libraryFree;
+
+  /// No description provided for @libraryCoinsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} COINS'**
+  String libraryCoinsLabel(Object count);
+
+  /// No description provided for @libraryFeatured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get libraryFeatured;
+
+  /// No description provided for @libraryByUploader.
+  ///
+  /// In en, this message translates to:
+  /// **'by {name}'**
+  String libraryByUploader(Object name);
+
+  /// No description provided for @libraryUnlockedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked • {coins} coins'**
+  String libraryUnlockedFor(Object coins);
+
+  /// No description provided for @libraryUnlocking.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking…'**
+  String get libraryUnlocking;
+
+  /// No description provided for @libraryGettingLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting link…'**
+  String get libraryGettingLink;
+
+  /// No description provided for @libraryDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get libraryDownload;
+
+  /// No description provided for @libraryUnlockNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocking is charged to your coin balance once, even if the tap does not register the first time. You need to unlock a file before you can download it.'**
+  String get libraryUnlockNote;
+
+  /// No description provided for @libraryReviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String libraryReviewsCount(Object count);
+
+  /// No description provided for @libraryDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'downloads'**
+  String get libraryDownloads;
+
+  /// No description provided for @libraryAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'access'**
+  String get libraryAccess;
+
+  /// No description provided for @libraryWriteReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a review (must unlock first)'**
+  String get libraryWriteReview;
+
+  /// No description provided for @libraryCommentOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment (optional)'**
+  String get libraryCommentOptional;
+
+  /// No description provided for @librarySubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting…'**
+  String get librarySubmitting;
+
+  /// No description provided for @librarySubmitReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit review'**
+  String get librarySubmitReview;
+
+  /// No description provided for @libraryReviewVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews are verified if you have downloaded/unlocked the file.'**
+  String get libraryReviewVerified;
+
+  /// No description provided for @libraryVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'verified'**
+  String get libraryVerified;
+
+  /// No description provided for @librarySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search files, categories…'**
+  String get librarySearchHint;
+
+  /// No description provided for @libraryTrendingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the trending files.\n{reason}'**
+  String libraryTrendingFailed(Object reason);
+
+  /// No description provided for @libraryTrending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get libraryTrending;
+
+  /// No description provided for @libraryRecommendedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your recommendations.\n{reason}'**
+  String libraryRecommendedFailed(Object reason);
+
+  /// No description provided for @libraryRecommendedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended for you'**
+  String get libraryRecommendedForYou;
+
+  /// No description provided for @libraryFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get libraryFiles;
+
+  /// No description provided for @libraryTotalCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} total'**
+  String libraryTotalCount(Object count);
+
+  /// No description provided for @libraryNoFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No files yet'**
+  String get libraryNoFiles;
+
+  /// No description provided for @libraryNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results for \"{query}\"'**
+  String libraryNoResults(Object query);
+
+  /// No description provided for @libraryNoFilesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Library files will appear here once published and approved on the server.'**
+  String get libraryNoFilesBody;
+
+  /// No description provided for @libraryTryDifferentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term or clear filters.'**
+  String get libraryTryDifferentSearch;
+
+  /// No description provided for @libraryClearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get libraryClearSearch;
+
+  /// No description provided for @libraryNoCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories published'**
+  String get libraryNoCategories;
+
+  /// No description provided for @commonLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get commonLoadMore;
+
+  /// No description provided for @commonLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get commonLeaderboard;
+
+  /// No description provided for @commonWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get commonWallet;
+
+  /// No description provided for @commonLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get commonLibrary;
+
+  /// No description provided for @practiceDrillComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill complete'**
+  String get practiceDrillComplete;
+
+  /// No description provided for @practiceDoesNotAffect.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice — does not affect rank, XP or streak'**
+  String get practiceDoesNotAffect;
+
+  /// No description provided for @practiceQuestionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions'**
+  String practiceQuestionsCount(Object count);
+
+  /// No description provided for @practiceAnsweredSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{answered} answered • {skipped} skipped'**
+  String practiceAnsweredSkipped(Object answered, Object skipped);
+
+  /// No description provided for @practiceScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score}'**
+  String practiceScore(Object score);
+
+  /// No description provided for @practiceGradedByServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Graded by the server'**
+  String get practiceGradedByServer;
+
+  /// No description provided for @practiceCorrectWrongSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{correct} correct • {wrong} wrong • {skipped} skipped'**
+  String practiceCorrectWrongSkipped(
+    Object correct,
+    Object wrong,
+    Object skipped,
+  );
+
+  /// No description provided for @practiceGradingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The server could not grade this drill: {reason}'**
+  String practiceGradingFailed(Object reason);
+
+  /// No description provided for @practiceReviewPassNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This was a review pass. No attempt was created, so there is no score to show.'**
+  String get practiceReviewPassNote;
+
+  /// No description provided for @practiceNoQuestionsInSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions in this set'**
+  String get practiceNoQuestionsInSet;
+
+  /// No description provided for @practiceQuestionCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Q {current}/{total}'**
+  String practiceQuestionCounter(Object current, Object total);
+
+  /// No description provided for @practiceUntimedPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Untimed • Practice'**
+  String get practiceUntimedPractice;
+
+  /// No description provided for @practiceDifficultyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty: {difficulty}'**
+  String practiceDifficultyLabel(Object difficulty);
+
+  /// No description provided for @practiceNoOptionsNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The server sent this question without answer options, so it cannot be drilled here. Try the graded Quiz tab, which loads a full session.'**
+  String get practiceNoOptionsNotice;
+
+  /// No description provided for @practiceAnswerSentNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer sent to the server. It grades the attempt — this screen never guesses a score.'**
+  String get practiceAnswerSentNotice;
+
+  /// No description provided for @practicePrev.
+  ///
+  /// In en, this message translates to:
+  /// **'Prev'**
+  String get practicePrev;
+
+  /// No description provided for @practiceGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading…'**
+  String get practiceGrading;
+
+  /// No description provided for @practiceNoEffectNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice is untimed and carries no score, XP, coins or streak effect.'**
+  String get practiceNoEffectNote;
 
   /// No description provided for @forceUpdateUnsupportedLatest.
   ///

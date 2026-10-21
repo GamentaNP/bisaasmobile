@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -28,13 +30,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(economyControllerProvider);
     final theme = Theme.of(context);
     final bundle = state.inventoryBundle;
     final isLoading = state.isInventoryLoading;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventory')),
+      appBar: AppBar(title: Text(l10n.economyInventory)),
       body: RefreshIndicator(
         onRefresh: () => Future.wait([
           ref.read(economyControllerProvider.notifier).fetchInventory(),
@@ -49,7 +52,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 color: AppColors.wrongRed.withValues(alpha: 0.08),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.inventoryError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchInventory(), child: const Text('Retry'))]),
+                  child: Row(children: [const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.inventoryError!, style: const TextStyle(fontSize: 12, color: AppColors.wrongRed))), TextButton(onPressed: () => ref.read(economyControllerProvider.notifier).fetchInventory(), child: Text(l10n.retry))]),
                 ),
               ),
             if (isLoading && bundle == null)
@@ -57,9 +60,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
             // ── Inventory headline ────────────────────────────────────────────
             if (bundle != null) ...[
-              Text('Your resources', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyYourResources, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              Text('${bundle.inventory.length} held • ${bundle.catalog.length} catalog • ${bundle.recentActivity.length} recent',
+              Text(l10n.economyResourceSummary(bundle.inventory.length, bundle.catalog.length, bundle.recentActivity.length),
                   style: const TextStyle(fontSize: 11, color: Colors.grey)),
               const SizedBox(height: 12),
               if (bundle.inventory.isEmpty)
@@ -69,9 +72,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   child: Column(children: [
                     Icon(Icons.inventory_2_rounded, size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.35)),
                     const SizedBox(height: 8),
-                    const Text('No resources yet', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    Text(l10n.economyNoResources, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     const SizedBox(height: 4),
-                    const Text('Resources are earned via city / economy flows and quiz rewards. They appear here when available.', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+                    Text(l10n.economyResourcesExplain, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
                   ]),
                 )
               else
@@ -86,10 +89,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   },
                 ),
               const SizedBox(height: 18),
-              Text('Catalog', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyCatalog, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (bundle.catalog.isEmpty)
-                const Text('Catalog empty — server will populate material list.', style: TextStyle(fontSize: 11, color: Colors.grey))
+                Text(l10n.economyCatalogEmpty, style: TextStyle(fontSize: 11, color: Colors.grey))
               else
                 Wrap(
                   spacing: 8,
@@ -97,10 +100,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   children: bundle.catalog.map((c) => Chip(label: Text(c.name, style: const TextStyle(fontSize: 11)), avatar: Icon(_iconForKey(c.icon ?? c.key), size: 14))).toList(),
                 ),
               const SizedBox(height: 18),
-              Text('Recent activity', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyRecentActivity, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (bundle.recentActivity.isEmpty)
-                const Text('No recent activity.', style: TextStyle(fontSize: 11, color: Colors.grey))
+                Text(l10n.economyNoRecentActivity, style: TextStyle(fontSize: 11, color: Colors.grey))
               else
                 ...bundle.recentActivity.map((a) => Card(
                       margin: const EdgeInsets.only(bottom: 8),
@@ -117,9 +120,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             const SizedBox(height: 20),
             const Divider(),
             // ── Donations (live) ──────────────────────────────────────────────
-            Text('Donations', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(l10n.economyDonations, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            const Text('Live leaderboard and feed. Coins can freeze a donor streak.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.economyDonationsExplain, style: TextStyle(fontSize: 11, color: Colors.grey)),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -134,7 +137,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: res?.frozen == true ? AppColors.correctGreen : AppColors.wrongRed));
                           },
                     icon: state.isFreezingStreak ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.ac_unit_rounded, size: 16),
-                    label: const Text('Freeze streak (50 coins)', style: TextStyle(fontSize: 12)),
+                    label: Text(l10n.streakFreezeAction, style: TextStyle(fontSize: 12)),
                   ),
                 ),
               ],
@@ -147,24 +150,24 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             if (state.isLeaderboardLoading || state.isFeedLoading)
               const LinearProgressIndicator(),
             if (state.leaderboardError != null || state.feedError != null) ...[
-              Text('Leaderboard/feed: ${state.leaderboardError ?? state.feedError}', style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
-              TextButton(onPressed: () => Future.wait([ref.read(economyControllerProvider.notifier).fetchLeaderboard(), ref.read(economyControllerProvider.notifier).fetchFeed()]), child: const Text('Retry')),
+              Text(l10n.economyLeaderboardFeed(state.leaderboardError ?? state.feedError ?? '—'), style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
+              TextButton(onPressed: () => Future.wait([ref.read(economyControllerProvider.notifier).fetchLeaderboard(), ref.read(economyControllerProvider.notifier).fetchFeed()]), child: Text(l10n.retry)),
             ],
             if (state.leaderboard.isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text('Leaderboard', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.commonLeaderboard, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 6),
               ...state.leaderboard.take(5).map((e) => ListTile(
                     dense: true,
                     leading: Container(width: 8, height: 8, decoration: BoxDecoration(color: _parseColor(e.badgeColor), shape: BoxShape.circle)),
                     title: Text(e.donorName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                    subtitle: Text('${e.badgeLabel} • ${e.streakMonths} mo streak', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    subtitle: Text(l10n.economyStreakMonths(e.badgeLabel, e.streakMonths), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                     trailing: Text(e.totalDonatedFormatted, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   )),
             ],
             if (state.feed.isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text('Live feed', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.economyLiveFeed, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 6),
               ...state.feed.take(5).map((e) => ListTile(
                     dense: true,
@@ -174,7 +177,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   )),
             ],
             if (state.leaderboard.isEmpty && state.feed.isEmpty && !state.isLeaderboardLoading && !state.isFeedLoading)
-              const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text('Donation leaderboard and feed are empty.', style: TextStyle(fontSize: 11, color: Colors.grey))),
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text(l10n.economyDonationsEmpty, style: TextStyle(fontSize: 11, color: Colors.grey))),
           ],
         ),
       ),

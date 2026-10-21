@@ -528,7 +528,6 @@ add("profileEiceSub", "coach • triage • sprint", "कोच • त्रा
 add("profilePsc", "PSC / Loksewa", "PSC / लोकसेवा", "PSC / लोकसेवा")
 add("profilePscSub", "exam blueprints & syllabus", "परीक्षा ढाँचा र पाठ्यक्रम", "परीक्षा ढांचा और पाठ्यक्रम")
 add("profilePracticeSub", "drill bookmarks • weak topics", "बुकमार्क ड्रिल • कमजोर विषय", "बुकमार्क ड्रिल • कमजोर विषय")
-add("profileLeaderboard", "Leaderboard", "लिडरबोर्ड", "लीडरबोर्ड")
 add("profileLeaderboardSub", "global • friends • league", "विश्व • साथी • लिग", "विश्व • दोस्त • लीग")
 add("profileContests", "Contests", "प्रतियोगिता", "प्रतियोगिताएं")
 add("profileContestsSub", "live quizzes & leaderboards", "प्रत्यक्ष क्विज र लिडरबोर्ड", "लाइव क्विज़ और लीडरबोर्ड")
@@ -542,7 +541,6 @@ add("profileNotifications", "Notifications", "सूचनाहरू", "सू
 add("profileNotificationsSub", "activity & reminders", "गतिविधि र सम्झना", "गतिविधि और याद दिलाना")
 add("profileSocial", "Social & Referral", "सामाजिक र रेफरल", "सोशल और रेफरल")
 add("profileSocialSub", "share • streak • leaderboard", "साझेदारी • स्ट्रिक • लिडरबोर्ड", "साझा • स्ट्रीक • लीडरबोर्ड")
-add("profileWallet", "Wallet", "वालेट", "वॉलेट")
 add("profileWalletSub", "coins & ledger", "क्विन र खाता", "कॉइन और बही")
 add("profileAchievementsSub", "streak + badges", "स्ट्रिक + ब्याज", "स्ट्रीक + बैज")
 add("profileOffline", "Offline content", "अफलाइन सामग्री", "ऑफ़लाइन सामग्री")
@@ -591,14 +589,12 @@ add(
     "विश्लेषण, कार्यक्षम र प्रचारको सहमति",
     "विश्लेषण, कार्यक्षम और प्रचार की सहमति",
 )
-add("settingsAiUsage", "Your AI usage", "तपाईंको AI प्रयोग", "आपका AI का उपयोग")
 add(
     "settingsAiUsageSub",
     "What AI used on your behalf, by feature",
     "तपाईंको तर्फमा AI ले के प्रयोग गर्यो, सुविधाअनुसार",
     "आपकी ओर से AI ने क्या इस्तेमाल किया, सुविधा के अनुसार",
 )
-add("settingsAiKeys", "Your AI keys", "तपाईंका AI कुञ्जीहरू", "आपकी AI कुंजियां")
 add(
     "settingsAiKeysSub",
     "Run AI features on your own provider quota",
@@ -727,6 +723,514 @@ add(
     "{days} दिन के लिए {coins} कॉइन का वेजर",
     ["coins", "days"],
 )
+
+# ── tutor ───────────────────────────────────────────────────────────────────
+add("tutorStudyPlan", "Study Plan", "अध्ययन योजना", "अध्ययन योजना")
+add("tutorChat", "Chat", "कुराकानी", "चैट")
+add("tutorPlanTab", "Plan", "योजना", "योजना")
+add("tutorInsights", "Insights", "विश्लेषण", "विश्लेषण")
+add("tutorRevisions", "Revisions", "दोहोराइ", "दोहराव")
+add("tutorWeekly", "Weekly", "साप्ताहिक", "साप्ताहिक")
+add("tutorNoTasksToday", "No tasks today — check back tomorrow", "आज कुनै काम छैन — भोलि हेर्नुहोस्", "आज कोई काम नहीं — कल देखें")
+add("tutorDone", "Done", "पूरा", "पूर्ण")
+add("tutorTasksDone", "{done}/{total} tasks", "{done}/{total} काम", "{done}/{total} काम", ["done", "total"])
+add("tutorDayCompleted", "Day completed — plan updated.", "दिन पूरा भयो — योजना अद्यावधिक भयो।", "दिन पूरा हुआ — योजना अपडेट हुई।")
+add("tutorMarkDayComplete", "Mark day complete", "दिन पूरा भएको जनाउनुहोस्", "दिन पूरा चिह्नित करें")
+add("tutorYourPlan", "Your plan — {title}", "तपाईंको योजना — {title}", "आपकी योजना — {title}", ["title"])
+add("tutorPlanDays", "{days} days • current {current}", "{days} दिन • हालको {current}", "{days} दिन • वर्तमान {current}", ["days", "current"])
+add("tutorPlanNoDays", "Plan has no days yet — onboarding will generate it.", "योजनामा अहिलेसम्म दिन छैनन् — अन onboarding ले बनाउनेछ।", "योजना में अभी तक दिन नहीं हैं — ऑनबोर्डिंग इसे बनाएगी।")
+add("tutorMoreDays", "+ {count} more days", "+ {count} थप दिन", "+ {count} और दिन", ["count"])
+add("tutorAdjustPlan", "Adjust plan", "योजना मिलाउनुहोस्", "योजना बदलें")
+add("tutorNoPlanYet", "No plan yet", "अहिलेसम्म कुनै योजना छैन", "अभी तक कोई योजना नहीं")
+add(
+    "tutorOnboardingRequired",
+    "Complete tutor onboarding to generate your personalized study plan.",
+    "तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर onboarding पूरा गर्नुहोस्।",
+    "आपकी व्यक्तिगत अध्ययन योजना बनाने के लिए ट्यूटर ऑनबोर्डिंग पूरा करें।",
+)
+add("tutorStartOnboarding", "Start onboarding", "Onboarding सुरु गर्नुहोस्", "ऑनबोर्डिंग शुरू करें")
+add(
+    "tutorAdjustExample",
+    "e.g., \"I can do 3h/day\" or \"Focus more on soil mechanics\"",
+    "जस्तै, \"म दिनमा ३ घण्टा गर्न सक्छु\" वा \"माटोको यान्त्रिकीमा बढी ध्यान दिन्छु\"",
+    "जैसे, \"मैं रोज़ 3 घंटे कर सकता हूं\" या \"मिट्टी की यांत्रिकी पर अधिक ध्यान दें\"",
+)
+add("tutorAdjustPrompt", "How should we adjust?", "कसरी मिलाउने?", "कैसे बदलें?")
+add("tutorAdjustRequested", "Plan adjustment requested.", "योजना मिलाउने अनुरोध भयो।", "योजना बदलने का अनुरोध भेजा गया।")
+add("tutorSubmit", "Submit", "पेश गर्नुहोस्", "जमा करें")
+add("tutorProjectedScore", "Projected score", "अनुमानित अंक", "अनुमानित अंक")
+add("tutorConfidence", "Confidence {confidence}% • {trend}", "विश्वास {confidence}% • {trend}", "विश्वास {confidence}% • {trend}", ["confidence", "trend"])
+add("tutorWeakAreas", "Weak areas", "कमजोर क्षेत्र", "कमजोर क्षेत्र")
+add(
+    "tutorNoWeakAreas",
+    "No weak areas — great work! Keep practicing to stay sharp.",
+    "कुनै कमजोर क्षेत्र छैन — उत्कृष्ट काम! तल्कुल तयार रहनुहोस्।",
+    "कोई कमजोर क्षेत्र नहीं — बहुत बढ़िया! तेज़ रहने के लिए अभ्यास जारी रखें।",
+)
+add("tutorAccuracy", "Accuracy {accuracy}% • {attempts} attempts", "शुद्धता {accuracy}% • {attempts} प्रयास", "शुद्धता {accuracy}% • {attempts} प्रयास", ["accuracy", "attempts"])
+add("tutorNoRevisionsDue", "No revisions due — you are on track.", "कुनै दोहोराइ बाँकी छैन — तपाईं कुशलमा हुनुहुन्छ।", "कोई दोहराव बाकी नहीं — आप सही रास्ते पर हैं।")
+add("tutorDueLabel", "due {date}", "{date} सम्म", "{date} तक", ["date"])
+add(
+    "tutorTopicDue",
+    "{topic} • due {date}",
+    "{topic} • {date} सम्म",
+    "{topic} • {date} तक",
+    ["topic", "date"],
+)
+add("tutorCompleted", "Completed", "पूरा भयो", "पूरा हुआ")
+add("tutorOverdue", "Overdue", "समय बित्यो", "समय बीत चुका")
+add("tutorDue", "Due", "बाकी", "बाकी")
+add("tutorWeekRange", "Week {start} → {end}", "हप्ता {start} → {end}", "सप्ताह {start} → {end}", ["start", "end"])
+add("tutorAvgScore", "Avg score", "औसत अंक", "औसत अंक")
+add("tutorHours", "Hours", "घण्टा", "घंटे")
+add("tutorCompletion", "{percent}% completion", "{percent}% पूरा", "{percent}% पूरा", ["percent"])
+add("tutorHighlights", "Highlights", "मुख्य कुराहरू", "मुख्य बातें")
+add("tutorWeeklyReportPending", "Weekly report appears after a week of activity.", "हप्ताको गतिविधि पछि साप्ताहिक प्रतिवेदन देखिन्छ।", "एक सप्ताह की गतिविधि के बाद साप्ताहिक रिपोर्ट दिखेगी।")
+add("tutorOnboardingSaved", "Onboarding saved — plan will generate shortly.", "Onboarding सुरक्षित भयो — योजना छिट्टै बनाइनेछ।", "ऑनबोर्डिंग सहेजी गई — योजना जल्द बनेगी।")
+add("tutorOnboardingTitle", "Tutor Onboarding", "ट्युटर Onboarding", "ट्यूटर ऑनबोर्डिंग")
+add("tutorPersonalised", "Personalized tutor", "व्यक्तिगत ट्युटर", "व्यक्तिगत ट्यूटर")
+add(
+    "tutorOnboardingExplain",
+    "Tell us your goal — the server builds your plan. No user_id required (token-bound).",
+    "आफ्नो लक्ष्य बताउनुहोस् — सर्भरले तपाईंको योजना बनाउँछ। user_id चाहिन्छैन (टोकनबाट)।",
+    "अपना लक्ष्य बताएं — सर्वर आपकी योजना बनाएगा। user_id की ज़रूरत नहीं (टोकन से)।",
+)
+add("tutorSessionLabel", "Session: {session}", "सत्र: {session}", "सत्र: {session}", ["session"])
+add("tutorYourGoal", "Your goal", "तपाईंको लक्ष्य", "आपका लक्ष्य")
+add("tutorGoalExample", "e.g., Crack PSC Civil in 6 months", "जस्तै, ६ महिनामा PSC सिभिल क्र्याक गर्ने", "जैसे, 6 महीने में PSC सिविल क्रैक करना")
+add("tutorCurrentLevel", "Current level", "हालको तह", "वर्तमान स्तर")
+add("tutorLevelExample", "e.g., Final year B.E. Civil", "जस्तै: B.E. सिभिल अन्तिम वर्ष", "जैसे: B.E. सिविल अंतिम वर्ष")
+add("tutorHoursPerDay", "Hours per day", "दिनमा घण्टा", "प्रतिदिन घंटे")
+add("tutorHoursExample", "e.g., 2", "जस्तै: २", "जैसे: 2")
+add("tutorOnboardingComplete", "Onboarding complete — your plan is ready.", "Onboarding पूरा भयो — तपाईंको योजना तयार छ।", "ऑनबोर्डिंग पूरा हुई — आपकी योजना तैयार है।")
+add("tutorViewPlan", "View Plan", "योजना हेर्नुहोस्", "योजना देखें")
+add("tutorCompleteOnboarding", "Complete onboarding", "Onboarding पूरा गर्नुहोस्", "ऑनबोर्डिंग पूरा करें")
+add("tutorSkipToChat", "Skip → Chat with tutor", "छोड्नुहोस् → ट्युटरसँग कुराकानी", "छोड़ें → ट्यूटर से चैट")
+add(
+    "tutorSavedToAccount",
+    "Saved to your account. Safe to retry if the connection drops.",
+    "तपाईंको खातामा सुरक्षित भयो। जडान बिच्छ भने फेरि प्रयास गर्न सकिन्छ।",
+    "आपके खाते में सहेजा गया। कनेक्शन टूटे तो फिर से कोशिश करना सुरक्षित है।",
+)
+add("tutorTitle", "AI Tutor", "AI ट्युटर", "AI ट्यूटर")
+add("tutorClearChat", "Clear chat", "कुराकानी हटाउनुहोस्", "चैट साफ़ करें")
+add(
+    "tutorNotEnoughHistory",
+    "Not enough history yet — complete a few quizzes to personalize.",
+    "अहिलेसम्म पर्याप्त इतिहास छैन — व्यक्तिगत बनाउन केही क्विज पूरा गर्नुहोस्।",
+    "अभी पर्याप्त इतिहास नहीं — व्यक्तिगत बनाने के लिए कुछ क्विज़ पूरे करें।",
+)
+add("tutorDismiss", "Dismiss", "हटाउनुहोस्", "खारिज करें")
+add(
+    "tutorWriting",
+    "The tutor is writing its reply. It can take a moment on longer questions.",
+    "ट्युटरले आफ्नो जवाफ लेख्दैछ। लामो प्रश्नमा केही समय लाग्न सक्छ।",
+    "ट्यूटर अपना उत्तर लिख रहा है। लंबे प्रश्न में कुछ समय लग सकता है।",
+)
+add("tutorAskAnything", "Ask anything", "केही पनि सोध्नुहोस्", "कुछ भी पूछें")
+add(
+    "tutorChatExplain",
+    "Exam concepts, beam deflection, soil mechanics — AI answers via Laravel gateway (never direct provider).",
+    "परीक्षाका कन्सेप्ट, बिम डिफ्लेक्सन, माटोको यान्त्रिकी — AI उत्तर Laravel गेटवेबहरूबाट दिन्छ (कहिल्यै सिधै प्रोभाइडरबाट होइन)।",
+    "परीक्षा के अवधारणाएं, बीम डिफ्लेक्शन, मिट्टी की यांत्रिकी — AI उत्तर Laravel गेटवे से देता है (कभी सीधे प्रोवाइडर से नहीं)।",
+)
+add("tutorExample1", "Explain proctor compaction", "प्रोक्टर कम्प्याक्सन बुझाउनुहोस्", "प्रोक्टर कम्पैक्शन समझाएं")
+add("tutorExample2", "Weekly plan help", "साप्ताहिक योजनामा मद्दत", "साप्ताहिक योजना में मदद")
+add("tutorExample3", "Weak areas?", "कमजोर क्षेत्रहरू?", "कमजोर क्षेत्र?")
+add("tutorTyping", "Tutor is typing…", "ट्युटर लेख्दैछ…", "ट्यूटर लिख रहा है…")
+add("tutorInputHint", "Ask tutor…", "ट्युटरलाई सोध्नुहोस्…", "ट्यूटर से पूछें…")
+
+# ── AI settings ─────────────────────────────────────────────────────────────
+add("aiUsageTitle", "Your AI usage", "तपाईंको AI प्रयोग", "आपका AI का उपयोग")
+add("aiUsageOverview", "Overview", "समग्र", "अवलोकन")
+add("aiUsageRequests", "requests", "अनुरोध", "अनुरोध")
+add("aiUsageTokens", "tokens", "टोकन", "टोकन")
+add("aiUsageTutorChats", "tutor chats (all time)", "ट्युटर कुराकानी (सबै समय)", "ट्यूटर चैट (सभी समय)")
+add("aiUsageNone", "No AI features were used in this period.", "यो अवधिमा कुनै AI सुविधा प्रयोग भएको छैन।", "इस अवधि में कोई AI सुविधा उपयोग नहीं हुई।")
+add("aiUsageByFeature", "By feature", "सुविधाअनुसार", "सुविधा के अनुसार")
+add("aiUsageTutorConversations", "Tutor conversations", "ट्युटर कुराकानीहरू", "ट्यूटर बातचीत")
+add("aiUsageNoConversations", "No tutor conversations yet.", "अहिलेसम्म कुनै ट्युटर कुराकानी छैन।", "अभी तक कोई ट्यूटर बातचीत नहीं।")
+add("aiUsageLoadMoreConversations", "Load more conversations", "थप कुराकानीहरू हेर्नुहोस्", "और बातचीत लोड करें")
+add("aiUsageWeeklyReport", "Weekly report card", "साप्ताहिक प्रतिवेदन", "साप्ताहिक रिपोर्ट कार्ड")
+add("aiUsageNoWeeks", "No weekly summaries stored yet.", "अहिलेसम्म कुनै साप्ताहिक सारांश सुरक्षित छैन।", "अभी तक कोई साप्ताहिक सारांश सहेजा नहीं गया।")
+add("aiUsageLoadMoreWeeks", "Load more weeks", "थप हप्ता हेर्नुहोस्", "और सप्ताह लोड करें")
+add("aiUsageConversationNumber", "Conversation #{number}", "कुराकानी #{number}", "बातचीत #{number}", ["number"])
+add("aiUsageQuestionNumber", "Question {number}", "प्रश्न {number}", "प्रश्न {number}", ["number"])
+add("aiUsageTurns", "{count} turns", "{count} पटक", "{count} बार", ["count"])
+add("aiUsageWeekOf", "Week of {date}", "{date} को हप्ता", "{date} का सप्ताह", ["date"])
+add(
+    "aiUsageWeekSummary",
+    "{accuracy}% accuracy • {xp} XP • {coins} coins • {streak} day streak",
+    "{accuracy}% शुद्धता • {xp} XP • {coins} क्विन • {streak} दिन स्ट्रिक",
+    "{accuracy}% शुद्धता • {xp} XP • {coins} कॉइन • {streak} दिन स्ट्रीक",
+    ["accuracy", "xp", "coins", "streak"],
+)
+add("aiUsageHoursShort", "{hours}h", "{hours} घ", "{hours} घं", ["hours"])
+add("aiKeysTitle", "Your AI keys", "तपाईंका AI कुञ्जीहरू", "आपकी AI कुंजियां")
+add(
+    "aiKeysExplain",
+    "Your key is encrypted on our servers and never shown again. Only the last four characters are ever displayed.",
+    "तपाईंको कुञ्जी हाम्रो सर्भरमा इन्क्रिप्टेड हुन्छ र पछि कहिल्यै देखाइँदैन। पछिल्लो चार अक्षर मात्र देखिन्छ।",
+    "आपकी कुंजी हमारे सर्वर पर एन्क्रिप्ट होती है और कभी दोबारा नहीं दिखती। केवल अंतिम चार अक्षर दिखते हैं।",
+)
+add("aiKeysAddTitle", "Add a key", "कुञ्जी थप्नुहोस्", "कुंजी जोड़ें")
+add("aiKeysNoneYet", "No keys yet", "अहिलेसम्म कुनै कुञ्जी छैन", "अभी तक कोई कुंजी नहीं")
+add(
+    "aiKeysNoneExplain",
+    "Add a provider key to run AI features on your own quota instead of the shared one.",
+    "साझा कोटामा होरुनेभन्दा आफ्नै कोटामा AI सुविधाहरू चलाउन प्रोभाइडर कुञ्जी थप्नुहोस्।",
+    "साझा कोटे के बजाय अपने कोटे पर AI सुविधाएं चलाने के लिए प्रोवाइडर कुंजी जोड़ें।",
+)
+add("aiKeysStored", "Stored keys", "सुरक्षित कुञ्जीहरू", "सहेजी कुंजियां")
+add("aiKeysTokensUsed", "{used} of {total} daily tokens used", "दैनिक {total} टोकनमध्ये {used} प्रयोग भयो", "{total} दैनिक टोकन में से {used} उपयोग", ["used", "total"])
+add("aiKeysRevoke", "Revoke", "रद्द गर्नुहोस्", "रद्द करें")
+add("aiKeysTooShort", "The key must be at least 8 characters", "कुञ्जी कम्तीमा ८ अक्षरको हुनुपर्छ", "कुंजी कम से कम 8 अक्षर की होनी चाहिए")
+add("aiKeysAddProvider", "Add a provider key", "प्रोभाइडर कुञ्जी थप्नुहोस्", "प्रोवाइडर कुंजी जोड़ें")
+add("aiKeysProvider", "Provider", "प्रोभाइडर", "प्रोवाइडर")
+add("aiKeysApiKey", "API key", "API कुञ्जी", "API कुंजी")
+add("aiKeysSentOnce", "Sent once and never shown again.", "एक पटक पठाइन्छ अनि कहिल्यै देखाइँदैन।", "एक बार भेजा जाता है और कभी दोबारा नहीं दिखता।")
+add("aiKeysLabelOptional", "Label (optional)", "लेबल (वैकल्पिक)", "लेबल (वैकल्पिक)")
+add("aiKeysSaveKey", "Save key", "कुञ्जी सुरक्षित गर्नुहोस्", "कुंजी सहेजें")
+add("aiKeysSaved", "{name} saved. It is encrypted on our servers and never shown again.", "{name} सुरक्षित भयो। यो हाम्रो सर्भरमा इन्क्रिप्टेड हुन्छ अनि कहिल्यै देखाइँदैन।", "{name} सहेजी गई। यह हमारे सर्वर पर एन्क्रिप्ट है और कभी दोबारा नहीं दिखेगी।", ["name"])
+add("aiKeysRevoked", "Key revoked.", "कुञ्जी रद्द गरियो।", "कुंजी रद्द कर दी गई।")
+
+# ── practice ────────────────────────────────────────────────────────────────
+add("practiceBookmarks", "Bookmarks", "बुकमार्क", "बुकमार्क")
+add("practiceWeakTopics", "Weak Topics", "कमजोर विषय", "कमजोर विषय")
+add("practiceSelfChallenge", "Self Challenge", "आफैँ चुनौती", "स्वयं चुनौती")
+add("practiceHistory", "History", "इतिहास", "इतिहास")
+add("practiceNoBookmarks", "No bookmarks to practice", "अभ्यास गर्न कुनै बुकमार्क छैन", "अभ्यास के लिए कोई बुकमार्क नहीं")
+add("practiceBookmarkedPractice", "Bookmarked Practice", "बुकमार्क अभ्यास", "बुकमार्क अभ्यास")
+add(
+    "practiceBookmarksUnavailable",
+    "{count} of {total} bookmarks could not be drilled — the server does not publish their answer options yet.",
+    "{total} मध्ये {count} बुकमार्क अभ्यास गर्न सकिएन — सर्भरले तिनका विकल्प अझै प्रकाशित गरेको छैन।",
+    "{total} में से {count} बुकमार्क अभ्यास नहीं किए जा सके — सर्वर ने अभी तक उनके विकल्प प्रकाशित नहीं किए।",
+    ["count", "total"],
+)
+add("practiceDrill", "Practice Drill", "अभ्यास ड्रिल", "अभ्यास ड्रिल")
+add("practiceDrillCount", "Drill: {count}", "ड्रिल: {count}", "ड्रिल: {count}", ["count"])
+add("practiceNoBookmarksBody", "No bookmarks", "कुनै बुकमार्क छैन", "कोई बुकमार्क नहीं")
+add(
+    "practiceNoBookmarksHint",
+    "Bookmark questions while you take a quiz and they will show up here for drilling later.",
+    "क्विज खेल्दा प्रश्न बुकमार्क गर्नुहोस्, पछि तिनीहरू यहाँ ड्रिलका लागि देखिन्छन्।",
+    "क्विज़ खेलते समय प्रश्न बुकमार्क करें, बाद में वे यहाँ अभ्यास के लिए दिखेंगे।",
+)
+add("practiceBrowseQuizzes", "Browse quizzes", "क्विजहरू हेर्नुहोस्", "क्विज़ ब्राउज़ करें")
+add("practiceBookmarkedCount", "{count} bookmarked", "{count} बुकमार्क", "{count} बुकमार्क", ["count"])
+add("practiceAll", "Practice all", "सबै अभ्यास गर्नुहोस्", "सभी का अभ्यास करें")
+add("practiceQuestionNumber", "Question #{number}", "प्रश्न #{number}", "प्रश्न #{number}", ["number"])
+add("practiceQuestionMeta", "{meta} • difficulty {difficulty} • {points} pts", "{meta} • कठिनाई {difficulty} • {points} अंक", "{meta} • कठिनाई {difficulty} • {points} अंक", ["meta", "difficulty", "points"])
+add("practiceBookmarked", "Bookmarked", "बुकमार्क गरिएको", "बुकमार्क किया गया")
+add("practiceLoadMoreCursor", "Load more (cursor)", "थप हेर्नुहोस् (cursor)", "और लोड करें (cursor)")
+add("practiceWeakTopicsLoadFailed", "Could not load your weak topics", "तपाईंका कमजोर विषय लोड गर्न सकिएन", "आपके कमजोर विषय लोड नहीं हो सके")
+add(
+    "practiceWeakTopicsExplained",
+    "These are worked out from your own answer history. Nothing is shown unless it is real.",
+    "यी तपाईंको आफ्नै उत्तर इतिहासबाट निकालिएका हुन्। सत्य नभएसम्म केही देखाइँदैन।",
+    "ये आपके अपने उत्तर इतिहास से निकाले गए हैं। जब तक सच न हो, कुछ नहीं दिखाया जाता।",
+)
+add("practiceNoWeakTopics", "No weak topics yet", "अहिलेसम्म कुनै कमजोर विषय छैन", "अभी तक कोई कमजोर विषय नहीं")
+add(
+    "practiceWeakTopicsNeedsAttempts",
+    "The server needs graded attempts before it can spot weak areas. Take a quiz from the Quiz tab and check back.",
+    "कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। Quiz ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।",
+    "कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। Quiz टैब से एक क्विज़ खेलें और फिर देखें।",
+)
+add(
+    "practiceWeakTopicsServerNote",
+    "Weak topics are worked out on our servers from your answer history, so nothing here is guessed.",
+    "कमजोर विषयहरू हाम्रो सर्भरले तपाईंको उत्तर इतिहासबाट निकाल्छ, त्यसैले यहाँ केही अनुमान गरिएको हुँदैन।",
+    "कमजोर विषय हमारे सर्वर आपके उत्तर इतिहास से निकालते हैं, इसलिए यहाँ कुछ भी अनुमानित नहीं है।",
+)
+add("practiceYourWeakTopics", "Your weak topics", "तपाईंका कमजोर विषय", "आपके कमजोर विषय")
+add("practiceDrillAction", "Drill", "ड्रिल गर्नुहोस्", "ड्रिल करें")
+add("practiceDrillTen", "Drill 10 questions (practice mode, untimed)", "१० प्रश्न ड्रिल गर्नुहोस् (अभ्यास मोड, समयसीमा छैन)", "10 प्रश्न ड्रिल करें (अभ्यास मोड, समय-सीमित नहीं)")
+add(
+    "practiceUntimedNote",
+    "Practice is untimed and does not affect your rank or coin balance.",
+    "अभ्यासमा समयसीमा छैन र यसले तपाईंको अंक वा क्विन बदल्दैन।",
+    "अभ्यास समय-सीमित नहीं है और इससे आपकी रैंक या कॉइन नहीं बदलते।",
+)
+add(
+    "practiceSelfChallengeExplain",
+    "Pick question count & difficulty — mirrors Elite Quiz self-challenge but sourced from adaptive engine.",
+    "प्रश्न संख्या र कठिनाई छान्नुहोस् — Elite Quiz को आफैँ चुनौतीजस्तै, तर अनुकूली इन्जिनबाट।",
+    "प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर adaptive engine से।",
+)
+add("practiceQuestionCount", "Question count: {count}", "प्रश्न संख्या: {count}", "प्रश्न संख्या: {count}", ["count"])
+add("practiceDifficulty", "Difficulty", "कठिनाई", "कठिनाई")
+add("practiceStarting", "Starting…", "सुरु हुँदैछ…", "शुरू हो रहा है…")
+add("practiceStartChallenge", "Start challenge ({count} Qs)", "चुनौती सुरु गर्नुहोस् ({count} प्रश्न)", "चुनौती शुरू करें ({count} प्रश्न)", ["count"])
+add(
+    "practiceResultsLabelled",
+    "Results are labelled as practice, so they never count towards your rank.",
+    "नतिजालाई अभ्यासका रूपमा चिन्हित गरिन्छ, त्यसैले तिनले कहिल्यै अंकमा गनिन्छन्।",
+    "परिणाम अभ्यास के रूप में चिह्नित होते हैं, इसलिए वे कभी आपकी रैंक में नहीं गिने जाते।",
+)
+add("practiceNoHistory", "No history", "कुनै इतिहास छैन", "कोई इतिहास नहीं")
+add("practiceNoHistoryBody", "Your completed practice sessions will appear here.", "तपाईंका पूरा भएका अभ्यास सत्रहरू यहाँ देखिन्छन्।", "आपके पूरे हुए अभ्यास सत्र यहाँ दिखेंगे।")
+add("practiceAttemptMeta", "Attempt #{number} • {mode}", "प्रयास #{number} • {mode}", "प्रयास #{number} • {mode}", ["number", "mode"])
+add(
+    "practiceAttemptSummary",
+    "{meta} • score {score} • {correct}✓ {wrong}✗ {skipped}– • {questions} Qs",
+    "{meta} • अंक {score} • {correct}✓ {wrong}✗ {skipped}– • {questions} प्रश्न",
+    "{meta} • अंक {score} • {correct}✓ {wrong}✗ {skipped}– • {questions} प्रश्न",
+    ["meta", "score", "correct", "wrong", "skipped", "questions"],
+)
+
+# ── economy ─────────────────────────────────────────────────────────────────
+add("economyInventory", "Inventory", "सामग्री", "सामग्री")
+add("economyYourResources", "Your resources", "तपाईंका स्रोतहरू", "आपके संसाधन")
+add(
+    "economyResourceSummary",
+    "{held} held • {catalog} catalog • {recent} recent",
+    "{held} सुरक्षित • {catalog} सङ्ग्रह • {recent} हालैका",
+    "{held} सहेजे • {catalog} कैटलॉग • {recent} हाल के",
+    ["held", "catalog", "recent"],
+)
+add("economyNoResources", "No resources yet", "अहिलेसम्म कुनै स्रोत छैन", "अभी तक कोई संसाधन नहीं")
+add(
+    "economyResourcesExplain",
+    "Resources are earned via city / economy flows and quiz rewards. They appear here when available.",
+    "स्रोतहरू सिटी/अर्थव्यवस्थाको प्रवाह र क्विज पुरस्कारबाट कमाइन्छन्। उपलब्ध भएपछि यहाँ देखिन्छन्।",
+    "संसाधन शहर/अर्थव्यवस्था के प्रवाह और क्विज़ पुरस्कारों से मिलते हैं। उपलब्ध होने पर यहाँ दिखते हैं।",
+)
+add("economyCatalog", "Catalog", "सङ्ग्रह", "कैटलॉग")
+add("economyCatalogEmpty", "Catalog empty — server will populate material list.", "सङ्ग्रह खाली छ — सर्भरले सामग्रीको सूची भर्नेछ।", "कैटलॉग खाली है — सर्वर सामग्री की सूची भरेगा।")
+add("economyRecentActivity", "Recent activity", "हालैका गतिविधि", "हाल की गतिविधि")
+add("economyNoRecentActivity", "No recent activity.", "हालै कुनै गतिविधि छैन।", "हाल में कोई गतिविधि नहीं।")
+add("economyDonations", "Donations", "दान", "दान")
+add(
+    "economyDonationsExplain",
+    "Live leaderboard and feed. Coins can freeze a donor streak.",
+    "प्रत्यक्ष लिडरबोर्ड र फिड। क्विनले दानकर्ताको स्ट्रिक फ्रिज गर्न सक्छ।",
+    "लाइव लीडरबोर्ड और फ़ीड। कॉइन से दानकर्ता की स्ट्रीक फ्रीज़ हो सकती है।",
+)
+add("economyLeaderboardFeed", "Leaderboard/feed: {status}", "लिडरबोर्ड/फिड: {status}", "लीडरबोर्ड/फ़ीड: {status}", ["status"])
+add("economyStreakMonths", "{name} • {months} mo streak", "{name} • {months} महिनाको स्ट्रिक", "{name} • {months} महीने की स्ट्रीक", ["name", "months"])
+add("economyLiveFeed", "Live feed", "प्रत्यक्ष फिड", "लाइव फ़ीड")
+add("economyDonationsEmpty", "Donation leaderboard and feed are empty.", "दानको लिडरबोर्ड र फिड खाली छन्।", "दान लीडरबोर्ड और फ़ीड खाली हैं।")
+add("economySyncing", "Syncing…", "सिंक हुँदैछ…", "सिंक हो रहा है…")
+add("economyLedger", "Ledger", "खाता", "बही")
+add(
+    "economyLedgerExplain",
+    "Grouped by day. Source labels come from credits.description (not metadata.source).",
+    "दिनअनुसार समूहबद्ध। स्रोतका लेबल credits.description बाट आउँछन् (metadata.source बाट होइन)।",
+    "दिन के अनुसार समूहबद्ध। स्रोत लेबल credits.description से आते हैं (metadata.source से नहीं)।",
+)
+add("economyWhereCoinsWent", "Where your coins went", "तपाईंका क्विन कहाँ गए", "आपके कॉइन कहाँ गए")
+add(
+    "economyPeriodSummary",
+    "Last {days} days • earned {earned} • spent {spent}",
+    "गत {days} दिन • कमाइ {earned} • खर्च {spent}",
+    "पिछले {days} दिन • कमाए {earned} • खर्च {spent}",
+    ["days", "earned", "spent"],
+)
+add("economyNoActivity", "No coin activity in this period.", "यो अवधिमा कुनै क्विन गतिविधि छैन।", "इस अवधि में कोई कॉइन गतिविधि नहीं।")
+add("economyHowYouEarn", "How you earn", "तपाईं कसरी कमाउनुहुन्छ", "आप कैसे कमाते हैं")
+add(
+    "economyMintingExplain",
+    "Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.",
+    "क्विन हरेक अंकयुक्त क्विज र सर्भरका दैनिक कार्यपछि जम्मा हुन्छन्। तिनीहरू यन्त्रमा कहिल्यै बन्दैनन्, त्यसैले तपाईंको ब्यालेन्स बिग्रिँदैन।",
+    "कॉइन हर अंक वाले क्विज़ और सर्वर के दैनिक कार्यों के बाद जमा होते हैं। वे कभी आपके डिवाइस पर नहीं बनते, इसलिए आपका बैलेंस नहीं बिगड़ता।",
+)
+add("economyNoTransactions", "No transactions yet", "अहिलेसम्म कुनै कारोबार छैन", "अभी तक कोई लेनदेन नहीं")
+add(
+    "economyNoTransactionsBody",
+    "Complete a quiz to earn coins. Every credit is recorded on our servers.",
+    "क्विन कमाउन एउटा क्विज पूरा गर्नुहोस्। हरेक जम्मा हाम्रो सर्भरमा दर्ज हुन्छ।",
+    "कॉइन कमाने के लिए एक क्विज़ पूरा करें। हर जमा हमारे सर्वर पर दर्ज होता है।",
+)
+add("economyTitle", "Economy", "अर्थव्यवस्था", "अर्थव्यवस्था")
+add("economyXpTotal", "{xp} XP total", "जम्मा {xp} XP", "कुल {xp} XP", ["xp"])
+add(
+    "economyLiveExplain",
+    "Balance, ledger, shop and store are all live. Coins are minted server-side when a graded attempt completes.",
+    "ब्यालेन्स, खाता, शप र स्टोर सबै प्रत्यक्ष छन्। अंकयुक्त प्रयास पूरा भएपछि क्विन सर्भरमा बन्दैनन्।",
+    "बैलेंस, बही, शॉप और स्टोर सब लाइव हैं। अंक वाला प्रयास पूरा होने पर कॉइन सर्वर पर बनते हैं।",
+)
+add("economyWalletTile", "Wallet - balance + ledger by day", "वालेट - ब्यालेन्स + दिनअनुसार खाता", "वॉलेट - बैलेंस + दिन के अनुसार बही")
+add("economyWalletTileSub", "Balance, lifetime totals and your coin history", "ब्यालेन्स, जीवनभरका जम्मा र तपाईंको क्विन इतिहास", "बैलेंस, जीवनभर के कुल और आपका कॉइन इतिहास")
+add("economyShopTile", "Coin Shop - resources & bundles", "क्विन शप - स्रोत र बन्डल", "कॉइन शॉप - संसाधन और बंडल")
+add("economyShopTileSub", "Spend coins on materials and bundles", "सामग्री र बन्डलमा क्विन खर्च्नुहोस्", "सामग्री और बंडल पर कॉइन खर्चें")
+add("economyInventoryTile", "Inventory — resources + donations", "सामग्री - स्रोत + दान", "सामग्री - संसाधन + दान")
+add("economyInventoryTileSub", "8 materials + catalog + live donations feed/leaderboard", "८ सामग्री + सङ्ग्रह + प्रत्यक्ष दान फिड/लिडरबोर्ड", "8 सामग्री + कैटलॉग + लाइव दान फ़ीड/लीडरबोर्ड")
+add("economyStoreTile", "Premium Store - assets & skins", "प्रिमियम स्टोर - एसेट र स्किन", "प्रीमियम स्टोर - एसेट और स्किन")
+add("economyStoreTileSub", "Buy frames, themes, badges and avatars", "फ्रेम, थिम, ब्याज र अवतार किन्नुहोस्", "फ़्रेम, थीम, बैज और अवतार खरीदें")
+add("economyWardrobeTile", "Wardrobe - equip", "वार्डरोब - लगाउनुहोस्", "वॉर्डरोब - लगाएं")
+add("economyWardrobeTileSub", "Equip or clear the assets you own", "आफूले भएका एसेट लगाउनुहोस् वा हटाउनुहोस्", "अपने एसेट लगाएं या हटाएं")
+add("economyShopTitle", "Coin Shop", "क्विन शप", "कॉइन शॉप")
+add("economyNothingForSale", "Nothing for sale yet", "अहिलेसम्म बिक्रीका लागि केही छैन", "अभी तक बिक्री के लिए कुछ नहीं")
+add(
+    "economyShopEmpty",
+    "The shop has no items published on the server right now.",
+    "सर्भरमा अहिले शपका कुनै वस्तु प्रकाशित छैनन्।",
+    "सर्वर पर अभी शॉप की कोई वस्तु प्रकाशित नहीं है।",
+)
+add("economyBundles", "Bundles", "बन्डल", "बंडल")
+add("economyMaterials", "Materials", "सामग्री", "सामग्री")
+add(
+    "economyPurchaseSafe",
+    "If a purchase does not go through, retrying is safe — you are never charged twice.",
+    "खरिद नभए पुनः प्रयास गर्न सुरक्षित छ — दुब्बे तिरोस् हुँदैन।",
+    "खरीद सफल नहीं हुई तो फिर से कोशिश करना सुरक्षित है — दोबारा शुल्क नहीं लगेगा।",
+)
+add("economySellsBackFor", "sells back for {coins}", "{coins} मा फिर्ता बिक्छ", "{coins} में वापस बिकता है", ["coins"])
+add("economySave", "save {coins}", "{coins} बचत", "{coins} की बचत", ["coins"])
+
+# ── library ─────────────────────────────────────────────────────────────────
+add("libraryUnlockedCoins", "Unlocked! Coins spent: {coins}", "खुल्यो! खर्च भएको क्विन: {coins}", "अनलॉक हो गया! खर्च किए गए कॉइन: {coins}", ["coins"])
+add("libraryDownloadStarted", "Download started — opening browser", "डाउनलोड सुरु भयो — ब्राउजर खुल्दै", "डाउनलोड शुरू हुआ — ब्राउज़र खुल रहा है")
+add("libraryDownloadUrl", "Download URL: {url}", "डाउनलोड URL: {url}", "डाउनलोड URL: {url}", ["url"])
+add("libraryRatingRange", "Rating must be 1-5", "रेटिङ १-५ बीच हुनुपर्छ", "रेटिंग 1-5 के बीच होनी चाहिए")
+add("libraryReviewSubmitted", "Review submitted", "समीक्षा पेश भयो", "समीक्षा जमा हुई")
+add("libraryAbout", "About", "बारेमा", "परिचय")
+add("libraryReviews", "Reviews", "समीक्षाहरू", "समीक्षाएं")
+add(
+    "libraryNoReviews",
+    "No reviews yet — be the first to review after unlocking!",
+    "अहिलेसम्म कुनै समीक्षा छैन — अनलोक गरेपछि पहिलो समीक्षा गर्नुहोस्!",
+    "अभी तक कोई समीक्षा नहीं — अनलॉक करने के बाद पहली समीक्षा करें!",
+)
+add("libraryLoadMoreReviews", "Load more reviews", "थप समीक्षा हेर्नुहोस्", "और समीक्षाएं लोड करें")
+add(
+    "librarySignedUrls",
+    "Download URLs are signed and short-lived. If a download fails, tap Download again to get a fresh URL. Respect library-api-download throttle.",
+    "डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि Download थिच्नुहोस्। library-api-download को throttle मान्नुहोस्।",
+    "डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से Download दबाएं। library-api-download की सीमा मानें।",
+)
+add("libraryFree", "FREE", "निःशुल्क", "मुफ़्त")
+add("libraryCoinsLabel", "{count} COINS", "{count} क्विन", "{count} कॉइन", ["count"])
+add("libraryFeatured", "Featured", "विशेष", "विशेष")
+add("libraryByUploader", "by {name}", "{name} द्वारा", "{name} द्वारा", ["name"])
+add("libraryUnlockedFor", "Unlocked • {coins} coins", "खुल्यो • {coins} क्विन", "अनलॉक • {coins} कॉइन", ["coins"])
+add("libraryUnlocking", "Unlocking…", "खोल्दै…", "अनलॉक हो रहा है…")
+add("libraryGettingLink", "Getting link…", "लिंक खोज्दै…", "लिंक ला रहे हैं…")
+add("libraryDownload", "Download", "डाउनलोड", "डाउनलोड")
+add(
+    "libraryUnlockNote",
+    "Unlocking is charged to your coin balance once, even if the tap does not register the first time. You need to unlock a file before you can download it.",
+    "अनलोक गर्दा तपाईंको क्विन ब्यालेन्सबाट एक पटक मात्र काटिन्छ, पहिलो थिचाइ नभए पनि। डाउनलोड गर्नुअघि फाइल अनलोक गर्नुपर्छ।",
+    "अनलॉक करने पर आपके कॉइन बैलेंस से एक बार ही कटौती होती है, पहली बार टैप न हो तो भी। डाउनलोड से पहले फ़ाइल अनलॉक करनी होगी।",
+)
+add("libraryReviewsCount", "{count} reviews", "{count} समीक्षा", "{count} समीक्षाएं", ["count"])
+add("libraryDownloads", "downloads", "डाउनलोड", "डाउनलोड")
+add("libraryAccess", "access", "पहुँच", "पहुँच")
+add("libraryWriteReview", "Write a review (must unlock first)", "समीक्षा लेख्नुहोस् (पहिले अनलोक गर्नुपर्छ)", "समीक्षा लिखें (पहले अनलॉक करना होगा)")
+add("libraryCommentOptional", "Comment (optional)", "टिप्पणी (वैकल्पिक)", "टिप्पणी (वैकल्पिक)")
+add("librarySubmitting", "Submitting…", "पेश गर्दै…", "जमा हो रहा है…")
+add("librarySubmitReview", "Submit review", "समीक्षा पेश गर्नुहोस्", "समीक्षा जमा करें")
+add(
+    "libraryReviewVerified",
+    "Reviews are verified if you have downloaded/unlocked the file.",
+    "तपाईंले फाइल डाउनलोड/अनलोक गरेको भए समीक्षा प्रमाणित हुन्छ।",
+    "आपने फ़ाइल डाउनलोड/अनलॉक की है तो समीक्षा सत्यापित होती है।",
+)
+add("libraryVerified", "verified", "प्रमाणित", "सत्यापित")
+add("librarySearchHint", "Search files, categories…", "फाइल, श्रेणी खोज्नुहोस्…", "फ़ाइल, श्रेणी खोजें…")
+add(
+    "libraryTrendingFailed",
+    "Could not load the trending files.\n{reason}",
+    "प्रचलित फाइलहरू लोड गर्न सकिएन।\n{reason}",
+    "ट्रेंडिंग फ़ाइलें लोड नहीं हो सकीं।\n{reason}",
+    ["reason"],
+)
+add("libraryTrending", "Trending", "प्रचलित", "ट्रेंडिंग")
+add(
+    "libraryRecommendedFailed",
+    "Could not load your recommendations.\n{reason}",
+    "तपाईंका सुझावहरू लोड गर्न सकिएन।\n{reason}",
+    "आपके सुझाव लोड नहीं हो सके।\n{reason}",
+    ["reason"],
+)
+add("libraryRecommendedForYou", "Recommended for you", "तपाईंका लागि सुझाव", "आपके लिए सुझाव")
+add("libraryFiles", "Files", "फाइलहरू", "फ़ाइलें")
+add("libraryTotalCount", "{count} total", "जम्मा {count}", "कुल {count}", ["count"])
+add("libraryNoFiles", "No files yet", "अहिलेसम्म कुनै फाइल छैन", "अभी तक कोई फ़ाइल नहीं")
+add("libraryNoResults", "No results for \"{query}\"", "\"{query}\" का कुनै नतिजा छैन", "\"{query}\" का कोई परिणाम नहीं", ["query"])
+add(
+    "libraryNoFilesBody",
+    "Library files will appear here once published and approved on the server.",
+    "सर्भरमा प्रकाशित र स्वीकृत भएपछि लाइब्रेरीका फाइलहरू यहाँ देखिन्छन्।",
+    "सर्वर पर प्रकाशित और स्वीकृत होने के बाद लाइब्रेरी की फ़ाइलें यहाँ दिखेंगी।",
+)
+add("libraryTryDifferentSearch", "Try a different search term or clear filters.", "अर्को शब्द खोज्नुहोस् वा फिल्टर हटाउनुहोस्।", "कोई दूसरा शब्द खोजें या फ़िल्टर हटाएं।")
+add("libraryClearSearch", "Clear search", "खोजी हटाउनुहोस्", "खोज साफ़ करें")
+add("libraryNoCategories", "No categories published", "कुनै श्रेणी प्रकाशित छैन", "कोई श्रेणी प्रकाशित नहीं")
+
+# ── shared ──────────────────────────────────────────────────────────────────
+# One key per English string, however many screens say it. The rewrite
+# matches on the text, so a second key with the same text would be
+# ambiguous.
+add("commonLoadMore", "Load more", "थप हेर्नुहोस्", "और लोड करें")
+add("commonLeaderboard", "Leaderboard", "लिडरबोर्ड", "लीडरबोर्ड")
+add("commonWallet", "Wallet", "वालेट", "वॉलेट")
+add("commonLibrary", "Library", "लाइब्रेरी", "लाइब्रेरी")
+
+# ── the practice session ────────────────────────────────────────────────────
+add("practiceDrillComplete", "Drill complete", "ड्रिल पूरा भयो", "ड्रिल पूरा हुआ")
+add(
+    "practiceDoesNotAffect",
+    "Practice — does not affect rank, XP or streak",
+    "अभ्यास — अंक, XP वा स्ट्रिकलाई असर गर्दैन",
+    "अभ्यास — रैंक, XP या स्ट्रीक को प्रभावित नहीं करता",
+)
+add("practiceQuestionsCount", "{count} questions", "{count} प्रश्न", "{count} प्रश्न", ["count"])
+add(
+    "practiceAnsweredSkipped",
+    "{answered} answered • {skipped} skipped",
+    "{answered} उत्तर दिइयो • {skipped} छाडियो",
+    "{answered} उत्तर दिए • {skipped} छोड़े",
+    ["answered", "skipped"],
+)
+add("practiceScore", "Score {score}", "अंक {score}", "अंक {score}", ["score"])
+add("practiceGradedByServer", "Graded by the server", "सर्भरद्वारा अंकित", "सर्वर द्वारा अंकित")
+add(
+    "practiceCorrectWrongSkipped",
+    "{correct} correct • {wrong} wrong • {skipped} skipped",
+    "{correct} सही • {wrong} गलत • {skipped} छाडिएको",
+    "{correct} सही • {wrong} गलत • {skipped} छोड़े",
+    ["correct", "wrong", "skipped"],
+)
+add(
+    "practiceGradingFailed",
+    "The server could not grade this drill: {reason}",
+    "सर्भरले यो ड्रिल अंकित गर्न सकेन: {reason}",
+    "सर्वर यह ड्रिल अंकित नहीं कर सका: {reason}",
+    ["reason"],
+)
+add(
+    "practiceReviewPassNote",
+    "This was a review pass. No attempt was created, so there is no score to show.",
+    "यो पुनरावलोकन थियो। कुनै प्रयास बनाइएको छैन, त्यसैले देखाउनुपर्ने अंक छैन।",
+    "यह एक दोहराव था। कोई प्रयास नहीं बनाया गया, इसलिए दिखाने कोई अंक नहीं है।",
+)
+add("practiceNoQuestionsInSet", "No questions in this set", "यस सेटमा कुनै प्रश्न छैन", "इस सेट में कोई प्रश्न नहीं")
+add("practiceQuestionCounter", "Q {current}/{total}", "प्रश्न {current}/{total}", "प्रश्न {current}/{total}", ["current", "total"])
+add("practiceUntimedPractice", "Untimed • Practice", "समयसीमा छैन • अभ्यास", "समय-सीमित नहीं • अभ्यास")
+add("practiceDifficultyLabel", "Difficulty: {difficulty}", "कठिनाई: {difficulty}", "कठिनाई: {difficulty}", ["difficulty"])
+add(
+    "practiceNoOptionsNotice",
+    "The server sent this question without answer options, so it cannot be drilled here. Try the graded Quiz tab, which loads a full session.",
+    "सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त Quiz ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।",
+    "सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला Quiz टैब आज़माएं, जो पूरा सत्र लोड करता है।",
+)
+add(
+    "practiceAnswerSentNotice",
+    "Answer sent to the server. It grades the attempt — this screen never guesses a score.",
+    "उत्तर सर्भरमा पठाइयो। सर्भरले प्रयास अंकित गर्छ — यो स्क्रिनले कहिल्यै अंक अनुमान गर्दैन।",
+    "उत्तर सर्वर को भेजा गया। सर्वर प्रयास को अंकित करता है — यह स्क्रीन कभी अंक का अनुमान नहीं लगाती।",
+)
+add("practicePrev", "Prev", "अघिल्लो", "पिछला")
+add("practiceGrading", "Grading…", "अंक गरिँदै…", "अंक लगा रहे हैं…")
+add(
+    "practiceNoEffectNote",
+    "Practice is untimed and carries no score, XP, coins or streak effect.",
+    "अभ्यासमा समयसीमा छैन र यसले अंक, XP, क्विन वा स्ट्रिकमा कुनै असर गर्दैन।",
+    "अभ्यास समय-सीमित नहीं है और इसका अंक, XP, कॉइन या स्ट्रीक पर कोई प्रभाव नहीं पड़ता।",
+)
 add(
     "forceUpdateUnsupportedLatest",
     "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
@@ -743,16 +1247,18 @@ add(
 add("routeNotFound", "Route not found: {path}", "मार्ग फेला परेन: {path}", "रूट नहीं मिला: {path}", ["path"])
 
 # ── write ────────────────────────────────────────────────────────────────────
-# The placeholder types decide the signature gen-l10n generates. `Object`
-# accepts whatever the caller has — an int, a double, a nullable String that
-# was already coalesced — and gen-l10n stringifies it. Only the counters that
-# are unambiguously whole numbers keep the `int` type.
-PLACEHOLDER_TYPES = {
-    "days": "int",
-    "count": "int",
-    "current": "int",
-    "total": "int",
-}
+# The placeholder types decide the signature gen-l10n generates.
+#
+# `Object` accepts whatever the caller has — an int, a double, a String, an
+# enum's `name` — and gen-l10n stringifies it. A narrower type (`int`,
+# `String`) makes the *client* the place where a mismatch is found, and the
+# mismatch is a compile error in a screen that was correct the moment the
+# server changed a field from a count to a label.
+#
+# The one thing `Object` does not accept is `null`, so a nullable value has
+# to be coalesced at the call site. That is the right place for it: the
+# screen knows what to show when the server sent nothing.
+PLACEHOLDER_TYPES = {}
 
 
 def build(locale_index, locale):

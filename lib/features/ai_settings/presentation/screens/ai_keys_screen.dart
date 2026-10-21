@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,12 +36,13 @@ class _AiKeysScreenState extends ConsumerState<AiKeysScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(aiSettingsControllerProvider);
     final notifier = ref.read(aiSettingsControllerProvider.notifier);
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your AI keys')),
+      appBar: AppBar(title: Text(l10n.aiKeysTitle)),
       body: RefreshIndicator(
         onRefresh: notifier.fetchKeys,
         child: ListView(
@@ -52,15 +55,14 @@ class _AiKeysScreenState extends ConsumerState<AiKeysScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.brand.withValues(alpha: 0.2)),
               ),
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.brand),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Your key is encrypted on our servers and never shown again. '
-                      'Only the last four characters are ever displayed.',
+                      l10n.aiKeysExplain,
                       style: TextStyle(fontSize: 11, color: AppColors.brandDark, height: 1.3),
                     ),
                   ),
@@ -97,7 +99,7 @@ class _AiKeysScreenState extends ConsumerState<AiKeysScreen> {
             FilledButton.icon(
               onPressed: () => setState(() => _adding = !_adding),
               icon: Icon(_adding ? Icons.close_rounded : Icons.add_rounded, size: 18),
-              label: Text(_adding ? 'Cancel' : 'Add a key'),
+              label: Text(_adding ? l10n.commonCancel : l10n.aiKeysAddTitle),
             ),
             const SizedBox(height: 16),
             if (state.isKeysLoading && state.keys.isEmpty)
@@ -109,15 +111,14 @@ class _AiKeysScreenState extends ConsumerState<AiKeysScreen> {
               )
 
             else if (!state.isKeysLoading && state.keys.isEmpty && state.keysError == null)
-              const EmptyState(
-                title: 'No keys yet',
+              EmptyState(
+                title: l10n.aiKeysNoneYet,
                 subtitle:
-                    'Add a provider key to run AI features on your own quota '
-                    'instead of the shared one.',
+                    l10n.aiKeysNoneExplain,
                 icon: Icons.key_rounded,
               )
             else ...[
-              Text('Stored keys', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+              Text(l10n.aiKeysStored, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ...state.keys.map(
                 (k) => _KeyCard(credential: k, onRevoke: () => notifier.revokeKey(k.id)),
@@ -130,7 +131,7 @@ class _AiKeysScreenState extends ConsumerState<AiKeysScreen> {
                         ? null
                         : () => notifier.fetchKeys(cursor: state.keysCursor, append: true),
                     icon: const Icon(Icons.expand_more_rounded),
-                    label: const Text('Load more'),
+                    label: Text(l10n.commonLoadMore),
                   ),
                 ),
             ],
@@ -148,6 +149,7 @@ class _KeyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final key = credential;
     final health = key.healthStatus?.toLowerCase();
@@ -214,7 +216,7 @@ class _KeyCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${key.tokensConsumedToday} of ${key.dailyTokenLimit} daily tokens used',
+                l10n.aiKeysTokensUsed(key.tokensConsumedToday, key.dailyTokenLimit),
                 style: const TextStyle(fontSize: 10, color: Colors.grey),
               ),
             ],
@@ -231,7 +233,7 @@ class _KeyCard extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: onRevoke,
                 icon: const Icon(Icons.delete_outline_rounded, size: 16),
-                label: const Text('Revoke', style: TextStyle(fontSize: 12)),
+                label: Text(l10n.aiKeysRevoke, style: TextStyle(fontSize: 12)),
                 style: TextButton.styleFrom(foregroundColor: AppColors.wrongRed),
               ),
             ),
@@ -262,10 +264,11 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context)!;
     final secret = _secret.text.trim();
     if (secret.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('The key must be at least 8 characters')),
+        SnackBar(content: Text(l10n.aiKeysTooShort)),
       );
       return;
     }
@@ -283,6 +286,7 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(aiSettingsControllerProvider);
 
     return Card(
@@ -292,7 +296,7 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Add a provider key',
+              l10n.aiKeysAddProvider,
               style: Theme.of(context)
                   .textTheme
                   .titleSmall
@@ -301,8 +305,8 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
             const SizedBox(height: 12),
             DropdownButtonFormField<AiProvider>(
               initialValue: _provider,
-              decoration: const InputDecoration(
-                labelText: 'Provider',
+              decoration: InputDecoration(
+                labelText: l10n.aiKeysProvider,
                 isDense: true,
               ),
               items: [
@@ -320,17 +324,17 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
               obscureText: true,
               autocorrect: false,
               enableSuggestions: false,
-              decoration: const InputDecoration(
-                labelText: 'API key',
-                helperText: 'Sent once and never shown again.',
+              decoration: InputDecoration(
+                labelText: l10n.aiKeysApiKey,
+                helperText: l10n.aiKeysSentOnce,
                 isDense: true,
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _label,
-              decoration: const InputDecoration(
-                labelText: 'Label (optional)',
+              decoration: InputDecoration(
+                labelText: l10n.aiKeysLabelOptional,
                 isDense: true,
               ),
             ),
@@ -346,7 +350,7 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Save key'),
+                  : Text(l10n.aiKeysSaveKey),
             ),
           ],
         ),

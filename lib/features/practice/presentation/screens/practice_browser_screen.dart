@@ -11,6 +11,7 @@ import '../../../tutor/presentation/controllers/tutor_controller.dart';
 import '../controllers/practice_controller.dart';
 import '../practice_session_args.dart';
 import '../../domain/entities/practice.dart';
+import '../../../../l10n/app_localizations.dart';
 // Re-exported so the router keeps resolving the session args from this
 // screen, which is where they used to live.
 export '../practice_session_args.dart';
@@ -54,16 +55,17 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Practice'),
+        title: Text(l10n.practice),
         bottom: TabBar(
           controller: _tab,
-          tabs: const [
-            Tab(icon: Icon(Icons.bookmark_rounded), text: 'Bookmarks'),
-            Tab(icon: Icon(Icons.psychology_rounded), text: 'Weak Topics'),
-            Tab(icon: Icon(Icons.flash_on_rounded), text: 'Self Challenge'),
-            Tab(icon: Icon(Icons.history_rounded), text: 'History'),
+          tabs: [
+            Tab(icon: Icon(Icons.bookmark_rounded), text: l10n.practiceBookmarks),
+            Tab(icon: Icon(Icons.psychology_rounded), text: l10n.practiceWeakTopics),
+            Tab(icon: Icon(Icons.flash_on_rounded), text: l10n.practiceSelfChallenge),
+            Tab(icon: Icon(Icons.history_rounded), text: l10n.practiceHistory),
           ],
         ),
       ),
@@ -80,8 +82,9 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
   }
 
   Future<void> _startBookmarkedPractice(List<BookmarkedQuestion> items) async {
+    final l10n = AppLocalizations.of(context)!;
     if (items.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No bookmarks to practice'), backgroundColor: AppColors.wrongRed));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.practiceNoBookmarks), backgroundColor: AppColors.wrongRed));
       return;
     }
 
@@ -90,7 +93,7 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
     // from the same category.
     final notifier = ref.read(practiceControllerProvider.notifier);
     final drill = await notifier.startBookmarkDrill(
-      title: 'Bookmarked Practice',
+      title: l10n.practiceBookmarkedPractice,
       bookmarks: items,
     );
     if (!mounted) return;
@@ -103,8 +106,7 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '${drill.undrillableCount} of ${items.length} bookmarks could not be '
-            'drilled — the server does not publish their answer options yet.',
+            l10n.practiceBookmarksUnavailable(drill.undrillableCount, items.length),
           ),
           backgroundColor: AppColors.streakOrange,
         ),
@@ -121,9 +123,10 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
   /// that come back are seeded into a practice attempt, so the drill is graded
   /// by the server like any other.
   Future<void> _startWeakTopic({String? topic, int? topicId}) async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(practiceControllerProvider.notifier);
     final drill = await notifier.startDrill(
-      title: topic == null ? 'Practice Drill' : 'Drill: $topic',
+      title: topic == null ? l10n.practiceDrill : l10n.practiceDrillCount(topic),
       search: topic,
       count: 10,
     );
@@ -137,9 +140,10 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
   }
 
   Future<void> _startSelfChallenge({required int count, String? difficulty}) async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(practiceControllerProvider.notifier);
     final drill = await notifier.startDrill(
-      title: 'Self Challenge',
+      title: l10n.practiceSelfChallenge,
       difficulty: difficulty,
       count: count,
     );
@@ -161,6 +165,7 @@ class _BookmarksTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(practiceControllerProvider);
 
     if (state.isBookmarksLoading && state.bookmarks.isEmpty) {
@@ -173,9 +178,9 @@ class _BookmarksTab extends ConsumerWidget {
       return RefreshIndicator(
         onRefresh: () => ref.read(practiceControllerProvider.notifier).fetchBookmarks(),
         child: ListView(padding: const EdgeInsets.all(24), children: [
-          const EmptyState(title: 'No bookmarks', subtitle: 'Bookmark questions while you take a quiz and they will show up here for drilling later.', icon: Icons.bookmark_border_rounded),
+          EmptyState(title: l10n.practiceNoBookmarksBody, subtitle: l10n.practiceNoBookmarksHint, icon: Icons.bookmark_border_rounded),
           const SizedBox(height: 16),
-          FilledButton.tonalIcon(onPressed: () => context.go('/quiz'), icon: const Icon(Icons.quiz_rounded), label: const Text('Browse quizzes')),
+          FilledButton.tonalIcon(onPressed: () => context.go('/quiz'), icon: const Icon(Icons.quiz_rounded), label: Text(l10n.practiceBrowseQuizzes)),
         ]),
       );
     }
@@ -191,13 +196,13 @@ class _BookmarksTab extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                  child: Text('${state.bookmarks.length} bookmarked', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
+                  child: Text(l10n.practiceBookmarkedCount(state.bookmarks.length), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
                 ),
                 const Spacer(),
                 FilledButton.icon(
                   onPressed: () => onPractice(state.bookmarks),
                   icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Practice all'),
+                  label: Text(l10n.practiceAll),
                 ),
               ],
             ),
@@ -234,7 +239,7 @@ class _BookmarksTab extends ConsumerWidget {
                       onPressed: () => ref
                           .read(practiceControllerProvider.notifier)
                           .fetchBookmarks(),
-                      child: const Text('Retry'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -255,8 +260,8 @@ class _BookmarksTab extends ConsumerWidget {
                       decoration: BoxDecoration(color: AppColors.xpGold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
                       child: const Icon(Icons.bookmark_rounded, size: 16, color: AppColors.xpGold),
                     ),
-                    title: Text(b.question.questionText.isEmpty ? 'Question #${b.question.id}' : b.question.questionText, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    subtitle: Text('${b.question.type ?? 'mcq'} • difficulty ${b.question.difficulty ?? '-'} • ${b.question.points ?? 0} pts', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    title: Text(b.question.questionText.isEmpty ? l10n.practiceQuestionNumber(b.question.id) : b.question.questionText, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    subtitle: Text(l10n.practiceQuestionMeta(b.question.type ?? 'mcq', b.question.difficulty ?? '-', b.question.points ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                     trailing: IconButton(
                       icon: state.isTogglingBookmark ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bookmark_remove_rounded),
                       // Removes the bookmark. The server's `POST` alias converges
@@ -268,7 +273,7 @@ class _BookmarksTab extends ConsumerWidget {
                       // Review a single bookmark. The bookmarks endpoint does
                       // not publish answer options, so this is a read-through
                       // pass, not a drill — there is no attempt behind it.
-                      context.push('/practice/session', extra: PracticeSessionArgs(title: 'Bookmarked', questions: [b.question], isTimed: false));
+                      context.push('/practice/session', extra: PracticeSessionArgs(title: l10n.practiceBookmarked, questions: [b.question], isTimed: false));
                     },
                   ),
                 );
@@ -286,7 +291,7 @@ class _BookmarksTab extends ConsumerWidget {
                         ref.read(practiceControllerProvider.notifier).fetchBookmarks(cursor: next, append: true);
                       },
                 icon: const Icon(Icons.expand_more_rounded),
-                label: const Text('Load more (cursor)'),
+                label: Text(l10n.practiceLoadMoreCursor),
               ),
             ),
         ],
@@ -313,6 +318,7 @@ class _WeakTopicTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final weakAsync = ref.watch(tutorWeakAreasProvider);
 
@@ -326,15 +332,14 @@ class _WeakTopicTab extends ConsumerWidget {
             children: [
               const Icon(Icons.cloud_off_rounded, size: 40, color: Colors.grey),
               const SizedBox(height: 12),
-              const Text(
-                'Could not load your weak topics',
+              Text(
+                l10n.practiceWeakTopicsLoadFailed,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'These are worked out from your own answer history. Nothing is '
-                'shown unless it is real.',
+              Text(
+                l10n.practiceWeakTopicsExplained,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
@@ -342,7 +347,7 @@ class _WeakTopicTab extends ConsumerWidget {
               OutlinedButton.icon(
                 onPressed: () => ref.invalidate(tutorWeakAreasProvider),
                 icon: const Icon(Icons.refresh_rounded, size: 18),
-                label: const Text('Retry'),
+                label: Text(l10n.retry),
               ),
             ],
           ),
@@ -353,19 +358,18 @@ class _WeakTopicTab extends ConsumerWidget {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: const Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.insights_rounded, size: 40, color: Colors.grey),
                   SizedBox(height: 12),
                   Text(
-                    'No weak topics yet',
+                    l10n.practiceNoWeakTopics,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'The server needs graded attempts before it can spot weak '
-                    'areas. Take a quiz from the Quiz tab and check back.',
+                    l10n.practiceWeakTopicsNeedsAttempts,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
@@ -380,10 +384,10 @@ class _WeakTopicTab extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.wrongRed.withValues(alpha: 0.2))),
-              child: const Row(children: [Icon(Icons.insights_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Expanded(child: Text('Weak topics are worked out on our servers from your answer history, so nothing here is guessed.', style: TextStyle(fontSize: 11, color: AppColors.wrongRed)))]),
+              child: Row(children: [Icon(Icons.insights_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Expanded(child: Text(l10n.practiceWeakTopicsServerNote, style: TextStyle(fontSize: 11, color: AppColors.wrongRed)))]),
             ),
             const SizedBox(height: 16),
-            Text('Your weak topics', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(l10n.practiceYourWeakTopics, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ...weak.map((w) => Card(
                   margin: const EdgeInsets.only(bottom: 8),
@@ -400,7 +404,7 @@ class _WeakTopicTab extends ConsumerWidget {
                     ),
                     trailing: FilledButton.tonal(
                       onPressed: () => onStart(topic: w.topic, topicId: int.tryParse(w.topicId ?? '')),
-                      child: const Text('Drill', style: TextStyle(fontSize: 12)),
+                      child: Text(l10n.practiceDrillAction, style: TextStyle(fontSize: 12)),
                     ),
                   ),
                 )),
@@ -408,10 +412,10 @@ class _WeakTopicTab extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => onStart(),
               icon: const Icon(Icons.psychology_rounded),
-              label: const Text('Drill 10 questions (practice mode, untimed)'),
+              label: Text(l10n.practiceDrillTen),
             ),
             const SizedBox(height: 8),
-            const Text('Practice is untimed and does not affect your rank or coin balance.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.practiceUntimedNote, style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         );
       },
@@ -435,18 +439,19 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Self Challenge', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(l10n.practiceSelfChallenge, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        const Text('Pick question count & difficulty — mirrors Elite Quiz self-challenge but sourced from adaptive engine.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(l10n.practiceSelfChallengeExplain, style: TextStyle(fontSize: 11, color: Colors.grey)),
         const SizedBox(height: 16),
-        Text('Question count: $_count', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+        Text(l10n.practiceQuestionCount(_count), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         Slider(value: _count.toDouble(), min: 5, max: 30, divisions: 5, label: '$_count', onChanged: (v) => setState(() => _count = v.round())),
         const SizedBox(height: 8),
-        Text('Difficulty', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+        Text(l10n.practiceDifficulty, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -458,7 +463,7 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
           return FilledButton.icon(
             onPressed: s.isStartingSession ? null : () => widget.onStart(count: _count, difficulty: _difficulty == 'any' ? null : _difficulty),
             icon: s.isStartingSession ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.play_arrow_rounded),
-            label: Text(s.isStartingSession ? 'Starting…' : 'Start challenge ($_count Qs)'),
+            label: Text(s.isStartingSession ? l10n.practiceStarting : l10n.practiceStartChallenge(_count)),
           );
         }),
         const SizedBox(height: 8),
@@ -468,7 +473,7 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
           return Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Text(err, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)));
         }),
         const SizedBox(height: 16),
-        const Text('Results are labelled as practice, so they never count towards your rank.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(l10n.practiceResultsLabelled, style: TextStyle(fontSize: 11, color: Colors.grey)),
       ],
     );
   }
@@ -479,6 +484,7 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
 class _HistoryTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(practiceControllerProvider);
 
     if (state.isHistoryLoading && state.history.isEmpty) {
@@ -490,7 +496,7 @@ class _HistoryTab extends ConsumerWidget {
     if (state.history.isEmpty) {
       return RefreshIndicator(
         onRefresh: () => ref.read(practiceControllerProvider.notifier).fetchHistory(),
-        child: ListView(padding: const EdgeInsets.all(24), children: const [EmptyState(title: 'No history', subtitle: 'Your completed practice sessions will appear here.', icon: Icons.history_rounded)]),
+        child: ListView(padding: const EdgeInsets.all(24), children: [EmptyState(title: l10n.practiceNoHistory, subtitle: l10n.practiceNoHistoryBody, icon: Icons.history_rounded)]),
       );
     }
 
@@ -513,8 +519,8 @@ class _HistoryTab extends ConsumerWidget {
                       decoration: BoxDecoration(color: (h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
                       child: Icon(h.isCompleted ? Icons.check_circle_rounded : Icons.hourglass_empty_rounded, size: 16, color: h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange),
                     ),
-                    title: Text('Attempt #${h.id} • ${h.mode}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    subtitle: Text('${h.status} • score ${h.score ?? '-'} • ${h.correctCount ?? 0}✓ ${h.wrongCount ?? 0}✗ ${h.skippedCount ?? 0}– • ${h.questionCount ?? '-'} Qs', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    title: Text(l10n.practiceAttemptMeta(h.id, h.mode), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    subtitle: Text(l10n.practiceAttemptSummary(h.status, h.score ?? '-', h.correctCount ?? 0, h.wrongCount ?? 0, h.skippedCount ?? 0, h.questionCount ?? '-'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
                     trailing: Text(h.completedAt != null ? '${h.completedAt!.toLocal().toIso8601String().split('T').first}' : '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
                   ),
                 );
@@ -534,7 +540,7 @@ class _HistoryTab extends ConsumerWidget {
                         ref.read(practiceControllerProvider.notifier).fetchHistory(cursor: next, append: true);
                       },
                 icon: const Icon(Icons.expand_more_rounded),
-                label: const Text('Load more (cursor)'),
+                label: Text(l10n.practiceLoadMoreCursor),
               ),
             ),
         ],
