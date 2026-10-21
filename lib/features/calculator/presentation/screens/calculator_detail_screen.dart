@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
@@ -47,6 +48,9 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   final _legacyFields = <_LegacyFieldEntry>[_LegacyFieldEntry()];
 
   bool _useSchema = false;
+
+  /// Whether a share permalink is being minted.
+  bool _sharing = false;
 
   /// Whether a session token exists.
   ///
@@ -128,6 +132,51 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
   /// The assistant is advisory: the user taps "Apply" on a specific
   /// suggestion, and only then does anything change. The client never
   /// silently fills a field.
+  /// Shares the result.
+  ///
+  /// The permalink is minted by the server from the **inline** payload —
+  /// the domain, the calculator, the inputs the user typed and the result the
+  /// server computed. The intent is `rehydrate`, so the recipient's calculator
+  /// prefills the form and recomputes: the number they see is the server's,
+  /// not one this device asserted.
+  ///
+  /// `POST /api/v1/share` is deliberately **not** used: it is snapshot-only
+  /// and demands a `calculable_type` the client cannot mint.
+  Future<void> _shareResult(
+    CalculatorConfig config,
+    CalcState calcState,
+  ) async {
+    final result = calcState.result;
+    if (result == null) return;
+
+    setState(() => _sharing = true);
+    try {
+      final inputs = _useSchema
+          ? _collectSchemaInputs(config)
+          : _collectLegacyInputs();
+      final permalink = await ref.read(calculatorRepositoryProvider).createPermalink(
+            domain: widget.domain,
+            calculatorSlug: widget.slug,
+            inputs: inputs,
+            results: result.data,
+          );
+      if (!mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(
+          text: '${config.label} — ${permalink.url}',
+          subject: config.label,
+        ),
+      );
+    } on Object catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not share this result: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _sharing = false);
+    }
+  }
+
   void _applyAssistantValue(String field, String value) {
     // A boolean field lives in the bool map, not the text map. The previous
     // version only looked at the text map, so applying a suggestion to a
@@ -261,6 +310,20 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
               if (config.stepsInResponse) const SizedBox(height: 12),
               _ResultCard(result: calcState.result!),
               const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _sharing
+                    ? null
+                    : () => _shareResult(config, calcState),
+                icon: _sharing
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.share_rounded, size: 18),
+                label: const Text('Share result'),
+              ),
+              const SizedBox(height: 8),
               OutlinedButton.icon(
                 onPressed: () => context.go(Uri(
                   path: '/search',

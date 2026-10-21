@@ -41,6 +41,15 @@ class _FailingCalculatorRepository implements CalculatorRepository {
       throw UnimplementedError();
 
   @override
+  Future<CalculatorPermalinkDto> createPermalink({
+    required String domain,
+    required String calculatorSlug,
+    required Map<String, dynamic> inputs,
+    required Map<String, dynamic> results,
+  }) =>
+      throw UnimplementedError();
+
+  @override
   Future<CalculatorAssistant> assist({
     required String message,
     String? domain,

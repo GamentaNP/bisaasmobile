@@ -13,6 +13,19 @@ abstract class CalculatorRepository {
   });
   Future<List<Map<String, dynamic>>> getHistory(String domain, String slug);
 
+  /// Mints a shareable permalink for a calculation.
+  ///
+  /// Uses `POST /api/v1/calculator/permalinks` with the inline payload.
+  /// The sibling `POST /api/v1/share` is snapshot-only — it demands a
+  /// `calculable_id` + `calculable_type` pair the client cannot mint — so
+  /// the permalink route is the one a mobile client can actually use.
+  Future<CalculatorPermalinkDto> createPermalink({
+    required String domain,
+    required String calculatorSlug,
+    required Map<String, dynamic> inputs,
+    required Map<String, dynamic> results,
+  });
+
   /// Asks the server's calculator assistant about the current form.
   ///
   /// The assistant is advisory: it proposes field values, and the user

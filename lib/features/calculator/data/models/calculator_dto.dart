@@ -133,3 +133,42 @@ class CalculatorConfigDto {
     calculationModes: calculationModes,
   );
 }
+
+/// A minted calculator permalink.
+///
+/// `POST /api/v1/calculator/permalinks` answers with the canonical url plus
+/// the variants the server offers (a standalone page and a PDF report).
+class CalculatorPermalinkDto {
+  const CalculatorPermalinkDto({
+    required this.url,
+    this.ulid,
+    this.standaloneUrl,
+    this.reportUrl,
+    this.expiresAt,
+  });
+
+  factory CalculatorPermalinkDto.fromJson(Map<String, dynamic> json) {
+    final url = (json['url'] as String?)?.trim();
+    if (url == null || url.isEmpty) {
+      throw const FormatException('Permalink payload has no url');
+    }
+    return CalculatorPermalinkDto(
+      url: url,
+      ulid: json['ulid'] as String?,
+      standaloneUrl: json['standalone_url'] as String?,
+      reportUrl: json['report_url'] as String?,
+      expiresAt: json['expires_at'] as String?,
+    );
+  }
+
+  /// The canonical shareable url.
+  final String url;
+  final String? ulid;
+
+  /// A url that opens the calculation on its own page.
+  final String? standaloneUrl;
+
+  /// A url that resolves to the PDF/report artefact.
+  final String? reportUrl;
+  final String? expiresAt;
+}

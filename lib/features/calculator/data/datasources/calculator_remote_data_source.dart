@@ -84,6 +84,50 @@ class CalculatorRemoteDataSource {
     return [];
   }
 
+  // ── Share ───────────────────────────────────────────────────────────────────
+
+  /// Mints a shareable permalink for a calculation.
+  ///
+  /// `POST /api/v1/calculator/permalinks` with the **inline** payload
+  /// (`domain`, `calculator_slug`, `inputs`, `results`).
+  ///
+  /// The sibling route `POST /api/v1/share` is snapshot-only: it demands
+  /// `calculable_id` + `calculable_type`, and `calculable_type` is the PHP
+  /// class name of a row the client has no way to mint. The permalink route
+  /// is the canonical one and accepts the payload a mobile client actually
+  /// has — the calculation it just performed.
+  ///
+  /// The intent is `rehydrate`: the recipient's calculator prefills the form
+  /// and stops, so the result they see is computed on their side rather than
+  /// being a number this client asserted.
+  Future<CalculatorPermalinkDto> createPermalink({
+    required String domain,
+    required String calculatorSlug,
+    required Map<String, dynamic> inputs,
+    required Map<String, dynamic> results,
+    String intent = 'rehydrate',
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/calculator/permalinks',
+      data: <String, dynamic>{
+        'domain': domain,
+        'calculator_slug': calculatorSlug,
+        'inputs': inputs,
+        'results': results,
+        'intent': intent,
+      },
+    );
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/calculator/permalinks',
+      );
+    }
+    final data = requireDataMap(body, endpoint: '/calculator/permalinks');
+    return CalculatorPermalinkDto.fromJson(data);
+  }
+
   // ── AI assistant ───────────────────────────────────────────────────────────
 
   /// Asks the server's calculator assistant about the current form.
