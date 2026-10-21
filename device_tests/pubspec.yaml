@@ -40,6 +40,8 @@ dependencies:
   # The app under test, by path.
   bisaasmobile:
     path: ../
+  # Used directly by the device tests to wrap the app in a ProviderScope.
+  flutter_riverpod: ^3.4.2
 
 dev_dependencies:
   flutter_lints: ^5.0.0
