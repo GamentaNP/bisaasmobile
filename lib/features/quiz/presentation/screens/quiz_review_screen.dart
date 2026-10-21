@@ -54,10 +54,29 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.hasError) {
+            // A failed review must offer a way back in — the user used to have
+            // to leave the screen and come back to try again.
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('Failed to load review: ${snap.error}', textAlign: TextAlign.center),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.cloud_off_rounded,
+                        size: 40, color: Colors.grey),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Failed to load review: ${snap.error}',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      onPressed: () => setState(() => _future = _load()),
+                      icon: const Icon(Icons.refresh_rounded, size: 18),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             );
           }

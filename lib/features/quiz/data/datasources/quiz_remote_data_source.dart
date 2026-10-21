@@ -476,7 +476,12 @@ class QuizRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
     );
     final body = res.data;
-    if (body == null) throw Exception('Quiz result missing');
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/attempts/{attempt}/completion',
+      );
+    }
     Map<String, dynamic>? d;
     if (body['data'] is Map<String, dynamic>) {
       d = body['data'] as Map<String, dynamic>;
@@ -484,17 +489,31 @@ class QuizRemoteDataSource {
       try {
         final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
         d = env.data;
-      } catch (_) {}
+      } on Object catch (e) {
+        throw ContractViolation(
+          'Quiz result payload not understood: $e',
+          endpoint: '/quiz/attempts/{attempt}/completion',
+        );
+      }
     }
-    if (d == null) throw Exception('Quiz result missing');
+    if (d == null) {
+      throw const ContractViolation(
+        'Quiz result payload not understood',
+        endpoint: '/quiz/attempts/{attempt}/completion',
+      );
+    }
     // Backend complete returns {attempt_id, score, correct_count, wrong_count, skipped_count, completed_at}
     // Map to QuizResultDto tolerant shape: totalQuestions, correctAnswers, etc.
     final correct = (d['correct_count'] as int?) ?? (d['correct'] as int?) ?? 0;
     final wrong = (d['wrong_count'] as int?) ?? (d['wrong'] as int?) ?? 0;
     final skipped = (d['skipped_count'] as int?) ?? (d['skipped'] as int?) ?? 0;
+    // The total is the sum of what the server counted. It used to fall back to
+    // a hard-coded 20, which meant a user who skipped 17 of 20 questions saw
+    // "3 of 3 correct" and a 100 % accuracy ring. The client does not know
+    // how many questions the attempt had, so it reports what it can count.
     final total = (d['total_questions'] as int?) ??
         (d['total'] as int?) ??
-        (correct + wrong + skipped == 0 ? 20 : correct + wrong + skipped);
+        (correct + wrong + skipped);
     return QuizResultDto.fromJson({
       'attempt_id': (d['attempt_id'] ?? d['id'] ?? attemptId).toString(),
       'stats': {

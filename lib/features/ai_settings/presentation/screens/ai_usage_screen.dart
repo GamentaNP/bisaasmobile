@@ -108,7 +108,11 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                   const SizedBox(width: 18),
                   _Stat(
                     value: '${usage.tutorConversations}',
-                    label: 'tutor chats',
+                    // The server counts tutor conversations with **no** date
+                    // filter, so this is a lifetime total. Labelling it
+                    // "all time" keeps it from reading as a period figure
+                    // next to the 7/30/90-day chip.
+                    label: 'tutor chats (all time)',
                   ),
                 ],
               ),
