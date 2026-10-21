@@ -53,70 +53,101 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
           top: 24,
           bottom: 24 + MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Privacy choices', style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              Text(
-                'We collect nothing beyond what the app needs to work unless you '
-                'allow it. You can change this at any time in Settings → Privacy.',
-                style: theme.textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 16),
-              _Row(
-                title: 'Necessary',
-                subtitle: 'Sign-in, your saved work, and crash reports. '
-                    'Required for the app to work.',
-                value: true,
-                enabled: false,
-                onChanged: null,
-              ),
-              _Row(
-                title: 'Functional',
-                subtitle: 'Remember settings such as your language and filters.',
-                value: _functional,
-                onChanged: (v) => setState(() => _functional = v),
-              ),
-              _Row(
-                title: 'Analytics',
-                subtitle: 'Anonymous usage events that tell us which features '
-                    'are useful. No question content is ever included.',
-                value: _analytics,
-                onChanged: (v) => setState(() => _analytics = v),
-              ),
-              _Row(
-                title: 'Marketing',
-                subtitle: 'Offers and promotions. Off unless you ask for it.',
-                value: _marketing,
-                onChanged: (v) => setState(() => _marketing = v),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _saving ? null : _save,
-                  child: _saving
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Save choices'),
+        // The disclosure text scrolls; the two buttons do not. A consent
+        // sheet whose primary action can sit below the fold is a sheet that
+        // strands the user — and the longer, more accurate the disclosure
+        // has to be, the more likely that is. Pinning the actions means
+        // they are reachable at any font scale and on any screen height.
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Privacy choices', style: theme.textTheme.headlineSmall),
+                    const SizedBox(height: 8),
+                    Text(
+                      // The wording has to survive a review. The previous
+                      // copy claimed the app collects nothing beyond what it
+                      // needs to work, which was not true: it registers a
+                      // push token, reports crashes and sends a
+                      // device-integrity signal, all before any choice is
+                      // made. Guideline 5.1.1 and the Play Data Safety form
+                      // both require the disclosure to name what is actually
+                      // transmitted, so this paragraph lists it.
+                      'Your account and quiz progress are stored on our '
+                      'servers so you can sign in on any device. To make that '
+                      'work and to keep the app stable we also send a device '
+                      'identifier, a push-notification token, crash reports '
+                      'and a device security check. With your permission we '
+                      'also send anonymous usage events. You can change this '
+                      'at any time in Settings → Privacy.',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    _Row(
+                      title: 'Necessary',
+                      subtitle: 'Sign-in and your saved work, your '
+                          'push-notification token, crash reports, and a '
+                          'device security check. Required for the app to '
+                          'work.',
+                      value: true,
+                      enabled: false,
+                      onChanged: null,
+                    ),
+                    _Row(
+                      title: 'Functional',
+                      subtitle: 'Remember settings such as your language and '
+                          'filters on this device.',
+                      value: _functional,
+                      onChanged: (v) => setState(() => _functional = v),
+                    ),
+                    _Row(
+                      title: 'Analytics',
+                      subtitle: 'Usage events that tell us which features are '
+                          'useful. They are tied to a device identifier rather '
+                          'than to your account. No question content is ever '
+                          'included.',
+                      value: _analytics,
+                      onChanged: (v) => setState(() => _analytics = v),
+                    ),
+                    _Row(
+                      title: 'Marketing',
+                      subtitle: 'Offers and promotions. Off unless you ask for '
+                          'it.',
+                      value: _marketing,
+                      onChanged: (v) => setState(() => _marketing = v),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: _saving ? null : _saveEssentialOnly,
-                  child: const Text('Continue with necessary only'),
-                ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _saving ? null : _save,
+                child: _saving
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Save choices'),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: _saving ? null : _saveEssentialOnly,
+                child: const Text('Continue with necessary only'),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -195,13 +226,15 @@ class PrivacySettingsScreen extends ConsumerWidget {
           children: [
             ListTile(
               title: const Text('Necessary'),
-              subtitle: const Text('Always on. Required for the app to work.'),
+              subtitle: const Text('Always on. Your account, saved work, push '
+                  'token, crash reports and device security check.'),
               trailing: const Icon(Icons.lock_outline),
               enabled: false,
             ),
             for (final entry in const [
               (ConsentCategory.functional, 'Functional', 'Remembered settings'),
-              (ConsentCategory.analytics, 'Analytics', 'Anonymous usage events'),
+              (ConsentCategory.analytics, 'Analytics', 'Usage events, tied to '
+                  'a device identifier'),
               (ConsentCategory.marketing, 'Marketing', 'Offers and promotions'),
             ])
               SwitchListTile(
