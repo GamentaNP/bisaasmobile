@@ -63,6 +63,12 @@ android/app/*.keystore
 *.jks
 *.keystore
 
+# Google Play service-account key for `fastlane supply` — never commit.
+# The Play Appfile points at `android/play-service.json`; CI materialises the
+# file from the PLAY_SERVICE_JSON_BASE64 secret before the lane runs.
+android/play-service.json
+android/fastlane/play-service.json
+
 # Env & secrets — never commit
 .env
 .env.*

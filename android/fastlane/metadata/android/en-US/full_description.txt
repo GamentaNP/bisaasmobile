@@ -1,0 +1,24 @@
+CivilCal is a study and practice app for engineering students and civil service aspirants. Everything you need to revise, practise and track your progress — in one app that works on a slow connection.
+
+PRACTISE WITH REAL QUESTIONS
+Answer practice questions for Loksewa, PSC and engineering subjects. Each question is graded on the server, so your score, streak and leaderboard position are always accurate on every device you sign in from. Bookmark the ones you got wrong and drill exactly those later.
+
+CALCULATORS THAT SHOW THEIR WORK
+170+ engineering calculators across civil, structural, electrical, HVAC, plumbing, fire, estimation and medical gas. Every result comes with a step-by-step solution, not just a number — so you can see where the formula came from and learn it for the exam. Ask the AI assistant to work a value out for you, then apply it to any field with one tap.
+
+LEARN WITH AN AI TUTOR
+Stuck on a topic? Ask the AI tutor. It explains the concept, works through an example and checks what you understood — in Nepali, Hindi or English. Bring your own AI key if you prefer, and your usage is shown to you clearly.
+
+STAY IN THE HABIT
+Daily streaks, XP, coins and achievements keep you coming back. Take on other students in a live battle, climb the leaderboard, and enter weekly contests. Miss a day and you can repair your streak with the coins you earn, or freeze it for a month when you know you will be away.
+
+STUDY OFFLINE
+Download course packs, notes and question sets for the subjects you are revising. They stay on your phone, so they work on a train with no signal. When you get back online, your answers sync automatically.
+
+BUILT FOR EVERY DAY
+Nepali, Hindi and English. Light on battery and data. App Lock with your fingerprint or face. Works on a budget phone — the app is built for Android 9 and up, and the whole thing runs on a small download.
+
+TRUSTED WITH YOUR DATA
+We never sell your information and we do not track you across other apps. Analytics are opt-in and can be switched off at any time in Settings, and you can erase your data from the same place. Your sign-in token is kept in the device's secure keystore, and the app's data is excluded from backups.
+
+Free to download, and no in-app purchases. Spend the coins you earn on avatar frames, badges and themes, and trade them with other students.
