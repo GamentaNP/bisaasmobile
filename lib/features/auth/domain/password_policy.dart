@@ -1,3 +1,5 @@
+import 'package:bisaasmobile/app/localization/l10n.dart';
+
 /// Password policy, mirrored from the server so the client never sends a
 /// request it knows will be rejected.
 ///
@@ -24,17 +26,17 @@ class PasswordPolicy {
 
   /// Returns a user-facing message, or null when [password] is acceptable.
   static String? validate(String password) {
-    if (password.isEmpty) return 'Enter a new password.';
+    if (password.isEmpty) return appL10n().authPasswordRequired;
     if (password.length < minLength) {
-      return 'Use at least $minLength characters.';
+      return appL10n().authPasswordTooShort(minLength);
     }
     return null;
   }
 
   /// Confirms the two fields match, mirroring the server's `confirmed` rule.
   static String? validateConfirmation(String password, String confirmation) {
-    if (confirmation.isEmpty) return 'Re-enter your new password.';
-    if (password != confirmation) return 'The two passwords do not match.';
+    if (confirmation.isEmpty) return appL10n().authPasswordConfirmRequired;
+    if (password != confirmation) return appL10n().authPasswordMismatch;
     return null;
   }
 }

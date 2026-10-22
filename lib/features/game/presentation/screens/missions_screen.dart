@@ -30,6 +30,7 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
   bool _bulkClaiming = false;
 
   Future<void> _claim(MissionDto mission) async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _claiming.add(mission.id));
     try {
       final result = await ref.read(gameRemoteDataSourceProvider).claimMission(mission.id);
@@ -37,7 +38,7 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
       ref.invalidate(gameMissionsProvider);
       if (!mounted) return;
       final message = result.claimed
-          ? 'Claimed ${result.coins} coins'
+          ? l10n.gameClaimedCoins(result.coins)
           : (result.reason ?? 'Could not claim this mission');
       _toast(context, message, ok: result.claimed);
     } catch (e) {
@@ -49,14 +50,15 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
   }
 
   Future<void> _claimAll() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _bulkClaiming = true);
     try {
       final result = await ref.read(gameRemoteDataSourceProvider).claimAllMissions();
       ref.invalidate(gameMissionsProvider);
       if (!mounted) return;
       final message = result.claimedCount == 0
-          ? 'Nothing was claimable'
-          : 'Claimed ${result.claimedCount} mission${result.claimedCount == 1 ? '' : 's'} for ${result.coins} coins';
+          ? l10n.gameNothingClaimable
+          : l10n.gameClaimedMission(result.claimedCount, result.claimedCount == 1 ? '' : 's', result.coins);
       _toast(context, message, ok: result.claimedCount > 0);
     } catch (e) {
       if (!mounted) return;

@@ -189,12 +189,13 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildQuickActionsGrid(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // The catalogue count is server-supplied (`total_calculators`). It was
     // previously a hardcoded "232" in three places; the database actually
     // holds 32 civil calculators, so the badge overstated the product.
     final catalog = ref.watch(calculatorCatalogProvider);
     final total = catalog.value?.totalCalculators ?? 0;
-    final calcTitle = total > 0 ? '$total Calculators' : 'Calculators';
+    final calcTitle = total > 0 ? l10n.homeCalculatorsCount(total) : l10n.calculators;
     final actions = [
       {
         'title': 'Practice MCQs',

@@ -108,7 +108,7 @@ class _TodayCard extends StatelessWidget {
       );
     }
     var tasks = <String>[];
-    var title = 'Today';
+    var title = l10n.learningToday;
     try {
       // Legacy TodayPlan: has tasks + title
       if (plan.tasks is List) {

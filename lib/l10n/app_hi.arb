@@ -116,7 +116,6 @@
   "authVerifyEmailBanner": "सभी सुविधाएं खोलने के लिए अपना ईमेल सत्यापित करें।",
   "authSplashTagline": "बिसास इंजीनियरिंग लर्निंग इकोसिस्टम",
   "authInvalidEmail": "मान्य ईमेल दर्ज करें",
-  "authPasswordRequired": "कृपया अपना पासवर्ड दर्ज करें",
   "onboardingStepOf": "चरण {current} / {total}",
   "@onboardingStepOf": {
     "placeholders": {
@@ -492,7 +491,6 @@
   },
   "onboardingStartLearning": "सीखना शुरू करें",
   "onboardingContinue": "जारी रखें",
-  "privacyLinkedToAccount": "यह प्रोफ़ाइल आपके खाते से जुड़ा है। सब कुछ मिटाने के लिए खाता ही हटाएं।",
   "quizSeeResults": "परिणाम देखें",
   "quizNextQuestion": "अगला प्रश्न",
   "quizAnswerSubmitted": "उत्तर जमा हुआ",
@@ -1363,14 +1361,6 @@
   "commonLibrary": "लाइब्रेरी",
   "practiceDrillComplete": "ड्रिल पूरा हुआ",
   "practiceDoesNotAffect": "अभ्यास — रैंक, XP या स्ट्रीक को प्रभावित नहीं करता",
-  "practiceQuestionsCount": "{count} प्रश्न",
-  "@practiceQuestionsCount": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
   "practiceAnsweredSkipped": "{answered} उत्तर दिए • {skipped} छोड़े",
   "@practiceAnsweredSkipped": {
     "placeholders": {
@@ -2686,6 +2676,352 @@
       }
     }
   },
+  "errSessionExpired": "आपका सत्र समाप्त हो गया। कृपया फिर से साइन इन करें।",
+  "errForbidden": "आपके पास इस संसाधन तक पहुँच नहीं है।",
+  "errNotFound": "नहीं मिला।",
+  "errValidationRejected": "प्रस्तुत किए गए कुछ मान अस्वीकार कर दिए गए।",
+  "errUpgradeRequired": "ऐप के नए संस्करण की आवश्यकता है।",
+  "errRateLimited": "बहुत अधिक अनुरोध। कृपया थोड़ी देर में फिर से कोशिश करें।",
+  "errServerTrouble": "सर्वर में समस्या है। कृपया फिर से कोशिश करें।",
+  "errRequestFailedStatus": "अनुरोध {status} स्थिति में विफल रहा।",
+  "@errRequestFailedStatus": {
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "errTimeout": "अनुरोध का समय समाप्त हो गया। कनेक्शन जांचें और फिर से कोशिश करें।",
+  "errUnreachable": "सर्वर तक नहीं पहुँच सके। कनेक्शन जांचें और फिर से कोशिश करें।",
+  "errCancelled": "अनुरोध रद्द कर दिया गया।",
+  "errBadCertificate": "सर्वर का प्रमाणपत्र सत्यापित नहीं हो सका।",
+  "errTransformTimeout": "सर्वर को जवाब देने में बहुत समय लगा।",
+  "lifelineWrongRemoved": "{count} गलत विकल्प हटा दिए गए।",
+  "@lifelineWrongRemoved": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineCorrectAnswer": "सही उत्तर: {answer}",
+  "@lifelineCorrectAnswer": {
+    "placeholders": {
+      "answer": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineTimeAdded": "+{seconds}s जोड़ा गया।",
+  "@lifelineTimeAdded": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineTimerFrozen": "{seconds}s के लिए टाइमर फ्रीज़।",
+  "@lifelineTimerFrozen": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineShieldActive": "शील्ड सक्रिय — एक गलत उत्तर माफ।",
+  "lifelineDoubleXp": "अगले सही उत्तर पर डबल XP सक्रिय।",
+  "lifelineAudiencePoll": "ऑडियंस पोल आने वाला है।",
+  "lifelineSecondChance": "इस प्रश्न के लिए दूसरा मौका सहेज लिया गया।",
+  "lifelineNotEnoughCoins": "पर्याप्त कॉइन नहीं।",
+  "lifelineNotValidForQuestion": "इस प्रश्न के लिए मान्य नहीं।",
+  "lifelineAlreadyUsed": "इस प्रयास में पहले ही उपयोग हो चुका है।",
+  "lifelineNotAvailable": "इस प्रयास के लिए उपलब्ध नहीं।",
+  "lifelineTryAgain": "कृपया फिर से कोशिश करें।",
+  "lifelineNeedsCoins": "{cost} कॉइन चाहिए (आपके पास {balance} हैं)",
+  "@lifelineNeedsCoins": {
+    "placeholders": {
+      "cost": {
+        "type": "Object"
+      },
+      "balance": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineUnavailableNow": "अभी उपलब्ध नहीं",
+  "streakAtRisk": "जोखिम में — {days} दिन बचाउने के लिए मध्यरात्रि से पहले एक क्विज़ पूरा करें।",
+  "@streakAtRisk": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakCompleteToGrow": "स्ट्रीक बढ़ाने के लिए आज का क्विज़ पूरा करें।",
+  "streakTierLegend": "लीजेंड 100+",
+  "streakTierChampion": "चैंपियन 30+",
+  "streakTierWarrior": "वॉरियर 7+",
+  "streakTierStarter": "स्टार्टर",
+  "streakCheckingRepair": "मरम्मत योग्यता जांच रहे हैं…",
+  "streakMissedDayGeneric": "आपने एक दिन छोड़ा। स्ट्रीक बचाने के लिए अभी मरम्मत करें।",
+  "streakMissedDayWhen": "आपने {when} छोड़ा। स्ट्रीक बचाने के लिए अभी मरम्मत करें।",
+  "@streakMissedDayWhen": {
+    "placeholders": {
+      "when": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakInsuranceBanked": "{max} में से {count} बीमा टोकन{plural} जमा। एक अपने आप छूटे दिन की मरम्मत कर देता है।",
+  "@streakInsuranceBanked": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "max": {
+        "type": "Object"
+      },
+      "plural": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakInsuranceExplain": "टोकन जमा करें, यह आपके लिए एक छूटा दिन अपने आप मरम्मत कर देता है। एक बार में अधिकतम {max}।",
+  "@streakInsuranceExplain": {
+    "placeholders": {
+      "max": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakInsuranceUnavailable": "आपके खाते में अभी बीमा उपलब्ध नहीं है।",
+  "streakNoInsuranceToUse": "उपयोग करने योग्य कोई बीमा बाकी नहीं है।",
+  "privacyUnreachable": "इस डिवाइस पर क्या सहेजा है दिखाने के लिए हम सर्वर तक नहीं पहुँच सके।",
+  "privacyUnreadable": "हम इस डिवाइस पर सहेजा क्या है पढ़ नहीं सके। आपके स्थानीय विकल्प अप्रभावित नहीं हैं।",
+  "privacyEraseViaAccount": "यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए Settings में Delete account का उपयोग करें।",
+  "privacyLocalConsentNote": "विश्लेषण, कार्यक्षम और प्रचार की सहमति इस डिवाइस पर सहेजी जाती है और तुरंत लागू होती है, ऊपर के अनाम प्रोफ़ाइल से स्वतंत्र।",
+  "privacyNoChoiceYet": "आपने अभी तक कोई चयन नहीं किया है।",
+  "settingsLanguageSection": "भाषा",
+  "settingsSecuritySection": "सुरक्षा",
+  "settingsAiSection": "AI",
+  "settingsAccountSection": "खाता",
+  "bookPageRangeOpen": "पृष्ठ {start}+",
+  "@bookPageRangeOpen": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookPageRangeSingle": "पृष्ठ {page}",
+  "@bookPageRangeSingle": {
+    "placeholders": {
+      "page": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookPageRange": "पृष्ठ {start}–{end}",
+  "@bookPageRange": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      },
+      "end": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookSessionNotCounted": "यह पढ़ने का सत्र गिना नहीं गया।",
+  "bookSessionNotCountedReason": "यह पढ़ने का सत्र गिना नहीं गया: {reason}",
+  "@bookSessionNotCountedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookPagesCount": "{count} पृष्ठ",
+  "@bookPagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookChaptersCount": "{count} अध्याय",
+  "@bookChaptersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookReadingTime": "{count} घं",
+  "@bookReadingTime": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookCoinsCount": "{count} कॉइन",
+  "@bookCoinsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookFormulasCount": "{count} सूत्र",
+  "@bookFormulasCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookNumericalsCount": "{count} संख्यात्मक",
+  "@bookNumericalsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookFreePreview": "मुफ़्त झलक",
+  "authPasswordTooShort": "कम से कम {count} अक्षर उपयोग करें।",
+  "@authPasswordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "authPasswordConfirmRequired": "अपना नया पासवर्ड फिर से दर्ज करें।",
+  "authPasswordMismatch": "दोनों पासवर्ड मेल नहीं खाते।",
+  "gameClaimedCoins": "{coins} कॉइन दावा किए",
+  "@gameClaimedCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameNothingClaimable": "दावा करने योग्य कुछ नहीं था",
+  "gameClaimedMission": "{coins} कॉइन के लिए {count} मिशन{plural} दावा किए",
+  "@gameClaimedMission": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "plural": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeCalculatorsCount": "{count} कैलकुलेटर",
+  "@homeCalculatorsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlockFree": "खोलें (मुफ़्त)",
+  "libraryUnlockCoins": "खोलें • {coins} कॉइन",
+  "@libraryUnlockCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizQuestionsPlus": "{count}+ प्रश्न",
+  "@quizQuestionsPlus": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizQuestionsCount": "{count} प्रश्न",
+  "@quizQuestionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialReferralApplied": "रेफ़रल कोड लागू हो गया।",
+  "socialReferralRejected": "वह कोड लागू नहीं हो सका। यह पहले से उपयोग किया जा चुका है।",
+  "socialTryThis": "CivilCal पर यह आज़माएं",
+  "socialShareInvite": "CivilCal पर मेरा कोड {code} का उपयोग करें — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।\n{url}",
+  "@socialShareInvite": {
+    "placeholders": {
+      "code": {
+        "type": "Object"
+      },
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorRetrievalFailed": "पुनर्प्राप्ति अस्थायी रूप से विफल — निश्चित योजना दिखा रहे हैं।",
+  "tutorDegradedNote": "उत्तर कम व्यक्तिगत हो सकते हैं (सीमित)।",
+  "eiceSectionFailed": "यह हिस्सा लोड नहीं हो सका। {reason}",
+  "@eiceSectionFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalNotCorrect": "गलत है। फिर से कोशिश करें या चरणबद्ध हल देखें।",
+  "quizAnswerSavedNote": "उत्तर सहेज लिया गया — विवरण परिणाम स्क्रीन पर खुलेगा।",
+  "quizShareResult": "मैंने \"{title}\" पर {correct}/{total} ({percent}%) अंक किए — {grade}! XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://bisaas.com",
+  "@quizShareResult": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      },
+      "percent": {
+        "type": "Object"
+      },
+      "title": {
+        "type": "Object"
+      },
+      "grade": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizGradeExcellent": "बहुत बढ़िया",
+  "quizGradeGoodJob": "अच्छा काम",
+  "quizGradeKeepPracticing": "अभ्यास जारी रखें",
+  "quizDefaultTitle": "CivilCal क्विज़",
+  "syllabusTopicsLoaded": "विषय लोड हुए",
+  "syllabusTopicsLabel": "विषय",
+  "quizIntroGradesInstantly": "सर्वर आपके उत्तर को तुरंत अंकित करता है।",
+  "quizIntroCorrectRule": "सही: +10 XP, स्ट्रीक कॉम्बो बोनस।",
+  "quizIntroWrongRule": "गलत: -2 XP, स्ट्रीक रीसेट।",
+  "quizIntroBackRule": "बाहर निकलने के लिए बैक बटन दबाएं (प्रगति चली जाएगी)।",
+  "tutorExampleProctor": "प्रोक्टर कम्पैक्शन आसान भाषा में समझाएं",
+  "tutorExamplePlanWeek": "इस सप्ताह की योजना बनाने में मदद करें",
+  "privacyLinkedToAccount": "खाते से जुड़ा",
+  "authPasswordRequired": "नया पासवर्ड दर्ज करें।",
   "forceUpdateUnsupportedLatest": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।",
   "forceUpdateUnsupportedVersion": "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया {version} या उससे नए संस्करण पर अपडेट करें।",
   "@forceUpdateUnsupportedVersion": {

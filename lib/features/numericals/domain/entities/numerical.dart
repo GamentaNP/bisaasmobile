@@ -1,3 +1,5 @@
+library;
+
 /// Deterministic numericals — server-solved practice problems.
 ///
 /// ## The one rule that matters
@@ -7,7 +9,8 @@
 /// that cached or displayed the answer from a failed attempt would have turned
 /// the practice surface into an answer oracle. [NumericalCheck.finalAnswer] is
 /// therefore nullable and the UI must not substitute anything for it.
-library;
+import '../../../../app/localization/l10n.dart';
+
 
 import 'package:flutter/foundation.dart';
 
@@ -87,7 +90,7 @@ class NumericalCheck {
       ? (finalAnswer == null
           ? 'Correct'
           : 'Correct · ${formatNumber(finalAnswer!)}$unitSuffix')
-      : 'Not correct. Try again or view the worked solution.';
+      : appL10n().numericalNotCorrect;
 
   String get unitSuffix => unit == null ? '' : ' $unit';
 }

@@ -8,6 +8,7 @@ import '../../data/models/streak_dto.dart';
 import '../../data/repositories/streak_repository_impl.dart';
 import '../../domain/entities/streak.dart';
 import '../../domain/repositories/streak_repository.dart';
+import '../../../../app/localization/l10n.dart';
 
 // ── Providers ───────────────────────────────────────────────────────────────
 
@@ -205,7 +206,7 @@ class StreakController extends Notifier<StreakState> {
         state = state.copyWith(isSelfServiceBusy: false);
         return null;
       }
-      const reason = 'No insurance available to use.';
+      final reason = appL10n().streakNoInsuranceToUse;
       state = state.copyWith(isSelfServiceBusy: false, selfServiceError: reason);
       return reason;
     } catch (e, st) {

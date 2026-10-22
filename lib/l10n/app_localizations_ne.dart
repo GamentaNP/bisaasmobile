@@ -231,9 +231,6 @@ class AppLocalizationsNe extends AppLocalizations {
   String get authInvalidEmail => 'मान्य इमेल लेख्नुहोस्';
 
   @override
-  String get authPasswordRequired => 'कृपया आफ्नो पासवर्ड लेख्नुहोस्';
-
-  @override
   String onboardingStepOf(Object current, Object total) {
     return 'चरण $current / $total';
   }
@@ -782,10 +779,6 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get onboardingContinue => 'जारी राख्नुहोस्';
-
-  @override
-  String get privacyLinkedToAccount =>
-      'यो प्रोफाइल तपाईंको खातासँग जोडिएको छ। सबै मेटाउन खाता नै हटाउनुहोस्।';
 
   @override
   String get quizSeeResults => 'नतिजा हेर्नुहोस्';
@@ -2061,11 +2054,6 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get practiceDoesNotAffect =>
       'अभ्यास — अंक, XP वा स्ट्रिकलाई असर गर्दैन';
-
-  @override
-  String practiceQuestionsCount(Object count) {
-    return '$count प्रश्न';
-  }
 
   @override
   String practiceAnsweredSkipped(Object answered, Object skipped) {
@@ -3572,6 +3560,386 @@ class AppLocalizationsNe extends AppLocalizations {
   String syllabusExaminableCount(Object count) {
     return '$count परीक्षामा';
   }
+
+  @override
+  String get errSessionExpired =>
+      'तपाईंको सत्रको म्याद सकियो। कृपया फेरि साइन इन गर्नुहोस्।';
+
+  @override
+  String get errForbidden => 'तपाईंलाई यो स्रोतमा पहुँच छैन।';
+
+  @override
+  String get errNotFound => 'फेला परेन।';
+
+  @override
+  String get errValidationRejected => 'पेश गरिएका केही मानहरू अस्वीकार भए।';
+
+  @override
+  String get errUpgradeRequired => 'एपको नयाँ संस्करण चाहिन्छ।';
+
+  @override
+  String get errRateLimited =>
+      'धेरै अनुरोध भए। कृपया छोटो समयमा फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get errServerTrouble =>
+      'सर्भरमा समस्या छ। कृपया फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String errRequestFailedStatus(Object status) {
+    return 'अनुरोध $status स्थितिमा असफल भयो।';
+  }
+
+  @override
+  String get errTimeout =>
+      'अनुरोधको समय सकियो। जडान जाँचेर फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get errUnreachable =>
+      'सर्भरसम्म पुग्न सकिएन। जडान जाँचेर फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get errCancelled => 'अनुरोध रद्द गरियो।';
+
+  @override
+  String get errBadCertificate => 'सर्भरको प्रमाणपत्र प्रमाणित गर्न सकिएन।';
+
+  @override
+  String get errTransformTimeout => 'सर्भरले उत्तर दिन धेरै समय लियो।';
+
+  @override
+  String lifelineWrongRemoved(Object count) {
+    return '$count गलत विकल्प हटाइयो।';
+  }
+
+  @override
+  String lifelineCorrectAnswer(Object answer) {
+    return 'सही उत्तर: $answer';
+  }
+
+  @override
+  String lifelineTimeAdded(Object seconds) {
+    return '+${seconds}s थपियो।';
+  }
+
+  @override
+  String lifelineTimerFrozen(Object seconds) {
+    return '${seconds}s को लागि टाइमर फ्रिज।';
+  }
+
+  @override
+  String get lifelineShieldActive => 'सिड सक्रिय — एउटा गलत उत्तर क्षमा हुन्छ।';
+
+  @override
+  String get lifelineDoubleXp => 'अर्को सही उत्तरमा दोहोरो XP सक्रिय।';
+
+  @override
+  String get lifelineAudiencePoll => 'अर्डियन्स पोल आउँदैछ।';
+
+  @override
+  String get lifelineSecondChance =>
+      'यो प्रश्नका लागि दोस्रो मौका सुरक्षित भयो।';
+
+  @override
+  String get lifelineNotEnoughCoins => 'पर्याप्त क्विन छैन।';
+
+  @override
+  String get lifelineNotValidForQuestion => 'यो प्रश्नका लागि मान्य छैन।';
+
+  @override
+  String get lifelineAlreadyUsed => 'यो प्रयासमा पहिले नै प्रयोग भइसकेको छ।';
+
+  @override
+  String get lifelineNotAvailable => 'यो प्रयासमा उपलब्ध छैन।';
+
+  @override
+  String get lifelineTryAgain => 'कृपया फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String lifelineNeedsCoins(Object cost, Object balance) {
+    return '$cost क्विन चाहिन्छ (तपाईंसँग $balance छ)';
+  }
+
+  @override
+  String get lifelineUnavailableNow => 'अहिले उपलब्ध छैन';
+
+  @override
+  String streakAtRisk(Object days) {
+    return 'जोखिममा — $days दिन जोगाउन मध्यरात्रिभन्दा पहिले एउटा क्विज पूरा गर्नुहोस्।';
+  }
+
+  @override
+  String get streakCompleteToGrow => 'स्ट्रिक बढाउन आजको क्विज पूरा गर्नुहोस्।';
+
+  @override
+  String get streakTierLegend => 'लिजेन्ड १००+';
+
+  @override
+  String get streakTierChampion => 'च्याम्पियन ३०+';
+
+  @override
+  String get streakTierWarrior => 'वारियर ७+';
+
+  @override
+  String get streakTierStarter => 'स्टार्टर';
+
+  @override
+  String get streakCheckingRepair => 'मर्मत योग्यता जाँच्दै…';
+
+  @override
+  String get streakMissedDayGeneric =>
+      'तपाईंले एक दिन छुटाउनुभयो। स्ट्रिक जोगाउन अहिले मर्मत गर्नुहोस्।';
+
+  @override
+  String streakMissedDayWhen(Object when) {
+    return 'तपाईंले $when छुटाउनुभयो। स्ट्रिक जोगाउन अहिले मर्मत गर्नुहोस्।';
+  }
+
+  @override
+  String streakInsuranceBanked(Object count, Object max, Object plural) {
+    return '$max मध्ये $count बीमा टोकन$plural बचत। एउटाले छुटेको दिन आफैँ मर्मत गर्छ।';
+  }
+
+  @override
+  String streakInsuranceExplain(Object max) {
+    return 'टोकन बचत राख्नुहोस्, तपाईंका लागि एउटा छुटेको दिन आफैँ मर्मत हुन्छ। एकैपटक बढीमा $max।';
+  }
+
+  @override
+  String get streakInsuranceUnavailable =>
+      'तपाईंको खातामा अहिले बीमा उपलब्ध छैन।';
+
+  @override
+  String get streakNoInsuranceToUse => 'प्रयोग गर्नुपर्ने कुनै बीमा बाँकी छैन।';
+
+  @override
+  String get privacyUnreachable =>
+      'यो यन्त्रमा के सुरक्षित छ देखाउन सर्भरसम्म पुग्न सकिएन।';
+
+  @override
+  String get privacyUnreadable =>
+      'यो यन्त्रमा के सुरक्षित छ पढ्न सकिएन। तपाईंका स्थानीय विकल्पमा असर पर्दैन।';
+
+  @override
+  String get privacyEraseViaAccount =>
+      'यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन Settings मा Delete account प्रयोग गर्नुहोस्।';
+
+  @override
+  String get privacyLocalConsentNote =>
+      'विश्लेषण, कार्यक्षम र प्रचारको सहमति यस यन्त्रमा सुरक्षित रहन्छ र तुरुन्तै लागू हुन्छ, माथिको अनाम प्रोफाइलबाट स्वतन्त्र।';
+
+  @override
+  String get privacyNoChoiceYet => 'तपाईंले अझै कुनै छनोट गर्नुभएको छैन।';
+
+  @override
+  String get settingsLanguageSection => 'भाषा';
+
+  @override
+  String get settingsSecuritySection => 'सुरक्षा';
+
+  @override
+  String get settingsAiSection => 'AI';
+
+  @override
+  String get settingsAccountSection => 'खाता';
+
+  @override
+  String bookPageRangeOpen(Object start) {
+    return 'पृष्ठ $start+';
+  }
+
+  @override
+  String bookPageRangeSingle(Object page) {
+    return 'पृष्ठ $page';
+  }
+
+  @override
+  String bookPageRange(Object start, Object end) {
+    return 'पृष्ठ $start–$end';
+  }
+
+  @override
+  String get bookSessionNotCounted => 'यो पढाइ सत्र गनिनेन।';
+
+  @override
+  String bookSessionNotCountedReason(Object reason) {
+    return 'यो पढाइ सत्र गनिनेन: $reason';
+  }
+
+  @override
+  String bookPagesCount(Object count) {
+    return '$count पृष्ठ';
+  }
+
+  @override
+  String bookChaptersCount(Object count) {
+    return '$count अध्याय';
+  }
+
+  @override
+  String bookReadingTime(Object count) {
+    return '$count घ';
+  }
+
+  @override
+  String bookCoinsCount(Object count) {
+    return '$count क्विन';
+  }
+
+  @override
+  String bookFormulasCount(Object count) {
+    return '$count सूत्र';
+  }
+
+  @override
+  String bookNumericalsCount(Object count) {
+    return '$count सङ्ख्यात्मक';
+  }
+
+  @override
+  String get bookFreePreview => 'निःशुल्क झलक';
+
+  @override
+  String authPasswordTooShort(Object count) {
+    return 'कम्तीमा $count अक्षर प्रयोग गर्नुहोस्।';
+  }
+
+  @override
+  String get authPasswordConfirmRequired =>
+      'आफ्नो नयाँ पासवर्ड फेरि लेख्नुहोस्।';
+
+  @override
+  String get authPasswordMismatch => 'दुवै पासवर्ड मिल्दैनन्।';
+
+  @override
+  String gameClaimedCoins(Object coins) {
+    return '$coins क्विन दावी गरियो';
+  }
+
+  @override
+  String get gameNothingClaimable => 'दावी गर्नुपर्ने केही थिएन';
+
+  @override
+  String gameClaimedMission(Object count, Object plural, Object coins) {
+    return '$coins क्विनका लागि $count मिसन$plural दावी गरियो';
+  }
+
+  @override
+  String homeCalculatorsCount(Object count) {
+    return '$count क्यालकुलेटर';
+  }
+
+  @override
+  String get libraryUnlockFree => 'खोल्नुहोस् (निःशुल्क)';
+
+  @override
+  String libraryUnlockCoins(Object coins) {
+    return 'खोल्नुहोस् • $coins क्विन';
+  }
+
+  @override
+  String quizQuestionsPlus(Object count) {
+    return '$count+ प्रश्न';
+  }
+
+  @override
+  String quizQuestionsCount(Object count) {
+    return '$count प्रश्न';
+  }
+
+  @override
+  String get socialReferralApplied => 'रेफरल कोड लागू भयो।';
+
+  @override
+  String get socialReferralRejected =>
+      'त्यो कोड लागू गर्न सकिएन। पहिले नै प्रयोग भएको हुन सक्छ।';
+
+  @override
+  String get socialTryThis => 'CivilCal मा यो प्रयास गर्नुहोस्';
+
+  @override
+  String socialShareInvite(Object code, Object url) {
+    return 'CivilCal मा मेरो कोड $code प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n$url';
+  }
+
+  @override
+  String get tutorRetrievalFailed =>
+      'खोज अस्थायी रूपमा असफल भयो — निश्चित योजना देखाइदैछौं।';
+
+  @override
+  String get tutorDegradedNote =>
+      'उत्तरहरू व्यक्तिगतभन्दा कम हुन सक्छन् (सीमित)।';
+
+  @override
+  String eiceSectionFailed(Object reason) {
+    return 'यो खण्ड लोड गर्न सकिएन। $reason';
+  }
+
+  @override
+  String get numericalNotCorrect =>
+      'गलत छ। फेरि प्रयास गर्नुहोस् वा चरणबद्ध समाधान हेर्नुहोस्।';
+
+  @override
+  String get quizAnswerSavedNote =>
+      'उत्तर सुरक्षित भयो — विवरण नतिजाको स्क्रिनमा खुल्छ।';
+
+  @override
+  String quizShareResult(
+    Object correct,
+    Object total,
+    Object percent,
+    Object title,
+    Object grade,
+    Object xp,
+    Object coins,
+  ) {
+    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins CivilCal (बिसास) बाट। प्रयास: https://bisaas.com';
+  }
+
+  @override
+  String get quizGradeExcellent => 'उत्कृष्ट';
+
+  @override
+  String get quizGradeGoodJob => 'राम्रो काम';
+
+  @override
+  String get quizGradeKeepPracticing => 'अभ्यास जारी राख्नुहोस्';
+
+  @override
+  String get quizDefaultTitle => 'CivilCal क्विज';
+
+  @override
+  String get syllabusTopicsLoaded => 'विषय लोड भए';
+
+  @override
+  String get syllabusTopicsLabel => 'विषय';
+
+  @override
+  String get quizIntroGradesInstantly =>
+      'सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।';
+
+  @override
+  String get quizIntroCorrectRule => 'सही: +१० XP, स्ट्रिक कम्बो बोनस।';
+
+  @override
+  String get quizIntroWrongRule => 'गलत: -२ XP, स्ट्रिक रिसेट।';
+
+  @override
+  String get quizIntroBackRule =>
+      'बाहिर निस्कन पछाडि बटन थिच्नुहोस् (प्रगति हराउँछ)।';
+
+  @override
+  String get tutorExampleProctor =>
+      'प्रोक्टर कम्प्याक्सन सरल भाषामा बुझाउनुहोस्';
+
+  @override
+  String get tutorExamplePlanWeek => 'यो हप्ताको योजना बनाउन मद्दत गर्नुहोस्';
+
+  @override
+  String get privacyLinkedToAccount => 'खातासँग जोडिएको';
+
+  @override
+  String get authPasswordRequired => 'नयाँ पासवर्ड लेख्नुहोस्।';
 
   @override
   String get forceUpdateUnsupportedLatest =>

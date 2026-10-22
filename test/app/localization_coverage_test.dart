@@ -4,11 +4,11 @@ import '../../tool/localization_coverage.dart';
 
 /// Literals that are deliberately not translated.
 ///
-/// An email address is an address, not copy — translating it would break
-/// it. The synthetic HTTP status message is never shown to a user. The
-/// debug auto-login button only exists in a `kDebugMode` build, so it is
-/// compiled out of a release. The avatar fallback is the first letter of
-/// the display name.
+/// An email address is an address, not copy — translating it would break it.
+/// The synthetic HTTP status message is never shown to a user. The debug
+/// auto-login button only exists in a `kDebugMode` build, so it is compiled
+/// out of a release. The avatar fallback is the first letter of the display
+/// name.
 const allowedLiterals = <String>{
   'support@bisaas.com',
   'privacy@bisaas.com',
@@ -16,6 +16,27 @@ const allowedLiterals = <String>{
   '⚡ Debug Auto-Login (user@bisaas.test)',
   'C',
 };
+
+/// Literals that are diagnostics for a developer, not copy for a user.
+///
+/// The sync-queue reasons explain why a queued endpoint was refused; they end
+/// up in an `ArgumentError` and in the log. The two battle-kernel labels and
+/// the roster-sampling label are **protocol values** — the kernel and the
+/// server agree on the strings `correctness` and `duration`, and translating
+/// them would break the contract rather than translate it.
+const developerDiagnostics = <String>{
+  'an empty endpoint',
+  'a path with surrounding whitespace',
+  'an absolute URL',
+  'a URL with a scheme',
+  'a protocol-relative URL',
+  'a path that is not rooted',
+  'a path containing traversal',
+  'correctness',
+  'duration',
+  'shuffle:{…}',
+};
+
 
 /// The whole interface is translated.
 ///
@@ -42,6 +63,7 @@ void main() {
   test('no user-facing string is hardcoded English', () {
     final offenders = hits
         .where((h) => !allowedLiterals.contains(h.text))
+        .where((h) => !developerDiagnostics.contains(h.text))
         .toList();
 
     expect(
@@ -59,7 +81,7 @@ void main() {
 
   test('the only untranslated strings are the ones that cannot be', () {
     // The exceptions are documented above. If this test fails, someone
-    // added a string to `allowedLiterals` that should not be there.
+    // added a string to an allowlist that should not be there.
     final unexpected = hits
         .where((h) => allowedLiterals.contains(h.text))
         .where((h) => !const {

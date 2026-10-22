@@ -145,7 +145,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
               child: Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.brand), SizedBox(width: 8), Expanded(child: Text(l10n.practiceDoesNotAffect, style: TextStyle(fontSize: 12, color: AppColors.brand)))]),
             ),
             const SizedBox(height: 12),
-            Text(l10n.practiceQuestionsCount(widget.args.questions.length), style: const TextStyle(fontSize: 13)),
+            Text(l10n.quizQuestionsCount(widget.args.questions.length), style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 4),
             Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: const TextStyle(fontSize: 12, color: Colors.grey)),
             if (result != null) ...[

@@ -151,7 +151,7 @@ class QuizRemoteDataSource {
       }).toList();
 
       // Fetch course name for title
-      var title = 'Quiz';
+      var title = appL10n().quiz;
       try {
         final courses = await getQuizList();
         for (final c in courses) {

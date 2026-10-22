@@ -116,7 +116,6 @@
   "authVerifyEmailBanner": "Verify your email to unlock every feature.",
   "authSplashTagline": "BiSaaS Engineering Learning Ecosystem",
   "authInvalidEmail": "Enter a valid email",
-  "authPasswordRequired": "Please enter your password",
   "onboardingStepOf": "Step {current} of {total}",
   "@onboardingStepOf": {
     "placeholders": {
@@ -492,7 +491,6 @@
   },
   "onboardingStartLearning": "Start Learning",
   "onboardingContinue": "Continue",
-  "privacyLinkedToAccount": "This profile is linked to your account. Delete the account to erase everything.",
   "quizSeeResults": "See Results",
   "quizNextQuestion": "Next Question",
   "quizAnswerSubmitted": "Answer submitted",
@@ -1363,14 +1361,6 @@
   "commonLibrary": "Library",
   "practiceDrillComplete": "Drill complete",
   "practiceDoesNotAffect": "Practice — does not affect rank, XP or streak",
-  "practiceQuestionsCount": "{count} questions",
-  "@practiceQuestionsCount": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
   "practiceAnsweredSkipped": "{answered} answered • {skipped} skipped",
   "@practiceAnsweredSkipped": {
     "placeholders": {
@@ -2686,6 +2676,352 @@
       }
     }
   },
+  "errSessionExpired": "Your session has expired. Please sign in again.",
+  "errForbidden": "You do not have access to this resource.",
+  "errNotFound": "Not found.",
+  "errValidationRejected": "Some of the submitted values were rejected.",
+  "errUpgradeRequired": "A newer version of the app is required.",
+  "errRateLimited": "Too many requests. Please try again shortly.",
+  "errServerTrouble": "The server is having trouble. Please try again.",
+  "errRequestFailedStatus": "Request failed with status {status}.",
+  "@errRequestFailedStatus": {
+    "placeholders": {
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
+  "errTimeout": "The request timed out. Check your connection and try again.",
+  "errUnreachable": "Could not reach the server. Check your connection and try again.",
+  "errCancelled": "The request was cancelled.",
+  "errBadCertificate": "The server certificate could not be verified.",
+  "errTransformTimeout": "The server took too long to deliver the response.",
+  "lifelineWrongRemoved": "{count} wrong option(s) removed.",
+  "@lifelineWrongRemoved": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineCorrectAnswer": "Correct answer: {answer}",
+  "@lifelineCorrectAnswer": {
+    "placeholders": {
+      "answer": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineTimeAdded": "+{seconds}s added.",
+  "@lifelineTimeAdded": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineTimerFrozen": "Timer frozen for {seconds}s.",
+  "@lifelineTimerFrozen": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineShieldActive": "Shield active — one wrong answer forgiven.",
+  "lifelineDoubleXp": "Double XP active on the next correct answer.",
+  "lifelineAudiencePoll": "Audience poll coming up.",
+  "lifelineSecondChance": "Second chance saved for this question.",
+  "lifelineNotEnoughCoins": "Not enough coins.",
+  "lifelineNotValidForQuestion": "Not valid for this question.",
+  "lifelineAlreadyUsed": "Already used on this attempt.",
+  "lifelineNotAvailable": "Not available for this attempt.",
+  "lifelineTryAgain": "Please try again.",
+  "lifelineNeedsCoins": "Needs {cost} coins (you have {balance})",
+  "@lifelineNeedsCoins": {
+    "placeholders": {
+      "cost": {
+        "type": "Object"
+      },
+      "balance": {
+        "type": "Object"
+      }
+    }
+  },
+  "lifelineUnavailableNow": "Unavailable right now",
+  "streakAtRisk": "At risk — complete a quiz before midnight to keep {days} days alive.",
+  "@streakAtRisk": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakCompleteToGrow": "Complete today's quiz to grow your streak.",
+  "streakTierLegend": "Legend 100+",
+  "streakTierChampion": "Champion 30+",
+  "streakTierWarrior": "Warrior 7+",
+  "streakTierStarter": "Starter",
+  "streakCheckingRepair": "Checking repair eligibility…",
+  "streakMissedDayGeneric": "You missed a day. Repair it now to keep the streak.",
+  "streakMissedDayWhen": "You missed {when}. Repair it now to keep the streak.",
+  "@streakMissedDayWhen": {
+    "placeholders": {
+      "when": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakInsuranceBanked": "{count} of {max} insurance token{plural} banked. One auto-repairs a missed day.",
+  "@streakInsuranceBanked": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "max": {
+        "type": "Object"
+      },
+      "plural": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakInsuranceExplain": "Bank a token and it auto-repairs one missed day for you. Up to {max} at a time.",
+  "@streakInsuranceExplain": {
+    "placeholders": {
+      "max": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakInsuranceUnavailable": "Insurance is not available on your account yet.",
+  "streakNoInsuranceToUse": "No insurance available to use.",
+  "privacyUnreachable": "We could not reach the server to show what is stored about this device.",
+  "privacyUnreadable": "We could not read what is stored about this device. Your local choices are unaffected.",
+  "privacyEraseViaAccount": "This profile is linked to your account, so erasing it is handled by the account deletion flow. Use Delete account in Settings to remove everything.",
+  "privacyLocalConsentNote": "Analytics, functional and marketing consent are stored on this device and applied immediately, independently of the anonymous profile above.",
+  "privacyNoChoiceYet": "You have not made a choice yet.",
+  "settingsLanguageSection": "Language",
+  "settingsSecuritySection": "Security",
+  "settingsAiSection": "AI",
+  "settingsAccountSection": "Account",
+  "bookPageRangeOpen": "p. {start}+",
+  "@bookPageRangeOpen": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookPageRangeSingle": "p. {page}",
+  "@bookPageRangeSingle": {
+    "placeholders": {
+      "page": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookPageRange": "p. {start}–{end}",
+  "@bookPageRange": {
+    "placeholders": {
+      "start": {
+        "type": "Object"
+      },
+      "end": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookSessionNotCounted": "This reading session was not counted.",
+  "bookSessionNotCountedReason": "This reading session was not counted: {reason}",
+  "@bookSessionNotCountedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookPagesCount": "{count} pages",
+  "@bookPagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookChaptersCount": "{count} chapters",
+  "@bookChaptersCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookReadingTime": "{count} h",
+  "@bookReadingTime": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookCoinsCount": "{count} coins",
+  "@bookCoinsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookFormulasCount": "{count} formulas",
+  "@bookFormulasCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookNumericalsCount": "{count} numericals",
+  "@bookNumericalsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "bookFreePreview": "Free preview",
+  "authPasswordTooShort": "Use at least {count} characters.",
+  "@authPasswordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "authPasswordConfirmRequired": "Re-enter your new password.",
+  "authPasswordMismatch": "The two passwords do not match.",
+  "gameClaimedCoins": "Claimed {coins} coins",
+  "@gameClaimedCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "gameNothingClaimable": "Nothing was claimable",
+  "gameClaimedMission": "Claimed {count} mission{plural} for {coins} coins",
+  "@gameClaimedMission": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "plural": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeCalculatorsCount": "{count} Calculators",
+  "@homeCalculatorsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "libraryUnlockFree": "Unlock (Free)",
+  "libraryUnlockCoins": "Unlock • {coins} coins",
+  "@libraryUnlockCoins": {
+    "placeholders": {
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizQuestionsPlus": "{count}+ questions",
+  "@quizQuestionsPlus": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizQuestionsCount": "{count} questions",
+  "@quizQuestionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "socialReferralApplied": "Referral code applied.",
+  "socialReferralRejected": "That code could not be applied. It may already have been used.",
+  "socialTryThis": "Try this on CivilCal",
+  "socialShareInvite": "Use my code {code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n{url}",
+  "@socialShareInvite": {
+    "placeholders": {
+      "code": {
+        "type": "Object"
+      },
+      "url": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorRetrievalFailed": "Retrieval temporarily failed — showing deterministic plan.",
+  "tutorDegradedNote": "Answers may be less personalized (degraded).",
+  "eiceSectionFailed": "Could not load this section. {reason}",
+  "@eiceSectionFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "numericalNotCorrect": "Not correct. Try again or view the worked solution.",
+  "quizAnswerSavedNote": "Answer saved — the breakdown unlocks on the results screen.",
+  "quizShareResult": "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com",
+  "@quizShareResult": {
+    "placeholders": {
+      "correct": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      },
+      "percent": {
+        "type": "Object"
+      },
+      "title": {
+        "type": "Object"
+      },
+      "grade": {
+        "type": "Object"
+      },
+      "xp": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizGradeExcellent": "Excellent",
+  "quizGradeGoodJob": "Good Job",
+  "quizGradeKeepPracticing": "Keep Practicing",
+  "quizDefaultTitle": "CivilCal Quiz",
+  "syllabusTopicsLoaded": "topics loaded",
+  "syllabusTopicsLabel": "topics",
+  "quizIntroGradesInstantly": "Server grades your answer instantly.",
+  "quizIntroCorrectRule": "Correct: +10 XP, streak combo bonus.",
+  "quizIntroWrongRule": "Wrong: -2 XP, streak resets.",
+  "quizIntroBackRule": "Tap the back button to exit (progress lost).",
+  "tutorExampleProctor": "Explain proctor compaction simply",
+  "tutorExamplePlanWeek": "Help me plan this week",
+  "privacyLinkedToAccount": "Linked to an account",
+  "authPasswordRequired": "Enter a new password.",
   "forceUpdateUnsupportedLatest": "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
   "forceUpdateUnsupportedVersion": "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
   "@forceUpdateUnsupportedVersion": {

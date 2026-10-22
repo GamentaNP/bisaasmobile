@@ -231,9 +231,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authInvalidEmail => 'Enter a valid email';
 
   @override
-  String get authPasswordRequired => 'Please enter your password';
-
-  @override
   String onboardingStepOf(Object current, Object total) {
     return 'Step $current of $total';
   }
@@ -782,10 +779,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingContinue => 'Continue';
-
-  @override
-  String get privacyLinkedToAccount =>
-      'This profile is linked to your account. Delete the account to erase everything.';
 
   @override
   String get quizSeeResults => 'See Results';
@@ -2056,11 +2049,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get practiceDoesNotAffect =>
       'Practice — does not affect rank, XP or streak';
-
-  @override
-  String practiceQuestionsCount(Object count) {
-    return '$count questions';
-  }
 
   @override
   String practiceAnsweredSkipped(Object answered, Object skipped) {
@@ -3562,6 +3550,386 @@ class AppLocalizationsEn extends AppLocalizations {
   String syllabusExaminableCount(Object count) {
     return '$count examinable';
   }
+
+  @override
+  String get errSessionExpired =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get errForbidden => 'You do not have access to this resource.';
+
+  @override
+  String get errNotFound => 'Not found.';
+
+  @override
+  String get errValidationRejected =>
+      'Some of the submitted values were rejected.';
+
+  @override
+  String get errUpgradeRequired => 'A newer version of the app is required.';
+
+  @override
+  String get errRateLimited => 'Too many requests. Please try again shortly.';
+
+  @override
+  String get errServerTrouble =>
+      'The server is having trouble. Please try again.';
+
+  @override
+  String errRequestFailedStatus(Object status) {
+    return 'Request failed with status $status.';
+  }
+
+  @override
+  String get errTimeout =>
+      'The request timed out. Check your connection and try again.';
+
+  @override
+  String get errUnreachable =>
+      'Could not reach the server. Check your connection and try again.';
+
+  @override
+  String get errCancelled => 'The request was cancelled.';
+
+  @override
+  String get errBadCertificate =>
+      'The server certificate could not be verified.';
+
+  @override
+  String get errTransformTimeout =>
+      'The server took too long to deliver the response.';
+
+  @override
+  String lifelineWrongRemoved(Object count) {
+    return '$count wrong option(s) removed.';
+  }
+
+  @override
+  String lifelineCorrectAnswer(Object answer) {
+    return 'Correct answer: $answer';
+  }
+
+  @override
+  String lifelineTimeAdded(Object seconds) {
+    return '+${seconds}s added.';
+  }
+
+  @override
+  String lifelineTimerFrozen(Object seconds) {
+    return 'Timer frozen for ${seconds}s.';
+  }
+
+  @override
+  String get lifelineShieldActive =>
+      'Shield active — one wrong answer forgiven.';
+
+  @override
+  String get lifelineDoubleXp => 'Double XP active on the next correct answer.';
+
+  @override
+  String get lifelineAudiencePoll => 'Audience poll coming up.';
+
+  @override
+  String get lifelineSecondChance => 'Second chance saved for this question.';
+
+  @override
+  String get lifelineNotEnoughCoins => 'Not enough coins.';
+
+  @override
+  String get lifelineNotValidForQuestion => 'Not valid for this question.';
+
+  @override
+  String get lifelineAlreadyUsed => 'Already used on this attempt.';
+
+  @override
+  String get lifelineNotAvailable => 'Not available for this attempt.';
+
+  @override
+  String get lifelineTryAgain => 'Please try again.';
+
+  @override
+  String lifelineNeedsCoins(Object cost, Object balance) {
+    return 'Needs $cost coins (you have $balance)';
+  }
+
+  @override
+  String get lifelineUnavailableNow => 'Unavailable right now';
+
+  @override
+  String streakAtRisk(Object days) {
+    return 'At risk — complete a quiz before midnight to keep $days days alive.';
+  }
+
+  @override
+  String get streakCompleteToGrow =>
+      'Complete today\'s quiz to grow your streak.';
+
+  @override
+  String get streakTierLegend => 'Legend 100+';
+
+  @override
+  String get streakTierChampion => 'Champion 30+';
+
+  @override
+  String get streakTierWarrior => 'Warrior 7+';
+
+  @override
+  String get streakTierStarter => 'Starter';
+
+  @override
+  String get streakCheckingRepair => 'Checking repair eligibility…';
+
+  @override
+  String get streakMissedDayGeneric =>
+      'You missed a day. Repair it now to keep the streak.';
+
+  @override
+  String streakMissedDayWhen(Object when) {
+    return 'You missed $when. Repair it now to keep the streak.';
+  }
+
+  @override
+  String streakInsuranceBanked(Object count, Object max, Object plural) {
+    return '$count of $max insurance token$plural banked. One auto-repairs a missed day.';
+  }
+
+  @override
+  String streakInsuranceExplain(Object max) {
+    return 'Bank a token and it auto-repairs one missed day for you. Up to $max at a time.';
+  }
+
+  @override
+  String get streakInsuranceUnavailable =>
+      'Insurance is not available on your account yet.';
+
+  @override
+  String get streakNoInsuranceToUse => 'No insurance available to use.';
+
+  @override
+  String get privacyUnreachable =>
+      'We could not reach the server to show what is stored about this device.';
+
+  @override
+  String get privacyUnreadable =>
+      'We could not read what is stored about this device. Your local choices are unaffected.';
+
+  @override
+  String get privacyEraseViaAccount =>
+      'This profile is linked to your account, so erasing it is handled by the account deletion flow. Use Delete account in Settings to remove everything.';
+
+  @override
+  String get privacyLocalConsentNote =>
+      'Analytics, functional and marketing consent are stored on this device and applied immediately, independently of the anonymous profile above.';
+
+  @override
+  String get privacyNoChoiceYet => 'You have not made a choice yet.';
+
+  @override
+  String get settingsLanguageSection => 'Language';
+
+  @override
+  String get settingsSecuritySection => 'Security';
+
+  @override
+  String get settingsAiSection => 'AI';
+
+  @override
+  String get settingsAccountSection => 'Account';
+
+  @override
+  String bookPageRangeOpen(Object start) {
+    return 'p. $start+';
+  }
+
+  @override
+  String bookPageRangeSingle(Object page) {
+    return 'p. $page';
+  }
+
+  @override
+  String bookPageRange(Object start, Object end) {
+    return 'p. $start–$end';
+  }
+
+  @override
+  String get bookSessionNotCounted => 'This reading session was not counted.';
+
+  @override
+  String bookSessionNotCountedReason(Object reason) {
+    return 'This reading session was not counted: $reason';
+  }
+
+  @override
+  String bookPagesCount(Object count) {
+    return '$count pages';
+  }
+
+  @override
+  String bookChaptersCount(Object count) {
+    return '$count chapters';
+  }
+
+  @override
+  String bookReadingTime(Object count) {
+    return '$count h';
+  }
+
+  @override
+  String bookCoinsCount(Object count) {
+    return '$count coins';
+  }
+
+  @override
+  String bookFormulasCount(Object count) {
+    return '$count formulas';
+  }
+
+  @override
+  String bookNumericalsCount(Object count) {
+    return '$count numericals';
+  }
+
+  @override
+  String get bookFreePreview => 'Free preview';
+
+  @override
+  String authPasswordTooShort(Object count) {
+    return 'Use at least $count characters.';
+  }
+
+  @override
+  String get authPasswordConfirmRequired => 'Re-enter your new password.';
+
+  @override
+  String get authPasswordMismatch => 'The two passwords do not match.';
+
+  @override
+  String gameClaimedCoins(Object coins) {
+    return 'Claimed $coins coins';
+  }
+
+  @override
+  String get gameNothingClaimable => 'Nothing was claimable';
+
+  @override
+  String gameClaimedMission(Object count, Object plural, Object coins) {
+    return 'Claimed $count mission$plural for $coins coins';
+  }
+
+  @override
+  String homeCalculatorsCount(Object count) {
+    return '$count Calculators';
+  }
+
+  @override
+  String get libraryUnlockFree => 'Unlock (Free)';
+
+  @override
+  String libraryUnlockCoins(Object coins) {
+    return 'Unlock • $coins coins';
+  }
+
+  @override
+  String quizQuestionsPlus(Object count) {
+    return '$count+ questions';
+  }
+
+  @override
+  String quizQuestionsCount(Object count) {
+    return '$count questions';
+  }
+
+  @override
+  String get socialReferralApplied => 'Referral code applied.';
+
+  @override
+  String get socialReferralRejected =>
+      'That code could not be applied. It may already have been used.';
+
+  @override
+  String get socialTryThis => 'Try this on CivilCal';
+
+  @override
+  String socialShareInvite(Object code, Object url) {
+    return 'Use my code $code on CivilCal — civil engineering calculators and Loksewa MCQs.\n$url';
+  }
+
+  @override
+  String get tutorRetrievalFailed =>
+      'Retrieval temporarily failed — showing deterministic plan.';
+
+  @override
+  String get tutorDegradedNote =>
+      'Answers may be less personalized (degraded).';
+
+  @override
+  String eiceSectionFailed(Object reason) {
+    return 'Could not load this section. $reason';
+  }
+
+  @override
+  String get numericalNotCorrect =>
+      'Not correct. Try again or view the worked solution.';
+
+  @override
+  String get quizAnswerSavedNote =>
+      'Answer saved — the breakdown unlocks on the results screen.';
+
+  @override
+  String quizShareResult(
+    Object correct,
+    Object total,
+    Object percent,
+    Object title,
+    Object grade,
+    Object xp,
+    Object coins,
+  ) {
+    return 'I scored $correct/$total ($percent%) on \"$title\" — $grade! XP +$xp, Coins +$coins via CivilCal (BiSaaS). Try: https://bisaas.com';
+  }
+
+  @override
+  String get quizGradeExcellent => 'Excellent';
+
+  @override
+  String get quizGradeGoodJob => 'Good Job';
+
+  @override
+  String get quizGradeKeepPracticing => 'Keep Practicing';
+
+  @override
+  String get quizDefaultTitle => 'CivilCal Quiz';
+
+  @override
+  String get syllabusTopicsLoaded => 'topics loaded';
+
+  @override
+  String get syllabusTopicsLabel => 'topics';
+
+  @override
+  String get quizIntroGradesInstantly => 'Server grades your answer instantly.';
+
+  @override
+  String get quizIntroCorrectRule => 'Correct: +10 XP, streak combo bonus.';
+
+  @override
+  String get quizIntroWrongRule => 'Wrong: -2 XP, streak resets.';
+
+  @override
+  String get quizIntroBackRule =>
+      'Tap the back button to exit (progress lost).';
+
+  @override
+  String get tutorExampleProctor => 'Explain proctor compaction simply';
+
+  @override
+  String get tutorExamplePlanWeek => 'Help me plan this week';
+
+  @override
+  String get privacyLinkedToAccount => 'Linked to an account';
+
+  @override
+  String get authPasswordRequired => 'Enter a new password.';
 
   @override
   String get forceUpdateUnsupportedLatest =>

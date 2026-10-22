@@ -28,13 +28,13 @@ half-happen.
 
 ## 2. What is translated today
 
-**Everything.** 993 messages, in English, Nepali and Hindi, covering
+**Everything.** 1087 messages, in English, Nepali and Hindi, covering
 every screen in the app:
 
 | Area | Screens |
 |---|---|
 | First run | onboarding, target exam, daily goal, current level |
-| Auth | sign-up, sign-in, forgot password, reset password, email verification, social sign-in |
+| Auth | sign-up, sign-in, forgot password, reset password, email verification, social sign-in, the password policy |
 | The study loop | quiz browse, intro, attempt, result, review, guest funnel, practice drill, self-challenge, numericals |
 | The AI | tutor chat, tutor onboarding, study plan, insights, revisions, weekly report, AI usage, AI keys |
 | Content | library browser and detail, books and the reader, syllabus tree and blueprints, courses, learning tracks, today plan, reviews due, goals, downloads |
@@ -43,9 +43,10 @@ every screen in the app:
 | Money | wallet, ledger, coin shop, inventory, donations, premium store, wardrobe, referral |
 | Social | invite friends, referral codes, shared challenges, notifications, search |
 | The app itself | privacy choices, stored data, settings, force update, maintenance, offline banner, error and empty states |
+| **Failures** | the whole error catalogue — every status code and every transport failure — because an error message is the copy a user reads most often |
 
-**Four strings in the whole of `lib/` are not translated**, and all four
-are correct:
+**Fourteen strings in the whole of `lib/` are not translated**, and all
+fourteen are correct:
 
 | String | Why |
 |---|---|
@@ -53,6 +54,12 @@ are correct:
 | `OK (cached)` | A synthetic HTTP status message. It is never shown to a user. |
 | The debug auto-login button | It only exists in a `kDebugMode` build, so it is compiled out of a release. |
 | `C` | The avatar fallback: the first letter of the display name. |
+| Seven sync-queue reasons | `an empty endpoint`, `a path with surrounding whitespace`, … They explain why a queued endpoint was refused; they end up in an `ArgumentError` and in the log. |
+| `correctness`, `duration` | **Protocol values.** The battle kernel and the server agree on those strings; translating them would break the contract rather than translate it. |
+| `shuffle:{…}` | A roster-sampling label for the log. |
+
+`test/app/localization_coverage_test.dart` holds the list, so an
+exemption is visible rather than hidden.
 
 ---
 
@@ -63,7 +70,7 @@ Four tools, all checked in:
 | Tool | What it does |
 |---|---|
 | `tool/generate_arb.py` | The master copy table. English, Nepali and Hindi sit side by side in one file and the script writes the three ARB files from it, so the locales cannot drift apart. It also **validates** that every `{placeholder}` in a message is declared — a mismatch is a build-time error, not a screen that quietly stayed English. |
-| `tool/localization_coverage.dart` | Parses every file under `lib/` with the Dart analyzer and reports the string literals that reach the user. A literal with no letter in it — a counter, a separator — is skipped, because a screen full of numbers is not untranslated copy. |
+| `tool/localization_coverage.dart` | Parses every file under `lib/` with the Dart analyzer and reports the string literals that reach the user. It sees the widget text positions, the string branches of a conditional, the copy a function **returns**, a copy **variable**, a map value under a copy-ish key, and the first argument of a private constructor — and it **skips** log lines, constant initialisers and protocol labels. A literal with no letter in it — a counter, a separator — is skipped, because a screen full of numbers is not untranslated copy. |
 | `tool/apply_localization.py` | Rewrites those literals to `l10n.<key>`. It removes the `const` chain the literal sat in (a getter call is not a constant expression) and calls the generated member with the original interpolated expressions, because a message with placeholders is a method and not a getter. |
 | `tool/apply_localization_plumbing.py` | Adds the import and the `l10n` binding the rewritten strings need. |
 

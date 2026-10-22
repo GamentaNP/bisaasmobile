@@ -126,7 +126,7 @@ class _Summary extends StatelessWidget {
     // The version card advertises the full topic count while a depth-scoped tree
     // request returns only what it fetched, so the label says which it is rather
     // than letting the two numbers appear to contradict each other.
-    final topicsLabel = tree.depthLimited ? 'topics loaded' : 'topics';
+    final topicsLabel = tree.depthLimited ? l10n.syllabusTopicsLoaded : l10n.syllabusTopicsLabel;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Row(

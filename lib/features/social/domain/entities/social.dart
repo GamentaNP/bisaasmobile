@@ -1,9 +1,12 @@
+library;
+
 /// Social growth domain entities.
 ///
 /// Server-authoritative throughout: referral attribution, reward amounts and
 /// statuses are computed by the server and rendered here. The client never
 /// decides that a referral "counted", and never mints a reward.
-library;
+import '../../../../app/localization/l10n.dart';
+
 
 import 'package:meta/meta.dart';
 
@@ -178,7 +181,7 @@ class ShareLink {
     if (title != null && body != null) return '$title\n$body';
     if (body != null) return body;
     if (title != null) return title;
-    return 'Try this on CivilCal';
+    return appL10n().socialTryThis;
   }
 }
 

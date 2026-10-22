@@ -201,6 +201,15 @@ SCOPE = {
     "lib/shared/widgets/offline_state_banner.dart",
     "lib/shared/widgets/error_view.dart",
     "lib/core/network/response_cache_interceptor.dart",
+    # tier 5 — the error catalogue and the domain copy
+    "lib/core/network/api_failure.dart",
+    "lib/features/auth/domain/password_policy.dart",
+    "lib/features/book/domain/entities/book.dart",
+    "lib/features/numericals/domain/entities/numerical.dart",
+    "lib/features/social/domain/entities/social.dart",
+    "lib/features/social/presentation/social_screen.dart",
+    "lib/features/social/presentation/controllers/social_controller.dart",
+    "lib/features/streak/presentation/controllers/streak_controller.dart",
 }
 
 

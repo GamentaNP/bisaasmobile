@@ -1,3 +1,5 @@
+library;
+
 /// Book Engine domain entities.
 ///
 /// The reader is the one part of the app where **server-authoritative** has a
@@ -6,7 +8,9 @@
 /// a void reason, and this model keeps them separate. A reader that showed the
 /// awarded XP while the server voided it would be telling the user something
 /// false.
-library;
+
+import '../../../../app/localization/l10n.dart';
+
 
 /// A book in the catalog.
 class Book {
@@ -126,9 +130,9 @@ class BookChapter {
     final start = startPage;
     if (start == null) return null;
     final end = endPage;
-    if (end == null) return 'p. $start+';
-    if (end <= start) return 'p. $start';
-    return 'p. $start–$end';
+    if (end == null) return appL10n().bookPageRangeOpen(start);
+    if (end <= start) return appL10n().bookPageRangeSingle(start);
+    return appL10n().bookPageRange(start, end);
   }
 
   /// The title in the reader's language, falling back to English.
@@ -214,8 +218,8 @@ class ReadingCredit {
     if (voided) {
       final reason = voidReason?.trim();
       return reason == null || reason.isEmpty
-          ? 'This reading session was not counted.'
-          : 'This reading session was not counted: $reason';
+          ? appL10n().bookSessionNotCounted
+          : appL10n().bookSessionNotCountedReason(reason);
     }
     if (xpAwarded > 0 || coinsAwarded > 0) {
       final parts = <String>[];

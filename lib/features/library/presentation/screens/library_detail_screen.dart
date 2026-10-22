@@ -384,7 +384,7 @@ class _ActionRow extends StatelessWidget {
                 icon: isUnlocking
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.lock_open_rounded, size: 18),
-                label: Text(isUnlocking ? l10n.libraryUnlocking : file.isFree ? 'Unlock (Free)' : 'Unlock • ${file.coinPrice} coins'),
+                label: Text(isUnlocking ? l10n.libraryUnlocking : file.isFree ? l10n.libraryUnlockFree : l10n.libraryUnlockCoins(file.coinPrice)),
               ),
             ),
             const SizedBox(width: 12),

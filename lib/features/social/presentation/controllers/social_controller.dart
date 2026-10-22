@@ -112,8 +112,8 @@ class SocialController extends Notifier<SocialState> {
     try {
       final result = await _repo.claimReferralCode(code);
       final message = result.claimed
-          ? 'Referral code applied.'
-          : 'That code could not be applied. It may already have been used.';
+          ? appL10n().socialReferralApplied
+          : appL10n().socialReferralRejected;
       state = state.copyWith(claimInFlight: false, claimMessage: message);
       // The reward may have changed the wallet, so re-read the dashboard.
       if (result.claimed) await load(force: true);

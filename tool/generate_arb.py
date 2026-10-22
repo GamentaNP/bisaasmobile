@@ -169,9 +169,6 @@ add("authMinChars", "At least {count} characters", "कम्तीमा {count
 add("authVerifyEmailBanner", "Verify your email to unlock every feature.", "सबै सुविधा खोल्न आफ्नो इमेल प्रमाणित गर्नुहोस्।", "सभी सुविधाएं खोलने के लिए अपना ईमेल सत्यापित करें।")
 add("authSplashTagline", "BiSaaS Engineering Learning Ecosystem", "बिसास इन्जिनियरिङ लर्निङ इकोसिस्टम", "बिसास इंजीनियरिंग लर्निंग इकोसिस्टम")
 add("authInvalidEmail", "Enter a valid email", "मान्य इमेल लेख्नुहोस्", "मान्य ईमेल दर्ज करें")
-add("authPasswordRequired", "Please enter your password", "कृपया आफ्नो पासवर्ड लेख्नुहोस्", "कृपया अपना पासवर्ड दर्ज करें")
-
-# ── onboarding ───────────────────────────────────────────────────────────────
 add("onboardingStepOf", "Step {current} of {total}", "चरण {current} / {total}", "चरण {current} / {total}", ["current", "total"])
 add("onboardingTargetExamTitle", "Target Examination", "लक्षित परीक्षा", "लक्षित परीक्षा")
 add(
@@ -473,12 +470,6 @@ add("homeMissionsReady", "{count} missions ready to claim", "{count} मिस�
 add("homeMissionsActive", "Missions — {count} active", "मिसन — {count} सक्रिय", "मिशन — {count} सक्रिय", ["count"])
 add("onboardingStartLearning", "Start Learning", "सिकाइ सुरु गर्नुहोस्", "सीखना शुरू करें")
 add("onboardingContinue", "Continue", "जारी राख्नुहोस्", "जारी रखें")
-add(
-    "privacyLinkedToAccount",
-    "This profile is linked to your account. Delete the account to erase everything.",
-    "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ। सबै मेटाउन खाता नै हटाउनुहोस्।",
-    "यह प्रोफ़ाइल आपके खाते से जुड़ा है। सब कुछ मिटाने के लिए खाता ही हटाएं।",
-)
 add("quizSeeResults", "See Results", "नतिजा हेर्नुहोस्", "परिणाम देखें")
 add("quizNextQuestion", "Next Question", "अर्को प्रश्न", "अगला प्रश्न")
 add("quizAnswerSubmitted", "Answer submitted", "उत्तर पठाइयो", "उत्तर जमा हुआ")
@@ -1213,7 +1204,6 @@ add(
     "अभ्यास — अंक, XP वा स्ट्रिकलाई असर गर्दैन",
     "अभ्यास — रैंक, XP या स्ट्रीक को प्रभावित नहीं करता",
 )
-add("practiceQuestionsCount", "{count} questions", "{count} प्रश्न", "{count} प्रश्न", ["count"])
 add(
     "practiceAnsweredSkipped",
     "{answered} answered • {skipped} skipped",
@@ -2082,6 +2072,213 @@ add(
     ["query"],
 )
 add("syllabusExaminableCount", "{count} examinable", "{count} परीक्षामा", "{count} परीक्षा में", ["count"])
+
+# ── the error catalogue ─────────────────────────────────────────────────────
+# Every one of these reaches the user when something fails, and they are the
+# most-read strings in the app after the navigation.
+add("errSessionExpired", "Your session has expired. Please sign in again.", "तपाईंको सत्रको म्याद सकियो। कृपया फेरि साइन इन गर्नुहोस्।", "आपका सत्र समाप्त हो गया। कृपया फिर से साइन इन करें।")
+add("errForbidden", "You do not have access to this resource.", "तपाईंलाई यो स्रोतमा पहुँच छैन।", "आपके पास इस संसाधन तक पहुँच नहीं है।")
+add("errNotFound", "Not found.", "फेला परेन।", "नहीं मिला।")
+add("errValidationRejected", "Some of the submitted values were rejected.", "पेश गरिएका केही मानहरू अस्वीकार भए।", "प्रस्तुत किए गए कुछ मान अस्वीकार कर दिए गए।")
+add("errUpgradeRequired", "A newer version of the app is required.", "एपको नयाँ संस्करण चाहिन्छ।", "ऐप के नए संस्करण की आवश्यकता है।")
+add("errRateLimited", "Too many requests. Please try again shortly.", "धेरै अनुरोध भए। कृपया छोटो समयमा फेरि प्रयास गर्नुहोस्।", "बहुत अधिक अनुरोध। कृपया थोड़ी देर में फिर से कोशिश करें।")
+add("errServerTrouble", "The server is having trouble. Please try again.", "सर्भरमा समस्या छ। कृपया फेरि प्रयास गर्नुहोस्।", "सर्वर में समस्या है। कृपया फिर से कोशिश करें।")
+add("errRequestFailedStatus", "Request failed with status {status}.", "अनुरोध {status} स्थितिमा असफल भयो।", "अनुरोध {status} स्थिति में विफल रहा।", ["status"])
+add("errTimeout", "The request timed out. Check your connection and try again.", "अनुरोधको समय सकियो। जडान जाँचेर फेरि प्रयास गर्नुहोस्।", "अनुरोध का समय समाप्त हो गया। कनेक्शन जांचें और फिर से कोशिश करें।")
+add("errUnreachable", "Could not reach the server. Check your connection and try again.", "सर्भरसम्म पुग्न सकिएन। जडान जाँचेर फेरि प्रयास गर्नुहोस्।", "सर्वर तक नहीं पहुँच सके। कनेक्शन जांचें और फिर से कोशिश करें।")
+add("errCancelled", "The request was cancelled.", "अनुरोध रद्द गरियो।", "अनुरोध रद्द कर दिया गया।")
+add("errBadCertificate", "The server certificate could not be verified.", "सर्भरको प्रमाणपत्र प्रमाणित गर्न सकिएन।", "सर्वर का प्रमाणपत्र सत्यापित नहीं हो सका।")
+add("errTransformTimeout", "The server took too long to deliver the response.", "सर्भरले उत्तर दिन धेरै समय लियो।", "सर्वर को जवाब देने में बहुत समय लगा।")
+
+# ── the lifelines ───────────────────────────────────────────────────────────
+add("lifelineWrongRemoved", "{count} wrong option(s) removed.", "{count} गलत विकल्प हटाइयो।", "{count} गलत विकल्प हटा दिए गए।", ["count"])
+add("lifelineCorrectAnswer", "Correct answer: {answer}", "सही उत्तर: {answer}", "सही उत्तर: {answer}", ["answer"])
+add("lifelineTimeAdded", "+{seconds}s added.", "+{seconds}s थपियो।", "+{seconds}s जोड़ा गया।", ["seconds"])
+add("lifelineTimerFrozen", "Timer frozen for {seconds}s.", "{seconds}s को लागि टाइमर फ्रिज।", "{seconds}s के लिए टाइमर फ्रीज़।", ["seconds"])
+add("lifelineShieldActive", "Shield active — one wrong answer forgiven.", "सिड सक्रिय — एउटा गलत उत्तर क्षमा हुन्छ।", "शील्ड सक्रिय — एक गलत उत्तर माफ।")
+add("lifelineDoubleXp", "Double XP active on the next correct answer.", "अर्को सही उत्तरमा दोहोरो XP सक्रिय।", "अगले सही उत्तर पर डबल XP सक्रिय।")
+add("lifelineAudiencePoll", "Audience poll coming up.", "अर्डियन्स पोल आउँदैछ।", "ऑडियंस पोल आने वाला है।")
+add("lifelineSecondChance", "Second chance saved for this question.", "यो प्रश्नका लागि दोस्रो मौका सुरक्षित भयो।", "इस प्रश्न के लिए दूसरा मौका सहेज लिया गया।")
+add("lifelineNotEnoughCoins", "Not enough coins.", "पर्याप्त क्विन छैन।", "पर्याप्त कॉइन नहीं।")
+add("lifelineNotValidForQuestion", "Not valid for this question.", "यो प्रश्नका लागि मान्य छैन।", "इस प्रश्न के लिए मान्य नहीं।")
+add("lifelineAlreadyUsed", "Already used on this attempt.", "यो प्रयासमा पहिले नै प्रयोग भइसकेको छ।", "इस प्रयास में पहले ही उपयोग हो चुका है।")
+add("lifelineNotAvailable", "Not available for this attempt.", "यो प्रयासमा उपलब्ध छैन।", "इस प्रयास के लिए उपलब्ध नहीं।")
+add("lifelineTryAgain", "Please try again.", "कृपया फेरि प्रयास गर्नुहोस्।", "कृपया फिर से कोशिश करें।")
+add("lifelineNeedsCoins", "Needs {cost} coins (you have {balance})", "{cost} क्विन चाहिन्छ (तपाईंसँग {balance} छ)", "{cost} कॉइन चाहिए (आपके पास {balance} हैं)", ["cost", "balance"])
+add("lifelineUnavailableNow", "Unavailable right now", "अहिले उपलब्ध छैन", "अभी उपलब्ध नहीं")
+
+# ── the streak ──────────────────────────────────────────────────────────────
+add("streakAtRisk", "At risk — complete a quiz before midnight to keep {days} days alive.", "जोखिममा — {days} दिन जोगाउन मध्यरात्रिभन्दा पहिले एउटा क्विज पूरा गर्नुहोस्।", "जोखिम में — {days} दिन बचाउने के लिए मध्यरात्रि से पहले एक क्विज़ पूरा करें।", ["days"])
+add("streakCompleteToGrow", "Complete today's quiz to grow your streak.", "स्ट्रिक बढाउन आजको क्विज पूरा गर्नुहोस्।", "स्ट्रीक बढ़ाने के लिए आज का क्विज़ पूरा करें।")
+add("streakTierLegend", "Legend 100+", "लिजेन्ड १००+", "लीजेंड 100+")
+add("streakTierChampion", "Champion 30+", "च्याम्पियन ३०+", "चैंपियन 30+")
+add("streakTierWarrior", "Warrior 7+", "वारियर ७+", "वॉरियर 7+")
+add("streakTierStarter", "Starter", "स्टार्टर", "स्टार्टर")
+add("streakCheckingRepair", "Checking repair eligibility…", "मर्मत योग्यता जाँच्दै…", "मरम्मत योग्यता जांच रहे हैं…")
+add("streakMissedDayGeneric", "You missed a day. Repair it now to keep the streak.", "तपाईंले एक दिन छुटाउनुभयो। स्ट्रिक जोगाउन अहिले मर्मत गर्नुहोस्।", "आपने एक दिन छोड़ा। स्ट्रीक बचाने के लिए अभी मरम्मत करें।")
+add(
+    "streakMissedDayWhen",
+    "You missed {when}. Repair it now to keep the streak.",
+    "तपाईंले {when} छुटाउनुभयो। स्ट्रिक जोगाउन अहिले मर्मत गर्नुहोस्।",
+    "आपने {when} छोड़ा। स्ट्रीक बचाने के लिए अभी मरम्मत करें।",
+    ["when"],
+)
+add(
+    "streakInsuranceBanked",
+    "{count} of {max} insurance token{plural} banked. One auto-repairs a missed day.",
+    "{max} मध्ये {count} बीमा टोकन{plural} बचत। एउटाले छुटेको दिन आफैँ मर्मत गर्छ।",
+    "{max} में से {count} बीमा टोकन{plural} जमा। एक अपने आप छूटे दिन की मरम्मत कर देता है।",
+    ["count", "max", "plural"],
+)
+add(
+    "streakInsuranceExplain",
+    "Bank a token and it auto-repairs one missed day for you. Up to {max} at a time.",
+    "टोकन बचत राख्नुहोस्, तपाईंका लागि एउटा छुटेको दिन आफैँ मर्मत हुन्छ। एकैपटक बढीमा {max}।",
+    "टोकन जमा करें, यह आपके लिए एक छूटा दिन अपने आप मरम्मत कर देता है। एक बार में अधिकतम {max}।",
+    ["max"],
+)
+add("streakInsuranceUnavailable", "Insurance is not available on your account yet.", "तपाईंको खातामा अहिले बीमा उपलब्ध छैन।", "आपके खाते में अभी बीमा उपलब्ध नहीं है।")
+
+add("streakNoInsuranceToUse", "No insurance available to use.", "प्रयोग गर्नुपर्ने कुनै बीमा बाँकी छैन।", "उपयोग करने योग्य कोई बीमा बाकी नहीं है।")
+# ── the privacy screen ──────────────────────────────────────────────────────
+add(
+    "privacyUnreachable",
+    "We could not reach the server to show what is stored about this device.",
+    "यो यन्त्रमा के सुरक्षित छ देखाउन सर्भरसम्म पुग्न सकिएन।",
+    "इस डिवाइस पर क्या सहेजा है दिखाने के लिए हम सर्वर तक नहीं पहुँच सके।",
+)
+add(
+    "privacyUnreadable",
+    "We could not read what is stored about this device. Your local choices are unaffected.",
+    "यो यन्त्रमा के सुरक्षित छ पढ्न सकिएन। तपाईंका स्थानीय विकल्पमा असर पर्दैन।",
+    "हम इस डिवाइस पर सहेजा क्या है पढ़ नहीं सके। आपके स्थानीय विकल्प अप्रभावित नहीं हैं।",
+)
+add(
+    "privacyEraseViaAccount",
+    "This profile is linked to your account, so erasing it is handled by the account deletion flow. Use Delete account in Settings to remove everything.",
+    "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन Settings मा Delete account प्रयोग गर्नुहोस्।",
+    "यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए Settings में Delete account का उपयोग करें।",
+)
+add(
+    "privacyLocalConsentNote",
+    "Analytics, functional and marketing consent are stored on this device and applied immediately, independently of the anonymous profile above.",
+    "विश्लेषण, कार्यक्षम र प्रचारको सहमति यस यन्त्रमा सुरक्षित रहन्छ र तुरुन्तै लागू हुन्छ, माथिको अनाम प्रोफाइलबाट स्वतन्त्र।",
+    "विश्लेषण, कार्यक्षम और प्रचार की सहमति इस डिवाइस पर सहेजी जाती है और तुरंत लागू होती है, ऊपर के अनाम प्रोफ़ाइल से स्वतंत्र।",
+)
+add("privacyNoChoiceYet", "You have not made a choice yet.", "तपाईंले अझै कुनै छनोट गर्नुभएको छैन।", "आपने अभी तक कोई चयन नहीं किया है।")
+
+# ── the settings sections ───────────────────────────────────────────────────
+add("settingsLanguageSection", "Language", "भाषा", "भाषा")
+add("settingsSecuritySection", "Security", "सुरक्षा", "सुरक्षा")
+add("settingsAiSection", "AI", "AI", "AI")
+add("settingsAccountSection", "Account", "खाता", "खाता")
+
+# ── the books ───────────────────────────────────────────────────────────────
+add("bookPageRangeOpen", "p. {start}+", "पृष्ठ {start}+", "पृष्ठ {start}+", ["start"])
+add("bookPageRangeSingle", "p. {page}", "पृष्ठ {page}", "पृष्ठ {page}", ["page"])
+add("bookPageRange", "p. {start}–{end}", "पृष्ठ {start}–{end}", "पृष्ठ {start}–{end}", ["start", "end"])
+add("bookSessionNotCounted", "This reading session was not counted.", "यो पढाइ सत्र गनिनेन।", "यह पढ़ने का सत्र गिना नहीं गया।")
+add(
+    "bookSessionNotCountedReason",
+    "This reading session was not counted: {reason}",
+    "यो पढाइ सत्र गनिनेन: {reason}",
+    "यह पढ़ने का सत्र गिना नहीं गया: {reason}",
+    ["reason"],
+)
+add("bookPagesCount", "{count} pages", "{count} पृष्ठ", "{count} पृष्ठ", ["count"])
+add("bookChaptersCount", "{count} chapters", "{count} अध्याय", "{count} अध्याय", ["count"])
+add("bookReadingTime", "{count} h", "{count} घ", "{count} घं", ["count"])
+add("bookCoinsCount", "{count} coins", "{count} क्विन", "{count} कॉइन", ["count"])
+add("bookFormulasCount", "{count} formulas", "{count} सूत्र", "{count} सूत्र", ["count"])
+add("bookNumericalsCount", "{count} numericals", "{count} सङ्ख्यात्मक", "{count} संख्यात्मक", ["count"])
+add("bookFreePreview", "Free preview", "निःशुल्क झलक", "मुफ़्त झलक")
+
+# ── the password policy ─────────────────────────────────────────────────────
+add("authPasswordTooShort", "Use at least {count} characters.", "कम्तीमा {count} अक्षर प्रयोग गर्नुहोस्।", "कम से कम {count} अक्षर उपयोग करें।", ["count"])
+add("authPasswordConfirmRequired", "Re-enter your new password.", "आफ्नो नयाँ पासवर्ड फेरि लेख्नुहोस्।", "अपना नया पासवर्ड फिर से दर्ज करें।")
+add("authPasswordMismatch", "The two passwords do not match.", "दुवै पासवर्ड मिल्दैनन्।", "दोनों पासवर्ड मेल नहीं खाते।")
+
+# ── the missions ────────────────────────────────────────────────────────────
+add("gameClaimedCoins", "Claimed {coins} coins", "{coins} क्विन दावी गरियो", "{coins} कॉइन दावा किए", ["coins"])
+add("gameNothingClaimable", "Nothing was claimable", "दावी गर्नुपर्ने केही थिएन", "दावा करने योग्य कुछ नहीं था")
+add(
+    "gameClaimedMission",
+    "Claimed {count} mission{plural} for {coins} coins",
+    "{coins} क्विनका लागि {count} मिसन{plural} दावी गरियो",
+    "{coins} कॉइन के लिए {count} मिशन{plural} दावा किए",
+    ["count", "plural", "coins"],
+)
+
+# ── the share copy ──────────────────────────────────────────────────────────
+add("homeCalculatorsCount", "{count} Calculators", "{count} क्यालकुलेटर", "{count} कैलकुलेटर", ["count"])
+add("libraryUnlockFree", "Unlock (Free)", "खोल्नुहोस् (निःशुल्क)", "खोलें (मुफ़्त)")
+add("libraryUnlockCoins", "Unlock • {coins} coins", "खोल्नुहोस् • {coins} क्विन", "खोलें • {coins} कॉइन", ["coins"])
+add("quizQuestionsPlus", "{count}+ questions", "{count}+ प्रश्न", "{count}+ प्रश्न", ["count"])
+add("quizQuestionsCount", "{count} questions", "{count} प्रश्न", "{count} प्रश्न", ["count"])
+add("socialReferralApplied", "Referral code applied.", "रेफरल कोड लागू भयो।", "रेफ़रल कोड लागू हो गया।")
+add(
+    "socialReferralRejected",
+    "That code could not be applied. It may already have been used.",
+    "त्यो कोड लागू गर्न सकिएन। पहिले नै प्रयोग भएको हुन सक्छ।",
+    "वह कोड लागू नहीं हो सका। यह पहले से उपयोग किया जा चुका है।",
+)
+add("socialTryThis", "Try this on CivilCal", "CivilCal मा यो प्रयास गर्नुहोस्", "CivilCal पर यह आज़माएं")
+add("socialShareInvite",
+    "Use my code {code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n{url}",
+    "CivilCal मा मेरो कोड {code} प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n{url}",
+    "CivilCal पर मेरा कोड {code} का उपयोग करें — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।\n{url}",
+    ["code", "url"],
+)
+add(
+    "tutorRetrievalFailed",
+    "Retrieval temporarily failed — showing deterministic plan.",
+    "खोज अस्थायी रूपमा असफल भयो — निश्चित योजना देखाइदैछौं।",
+    "पुनर्प्राप्ति अस्थायी रूप से विफल — निश्चित योजना दिखा रहे हैं।",
+)
+add(
+    "tutorDegradedNote",
+    "Answers may be less personalized (degraded).",
+    "उत्तरहरू व्यक्तिगतभन्दा कम हुन सक्छन् (सीमित)।",
+    "उत्तर कम व्यक्तिगत हो सकते हैं (सीमित)।",
+)
+add("eiceSectionFailed", "Could not load this section. {reason}", "यो खण्ड लोड गर्न सकिएन। {reason}", "यह हिस्सा लोड नहीं हो सका। {reason}", ["reason"])
+add(
+    "numericalNotCorrect",
+    "Not correct. Try again or view the worked solution.",
+    "गलत छ। फेरि प्रयास गर्नुहोस् वा चरणबद्ध समाधान हेर्नुहोस्।",
+    "गलत है। फिर से कोशिश करें या चरणबद्ध हल देखें।",
+)
+add(
+    "quizAnswerSavedNote",
+    "Answer saved — the breakdown unlocks on the results screen.",
+    "उत्तर सुरक्षित भयो — विवरण नतिजाको स्क्रिनमा खुल्छ।",
+    "उत्तर सहेज लिया गया — विवरण परिणाम स्क्रीन पर खुलेगा।",
+)
+add(
+    "quizShareResult",
+    "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com",
+    "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (बिसास) बाट। प्रयास: https://bisaas.com",
+    "मैंने \"{title}\" पर {correct}/{total} ({percent}%) अंक किए — {grade}! XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://bisaas.com",
+    ["correct", "total", "percent", "title", "grade", "xp", "coins"],
+)
+add("quizGradeExcellent", "Excellent", "उत्कृष्ट", "बहुत बढ़िया")
+add("quizGradeGoodJob", "Good Job", "राम्रो काम", "अच्छा काम")
+add("quizGradeKeepPracticing", "Keep Practicing", "अभ्यास जारी राख्नुहोस्", "अभ्यास जारी रखें")
+add("quizDefaultTitle", "CivilCal Quiz", "CivilCal क्विज", "CivilCal क्विज़")
+add("syllabusTopicsLoaded", "topics loaded", "विषय लोड भए", "विषय लोड हुए")
+add("syllabusTopicsLabel", "topics", "विषय", "विषय")
+add("quizIntroGradesInstantly", "Server grades your answer instantly.", "सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।", "सर्वर आपके उत्तर को तुरंत अंकित करता है।")
+add("quizIntroCorrectRule", "Correct: +10 XP, streak combo bonus.", "सही: +१० XP, स्ट्रिक कम्बो बोनस।", "सही: +10 XP, स्ट्रीक कॉम्बो बोनस।")
+add("quizIntroWrongRule", "Wrong: -2 XP, streak resets.", "गलत: -२ XP, स्ट्रिक रिसेट।", "गलत: -2 XP, स्ट्रीक रीसेट।")
+add("quizIntroBackRule", "Tap the back button to exit (progress lost).", "बाहिर निस्कन पछाडि बटन थिच्नुहोस् (प्रगति हराउँछ)।", "बाहर निकलने के लिए बैक बटन दबाएं (प्रगति चली जाएगी)।")
+add("tutorExampleProctor", "Explain proctor compaction simply", "प्रोक्टर कम्प्याक्सन सरल भाषामा बुझाउनुहोस्", "प्रोक्टर कम्पैक्शन आसान भाषा में समझाएं")
+add("tutorExamplePlanWeek", "Help me plan this week", "यो हप्ताको योजना बनाउन मद्दत गर्नुहोस्", "इस सप्ताह की योजना बनाने में मदद करें")
+
+# ── the error catalogue ─────────────────────────────────────────────────────
+# Every one of these reaches the user when something fails, and they are the
+# most-read strings in the app after the navigation.
+add("privacyLinkedToAccount", "Linked to an account", "खातासँग जोडिएको", "खाते से जुड़ा")
+add("authPasswordRequired", "Enter a new password.", "नयाँ पासवर्ड लेख्नुहोस्।", "नया पासवर्ड दर्ज करें।")
 add(
     "forceUpdateUnsupportedLatest",
     "This version of CivilCal is no longer supported. Please update to the latest version to continue.",

@@ -104,8 +104,8 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                       state.isNoData
                           ? l10n.tutorNotEnoughHistory
                           : state.isRetrievalFailed
-                              ? 'Retrieval temporarily failed — showing deterministic plan.'
-                              : 'Answers may be less personalized (degraded).',
+                              ? l10n.tutorRetrievalFailed
+                              : l10n.tutorDegradedNote,
                       style: TextStyle(
                         fontSize: 12,
                         color: state.isNoData

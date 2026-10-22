@@ -73,6 +73,8 @@ final _namedTextParams = <String>{
   'secondaryLabel',
   'actionText',
   'supporting',
+  // A validator's return value is shown to the user as the field's error.
+  'validator',
 };
 
 final _textParamPattern = RegExp(
@@ -168,6 +170,25 @@ class _Visitor extends RecursiveAstVisitor<void> {
   /// visited, innermost last. A literal inside them cannot stay const.
   final List<int> _constStack = <int>[];
 
+  /// The name of the function being visited, used to decide whether a
+  /// returned string is copy or a log line.
+  String? _functionName;
+
+  /// Set while inside a log call. A log line is never shown to a user.
+  bool _inLog = false;
+
+  /// Names whose value is copy a user reads.
+  static final _messageName = RegExp(
+    '(message|error|reason|title|label|hint|description|desc|text|body|subtitle|'
+    'caption|prompt|placeholder|summary|validate)',
+    caseSensitive: false,
+  );
+
+  /// The loggers, whose arguments never reach a user.
+  static const _loggers = {
+    'w', 'i', 'd', 'e', 'wtf', 'log', 'print', 'debugPrint', 'printOnError',
+  };
+
   void _record(Expression expression, String kind) {
     final source = expression.toSource();
     // Anything that reads from the generated localisations is already
@@ -198,54 +219,154 @@ class _Visitor extends RecursiveAstVisitor<void> {
         if (argument.argumentExpression is StringLiteral) {
           _record(argument.argumentExpression, 'named:$label');
         } else {
+          // `message: cond ? e.message : 'Login failed'` — the copy is in
+          // the branch, not in the argument itself.
           _recordConditional(argument.argumentExpression, 'named:$label');
         }
       }
     }
   }
 
-  /// The two branches of a `cond ? 'a' : 'b'` are both user-facing.
+  /// The string branches of a conditional, at any depth.
   void _recordConditional(Object? argument, String kind) {
-    if (argument is! ConditionalExpression) return;
-    for (final branch in [argument.thenExpression, argument.elseExpression]) {
-      if (branch is StringLiteral) {
-        _record(branch, kind);
+    if (argument is! Expression) return;
+    final expression = argument;
+    if (expression is ConditionalExpression) {
+      _recordConditional(expression.thenExpression, kind);
+      _recordConditional(expression.elseExpression, kind);
+      return;
+    }
+    if (expression is StringLiteral) {
+      _record(expression, kind);
+    }
+  }
+
+  void _recordFirstArgument(ArgumentList arguments, String kind) {
+    if (arguments.arguments.isEmpty) return;
+    final first = arguments.arguments.first;
+    if (first is StringLiteral) {
+      _record(first, kind);
+    } else {
+      _recordConditional(first, kind);
+    }
+  }
+
+  @override
+  void visitMethodDeclaration(MethodDeclaration node) {
+    final previous = _functionName;
+    _functionName = node.name.lexeme;
+    _recordExpressionBody(node.name.lexeme, node.body);
+    super.visitMethodDeclaration(node);
+    _functionName = previous;
+  }
+
+  @override
+  void visitFunctionDeclaration(FunctionDeclaration node) {
+    final previous = _functionName;
+    _functionName = node.name.lexeme;
+    _recordExpressionBody(node.name.lexeme, node.functionExpression.body);
+    super.visitFunctionDeclaration(node);
+    _functionName = previous;
+  }
+
+  /// `String get message => 'Could not load it';` — an expression body, not a
+  /// return statement.
+  void _recordExpressionBody(String name, FunctionBody body) {
+    if (_inLog || !_messageName.hasMatch(name)) return;
+    if (body is! ExpressionFunctionBody) return;
+    final expression = body.expression;
+    if (expression is StringLiteral) {
+      _record(expression, 'getter:$name');
+    } else {
+      _recordConditional(expression, 'getter:$name');
+    }
+  }
+
+  @override
+  void visitVariableDeclaration(VariableDeclaration node) {
+    // `final errorMessage = 'Could not load it';` — the variable name says
+    // the value is copy. A `const` is different: a constant string in a
+    // domain file is a protocol value (`'correctness'`, `'duration'`), and
+    // translating it would break the contract rather than translate it.
+    final isConst = node.toSource().trimLeft().startsWith('const ');
+    if (!_inLog && !isConst && _messageName.hasMatch(node.name.lexeme)) {
+      final initializer = node.initializer;
+      if (initializer != null) {
+        if (initializer is StringLiteral) {
+          _record(initializer, 'variable:${node.name.lexeme}');
+        } else {
+          _recordConditional(initializer, 'variable:${node.name.lexeme}');
+        }
       }
     }
+    super.visitVariableDeclaration(node);
+  }
+
+  @override
+  void visitSetOrMapLiteral(SetOrMapLiteral node) {
+    // `{'desc': '10-15 daily questions to maintain streak'}` — the key says
+    // the value is copy. (In analyzer 7+ a map literal is a
+    // `SetOrMapLiteral` with `isMap` set.)
+    if (!_inLog && node.isMap) {
+      for (final element in node.elements) {
+        if (element is MapLiteralEntry) {
+          final key = element.key;
+          if (key is StringLiteral &&
+              _messageName.hasMatch(key.stringValue ?? '')) {
+            final value = element.value;
+            if (value is StringLiteral) {
+              _record(value, 'map:${key.stringValue}');
+            } else {
+              _recordConditional(value, 'map:${key.stringValue}');
+            }
+          }
+        }
+      }
+    }
+    super.visitSetOrMapLiteral(node);
+  }
+
+  @override
+  void visitReturnStatement(ReturnStatement node) {
+    // A function whose name says it returns copy — `errorMessage(...)`,
+    // `_statusMessage(...)` — is returning something a user reads.
+    final name = _functionName ?? '';
+    if (_messageName.hasMatch(name) && !_inLog) {
+      final expression = node.expression;
+      if (expression != null) {
+        if (expression is StringLiteral) {
+          _record(expression, 'return:$name');
+        } else {
+          _recordConditional(expression, 'return:$name');
+        }
+      }
+    }
+    super.visitReturnStatement(node);
   }
 
   @override
   void visitMethodInvocation(MethodInvocation node) {
     final name = node.methodName.name;
-    if (_positionalTextWidgets.contains(name)) {
-      for (final argument in node.argumentList.arguments) {
-        if (argument is StringLiteral) {
-          _record(argument, 'positional:$name');
-        } else {
-          _recordConditional(argument, 'positional:$name');
+    final wasInLog = _inLog;
+    final isLog = _loggers.contains(name);
+    if (isLog) _inLog = true;
+
+    if (!wasInLog) {
+      if (_positionalTextWidgets.contains(name)) {
+        for (final argument in node.argumentList.arguments) {
+          if (argument is StringLiteral) {
+            _record(argument, 'positional:$name');
+          } else {
+            _recordConditional(argument, 'positional:$name');
+          }
         }
       }
+      _scanArguments(node.argumentList);
     }
-    _scanArguments(node.argumentList);
+
     super.visitMethodInvocation(node);
-  }
 
-  @override
-  void visitListLiteral(ListLiteral node) {
-    // `const [ … ]` — the list is a constant expression, so a getter call
-    // inside it is not allowed.
-    final constOffset = node.constKeyword?.offset;
-    if (constOffset != null) _constStack.add(constOffset);
-    super.visitListLiteral(node);
-    if (constOffset != null) _constStack.removeLast();
-  }
-
-  @override
-  void visitSetOrMapLiteral(SetOrMapLiteral node) {
-    final constOffset = node.constKeyword?.offset;
-    if (constOffset != null) _constStack.add(constOffset);
-    super.visitSetOrMapLiteral(node);
-    if (constOffset != null) _constStack.removeLast();
+    if (isLog) _inLog = wasInLog;
   }
 
   @override
@@ -255,13 +376,21 @@ class _Visitor extends RecursiveAstVisitor<void> {
     final typeName = node.constructorName.type.name.lexeme;
     final constOffset = node.keyword?.offset;
     if (constOffset != null) _constStack.add(constOffset);
+
     if (_positionalTextWidgets.contains(typeName)) {
       for (final argument in node.argumentList.arguments) {
         if (argument is StringLiteral) {
           _record(argument, 'positional:$typeName');
+        } else {
+          _recordConditional(argument, 'positional:$typeName');
         }
       }
+    } else if (typeName.startsWith('_')) {
+      // `_Note('…')` — a file-local widget whose first argument is the copy.
+      // A private *method* is not a widget: `_get('/me')` is a request path.
+      _recordFirstArgument(node.argumentList, 'positional:$typeName');
     }
+
     _scanArguments(node.argumentList);
     super.visitInstanceCreationExpression(node);
     if (constOffset != null) _constStack.removeLast();

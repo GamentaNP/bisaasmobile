@@ -15,6 +15,7 @@ import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../app/localization/l10n.dart';
 
 /// A question count read from a cursor-paginated endpoint.
 ///
@@ -28,7 +29,7 @@ class QuestionCount {
   final int rows;
   final bool isLowerBound;
 
-  String get questionsLabel => isLowerBound ? '$rows+ questions' : '$rows questions';
+  String get questionsLabel => isLowerBound ? appL10n().quizQuestionsPlus(rows) : appL10n().quizQuestionsCount(rows);
 }
 
 /// Browses the server-side quiz catalog via the real endpoints:

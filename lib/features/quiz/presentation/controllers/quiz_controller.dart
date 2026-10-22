@@ -335,27 +335,27 @@ class QuizController extends Notifier<QuizState> {
       return effect.explanation;
     }
     if (effect.hiddenOptionKeys.isNotEmpty) {
-      return '${effect.hiddenOptionKeys.length} wrong option(s) removed.';
+      return appL10n().lifelineWrongRemoved(effect.hiddenOptionKeys.length);
     }
-    if (effect.correctAnswer != null) return 'Correct answer: ${effect.correctAnswer}';
-    if (effect.extraSeconds != null) return '+${effect.extraSeconds}s added.';
-    if (effect.freezeSeconds != null) return 'Timer frozen for ${effect.freezeSeconds}s.';
-    if (effect.shieldActive ?? false) return 'Shield active — one wrong answer forgiven.';
-    if (effect.doubleXpActive ?? false) return 'Double XP active on the next correct answer.';
-    if (effect.poll != null) return 'Audience poll coming up.';
-    if (effect.retryQuestionId != null) return 'Second chance saved for this question.';
+    if (effect.correctAnswer != null) return appL10n().lifelineCorrectAnswer(effect.correctAnswer!);
+    if (effect.extraSeconds != null) return appL10n().lifelineTimeAdded(effect.extraSeconds!);
+    if (effect.freezeSeconds != null) return appL10n().lifelineTimerFrozen(effect.freezeSeconds!);
+    if (effect.shieldActive ?? false) return appL10n().lifelineShieldActive;
+    if (effect.doubleXpActive ?? false) return appL10n().lifelineDoubleXp;
+    if (effect.poll != null) return appL10n().lifelineAudiencePoll;
+    if (effect.retryQuestionId != null) return appL10n().lifelineSecondChance;
     return null;
   }
 
   static String _lifelineError(Object e) {
     final text = e.toString();
-    if (text.contains('INSUFFICIENT_COINS')) return 'Not enough coins.';
-    if (text.contains('LIFELINE_INVALID_QUESTION')) return 'Not valid for this question.';
+    if (text.contains('INSUFFICIENT_COINS')) return appL10n().lifelineNotEnoughCoins;
+    if (text.contains('LIFELINE_INVALID_QUESTION')) return appL10n().lifelineNotValidForQuestion;
     if (text.contains('LIFELINE_ALREADY_USED') || text.contains('409')) {
-      return 'Already used on this attempt.';
+      return appL10n().lifelineAlreadyUsed;
     }
-    if (text.contains('403')) return 'Not available for this attempt.';
-    return 'Please try again.';
+    if (text.contains('403')) return appL10n().lifelineNotAvailable;
+    return appL10n().lifelineTryAgain;
   }
 
   // ── Private ───────────────────────────────────────────────────────────────

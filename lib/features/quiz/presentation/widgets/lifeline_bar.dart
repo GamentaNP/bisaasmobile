@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../data/models/lifeline_dto.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../app/localization/l10n.dart';
 
 /// Attempt lifelines, rendered from the server's own catalogue.
 ///
@@ -81,9 +82,9 @@ class _LifelineChip extends StatelessWidget {
     if (lifeline.isAvailable) return null;
     // Not purchasable and not banked — say which of the two is the problem.
     if (walletBalance < lifeline.costCoins) {
-      return 'Needs ${lifeline.costCoins} coins (you have $walletBalance)';
+      return appL10n().lifelineNeedsCoins(lifeline.costCoins, walletBalance);
     }
-    return 'Unavailable right now';
+    return appL10n().lifelineUnavailableNow;
   }
 
   @override

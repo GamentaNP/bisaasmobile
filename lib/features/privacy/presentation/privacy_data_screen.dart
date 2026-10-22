@@ -40,9 +40,8 @@ class PrivacyDataScreen extends ConsumerWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, __) => _List(
             children: [
-              const _Note(
-                'We could not reach the server to show what is stored about this '
-                'device.',
+              _Note(
+                l10n.privacyUnreachable,
               ),
               const SizedBox(height: 12),
               Center(
@@ -58,9 +57,8 @@ class PrivacyDataScreen extends ConsumerWidget {
           data: (visitor) => visitor == null
               ? _List(
                   children: [
-                    const _Note(
-                      'We could not read what is stored about this device. Your '
-                      'local choices are unaffected.',
+                    _Note(
+                      l10n.privacyUnreadable,
                     ),
                     const SizedBox(height: 12),
                     Center(
@@ -89,7 +87,7 @@ class PrivacyDataScreen extends ConsumerWidget {
                       visitor.consentMode.grantsAnalytics ? 'Granted' : 'Not granted',
                     ),
                     if (visitor.stitched)
-                      const _Row('Linked to an account', 'Yes'),
+                      _Row(l10n.privacyLinkedToAccount, 'Yes'),
                     const SizedBox(height: 16),
                     if (visitor.canEraseHere)
                       OutlinedButton.icon(
@@ -98,18 +96,14 @@ class PrivacyDataScreen extends ConsumerWidget {
                         label: Text(l10n.privacyEraseData),
                       )
                     else
-                      const _Note(
-                        'This profile is linked to your account, so erasing it is '
-                        'handled by the account deletion flow. Use Delete account '
-                        'in Settings to remove everything.',
+                      _Note(
+                        l10n.privacyEraseViaAccount,
                       ),
                     const SizedBox(height: 16),
                     Text(l10n.privacyLocalChoices, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
-                    const _Note(
-                      'Analytics, functional and marketing consent are stored on '
-                      'this device and applied immediately, independently of the '
-                      'anonymous profile above.',
+                    _Note(
+                      l10n.privacyLocalConsentNote,
                     ),
                     const SizedBox(height: 8),
                     const _LocalConsentSummary(),
@@ -181,9 +175,10 @@ class _LocalConsentSummary extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final consent = ref.watch(consentProvider).value ?? const ConsentState.unknown();
     if (!consent.decided) {
-      return const _Note('You have not made a choice yet.');
+      return _Note(l10n.privacyNoChoiceYet);
     }
     return Column(
       children: [

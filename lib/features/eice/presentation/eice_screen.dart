@@ -1,4 +1,5 @@
 import '../../../l10n/app_localizations.dart';
+import '../../../app/localization/l10n.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ String friendlyError(Object e) {
     final inner = e.error;
     if (inner is ApiException) return inner.message;
   }
-  return 'Could not load this section. $e';
+  return appL10n().eiceSectionFailed(e);
 }
 
 class EiceScreen extends ConsumerWidget {

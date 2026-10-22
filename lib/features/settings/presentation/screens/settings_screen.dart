@@ -19,6 +19,7 @@ import '../../../../core/security/biometric_auth.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/profile/presentation/controllers/profile_skills_controller.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../app/localization/l10n.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -187,7 +188,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   String _localeLabel(Locale? locale) {
-    if (locale == null) return 'System default';
+    if (locale == null) return appL10n().settingsSystemDefault;
     final lang = AppLanguages.byCode(locale.languageCode);
     if (lang == null) return locale.languageCode;
     return lang.displayLabel;
@@ -202,7 +203,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
-          const _SectionHeader('Language'),
+          _SectionHeader(l10n.settingsLanguageSection),
           ListTile(
             leading: const Icon(Icons.language_rounded),
             title: Text(l10n.settingsAppLanguage),
@@ -211,7 +212,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => unawaited(_pickLocale(locale)),
           ),
           const Divider(height: 1),
-          const _SectionHeader('Security'),
+          _SectionHeader(l10n.settingsSecuritySection),
           SwitchListTile(
             secondary: const Icon(Icons.fingerprint_rounded),
             title: Text(l10n.settingsBiometricLock),
@@ -220,7 +221,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onChanged: (v) => unawaited(_toggleAppLock(v)),
           ),
           const Divider(height: 1),
-          const _SectionHeader('Privacy'),
+          _SectionHeader(l10n.privacyMenu),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
             title: Text(l10n.consentTitle),
@@ -229,7 +230,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => context.push('/privacy'),
           ),
           const Divider(height: 1),
-          const _SectionHeader('AI'),
+          _SectionHeader(l10n.settingsAiSection),
           ListTile(
             leading: const Icon(Icons.insights_rounded),
             title: Text(l10n.aiUsageTitle),
@@ -245,7 +246,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => context.push('/ai/keys'),
           ),
           const Divider(height: 1),
-          const _SectionHeader('Account'),
+          _SectionHeader(l10n.settingsAccountSection),
           ListTile(
             leading: const Icon(Icons.logout_rounded),
             title: Text(l10n.settingsLogOut),

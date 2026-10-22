@@ -242,7 +242,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
     // the plain "share invite link" button, so the recipient got a bare code
     // with no way to reach the sign-up page.
     final text =
-        'Use my code ${dash.code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n${dash.shareUrl}';
+        l10n.socialShareInvite(dash.code, dash.shareUrl);
     try {
       await SharePlus.instance.share(
         ShareParams(text: text, subject: 'CivilCal'),

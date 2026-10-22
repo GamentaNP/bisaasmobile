@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_non_null_assertion, avoid_escaping_inner_quotes
+// ignore_for_file: unnecessary_non_null_assertion
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +11,7 @@ import '../../domain/entities/streak.dart';
 import '../controllers/streak_controller.dart';
 import '../widgets/streak_calendar.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../app/localization/l10n.dart';
 
 /// Streak screen — `GET /quiz/streak` (+ `POST /donations/freeze-streak`).
 /// Server-authoritative: Flutter never computes streak locally, only visualizes.
@@ -104,8 +105,8 @@ class _StreakScreenState extends ConsumerState<StreakScreen> {
           streak.isActiveToday
               ? l10n.streakOnFire
               : streak.isAtRisk
-                  ? 'At risk — complete a quiz before midnight to keep ${streak.currentStreak} days alive.'
-                  : 'Complete today\'s quiz to grow your streak.',
+                  ? l10n.streakAtRisk(streak.currentStreak)
+                  : l10n.streakCompleteToGrow,
           style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
         ),
         const SizedBox(height: 20),
@@ -197,10 +198,10 @@ class _MultiplierCard extends StatelessWidget {
   final Streak streak;
 
   String _tierLabel(double m) {
-    if (m >= 3.0) return 'Legend 100+';
-    if (m >= 2.0) return 'Champion 30+';
-    if (m >= 1.5) return 'Warrior 7+';
-    return 'Starter';
+    if (m >= 3.0) return appL10n().streakTierLegend;
+    if (m >= 2.0) return appL10n().streakTierChampion;
+    if (m >= 1.5) return appL10n().streakTierWarrior;
+    return appL10n().streakTierStarter;
   }
 
   @override
@@ -439,12 +440,12 @@ class _RepairCard extends ConsumerWidget {
   }
 
   static String _describe(StreakRepairEligibilityDto? e) {
-    if (e == null) return 'Checking repair eligibility…';
+    if (e == null) return appL10n().streakCheckingRepair;
     if (e.eligible) {
       final when = e.missedDate?.toLocal().toString().split('.').first;
       return when == null
-          ? 'You missed a day. Repair it now to keep the streak.'
-          : 'You missed $when. Repair it now to keep the streak.';
+          ? appL10n().streakMissedDayGeneric
+          : appL10n().streakMissedDayWhen(when);
     }
     return switch (e.reason) {
       'not_missed_one_day' => 'No missed day to repair — you are up to date.',
@@ -499,10 +500,10 @@ class _InsuranceCard extends ConsumerWidget {
             ins == null
                 ? l10n.streakInsuranceChecking
                 : active > 0
-                    ? '$active of $max insurance token${max == 1 ? '' : 's'} banked. One auto-repairs a missed day.'
+                    ? l10n.streakInsuranceBanked(active, max, max == 1 ? '' : 's')
                     : max > 0
-                        ? 'Bank a token and it auto-repairs one missed day for you. Up to $max at a time.'
-                        : 'Insurance is not available on your account yet.',
+                        ? l10n.streakInsuranceExplain(max)
+                        : l10n.streakInsuranceUnavailable,
             style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.65)),
           ),
           const SizedBox(height: 10),

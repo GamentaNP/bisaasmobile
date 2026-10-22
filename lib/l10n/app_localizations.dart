@@ -502,12 +502,6 @@ abstract class AppLocalizations {
   /// **'Enter a valid email'**
   String get authInvalidEmail;
 
-  /// No description provided for @authPasswordRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter your password'**
-  String get authPasswordRequired;
-
   /// No description provided for @onboardingStepOf.
   ///
   /// In en, this message translates to:
@@ -1431,12 +1425,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get onboardingContinue;
-
-  /// No description provided for @privacyLinkedToAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'This profile is linked to your account. Delete the account to erase everything.'**
-  String get privacyLinkedToAccount;
 
   /// No description provided for @quizSeeResults.
   ///
@@ -3603,12 +3591,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Practice — does not affect rank, XP or streak'**
   String get practiceDoesNotAffect;
-
-  /// No description provided for @practiceQuestionsCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} questions'**
-  String practiceQuestionsCount(Object count);
 
   /// No description provided for @practiceAnsweredSkipped.
   ///
@@ -6060,6 +6042,596 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} examinable'**
   String syllabusExaminableCount(Object count);
+
+  /// No description provided for @errSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please sign in again.'**
+  String get errSessionExpired;
+
+  /// No description provided for @errForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have access to this resource.'**
+  String get errForbidden;
+
+  /// No description provided for @errNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not found.'**
+  String get errNotFound;
+
+  /// No description provided for @errValidationRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Some of the submitted values were rejected.'**
+  String get errValidationRejected;
+
+  /// No description provided for @errUpgradeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version of the app is required.'**
+  String get errUpgradeRequired;
+
+  /// No description provided for @errRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please try again shortly.'**
+  String get errRateLimited;
+
+  /// No description provided for @errServerTrouble.
+  ///
+  /// In en, this message translates to:
+  /// **'The server is having trouble. Please try again.'**
+  String get errServerTrouble;
+
+  /// No description provided for @errRequestFailedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Request failed with status {status}.'**
+  String errRequestFailedStatus(Object status);
+
+  /// No description provided for @errTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out. Check your connection and try again.'**
+  String get errTimeout;
+
+  /// No description provided for @errUnreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server. Check your connection and try again.'**
+  String get errUnreachable;
+
+  /// No description provided for @errCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'The request was cancelled.'**
+  String get errCancelled;
+
+  /// No description provided for @errBadCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'The server certificate could not be verified.'**
+  String get errBadCertificate;
+
+  /// No description provided for @errTransformTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The server took too long to deliver the response.'**
+  String get errTransformTimeout;
+
+  /// No description provided for @lifelineWrongRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} wrong option(s) removed.'**
+  String lifelineWrongRemoved(Object count);
+
+  /// No description provided for @lifelineCorrectAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct answer: {answer}'**
+  String lifelineCorrectAnswer(Object answer);
+
+  /// No description provided for @lifelineTimeAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'+{seconds}s added.'**
+  String lifelineTimeAdded(Object seconds);
+
+  /// No description provided for @lifelineTimerFrozen.
+  ///
+  /// In en, this message translates to:
+  /// **'Timer frozen for {seconds}s.'**
+  String lifelineTimerFrozen(Object seconds);
+
+  /// No description provided for @lifelineShieldActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Shield active — one wrong answer forgiven.'**
+  String get lifelineShieldActive;
+
+  /// No description provided for @lifelineDoubleXp.
+  ///
+  /// In en, this message translates to:
+  /// **'Double XP active on the next correct answer.'**
+  String get lifelineDoubleXp;
+
+  /// No description provided for @lifelineAudiencePoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Audience poll coming up.'**
+  String get lifelineAudiencePoll;
+
+  /// No description provided for @lifelineSecondChance.
+  ///
+  /// In en, this message translates to:
+  /// **'Second chance saved for this question.'**
+  String get lifelineSecondChance;
+
+  /// No description provided for @lifelineNotEnoughCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough coins.'**
+  String get lifelineNotEnoughCoins;
+
+  /// No description provided for @lifelineNotValidForQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Not valid for this question.'**
+  String get lifelineNotValidForQuestion;
+
+  /// No description provided for @lifelineAlreadyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used on this attempt.'**
+  String get lifelineAlreadyUsed;
+
+  /// No description provided for @lifelineNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available for this attempt.'**
+  String get lifelineNotAvailable;
+
+  /// No description provided for @lifelineTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again.'**
+  String get lifelineTryAgain;
+
+  /// No description provided for @lifelineNeedsCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs {cost} coins (you have {balance})'**
+  String lifelineNeedsCoins(Object cost, Object balance);
+
+  /// No description provided for @lifelineUnavailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable right now'**
+  String get lifelineUnavailableNow;
+
+  /// No description provided for @streakAtRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'At risk — complete a quiz before midnight to keep {days} days alive.'**
+  String streakAtRisk(Object days);
+
+  /// No description provided for @streakCompleteToGrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete today\'s quiz to grow your streak.'**
+  String get streakCompleteToGrow;
+
+  /// No description provided for @streakTierLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Legend 100+'**
+  String get streakTierLegend;
+
+  /// No description provided for @streakTierChampion.
+  ///
+  /// In en, this message translates to:
+  /// **'Champion 30+'**
+  String get streakTierChampion;
+
+  /// No description provided for @streakTierWarrior.
+  ///
+  /// In en, this message translates to:
+  /// **'Warrior 7+'**
+  String get streakTierWarrior;
+
+  /// No description provided for @streakTierStarter.
+  ///
+  /// In en, this message translates to:
+  /// **'Starter'**
+  String get streakTierStarter;
+
+  /// No description provided for @streakCheckingRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking repair eligibility…'**
+  String get streakCheckingRepair;
+
+  /// No description provided for @streakMissedDayGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'You missed a day. Repair it now to keep the streak.'**
+  String get streakMissedDayGeneric;
+
+  /// No description provided for @streakMissedDayWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'You missed {when}. Repair it now to keep the streak.'**
+  String streakMissedDayWhen(Object when);
+
+  /// No description provided for @streakInsuranceBanked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} insurance token{plural} banked. One auto-repairs a missed day.'**
+  String streakInsuranceBanked(Object count, Object max, Object plural);
+
+  /// No description provided for @streakInsuranceExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank a token and it auto-repairs one missed day for you. Up to {max} at a time.'**
+  String streakInsuranceExplain(Object max);
+
+  /// No description provided for @streakInsuranceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance is not available on your account yet.'**
+  String get streakInsuranceUnavailable;
+
+  /// No description provided for @streakNoInsuranceToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'No insurance available to use.'**
+  String get streakNoInsuranceToUse;
+
+  /// No description provided for @privacyUnreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not reach the server to show what is stored about this device.'**
+  String get privacyUnreachable;
+
+  /// No description provided for @privacyUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not read what is stored about this device. Your local choices are unaffected.'**
+  String get privacyUnreadable;
+
+  /// No description provided for @privacyEraseViaAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'This profile is linked to your account, so erasing it is handled by the account deletion flow. Use Delete account in Settings to remove everything.'**
+  String get privacyEraseViaAccount;
+
+  /// No description provided for @privacyLocalConsentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics, functional and marketing consent are stored on this device and applied immediately, independently of the anonymous profile above.'**
+  String get privacyLocalConsentNote;
+
+  /// No description provided for @privacyNoChoiceYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not made a choice yet.'**
+  String get privacyNoChoiceYet;
+
+  /// No description provided for @settingsLanguageSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguageSection;
+
+  /// No description provided for @settingsSecuritySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get settingsSecuritySection;
+
+  /// No description provided for @settingsAiSection.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get settingsAiSection;
+
+  /// No description provided for @settingsAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsAccountSection;
+
+  /// No description provided for @bookPageRangeOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'p. {start}+'**
+  String bookPageRangeOpen(Object start);
+
+  /// No description provided for @bookPageRangeSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'p. {page}'**
+  String bookPageRangeSingle(Object page);
+
+  /// No description provided for @bookPageRange.
+  ///
+  /// In en, this message translates to:
+  /// **'p. {start}–{end}'**
+  String bookPageRange(Object start, Object end);
+
+  /// No description provided for @bookSessionNotCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'This reading session was not counted.'**
+  String get bookSessionNotCounted;
+
+  /// No description provided for @bookSessionNotCountedReason.
+  ///
+  /// In en, this message translates to:
+  /// **'This reading session was not counted: {reason}'**
+  String bookSessionNotCountedReason(Object reason);
+
+  /// No description provided for @bookPagesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pages'**
+  String bookPagesCount(Object count);
+
+  /// No description provided for @bookChaptersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chapters'**
+  String bookChaptersCount(Object count);
+
+  /// No description provided for @bookReadingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h'**
+  String bookReadingTime(Object count);
+
+  /// No description provided for @bookCoinsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} coins'**
+  String bookCoinsCount(Object count);
+
+  /// No description provided for @bookFormulasCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} formulas'**
+  String bookFormulasCount(Object count);
+
+  /// No description provided for @bookNumericalsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} numericals'**
+  String bookNumericalsCount(Object count);
+
+  /// No description provided for @bookFreePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Free preview'**
+  String get bookFreePreview;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least {count} characters.'**
+  String authPasswordTooShort(Object count);
+
+  /// No description provided for @authPasswordConfirmRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your new password.'**
+  String get authPasswordConfirmRequired;
+
+  /// No description provided for @authPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The two passwords do not match.'**
+  String get authPasswordMismatch;
+
+  /// No description provided for @gameClaimedCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed {coins} coins'**
+  String gameClaimedCoins(Object coins);
+
+  /// No description provided for @gameNothingClaimable.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was claimable'**
+  String get gameNothingClaimable;
+
+  /// No description provided for @gameClaimedMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed {count} mission{plural} for {coins} coins'**
+  String gameClaimedMission(Object count, Object plural, Object coins);
+
+  /// No description provided for @homeCalculatorsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Calculators'**
+  String homeCalculatorsCount(Object count);
+
+  /// No description provided for @libraryUnlockFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock (Free)'**
+  String get libraryUnlockFree;
+
+  /// No description provided for @libraryUnlockCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock • {coins} coins'**
+  String libraryUnlockCoins(Object coins);
+
+  /// No description provided for @quizQuestionsPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}+ questions'**
+  String quizQuestionsPlus(Object count);
+
+  /// No description provided for @quizQuestionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions'**
+  String quizQuestionsCount(Object count);
+
+  /// No description provided for @socialReferralApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Referral code applied.'**
+  String get socialReferralApplied;
+
+  /// No description provided for @socialReferralRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'That code could not be applied. It may already have been used.'**
+  String get socialReferralRejected;
+
+  /// No description provided for @socialTryThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Try this on CivilCal'**
+  String get socialTryThis;
+
+  /// No description provided for @socialShareInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my code {code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n{url}'**
+  String socialShareInvite(Object code, Object url);
+
+  /// No description provided for @tutorRetrievalFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Retrieval temporarily failed — showing deterministic plan.'**
+  String get tutorRetrievalFailed;
+
+  /// No description provided for @tutorDegradedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers may be less personalized (degraded).'**
+  String get tutorDegradedNote;
+
+  /// No description provided for @eiceSectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this section. {reason}'**
+  String eiceSectionFailed(Object reason);
+
+  /// No description provided for @numericalNotCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Not correct. Try again or view the worked solution.'**
+  String get numericalNotCorrect;
+
+  /// No description provided for @quizAnswerSavedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer saved — the breakdown unlocks on the results screen.'**
+  String get quizAnswerSavedNote;
+
+  /// No description provided for @quizShareResult.
+  ///
+  /// In en, this message translates to:
+  /// **'I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com'**
+  String quizShareResult(
+    Object correct,
+    Object total,
+    Object percent,
+    Object title,
+    Object grade,
+    Object xp,
+    Object coins,
+  );
+
+  /// No description provided for @quizGradeExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get quizGradeExcellent;
+
+  /// No description provided for @quizGradeGoodJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Job'**
+  String get quizGradeGoodJob;
+
+  /// No description provided for @quizGradeKeepPracticing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Practicing'**
+  String get quizGradeKeepPracticing;
+
+  /// No description provided for @quizDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'CivilCal Quiz'**
+  String get quizDefaultTitle;
+
+  /// No description provided for @syllabusTopicsLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'topics loaded'**
+  String get syllabusTopicsLoaded;
+
+  /// No description provided for @syllabusTopicsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'topics'**
+  String get syllabusTopicsLabel;
+
+  /// No description provided for @quizIntroGradesInstantly.
+  ///
+  /// In en, this message translates to:
+  /// **'Server grades your answer instantly.'**
+  String get quizIntroGradesInstantly;
+
+  /// No description provided for @quizIntroCorrectRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct: +10 XP, streak combo bonus.'**
+  String get quizIntroCorrectRule;
+
+  /// No description provided for @quizIntroWrongRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong: -2 XP, streak resets.'**
+  String get quizIntroWrongRule;
+
+  /// No description provided for @quizIntroBackRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the back button to exit (progress lost).'**
+  String get quizIntroBackRule;
+
+  /// No description provided for @tutorExampleProctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain proctor compaction simply'**
+  String get tutorExampleProctor;
+
+  /// No description provided for @tutorExamplePlanWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Help me plan this week'**
+  String get tutorExamplePlanWeek;
+
+  /// No description provided for @privacyLinkedToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked to an account'**
+  String get privacyLinkedToAccount;
+
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new password.'**
+  String get authPasswordRequired;
 
   /// No description provided for @forceUpdateUnsupportedLatest.
   ///

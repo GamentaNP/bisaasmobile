@@ -1,3 +1,5 @@
+library;
+
 /// Typed failure plumbing for data sources.
 ///
 /// Contract (AGENTS.md → "Every network call honors `X-Request-Id` logging,
@@ -20,7 +22,8 @@
 /// [ApiException] already carries the server's frozen `error.code`, the
 /// display-safe message, validation `errors`, and the `X-Request-Id` needed for
 /// a support report.
-library;
+import '../../app/localization/l10n.dart';
+
 
 import 'package:dio/dio.dart';
 
@@ -92,14 +95,14 @@ ApiErrorCode _codeForStatus(int status) {
 }
 
 String _statusMessage(int status) {
-  if (status == 401) return 'Your session has expired. Please sign in again.';
-  if (status == 403) return 'You do not have access to this resource.';
-  if (status == 404) return 'Not found.';
-  if (status == 422) return 'Some of the submitted values were rejected.';
-  if (status == 426) return 'A newer version of the app is required.';
-  if (status == 429) return 'Too many requests. Please try again shortly.';
-  if (status >= 500) return 'The server is having trouble. Please try again.';
-  return 'Request failed with status $status.';
+  if (status == 401) return appL10n().errSessionExpired;
+  if (status == 403) return appL10n().errForbidden;
+  if (status == 404) return appL10n().errNotFound;
+  if (status == 422) return appL10n().errValidationRejected;
+  if (status == 426) return appL10n().errUpgradeRequired;
+  if (status == 429) return appL10n().errRateLimited;
+  if (status >= 500) return appL10n().errServerTrouble;
+  return appL10n().errRequestFailedStatus(status);
 }
 
 String _transportMessage(DioException e) {
@@ -107,20 +110,20 @@ String _transportMessage(DioException e) {
     case DioExceptionType.connectionTimeout:
     case DioExceptionType.sendTimeout:
     case DioExceptionType.receiveTimeout:
-      return 'The request timed out. Check your connection and try again.';
+      return appL10n().errTimeout;
     case DioExceptionType.connectionError:
-      return 'Could not reach the server. Check your connection and try again.';
+      return appL10n().errUnreachable;
     case DioExceptionType.cancel:
-      return 'The request was cancelled.';
+      return appL10n().errCancelled;
     case DioExceptionType.badCertificate:
-      return 'The server certificate could not be verified.';
+      return appL10n().errBadCertificate;
     case DioExceptionType.badResponse:
     case DioExceptionType.unknown:
       return e.message ?? 'Network error.';
     // `transformTimeout` was added in Dio 5.7 and is not a transport failure
     // the user can act on beyond retrying.
     case DioExceptionType.transformTimeout:
-      return 'The server took too long to deliver the response.';
+      return appL10n().errTransformTimeout;
   }
 }
 
