@@ -120,14 +120,40 @@ dart run tool/localization_coverage.dart --verbose  # every string, with a line 
 
 ## 5. Known gaps
 
-- **`hi` has had less review than `ne`.** Both have the same 993
-  messages, so the coverage is identical, but the launch market is
-  Nepal and the Hindi copy has not been read by a Hindi speaker. If the
-  launch is Nepal-only, dropping `hi` from the picker until someone has
-  checked it is the honest option.
+- **`hi` has had less review than `ne`.** Both have the same 1087
+  messages, so the coverage is identical, but the launch market is Nepal
+  and the Hindi copy has not been read by a Hindi speaker. The
+  mechanical defects a machine translation produces — a term spelled two
+  ways, half a sentence left in English — are now **caught by
+  `tool/audit_translations.py`**, which runs in CI. What it cannot catch
+  is a sentence that is grammatical and still reads oddly. If the launch
+  is Nepal-only, dropping `hi` from the picker until someone has read
+  it is the safe call.
 - **The `zh` locale is deliberately absent.** The server has no `zh`
   row, so offering it would promise translated questions that do not
   exist.
 - **The server drives the question language**, not the client. The
   `Accept-Language` header carries the user's choice, so the *content*
   is localised independently of the chrome.
+
+---
+
+## 6. Keeping the copy consistent
+
+`tool/audit_translations.py` is the gate. It fails when:
+
+* a Devanagari message still contains an English word that is not an
+  acronym, a unit, a product name or an API field name;
+* the same term is spelled two ways in the same locale;
+* a message is identical to English in a translated locale.
+
+And `tool/generate_arb.py` **owns** the transliterations: it rewrites
+any other spelling to the one the locale uses, so a message added in a
+hurry cannot introduce a third spelling. The Nepali transliteration of
+"quiz" is क्विज and the Hindi one carries the nukta, क्विज़.
+
+```bash
+python tool/generate_arb.py      # writes the three ARB files
+python tool/audit_translations.py # the consistency gate
+```
+

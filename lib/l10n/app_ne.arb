@@ -390,7 +390,7 @@
   "homeDashboardEmpty": "अनुमान गर्नुको सट्टा केही देखाइएको छैन। तान्नुहोस्, वा तल फेरि प्रयास गर्नुहोस्।",
   "homeDashboardUnreachable": "सर्भरसम्म पुग्न सकिएन, त्यसैले ड्यासबोर्ड देखाउन सकिएन।",
   "consentTitle": "गोपनीयता विकल्प",
-  "consentIntro": "तपाईंको खाता र क्विजको प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। Settings → Privacy मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।",
+  "consentIntro": "तपाईंको खाता र क्विजको प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। सेटिङ → गोपनीयता मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।",
   "consentNecessary": "आवश्यक",
   "consentNecessaryBody": "साइन इन र तपाईंको सुरक्षित काम, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच। एप चल्नका लागि आवश्यक।",
   "consentFunctional": "कार्यक्षम",
@@ -504,7 +504,7 @@
   "quizTryDifferentSearch": "अर्को खोजी प्रयास गर्नुहोस्",
   "quizNoTopicsYet": "अहिलेसम्म कुनै विषय छैन",
   "quizCourseNoActiveTopics": "यो कोर्समा अहिलेसम्म कुनै सक्रिय विषय छैन।",
-  "quizFunnelSampleBody": "हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न Quiz ट्याब खोल्नुहोस्।",
+  "quizFunnelSampleBody": "हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न क्विज ट्याब खोल्नुहोस्।",
   "quizFunnelPublicBody": "हाम्रो सङ्ग्रहबाट सार्वजनिक प्रश्नहरू। निःशुल्क खाता बनाएपछि उत्तरहरू खुल्छन्।",
   "quizFreshQuestions": "हालै नयाँ प्रश्नहरू थपिएका छन्।",
   "quizNewIn": "{scope} मा नयाँ",
@@ -780,7 +780,7 @@
       }
     }
   },
-  "tutorPlanNoDays": "योजनामा अहिलेसम्म दिन छैनन् — अन onboarding ले बनाउनेछ।",
+  "tutorPlanNoDays": "योजनामा अहिलेसम्म दिन छैनन् — सुरुवातीले यो बनाउनेछ।",
   "tutorMoreDays": "+ {count} थप दिन",
   "@tutorMoreDays": {
     "placeholders": {
@@ -791,8 +791,8 @@
   },
   "tutorAdjustPlan": "योजना मिलाउनुहोस्",
   "tutorNoPlanYet": "अहिलेसम्म कुनै योजना छैन",
-  "tutorOnboardingRequired": "तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर onboarding पूरा गर्नुहोस्।",
-  "tutorStartOnboarding": "Onboarding सुरु गर्नुहोस्",
+  "tutorOnboardingRequired": "तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर सुरुवाती पूरा गर्नुहोस्।",
+  "tutorStartOnboarding": "सुरुवाती सुरु गर्नुहोस्",
   "tutorAdjustExample": "जस्तै, \"म दिनमा ३ घण्टा गर्न सक्छु\" वा \"माटोको यान्त्रिकीमा बढी ध्यान दिन्छु\"",
   "tutorAdjustPrompt": "कसरी मिलाउने?",
   "tutorAdjustRequested": "योजना मिलाउने अनुरोध भयो।",
@@ -868,8 +868,8 @@
   },
   "tutorHighlights": "मुख्य कुराहरू",
   "tutorWeeklyReportPending": "हप्ताको गतिविधि पछि साप्ताहिक प्रतिवेदन देखिन्छ।",
-  "tutorOnboardingSaved": "Onboarding सुरक्षित भयो — योजना छिट्टै बनाइनेछ।",
-  "tutorOnboardingTitle": "ट्युटर Onboarding",
+  "tutorOnboardingSaved": "सुरुवाती सुरक्षित भयो — योजना छिट्टै बनाइनेछ।",
+  "tutorOnboardingTitle": "ट्युटर सुरुवाती",
   "tutorPersonalised": "व्यक्तिगत ट्युटर",
   "tutorOnboardingExplain": "आफ्नो लक्ष्य बताउनुहोस् — सर्भरले तपाईंको योजना बनाउँछ। user_id चाहिन्छैन (टोकनबाट)।",
   "tutorSessionLabel": "सत्र: {session}",
@@ -886,9 +886,9 @@
   "tutorLevelExample": "जस्तै: B.E. सिभिल अन्तिम वर्ष",
   "tutorHoursPerDay": "दिनमा घण्टा",
   "tutorHoursExample": "जस्तै: २",
-  "tutorOnboardingComplete": "Onboarding पूरा भयो — तपाईंको योजना तयार छ।",
+  "tutorOnboardingComplete": "सुरुवाती पूरा भयो — तपाईंको योजना तयार छ।",
   "tutorViewPlan": "योजना हेर्नुहोस्",
-  "tutorCompleteOnboarding": "Onboarding पूरा गर्नुहोस्",
+  "tutorCompleteOnboarding": "सुरुवाती पूरा गर्नुहोस्",
   "tutorSkipToChat": "छोड्नुहोस् → ट्युटरसँग कुराकानी",
   "tutorSavedToAccount": "तपाईंको खातामा सुरक्षित भयो। जडान बिच्छ भने फेरि प्रयास गर्न सकिन्छ।",
   "tutorTitle": "AI ट्युटर",
@@ -1068,11 +1068,11 @@
     }
   },
   "practiceBookmarked": "बुकमार्क गरिएको",
-  "practiceLoadMoreCursor": "थप हेर्नुहोस् (cursor)",
+  "practiceLoadMoreCursor": "थप हेर्नुहोस् (कर्सर)",
   "practiceWeakTopicsLoadFailed": "तपाईंका कमजोर विषय लोड गर्न सकिएन",
   "practiceWeakTopicsExplained": "यी तपाईंको आफ्नै उत्तर इतिहासबाट निकालिएका हुन्। सत्य नभएसम्म केही देखाइँदैन।",
   "practiceNoWeakTopics": "अहिलेसम्म कुनै कमजोर विषय छैन",
-  "practiceWeakTopicsNeedsAttempts": "कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। Quiz ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।",
+  "practiceWeakTopicsNeedsAttempts": "कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। क्विज ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।",
   "practiceWeakTopicsServerNote": "कमजोर विषयहरू हाम्रो सर्भरले तपाईंको उत्तर इतिहासबाट निकाल्छ, त्यसैले यहाँ केही अनुमान गरिएको हुँदैन।",
   "practiceYourWeakTopics": "तपाईंका कमजोर विषय",
   "practiceDrillAction": "ड्रिल गर्नुहोस्",
@@ -1267,7 +1267,7 @@
   "libraryReviews": "समीक्षाहरू",
   "libraryNoReviews": "अहिलेसम्म कुनै समीक्षा छैन — अनलोक गरेपछि पहिलो समीक्षा गर्नुहोस्!",
   "libraryLoadMoreReviews": "थप समीक्षा हेर्नुहोस्",
-  "librarySignedUrls": "डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि Download थिच्नुहोस्। library-api-download को throttle मान्नुहोस्।",
+  "librarySignedUrls": "डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि डाउनलोड थिच्नुहोस्। library-api-download को सीमा मान्नुहोस्।",
   "libraryFree": "निःशुल्क",
   "libraryCoinsLabel": "{count} क्विन",
   "@libraryCoinsLabel": {
@@ -1425,7 +1425,7 @@
       }
     }
   },
-  "practiceNoOptionsNotice": "सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त Quiz ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।",
+  "practiceNoOptionsNotice": "सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त क्विज ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।",
   "practiceAnswerSentNotice": "उत्तर सर्भरमा पठाइयो। सर्भरले प्रयास अंकित गर्छ — यो स्क्रिनले कहिल्यै अंक अनुमान गर्दैन।",
   "practicePrev": "अघिल्लो",
   "practiceGrading": "अंक गरिँदै…",
@@ -1580,14 +1580,14 @@
   },
   "coachingTutorChat": "ट्युटर कुराकानी",
   "coachingStudyPlan": "अध्ययन योजना",
-  "coachingTutorOnboarding": "ट्युटर onboarding",
-  "coachingGoalIdHint": "तयारीका लागि Goal ID (जस्तै: psc-civil)",
+  "coachingTutorOnboarding": "ट्युटर सुरुवाती",
+  "coachingGoalIdHint": "तयारीका लागि लक्ष्य ID (जस्तै: psc-civil)",
   "coachingLoad": "लोड गर्नुहोस्",
-  "coachingNoData": "अहिलेसम्म कुनै कोचिङ डाटा छैन — onboarding पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।",
+  "coachingNoData": "अहिलेसम्म कुनै कोचिङ डाटा छैन — सुरुवाती पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।",
   "coachingPartial": "केही कोचिङ स्क्रिन अस्थायी रूपमा उपलब्ध छैनन् — उपलब्ध डाटा देखाइदैछौं।",
   "coachingNoReadinessForGoal": "तयारी: यो लक्ष्यका लागि अहिलेसम्म डाटा छैन।",
   "coachingAskTutor": "ट्युटरलाई सोध्नुहोस्",
-  "coachingOnboarding": "Onboarding सुरु गर्नुहोस्",
+  "coachingOnboarding": "सुरुवाती सुरु गर्नुहोस्",
   "coachingReadinessExplained": "तयारी तपाईंका लक्ष्य, ट्र्याक र ट्युटर गतिविधिबाट निकालिन्छ। केही खण्ड प्रयोग नगरेसम्म लुकाइन्छन्।",
   "coachingReadiness": "तयारी",
   "coachingFocusNext": "अर्को केन्द्रमा:",
@@ -1920,7 +1920,7 @@
   "learningBackToTracks": "ट्र्याकमा फर्कनुहोस्",
   "learningTodaysPlan": "आजको योजना",
   "learningNoActiveGoal": "कुनै सक्रिय लक्ष्य छैन",
-  "learningNoActiveGoalBody": "आजको योजना पाउन Tracks बाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।",
+  "learningNoActiveGoalBody": "आजको योजना पाउन ट्र्याकहरूबाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।",
   "learningBrowseTracks": "ट्र्याकहरू हेर्नुहोस्",
   "learningPlanLabel": "योजना #{number}",
   "@learningPlanLabel": {
@@ -2304,7 +2304,7 @@
   "storeNothingEquipped": "केही पनि लगाइएको छैन",
   "storeNothingEquippedBody": "प्रिमियम स्टोरबाट एसेट किन्नुहोस्, अनि यहाँ लगाउनुहोस्।",
   "storeAvailableToEquip": "लगाउन मिल्ने",
-  "storeEquipHint": "लगाउन Equip थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।",
+  "storeEquipHint": "लगाउन थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।",
   "storeNoAssets": "अहिलेसम्म कुनै एसेट छैन — प्रिमियम स्टोर हेर्नुहोस्।",
   "storeClearSlot": "{slot} हटाउनुहोस्",
   "@storeClearSlot": {
@@ -2478,7 +2478,7 @@
   },
   "lottieOverlay": "lottie-overlay",
   "lottieTapToDismiss": "हटाउन थिच्नुहोस्",
-  "lifelineCost": "{name} lifeline, {coins} क्विन",
+  "lifelineCost": "{name} लाइफलाइन, {coins} क्विन",
   "@lifelineCost": {
     "placeholders": {
       "name": {
@@ -2489,7 +2489,7 @@
       }
     }
   },
-  "lifelineUnavailable": "{name} lifeline उपलब्ध छैन: {reason}",
+  "lifelineUnavailable": "{name} लाइफलाइन उपलब्ध छैन: {reason}",
   "@lifelineUnavailable": {
     "placeholders": {
       "name": {
@@ -2798,7 +2798,7 @@
   "streakNoInsuranceToUse": "प्रयोग गर्नुपर्ने कुनै बीमा बाँकी छैन।",
   "privacyUnreachable": "यो यन्त्रमा के सुरक्षित छ देखाउन सर्भरसम्म पुग्न सकिएन।",
   "privacyUnreadable": "यो यन्त्रमा के सुरक्षित छ पढ्न सकिएन। तपाईंका स्थानीय विकल्पमा असर पर्दैन।",
-  "privacyEraseViaAccount": "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन Settings मा Delete account प्रयोग गर्नुहोस्।",
+  "privacyEraseViaAccount": "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन सेटिङमा खाता मेटाउनुहोस् प्रयोग गर्नुहोस्।",
   "privacyLocalConsentNote": "विश्लेषण, कार्यक्षम र प्रचारको सहमति यस यन्त्रमा सुरक्षित रहन्छ र तुरुन्तै लागू हुन्छ, माथिको अनाम प्रोफाइलबाट स्वतन्त्र।",
   "privacyNoChoiceYet": "तपाईंले अझै कुनै छनोट गर्नुभएको छैन।",
   "settingsLanguageSection": "भाषा",
@@ -2982,7 +2982,7 @@
   },
   "numericalNotCorrect": "गलत छ। फेरि प्रयास गर्नुहोस् वा चरणबद्ध समाधान हेर्नुहोस्।",
   "quizAnswerSavedNote": "उत्तर सुरक्षित भयो — विवरण नतिजाको स्क्रिनमा खुल्छ।",
-  "quizShareResult": "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (बिसास) बाट। प्रयास: https://bisaas.com",
+  "quizShareResult": "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://bisaas.com",
   "@quizShareResult": {
     "placeholders": {
       "correct": {

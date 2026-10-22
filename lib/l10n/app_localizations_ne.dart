@@ -599,7 +599,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get consentIntro =>
-      'तपाईंको खाता र क्विजको प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। Settings → Privacy मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।';
+      'तपाईंको खाता र क्विजको प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। सेटिङ → गोपनीयता मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।';
 
   @override
   String get consentNecessary => 'आवश्यक';
@@ -823,7 +823,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get quizFunnelSampleBody =>
-      'हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न Quiz ट्याब खोल्नुहोस्।';
+      'हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न क्विज ट्याब खोल्नुहोस्।';
 
   @override
   String get quizFunnelPublicBody =>
@@ -1254,7 +1254,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get tutorPlanNoDays =>
-      'योजनामा अहिलेसम्म दिन छैनन् — अन onboarding ले बनाउनेछ।';
+      'योजनामा अहिलेसम्म दिन छैनन् — सुरुवातीले यो बनाउनेछ।';
 
   @override
   String tutorMoreDays(Object count) {
@@ -1269,10 +1269,10 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get tutorOnboardingRequired =>
-      'तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर onboarding पूरा गर्नुहोस्।';
+      'तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर सुरुवाती पूरा गर्नुहोस्।';
 
   @override
-  String get tutorStartOnboarding => 'Onboarding सुरु गर्नुहोस्';
+  String get tutorStartOnboarding => 'सुरुवाती सुरु गर्नुहोस्';
 
   @override
   String get tutorAdjustExample =>
@@ -1355,10 +1355,10 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get tutorOnboardingSaved =>
-      'Onboarding सुरक्षित भयो — योजना छिट्टै बनाइनेछ।';
+      'सुरुवाती सुरक्षित भयो — योजना छिट्टै बनाइनेछ।';
 
   @override
-  String get tutorOnboardingTitle => 'ट्युटर Onboarding';
+  String get tutorOnboardingTitle => 'ट्युटर सुरुवाती';
 
   @override
   String get tutorPersonalised => 'व्यक्तिगत ट्युटर';
@@ -1392,13 +1392,13 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get tutorOnboardingComplete =>
-      'Onboarding पूरा भयो — तपाईंको योजना तयार छ।';
+      'सुरुवाती पूरा भयो — तपाईंको योजना तयार छ।';
 
   @override
   String get tutorViewPlan => 'योजना हेर्नुहोस्';
 
   @override
-  String get tutorCompleteOnboarding => 'Onboarding पूरा गर्नुहोस्';
+  String get tutorCompleteOnboarding => 'सुरुवाती पूरा गर्नुहोस्';
 
   @override
   String get tutorSkipToChat => 'छोड्नुहोस् → ट्युटरसँग कुराकानी';
@@ -1640,7 +1640,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get practiceBookmarked => 'बुकमार्क गरिएको';
 
   @override
-  String get practiceLoadMoreCursor => 'थप हेर्नुहोस् (cursor)';
+  String get practiceLoadMoreCursor => 'थप हेर्नुहोस् (कर्सर)';
 
   @override
   String get practiceWeakTopicsLoadFailed =>
@@ -1655,7 +1655,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get practiceWeakTopicsNeedsAttempts =>
-      'कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। Quiz ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।';
+      'कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। क्विज ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।';
 
   @override
   String get practiceWeakTopicsServerNote =>
@@ -1921,7 +1921,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get librarySignedUrls =>
-      'डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि Download थिच्नुहोस्। library-api-download को throttle मान्नुहोस्।';
+      'डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि डाउनलोड थिच्नुहोस्। library-api-download को सीमा मान्नुहोस्।';
 
   @override
   String get libraryFree => 'निःशुल्क';
@@ -2104,7 +2104,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get practiceNoOptionsNotice =>
-      'सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त Quiz ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।';
+      'सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त क्विज ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।';
 
   @override
   String get practiceAnswerSentNotice =>
@@ -2244,17 +2244,17 @@ class AppLocalizationsNe extends AppLocalizations {
   String get coachingStudyPlan => 'अध्ययन योजना';
 
   @override
-  String get coachingTutorOnboarding => 'ट्युटर onboarding';
+  String get coachingTutorOnboarding => 'ट्युटर सुरुवाती';
 
   @override
-  String get coachingGoalIdHint => 'तयारीका लागि Goal ID (जस्तै: psc-civil)';
+  String get coachingGoalIdHint => 'तयारीका लागि लक्ष्य ID (जस्तै: psc-civil)';
 
   @override
   String get coachingLoad => 'लोड गर्नुहोस्';
 
   @override
   String get coachingNoData =>
-      'अहिलेसम्म कुनै कोचिङ डाटा छैन — onboarding पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।';
+      'अहिलेसम्म कुनै कोचिङ डाटा छैन — सुरुवाती पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।';
 
   @override
   String get coachingPartial =>
@@ -2268,7 +2268,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get coachingAskTutor => 'ट्युटरलाई सोध्नुहोस्';
 
   @override
-  String get coachingOnboarding => 'Onboarding सुरु गर्नुहोस्';
+  String get coachingOnboarding => 'सुरुवाती सुरु गर्नुहोस्';
 
   @override
   String get coachingReadinessExplained =>
@@ -2685,7 +2685,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get learningNoActiveGoalBody =>
-      'आजको योजना पाउन Tracks बाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।';
+      'आजको योजना पाउन ट्र्याकहरूबाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।';
 
   @override
   String get learningBrowseTracks => 'ट्र्याकहरू हेर्नुहोस्';
@@ -3158,7 +3158,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get storeEquipHint =>
-      'लगाउन Equip थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।';
+      'लगाउन थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।';
 
   @override
   String get storeNoAssets =>
@@ -3396,12 +3396,12 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String lifelineCost(Object name, Object coins) {
-    return '$name lifeline, $coins क्विन';
+    return '$name लाइफलाइन, $coins क्विन';
   }
 
   @override
   String lifelineUnavailable(Object name, Object reason) {
-    return '$name lifeline उपलब्ध छैन: $reason';
+    return '$name लाइफलाइन उपलब्ध छैन: $reason';
   }
 
   @override
@@ -3722,7 +3722,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get privacyEraseViaAccount =>
-      'यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन Settings मा Delete account प्रयोग गर्नुहोस्।';
+      'यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन सेटिङमा खाता मेटाउनुहोस् प्रयोग गर्नुहोस्।';
 
   @override
   String get privacyLocalConsentNote =>
@@ -3893,7 +3893,7 @@ class AppLocalizationsNe extends AppLocalizations {
     Object xp,
     Object coins,
   ) {
-    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins CivilCal (बिसास) बाट। प्रयास: https://bisaas.com';
+    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins CivilCal (BiSaaS) बाट। प्रयास: https://bisaas.com';
   }
 
   @override

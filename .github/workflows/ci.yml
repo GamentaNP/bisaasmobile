@@ -29,6 +29,11 @@ jobs:
       # generated l10n classes fall back to English silently, so nothing else
       # catches it. Non-zero exit fails the build.
       - run: dart run tool/arb_coverage.dart
+      # The translated copy has to be *consistent*, not merely present: one
+      # term spelled two ways across two screens, or half a message left in
+      # English, is what makes an app read as machine-made. The audit checks
+      # for exactly that.
+      - run: python3 tool/audit_translations.py
 
   # The device-test harness is its own package (it needs `integration_test`,
   # whose Android plugin would otherwise pull Espresso into the release AAB).

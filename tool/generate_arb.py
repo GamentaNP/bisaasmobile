@@ -70,7 +70,7 @@ def validate():
 add("appTitle", "CivilCal", "CivilCal", "CivilCal")
 add("signIn", "Sign in", "साइन इन गर्नुहोस्", "साइन इन करें")
 add("register", "Register", "दर्ता गर्नुहोस्", "रजिस्टर करें")
-add("quiz", "Quiz", "क्विज", "क्विज़")
+add("quiz", "Quiz", "क्विज़", "क्विज़")
 add("practice", "Practice", "अभ्यास", "अभ्यास")
 add("calculators", "Calculators", "क्यालकुलेटर", "कैलकुलेटर")
 add("courses", "Courses", "कोर्स", "कोर्स")
@@ -114,7 +114,7 @@ add("authWelcomeBackTitle", "Welcome back", "पुनः स्वागत छ
 add(
     "authWelcomeBackSubtitle",
     "Sign in to access your quizzes, formulas, and ranking",
-    "आफ्ना क्विज, सूत्र र अंक हेर्न साइन इन गर्नुहोस्",
+    "आफ्ना क्विज़, सूत्र र अंक हेर्न साइन इन गर्नुहोस्",
     "अपने क्विज़, सूत्र और रैंक देखने के लिए साइन इन करें",
 )
 add("authForgotPasswordTitle", "Forgot Password?", "पासवर्ड बिर्सनुभयो?", "पासवर्ड भूल गए?")
@@ -194,9 +194,9 @@ add(
 )
 
 # ── quiz ─────────────────────────────────────────────────────────────────────
-add("quizHomeTitle", "Practice & Quiz", "अभ्यास र क्विज", "अभ्यास और क्विज़")
-add("quizHomeLoadError", "Could not load quiz", "क्विज लोड गर्न सकिएन", "क्विज़ लोड नहीं हो सका")
-add("quizHomeEmptyTitle", "No quizzes yet", "अहिलेसम्म कुनै क्विज छैन", "अभी तक कोई क्विज़ नहीं")
+add("quizHomeTitle", "Practice & Quiz", "अभ्यास र क्विज़", "अभ्यास और क्विज़")
+add("quizHomeLoadError", "Could not load quiz", "क्विज़ लोड गर्न सकिएन", "क्विज़ लोड नहीं हो सका")
+add("quizHomeEmptyTitle", "No quizzes yet", "अहिलेसम्म कुनै क्विज़ छैन", "अभी तक कोई क्विज़ नहीं")
 add(
     "quizHomeEmptyBody",
     "Question sets for your exam are being prepared. Check back soon.",
@@ -212,13 +212,13 @@ add(
     "आफ्ना बुकमार्क र कमजोर विषय दोहोराउनुहोस् — समयसीमा छैन, अंकमा असर छैन",
     "अपने बुकमार्क और कमजोर विषय दोहराएं — समय-सीमित नहीं, रैंक पर असर नहीं",
 )
-add("quizIntroDetailsTitle", "Quiz Details", "क्विजको विवरण", "क्विज़ का विवरण")
-add("quizIntroLoadFailed", "Failed to load quiz: {reason}", "क्विज लोड गर्न सकिएन: {reason}", "क्विज़ लोड नहीं हो सका: {reason}", ["reason"])
+add("quizIntroDetailsTitle", "Quiz Details", "क्विज़को विवरण", "क्विज़ का विवरण")
+add("quizIntroLoadFailed", "Failed to load quiz: {reason}", "क्विज़ लोड गर्न सकिएन: {reason}", "क्विज़ लोड नहीं हो सका: {reason}", ["reason"])
 add("quizIntroQuestions", "Questions", "प्रश्नहरू", "प्रश्न")
 add("quizIntroMinutes", "min", "मिनेट", "मिनट")
-add("quizIntroStart", "Start Quiz", "क्विज सुरु गर्नुहोस्", "क्विज़ शुरू करें")
+add("quizIntroStart", "Start Quiz", "क्विज़ सुरु गर्नुहोस्", "क्विज़ शुरू करें")
 add("quizIntroHowItWorks", "How it works", "यसरी काम गर्छ", "यह कैसे काम करता है")
-add("quizAttemptLoadError", "Could not load quiz", "क्विज लोड गर्न सकिएन", "क्विज़ लोड नहीं हो सका")
+add("quizAttemptLoadError", "Could not load quiz", "क्विज़ लोड गर्न सकिएन", "क्विज़ लोड नहीं हो सका")
 add(
     "quizAttemptOfflineNotice",
     "Offline practice — not official. XP/coins will reconcile when back online.",
@@ -233,14 +233,14 @@ add(
     ["effect"],
 )
 add("quizAttemptCombo", "×{count} Combo!", "×{count} कम्बो!", "×{count} कॉम्बो!", ["count"])
-add("quizAttemptExitTitle", "Exit Quiz?", "क्विजबाट निस्कने?", "क्विज़ से बाहर निकलें?")
+add("quizAttemptExitTitle", "Exit Quiz?", "क्विज़बाट निस्कने?", "क्विज़ से बाहर निकलें?")
 add(
     "quizAttemptExitBody",
     "Your current progress will be lost. Are you sure you want to exit?",
     "तपाईंको हालको प्रगति हराउनेछ। निस्कनेमा पक्का हुनुहुन्छ?",
     "आपकी अभी की प्रगति चली जाएगी। क्या आप वाकई बाहर निकलना चाहते हैं?",
 )
-add("quizResultTitle", "Quiz Complete!", "क्विज पूरा भयो!", "क्विज़ पूरा हुआ!")
+add("quizResultTitle", "Quiz Complete!", "क्विज़ पूरा भयो!", "क्विज़ पूरा हुआ!")
 add("quizResultAccuracy", "Accuracy", "शुद्धता", "शुद्धता")
 add("quizResultCorrectOf", "{correct} of {total} correct", "{total} मध्ये {correct} सही", "{total} में से {correct} सही", ["correct", "total"])
 add("quizResultCorrect", "Correct", "सही", "सही")
@@ -268,10 +268,10 @@ add(
     "इस समय कैटलॉग में कोई सार्वजनिक प्रश्न नहीं है। साइन अप करें, आप सब कुछ देखेंगे।",
 )
 add("quizFunnelCreateAccount", "Create a free account to play", "खेल्न निःशुल्क खाता खोल्नुहोस्", "खेलने के लिए मुफ़्त खाता बनाएं")
-add("quizFunnelPlayGraded", "Play a graded quiz", "मूल्याङ्कनसहितको क्विज खेल्नुहोस्", "अंक वाला क्विज़ खेलें")
+add("quizFunnelPlayGraded", "Play a graded quiz", "मूल्याङ्कनसहितको क्विज़ खेल्नुहोस्", "अंक वाला क्विज़ खेलें")
 add("quizFunnelPracticeNote", "Practice mode never affects rank, XP or streak.", "अभ्यास मोडले अंक, XP वा स्ट्रिकलाई कहिल्यै असर गर्दैन।", "अभ्यास मोड कभी रैंक, XP या स्ट्रीक को प्रभावित नहीं करता।")
 add("quizOfflinePractice", "Offline Practice — {subject}", "अफलाइन अभ्यास — {subject}", "ऑफ़लाइन अभ्यास — {subject}", ["subject"])
-add("quizFinishFailed", "Could not finish the quiz. Please try again.", "क्विज समाप्त गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।", "क्विज़ पूरा नहीं हो सका। कृपया फिर से कोशिश करें।")
+add("quizFinishFailed", "Could not finish the quiz. Please try again.", "क्विज़ समाप्त गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।", "क्विज़ पूरा नहीं हो सका। कृपया फिर से कोशिश करें।")
 add("quizCountUnavailable", "Count unavailable", "संख्या उपलब्ध छैन", "संख्या उपलब्ध नहीं")
 
 # ── calculator ───────────────────────────────────────────────────────────────
@@ -348,8 +348,8 @@ add("consentTitle", "Privacy choices", "गोपनीयता विकल्
 add(
     "consentIntro",
     "Your account and quiz progress are stored on our servers so you can sign in on any device. To make that work and to keep the app stable we also send a device identifier, a push-notification token, crash reports and a device security check. With your permission we also send anonymous usage events. You can change this at any time in Settings → Privacy.",
-    "तपाईंको खाता र क्विजको प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। Settings → Privacy मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।",
-    "आपका खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप Settings → Privacy में जाकर कभी भी इसे बदल सकते हैं।",
+    "तपाईंको खाता र क्विज़को प्रगति हाम्रो सर्भरमा राखिन्छ, जसले तपाईं जुनसुकै यन्त्रमा साइन इन गर्न सक्नुहुन्छ। यसले काम गर्न र एप स्थिर रहनका लागि हामी यन्त्र पहिचान, पुश सूचना टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच पनि पठाउँछौं। तपाईंको अनुमति भए हामी प्रयोग सम्बन्धी घटना पनि पठाउँछौं। सेटिङ → गोपनीयता मा गएर जुनसुकै बेला परिवर्तन गर्न सकिन्छ।",
+    "आपके खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप सेटिंग → गोपनीयता में जाकर कभी भी इसे बदल सकते हैं।",
 )
 add("consentNecessary", "Necessary", "आवश्यक", "आवश्यक")
 add(
@@ -473,7 +473,7 @@ add("onboardingContinue", "Continue", "जारी राख्नुहोस�
 add("quizSeeResults", "See Results", "नतिजा हेर्नुहोस्", "परिणाम देखें")
 add("quizNextQuestion", "Next Question", "अर्को प्रश्न", "अगला प्रश्न")
 add("quizAnswerSubmitted", "Answer submitted", "उत्तर पठाइयो", "उत्तर जमा हुआ")
-add("quizBrowseQuizzes", "Browse Quizzes", "क्विजहरू हेर्नुहोस्", "क्विज़ ब्राउज़ करें")
+add("quizBrowseQuizzes", "Browse Quizzes", "क्विज़हरू हेर्नुहोस्", "क्विज़ ब्राउज़ करें")
 add("quizPickTopic", "Pick a Topic", "विषय छान्नुहोस्", "विषय चुनें")
 add("quizSearchCourses", "Search courses…", "कोर्स खोज्नुहोस्…", "कोर्स खोजें…")
 add("quizSearchTopics", "Search topics…", "विषय खोज्नुहोस्…", "विषय खोजें…")
@@ -491,8 +491,8 @@ add("quizCourseNoActiveTopics", "This course has no active topics yet.", "यो
 add(
     "quizFunnelSampleBody",
     "Sample questions from our catalogue. Open the Quiz tab to play a full graded session.",
-    "हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न Quiz ट्याब खोल्नुहोस्।",
-    "हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए Quiz टैब खोलें।",
+    "हाम्रो सङ्ग्रहबाट नमुना प्रश्नहरू। पूर्ण अंकयुक्त सत्र खेल्न क्विज़ ट्याब खोल्नुहोस्।",
+    "हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए क्विज़ टैब खोलें।",
 )
 add(
     "quizFunnelPublicBody",
@@ -535,14 +535,14 @@ add("profileAchievementsLoadFailed", "Could not load achievements", "उपल�
 add(
     "profileNoBadges",
     "No badges yet — complete quizzes to earn them!",
-    "अहिलेसम्म कुनै ब्याज छैन — क्विज पूरा गरेर कमाउनुहोस्!",
+    "अहिलेसम्म कुनै ब्याज छैन — क्विज़ पूरा गरेर कमाउनुहोस्!",
     "अभी तक कोई बैज नहीं — क्विज़ पूरे करके कमाएं!",
 )
 add("profileUnlocked", "Unlocked", "खुला", "अनलॉक")
 add(
     "profileSkillRadarEmpty",
     "Take quizzes to reveal your skill radar.",
-    "आफ्नो सीप रेडार देख्न क्विज खेल्नुहोस्।",
+    "आफ्नो सीप रेडार देख्न क्विज़ खेल्नुहोस्।",
     "अपना स्किल रडार देखने के लिए क्विज़ खेलें।",
 )
 add(
@@ -559,7 +559,7 @@ add("profilePscSub", "exam blueprints & syllabus", "परीक्षा ढा
 add("profilePracticeSub", "drill bookmarks • weak topics", "बुकमार्क ड्रिल • कमजोर विषय", "बुकमार्क ड्रिल • कमजोर विषय")
 add("profileLeaderboardSub", "global • friends • league", "विश्व • साथी • लिग", "विश्व • दोस्त • लीग")
 add("profileContests", "Contests", "प्रतियोगिता", "प्रतियोगिताएं")
-add("profileContestsSub", "live quizzes & leaderboards", "प्रत्यक्ष क्विज र लिडरबोर्ड", "लाइव क्विज़ और लीडरबोर्ड")
+add("profileContestsSub", "live quizzes & leaderboards", "प्रत्यक्ष क्विज़ र लिडरबोर्ड", "लाइव क्विज़ और लीडरबोर्ड")
 add("profileLiveEvents", "Live events", "प्रत्यक्ष कार्यक्रम", "लाइव कार्यक्रम")
 add("profileLiveEventsSub", "scheduled sessions & check-in", "तोकिएका सत्र र चेक-इन", "निर्धारित सत्र और चेक-इन")
 add("profileCoaching", "Coaching", "कोचिङ", "कोचिंग")
@@ -640,7 +640,7 @@ add("settingsDeleteAccountTitle", "Delete account?", "खाता मेटा�
 add(
     "settingsDeleteAccountBody",
     "This permanently deletes your account, quiz history, coins and purchases. This cannot be undone.",
-    "यसले तपाईंको खाता, क्विज इतिहास, क्विन र खरोद स्थायी रूपमा मेटाउँछ। यो पूर्ववत् हुँदैन।",
+    "यसले तपाईंको खाता, क्विज़ इतिहास, क्विन र खरोद स्थायी रूपमा मेटाउँछ। यो पूर्ववत् हुँदैन।",
     "यह आपका खाता, क्विज़ इतिहास, कॉइन और खरीद स्थायी रूप से मिटा देता है। इसे पूर्ववत नहीं किया जा सकता।",
 )
 add(
@@ -657,7 +657,7 @@ add("streakNoneTitle", "No streak yet", "अहिलेसम्म कुन�
 add(
     "streakNoneBody",
     "Complete a quiz to start your fire streak.",
-    "आफ्नो स्ट्रिक सुरु गर्न एउटा क्विज पूरा गर्नुहोस्।",
+    "आफ्नो स्ट्रिक सुरु गर्न एउटा क्विज़ पूरा गर्नुहोस्।",
     "अपनी स्ट्रीक शुरू करने के लिए एक क्विज़ पूरा करें।",
 )
 add("streakCalendar", "Calendar", "पात्रो", "कैलेंडर")
@@ -765,17 +765,27 @@ add("tutorDayCompleted", "Day completed — plan updated.", "दिन पूर
 add("tutorMarkDayComplete", "Mark day complete", "दिन पूरा भएको जनाउनुहोस्", "दिन पूरा चिह्नित करें")
 add("tutorYourPlan", "Your plan — {title}", "तपाईंको योजना — {title}", "आपकी योजना — {title}", ["title"])
 add("tutorPlanDays", "{days} days • current {current}", "{days} दिन • हालको {current}", "{days} दिन • वर्तमान {current}", ["days", "current"])
-add("tutorPlanNoDays", "Plan has no days yet — onboarding will generate it.", "योजनामा अहिलेसम्म दिन छैनन् — अन onboarding ले बनाउनेछ।", "योजना में अभी तक दिन नहीं हैं — ऑनबोर्डिंग इसे बनाएगी।")
+add(
+    "tutorPlanNoDays",
+    "Plan has no days yet — onboarding will generate it.",
+    "योजनामा अहिलेसम्म दिन छैनन् — सुरुवातीले यो बनाउनेछ।",
+    "योजना में अभी तक दिन नहीं हैं — ऑनबोर्डिंग इसे बनाएगी।",
+)
 add("tutorMoreDays", "+ {count} more days", "+ {count} थप दिन", "+ {count} और दिन", ["count"])
 add("tutorAdjustPlan", "Adjust plan", "योजना मिलाउनुहोस्", "योजना बदलें")
 add("tutorNoPlanYet", "No plan yet", "अहिलेसम्म कुनै योजना छैन", "अभी तक कोई योजना नहीं")
 add(
     "tutorOnboardingRequired",
     "Complete tutor onboarding to generate your personalized study plan.",
-    "तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर onboarding पूरा गर्नुहोस्।",
+    "तपाईंको व्यक्तिगत अध्ययन योजना बनाउन ट्युटर सुरुवाती पूरा गर्नुहोस्।",
     "आपकी व्यक्तिगत अध्ययन योजना बनाने के लिए ट्यूटर ऑनबोर्डिंग पूरा करें।",
 )
-add("tutorStartOnboarding", "Start onboarding", "Onboarding सुरु गर्नुहोस्", "ऑनबोर्डिंग शुरू करें")
+add(
+    "tutorStartOnboarding",
+    "Start onboarding",
+    "सुरुवाती सुरु गर्नुहोस्",
+    "ऑनबोर्डिंग शुरू करें",
+)
 add(
     "tutorAdjustExample",
     "e.g., \"I can do 3h/day\" or \"Focus more on soil mechanics\"",
@@ -813,8 +823,18 @@ add("tutorHours", "Hours", "घण्टा", "घंटे")
 add("tutorCompletion", "{percent}% completion", "{percent}% पूरा", "{percent}% पूरा", ["percent"])
 add("tutorHighlights", "Highlights", "मुख्य कुराहरू", "मुख्य बातें")
 add("tutorWeeklyReportPending", "Weekly report appears after a week of activity.", "हप्ताको गतिविधि पछि साप्ताहिक प्रतिवेदन देखिन्छ।", "एक सप्ताह की गतिविधि के बाद साप्ताहिक रिपोर्ट दिखेगी।")
-add("tutorOnboardingSaved", "Onboarding saved — plan will generate shortly.", "Onboarding सुरक्षित भयो — योजना छिट्टै बनाइनेछ।", "ऑनबोर्डिंग सहेजी गई — योजना जल्द बनेगी।")
-add("tutorOnboardingTitle", "Tutor Onboarding", "ट्युटर Onboarding", "ट्यूटर ऑनबोर्डिंग")
+add(
+    "tutorOnboardingSaved",
+    "Onboarding saved — plan will generate shortly.",
+    "सुरुवाती सुरक्षित भयो — योजना छिट्टै बनाइनेछ।",
+    "ऑनबोर्डिंग सहेज ली गई — योजना जल्द बनेगी।",
+)
+add(
+    "tutorOnboardingTitle",
+    "Tutor Onboarding",
+    "ट्युटर सुरुवाती",
+    "ट्यूटर ऑनबोर्डिंग",
+)
 add("tutorPersonalised", "Personalized tutor", "व्यक्तिगत ट्युटर", "व्यक्तिगत ट्यूटर")
 add(
     "tutorOnboardingExplain",
@@ -829,9 +849,19 @@ add("tutorCurrentLevel", "Current level", "हालको तह", "वर्�
 add("tutorLevelExample", "e.g., Final year B.E. Civil", "जस्तै: B.E. सिभिल अन्तिम वर्ष", "जैसे: B.E. सिविल अंतिम वर्ष")
 add("tutorHoursPerDay", "Hours per day", "दिनमा घण्टा", "प्रतिदिन घंटे")
 add("tutorHoursExample", "e.g., 2", "जस्तै: २", "जैसे: 2")
-add("tutorOnboardingComplete", "Onboarding complete — your plan is ready.", "Onboarding पूरा भयो — तपाईंको योजना तयार छ।", "ऑनबोर्डिंग पूरा हुई — आपकी योजना तैयार है।")
+add(
+    "tutorOnboardingComplete",
+    "Onboarding complete — your plan is ready.",
+    "सुरुवाती पूरा भयो — तपाईंको योजना तयार छ।",
+    "ऑनबोर्डिंग पूरा हुई — आपकी योजना तैयार है।",
+)
 add("tutorViewPlan", "View Plan", "योजना हेर्नुहोस्", "योजना देखें")
-add("tutorCompleteOnboarding", "Complete onboarding", "Onboarding पूरा गर्नुहोस्", "ऑनबोर्डिंग पूरा करें")
+add(
+    "tutorCompleteOnboarding",
+    "Complete onboarding",
+    "सुरुवाती पूरा गर्नुहोस्",
+    "ऑनबोर्डिंग पूरा करें",
+)
 add("tutorSkipToChat", "Skip → Chat with tutor", "छोड्नुहोस् → ट्युटरसँग कुराकानी", "छोड़ें → ट्यूटर से चैट")
 add(
     "tutorSavedToAccount",
@@ -844,7 +874,7 @@ add("tutorClearChat", "Clear chat", "कुराकानी हटाउनु
 add(
     "tutorNotEnoughHistory",
     "Not enough history yet — complete a few quizzes to personalize.",
-    "अहिलेसम्म पर्याप्त इतिहास छैन — व्यक्तिगत बनाउन केही क्विज पूरा गर्नुहोस्।",
+    "अहिलेसम्म पर्याप्त इतिहास छैन — व्यक्तिगत बनाउन केही क्विज़ पूरा गर्नुहोस्।",
     "अभी पर्याप्त इतिहास नहीं — व्यक्तिगत बनाने के लिए कुछ क्विज़ पूरे करें।",
 )
 add("tutorDismiss", "Dismiss", "हटाउनुहोस्", "खारिज करें")
@@ -941,16 +971,21 @@ add("practiceNoBookmarksBody", "No bookmarks", "कुनै बुकमार�
 add(
     "practiceNoBookmarksHint",
     "Bookmark questions while you take a quiz and they will show up here for drilling later.",
-    "क्विज खेल्दा प्रश्न बुकमार्क गर्नुहोस्, पछि तिनीहरू यहाँ ड्रिलका लागि देखिन्छन्।",
+    "क्विज़ खेल्दा प्रश्न बुकमार्क गर्नुहोस्, पछि तिनीहरू यहाँ ड्रिलका लागि देखिन्छन्।",
     "क्विज़ खेलते समय प्रश्न बुकमार्क करें, बाद में वे यहाँ अभ्यास के लिए दिखेंगे।",
 )
-add("practiceBrowseQuizzes", "Browse quizzes", "क्विजहरू हेर्नुहोस्", "क्विज़ ब्राउज़ करें")
+add("practiceBrowseQuizzes", "Browse quizzes", "क्विज़हरू हेर्नुहोस्", "क्विज़ ब्राउज़ करें")
 add("practiceBookmarkedCount", "{count} bookmarked", "{count} बुकमार्क", "{count} बुकमार्क", ["count"])
 add("practiceAll", "Practice all", "सबै अभ्यास गर्नुहोस्", "सभी का अभ्यास करें")
 add("practiceQuestionNumber", "Question #{number}", "प्रश्न #{number}", "प्रश्न #{number}", ["number"])
 add("practiceQuestionMeta", "{meta} • difficulty {difficulty} • {points} pts", "{meta} • कठिनाई {difficulty} • {points} अंक", "{meta} • कठिनाई {difficulty} • {points} अंक", ["meta", "difficulty", "points"])
 add("practiceBookmarked", "Bookmarked", "बुकमार्क गरिएको", "बुकमार्क किया गया")
-add("practiceLoadMoreCursor", "Load more (cursor)", "थप हेर्नुहोस् (cursor)", "और लोड करें (cursor)")
+add(
+    "practiceLoadMoreCursor",
+    "Load more (cursor)",
+    "थप हेर्नुहोस् (कर्सर)",
+    "और लोड करें (कर्सर)",
+)
 add("practiceWeakTopicsLoadFailed", "Could not load your weak topics", "तपाईंका कमजोर विषय लोड गर्न सकिएन", "आपके कमजोर विषय लोड नहीं हो सके")
 add(
     "practiceWeakTopicsExplained",
@@ -962,8 +997,8 @@ add("practiceNoWeakTopics", "No weak topics yet", "अहिलेसम्म �
 add(
     "practiceWeakTopicsNeedsAttempts",
     "The server needs graded attempts before it can spot weak areas. Take a quiz from the Quiz tab and check back.",
-    "कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। Quiz ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।",
-    "कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। Quiz टैब से एक क्विज़ खेलें और फिर देखें।",
+    "कमजोर क्षेत्र पहिचान्न सर्भरलाई अंकयुक्त प्रयास चाहिन्छ। क्विज़ ट्याबबाट एउटा क्विज खेल्नुहोस् र फेरि हेर्नुहोस्।",
+    "कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। क्विज़ टैब से एक क्विज़ खेलें और फिर देखें।",
 )
 add(
     "practiceWeakTopicsServerNote",
@@ -984,7 +1019,7 @@ add(
     "practiceSelfChallengeExplain",
     "Pick question count & difficulty — mirrors Elite Quiz self-challenge but sourced from adaptive engine.",
     "प्रश्न संख्या र कठिनाई छान्नुहोस् — Elite Quiz को आफैँ चुनौतीजस्तै, तर अनुकूली इन्जिनबाट।",
-    "प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर adaptive engine से।",
+    "प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर अनुकूली इंजन से।",
 )
 add("practiceQuestionCount", "Question count: {count}", "प्रश्न संख्या: {count}", "प्रश्न संख्या: {count}", ["count"])
 add("practiceDifficulty", "Difficulty", "कठिनाई", "कठिनाई")
@@ -1021,7 +1056,7 @@ add("economyNoResources", "No resources yet", "अहिलेसम्म क�
 add(
     "economyResourcesExplain",
     "Resources are earned via city / economy flows and quiz rewards. They appear here when available.",
-    "स्रोतहरू सिटी/अर्थव्यवस्थाको प्रवाह र क्विज पुरस्कारबाट कमाइन्छन्। उपलब्ध भएपछि यहाँ देखिन्छन्।",
+    "स्रोतहरू सिटी/अर्थव्यवस्थाको प्रवाह र क्विज़ पुरस्कारबाट कमाइन्छन्। उपलब्ध भएपछि यहाँ देखिन्छन्।",
     "संसाधन शहर/अर्थव्यवस्था के प्रवाह और क्विज़ पुरस्कारों से मिलते हैं। उपलब्ध होने पर यहाँ दिखते हैं।",
 )
 add("economyCatalog", "Catalog", "सङ्ग्रह", "कैटलॉग")
@@ -1060,14 +1095,14 @@ add("economyHowYouEarn", "How you earn", "तपाईं कसरी कमा
 add(
     "economyMintingExplain",
     "Coins are credited after each graded quiz and server-side daily actions. They are never minted on your device, so your balance cannot drift.",
-    "क्विन हरेक अंकयुक्त क्विज र सर्भरका दैनिक कार्यपछि जम्मा हुन्छन्। तिनीहरू यन्त्रमा कहिल्यै बन्दैनन्, त्यसैले तपाईंको ब्यालेन्स बिग्रिँदैन।",
+    "क्विन हरेक अंकयुक्त क्विज़ र सर्भरका दैनिक कार्यपछि जम्मा हुन्छन्। तिनीहरू यन्त्रमा कहिल्यै बन्दैनन्, त्यसैले तपाईंको ब्यालेन्स बिग्रिँदैन।",
     "कॉइन हर अंक वाले क्विज़ और सर्वर के दैनिक कार्यों के बाद जमा होते हैं। वे कभी आपके डिवाइस पर नहीं बनते, इसलिए आपका बैलेंस नहीं बिगड़ता।",
 )
 add("economyNoTransactions", "No transactions yet", "अहिलेसम्म कुनै कारोबार छैन", "अभी तक कोई लेनदेन नहीं")
 add(
     "economyNoTransactionsBody",
     "Complete a quiz to earn coins. Every credit is recorded on our servers.",
-    "क्विन कमाउन एउटा क्विज पूरा गर्नुहोस्। हरेक जम्मा हाम्रो सर्भरमा दर्ज हुन्छ।",
+    "क्विन कमाउन एउटा क्विज़ पूरा गर्नुहोस्। हरेक जम्मा हाम्रो सर्भरमा दर्ज हुन्छ।",
     "कॉइन कमाने के लिए एक क्विज़ पूरा करें। हर जमा हमारे सर्वर पर दर्ज होता है।",
 )
 add("economyTitle", "Economy", "अर्थव्यवस्था", "अर्थव्यवस्था")
@@ -1125,8 +1160,8 @@ add("libraryLoadMoreReviews", "Load more reviews", "थप समीक्षा
 add(
     "librarySignedUrls",
     "Download URLs are signed and short-lived. If a download fails, tap Download again to get a fresh URL. Respect library-api-download throttle.",
-    "डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि Download थिच्नुहोस्। library-api-download को throttle मान्नुहोस्।",
-    "डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से Download दबाएं। library-api-download की सीमा मानें।",
+    "डाउनलोड URL हस्ताक्षरित र छोटो अवधिका हुन्छन्। डाउनलोड असफल भए फेरि डाउनलोड थिच्नुहोस्। library-api-download को सीमा मान्नुहोस्।",
+    "डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से डाउनलोड दबाएं। library-api-download की सीमा मानें।",
 )
 add("libraryFree", "FREE", "निःशुल्क", "मुफ़्त")
 add("libraryCoinsLabel", "{count} COINS", "{count} क्विन", "{count} कॉइन", ["count"])
@@ -1240,8 +1275,8 @@ add("practiceDifficultyLabel", "Difficulty: {difficulty}", "कठिनाई: 
 add(
     "practiceNoOptionsNotice",
     "The server sent this question without answer options, so it cannot be drilled here. Try the graded Quiz tab, which loads a full session.",
-    "सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त Quiz ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।",
-    "सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला Quiz टैब आज़माएं, जो पूरा सत्र लोड करता है।",
+    "सर्भरले यो प्रश्न विकल्पबिना पठायो, त्यसैले यहाँ ड्रिल गर्न सकिँदैन। अंकयुक्त क्विज़ ट्याब प्रयास गर्नुहोस्, जसले पूरै सत्र लोड गर्छ।",
+    "सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला क्विज़ टैब आज़माएं, जो पूरा सत्र लोड करता है।",
 )
 add(
     "practiceAnswerSentNotice",
@@ -1340,15 +1375,25 @@ add("liveEventRawKeys", "Raw keys: {keys}", "कच्चा कुञ्जी:
 # ── coaching ────────────────────────────────────────────────────────────────
 add("coachingTutorChat", "Tutor chat", "ट्युटर कुराकानी", "ट्यूटर चैट")
 add("coachingStudyPlan", "Study plan", "अध्ययन योजना", "अध्ययन योजना")
-add("coachingTutorOnboarding", "Tutor onboarding", "ट्युटर onboarding", "ट्यूटर ऑनबोर्डिंग")
+add(
+    "coachingTutorOnboarding",
+    "Tutor onboarding",
+    "ट्युटर सुरुवाती",
+    "ट्यूटर ऑनबोर्डिंग",
+)
 add(
     "coachingGoalIdHint",
     "Goal ID for readiness (e.g., psc-civil)",
-    "तयारीका लागि Goal ID (जस्तै: psc-civil)",
-    "तैयारी के लिए Goal ID (जैसे: psc-civil)",
+    "तयारीका लागि लक्ष्य ID (जस्तै: psc-civil)",
+    "तैयारी के लिए लक्ष्य ID (जैसे: psc-civil)",
 )
 add("coachingLoad", "Load", "लोड गर्नुहोस्", "लोड करें")
-add("coachingNoData", "No coaching data yet — complete onboarding or chat with tutor to seed.", "अहिलेसम्म कुनै कोचिङ डाटा छैन — onboarding पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।", "अभी तक कोई कोचिंग डेटा नहीं — ऑनबोर्डिंग पूरा करें या ट्यूटर से चैट करें।")
+add(
+    "coachingNoData",
+    "No coaching data yet — complete onboarding or chat with tutor to seed.",
+    "अहिलेसम्म कुनै कोचिङ डाटा छैन — सुरुवाती पूरा गर्नुहोस् वा ट्युटरसँग कुराकानी गर्नुहोस्।",
+    "अभी तक कोई कोचिंग डेटा नहीं — ऑनबोर्डिंग पूरा करें या ट्यूटर से चैट करें।",
+)
 add(
     "coachingPartial",
     "Some coaching surfaces are temporarily unavailable — showing available data.",
@@ -1357,9 +1402,10 @@ add(
 )
 add("coachingNoReadinessForGoal", "Readiness: no data for this goal yet.", "तयारी: यो लक्ष्यका लागि अहिलेसम्म डाटा छैन।", "तैयारी: इस लक्ष्य के लिए अभी तक डेटा नहीं।")
 add("coachingAskTutor", "Ask tutor", "ट्युटरलाई सोध्नुहोस्", "ट्यूटर से पूछें")
-add("coachingOnboarding",
+add(
+    "coachingOnboarding",
     "Onboarding",
-    "Onboarding सुरु गर्नुहोस्",
+    "सुरुवाती सुरु गर्नुहोस्",
     "ऑनबोर्डिंग शुरू करें",
 )
 add(
@@ -1370,7 +1416,7 @@ add(
 )
 add("coachingReadiness", "Readiness", "तयारी", "तैयारी")
 add("coachingFocusNext", "Focus next:", "अर्को केन्द्रमा:", "अगला ध्यान दें:")
-add("coachingNoReadiness", "No readiness yet — attempt a few quizzes under this goal.", "अहिलेसम्म तयारी छैन — यो लक्ष्य अन्तर्गत केही क्विज खेल्नुहोस्।", "अभी तक तैयारी नहीं — इस लक्ष्य के तहत कुछ क्विज़ खेलें।")
+add("coachingNoReadiness", "No readiness yet — attempt a few quizzes under this goal.", "अहिलेसम्म तयारी छैन — यो लक्ष्य अन्तर्गत केही क्विज़ खेल्नुहोस्।", "अभी तक तैयारी नहीं — इस लक्ष्य के तहत कुछ क्विज़ खेलें।")
 add("coachingGoalLabel", "Goal {goal}", "लक्ष्य {goal}", "लक्ष्य {goal}", ["goal"])
 add("coachingMore", "+ {count} more", "+ {count} थप", "+ {count} और", ["count"])
 add("coachingNoTasksToday", "No tasks today", "आज कुनै काम छैन", "आज कोई काम नहीं")
@@ -1398,7 +1444,7 @@ add("socialCopyCode", "Copy code", "कोड प्रतिलिपि गर
 add("socialRewards", "Rewards", "पुरस्कार", "पुरस्कार")
 add("socialRewardPerSignup", "You earn per friend who signs up", "दर्ता गर्ने हरेक साथीका लागि तपाईंले कमाउनुहुन्छ", "हर दाखिल करने दोस्त के लिए आपको इनाम")
 add("socialTheyEarn", "They earn when they sign up", "दर्ता गर्दा उनले पनि कमाउँछन्", "दाखिल करते ही वे भी कमाते हैं")
-add("socialBonusFirstQuiz", "Bonus when they finish their first quiz", "उनको पहिलो क्विज पूरा भएपछि बोनस", "उनका पहले क्विज़ के बाद बोनस")
+add("socialBonusFirstQuiz", "Bonus when they finish their first quiz", "उनको पहिलो क्विज़ पूरा भएपछि बोनस", "उनका पहले क्विज़ के बाद बोनस")
 add("socialYourReferrals", "Your referrals", "तपाईंका रेफरल", "आपके रेफ़रल")
 add("socialInvited", "invited", "आमन्त्रित", "बुलाए")
 add("socialRewarded", "rewarded", "पुरस्कृत", "इनाम पाए")
@@ -1511,7 +1557,7 @@ add("leaderboardGlobal", "Global", "विश्व", "विश्व")
 add("leaderboardFriends", "Friends", "साथी", "दोस्त")
 add("leaderboardLeague", "League", "लिग", "लीग")
 add("leaderboardDonors", "Donors", "दानकर्ता", "दानकर्ता")
-add("leaderboardNoRank", "No rank yet — complete a quiz to enter the leaderboard.", "अहिलेसम्म कुनो अंक छैन — लिडरबोर्डमा पर्न एउटा क्विज पूरा गर्नुहोस्।", "अभी तक कोई रैंक नहीं — लीडरबोर्ड में आने के लिए एक क्विज़ पूरा करें।")
+add("leaderboardNoRank", "No rank yet — complete a quiz to enter the leaderboard.", "अहिलेसम्म कुनो अंक छैन — लिडरबोर्डमा पर्न एउटा क्विज़ पूरा गर्नुहोस्।", "अभी तक कोई रैंक नहीं — लीडरबोर्ड में आने के लिए एक क्विज़ पूरा करें।")
 add("leaderboardMyRank", "MY RANK", "मेरो अंक", "मेरा रैंक")
 add(
     "leaderboardRankIn",
@@ -1557,8 +1603,18 @@ add(
 # ── learning ────────────────────────────────────────────────────────────────
 add("learningGoalLabel", "Goal #{number}", "लक्ष्य #{number}", "लक्ष्य #{number}", ["number"])
 add("learningToday", "Today", "आज", "आज")
-add("learningGoalId", "Goal ID", "लक्ष्य ID", "लक्ष्य ID")
-add("learningTrackId", "Track ID", "ट्र्याक ID", "ट्रैक ID")
+add(
+    "learningGoalId",
+    "Goal ID",
+    "लक्ष्य ID",
+    "लक्ष्य ID",
+)
+add(
+    "learningTrackId",
+    "Track ID",
+    "ट्र्याक ID",
+    "ट्रैक ID",
+)
 add("learningTargetDate", "Target date", "लक्ष्य मिति", "लक्ष्य तिथि")
 add("learningDailyMinutes", "Daily minutes", "दैनिक मिनेट", "दैनिक मिनट")
 add("learningIntensity", "Intensity", "तीव्रता", "तीव्रता")
@@ -1588,7 +1644,7 @@ add("learningNoActiveGoal", "No active goal", "कुनै सक्रिय �
 add(
     "learningNoActiveGoalBody",
     "Create a learning goal from Tracks to get a Today plan. If you already have one, it will show up here.",
-    "आजको योजना पाउन Tracks बाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।",
+    "आजको योजना पाउन ट्र्याकहरूबाट सिकाइको लक्ष्य बनाउनुहोस्। पहिले नै भए यहाँ देखिन्छ।",
     "आज की योजना पाने के लिए ट्रैक से सीखने का लक्ष्य बनाएं। पहले से है तो यहाँ दिखेगा।",
 )
 add("learningBrowseTracks", "Browse tracks", "ट्र्याकहरू हेर्नुहोस्", "ट्रैक ब्राउज़ करें")
@@ -1779,7 +1835,7 @@ add("gameNotPlayable", "Not playable yet", "अहिले खेल्न म�
 add(
     "gameWorldNoCourse",
     "This world has no quiz course linked to it yet, so there is nothing to play. Ask an admin to set the world's course.",
-    "यो वर्ल्डसँग अहिलेसम्म कुनै क्विज कोर्स जोडिएको छैन, त्यसैले खेल्नुपर्ने केही छैन। प्रशासकलाई वर्ल्डको कोर्स सेट गर्न भन्नुहोस्।",
+    "यो वर्ल्डसँग अहिलेसम्म कुनै क्विज़ कोर्स जोडिएको छैन, त्यसैले खेल्नुपर्ने केही छैन। प्रशासकलाई वर्ल्डको कोर्स सेट गर्न भन्नुहोस्।",
     "इस वर्ल्ड से अभी तक कोई क्विज़ कोर्स नहीं जुड़ा है, इसलिए खेलने को कुछ नहीं है। एडमिन से वर्ल्ड का कोर्स सेट करवाएं।",
 )
 add("gameWorldsTitle", "Worlds", "वर्ल्डहरू", "वर्ल्ड")
@@ -1842,8 +1898,8 @@ add("storeAvailableToEquip", "Available to equip", "लगाउन मिल्
 add(
     "storeEquipHint",
     "Tap Equip to try it on. If you tap twice you are never equipped twice.",
-    "लगाउन Equip थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।",
-    "लगाने के लिए Equip दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।",
+    "लगाउन थिच्नुहोस्। दुई पटक थिचे पनि दुई पटक लगाइँदैन।",
+    "लगाने के लिए दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।",
 )
 add("storeNoAssets", "No assets yet — visit Premium Store.", "अहिलेसम्म कुनै एसेट छैन — प्रिमियम स्टोर हेर्नुहोस्।", "अभी तक कोई एसेट नहीं — प्रीमियम स्टोर देखें।")
 add("storeClearSlot", "Clear {slot}", "{slot} हटाउनुहोस्", "{slot} हटाएं", ["slot"])
@@ -1941,7 +1997,7 @@ add(
     "उपलब्धियां लोड नहीं हो सकीं: {reason}",
     ["reason"],
 )
-add("achievementsNone", "No achievements yet — start quizzing!", "अहिलेसम्म कुनै उपलब्धि छैन — क्विज खेल्न सुरु गर्नुहोस्!", "अभी तक कोई उपलब्धि नहीं — क्विज़ खेलना शुरू करें!")
+add("achievementsNone", "No achievements yet — start quizzing!", "अहिलेसम्म कुनै उपलब्धि छैन — क्विज़ खेल्न सुरु गर्नुहोस्!", "अभी तक कोई उपलब्धि नहीं — क्विज़ खेलना शुरू करें!")
 add("searchTitle", "Search", "खोज", "खोज")
 add("searchHint", "Search questions, calculators, courses…", "प्रश्न, क्यालकुलेटर, कोर्स खोज्नुहोस्…", "प्रश्न, कैलकुलेटर, कोर्स खोजें…")
 add("searchTry", "Try: levelling, RCC, Bernoulli", "जस्तै: levelling, RCC, Bernoulli", "जैसे: levelling, RCC, Bernoulli")
@@ -1957,15 +2013,15 @@ add("lottieTapToDismiss", "Tap to dismiss", "हटाउन थिच्नु�
 add(
     "lifelineCost",
     "{name} lifeline, {coins} coins",
-    "{name} lifeline, {coins} क्विन",
-    "{name} lifeline, {coins} कॉइन",
+    "{name} लाइफलाइन, {coins} क्विन",
+    "{name} लाइफ़लाइन, {coins} कॉइन",
     ["name", "coins"],
 )
 add(
     "lifelineUnavailable",
     "{name} lifeline unavailable: {reason}",
-    "{name} lifeline उपलब्ध छैन: {reason}",
-    "{name} lifeline उपलब्ध नहीं: {reason}",
+    "{name} लाइफलाइन उपलब्ध छैन: {reason}",
+    "{name} लाइफ़लाइन उपलब्ध नहीं: {reason}",
     ["name", "reason"],
 )
 add(
@@ -2112,8 +2168,8 @@ add("lifelineNeedsCoins", "Needs {cost} coins (you have {balance})", "{cost} क
 add("lifelineUnavailableNow", "Unavailable right now", "अहिले उपलब्ध छैन", "अभी उपलब्ध नहीं")
 
 # ── the streak ──────────────────────────────────────────────────────────────
-add("streakAtRisk", "At risk — complete a quiz before midnight to keep {days} days alive.", "जोखिममा — {days} दिन जोगाउन मध्यरात्रिभन्दा पहिले एउटा क्विज पूरा गर्नुहोस्।", "जोखिम में — {days} दिन बचाउने के लिए मध्यरात्रि से पहले एक क्विज़ पूरा करें।", ["days"])
-add("streakCompleteToGrow", "Complete today's quiz to grow your streak.", "स्ट्रिक बढाउन आजको क्विज पूरा गर्नुहोस्।", "स्ट्रीक बढ़ाने के लिए आज का क्विज़ पूरा करें।")
+add("streakAtRisk", "At risk — complete a quiz before midnight to keep {days} days alive.", "जोखिममा — {days} दिन जोगाउन मध्यरात्रिभन्दा पहिले एउटा क्विज़ पूरा गर्नुहोस्।", "जोखिम में — {days} दिन बचाउने के लिए मध्यरात्रि से पहले एक क्विज़ पूरा करें।", ["days"])
+add("streakCompleteToGrow", "Complete today's quiz to grow your streak.", "स्ट्रिक बढाउन आजको क्विज़ पूरा गर्नुहोस्।", "स्ट्रीक बढ़ाने के लिए आज का क्विज़ पूरा करें।")
 add("streakTierLegend", "Legend 100+", "लिजेन्ड १००+", "लीजेंड 100+")
 add("streakTierChampion", "Champion 30+", "च्याम्पियन ३०+", "चैंपियन 30+")
 add("streakTierWarrior", "Warrior 7+", "वारियर ७+", "वॉरियर 7+")
@@ -2160,8 +2216,8 @@ add(
 add(
     "privacyEraseViaAccount",
     "This profile is linked to your account, so erasing it is handled by the account deletion flow. Use Delete account in Settings to remove everything.",
-    "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन Settings मा Delete account प्रयोग गर्नुहोस्।",
-    "यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए Settings में Delete account का उपयोग करें।",
+    "यो प्रोफाइल तपाईंको खातासँग जोडिएको छ, त्यसैले यो मेटाउने काम खाता मेटाउने प्रक्रियाले गर्छ। सबै हटाउन सेटिङमा खाता मेटाउनुहोस् प्रयोग गर्नुहोस्।",
+    "यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए सेटिंग में खाता मिटाएं का उपयोग करें।",
 )
 add(
     "privacyLocalConsentNote",
@@ -2260,15 +2316,18 @@ add(
 )
 add(
     "quizShareResult",
-    "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com",
-    "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (बिसास) बाट। प्रयास: https://bisaas.com",
-    "मैंने \"{title}\" पर {correct}/{total} ({percent}%) अंक किए — {grade}! XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://bisaas.com",
+    "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! "
+    "XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com",
+    "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! "
+    "XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://bisaas.com",
+    "मैंने \"{title}\" पर {correct}/{total} ({percent}%) अंक किए — {grade}! "
+    "XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://bisaas.com",
     ["correct", "total", "percent", "title", "grade", "xp", "coins"],
 )
 add("quizGradeExcellent", "Excellent", "उत्कृष्ट", "बहुत बढ़िया")
 add("quizGradeGoodJob", "Good Job", "राम्रो काम", "अच्छा काम")
 add("quizGradeKeepPracticing", "Keep Practicing", "अभ्यास जारी राख्नुहोस्", "अभ्यास जारी रखें")
-add("quizDefaultTitle", "CivilCal Quiz", "CivilCal क्विज", "CivilCal क्विज़")
+add("quizDefaultTitle", "CivilCal Quiz", "CivilCal क्विज़", "CivilCal क्विज़")
 add("syllabusTopicsLoaded", "topics loaded", "विषय लोड भए", "विषय लोड हुए")
 add("syllabusTopicsLabel", "topics", "विषय", "विषय")
 add("quizIntroGradesInstantly", "Server grades your answer instantly.", "सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।", "सर्वर आपके उत्तर को तुरंत अंकित करता है।")
@@ -2313,10 +2372,34 @@ add("routeNotFound", "Route not found: {path}", "मार्ग फेला �
 PLACEHOLDER_TYPES = {}
 
 
+# ── transliteration consistency ──────────────────────────────────────────────
+# A term that is transliterated has one spelling per locale. The Nepali
+# transliteration of "quiz" is क्विज and the Hindi one carries the nukta,
+# क्विज़; without this, a message added in a hurry ends up with the other
+# spelling and the app reads as machine-made.
+NORMALISE = {
+    # The patterns are regexes: the Hindi rule adds a nukta, and `क्विज` is a
+    # prefix of `क्विज़`, so it has to look ahead to avoid a second one.
+    "ne": {
+        r"क्विज़": "क्विज",
+    },
+    "hi": {
+        "क्विज(?!़)": "क्विज़",
+    },
+}
+
+
+def normalise(value, locale):
+    """One spelling per term, per locale."""
+    for pattern, right in NORMALISE.get(locale, {}).items():
+        value = re.sub(pattern, right, value)
+    return value
+
+
 def build(locale_index, locale):
     out = {"@@locale": locale}
     for key, values in T.items():
-        out[key] = values[locale_index]
+        out[key] = normalise(values[locale_index], locale)
         names = values[3]
         if names:
             meta = {"placeholders": {}}

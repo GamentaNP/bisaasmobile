@@ -598,7 +598,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get consentIntro =>
-      'आपका खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप Settings → Privacy में जाकर कभी भी इसे बदल सकते हैं।';
+      'आपके खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप सेटिंग → गोपनीयता में जाकर कभी भी इसे बदल सकते हैं।';
 
   @override
   String get consentNecessary => 'आवश्यक';
@@ -822,7 +822,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get quizFunnelSampleBody =>
-      'हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए Quiz टैब खोलें।';
+      'हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए क्विज़ टैब खोलें।';
 
   @override
   String get quizFunnelPublicBody =>
@@ -1353,7 +1353,8 @@ class AppLocalizationsHi extends AppLocalizations {
       'एक सप्ताह की गतिविधि के बाद साप्ताहिक रिपोर्ट दिखेगी।';
 
   @override
-  String get tutorOnboardingSaved => 'ऑनबोर्डिंग सहेजी गई — योजना जल्द बनेगी।';
+  String get tutorOnboardingSaved =>
+      'ऑनबोर्डिंग सहेज ली गई — योजना जल्द बनेगी।';
 
   @override
   String get tutorOnboardingTitle => 'ट्यूटर ऑनबोर्डिंग';
@@ -1638,7 +1639,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get practiceBookmarked => 'बुकमार्क किया गया';
 
   @override
-  String get practiceLoadMoreCursor => 'और लोड करें (cursor)';
+  String get practiceLoadMoreCursor => 'और लोड करें (कर्सर)';
 
   @override
   String get practiceWeakTopicsLoadFailed => 'आपके कमजोर विषय लोड नहीं हो सके';
@@ -1652,7 +1653,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get practiceWeakTopicsNeedsAttempts =>
-      'कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। Quiz टैब से एक क्विज़ खेलें और फिर देखें।';
+      'कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। क्विज़ टैब से एक क्विज़ खेलें और फिर देखें।';
 
   @override
   String get practiceWeakTopicsServerNote =>
@@ -1674,7 +1675,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get practiceSelfChallengeExplain =>
-      'प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर adaptive engine से।';
+      'प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर अनुकूली इंजन से।';
 
   @override
   String practiceQuestionCount(Object count) {
@@ -1916,7 +1917,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get librarySignedUrls =>
-      'डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से Download दबाएं। library-api-download की सीमा मानें।';
+      'डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से डाउनलोड दबाएं। library-api-download की सीमा मानें।';
 
   @override
   String get libraryFree => 'मुफ़्त';
@@ -2099,7 +2100,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get practiceNoOptionsNotice =>
-      'सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला Quiz टैब आज़माएं, जो पूरा सत्र लोड करता है।';
+      'सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला क्विज़ टैब आज़माएं, जो पूरा सत्र लोड करता है।';
 
   @override
   String get practiceAnswerSentNotice =>
@@ -2243,7 +2244,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get coachingTutorOnboarding => 'ट्यूटर ऑनबोर्डिंग';
 
   @override
-  String get coachingGoalIdHint => 'तैयारी के लिए Goal ID (जैसे: psc-civil)';
+  String get coachingGoalIdHint => 'तैयारी के लिए लक्ष्य ID (जैसे: psc-civil)';
 
   @override
   String get coachingLoad => 'लोड करें';
@@ -3154,7 +3155,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get storeEquipHint =>
-      'लगाने के लिए Equip दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।';
+      'लगाने के लिए दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।';
 
   @override
   String get storeNoAssets => 'अभी तक कोई एसेट नहीं — प्रीमियम स्टोर देखें।';
@@ -3391,12 +3392,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String lifelineCost(Object name, Object coins) {
-    return '$name lifeline, $coins कॉइन';
+    return '$name लाइफ़लाइन, $coins कॉइन';
   }
 
   @override
   String lifelineUnavailable(Object name, Object reason) {
-    return '$name lifeline उपलब्ध नहीं: $reason';
+    return '$name लाइफ़लाइन उपलब्ध नहीं: $reason';
   }
 
   @override
@@ -3721,7 +3722,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get privacyEraseViaAccount =>
-      'यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए Settings में Delete account का उपयोग करें।';
+      'यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए सेटिंग में खाता मिटाएं का उपयोग करें।';
 
   @override
   String get privacyLocalConsentNote =>

@@ -390,7 +390,7 @@
   "homeDashboardEmpty": "अनुमान लगाने के बजाय कुछ नहीं दिखाया गया। खींचें, या नीचे फिर से प्रयास करें।",
   "homeDashboardUnreachable": "सर्वर तक नहीं पहुँच सके, इसलिए डैशबोर्ड नहीं दिखाया जा सका।",
   "consentTitle": "गोपनीयता विकल्प",
-  "consentIntro": "आपका खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप Settings → Privacy में जाकर कभी भी इसे बदल सकते हैं।",
+  "consentIntro": "आपके खाते और क्विज़ की प्रगति हमारे सर्वर पर रखी जाती है, ताकि आप किसी भी डिवाइस में साइन इन कर सकें। इसके काम करने और ऐप को स्थिर रखने के लिए हम डिवाइस पहचान, पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच भी भेजते हैं। आपकी अनुमति से हम उपयोग घटनाएं भी भेजते हैं। आप सेटिंग → गोपनीयता में जाकर कभी भी इसे बदल सकते हैं।",
   "consentNecessary": "आवश्यक",
   "consentNecessaryBody": "साइन इन और आपका सहेजा काम, आपका पुश नोटिफिकेशन टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच। ऐप चलने के लिए आवश्यक।",
   "consentFunctional": "कार्यक्षम",
@@ -504,7 +504,7 @@
   "quizTryDifferentSearch": "कोई दूसरी खोज आज़माएं",
   "quizNoTopicsYet": "अभी तक कोई विषय नहीं",
   "quizCourseNoActiveTopics": "इस कोर्स में अभी तक कोई सक्रिय विषय नहीं है।",
-  "quizFunnelSampleBody": "हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए Quiz टैब खोलें।",
+  "quizFunnelSampleBody": "हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए क्विज़ टैब खोलें।",
   "quizFunnelPublicBody": "हमारे कैटलॉग से सार्वजनिक प्रश्न। मुफ़्त खाता बनाने पर उत्तर खुलते हैं।",
   "quizFreshQuestions": "हाल ही में नए प्रश्न जोड़े गए हैं।",
   "quizNewIn": "{scope} में नया",
@@ -868,7 +868,7 @@
   },
   "tutorHighlights": "मुख्य बातें",
   "tutorWeeklyReportPending": "एक सप्ताह की गतिविधि के बाद साप्ताहिक रिपोर्ट दिखेगी।",
-  "tutorOnboardingSaved": "ऑनबोर्डिंग सहेजी गई — योजना जल्द बनेगी।",
+  "tutorOnboardingSaved": "ऑनबोर्डिंग सहेज ली गई — योजना जल्द बनेगी।",
   "tutorOnboardingTitle": "ट्यूटर ऑनबोर्डिंग",
   "tutorPersonalised": "व्यक्तिगत ट्यूटर",
   "tutorOnboardingExplain": "अपना लक्ष्य बताएं — सर्वर आपकी योजना बनाएगा। user_id की ज़रूरत नहीं (टोकन से)।",
@@ -1068,17 +1068,17 @@
     }
   },
   "practiceBookmarked": "बुकमार्क किया गया",
-  "practiceLoadMoreCursor": "और लोड करें (cursor)",
+  "practiceLoadMoreCursor": "और लोड करें (कर्सर)",
   "practiceWeakTopicsLoadFailed": "आपके कमजोर विषय लोड नहीं हो सके",
   "practiceWeakTopicsExplained": "ये आपके अपने उत्तर इतिहास से निकाले गए हैं। जब तक सच न हो, कुछ नहीं दिखाया जाता।",
   "practiceNoWeakTopics": "अभी तक कोई कमजोर विषय नहीं",
-  "practiceWeakTopicsNeedsAttempts": "कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। Quiz टैब से एक क्विज़ खेलें और फिर देखें।",
+  "practiceWeakTopicsNeedsAttempts": "कमजोर क्षेत्र पहचानने के लिए सर्वर को अंक वाले प्रयास चाहिए। क्विज़ टैब से एक क्विज़ खेलें और फिर देखें।",
   "practiceWeakTopicsServerNote": "कमजोर विषय हमारे सर्वर आपके उत्तर इतिहास से निकालते हैं, इसलिए यहाँ कुछ भी अनुमानित नहीं है।",
   "practiceYourWeakTopics": "आपके कमजोर विषय",
   "practiceDrillAction": "ड्रिल करें",
   "practiceDrillTen": "10 प्रश्न ड्रिल करें (अभ्यास मोड, समय-सीमित नहीं)",
   "practiceUntimedNote": "अभ्यास समय-सीमित नहीं है और इससे आपकी रैंक या कॉइन नहीं बदलते।",
-  "practiceSelfChallengeExplain": "प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर adaptive engine से।",
+  "practiceSelfChallengeExplain": "प्रश्नों की संख्या और कठिनाई चुनें — Elite Quiz के सेल्फ-चैलेंज जैसा, पर अनुकूली इंजन से।",
   "practiceQuestionCount": "प्रश्न संख्या: {count}",
   "@practiceQuestionCount": {
     "placeholders": {
@@ -1267,7 +1267,7 @@
   "libraryReviews": "समीक्षाएं",
   "libraryNoReviews": "अभी तक कोई समीक्षा नहीं — अनलॉक करने के बाद पहली समीक्षा करें!",
   "libraryLoadMoreReviews": "और समीक्षाएं लोड करें",
-  "librarySignedUrls": "डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से Download दबाएं। library-api-download की सीमा मानें।",
+  "librarySignedUrls": "डाउनलोड URL हस्ताक्षरित और अल्पकालिक होते हैं। डाउनलोड विफल हो तो फिर से डाउनलोड दबाएं। library-api-download की सीमा मानें।",
   "libraryFree": "मुफ़्त",
   "libraryCoinsLabel": "{count} कॉइन",
   "@libraryCoinsLabel": {
@@ -1425,7 +1425,7 @@
       }
     }
   },
-  "practiceNoOptionsNotice": "सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला Quiz टैब आज़माएं, जो पूरा सत्र लोड करता है।",
+  "practiceNoOptionsNotice": "सर्वर ने यह प्रश्न विकल्पों के बिना भेजा, इसलिए यहाँ ड्रिल नहीं किया जा सकता। अंक वाला क्विज़ टैब आज़माएं, जो पूरा सत्र लोड करता है।",
   "practiceAnswerSentNotice": "उत्तर सर्वर को भेजा गया। सर्वर प्रयास को अंकित करता है — यह स्क्रीन कभी अंक का अनुमान नहीं लगाती।",
   "practicePrev": "पिछला",
   "practiceGrading": "अंक लगा रहे हैं…",
@@ -1581,7 +1581,7 @@
   "coachingTutorChat": "ट्यूटर चैट",
   "coachingStudyPlan": "अध्ययन योजना",
   "coachingTutorOnboarding": "ट्यूटर ऑनबोर्डिंग",
-  "coachingGoalIdHint": "तैयारी के लिए Goal ID (जैसे: psc-civil)",
+  "coachingGoalIdHint": "तैयारी के लिए लक्ष्य ID (जैसे: psc-civil)",
   "coachingLoad": "लोड करें",
   "coachingNoData": "अभी तक कोई कोचिंग डेटा नहीं — ऑनबोर्डिंग पूरा करें या ट्यूटर से चैट करें।",
   "coachingPartial": "कुछ कोचिंग स्क्रीन अस्थायी रूप से उपलब्ध नहीं — उपलब्ध डेटा दिखा रहे हैं।",
@@ -2304,7 +2304,7 @@
   "storeNothingEquipped": "कुछ भी लगाया नहीं है",
   "storeNothingEquippedBody": "प्रीमियम स्टोर से एसेट खरीदें, फिर यहाँ लगाएं।",
   "storeAvailableToEquip": "लगाने योग्य",
-  "storeEquipHint": "लगाने के लिए Equip दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।",
+  "storeEquipHint": "लगाने के लिए दबाएं। दो बार दबाने पर भी दो बार लगता नहीं।",
   "storeNoAssets": "अभी तक कोई एसेट नहीं — प्रीमियम स्टोर देखें।",
   "storeClearSlot": "{slot} हटाएं",
   "@storeClearSlot": {
@@ -2478,7 +2478,7 @@
   },
   "lottieOverlay": "lottie-overlay",
   "lottieTapToDismiss": "हटाने के लिए दबाएं",
-  "lifelineCost": "{name} lifeline, {coins} कॉइन",
+  "lifelineCost": "{name} लाइफ़लाइन, {coins} कॉइन",
   "@lifelineCost": {
     "placeholders": {
       "name": {
@@ -2489,7 +2489,7 @@
       }
     }
   },
-  "lifelineUnavailable": "{name} lifeline उपलब्ध नहीं: {reason}",
+  "lifelineUnavailable": "{name} लाइफ़लाइन उपलब्ध नहीं: {reason}",
   "@lifelineUnavailable": {
     "placeholders": {
       "name": {
@@ -2798,7 +2798,7 @@
   "streakNoInsuranceToUse": "उपयोग करने योग्य कोई बीमा बाकी नहीं है।",
   "privacyUnreachable": "इस डिवाइस पर क्या सहेजा है दिखाने के लिए हम सर्वर तक नहीं पहुँच सके।",
   "privacyUnreadable": "हम इस डिवाइस पर सहेजा क्या है पढ़ नहीं सके। आपके स्थानीय विकल्प अप्रभावित नहीं हैं।",
-  "privacyEraseViaAccount": "यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए Settings में Delete account का उपयोग करें।",
+  "privacyEraseViaAccount": "यह प्रोफ़ाइल आपके खाते से जुड़ा है, इसलिए इसे मिटाने का काम खाता हटाने की प्रक्रिया करती है। सब कुछ हटाने के लिए सेटिंग में खाता मिटाएं का उपयोग करें।",
   "privacyLocalConsentNote": "विश्लेषण, कार्यक्षम और प्रचार की सहमति इस डिवाइस पर सहेजी जाती है और तुरंत लागू होती है, ऊपर के अनाम प्रोफ़ाइल से स्वतंत्र।",
   "privacyNoChoiceYet": "आपने अभी तक कोई चयन नहीं किया है।",
   "settingsLanguageSection": "भाषा",
