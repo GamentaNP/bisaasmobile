@@ -1357,7 +1357,11 @@ add(
 )
 add("coachingNoReadinessForGoal", "Readiness: no data for this goal yet.", "तयारी: यो लक्ष्यका लागि अहिलेसम्म डाटा छैन।", "तैयारी: इस लक्ष्य के लिए अभी तक डेटा नहीं।")
 add("coachingAskTutor", "Ask tutor", "ट्युटरलाई सोध्नुहोस्", "ट्यूटर से पूछें")
-add("coachingOnboarding", "Onboarding", "Onboarding", "ऑनबोर्डिंग")
+add("coachingOnboarding",
+    "Onboarding",
+    "Onboarding सुरु गर्नुहोस्",
+    "ऑनबोर्डिंग शुरू करें",
+)
 add(
     "coachingReadinessExplained",
     "Readiness is worked out from your goals, tracks and tutor activity. Some sections stay hidden until you use them.",

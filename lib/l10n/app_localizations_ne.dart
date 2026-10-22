@@ -2268,7 +2268,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get coachingAskTutor => 'ट्युटरलाई सोध्नुहोस्';
 
   @override
-  String get coachingOnboarding => 'Onboarding';
+  String get coachingOnboarding => 'Onboarding सुरु गर्नुहोस्';
 
   @override
   String get coachingReadinessExplained =>

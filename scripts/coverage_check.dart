@@ -26,11 +26,19 @@ void main(List<String> args) {
 
   for (final line in lines) {
     if (line.startsWith('SF:')) {
-      skipFile = line.contains('.g.dart') ||
-          line.contains('.freezed.dart') ||
-          line.contains('.drift.dart') ||
-          line.contains('l10n/') ||
-          line.contains('lib/l10n');
+      // The path separator differs by platform — lcov writes `lib/l10n/…`
+      // on Linux and `lib\l10n\…` on Windows — so the path is normalised
+      // before it is matched. Without that, the generated localisations are
+      // counted as uncovered code on Windows and the measurement disagrees
+      // with CI by several thousand lines.
+      final path = line.substring(3).replaceAll('\\', '/');
+      skipFile = path.endsWith('.g.dart') ||
+          path.endsWith('.freezed.dart') ||
+          path.endsWith('.drift.dart') ||
+          path.contains('/l10n/') ||
+          path.contains('/lib/l10n/') ||
+          path.startsWith('l10n/') ||
+          path.startsWith('lib/l10n/');
     }
     if (skipFile) continue;
     if (line.startsWith('LF:')) {

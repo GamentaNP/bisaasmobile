@@ -18,6 +18,7 @@ settings that only the account owner can touch.
 |---|---|---|
 | Static analysis | `flutter analyze` | CI, `analyze-test` job |
 | Unit + integration tests | `flutter test` | CI, `analyze-test` job |
+| Test coverage | `flutter test --coverage` then `dart scripts/coverage_check.dart --min=55` | CI, `analyze-test` job |
 | Device-test analysis | `cd device_tests && flutter analyze` | CI, `device-tests-analyze` job |
 | Debug APK builds | `flutter build apk --debug` | CI, `build-android` job |
 | Release APK builds | `flutter build apk --release --dart-define-from-file=dart_defines/production.json` | manual / release pipeline |
