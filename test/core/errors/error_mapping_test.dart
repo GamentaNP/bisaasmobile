@@ -46,6 +46,55 @@ void main() {
       expect(e.isValidation, isTrue);
       expect(e.errors?['email'], isNotNull);
     });
+
+    test('validation field errors come from error.details (the real wire shape)', () {
+      // The frozen envelope carries field errors at error.details — the
+      // top-level `errors` mirror the guide once promised does not exist.
+      final e = ApiException.fromJson(422, {
+        'message': 'The token field is required.',
+        'error': {
+          'code': 'VALIDATION_ERROR',
+          'details': {
+            'platform': ['The selected platform is invalid.'],
+            'token': ['The token field is required.'],
+          },
+        },
+      });
+      expect(e.isValidation, isTrue);
+      expect(e.fieldErrors?['token'], isNotNull);
+      expect(e.fieldErrors?['platform'], isNotNull);
+    });
+
+    test('error.details as an empty array (contract-allowed) yields null fieldErrors', () {
+      // error.details is an object OR an empty JSON array; clients must
+      // tolerate the array form without crashing.
+      final e = ApiException.fromJson(422, {
+        'message': 'The given data was invalid.',
+        'error': {'code': 'VALIDATION_ERROR', 'details': <dynamic>[]},
+      });
+      expect(e.isValidation, isTrue);
+      expect(e.fieldErrors, isNull);
+    });
+
+    test('newly mapped server codes resolve to their enum cases', () {
+      expect(ApiErrorCode.fromRaw('AUTH_TOKEN_REVOKED'), ApiErrorCode.authTokenRevoked);
+      expect(ApiErrorCode.fromRaw('AUTH_MFA_REQUIRED'), ApiErrorCode.authMfaRequired);
+      expect(ApiErrorCode.fromRaw('MAINTENANCE_MODE'), ApiErrorCode.maintenanceMode);
+      expect(ApiErrorCode.fromRaw('INSUFFICIENT_COINS'), ApiErrorCode.insufficientCoins);
+      expect(ApiErrorCode.fromRaw('PLAN_UPGRADE_REQUIRED'), ApiErrorCode.planUpgradeRequired);
+      expect(ApiErrorCode.fromRaw('FEATURE_DISABLED'), ApiErrorCode.featureDisabled);
+      expect(ApiErrorCode.fromRaw('IDEMPOTENCY_KEY_REQUIRED'), ApiErrorCode.idempotencyKeyRequired);
+    });
+
+    test('MAINTENANCE_MODE 503 marks isMaintenance', () {
+      final e = ApiException.fromJson(503, {
+        'error': {'code': 'MAINTENANCE_MODE', 'message': 'Under maintenance'},
+      });
+      expect(e.isMaintenance, isTrue);
+      expect(ApiException.fromJson(500, {
+        'error': {'code': 'INTERNAL_ERROR', 'message': 'x'},
+      }).isMaintenance, isFalse);
+    });
   });
 
   group('ErrorHandler', () {
@@ -59,6 +108,31 @@ void main() {
       expect(f, isA<ValidationFailure>());
       final vf = f as ValidationFailure;
       expect(vf.fieldErrors?['email'], isNotNull);
+    });
+
+    test('validation from error.details → ValidationFailure with field errors', () {
+      final f = ErrorHandler.handle(
+        ApiException.fromJson(422, {
+          'message': 'Invalid input',
+          'error': {
+            'code': 'VALIDATION_ERROR',
+            'details': {'email': ['bad']},
+          },
+        }),
+      );
+      expect(f, isA<ValidationFailure>());
+      final vf = f as ValidationFailure;
+      expect(vf.fieldErrors?['email'], isNotNull);
+    });
+
+    test('MAINTENANCE_MODE → MaintenanceFailure, not a retryable network error', () {
+      final f = ErrorHandler.handle(
+        ApiException.fromJson(503, {
+          'error': {'code': 'MAINTENANCE_MODE', 'message': 'Scheduled maintenance'},
+        }),
+      );
+      expect(f, isA<MaintenanceFailure>());
+      expect(f.message, 'Scheduled maintenance');
     });
 
     test('DioException carrying ApiException unwraps to NetworkFailure', () {

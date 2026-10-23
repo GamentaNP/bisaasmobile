@@ -128,8 +128,11 @@ void main() {
       verify(() => messaging.deleteToken()).called(1);
     });
 
-    test('a server that does not know the path still gets the token', () async {
-      // The fallback the guide allows: the body form of the same route.
+    test('an unknown path form never retries as a body-form DELETE', () async {
+      // The server only defines DELETE /device-tokens/{token}; the collection
+      // has no DELETE route, so a body-form retry would 405 and mask the real
+      // failure. The failure is swallowed once (logout must not throw), but
+      // no second request is made.
       final api = FakeApi(<String, FakeRoute>{});
       api.on(
         'DELETE',
@@ -143,8 +146,11 @@ void main() {
 
       await PushNotificationService(messaging, dioFor(api)).unregisterToken();
 
-      final body = api.jsonBodyOf(api.indexOfRequest('DELETE', '/device-tokens'));
-      expect(body['token'], 'tok-abc');
+      expect(
+        api.indexOfRequest('DELETE', '/device-tokens'),
+        -1,
+        reason: 'the body form does not exist on the server; never send it',
+      );
     });
 
     test('a token with URL-unsafe characters is encoded in the path', () async {

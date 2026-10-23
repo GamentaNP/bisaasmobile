@@ -37,6 +37,19 @@ jobs:
             echo "keyPassword=$ANDROID_KEY_PASSWORD"
           } > android/key.properties
 
+      # build.gradle.kts applies the Google Services plugin only when
+      # google-services.json exists — so a deploy build without this secret
+      # would succeed while shipping push, Crashlytics and Analytics dead.
+      - name: Materialise Firebase config
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "::error::GOOGLE_SERVICES_JSON is not configured. A deploy build would ship without Firebase (push, Crashlytics, Analytics silently absent)."
+            exit 1
+          fi
+          echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+
       - name: Resolve app version
         # Prefer the pubspec `version:` (the version actually being built) and
         # fall back to the tag. github.ref_name is a `v*` tag, which the
@@ -66,8 +79,8 @@ jobs:
           path: build/symbols
           retention-days: 365
 
-      - name: Remove signing material
+      - name: Remove signing and Firebase material
         if: always()
-        run: rm -f android/key.properties android/app/upload-keystore.jks
+        run: rm -f android/key.properties android/app/upload-keystore.jks android/app/google-services.json
       # Add Play Store upload via r0adkll/upload-google-play@v1 once the Play
       # service-account JSON is provisioned as PLAY_SERVICE_JSON.

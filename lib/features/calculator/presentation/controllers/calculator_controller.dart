@@ -145,11 +145,11 @@ class CalculatorController extends Notifier<CalcState> {
       } catch (_) {}
     } on DioException catch (e) {
       final apiErr = e.error;
-      if (apiErr is ApiException && apiErr.errors != null) {
+      if (apiErr is ApiException && apiErr.fieldErrors != null) {
         state = state.copyWith(
           loading: false,
           error: apiErr.message,
-          fieldErrors: apiErr.errors,
+          fieldErrors: apiErr.fieldErrors,
         );
       } else if (apiErr is ApiException) {
         state = state.copyWith(loading: false, error: apiErr.message);

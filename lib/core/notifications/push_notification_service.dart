@@ -220,14 +220,11 @@ class PushNotificationService {
     if (token == null || token.isEmpty) return;
     try {
       await _messaging.deleteToken();
-      // Server expects DELETE /device-tokens/{token} per guide; fallback to body.
-      try {
-        await _dio.delete<dynamic>(
-          '/device-tokens/${Uri.encodeComponent(token)}',
-        );
-      } catch (_) {
-        await _dio.delete<dynamic>('/device-tokens', data: {'token': token});
-      }
+      // The server only defines DELETE /device-tokens/{token} — a body-style
+      // DELETE on the collection 405s and would mask the real failure.
+      await _dio.delete<dynamic>(
+        '/device-tokens/${Uri.encodeComponent(token)}',
+      );
     } catch (e) {
       AppLogger.w('device-token unregister failed: $e');
     }

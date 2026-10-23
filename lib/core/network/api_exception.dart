@@ -7,8 +7,10 @@ enum ApiErrorCode {
   authUnauthenticated('AUTH_UNAUTHENTICATED'),
   authInvalidCredentials('AUTH_INVALID_CREDENTIALS'),
   authTokenExpired('AUTH_TOKEN_EXPIRED'),
+  authTokenRevoked('AUTH_TOKEN_REVOKED'),
   authAccountDisabled('AUTH_ACCOUNT_DISABLED'),
   authEmailUnverified('AUTH_EMAIL_UNVERIFIED'),
+  authMfaRequired('AUTH_MFA_REQUIRED'),
   authSocialFailed('AUTH_SOCIAL_FAILED'),
   authSocialDisabled('AUTH_SOCIAL_DISABLED'),
   authRegistrationDisabled('AUTH_REGISTRATION_DISABLED'),
@@ -16,8 +18,13 @@ enum ApiErrorCode {
   forbidden('FORBIDDEN'),
   validationError('VALIDATION_ERROR'),
   idempotencyConflict('IDEMPOTENCY_CONFLICT'),
+  idempotencyKeyRequired('IDEMPOTENCY_KEY_REQUIRED'),
   notFound('NOT_FOUND'),
   rateLimitExceeded('RATE_LIMIT_EXCEEDED'),
+  insufficientCoins('INSUFFICIENT_COINS'),
+  planUpgradeRequired('PLAN_UPGRADE_REQUIRED'),
+  featureDisabled('FEATURE_DISABLED'),
+  maintenanceMode('MAINTENANCE_MODE'),
   webhookSecretNotConfigured('WEBHOOK_SECRET_NOT_CONFIGURED'),
   webhookUnauthorized('WEBHOOK_UNAUTHORIZED'),
   internalError('INTERNAL_ERROR'),
@@ -84,6 +91,31 @@ class ApiException implements Exception {
       statusCode == 401;
 
   bool get isValidation => code == ApiErrorCode.validationError || statusCode == 422;
+
+  /// The server is answering every call with `MAINTENANCE_MODE` (503) — the
+  /// mobile kill switch, not a transient outage. The UI can route to its
+  /// maintenance surface instead of a retry toast.
+  bool get isMaintenance =>
+      code == ApiErrorCode.maintenanceMode || statusCode == 503;
+
+  /// Per-field validation errors.
+  ///
+  /// The frozen envelope carries them at `error.details` — an object of
+  /// field → error list. A validation error with no details serialises `[]`
+  /// (the contract requires clients to tolerate that), which yields null
+  /// here. The top-level `errors` mirror the integration guide once promised
+  /// does not exist on the server; if a gateway ever re-adds it, it wins.
+  Map<String, dynamic>? get fieldErrors {
+    final top = errors;
+    if (top != null && top.isNotEmpty) {
+      return top;
+    }
+    final d = details;
+    if (d is Map && d.isNotEmpty) {
+      return d.cast<String, dynamic>();
+    }
+    return null;
+  }
 
   /// The server refused this build outright (`EnforceAppVersion` → 426,
   /// `AppUpdateRequiredException`). Not a retryable failure: the only fix is a

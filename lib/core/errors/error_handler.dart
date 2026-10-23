@@ -7,8 +7,11 @@ import 'failures.dart';
 abstract final class ErrorHandler {
   static Failure handle(Object error, [StackTrace? _]) {
     if (error is ApiException) {
+      if (error.isMaintenance) {
+        return MaintenanceFailure(error.message);
+      }
       if (error.isValidation) {
-        return ValidationFailure(error.message, fieldErrors: error.errors);
+        return ValidationFailure(error.message, fieldErrors: error.fieldErrors);
       }
       return NetworkFailure.fromApi(error);
     }

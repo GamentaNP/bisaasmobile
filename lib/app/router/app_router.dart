@@ -77,6 +77,8 @@ import '../../features/live_events/presentation/screens/live_events_screen.dart'
 import '../../features/live_events/presentation/screens/live_event_detail_screen.dart';
 import 'deep_link_handler.dart';
 import 'route_guards.dart';
+import 'package:flutter/foundation.dart';
+
 import 'route_names.dart';
 import 'shell_router.dart';
 import '../../l10n/app_localizations.dart';
@@ -87,7 +89,9 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     initialLocation: '/',
-    debugLogDiagnostics: true,
+    // Route transitions in a release log are pure noise and can leak
+    // screen names into device logs — debug builds only.
+    debugLogDiagnostics: kDebugMode,
     redirect: (context, state) => RouteGuards.authGuard(context, state, _tokens),
     routes: [
       GoRoute(
