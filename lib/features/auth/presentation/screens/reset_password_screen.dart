@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/errors/error_handler.dart';
+import '../../../../core/errors/failures.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../domain/password_policy.dart';
 import '../controllers/auth_controller.dart';
@@ -43,6 +44,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   bool _obscure = true;
   bool _loading = false;
   String? _errorMessage;
+  Map<String, String> _serverFieldErrors = const {};
 
   @override
   void dispose() {
@@ -65,6 +67,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     setState(() {
       _loading = true;
       _errorMessage = null;
+      _serverFieldErrors = const {};
     });
 
     try {
@@ -81,7 +84,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       context.go('/login?reset=1');
     } catch (e) {
       if (!mounted) return;
-      setState(() => _errorMessage = ErrorHandler.handle(e).message);
+      final failure = ErrorHandler.handle(e);
+      setState(() {
+        _errorMessage = failure.message;
+        if (failure is ValidationFailure) {
+          _serverFieldErrors = failure.fieldErrorTexts;
+        }
+      });
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -155,6 +164,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         labelText: l10n.authNewPasswordLabel,
                         helperText: l10n.authMinChars(PasswordPolicy.minLength),
                         border: const OutlineInputBorder(),
+                        errorText: _serverFieldErrors['password'],
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         suffixIcon: IconButton(
                           icon: Icon(_obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded),
@@ -174,6 +184,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.authConfirmNewPasswordLabel,
                         border: OutlineInputBorder(),
+                        errorText: _serverFieldErrors['password_confirmation'],
                         prefixIcon: Icon(Icons.lock_reset_rounded),
                       ),
                       validator: (v) => PasswordPolicy.validateConfirmation(

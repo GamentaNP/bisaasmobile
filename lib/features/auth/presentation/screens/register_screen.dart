@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/errors/error_handler.dart';
+import '../../../../core/errors/failures.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../controllers/auth_controller.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -25,6 +26,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _obscurePassword = true;
   bool _loading = false;
   String? _errorMessage;
+  Map<String, String> _serverFieldErrors = const {};
 
   @override
   void dispose() {
@@ -40,6 +42,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     setState(() {
       _loading = true;
       _errorMessage = null;
+      _serverFieldErrors = const {};
     });
 
     try {
@@ -52,7 +55,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (!mounted) return;
       context.go('/home');
     } catch (e) {
-      setState(() => _errorMessage = ErrorHandler.handle(e).message);
+      final failure = ErrorHandler.handle(e);
+      setState(() {
+        _errorMessage = failure.message;
+        if (failure is ValidationFailure) {
+          _serverFieldErrors = failure.fieldErrorTexts;
+        }
+      });
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -141,6 +150,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.authFullNameLabel,
                         prefixIcon: Icon(Icons.person_outline),
+                        errorText: _serverFieldErrors['name'] ??
+                            _serverFieldErrors['full_name'],
                       ),
                       validator: (v) =>
                           v == null || v.trim().isEmpty ? 'Please enter your name' : null,
@@ -151,6 +162,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.commonEmail,
                         prefixIcon: Icon(Icons.email_outlined),
+                        errorText: _serverFieldErrors['email'],
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) =>
@@ -163,6 +175,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.commonPassword,
                         prefixIcon: const Icon(Icons.lock_outline),
+                        errorText: _serverFieldErrors['password'],
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -183,6 +196,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.authConfirmPasswordLabel,
                         prefixIcon: Icon(Icons.lock_outline),
+                        errorText: _serverFieldErrors['password_confirmation'],
                       ),
                       validator: (v) => v != _passwordController.text
                           ? 'Passwords do not match'

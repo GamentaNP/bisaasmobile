@@ -21,6 +21,32 @@ class CacheFailure extends Failure {
 class ValidationFailure extends Failure {
   const ValidationFailure(super.message, {this.fieldErrors});
   final Map<String, dynamic>? fieldErrors;
+
+  /// Server field errors flattened to one display string per field.
+  ///
+  /// The contract serialises them as `error.details` — an object of field →
+  /// error list (`{"email": ["The email has already been taken."]}`). Values
+  /// may also be a bare string from older envelopes; both are tolerated.
+  /// Empty lists collapse to nothing so a field never renders a blank line.
+  Map<String, String> get fieldErrorTexts {
+    final raw = fieldErrors;
+    if (raw == null || raw.isEmpty) return const {};
+
+    final out = <String, String>{};
+    raw.forEach((field, value) {
+      final text = switch (value) {
+        final List<dynamic> list => list
+            .map((e) => e.toString())
+            .where((e) => e.trim().isNotEmpty)
+            .join('\n'),
+        final String s => s.trim(),
+        _ => value.toString().trim(),
+      };
+      if (text.isNotEmpty) out[field] = text;
+    });
+
+    return out;
+  }
 }
 
 /// The server answered `MAINTENANCE_MODE` (503) — the mobile kill switch is

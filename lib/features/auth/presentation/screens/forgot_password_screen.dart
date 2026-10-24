@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/errors/error_handler.dart';
+import '../../../../core/errors/failures.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../controllers/auth_controller.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -26,6 +27,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   bool _loading = false;
   bool _submitted = false;
   String? _errorMessage;
+  Map<String, String> _serverFieldErrors = const {};
 
   @override
   void initState() {
@@ -54,7 +56,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       if (!mounted) return;
       setState(() => _submitted = true);
     } catch (e) {
-      setState(() => _errorMessage = ErrorHandler.handle(e).message);
+      final failure = ErrorHandler.handle(e);
+      setState(() {
+        _errorMessage = failure.message;
+        if (failure is ValidationFailure) {
+          _serverFieldErrors = failure.fieldErrorTexts;
+        }
+      });
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -193,6 +201,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             decoration: InputDecoration(
                               labelText: l10n.authEmailAddressLabel,
                               prefixIcon: Icon(Icons.email_outlined),
+                              errorText: _serverFieldErrors['email'],
                             ),
                             keyboardType: TextInputType.emailAddress,
                             validator: (v) => v == null || !v.contains('@')

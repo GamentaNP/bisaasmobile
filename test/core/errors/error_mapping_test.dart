@@ -79,6 +79,29 @@ void main() {
       expect(e.fieldErrors, isNull);
     });
 
+    test('ValidationFailure.fieldErrorTexts flattens list values to display strings', () {
+      final failure = ErrorHandler.handle(
+        ApiException.fromJson(422, {
+          'message': 'The given data was invalid.',
+          'error': {
+            'code': 'VALIDATION_ERROR',
+            'details': {
+              'email': ['The email has already been taken.'],
+              'password': ['too short', 'too common'],
+              'note': 'bare string form',
+              'blank': <String>[],
+            },
+          },
+        }),
+      );
+      expect(failure, isA<ValidationFailure>());
+      final texts = (failure as ValidationFailure).fieldErrorTexts;
+      expect(texts['email'], 'The email has already been taken.');
+      expect(texts['password'], 'too short\ntoo common');
+      expect(texts['note'], 'bare string form');
+      expect(texts.containsKey('blank'), isFalse);
+    });
+
     test('newly mapped server codes resolve to their enum cases', () {
       expect(ApiErrorCode.fromRaw('AUTH_TOKEN_REVOKED'), ApiErrorCode.authTokenRevoked);
       expect(ApiErrorCode.fromRaw('AUTH_MFA_REQUIRED'), ApiErrorCode.authMfaRequired);
