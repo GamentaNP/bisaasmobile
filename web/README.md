@@ -13,3 +13,5 @@ cp "$(ls -d ~/AppData/Local/Pub/Cache/hosted/pub.dev/drift-2.35.3 2>/dev/null ||
 
 The database reads it at `driftWorker: Uri.parse('drift_worker.js')` —
 see `lib/core/storage/database/app_database.dart`.
+
+Gate pass verified 2026-10-24.
