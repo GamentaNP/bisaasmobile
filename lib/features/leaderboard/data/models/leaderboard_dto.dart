@@ -1,5 +1,6 @@
 // ignore_for_file: omit_local_variable_types
 
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/leaderboard.dart';
 
 int? _asInt(Object? v) {
@@ -195,7 +196,7 @@ class DonorLeaderboardEntryDto {
   factory DonorLeaderboardEntryDto.fromJson(Map<String, dynamic> j) => DonorLeaderboardEntryDto(
         donorName: (j['donorName'] as String?) ?? (j['donor_name'] as String?) ?? 'Anonymous',
         badge: (j['badge'] as String?) ?? 'bronze',
-        badgeLabel: (j['badgeLabel'] as String?) ?? (j['badge_label'] as String?) ?? 'Bronze',
+        badgeLabel: (j['badgeLabel'] as String?) ?? (j['badge_label'] as String?) ?? appL10n().leaderboardTierBronze,
         badgeColor: (j['badgeColor'] as String?) ?? (j['badge_color'] as String?) ?? '#CD7F32',
         totalDonatedFormatted: (j['totalDonatedFormatted'] as String?) ?? (j['total_donated_formatted'] as String?) ?? r'$0.00',
         streakMonths: _asInt(j['streakMonths'] ?? j['streak_months']) ?? 0,

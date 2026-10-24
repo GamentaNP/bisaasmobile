@@ -8,13 +8,29 @@ import '../../tool/localization_coverage.dart';
 /// The synthetic HTTP status message is never shown to a user. The debug
 /// auto-login button only exists in a `kDebugMode` build, so it is compiled
 /// out of a release. The avatar fallback is the first letter of the display
-/// name.
+/// name. The offline-identity email is a synthetic address, not copy.
 const allowedLiterals = <String>{
   'support@bisaas.com',
   'privacy@bisaas.com',
+  'offline@bisaas.test',
   'OK (cached)',
   '⚡ Debug Auto-Login (user@bisaas.test)',
   'C',
+};
+
+/// Brand names — the same proper noun in every locale. Translating "OpenAI"
+/// into Devanagari would make it *wrong*, not Nepali.
+const brandNames = <String>{
+  'CivilCal',
+  'OpenAI',
+  'Google Gemini',
+  'Anthropic',
+  'DeepSeek',
+  'Groq',
+  'Mistral',
+  'OpenRouter',
+  'Google',
+  'Apple',
 };
 
 /// Literals that are diagnostics for a developer, not copy for a user.
@@ -64,6 +80,7 @@ void main() {
     final offenders = hits
         .where((h) => !allowedLiterals.contains(h.text))
         .where((h) => !developerDiagnostics.contains(h.text))
+        .where((h) => !brandNames.contains(h.text))
         .toList();
 
     expect(
@@ -87,6 +104,7 @@ void main() {
         .where((h) => !const {
               'support@bisaas.com',
               'privacy@bisaas.com',
+              'offline@bisaas.test',
               'OK (cached)',
               '⚡ Debug Auto-Login (user@bisaas.test)',
               'C',

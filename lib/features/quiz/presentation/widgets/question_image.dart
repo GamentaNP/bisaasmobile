@@ -21,8 +21,8 @@ class QuestionImage extends StatelessWidget {
     // host check. Blocked or unparseable URLs render the broken-image icon
     // rather than reaching out to whatever host the row named.
     if (!RemoteImagePolicy.isAllowed(imageUrl)) {
-      return const Center(
-        child: Icon(Icons.broken_image_outlined, color: Colors.grey, size: 48),
+      return Center(
+        child: Icon(Icons.broken_image_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 48),
       );
     }
     return Center(

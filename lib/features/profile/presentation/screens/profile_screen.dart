@@ -168,7 +168,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [
                         Flexible(
-                          child: Text(user?.name ?? 'Engineer', overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                          child: Text(user?.name ?? l10n.profileFallbackName, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                         ),
                         IconButton(
                           visualDensity: VisualDensity.compact,
@@ -247,7 +247,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (recent.isEmpty) {
                 return SizedBox(
                   height: 64,
-                  child: Center(child: Text(l10n.profileNoBadges, style: TextStyle(color: Colors.grey, fontSize: 12))),
+                  child: Center(child: Text(l10n.profileNoBadges, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12))),
                 );
               }
               return SizedBox(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Renders a `flutter_math_fork` LaTeX formula inside a brand-tinted card.
 class FormulaDisplay extends StatelessWidget {
@@ -26,7 +27,7 @@ class FormulaDisplay extends StatelessWidget {
             children: [
               const Icon(Icons.functions_rounded, size: 18, color: AppColors.brand),
               const SizedBox(width: 6),
-              Text(title ?? 'Formula', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
+              Text(title ?? AppLocalizations.of(context)!.formulaTitleFallback, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
             ],
           ),
           const SizedBox(height: 8),

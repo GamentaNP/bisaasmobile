@@ -64,8 +64,8 @@ class _QuizReviewScreenState extends ConsumerState<QuizReviewScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.cloud_off_rounded,
-                        size: 40, color: Colors.grey),
+                    Icon(Icons.cloud_off_rounded,
+                        size: 40, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(height: 12),
                     Text(
                       l10n.quizReviewLoadFailed(snap.error.toString()),
@@ -145,7 +145,7 @@ class _ReviewCard extends StatelessWidget {
             _OptionRow(
               label: l10n.quizReviewYourAnswer,
               text: l10n.quizReviewNotAnswered,
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           // The results endpoint withholds answer keys — show the key row
           // only when the server actually sent one.
@@ -190,7 +190,7 @@ class _OptionRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Text('$label: ', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey)),
+          Text('$label: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           Expanded(child: Text(text, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13))),
         ],
       ),

@@ -55,7 +55,7 @@ class SkillRadarChart extends StatelessWidget {
           borderData: FlBorderData(show: false),
           radarBorderData: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4)),
           tickCount: 4,
-          ticksTextStyle: const TextStyle(fontSize: 8, color: Colors.grey),
+          ticksTextStyle: TextStyle(fontSize: 8, color: theme.colorScheme.onSurfaceVariant),
           tickBorderData: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.25)),
           gridBorderData: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3)),
           getTitle: (index, angle) {

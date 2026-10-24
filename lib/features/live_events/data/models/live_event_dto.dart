@@ -1,5 +1,6 @@
 // ignore_for_file: omit_local_variable_types
 
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/live_event.dart';
 
 int? _asInt(Object? v) {
@@ -43,7 +44,7 @@ class LiveEventDto {
     // Handle both snake_case and camelCase keys for tolerance
     return LiveEventDto(
       id: _asInt(j['id']) ?? 0,
-      title: (j['title'] as String?) ?? 'Live Event',
+      title: (j['title'] as String?) ?? appL10n().liveEventFallbackTitle,
       description: j['description'] as String?,
       eventType: (j['event_type'] as String?) ?? (j['eventType'] as String?) ?? 'quiz',
       status: (j['status'] as String?) ?? 'scheduled',

@@ -32,6 +32,25 @@ class ConsentSheet extends ConsumerStatefulWidget {
     return result ?? false;
   }
 
+  /// Same sheet, pushed through a [NavigatorState] directly.
+  ///
+  /// The app root sits ABOVE the go_router Navigator, so `show`'s
+  /// `Navigator.of(context)` lookup cannot start from it — and the throw was
+  /// being swallowed by the platform error handler, silently skipping the
+  /// first-run consent on every fresh install. Callers at the app root use
+  /// this overload with `routerDelegate.navigatorKey.currentState`.
+  static Future<bool> showWith(NavigatorState navigator) async {
+    final result = await navigator.push(
+      ModalBottomSheetRoute<bool>(
+        isScrollControlled: true,
+        isDismissible: false,
+        enableDrag: false,
+        builder: (_) => const ConsentSheet(),
+      ),
+    );
+    return result ?? false;
+  }
+
   @override
   ConsumerState<ConsentSheet> createState() => _ConsentSheetState();
 }

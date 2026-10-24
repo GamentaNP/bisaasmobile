@@ -261,7 +261,7 @@ class _BookmarksTab extends ConsumerWidget {
                       child: const Icon(Icons.bookmark_rounded, size: 16, color: AppColors.xpGold),
                     ),
                     title: Text(b.question.questionText.isEmpty ? l10n.practiceQuestionNumber(b.question.id) : b.question.questionText, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    subtitle: Text(l10n.practiceQuestionMeta(b.question.type ?? 'mcq', b.question.difficulty ?? '-', b.question.points ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    subtitle: Text(l10n.practiceQuestionMeta(b.question.type ?? 'mcq', b.question.difficulty ?? '-', b.question.points ?? 0), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     trailing: IconButton(
                       icon: state.isTogglingBookmark ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bookmark_remove_rounded),
                       // Removes the bookmark. The server's `POST` alias converges
@@ -330,7 +330,7 @@ class _WeakTopicTab extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 40, color: Colors.grey),
+              Icon(Icons.cloud_off_rounded, size: 40, color: theme.colorScheme.onSurfaceVariant),
               const SizedBox(height: 12),
               Text(
                 l10n.practiceWeakTopicsLoadFailed,
@@ -341,7 +341,7 @@ class _WeakTopicTab extends ConsumerWidget {
               Text(
                 l10n.practiceWeakTopicsExplained,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
@@ -361,7 +361,7 @@ class _WeakTopicTab extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.insights_rounded, size: 40, color: Colors.grey),
+                  Icon(Icons.insights_rounded, size: 40, color: theme.colorScheme.onSurfaceVariant),
                   SizedBox(height: 12),
                   Text(
                     l10n.practiceNoWeakTopics,
@@ -371,7 +371,7 @@ class _WeakTopicTab extends ConsumerWidget {
                   Text(
                     l10n.practiceWeakTopicsNeedsAttempts,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -400,7 +400,7 @@ class _WeakTopicTab extends ConsumerWidget {
                         if (w.accuracy != null) '${w.accuracy!.toStringAsFixed(0)}% accuracy',
                         if (w.attempts > 0) '${w.attempts} attempt${w.attempts == 1 ? '' : 's'}',
                       ].join(' • '),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                      style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                     ),
                     trailing: FilledButton.tonal(
                       onPressed: () => onStart(topic: w.topic, topicId: int.tryParse(w.topicId ?? '')),
@@ -415,7 +415,7 @@ class _WeakTopicTab extends ConsumerWidget {
               label: Text(l10n.practiceDrillTen),
             ),
             const SizedBox(height: 8),
-            Text(l10n.practiceUntimedNote, style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.practiceUntimedNote, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
           ],
         );
       },
@@ -446,7 +446,7 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
       children: [
         Text(l10n.practiceSelfChallenge, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text(l10n.practiceSelfChallengeExplain, style: TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(l10n.practiceSelfChallengeExplain, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
         const SizedBox(height: 16),
         Text(l10n.practiceQuestionCount(_count), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         Slider(value: _count.toDouble(), min: 5, max: 30, divisions: 5, label: '$_count', onChanged: (v) => setState(() => _count = v.round())),
@@ -473,7 +473,7 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
           return Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.wrongRed.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Text(err, style: const TextStyle(color: AppColors.wrongRed, fontSize: 12)));
         }),
         const SizedBox(height: 16),
-        Text(l10n.practiceResultsLabelled, style: TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(l10n.practiceResultsLabelled, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }
@@ -520,8 +520,8 @@ class _HistoryTab extends ConsumerWidget {
                       child: Icon(h.isCompleted ? Icons.check_circle_rounded : Icons.hourglass_empty_rounded, size: 16, color: h.isCompleted ? AppColors.correctGreen : AppColors.streakOrange),
                     ),
                     title: Text(l10n.practiceAttemptMeta(h.id, h.mode), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    subtitle: Text(l10n.practiceAttemptSummary(h.status, h.score ?? '-', h.correctCount ?? 0, h.wrongCount ?? 0, h.skippedCount ?? 0, h.questionCount ?? '-'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                    trailing: Text(h.completedAt != null ? '${h.completedAt!.toLocal().toIso8601String().split('T').first}' : '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    subtitle: Text(l10n.practiceAttemptSummary(h.status, h.score ?? '-', h.correctCount ?? 0, h.wrongCount ?? 0, h.skippedCount ?? 0, h.questionCount ?? '-'), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    trailing: Text(h.completedAt != null ? '${h.completedAt!.toLocal().toIso8601String().split('T').first}' : '', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ),
                 );
               },

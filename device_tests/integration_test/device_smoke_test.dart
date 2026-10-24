@@ -20,9 +20,13 @@
 library;
 
 import 'package:bisaasmobile/app/app.dart';
+import 'package:bisaasmobile/app/bootstrap.dart' as bootstrap;
 import 'package:bisaasmobile/app/config/api_config.dart';
 import 'package:bisaasmobile/app/router/deep_link_handler.dart';
 import 'package:bisaasmobile/app/router/route_names.dart';
+import 'package:bisaasmobile/core/consent/consent_screens.dart';
+import 'package:bisaasmobile/core/storage/preferences.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,6 +36,13 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   const runLive = bool.fromEnvironment('RUN_LIVE_TESTS');
+
+  // CivilCalApp's providers read DioClient/Preferences, which only bootstrap()
+  // initializes. Without it the first frame throws "DioClient not init" — the
+  // app is exercised exactly as main.dart runs it: bootstrap, then pump.
+  setUpAll(() async {
+    await bootstrap.bootstrap();
+  });
 
   group('deep links', () {
     test('a share link routes to the in-app guest sandbox', () {
@@ -68,14 +79,69 @@ void main() {
     testWidgets('boots and paints the first screen', (tester) async {
       // The engine, the plugins and the platform channels are all exercised
       // here — this is the part a host-side test cannot reach.
+      //
+      // CivilCalApp's own build reads AppLocalizations (for the app title), so
+      // the delegates must be loadable ABOVE it — under `runApp` the real
+      // launch provides them through the framework's root; a bare
+      // `ProviderScope` in a test does not.
       await tester.pumpWidget(
-        const ProviderScope(child: CivilCalApp()),
+        ProviderScope(
+          child: Localizations(
+            delegates: AppLocalizations.localizationsDelegates,
+            locale: const Locale('en'),
+            child: CivilCalApp(),
+          ),
+        ),
       );
       await tester.pump(const Duration(milliseconds: 500));
 
       // Whatever the first route is, the app must have painted something
       // rather than thrown.
       expect(find.byType(MaterialApp), findsOneWidget);
+    });
+
+    testWidgets('first-run consent sheet appears once the router mounts', (
+      tester,
+    ) async {
+      // Guarantee the fresh-install state: a corrupt blob reads as unknown,
+      // which is undecided. (A previous run of the suite on this device may
+      // have recorded a decision.)
+      await Preferences.instance.setString('consent_state', '{not-valid-json');
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: Localizations(
+            delegates: AppLocalizations.localizationsDelegates,
+            locale: const Locale('en'),
+            child: CivilCalApp(),
+          ),
+        ),
+      );
+
+      // The consent ask waits for the router to mount — up to 10s — then
+      // pushes the sheet. On a slow device the first frame alone can take
+      // seconds, so poll for the full window.
+      ConsentSheet? sheet;
+      for (var i = 0; i < 24; i++) {
+        await tester.pump(const Duration(milliseconds: 500));
+        final found = find
+            .byType(ConsentSheet, skipOffstage: false)
+            .evaluate()
+            .toList();
+        if (found.isNotEmpty) {
+          sheet = found.first.widget as ConsentSheet?;
+          break;
+        }
+      }
+      expect(
+        sheet,
+        isNotNull,
+        reason: 'on a fresh install the first-run consent sheet must appear '
+            'once the router mounts — it never did on the QA phone',
+      );
+      // And it stays up: not dismissible, a decision is required.
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.byType(ConsentSheet, skipOffstage: false), findsOneWidget);
     });
 
     testWidgets('the API base URL is the versioned one', (tester) async {
@@ -103,7 +169,13 @@ void main() {
         return;
       }
       await tester.pumpWidget(
-        const ProviderScope(child: CivilCalApp()),
+        ProviderScope(
+          child: Localizations(
+            delegates: AppLocalizations.localizationsDelegates,
+            locale: const Locale('en'),
+            child: CivilCalApp(),
+          ),
+        ),
       );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 

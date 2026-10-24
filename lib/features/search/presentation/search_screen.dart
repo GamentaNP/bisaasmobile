@@ -4,17 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/dio_client.dart';
-import '../../../core/network/api_response.dart';
 import '../../../l10n/app_localizations.dart';
+import '../data/search_remote_data_source.dart';
+
+final _searchDataSourceProvider = Provider<SearchRemoteDataSource>((ref) {
+  return SearchRemoteDataSource(DioClient.instance.dio);
+});
 
 final _searchProvider = FutureProvider.family<List<Map<String, dynamic>>, String>((ref, q) async {
   if (q.trim().isEmpty) return [];
-  final dio = DioClient.instance.dio;
-  final res = await dio.get<Map<String, dynamic>>('/quiz/questions', queryParameters: {'search': q, 'per_page': 10});
-  final body = res.data!;
-  if (body['data'] is List) return (body['data'] as List).cast<Map<String, dynamic>>();
-  final env = ApiResponse.fromJson(body, (j) => (j as List?)?.cast<Map<String, dynamic>>() ?? []);
-  return env.data ?? [];
+  return ref.watch(_searchDataSourceProvider).searchQuestions(q);
 });
 
 /// Global search — `GET /quiz/questions?search=...` (server query builder 7.3).
@@ -49,11 +48,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               onSubmitted: (v) => setState(() => _q = v.trim()),
             ),
           ),
-          if (_q.isEmpty) Padding(padding: EdgeInsets.all(24), child: Text(l10n.searchTry, style: TextStyle(color: Colors.grey))),
+          if (_q.isEmpty) Padding(padding: EdgeInsets.all(24), child: Text(l10n.searchTry, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))),
           if (results != null)
             Expanded(
               child: results.when(
-                data: (list) => list.isEmpty ? Center(child: Text(l10n.searchNoResults)) : ListView.separated(padding: const EdgeInsets.all(12), itemCount: list.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (context, i) => Card(child: ListTile(title: Text((list[i]['body'] ?? list[i]['title'] ?? '').toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)), subtitle: Text((list[i]['subject_slug'] ?? '').toString(), style: const TextStyle(fontSize: 11, color: Colors.grey))))),
+                data: (list) => list.isEmpty ? Center(child: Text(l10n.searchNoResults)) : ListView.separated(padding: const EdgeInsets.all(12), itemCount: list.length, separatorBuilder: (_, __) => SizedBox(height: 8), itemBuilder: (context, i) => Card(child: ListTile(title: Text((list[i]['body'] ?? list[i]['title'] ?? '').toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)), subtitle: Text((list[i]['subject_slug'] ?? '').toString(), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant))))),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, _) => Center(child: Text(l10n.searchFailed(e), style: const TextStyle(color: Colors.red, fontSize: 12))),
               ),

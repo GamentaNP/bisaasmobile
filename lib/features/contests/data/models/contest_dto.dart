@@ -1,5 +1,6 @@
 // ignore_for_file: omit_local_variable_types
 
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/contest.dart';
 
 int? _asInt(Object? v) {
@@ -49,7 +50,7 @@ class ContestDto {
   factory ContestDto.fromJson(Map<String, dynamic> j) {
     return ContestDto(
       id: _asInt(j['id']) ?? 0,
-      title: (j['title'] as String?) ?? 'Contest',
+      title: (j['title'] as String?) ?? appL10n().contestFallbackTitle,
       description: j['description'] as String?,
       status: (j['status'] as String?) ?? (j['state'] as String?) ?? 'upcoming',
       quizBlueprintId: _asInt(j['quiz_blueprint_id'] ?? j['blueprint_id']),

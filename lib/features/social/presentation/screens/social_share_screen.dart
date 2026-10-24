@@ -205,7 +205,7 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
                   children: [
                     if (link == null)
                       ErrorView(
-                        message: _error ?? 'That share link could not be found.',
+                        message: _error ?? l10n.socialShareLinkMissing,
                         onRetry: _resolve,
                       )
                     else ...[
@@ -267,7 +267,7 @@ class _LinkHeader extends StatelessWidget {
           if (link.creatorName != null)
             Text(
               l10n.socialSharedBy(link.creatorName!),
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
             ),
           if (link.isExpired) ...[
             const SizedBox(height: 6),
@@ -324,7 +324,7 @@ class _StartPrompt extends StatelessWidget {
         Text(
           l10n.socialGuestNeverAwards,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
+          style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.4),
         ),
       ],
     );
@@ -397,7 +397,7 @@ class _PlayView extends StatelessWidget {
             if (q.difficulty != null)
               Text(
                 q.difficulty!,
-                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               ),
           ],
         ),
@@ -597,7 +597,7 @@ class _ResultView extends StatelessWidget {
         Text(
           l10n.socialChallengeSummary(result.correct, result.wrong, result.skipped, result.total),
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 8),
         Text(
@@ -605,7 +605,7 @@ class _ResultView extends StatelessWidget {
               ? l10n.socialGuestChallengeNote
               : l10n.socialNiceOne(creatorName!),
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
+          style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: 24),
         FilledButton.icon(

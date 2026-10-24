@@ -46,19 +46,6 @@ final _coursesProvider = FutureProvider<List<QuizCourseEntry>>((ref) async {
 class CoursesScreen extends ConsumerWidget {
   const CoursesScreen({super.key});
 
-  static const _courseColors = [
-    Color(0xFFF59E0B),
-    Color(0xFF8B5CF6),
-    Color(0xFF06B6D4),
-    Color(0xFF0EA5E9),
-    Color(0xFFEF4444),
-    Color(0xFF10B981),
-    Color(0xFF64748B),
-    Color(0xFF22D3EE),
-    Color(0xFFEAB308),
-    Color(0xFFEC4899),
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -124,7 +111,8 @@ class CoursesScreen extends ConsumerWidget {
                   delegate: SliverChildBuilderDelegate(
                     (context, i) {
                       final course = courses[i];
-                      final color = _courseColors[i % _courseColors.length];
+                      final color =
+                          AppColors.coursePalette[i % AppColors.coursePalette.length];
                       return _CourseCard(
                         course: course,
                         color: color,

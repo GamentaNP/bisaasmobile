@@ -95,7 +95,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.libraryReviewSubmitted)));
     } else {
       final err = ref.read(libraryControllerProvider).submitReviewError;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err ?? 'Review failed'), backgroundColor: AppColors.wrongRed));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err ?? l10n.libraryReviewFailed), backgroundColor: AppColors.wrongRed));
     }
   }
 
@@ -211,7 +211,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                   else if (state.reviews.isEmpty)
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text(l10n.libraryNoReviews, textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                      child: Text(l10n.libraryNoReviews, textAlign: TextAlign.center, style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
                     )
                   else
                     ...state.reviews.map((r) => _ReviewTile(review: r)),
@@ -232,7 +232,7 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                   const SizedBox(height: 24),
                   Text(
                     l10n.librarySignedUrls,
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                    style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -319,12 +319,12 @@ class _FileHeaderCard extends StatelessWidget {
             const SizedBox(height: 6),
             Row(
               children: [
-                const Icon(Icons.person_rounded, size: 14, color: Colors.grey),
+                Icon(Icons.person_rounded, size: 14, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: 4),
-                Text(l10n.libraryByUploader(file.uploader!.name), style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(l10n.libraryByUploader(file.uploader!.name), style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
                 const Spacer(),
                 if (file.createdAt != null)
-                  Text(_formatDate(file.createdAt!), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                  Text(_formatDate(file.createdAt!), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ],
@@ -403,7 +403,7 @@ class _ActionRow extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           l10n.libraryUnlockNote,
-          style: TextStyle(fontSize: 11, color: Colors.grey),
+          style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
     );
@@ -423,7 +423,7 @@ class _StatsRow extends StatelessWidget {
         const SizedBox(width: 12),
         _Stat(icon: Icons.download_rounded, color: AppColors.brand, value: '${file.downloadCount}', label: l10n.libraryDownloads),
         const SizedBox(width: 12),
-        _Stat(icon: Icons.visibility_rounded, color: Colors.grey, value: file.visibility, label: l10n.libraryAccess),
+        _Stat(icon: Icons.visibility_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant, value: file.visibility, label: l10n.libraryAccess),
       ],
     );
   }
@@ -490,7 +490,7 @@ class _SubmitReviewCard extends StatelessWidget {
               final idx = i + 1;
               final filled = idx <= rating;
               return IconButton(
-                icon: Icon(filled ? Icons.star_rounded : Icons.star_border_rounded, color: filled ? AppColors.xpGold : Colors.grey, size: 28),
+                icon: Icon(filled ? Icons.star_rounded : Icons.star_border_rounded, color: filled ? AppColors.xpGold : Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
                 onPressed: () => onRatingChanged(idx),
               );
             }),
@@ -515,7 +515,7 @@ class _SubmitReviewCard extends StatelessWidget {
             label: Text(isSubmitting ? l10n.librarySubmitting : l10n.librarySubmitReview),
           ),
           const SizedBox(height: 4),
-          Text(l10n.libraryReviewVerified, style: TextStyle(fontSize: 11, color: Colors.grey)),
+          Text(l10n.libraryReviewVerified, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
@@ -548,7 +548,7 @@ class _ReviewTile extends StatelessWidget {
                 child: Text((review.user?.name.isNotEmpty == true ? review.user!.name[0].toUpperCase() : '?'), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
               ),
               const SizedBox(width: 8),
-              Text(review.user?.name ?? 'Anonymous', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+              Text(review.user?.name ?? l10n.libraryAnonymousAuthor, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
               const SizedBox(width: 8),
               if (review.isVerifiedDownload)
                 Container(
@@ -571,7 +571,7 @@ class _ReviewTile extends StatelessWidget {
           ],
           if (review.createdAt != null) ...[
             const SizedBox(height: 6),
-            Text(_formatDate(review.createdAt!), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(_formatDate(review.createdAt!), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ],
       ),

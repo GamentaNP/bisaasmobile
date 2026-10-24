@@ -158,14 +158,17 @@ android {
         //     which is API 28. Keeping 29 meant the team's only physical
         //     device could never install the app, so no on-device verification
         //     could happen at all.
-        // Trade-off accepted: API 28 is out of support and receives no OS
+        // Trade-off accepted: API 26/27 are out of support and receive no OS
         // security patches. Nothing in the client depends on a 29-only API, and
         // the app performs no local grading or key storage that the platform
         // would harden for us — grading is server-authoritative and the PAT
         // lives in flutter_secure_storage's EncryptedSharedPreferences.
-        // Revisit to 29 once Play Console's own target-API deadline forces it
-        // or once the QA device is retired.
-        minSdk = 28
+        // 26 (Android 8.0) is the floor the whole dependency stack actually
+        // supports: the strictest plugin in the tree (flutter_local_notifications
+        // 22) requires API 24, Firebase's artifacts require 23 — so 8.0/8.1
+        // handsets, the cheapest ones still circulating in Nepal and India,
+        // stay installable. Revisit upward only when a plugin forces it.
+        minSdk = 26
         targetSdk = 36
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
@@ -179,7 +182,7 @@ android {
         // `x86_64` is dropped on purpose: no retail device runs it, and the
         // Play Store never serves that slice — it was ~21 MB of upload for
         // nothing. `armeabi-v7a` stays, because the budget handsets this app
-        // targets (the same reason `minSdk` is 28) are still frequently
+        // targets (the same reason `minSdk` is 26) are still frequently
         // 32-bit, and dropping the slice would make the app uninstallable
         // on them.
         //

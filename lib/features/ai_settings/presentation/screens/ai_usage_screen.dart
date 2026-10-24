@@ -92,7 +92,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
                   if (usage.periodFrom != null && usage.periodTo != null)
                     Text(
                       '${usage.periodFrom} → ${usage.periodTo}',
-                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                      style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                     ),
                 ],
               ),
@@ -123,7 +123,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
               if (usage.features.isEmpty)
                 Text(
                   l10n.aiUsageNone,
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                 )
               else ...[
                 Text(
@@ -157,7 +157,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
             else if (state.tutorSessions.isEmpty)
               Text(
                 l10n.aiUsageNoConversations,
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               )
             else
               ...state.tutorSessions.map((s) => _SessionRow(session: s)),
@@ -199,7 +199,7 @@ class _AiUsageScreenState extends ConsumerState<AiUsageScreen> {
             else if (state.reportCard.isEmpty)
               Text(
                 l10n.aiUsageNoWeeks,
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               )
             else
               ...state.reportCard.map((w) => _WeekRow(week: w)),
@@ -281,7 +281,7 @@ class _FeatureRow extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             l10n.aiUsageRequests,
-            style: TextStyle(fontSize: 10, color: Colors.grey),
+            style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),
@@ -313,13 +313,13 @@ class _SessionRow extends StatelessWidget {
           ),
           Text(
             l10n.aiUsageTurns(session.turnCount),
-            style: const TextStyle(fontSize: 11, color: Colors.grey),
+            style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           if (created != null) ...[
             const SizedBox(width: 8),
             Text(
               DateFormat.yMMMd().format(created.toLocal()),
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+              style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ],
@@ -345,7 +345,7 @@ class _WeekRow extends StatelessWidget {
         ),
         subtitle: Text(
           l10n.aiUsageWeekSummary(week.accuracyPct.toStringAsFixed(0), week.xpEarned, week.coinsEarned, week.bestStreak),
-          style: const TextStyle(fontSize: 11, color: Colors.grey),
+          style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         trailing: Text(
           l10n.aiUsageHoursShort((week.timeSpentSeconds / 3600).toStringAsFixed(1)),

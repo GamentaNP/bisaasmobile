@@ -2,6 +2,8 @@
 /// `C:\laragon\www\bisaas\app\Http\Support\ApiErrorCode` + `MOBILE_API_INTEGRATION_GUIDE.md:91`.
 library;
 
+import '../../app/localization/l10n.dart';
+
 /// Machine-readable codes are frozen per contract version — treat unknown as generic.
 enum ApiErrorCode {
   authUnauthenticated('AUTH_UNAUTHENTICATED'),
@@ -45,13 +47,46 @@ enum ApiErrorCode {
       );
 }
 
+/// Localized copy for a status the server did not explain in the body.
+/// The server's own localized `message` always wins when it is present —
+/// this is what a Nepali reader gets when it is not.
+String localizedStatusMessage(int status) {
+  if (status == 401) return appL10n().errSessionExpired;
+  if (status == 403) return appL10n().errForbidden;
+  if (status == 404) return appL10n().errNotFound;
+  if (status == 422) return appL10n().errValidationRejected;
+  if (status == 426) return appL10n().errUpgradeRequired;
+  if (status == 429) return appL10n().errRateLimited;
+  if (status == 503) return appL10n().errMaintenance;
+  if (status >= 500) return appL10n().errServerTrouble;
+  return appL10n().errRequestFailedStatus(status);
+}
+
+/// Localized copy for a frozen error code whose body carried no message.
+/// Codes a user can act on get their own line; everything else falls through
+/// to the status copy.
+String localizedCodeFallback(int statusCode, ApiErrorCode code) {
+  final l10n = appL10n();
+  return switch (code) {
+    ApiErrorCode.authInvalidCredentials => l10n.errAuthInvalidCredentials,
+    ApiErrorCode.authEmailUnverified => l10n.errAuthEmailUnverified,
+    ApiErrorCode.authAccountDisabled => l10n.errAuthAccountDisabled,
+    ApiErrorCode.authSocialFailed => l10n.errAuthSocialFailed,
+    ApiErrorCode.insufficientCoins => l10n.errInsufficientCoins,
+    ApiErrorCode.planUpgradeRequired => l10n.errPlanUpgradeRequired,
+    ApiErrorCode.featureDisabled => l10n.errFeatureDisabled,
+    ApiErrorCode.idempotencyConflict => l10n.errIdempotencyConflict,
+    ApiErrorCode.maintenanceMode => l10n.errMaintenance,
+    _ => localizedStatusMessage(statusCode),
+  };
+}
+
 class ApiException implements Exception {
   const ApiException({
     required this.statusCode,
     required this.code,
     required this.message,
     this.details,
-    this.errors,
     this.requestId,
   });
 
@@ -63,15 +98,13 @@ class ApiException implements Exception {
     final err = body['error'] as Map<String, dynamic>?;
     final rawCode = err?['code'] as String? ?? body['code'] as String?;
     final details = err?['details'];
-    final errors = body['errors'];
     return ApiException(
       statusCode: statusCode,
       code: ApiErrorCode.fromRaw(rawCode),
       message: (err?['message'] as String?) ??
           (body['message'] as String?) ??
-          'Request failed',
+          localizedCodeFallback(statusCode, ApiErrorCode.fromRaw(rawCode)),
       details: details,
-      errors: errors is Map ? errors.cast<String, dynamic>() : null,
       requestId: requestId ??
           (body['request_id'] as String?) ??
           (err?['request_id'] as String?),
@@ -82,7 +115,6 @@ class ApiException implements Exception {
   final ApiErrorCode code;
   final String message;
   final Object? details;
-  final Map<String, dynamic>? errors;
   final String? requestId;
 
   bool get isAuthError =>
@@ -92,11 +124,15 @@ class ApiException implements Exception {
 
   bool get isValidation => code == ApiErrorCode.validationError || statusCode == 422;
 
-  /// The server is answering every call with `MAINTENANCE_MODE` (503) — the
-  /// mobile kill switch, not a transient outage. The UI can route to its
-  /// maintenance surface instead of a retry toast.
-  bool get isMaintenance =>
-      code == ApiErrorCode.maintenanceMode || statusCode == 503;
+  /// The server answered `MAINTENANCE_MODE` — the mobile kill switch
+  /// (`EnforceMobileKillSwitches`), not a transient outage. The UI can route
+  /// to its maintenance surface instead of a retry toast.
+  ///
+  /// Keys on the code alone: the registry also maps `SERVICE_UNAVAILABLE` and
+  /// the whole AI/gateway family to 503 (`ApiErrorCode.php`), and those
+  /// feature-scoped refusals must stay ordinary retryable errors, not route
+  /// the user to a kill-switch screen while the app is healthy.
+  bool get isMaintenance => code == ApiErrorCode.maintenanceMode;
 
   /// Per-field validation errors.
   ///
@@ -104,12 +140,8 @@ class ApiException implements Exception {
   /// field → error list. A validation error with no details serialises `[]`
   /// (the contract requires clients to tolerate that), which yields null
   /// here. The top-level `errors` mirror the integration guide once promised
-  /// does not exist on the server; if a gateway ever re-adds it, it wins.
+  /// was never shipped by the server, so it is not parsed at all.
   Map<String, dynamic>? get fieldErrors {
-    final top = errors;
-    if (top != null && top.isNotEmpty) {
-      return top;
-    }
     final d = details;
     if (d is Map && d.isNotEmpty) {
       return d.cast<String, dynamic>();

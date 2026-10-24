@@ -119,18 +119,18 @@ class _PlanTab extends ConsumerWidget {
               border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3)),
             ),
             child: today == null
-                ? Text(l10n.tutorNoTasksToday, style: TextStyle(fontSize: 12, color: Colors.grey))
+                ? Text(l10n.tutorNoTasksToday, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))
                 : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
                       Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.today_rounded, color: AppColors.brand, size: 18)),
                       const SizedBox(width: 10),
-                      Expanded(child: Text(today.title, style: const TextStyle(fontWeight: FontWeight.bold))),
+                      Expanded(child: Text(today.title ?? l10n.todayTitle, style: const TextStyle(fontWeight: FontWeight.bold))),
                       if (today.isCompleted) Chip(label: Text(l10n.tutorDone, style: TextStyle(fontSize: 11)), backgroundColor: AppColors.correctGreenBg, visualDensity: VisualDensity.compact),
                     ]),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(value: today.progress, backgroundColor: theme.colorScheme.surfaceContainerHighest, color: AppColors.brand),
                     const SizedBox(height: 6),
-                    Text(l10n.tutorTasksDone(today.completedCount, today.totalCount), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(l10n.tutorTasksDone(today.completedCount, today.totalCount), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                     if (today.tasks.isNotEmpty) ...[
                       const SizedBox(height: 10),
                       ...today.tasks.map((t) => Padding(
@@ -140,7 +140,7 @@ class _PlanTab extends ConsumerWidget {
                     ],
                     if (today.summary != null) ...[
                       const SizedBox(height: 8),
-                      Text(today.summary!, style: const TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic)),
+                      Text(today.summary!, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant, fontStyle: FontStyle.italic)),
                     ],
                     const SizedBox(height: 12),
                     SizedBox(
@@ -164,12 +164,12 @@ class _PlanTab extends ConsumerWidget {
           // Plan overview
           if (plan != null) ...[
             Text(l10n.tutorYourPlan(plan.title), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-            if (plan.description != null) Text(plan.description!, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            if (plan.description != null) Text(plan.description!, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
             const SizedBox(height: 8),
-            Text(l10n.tutorPlanDays(plan.days.length, plan.currentDayIndex ?? '-'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.tutorPlanDays(plan.days.length, plan.currentDayIndex ?? '-'), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
             const SizedBox(height: 10),
             if (plan.days.isEmpty)
-              Text(l10n.tutorPlanNoDays, style: TextStyle(fontSize: 12, color: Colors.grey))
+              Text(l10n.tutorPlanNoDays, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))
             else
               ...plan.days.take(7).map((d) => Card(
                     margin: const EdgeInsets.only(bottom: 8),
@@ -182,14 +182,14 @@ class _PlanTab extends ConsumerWidget {
                           color: d.isCurrent ? AppColors.brand.withValues(alpha: 0.14) : theme.colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text('${d.dayIndex}', style: TextStyle(fontWeight: FontWeight.bold, color: d.isCurrent ? AppColors.brandDark : Colors.grey)),
+                        child: Text('${d.dayIndex}', style: TextStyle(fontWeight: FontWeight.bold, color: d.isCurrent ? AppColors.brandDark : theme.colorScheme.onSurfaceVariant)),
                       ),
                       title: Text(d.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                      subtitle: d.tasks.isEmpty ? null : Text(d.tasks.take(2).join(' • '), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                      subtitle: d.tasks.isEmpty ? null : Text(d.tasks.take(2).join(' • '), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                       trailing: d.completed ? const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen, size: 18) : null,
                     ),
                   )),
-            if (plan.days.length > 7) Text(l10n.tutorMoreDays(plan.days.length - 7), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            if (plan.days.length > 7) Text(l10n.tutorMoreDays(plan.days.length - 7), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: planState.isAdjusting
@@ -210,7 +210,7 @@ class _PlanTab extends ConsumerWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(l10n.tutorNoPlanYet, style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
-                  Text(l10n.tutorOnboardingRequired, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(l10n.tutorOnboardingRequired, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
                   const SizedBox(height: 10),
                   FilledButton(onPressed: () => context.go('/tutor/onboarding'), child: Text(l10n.tutorStartOnboarding)),
                 ]),
@@ -234,7 +234,7 @@ class _PlanTab extends ConsumerWidget {
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(l10n.tutorAdjustPlan, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text(l10n.tutorAdjustExample, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.tutorAdjustExample, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: 12),
             TextField(controller: ctrl, decoration: InputDecoration(hintText: l10n.tutorAdjustPrompt, border: OutlineInputBorder(), isDense: true), maxLines: 3),
             const SizedBox(height: 12),
@@ -290,7 +290,7 @@ class _InsightsTab extends StatelessWidget {
               Text(l10n.tutorProjectedScore, style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text('${s.score.toStringAsFixed(1)} / ${s.maxScore.toStringAsFixed(0)}', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: AppColors.brandDark)),
-              if (s.confidence != null) Text(l10n.tutorConfidence((s.confidence! * 100).toStringAsFixed(0), s.trend ?? 'stable'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              if (s.confidence != null) Text(l10n.tutorConfidence((s.confidence! * 100).toStringAsFixed(0), s.trend ?? 'stable'), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               if (s.breakdown.isNotEmpty) ...[
                 const SizedBox(height: 10),
                 ...s.breakdown.entries.take(4).map((e) => Padding(
@@ -308,14 +308,14 @@ class _InsightsTab extends StatelessWidget {
         const SizedBox(height: 8),
         weakAsync.when(
           data: (list) => list.isEmpty
-              ? Text(l10n.tutorNoWeakAreas, style: TextStyle(fontSize: 12, color: Colors.grey))
+              ? Text(l10n.tutorNoWeakAreas, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant))
               : Column(
                   children: list.take(6).map((w) => Card(
                         child: ListTile(
                           leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.wrongRedBg, borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.warning_amber_rounded, color: AppColors.wrongRed, size: 18)),
                           title: Text(w.topic, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                           subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            if (w.accuracy != null) Text(l10n.tutorAccuracy((w.accuracy! * 100).toStringAsFixed(0), w.attempts), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                            if (w.accuracy != null) Text(l10n.tutorAccuracy((w.accuracy! * 100).toStringAsFixed(0), w.attempts), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             if (w.recommendation != null) Text(w.recommendation!, style: const TextStyle(fontSize: 11, color: AppColors.brandDark)),
                           ]),
                         ),
@@ -341,7 +341,7 @@ class _RevisionsTab extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return revisionsAsync.when(
       data: (items) => items.isEmpty
-          ? Center(child: Padding(padding: EdgeInsets.all(24), child: Text(l10n.tutorNoRevisionsDue, style: TextStyle(color: Colors.grey))))
+          ? Center(child: Padding(padding: EdgeInsets.all(24), child: Text(l10n.tutorNoRevisionsDue, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))))
           : ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: items.length,
@@ -352,7 +352,7 @@ class _RevisionsTab extends StatelessWidget {
                   child: ListTile(
                     leading: Icon(r.isOverdue ? Icons.alarm_rounded : Icons.schedule_rounded, color: r.isOverdue ? AppColors.wrongRed : AppColors.xpGold),
                     title: Text(r.title ?? r.questionId, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    subtitle: Text(l10n.tutorTopicDue(r.topic ?? 'Revision', r.dueAt.toLocal().toString().substring(0, 16)), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    subtitle: Text(l10n.tutorTopicDue(r.topic ?? 'Revision', r.dueAt.toLocal().toString().substring(0, 16)), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(color: r.isOverdue ? AppColors.wrongRedBg : AppColors.xpGold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
@@ -401,7 +401,7 @@ class _WeeklyTab extends StatelessWidget {
               ]),
               LinearProgressIndicator(value: r.completionRate, color: AppColors.brand),
               const SizedBox(height: 6),
-              Text(l10n.tutorCompletion((r.completionRate * 100).toStringAsFixed(0)), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              Text(l10n.tutorCompletion((r.completionRate * 100).toStringAsFixed(0)), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ]),
           ),
           const SizedBox(height: 12),
@@ -417,7 +417,7 @@ class _WeeklyTab extends StatelessWidget {
                   child: Row(children: [const Icon(Icons.lightbulb_rounded, size: 14, color: AppColors.xpGold), const SizedBox(width: 6), Expanded(child: Text(s, style: const TextStyle(fontSize: 12)))]),
                 )),
           ] else
-            Text(l10n.tutorWeeklyReportPending, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.tutorWeeklyReportPending, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -438,7 +438,7 @@ class _Stat extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
-        child: Column(children: [Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color)), const SizedBox(height: 2), Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey))]),
+        child: Column(children: [Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color)), SizedBox(height: 2), Text(label, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant))]),
       ),
     );
   }

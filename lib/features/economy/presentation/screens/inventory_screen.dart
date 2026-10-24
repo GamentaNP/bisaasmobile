@@ -63,7 +63,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Text(l10n.economyYourResources, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text(l10n.economyResourceSummary(bundle.inventory.length, bundle.catalog.length, bundle.recentActivity.length),
-                  style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
               const SizedBox(height: 12),
               if (bundle.inventory.isEmpty)
                 Container(
@@ -74,7 +74,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     const SizedBox(height: 8),
                     Text(l10n.economyNoResources, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     const SizedBox(height: 4),
-                    Text(l10n.economyResourcesExplain, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+                    Text(l10n.economyResourcesExplain, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant, height: 1.4)),
                   ]),
                 )
               else
@@ -92,7 +92,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Text(l10n.economyCatalog, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (bundle.catalog.isEmpty)
-                Text(l10n.economyCatalogEmpty, style: TextStyle(fontSize: 11, color: Colors.grey))
+                Text(l10n.economyCatalogEmpty, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))
               else
                 Wrap(
                   spacing: 8,
@@ -103,7 +103,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Text(l10n.economyRecentActivity, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (bundle.recentActivity.isEmpty)
-                Text(l10n.economyNoRecentActivity, style: TextStyle(fontSize: 11, color: Colors.grey))
+                Text(l10n.economyNoRecentActivity, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))
               else
                 ...bundle.recentActivity.map((a) => Card(
                       margin: const EdgeInsets.only(bottom: 8),
@@ -111,7 +111,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         dense: true,
                         leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: (a.delta >= 0 ? AppColors.correctGreen : AppColors.wrongRed).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: Icon(a.delta >= 0 ? Icons.add_rounded : Icons.remove_rounded, size: 14, color: a.delta >= 0 ? AppColors.correctGreen : AppColors.wrongRed)),
                         title: Text('${a.resourceName}  ${a.delta >= 0 ? '+' : ''}${a.delta}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                        subtitle: Text('${a.reason ?? a.sourceType ?? ''} • ${_fmt(a.occurredAt)}', style: const TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        subtitle: Text('${a.reason ?? a.sourceType ?? ''} • ${_fmt(a.occurredAt)}', style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant), maxLines: 1, overflow: TextOverflow.ellipsis),
                         trailing: Text('${a.balanceAfter}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
                       ),
                     )),
@@ -122,7 +122,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             // ── Donations (live) ──────────────────────────────────────────────
             Text(l10n.economyDonations, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(l10n.economyDonationsExplain, style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.economyDonationsExplain, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -159,9 +159,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               const SizedBox(height: 6),
               ...state.leaderboard.take(5).map((e) => ListTile(
                     dense: true,
-                    leading: Container(width: 8, height: 8, decoration: BoxDecoration(color: _parseColor(e.badgeColor), shape: BoxShape.circle)),
+                    leading: Container(width: 8, height: 8, decoration: BoxDecoration(color: _parseColor(context, e.badgeColor), shape: BoxShape.circle)),
                     title: Text(e.donorName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                    subtitle: Text(l10n.economyStreakMonths(e.badgeLabel, e.streakMonths), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    subtitle: Text(l10n.economyStreakMonths(e.badgeLabel, e.streakMonths), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                     trailing: Text(e.totalDonatedFormatted, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   )),
             ],
@@ -173,11 +173,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     dense: true,
                     leading: const Icon(Icons.favorite_rounded, size: 14, color: AppColors.wrongRed),
                     title: Text('${e.displayName} — ${e.amountFormatted}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                    subtitle: Text('${e.message ?? ''} • ${e.timeAgo}', style: const TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    subtitle: Text('${e.message ?? ''} • ${e.timeAgo}', style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant), maxLines: 1, overflow: TextOverflow.ellipsis),
                   )),
             ],
             if (state.leaderboard.isEmpty && state.feed.isEmpty && !state.isLeaderboardLoading && !state.isFeedLoading)
-              Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text(l10n.economyDonationsEmpty, style: TextStyle(fontSize: 11, color: Colors.grey))),
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Text(l10n.economyDonationsEmpty, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))),
           ],
         ),
       ),
@@ -186,13 +186,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
   String _fmt(DateTime d) => DateFormat.MMMd().add_jm().format(d.toLocal());
 
-  Color _parseColor(String hex) {
+  Color _parseColor(BuildContext context, String hex) {
     try {
       final h = hex.replaceAll('#', '');
       if (h.length == 6) return Color(int.parse('FF$h', radix: 16));
       if (h.length == 8) return Color(int.parse(h, radix: 16));
     } catch (_) {}
-    return Colors.grey;
+    return Theme.of(context).colorScheme.surfaceContainerHighest;
   }
 }
 
@@ -216,7 +216,7 @@ class _ResourceTile extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
-              Text(resourceKey, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              Text(resourceKey, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ]),
           ),
           Text('$quantity', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.brandDark)),

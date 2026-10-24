@@ -104,7 +104,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.storage_rounded, size: 40, color: Colors.grey),
+                    Icon(Icons.storage_rounded, size: 40, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     const SizedBox(height: 12),
                     Text(
                       l10n.downloadsStorageUnreadable,
@@ -114,7 +114,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     Text(
                       l10n.downloadsNothingReported,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton.icon(

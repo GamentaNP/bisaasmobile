@@ -41,7 +41,7 @@ class EiceScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.eiceExplain,
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 12),
           _Card(

@@ -188,10 +188,10 @@ class AchievementsScreen extends ConsumerWidget {
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(Icons.emoji_events_outlined, size: 48, color: Colors.grey),
+                        Icon(Icons.emoji_events_outlined, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         SizedBox(height: 8),
                         Text(l10n.achievementsNone,
-                            style: TextStyle(color: Colors.grey, fontSize: 13)),
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13)),
                       ],
                     ),
                   ),

@@ -212,7 +212,7 @@ class TutorPlanDto {
 class TutorTodayDto {
   const TutorTodayDto({
     required this.date,
-    this.title = 'Today',
+    this.title,
     this.tasks = const [],
     this.completedCount = 0,
     this.totalCount = 0,
@@ -225,7 +225,7 @@ class TutorTodayDto {
     final tasks = _asStringList(src['tasks'] ?? src['items'] ?? src['plan'] ?? src['activities']);
     return TutorTodayDto(
       date: _asDate(src['date'] ?? src['due_at']) ?? DateTime.now(),
-      title: (src['title'] ?? src['name'] ?? 'Today').toString(),
+      title: (src['title'] ?? src['name']) as String?,
       tasks: tasks,
       completedCount: _asInt(src['completed_count'] ?? src['completed']) ?? 0,
       totalCount: _asInt(src['total_count'] ?? src['total'] ?? tasks.length) ?? tasks.length,
@@ -235,7 +235,7 @@ class TutorTodayDto {
   }
 
   final DateTime date;
-  final String title;
+  final String? title;
   final List<String> tasks;
   final int completedCount;
   final int totalCount;

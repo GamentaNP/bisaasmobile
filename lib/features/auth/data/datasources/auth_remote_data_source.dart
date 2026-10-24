@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
@@ -33,7 +34,7 @@ class AuthRemoteDataSource {
         throw ApiException(
           statusCode: res.statusCode ?? 500,
           code: ApiErrorCode.unknown,
-          message: envelope.message ?? 'Login failed',
+          message: envelope.message ?? appL10n().errAuthLoginFailed,
         );
       }
       return envelope.data!;
@@ -48,7 +49,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error during login',
+        message: e.message ?? appL10n().errNetworkDuringAuth,
       );
     }
   }
@@ -79,7 +80,7 @@ class AuthRemoteDataSource {
         throw ApiException(
           statusCode: res.statusCode ?? 500,
           code: ApiErrorCode.unknown,
-          message: envelope.message ?? 'Registration failed',
+          message: envelope.message ?? appL10n().errAuthRegisterFailed,
         );
       }
       return envelope.data!;
@@ -94,7 +95,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error during registration',
+        message: e.message ?? appL10n().errNetworkDuringAuth,
       );
     }
   }
@@ -124,7 +125,7 @@ class AuthRemoteDataSource {
         throw ApiException(
           statusCode: res.statusCode ?? 500,
           code: ApiErrorCode.unknown,
-          message: envelope.message ?? 'Token refresh failed',
+          message: envelope.message ?? appL10n().errAuthRefreshFailed,
         );
       }
       return envelope.data!;
@@ -139,7 +140,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error during token refresh',
+        message: e.message ?? appL10n().errNetworkDuringAuth,
       );
     }
   }
@@ -223,7 +224,7 @@ class AuthRemoteDataSource {
         throw ApiException(
           statusCode: res.statusCode ?? 500,
           code: ApiErrorCode.authSocialFailed,
-          message: envelope.message ?? 'Social sign-in failed',
+          message: envelope.message ?? appL10n().errAuthSocialSignInFailed,
         );
       }
       return envelope.data!;
@@ -238,7 +239,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error during social sign-in',
+        message: e.message ?? appL10n().errNetworkDuringAuth,
       );
     }
   }
@@ -267,7 +268,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error',
+        message: e.message ?? appL10n().errRequestFailed,
       );
     }
   }
@@ -289,7 +290,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error',
+        message: e.message ?? appL10n().errRequestFailed,
       );
     }
   }
@@ -329,7 +330,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error',
+        message: e.message ?? appL10n().errRequestFailed,
       );
     }
   }
@@ -361,7 +362,7 @@ class AuthRemoteDataSource {
       throw ApiException(
         statusCode: e.response?.statusCode ?? 500,
         code: ApiErrorCode.serviceUnavailable,
-        message: e.message ?? 'Network error',
+        message: e.message ?? appL10n().errRequestFailed,
       );
     }
   }

@@ -1,3 +1,4 @@
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../domain/entities/user.dart';
@@ -9,11 +10,14 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl({
     required AuthRemoteDataSource remoteDataSource,
     required TokenManager tokenManager,
-  }) : _remoteDataSource = remoteDataSource,
-       _tokenManager = tokenManager;
+    required SocialSignInGateway socialSignInGateway,
+  })  : _remoteDataSource = remoteDataSource,
+        _tokenManager = tokenManager,
+        _socialSignInGateway = socialSignInGateway;
 
   final AuthRemoteDataSource _remoteDataSource;
   final TokenManager _tokenManager;
+  final SocialSignInGateway _socialSignInGateway;
 
   @override
   Future<User> login({
@@ -37,9 +41,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return response.user!.toDomain();
     }
 
+    // A token without a user is contract drift, not a user to fabricate:
+    // a synthetic `User(id: 0, …)` leaks into every feature keyed by user id.
     final userDto = await _remoteDataSource.getCurrentUser();
-    return userDto?.toDomain() ??
-        User(id: 0, name: email.split('@').first, email: email);
+    if (userDto == null) {
+      throw const ContractViolation(
+        'Login response carried no user',
+        endpoint: '/auth/login',
+      );
+    }
+    return userDto.toDomain();
   }
 
   @override
@@ -68,7 +79,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return response.user!.toDomain();
     }
 
-    return User(id: 0, name: name, email: email);
+    // The register contract returns the created user; when it does not, ask
+    // `/me` (the token is already persisted) before declaring drift.
+    final userDto = await _remoteDataSource.getCurrentUser();
+    if (userDto == null) {
+      throw const ContractViolation(
+        'Register response carried no user',
+        endpoint: '/auth/register',
+      );
+    }
+    return userDto.toDomain();
   }
 
   @override
@@ -77,6 +97,15 @@ class AuthRepositoryImpl implements AuthRepository {
       await _remoteDataSource.logout();
     } finally {
       await _tokenManager.clear();
+      // Best-effort: clear the platform SDK session so the Google account
+      // picker does not keep offering the account after logout. Apple has no
+      // SDK-side session to clear. The server token is revoked by
+      // `POST /auth/logout` regardless.
+      try {
+        await _socialSignInGateway.signOut(SocialProvider.google);
+      } on Object {
+        // The SDK session is a convenience, not the source of truth.
+      }
       // Drop the public-response cache too. Only non-personal catalog data is
       // in it, but on a shared device the next account would otherwise start
       // from the previous one's cached world, and the allowlist that keeps it
@@ -124,6 +153,10 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       passwordConfirmation: passwordConfirmation,
     );
+    // The server revoked every session for the account. If this device held
+    // one, it is dead now — clear it so the guard does not keep a ghost
+    // session alive until the next 401 says so.
+    await _tokenManager.clear();
   }
 
   @override
@@ -169,8 +202,13 @@ class AuthRepositoryImpl implements AuthRepository {
     }
 
     final userDto = await _remoteDataSource.getCurrentUser();
-    return userDto?.toDomain() ??
-        User(id: 0, name: name ?? '', email: response.user?.email ?? '');
+    if (userDto == null) {
+      throw const ContractViolation(
+        'Social sign-in response carried no user',
+        endpoint: '/auth/social',
+      );
+    }
+    return userDto.toDomain();
   }
 
   @override

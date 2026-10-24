@@ -35,9 +35,10 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(contestDetailControllerProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(state.detail?.contest.title ?? 'Contest #$_id')),
+      appBar: AppBar(title: Text(state.detail?.contest.title ?? l10n.contestTitleNumbered(_id))),
       body: _buildBody(context, theme, state),
     );
   }
@@ -94,7 +95,7 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(12)),
-              child: Text(l10n.contestNoLeaderboard, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.contestNoLeaderboard, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
             ),
           ...state.leaderboard.map((e) => _LeaderTile(entry: e)),
           if (detail.leaderboardMeta != null) ...[
@@ -135,7 +136,7 @@ class _ContestDetailScreenState extends ConsumerState<ContestDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
-              child: Text(l10n.contestRecapPending, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.contestRecapPending, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
             ),
           const SizedBox(height: 24),
         ],
@@ -176,7 +177,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = detail.contest;
-    final color = switch (c.status.toLowerCase()) { 'active' => AppColors.correctGreen, 'upcoming' => AppColors.brand, 'ended' => Colors.grey, _ => AppColors.streakOrange };
+    final color = switch (c.status.toLowerCase()) { 'active' => AppColors.correctGreen, 'upcoming' => AppColors.brand, 'ended' => Theme.of(context).colorScheme.onSurfaceVariant, _ => AppColors.streakOrange };
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.25))),
@@ -301,7 +302,7 @@ class _LeaderTile extends StatelessWidget {
             child: Center(child: Text(rank > 0 ? '#$rank' : '—', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isTop ? AppColors.xpGold : null))),
           ),
           const SizedBox(width: 10),
-          Expanded(child: Text(entry.displayName ?? 'User #${entry.userId}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13))),
+          Expanded(child: Text(entry.displayName ?? AppLocalizations.of(context)!.contestUserNumbered(entry.userId), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13))),
           Text(entry.score.toStringAsFixed(0), style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(width: 6),
           if (entry.completed) const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.correctGreen),

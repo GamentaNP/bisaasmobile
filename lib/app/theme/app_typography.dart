@@ -110,12 +110,4 @@ abstract final class AppTypography {
     letterSpacing: 0.5,
     height: 1.45,
   );
-
-  // Engineering — formulas (monospace)
-  static const mono = TextStyle(
-    fontFamily: 'RobotoMono',
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.5,
-  );
 }

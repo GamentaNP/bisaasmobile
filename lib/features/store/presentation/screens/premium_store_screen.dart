@@ -96,7 +96,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
               Text(l10n.storeAssetsCount(assets.length), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (assets.isEmpty)
-                Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: Text(l10n.storeNoAssetsInCategory, style: TextStyle(fontSize: 11, color: Colors.grey))))
+                Padding(padding: EdgeInsets.symmetric(vertical: 24), child: Center(child: Text(l10n.storeNoAssetsInCategory, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))))
               else
                 GridView.builder(
                   shrinkWrap: true,
@@ -143,7 +143,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
             const SizedBox(height: 4),
             Text(
               l10n.storeTradingExplain,
-              style: TextStyle(fontSize: 11, color: Colors.grey),
+              style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 10),
             Row(
@@ -207,7 +207,7 @@ class _AssetCard extends StatelessWidget {
             Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: rarityColor.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)), child: Icon(_iconForCategory(asset.category), size: 22, color: rarityColor)),
             const SizedBox(height: 8),
             Text(asset.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
-            Text(asset.category ?? asset.slug, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+            Text(asset.category ?? asset.slug, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const Spacer(),
             Row(children: [const Icon(Icons.monetization_on_rounded, size: 14, color: AppColors.coinYellow), const SizedBox(width: 4), Text('${asset.priceCoins}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.coinYellow)), if (asset.isOwned) Container(margin: const EdgeInsets.only(left: 6), padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2), decoration: BoxDecoration(color: AppColors.correctGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)), child: Text(l10n.storeOwnedBadge, style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: AppColors.correctGreen)))]),
             const SizedBox(height: 8),

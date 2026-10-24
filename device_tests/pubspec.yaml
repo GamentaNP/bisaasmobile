@@ -33,10 +33,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_test:
-    sdk: flutter
-  integration_test:
-    sdk: flutter
   # The app under test, by path.
   bisaasmobile:
     path: ../
@@ -45,6 +41,12 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^5.0.0
+  # `flutter test integration_test` requires the plugin under dev_dependencies
+  # specifically — under plain dependencies the runner refuses to start.
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true

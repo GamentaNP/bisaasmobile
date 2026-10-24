@@ -155,7 +155,7 @@ class _KeyCard extends StatelessWidget {
     final health = key.healthStatus?.toLowerCase();
     final healthColor = health == 'healthy' || health == 'ok'
         ? AppColors.correctGreen
-        : (health == null ? Colors.grey : AppColors.warnAmber);
+        : (health == null ? theme.colorScheme.onSurfaceVariant : AppColors.warnAmber);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -179,7 +179,7 @@ class _KeyCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    key.healthStatus ?? 'unknown',
+                    key.healthStatus ?? l10n.aiKeysHealthUnknown,
                     style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: healthColor),
                   ),
                 ),
@@ -190,7 +190,7 @@ class _KeyCard extends StatelessWidget {
               children: [
                 Text(
                   key.provider.label,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -217,14 +217,14 @@ class _KeyCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 l10n.aiKeysTokensUsed(key.tokensConsumedToday, key.dailyTokenLimit),
-                style: const TextStyle(fontSize: 10, color: Colors.grey),
+                style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
             if (key.healthDetail != null) ...[
               const SizedBox(height: 6),
               Text(
                 key.healthDetail!,
-                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
             const SizedBox(height: 4),

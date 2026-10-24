@@ -114,7 +114,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
                 const SizedBox(height: 12),
                 Text(l10n.calcBrowserLoadError, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                Text(e.toString(), textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(e.toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
                 const SizedBox(height: 16),
                 FilledButton(onPressed: () => ref.invalidate(calculatorCatalogProvider), child: Text(l10n.retry)),
               ],
@@ -139,19 +139,8 @@ class _DomainSection extends StatelessWidget {
   final List<dynamic> calculators;
   final void Function(dynamic) onTap;
 
-  Color _colorFor(String domain) {
-    return switch (domain) {
-      'civil' => const Color(0xFF0EA5E9),
-      'structural' => const Color(0xFF8B5CF6),
-      'electrical' => const Color(0xFFEAB308),
-      'plumbing' => const Color(0xFF06B6D4),
-      'hvac' => const Color(0xFF10B981),
-      'fire' => const Color(0xFFEF4444),
-      'estimation' => const Color(0xFFF59E0B),
-      'medical-gas' => const Color(0xFFEC4899),
-      _ => AppColors.brand,
-    };
-  }
+  Color _colorFor(String domain) =>
+      AppColors.calculatorDomainColors[domain] ?? AppColors.brand;
 
   @override
   Widget build(BuildContext context) {

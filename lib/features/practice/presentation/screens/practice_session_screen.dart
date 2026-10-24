@@ -147,7 +147,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
             const SizedBox(height: 12),
             Text(l10n.quizQuestionsCount(widget.args.questions.length), style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 4),
-            Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             if (result != null) ...[
               const SizedBox(height: 12),
               // The score comes from the server's completion payload. The client
@@ -186,7 +186,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
               const SizedBox(height: 8),
               Text(
                 l10n.practiceReviewPassNote,
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
           ],
@@ -231,11 +231,11 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
+                  decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(8), border: Border.all(color: AppColors.brand.withValues(alpha: 0.2))),
                   child: Text(l10n.practiceQuestionCounter(_index + 1, qs.length), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.brand)),
                 ),
                 const SizedBox(width: 8),
-                Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                Text(l10n.practiceAnsweredSkipped(_answered, _skipped), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -259,7 +259,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                         children: [
                           Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)), child: const Icon(Icons.help_outline_rounded, size: 16, color: AppColors.brand)),
                           const SizedBox(width: 8),
-                          Expanded(child: Text(l10n.practiceQuestionNumber(_current.id), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey))),
+                          Expanded(child: Text(l10n.practiceQuestionNumber(_current.id), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: theme.colorScheme.onSurfaceVariant))),
                           if (_current.type != null) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(6)), child: Text(_current.type!, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600))),
                         ],
                       ),
@@ -274,7 +274,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                       ),
                       if (_current.difficulty != null) ...[
                         const SizedBox(height: 6),
-                        Text(l10n.practiceDifficultyLabel(_current.difficulty ?? '—'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                        Text(l10n.practiceDifficultyLabel(_current.difficulty ?? '—'), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                       ],
                     ],
                   ),
@@ -369,7 +369,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                 const SizedBox(height: 12),
                 Text(
                   l10n.practiceNoEffectNote,
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                   textAlign: TextAlign.center,
                 ),
               ],

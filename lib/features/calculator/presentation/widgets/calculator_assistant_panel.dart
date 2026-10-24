@@ -155,7 +155,7 @@ class _CalculatorAssistantPanelState
                       assistant.model == null
                           ? ''
                           : l10n.calcVia(assistant.model!),
-                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                      style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                     ),
                 ],
               ),
@@ -222,9 +222,9 @@ class _CalculatorAssistantPanelState
                                     if (m.sourceText != null)
                                       Text(
                                         m.sourceText!,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 10,
-                                          color: Colors.grey,
+                                          color: theme.colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                   ],
@@ -290,7 +290,7 @@ class _CalculatorAssistantPanelState
               const SizedBox(height: 6),
               Text(
                 l10n.calcAssistantDisclaimer,
-                style: TextStyle(fontSize: 10, color: Colors.grey),
+                style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
           ],

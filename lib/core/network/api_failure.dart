@@ -20,8 +20,8 @@ library;
 ///    that may produce an empty collection.
 ///
 /// [ApiException] already carries the server's frozen `error.code`, the
-/// display-safe message, validation `errors`, and the `X-Request-Id` needed for
-/// a support report.
+/// display-safe message, validation `details`, and the `X-Request-Id` needed
+/// for a support report.
 import '../../app/localization/l10n.dart';
 
 
@@ -31,11 +31,12 @@ import 'api_exception.dart';
 
 /// Converts a caught error into the canonical [ApiException].
 ///
-/// The server's error contract is `{error: {code, message, details}, errors}`
-/// with a Laravel-compatible top-level `errors` mirror for 422s
-/// (`MOBILE_API_INTEGRATION_GUIDE.md:86-89`). When the body is not JSON at all
-/// (a proxy HTML error page, an empty 502) the status code still carries the
-/// truth, so the status-derived code is used instead of inventing one.
+/// The server's error contract is `{error: {code, message, details}}` —
+/// per-field validation errors live at `error.details` only; there is no
+/// top-level `errors` mirror (`MOBILE_API_INTEGRATION_GUIDE.md:86-89`).
+/// When the body is not JSON at all (a proxy HTML error page, an empty 502)
+/// the status code still carries the truth, so the status-derived code is
+/// used instead of inventing one.
 ///
 /// A [DioException] becomes the server's own error; an [ApiException] passes
 /// through unchanged; anything else (a parse failure, a bug) becomes a
@@ -94,16 +95,9 @@ ApiErrorCode _codeForStatus(int status) {
   return ApiErrorCode.unknown;
 }
 
-String _statusMessage(int status) {
-  if (status == 401) return appL10n().errSessionExpired;
-  if (status == 403) return appL10n().errForbidden;
-  if (status == 404) return appL10n().errNotFound;
-  if (status == 422) return appL10n().errValidationRejected;
-  if (status == 426) return appL10n().errUpgradeRequired;
-  if (status == 429) return appL10n().errRateLimited;
-  if (status >= 500) return appL10n().errServerTrouble;
-  return appL10n().errRequestFailedStatus(status);
-}
+/// The status copy lives next to the exception (`localizedStatusMessage`) so
+/// the JSON-body-without-message path and this path cannot drift apart.
+String _statusMessage(int status) => localizedStatusMessage(status);
 
 String _transportMessage(DioException e) {
   switch (e.type) {
@@ -119,7 +113,7 @@ String _transportMessage(DioException e) {
       return appL10n().errBadCertificate;
     case DioExceptionType.badResponse:
     case DioExceptionType.unknown:
-      return e.message ?? 'Network error.';
+      return e.message ?? appL10n().errRequestFailed;
     // `transformTimeout` was added in Dio 5.7 and is not a transport failure
     // the user can act on beyond retrying.
     case DioExceptionType.transformTimeout:

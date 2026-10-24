@@ -118,7 +118,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: 4),
             Text(
               l10n.economyLedgerExplain,
-              style: TextStyle(fontSize: 11, color: Colors.grey),
+              style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 12),
 
@@ -188,11 +188,11 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               const SizedBox(height: 4),
               Text(
                 l10n.economyPeriodSummary(state.walletCategories!.periodDays, state.walletCategories!.earned, state.walletCategories!.spentAbsolute),
-                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 10),
               if (state.walletCategories!.categories.isEmpty)
-                Text(l10n.economyNoActivity, style: TextStyle(fontSize: 11, color: Colors.grey))
+                Text(l10n.economyNoActivity, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))
               else
                 ...state.walletCategories!.categories.map((c) => _CategoryTile(category: c)),
             ],
@@ -202,7 +202,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: 8),
             Text(l10n.economyHowYouEarn, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             const SizedBox(height: 6),
-            Text(l10n.economyMintingExplain, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+            Text(l10n.economyMintingExplain, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant, height: 1.4)),
           ],
         ),
       ),
@@ -279,7 +279,7 @@ class _LedgerTile extends StatelessWidget {
           child: Icon(isCredit ? Icons.add_rounded : Icons.remove_rounded, size: 16, color: isCredit ? AppColors.correctGreen : AppColors.wrongRed),
         ),
         title: Text(entry.sourceLabel.isEmpty ? entry.description : entry.sourceLabel, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text(DateFormat.jm().format(entry.createdAt.toLocal()), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        subtitle: Text(DateFormat.jm().format(entry.createdAt.toLocal()), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         trailing: Text('${isCredit ? '+' : '-'}${entry.amount}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isCredit ? AppColors.correctGreen : AppColors.wrongRed)),
       ),
     );
@@ -304,7 +304,7 @@ class _EmptyLedger extends StatelessWidget {
           Text(
             l10n.economyNoTransactionsBody,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
+            style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.4),
           ),
         ],
       ),
@@ -333,7 +333,7 @@ class _CategoryTile extends StatelessWidget {
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
           ),
-          Text('${category.entries}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          Text('${category.entries}', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(width: 10),
           Text(
             '${spending ? '-' : '+'}${category.coins.abs()}',

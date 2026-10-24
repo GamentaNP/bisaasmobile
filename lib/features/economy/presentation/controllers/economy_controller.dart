@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/economy_remote_data_source.dart';
@@ -342,7 +343,7 @@ class EconomyController extends Notifier<EconomyState> {
       }
       state = state.copyWith(
         isPurchasing: false,
-        purchaseMessage: result.message ?? 'Purchased ${item.name}',
+        purchaseMessage: result.message ?? appL10n().economyPurchased(item.name),
       );
       // The wallet and the ledger both moved.
       await fetchWallet();

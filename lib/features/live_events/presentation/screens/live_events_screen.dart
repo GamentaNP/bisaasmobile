@@ -83,12 +83,12 @@ class _LiveEventCard extends StatelessWidget {
   final LiveEvent event;
   final VoidCallback onTap;
 
-  Color _color(String status) {
+  Color _color(BuildContext context, String status) {
     return switch (status) {
       'live' => AppColors.wrongRed,
       'countdown' => AppColors.streakOrange,
       'scheduled' => AppColors.brand,
-      'finished' => Colors.grey,
+      'finished' => Theme.of(context).colorScheme.onSurfaceVariant,
       _ => AppColors.brandDark,
     };
   }
@@ -101,7 +101,7 @@ class _LiveEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final color = _color(event.status);
+    final color = _color(context, event.status);
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
@@ -164,7 +164,7 @@ class _Chip extends StatelessWidget {
     final c = color ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: (color ?? Colors.grey).withValues(alpha: 0.10), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: (color ?? Theme.of(context).colorScheme.onSurfaceVariant).withValues(alpha: 0.10), borderRadius: BorderRadius.circular(8)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 12, color: c), const SizedBox(width: 4), Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: c))]),
     );
   }

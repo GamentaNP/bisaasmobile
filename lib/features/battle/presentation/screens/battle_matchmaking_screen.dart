@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vibration/vibration.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/battle_controller.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -112,10 +113,10 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
   }
 
   String _phaseText(BattlePhase p) => switch (p) {
-        BattlePhase.fetchingToken => 'Securing connection…',
-        BattlePhase.connectingFirebase => 'Connecting to realtime…',
-        BattlePhase.searching => 'Searching for opponent…',
-        BattlePhase.error => 'Match failed',
-        _ => 'Preparing battle…',
+        BattlePhase.fetchingToken => appL10n().battlePhaseSecuring,
+        BattlePhase.connectingFirebase => appL10n().battlePhaseConnecting,
+        BattlePhase.searching => appL10n().battlePhaseSearching,
+        BattlePhase.error => appL10n().battlePhaseMatchFailed,
+        _ => appL10n().battlePhasePreparing,
       };
 }

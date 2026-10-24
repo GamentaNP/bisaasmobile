@@ -97,8 +97,8 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(r.knowledgeAtom?.title ?? 'Knowledge Atom #${r.knowledgeAtomId}', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                                Text(l10n.learningReviewMeta(r.id, r.knowledgeAtomId, r.state ?? 'learning'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                Text(r.knowledgeAtom?.title ?? l10n.knowledgeAtomNumbered(r.knowledgeAtomId), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                                Text(l10n.learningReviewMeta(r.id, r.knowledgeAtomId, r.state ?? 'learning'), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                               ]),
                             ),
                             if (r.intervalIndex != null)
@@ -115,9 +115,9 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                         ],
                         const SizedBox(height: 8),
                         Row(children: [
-                          const Icon(Icons.event_rounded, size: 14, color: Colors.grey),
+                          Icon(Icons.event_rounded, size: 14, color: theme.colorScheme.onSurfaceVariant),
                           const SizedBox(width: 4),
-                          Text(l10n.learningDueDate(r.dueAt.toLocal().toIso8601String().split('T').first), style: TextStyle(fontSize: 11, color: r.isOverdue ? AppColors.wrongRed : Colors.grey, fontWeight: r.isOverdue ? FontWeight.bold : FontWeight.normal)),
+                          Text(l10n.learningDueDate(r.dueAt.toLocal().toIso8601String().split('T').first), style: TextStyle(fontSize: 11, color: r.isOverdue ? AppColors.wrongRed : theme.colorScheme.onSurfaceVariant, fontWeight: r.isOverdue ? FontWeight.bold : FontWeight.normal)),
                           const Spacer(),
                           if (r.lapses != null && r.lapses! > 0)
                             Container(
@@ -142,7 +142,7 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                             ],
                           ),
                         const SizedBox(height: 6),
-                        Text(l10n.learningGradingNote, style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        Text(l10n.learningGradingNote, style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant)),
                       ],
                     ),
                   ),

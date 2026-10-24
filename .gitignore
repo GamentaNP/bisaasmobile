@@ -88,3 +88,4 @@ lcov.info
 
 # Node tooling (accidental npm installs at repo root)
 node_modules/
+web/drift_worker.js

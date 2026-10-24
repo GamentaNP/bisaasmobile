@@ -53,7 +53,7 @@ class _StepTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = (step['label'] as String?) ?? 'Step $index';
+    final label = (step['label'] as String?) ?? AppLocalizations.of(context)!.stepLabelFallback(index);
     final formula = step['formula'] as String?;
     final result = (step['result'] as String?) ?? (step['value']?.toString() ?? '');
     return Padding(

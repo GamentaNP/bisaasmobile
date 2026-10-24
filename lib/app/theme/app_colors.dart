@@ -104,6 +104,35 @@ abstract final class AppColors {
     colors: [Color(0xFF1CB0F6), Color(0xFF4FCBFF)],
   );
 
+  /// Category-card accents for the course grid — cycled by index. One home
+  /// for the palette so the calculator domains and the courses stay in the
+  /// same color language.
+  static const List<Color> coursePalette = [
+    Color(0xFFF59E0B),
+    Color(0xFF8B5CF6),
+    Color(0xFF06B6D4),
+    Color(0xFF0EA5E9),
+    Color(0xFFEF4444),
+    Color(0xFF10B981),
+    Color(0xFF64748B),
+    Color(0xFF22D3EE),
+    Color(0xFFEAB308),
+    Color(0xFFEC4899),
+  ];
+
+  /// Calculator discipline → accent. Keyed by the server's domain slug; a
+  /// domain missing from the map falls back to [brand] at the call site.
+  static const Map<String, Color> calculatorDomainColors = {
+    'civil': Color(0xFF0EA5E9),
+    'structural': Color(0xFF8B5CF6),
+    'electrical': Color(0xFFEAB308),
+    'plumbing': Color(0xFF06B6D4),
+    'hvac': Color(0xFF10B981),
+    'fire': Color(0xFFEF4444),
+    'estimation': Color(0xFFF59E0B),
+    'medical-gas': Color(0xFFEC4899),
+  };
+
   // Dark background (Duolingo night navy)
   static const auroraBackground = LinearGradient(
     begin: Alignment.topCenter,

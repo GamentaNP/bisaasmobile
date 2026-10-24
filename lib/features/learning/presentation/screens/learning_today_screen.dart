@@ -101,7 +101,7 @@ class _TodayPlanView extends ConsumerWidget {
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(l10n.learningPlanLabel(plan.id), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                      Text(l10n.learningPlanGoal(plan.planDate.toLocal().toIso8601String().split('T').first, plan.goalId), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                      Text(l10n.learningPlanGoal(plan.planDate.toLocal().toIso8601String().split('T').first, plan.goalId), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                     ]),
                   ),
                   if (plan.status != null)
@@ -123,7 +123,7 @@ class _TodayPlanView extends ConsumerWidget {
                   Text(l10n.learningCompletedCount(plan.completedItems, plan.totalItems), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                   const Spacer(),
                   if (plan.minutesBudget != null)
-                    Row(children: [const Icon(Icons.timer_outlined, size: 14, color: Colors.grey), const SizedBox(width: 4), Text(l10n.learningMinBudget(plan.minutesBudget ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey))]),
+                    Row(children: [Icon(Icons.timer_outlined, size: 14, color: theme.colorScheme.onSurfaceVariant), SizedBox(width: 4), Text(l10n.learningMinBudget(plan.minutesBudget ?? 0), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))]),
                 ],
               ),
               if (error != null) ...[
@@ -150,8 +150,8 @@ class _TodayPlanView extends ConsumerWidget {
               child: ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: (completed ? AppColors.correctGreen : _colorForType(item.type)).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
-                  child: Icon(completed ? Icons.check_rounded : _iconForType(item.type), size: 16, color: completed ? AppColors.correctGreen : _colorForType(item.type)),
+                  decoration: BoxDecoration(color: (completed ? AppColors.correctGreen : _colorForType(context, item.type)).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+                  child: Icon(completed ? Icons.check_rounded : _iconForType(item.type), size: 16, color: completed ? AppColors.correctGreen : _colorForType(context, item.type)),
                 ),
                 title: Text(item.label, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, decoration: completed ? TextDecoration.lineThrough : null)),
                 subtitle: Row(
@@ -163,7 +163,7 @@ class _TodayPlanView extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     if (item.estimatedMinutes > 0)
-                      Text(l10n.learningMinutes(item.estimatedMinutes), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                      Text(l10n.learningMinutes(item.estimatedMinutes), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                   ],
                 ),
                 trailing: completed
@@ -190,11 +190,11 @@ class _TodayPlanView extends ConsumerWidget {
     );
   }
 
-  Color _colorForType(String type) {
+  Color _colorForType(BuildContext context, String type) {
     return switch (type) {
       'review' => AppColors.xpGold,
       'topic' => AppColors.brand,
-      _ => Colors.grey,
+      _ => Theme.of(context).colorScheme.onSurfaceVariant,
     };
   }
 

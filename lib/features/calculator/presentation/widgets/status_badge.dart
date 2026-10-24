@@ -32,7 +32,7 @@ class StatusBadge extends StatelessWidget {
         icon = Icons.cancel_rounded;
         label = 'FAIL';
       default:
-        color = Colors.grey;
+        color = Theme.of(context).colorScheme.onSurfaceVariant;
         icon = Icons.info_outline_rounded;
         label = status.toUpperCase();
     }
@@ -62,7 +62,7 @@ class StatusBadge extends StatelessWidget {
                       if (actual != null) 'actual: $actual',
                       if (limit != null) 'limit: $limit',
                     ].join(' · '),
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
               ],
             ),

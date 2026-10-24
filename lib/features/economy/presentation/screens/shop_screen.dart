@@ -101,7 +101,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     const SizedBox(height: 8),
                     Text(l10n.economyNothingForSale, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     const SizedBox(height: 4),
-                    Text(l10n.economyShopEmpty, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(l10n.economyShopEmpty, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                   ],
                 ),
               ),
@@ -151,7 +151,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               ),
             ],
             const SizedBox(height: 18),
-            Text(l10n.economyPurchaseSafe, style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4)),
+            Text(l10n.economyPurchaseSafe, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant, height: 1.4)),
           ],
         ),
       ),
@@ -194,13 +194,13 @@ class _MaterialCard extends StatelessWidget {
             ),
             if (item.category != null) ...[
               const SizedBox(height: 2),
-              Text(item.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              Text(item.category!, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant)),
             ],
             const Spacer(),
             Text(l10n.coinsBalance(item.priceCoins), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.coinYellow)),
             if (item.sellPriceCoins != null) ...[
               const SizedBox(height: 2),
-              Text(l10n.economySellsBackFor(item.sellPriceCoins ?? 0), style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              Text(l10n.economySellsBackFor(item.sellPriceCoins ?? 0), style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant)),
             ],
             SizedBox(
               width: double.infinity,
@@ -243,7 +243,7 @@ class _ShopRow extends StatelessWidget {
                   Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                   if (item.description != null && item.description!.isNotEmpty) ...[
                     const SizedBox(height: 2),
-                    Text(item.description!, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(item.description!, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ],
                   const SizedBox(height: 4),
                   Row(

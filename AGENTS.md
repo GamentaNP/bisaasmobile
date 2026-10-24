@@ -7,7 +7,7 @@
 
 ```
 C:\laragon\www\bisaas\*                 = Laravel 13 web + Filament admin + API server. Source of truth for ALL business logic.
-C:\laragon\www\bisaasmobile\*           = Flutter client. Owns ONLY pixels, animations, local state, offline queue, push handling.
+C:\laragon\www\bisaasmobile\*           = Flutter client. Owns ONLY pixels, animations, local state, offline read-cache, push handling.
 C:\laragon\www\bisaas\docs\mobileapp\*  = Canonical mobile specs (master plans, API guide). Client MUST stay faithful to them.
 ```
 
@@ -48,6 +48,16 @@ actually published zero rows. The helpers that enforce this live in
 
 A controller catches the throw and renders an error **with a retry**; it must
 never convert the failure into "you have no rows".
+
+### Offline — read-cache today; the write outbox is built but unwired
+
+Offline the app serves the prefetched daily-quiz pack (`DailyQuizPrefetcher` →
+Drift) and the envelope response cache. The **write** path (`core/sync/`:
+`SyncQueueService`, `SyncManager`, `SyncWorker`, `sync_queue_table`) is fully
+built and **deliberately has nothing enqueued into it** (`unwired_tables_test.dart`
+pins that). Quiz grading is server-authoritative, so a replayed answer would be
+a lie the server never scored. Wire `.enqueue()` in only together with a
+product decision about offline answering — do not turn it on by accident.
 
 ## Local backend reference
 
@@ -165,16 +175,25 @@ Wiring notes (verified 2026-09-27 by an on-device run):
 
   Never point a release/profile build at Laragon: the cert shim is compiled out of non-debug
   builds by design, so the self-signed cert is rejected.
-- **minSdk is 28** (lowered from 29 on 2026-09-27 so the physical QA device, a Redmi 6A on
-  Android 9, can install). Flutter's engine for 3.47.2 references the API-34 type
+- **minSdk is 26** (Android 8.0; lowered from 28 on 2026-10-24 so the cheapest
+  handsets still circulating in Nepal and India stay installable — the strictest
+  plugin in the tree, flutter_local_notifications, requires only API 24, and
+  Firebase's artifacts require 23. Historically it was 29, lowered to 28 on
+  2026-09-27 so the physical QA device, a Redmi 6A on Android 9, could install).
+  Flutter's engine for 3.47.2 references the API-34 type
   `UiModeManager.ContrastChangeListener` from its accessibility bridge, so **TalkBack does not work
-  on API 28–33** — the engine catches the `NoClassDefFoundError` and disables the bridge. The app
+  on API 26–33** — the engine catches the `NoClassDefFoundError` and disables the bridge. The app
   itself runs fine. See `docs/MOBILE_REMAINING_WORK_2026-09-27.md` §3 item V.
 - **Firebase is active.** `android/app/google-services.json` exists (project
   `bisaas-realtime-123`), so the conditional google-services Gradle plugin applies and FCM /
-  Crashlytics / Analytics / Remote Config are live. Without Play Services reachable,
-  `firebase_messaging.getToken()` throws an **unhandled** `PlatformDispatcher` exception on every
-  login — `push_notification_service.dart:55` needs a guard.
+  Crashlytics / Analytics are live. **Remote Config is not used** — it was removed because it
+  disagreed with the operator's config (`economy_enabled` true on Firebase, false on the
+  server); operator control runs through the server instead: `GET /api/v1/app/config`
+  (feature flags, maintenance, min-version floor) enforced client-side by
+  `lib/app/config/app_config.dart` + `ForceUpdateGate`, and server-side by
+  `EnforceAppVersion` (426) / `EnforceMobileKillSwitches`. The FCM `getToken()`
+  no-Play-Services crash is **fixed** — `registerToken()`/`unregisterToken()` swallow the
+  throw (`push_notification_service.dart:177-220`), verified on the Redmi 6A.
 - **Deep links:** `civilcal://` + `https://bisaas.com` are registered on Android
   (intent-filters) and iOS (`CFBundleURLTypes`); runtime routing via `app_links` →
   `DeepLinkHandler.parse` in `app.dart`. App-Link verification on bisaas.com needs

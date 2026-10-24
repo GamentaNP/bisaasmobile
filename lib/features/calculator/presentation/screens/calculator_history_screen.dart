@@ -52,8 +52,8 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.cloud_off_rounded,
-                            size: 48, color: Colors.grey),
+                        Icon(Icons.cloud_off_rounded,
+                            size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         const SizedBox(height: 12),
                         Text(
                           state.error!,
@@ -77,9 +77,9 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.history_rounded, size: 56, color: Colors.grey),
+                      Icon(Icons.history_rounded, size: 56, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       SizedBox(height: 8),
-                      Text(l10n.calcHistoryEmpty, style: TextStyle(color: Colors.grey)),
+                      Text(l10n.calcHistoryEmpty, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 )

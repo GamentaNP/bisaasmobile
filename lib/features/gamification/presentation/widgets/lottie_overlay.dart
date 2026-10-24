@@ -119,7 +119,7 @@ class _LottieOverlayState extends State<LottieOverlay> {
                   ),
                 ],
                 const SizedBox(height: 12),
-                Text(l10n.lottieTapToDismiss, style: TextStyle(color: Colors.grey, fontSize: 11)),
+                Text(l10n.lottieTapToDismiss, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11)),
               ],
             ),
           ),

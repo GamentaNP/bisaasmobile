@@ -66,7 +66,7 @@ class TutorPlan {
 class TutorToday {
   const TutorToday({
     required this.date,
-    this.title = 'Today',
+    this.title,
     this.tasks = const [],
     this.completedCount = 0,
     this.totalCount = 0,
@@ -75,7 +75,10 @@ class TutorToday {
   });
 
   final DateTime date;
-  final String title;
+
+  /// Null when the server did not name the section — the screen renders the
+  /// localized "Today" instead of a hardcoded default living here.
+  final String? title;
   final List<String> tasks;
   final int completedCount;
   final int totalCount;

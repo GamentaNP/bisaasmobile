@@ -54,7 +54,7 @@ class StreakCalendar extends StatelessWidget {
         // Weekday labels
         Row(
           children: const ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-              .map((d) => Expanded(child: Center(child: Text(d, style: TextStyle(fontSize: 11, color: Colors.grey)))))
+              .map((d) => Expanded(child: Center(child: Text(d, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)))))
               .toList(),
         ),
         const SizedBox(height: 8),

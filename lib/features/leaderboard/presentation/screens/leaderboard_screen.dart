@@ -180,39 +180,88 @@ class _GlobalTab extends ConsumerWidget {
     final globalRanks = state.myRanks.where((r) => r.leaderboard.scope == 'global').toList();
     final leaderboardOptions = globalRanks.isNotEmpty ? globalRanks.map((r) => r.leaderboard).toList() : state.myRanks.map((r) => r.leaderboard).toList();
 
-    return ListView(
-      children: [
-        if (state.isMyRankLoading) const LinearProgressIndicator(),
-        if (state.myRanksError != null) Padding(padding: const EdgeInsets.all(16), child: ErrorView(message: state.myRanksError!, onRetry: () => ref.read(leaderboardControllerProvider.notifier).fetchMyRanks())),
-        _MyRankCard(myRanks: state.myRanks, selectedId: state.selectedLeaderboardId),
-        if (leaderboardOptions.isNotEmpty)
-          SizedBox(
-            height: 42,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              scrollDirection: Axis.horizontal,
-              itemCount: leaderboardOptions.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (context, i) {
-                final lb = leaderboardOptions[i];
-                final sel = lb.id == state.selectedLeaderboardId;
-                return ChoiceChip(
-                  label: Text(lb.name),
-                  selected: sel,
-                  onSelected: (_) => ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(lb.id),
-                );
-              },
+    // CustomScrollView rather than ListView(children: …): the entry tiles are
+    // built lazily, so a 100-row board does not inflate every tile on the
+    // first frame of a low-end device.
+    return CustomScrollView(
+      slivers: [
+        if (state.isMyRankLoading)
+          const SliverToBoxAdapter(child: LinearProgressIndicator()),
+        if (state.myRanksError != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ErrorView(
+                message: state.myRanksError!,
+                onRetry: () =>
+                    ref.read(leaderboardControllerProvider.notifier).fetchMyRanks(),
+              ),
             ),
           ),
-        if (state.isLoading) const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
-        if (state.error != null) Padding(padding: const EdgeInsets.all(16), child: ErrorView(message: state.error!, onRetry: () => state.selectedLeaderboardId != null ? ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(state.selectedLeaderboardId!) : ref.read(leaderboardControllerProvider.notifier).fetchMyRanks())),
-        if (!state.isLoading && state.entries.isEmpty && state.error == null)
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: EmptyState(title: l10n.leaderboardNoEntries, subtitle: l10n.leaderboardBeFirst, icon: Icons.leaderboard_rounded),
+        SliverToBoxAdapter(child: _MyRankCard(myRanks: state.myRanks, selectedId: state.selectedLeaderboardId)),
+        if (leaderboardOptions.isNotEmpty)
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 42,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                scrollDirection: Axis.horizontal,
+                itemCount: leaderboardOptions.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, i) {
+                  final lb = leaderboardOptions[i];
+                  final sel = lb.id == state.selectedLeaderboardId;
+                  return ChoiceChip(
+                    label: Text(lb.name),
+                    selected: sel,
+                    onSelected: (_) => ref
+                        .read(leaderboardControllerProvider.notifier)
+                        .fetchLeaderboard(lb.id),
+                  );
+                },
+              ),
+            ),
           ),
-        ...state.entries.map((e) => _EntryTile(entry: e, myRank: state.myRank)),
-        const SizedBox(height: 24),
+        if (state.isLoading)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        if (state.error != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ErrorView(
+                message: state.error!,
+                onRetry: () => state.selectedLeaderboardId != null
+                    ? ref
+                        .read(leaderboardControllerProvider.notifier)
+                        .fetchLeaderboard(state.selectedLeaderboardId!)
+                    : ref
+                        .read(leaderboardControllerProvider.notifier)
+                        .fetchMyRanks(),
+              ),
+            ),
+          ),
+        if (!state.isLoading && state.entries.isEmpty && state.error == null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: EmptyState(
+                title: l10n.leaderboardNoEntries,
+                subtitle: l10n.leaderboardBeFirst,
+                icon: Icons.leaderboard_rounded,
+              ),
+            ),
+          ),
+        SliverList.builder(
+          itemCount: state.entries.length,
+          itemBuilder: (context, i) =>
+              _EntryTile(entry: state.entries[i], myRank: state.myRank),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
     );
   }
@@ -229,15 +278,19 @@ class _FriendsLeagueTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final filtered = state.myRanks.where((r) => r.leaderboard.scope == scope).toList();
     if (filtered.isEmpty && !state.isMyRankLoading) {
-      return ListView(
-        children: [
-          _MyRankCard(myRanks: state.myRanks, selectedId: state.selectedLeaderboardId),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: EmptyState(
-              title: scope == 'friends' ? l10n.leaderboardFriendsTitle : l10n.leaderboardLeagueTitle,
-              subtitle: scope == 'friends' ? l10n.leaderboardFriendsHint : l10n.leaderboardLeagueHint,
-              icon: scope == 'friends' ? Icons.group_rounded : Icons.shield_rounded,
+      return CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: _MyRankCard(myRanks: state.myRanks, selectedId: state.selectedLeaderboardId),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: EmptyState(
+                title: scope == 'friends' ? l10n.leaderboardFriendsTitle : l10n.leaderboardLeagueTitle,
+                subtitle: scope == 'friends' ? l10n.leaderboardFriendsHint : l10n.leaderboardLeagueHint,
+                icon: scope == 'friends' ? Icons.group_rounded : Icons.shield_rounded,
+              ),
             ),
           ),
         ],
@@ -245,31 +298,65 @@ class _FriendsLeagueTab extends ConsumerWidget {
     }
     final lbOptions = filtered.map((r) => r.leaderboard).toList();
     final entriesToShow = state.leaderboard?.scope == scope ? state.entries : const <LeaderboardEntry>[];
-    return ListView(
-      children: [
-        if (state.isMyRankLoading) const LinearProgressIndicator(),
-        _MyRankCard(myRanks: filtered.isNotEmpty ? filtered : state.myRanks, selectedId: state.selectedLeaderboardId),
+    return CustomScrollView(
+      slivers: [
+        if (state.isMyRankLoading)
+          const SliverToBoxAdapter(child: LinearProgressIndicator()),
+        SliverToBoxAdapter(
+          child: _MyRankCard(
+            myRanks: filtered.isNotEmpty ? filtered : state.myRanks,
+            selectedId: state.selectedLeaderboardId,
+          ),
+        ),
         if (lbOptions.isNotEmpty)
-          SizedBox(
-            height: 42,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              scrollDirection: Axis.horizontal,
-              itemCount: lbOptions.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (context, i) {
-                final lb = lbOptions[i];
-                final sel = lb.id == state.selectedLeaderboardId;
-                return ChoiceChip(label: Text(lb.name), selected: sel, onSelected: (_) => ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(lb.id));
-              },
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 42,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                scrollDirection: Axis.horizontal,
+                itemCount: lbOptions.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, i) {
+                  final lb = lbOptions[i];
+                  final sel = lb.id == state.selectedLeaderboardId;
+                  return ChoiceChip(label: Text(lb.name), selected: sel, onSelected: (_) => ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(lb.id));
+                },
+              ),
             ),
           ),
-        if (state.isLoading) const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
-        if (state.error != null) Padding(padding: const EdgeInsets.all(16), child: ErrorView(message: state.error!, onRetry: () => state.selectedLeaderboardId != null ? ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(state.selectedLeaderboardId!) : null)),
+        if (state.isLoading)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        if (state.error != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ErrorView(
+                message: state.error!,
+                onRetry: () => state.selectedLeaderboardId != null
+                    ? ref.read(leaderboardControllerProvider.notifier).fetchLeaderboard(state.selectedLeaderboardId!)
+                    : null,
+              ),
+            ),
+          ),
         if (!state.isLoading && entriesToShow.isEmpty && state.error == null && filtered.isNotEmpty)
-          Padding(padding: EdgeInsets.all(16), child: EmptyState(title: l10n.leaderboardNoEntriesShort, subtitle: l10n.leaderboardCompeteToAppear, icon: Icons.leaderboard_outlined)),
-        ...entriesToShow.map((e) => _EntryTile(entry: e, myRank: state.myRank)),
-        const SizedBox(height: 24),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: EmptyState(title: l10n.leaderboardNoEntriesShort, subtitle: l10n.leaderboardCompeteToAppear, icon: Icons.leaderboard_outlined),
+            ),
+          ),
+        SliverList.builder(
+          itemCount: entriesToShow.length,
+          itemBuilder: (context, i) =>
+              _EntryTile(entry: entriesToShow[i], myRank: state.myRank),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
     );
   }
@@ -313,10 +400,10 @@ class _DonorsTab extends ConsumerWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: isTop3 ? (rank == 1 ? AppColors.xpGold.withValues(alpha: 0.15) : rank == 2 ? Colors.grey.withValues(alpha: 0.15) : Colors.orange.withValues(alpha: 0.15)) : theme.colorScheme.surfaceContainerHighest,
+                  color: isTop3 ? (rank == 1 ? AppColors.xpGold.withValues(alpha: 0.15) : rank == 2 ? Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.15) : Colors.orange.withValues(alpha: 0.15)) : theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Center(child: Text('$rank', style: TextStyle(fontWeight: FontWeight.bold, color: isTop3 ? (rank == 1 ? AppColors.xpGold : rank == 2 ? Colors.grey[700] : const Color(0xFFB45309)) : theme.colorScheme.onSurface))),
+                child: Center(child: Text('$rank', style: TextStyle(fontWeight: FontWeight.bold, color: isTop3 ? (rank == 1 ? AppColors.xpGold : rank == 2 ? Theme.of(context).colorScheme.onSurface : const Color(0xFFB45309)) : theme.colorScheme.onSurface))),
               ),
               const SizedBox(width: 12),
               Expanded(

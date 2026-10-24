@@ -53,7 +53,7 @@ class LearningHomeScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             tracksAsync.when(
               data: (tracks) => tracks.isEmpty
-                  ? Text(l10n.learningNoTracks, style: TextStyle(color: Colors.grey, fontSize: 12))
+                  ? Text(l10n.learningNoTracks, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12))
                   : Column(
                       children: tracks
                           .map((t) => Card(
@@ -64,7 +64,7 @@ class LearningHomeScreen extends ConsumerWidget {
                                     child: const Icon(Icons.school_rounded, color: AppColors.brand, size: 18),
                                   ),
                                   title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                                  subtitle: t.description != null ? Text(t.description!, style: const TextStyle(fontSize: 11, color: Colors.grey)) : null,
+                                  subtitle: t.description != null ? Text(t.description!, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)) : null,
                                    trailing: const Icon(Icons.chevron_right_rounded),
                                    onTap: () => context.go('/learning/tracks'),
                                 ),
@@ -81,7 +81,7 @@ class LearningHomeScreen extends ConsumerWidget {
               label: Text(l10n.learningAskAiTutor),
             ),
             const SizedBox(height: 8),
-            Text(l10n.learningStreamingNote, style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(l10n.learningStreamingNote, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
@@ -104,7 +104,7 @@ class _TodayCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3)),
         ),
-        child: Text(l10n.learningNoTasks, style: TextStyle(fontSize: 12, color: Colors.grey)),
+        child: Text(l10n.learningNoTasks, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
       );
     }
     var tasks = <String>[];
@@ -142,7 +142,7 @@ class _TodayCard extends StatelessWidget {
             const SizedBox(height: 8),
             ...tasks.map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
           ] else
-            Text(l10n.learningNoTasks, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.learningNoTasks, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );

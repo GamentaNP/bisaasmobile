@@ -40,8 +40,9 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(liveEventDetailControllerProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(state.detail?.event.title ?? 'Live Event #$_id')),
+      appBar: AppBar(title: Text(state.detail?.event.title ?? l10n.liveEventTitleNumbered(_id))),
       body: _buildBody(context, theme, state),
     );
   }
@@ -97,7 +98,7 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
-              child: Text(l10n.liveEventNoSnapshot, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.liveEventNoSnapshot, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
             ),
           const SizedBox(height: 16),
           // Answer form
@@ -143,7 +144,7 @@ class _LiveEventDetailScreenState extends ConsumerState<LiveEventDetailScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(12)),
-              child: Text(l10n.liveEventNoLeaderboard, style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+              child: Text(l10n.liveEventNoLeaderboard, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant), textAlign: TextAlign.center),
             )
           else
             ...detail.leaderboard.take(10).map((row) {
@@ -212,7 +213,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final color = switch (event.status) { 'live' => AppColors.wrongRed, 'countdown' => AppColors.streakOrange, 'scheduled' => AppColors.brand, 'finished' => Colors.grey, _ => AppColors.brandDark };
+    final color = switch (event.status) { 'live' => AppColors.wrongRed, 'countdown' => AppColors.streakOrange, 'scheduled' => AppColors.brand, 'finished' => Theme.of(context).colorScheme.onSurfaceVariant, _ => AppColors.brandDark };
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.25))),
@@ -269,7 +270,7 @@ class _MetaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(8)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 12, color: Colors.grey[600]), const SizedBox(width: 4), Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600))]),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant), const SizedBox(width: 4), Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600))]),
     );
   }
 }
@@ -334,7 +335,7 @@ class _SnapshotCard extends StatelessWidget {
             Text(l10n.liveEventQuestionPoints(
           (cq['index'] ?? cq['question_index'] ?? '') as String,
           (cq['points'] ?? '') as String,
-        ), style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600)),
+        ), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             Text((cq['question_text'] ?? cq['questionText'] ?? cq['text'] ?? 'Question').toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             if (cq['options'] is List) ...[
@@ -354,7 +355,7 @@ class _SnapshotCard extends StatelessWidget {
         ), style: const TextStyle(fontSize: 11, color: AppColors.wrongRed)),
             ],
           ] else ...[
-            Text(l10n.liveEventWaitingForHost, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(l10n.liveEventWaitingForHost, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             const SizedBox(height: 6),
             Text(l10n.liveEventRawKeys(snapshot.raw.keys.take(8).join(', ')), style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.4))),
           ],

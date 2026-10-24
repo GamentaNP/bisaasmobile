@@ -142,7 +142,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
               color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
               child: Text(
                 l10n.tutorWriting,
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               ),
             ),
           Expanded(
@@ -164,7 +164,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                           Text(
                             l10n.tutorChatExplain,
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12, color: Colors.grey, height: 1.4),
+                            style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant, height: 1.4),
                           ),
                           const SizedBox(height: 16),
                           Wrap(
@@ -194,7 +194,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
           if (state.isSending)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(children: [SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)), SizedBox(width: 8), Text(l10n.tutorTyping, style: TextStyle(fontSize: 12, color: Colors.grey))]),
+              child: Row(children: [SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)), SizedBox(width: 8), Text(l10n.tutorTyping, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))]),
             ),
           SafeArea(
             child: Padding(

@@ -308,7 +308,7 @@ class _CategoriesStrip extends StatelessWidget {
     if (categories.isEmpty) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Text(l10n.libraryNoCategories, style: TextStyle(fontSize: 12, color: Colors.grey)),
+        child: Text(l10n.libraryNoCategories, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
       );
     }
 

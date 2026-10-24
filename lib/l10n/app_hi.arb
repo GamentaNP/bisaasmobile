@@ -2696,6 +2696,58 @@
   "errCancelled": "अनुरोध रद्द कर दिया गया।",
   "errBadCertificate": "सर्वर का प्रमाणपत्र सत्यापित नहीं हो सका।",
   "errTransformTimeout": "सर्वर को जवाब देने में बहुत समय लगा।",
+  "errContractDrift": "सर्वर ने ऐसा जवाब भेजा जिसे यह ऐप नहीं समझ पाई। कृपया फिर से कोशिश करें।",
+  "errRequestFailed": "अनुरोध पूरा नहीं हो सका।",
+  "errAuthInvalidCredentials": "ईमेल या पासवर्ड गलत है।",
+  "errAuthEmailUnverified": "जारी रखने के लिए अपना ईमेल सत्यापित करें।",
+  "errAuthAccountDisabled": "यह खाता निष्क्रिय कर दिया गया है।",
+  "errAuthSocialFailed": "प्रोवाइडर से साइन-इन विफल हुआ। फिर से कोशिश करें।",
+  "errInsufficientCoins": "पर्याप्त कॉइन नहीं।",
+  "errPlanUpgradeRequired": "इसे उपयोग करने के लिए अपना प्लान अपग्रेड करें।",
+  "errFeatureDisabled": "यह सुविधा अभी उपलब्ध नहीं है।",
+  "errIdempotencyConflict": "वह क्रिया पहले से प्रोसेस हो रही है।",
+  "errMaintenance": "ऐप रखरखाव में है। कृपया जल्द ही फिर से कोशिश करें।",
+  "streakRepairNoMissedDay": "आपने कोई दिन नहीं छोड़ा — मरम्मत करने के लिए कुछ नहीं।",
+  "streakRepairWindowClosed": "छोड़े गए दिन की मरम्मत अवधि समाप्त हो गई।",
+  "streakRepairMonthLimit": "आपने इस महीने की सारी मरम्मतें उपयोग कर ली हैं।",
+  "streakRepairNoCoins": "कॉइन पर्याप्त नहीं — एक मरम्मत के 50 चाहिए।",
+  "streakRepairDeclined": "सर्वर ने मरम्मत अस्वीकार कर दी।",
+  "streakWagerAlreadyRunning": "आपकी एक शर्त पहले से चल रही है।",
+  "streakWagerMinStake": "न्यूनतम शर्त 50 कॉइन है।",
+  "streakWagerTooShort": "शर्त कम से कम 3 दिन चलनी चाहिए।",
+  "streakWagerNoCoins": "उस शर्त के लिए कॉइन पर्याप्त नहीं।",
+  "streakWagerDuplicate": "वह शर्त पहले ही सबमिट हो चुकी है — रिफ्रेश के लिए नीचे खींचें।",
+  "streakWagerNotOpened": "शर्त नहीं खोली जा सकी।",
+  "streakRepairUpToDate": "मरम्मत के लिए कोई छोड़ा दिन नहीं — आप अप-टू-डेट हैं।",
+  "streakRepairMonthlyUse": "मासिक मरम्मत सीमा पूरी ({count} उपयोग)।",
+  "@streakRepairMonthlyUse": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakRepairCosts50": "एक मरम्मत में 50 कॉइन लगते हैं — पहले टॉप-अप करें।",
+  "streakRepairUnavailableNow": "अभी मरम्मत उपलब्ध नहीं।",
+  "battlePhaseSecuring": "कनेक्शन सुरक्षित कर रहे हैं…",
+  "battlePhaseConnecting": "रियलटाइम से जुड़ रहे हैं…",
+  "battlePhaseSearching": "प्रतिद्वंद्वी खोज रहे हैं…",
+  "battlePhaseMatchFailed": "मैच विफल हुआ",
+  "battlePhasePreparing": "बैटल तैयार कर रहे हैं…",
+  "contentQuizReadyEmpty": "तैयार, लेकिन कोई प्रश्न नहीं लौटा",
+  "contentQuizReady": "शुरू करने के लिए तैयार",
+  "contentQuizGenerating": "तैयार किया जा रहा है…",
+  "contentQuizFailed": "बनाया नहीं जा सका",
+  "contentQuizPending": "तैयार होने का इंतज़ार",
+  "difficultyEasy": "आसान",
+  "difficultyMedium": "मध्यम",
+  "difficultyHard": "कठिन",
+  "difficultyExpert": "विशेषज्ञ",
+  "difficultyMixed": "मिश्रित",
+  "todayTitle": "आज",
+  "appLockPromptTitle": "CivilCal अनलॉक करें",
+  "appLockPromptReason": "जारी रखने के लिए प्रमाणित करें",
+  "notificationChannelDaily": "डेली क्विज़",
   "lifelineWrongRemoved": "{count} गलत विकल्प हटा दिए गए।",
   "@lifelineWrongRemoved": {
     "placeholders": {
@@ -3035,6 +3087,96 @@
   "@routeNotFound": {
     "placeholders": {
       "path": {
+        "type": "Object"
+      }
+    }
+  },
+  "errAuthLoginFailed": "लॉगिन विफल हुआ।",
+  "errAuthRegisterFailed": "रजिस्ट्रेशन विफल हुआ।",
+  "errAuthRefreshFailed": "टोकन रिफ्रेश विफल हुआ।",
+  "errAuthSocialSignInFailed": "सोशल साइन-इन विफल हुआ।",
+  "errNetworkDuringAuth": "सर्वर तक नहीं पहुँच सके। फिर से कोशिश करें।",
+  "quizCompleteTitle": "क्विज़ पूर्ण",
+  "quizShareTitleFallback": "CivilCal क्विज़",
+  "profileFallbackName": "इंजीनियर",
+  "aiKeysHealthUnknown": "अज्ञात",
+  "lifelineModeLocked": "इस मोड में उपलब्ध नहीं",
+  "lifelineCostShort": "{name} · {coins} कॉइन",
+  "@lifelineCostShort": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcResultServer": "सर्वर से गणना हुई",
+  "formulaTitleFallback": "सूत्र",
+  "stepLabelFallback": "चरण {index}",
+  "@stepLabelFallback": {
+    "placeholders": {
+      "index": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyPurchased": "{name} खरीदा गया",
+  "@economyPurchased": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeFeaturedCourse": "चुनिंदा कोर्स",
+  "battleNoQuestionsFromServer": "सर्वर ने बिना कोई प्रश्न भेजे मैच खोला, इसलिए खेलने के लिए कुछ नहीं है।",
+  "socialShareLinkMissing": "वह शेयर लिंक नहीं मिला।",
+  "socialShareMomentFallback": "मैंने अभी CivilCal पर प्रगति की — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।",
+  "streakInsuranceFailed": "बीमा नहीं खरीदा जा सका।",
+  "libraryReviewFailed": "समीक्षा विफल हुई",
+  "libraryAnonymousAuthor": "गुमनाम",
+  "leaderboardTierBronze": "कांस्य",
+  "syllabusUntitled": "शीर्षकहीन पाठ्यक्रम",
+  "liveEventFallbackTitle": "लाइव कार्यक्रम",
+  "contestFallbackTitle": "प्रतियोगिता",
+  "contestTitleNumbered": "प्रतियोगिता #{id}",
+  "@contestTitleNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestUserNumbered": "उपयोगकर्ता #{id}",
+  "@contestUserNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventTitleNumbered": "लाइव कार्यक्रम #{id}",
+  "@liveEventTitleNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "trackTitleNumbered": "ट्रैक #{id}",
+  "@trackTitleNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "knowledgeAtomNumbered": "ज्ञान एटम #{id}",
+  "@knowledgeAtomNumbered": {
+    "placeholders": {
+      "id": {
         "type": "Object"
       }
     }

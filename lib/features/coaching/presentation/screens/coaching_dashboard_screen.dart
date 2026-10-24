@@ -117,7 +117,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                   if (dashboard == null)
                     Padding(
                       padding: EdgeInsets.all(24),
-                      child: Center(child: Text(l10n.coachingNoData, style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
+                      child: Center(child: Text(l10n.coachingNoData, style: TextStyle(color: theme.colorScheme.onSurfaceVariant), textAlign: TextAlign.center)),
                     )
                   else ...[
                     if (dashboard.isDegraded)
@@ -128,7 +128,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                         child: Row(children: [Icon(Icons.info_outline_rounded, size: 16, color: AppColors.xpGold), SizedBox(width: 8), Expanded(child: Text(l10n.coachingPartial, style: TextStyle(fontSize: 12, color: AppColors.xpGold)))]),
                       ),
                     // Readiness
-                    if (dashboard.readiness != null) _ReadinessCard(readiness: dashboard.readiness!) else if (state.selectedGoalId != null && state.selectedGoalId!.isNotEmpty) Padding(padding: EdgeInsets.only(bottom: 12), child: Text(l10n.coachingNoReadinessForGoal, style: TextStyle(fontSize: 12, color: Colors.grey))),
+                    if (dashboard.readiness != null) _ReadinessCard(readiness: dashboard.readiness!) else if (state.selectedGoalId != null && state.selectedGoalId!.isNotEmpty) Padding(padding: EdgeInsets.only(bottom: 12), child: Text(l10n.coachingNoReadinessForGoal, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant))),
                     // Today
                     if (dashboard.today != null) _TodayCard(today: dashboard.today!),
                     // Projected score inline
@@ -152,7 +152,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text(l10n.coachingReadinessExplained, style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey)),
+                    Text(l10n.coachingReadinessExplained, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                   ],
                   if (state.isRefreshing) const Padding(padding: EdgeInsets.only(top: 12), child: LinearProgressIndicator()),
                 ],
@@ -187,18 +187,18 @@ class _ReadinessCard extends StatelessWidget {
           LinearProgressIndicator(value: pct / 100, color: AppColors.brand, backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest),
           if (readiness.missingTopics.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text(l10n.coachingFocusNext, style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600)),
+            Text(l10n.coachingFocusNext, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
-            ...readiness.missingTopics.take(3).map((t) => Padding(padding: const EdgeInsets.only(bottom: 2), child: Row(children: [const Icon(Icons.arrow_right_rounded, size: 14, color: Colors.grey), const SizedBox(width: 4), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
+            ...readiness.missingTopics.take(3).map((t) => Padding(padding: const EdgeInsets.only(bottom: 2), child: Row(children: [Icon(Icons.arrow_right_rounded, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant), const SizedBox(width: 4), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
           ],
           if (readiness.nextSteps.isNotEmpty) ...[
             const SizedBox(height: 8),
             ...readiness.nextSteps.take(2).map((s) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_rounded, size: 12, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(s, style: const TextStyle(fontSize: 12)))]))),
           ],
         ] else
-          Text(l10n.coachingNoReadiness, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(l10n.coachingNoReadiness, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         const SizedBox(height: 6),
-        Text(l10n.coachingGoalLabel(readiness.goalId), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(l10n.coachingGoalLabel(readiness.goalId), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ]),
     );
   }
@@ -216,15 +216,15 @@ class _TodayCard extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.brand.withValues(alpha: 0.15))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [const Icon(Icons.today_rounded, color: AppColors.brand, size: 18), const SizedBox(width: 8), Text(today.title, style: const TextStyle(fontWeight: FontWeight.bold)), const Spacer(), Text('${today.completedCount}/${today.totalCount}', style: const TextStyle(fontSize: 11, color: Colors.grey))]),
+        Row(children: [Icon(Icons.today_rounded, color: AppColors.brand, size: 18), SizedBox(width: 8), Text(today.title ?? l10n.todayTitle, style: const TextStyle(fontWeight: FontWeight.bold)), Spacer(), Text('${today.completedCount}/${today.totalCount}', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant))]),
         const SizedBox(height: 8),
         LinearProgressIndicator(value: today.progress, color: AppColors.brand),
         if (today.tasks.isNotEmpty) ...[
           const SizedBox(height: 8),
           ...today.tasks.take(3).map((t) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle_outline_rounded, size: 14, color: AppColors.correctGreen), const SizedBox(width: 6), Expanded(child: Text(t, style: const TextStyle(fontSize: 12)))]))),
-          if (today.tasks.length > 3) Text(l10n.coachingMore(today.tasks.length - 3), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          if (today.tasks.length > 3) Text(l10n.coachingMore(today.tasks.length - 3), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ] else
-          Text(l10n.coachingNoTasksToday, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(l10n.coachingNoTasksToday, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ]),
     );
   }
@@ -247,7 +247,7 @@ class _ProjectedScoreCard extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(l10n.tutorProjectedScore, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             Text('${score.score.toStringAsFixed(1)} / ${score.maxScore.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.xpGold)),
-            if (score.confidence != null) Text(l10n.coachingConfidence((score.confidence! * 100).toStringAsFixed(0)), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            if (score.confidence != null) Text(l10n.coachingConfidence((score.confidence! * 100).toStringAsFixed(0)), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ]),
         ),
         if (score.trend != null) Chip(label: Text(score.trend!, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact),
@@ -267,7 +267,7 @@ class _WeakAreasCard extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.25))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [const Icon(Icons.warning_amber_rounded, color: AppColors.wrongRed, size: 18), const SizedBox(width: 8), Text(l10n.tutorWeakAreas, style: TextStyle(fontWeight: FontWeight.bold)), const Spacer(), Text('${areas.length}', style: const TextStyle(fontSize: 12, color: Colors.grey))]),
+        Row(children: [Icon(Icons.warning_amber_rounded, color: AppColors.wrongRed, size: 18), SizedBox(width: 8), Text(l10n.tutorWeakAreas, style: TextStyle(fontWeight: FontWeight.bold)), Spacer(), Text('${areas.length}', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant))]),
         const SizedBox(height: 8),
         ...areas.take(3).map((a) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -295,7 +295,7 @@ class _TracksCard extends StatelessWidget {
         Text(l10n.coachingLearningTracks, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
         const SizedBox(height: 8),
         Wrap(spacing: 6, runSpacing: 6, children: tracks.take(6).map((t) => Chip(label: Text(t.name, style: const TextStyle(fontSize: 11)), visualDensity: VisualDensity.compact)).toList()),
-        if (tracks.length > 6) Padding(padding: const EdgeInsets.only(top: 6), child: Text(l10n.coachingMore(tracks.length - 6), style: const TextStyle(fontSize: 11, color: Colors.grey))),
+        if (tracks.length > 6) Padding(padding: const EdgeInsets.only(top: 6), child: Text(l10n.coachingMore(tracks.length - 6), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant))),
       ]),
     );
   }
@@ -314,7 +314,7 @@ class _WeeklySnippet extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [Icon(Icons.calendar_view_week_rounded, size: 16, color: AppColors.brandDark), SizedBox(width: 6), Text(l10n.coachingThisWeek, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))]),
         const SizedBox(height: 6),
-        Text(l10n.coachingWeekTasks(report.tasksCompleted, report.tasksPlanned, report.averageScore?.toStringAsFixed(1) ?? '—'), style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(l10n.coachingWeekTasks(report.tasksCompleted, report.tasksPlanned, report.averageScore?.toStringAsFixed(1) ?? '—'), style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         if (report.summary != null) Padding(padding: const EdgeInsets.only(top: 6), child: Text(report.summary!, style: const TextStyle(fontSize: 12, height: 1.3), maxLines: 2, overflow: TextOverflow.ellipsis)),
       ]),
     );
@@ -339,7 +339,7 @@ class _RevisionsSnippet extends StatelessWidget {
           Icon(count == 0 ? Icons.check_circle_rounded : Icons.repeat_rounded, color: count == 0 ? AppColors.correctGreen : AppColors.xpGold, size: 18),
           const SizedBox(width: 10),
           Expanded(child: Text(count == 0 ? l10n.coachingNoRevisions : l10n.coachingRevisionsDue(count), style: TextStyle(fontWeight: FontWeight.bold, color: count == 0 ? AppColors.correctGreen : AppColors.xpGold))),
-          const Icon(Icons.chevron_right_rounded, size: 18, color: Colors.grey),
+          Icon(Icons.chevron_right_rounded, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ]),
       ),
     );

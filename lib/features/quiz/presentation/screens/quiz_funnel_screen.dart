@@ -105,7 +105,7 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                           const Spacer(),
                           Text(
                             l10n.quizFunnelShown(funnel?.items.length ?? 0),
-                            style: const TextStyle(fontSize: 11, color: Colors.grey),
+                            style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -114,7 +114,7 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                         signedIn
                             ? l10n.quizFunnelSampleBody
                             : l10n.quizFunnelPublicBody,
-                        style: const TextStyle(fontSize: 11, color: Colors.grey),
+                        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                       ),
                       const SizedBox(height: 12),
                       if (funnel?.items.isEmpty ?? true)
@@ -152,7 +152,7 @@ class _QuizFunnelScreenState extends ConsumerState<QuizFunnelScreen> {
                       const SizedBox(height: 10),
                       Text(
                         l10n.quizFunnelPracticeNote,
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -199,7 +199,7 @@ class _Counts extends StatelessWidget {
                 ),
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -282,7 +282,7 @@ class _FunnelCard extends StatelessWidget {
                         item.topicName!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 10, color: Colors.grey),
+                        style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ),
                 ],
@@ -339,19 +339,19 @@ class _FunnelCard extends StatelessWidget {
                 if (item.typeLabel != null)
                   Text(
                     item.typeLabel!,
-                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                   ),
                 if (item.difficulty != null) ...[
                   const SizedBox(width: 8),
                   Text(
                     item.difficulty!,
-                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ],
                 const Spacer(),
                 Text(
                   l10n.commonPoints(item.points),
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -361,4 +361,3 @@ class _FunnelCard extends StatelessWidget {
     );
   }
 }
-

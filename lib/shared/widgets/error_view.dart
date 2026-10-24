@@ -6,10 +6,14 @@ import '../../l10n/app_localizations.dart';
 
 /// Branded error state with retry — consistent empty/error language.
 class ErrorView extends StatelessWidget {
-  const ErrorView({super.key, required this.message, this.onRetry, this.title = 'Something went wrong'});
+  const ErrorView({super.key, required this.message, this.onRetry, this.title});
   final String message;
   final VoidCallback? onRetry;
-  final String title;
+
+  /// Null renders the localized generic title. A hardcoded English default
+  /// here used to reach a Nepali reader on every error screen — 39 call sites
+  /// omit this argument.
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class ErrorView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(title, style: theme.textTheme.titleMedium),
+            Text(title ?? l10n.error, style: theme.textTheme.titleMedium),
             const SizedBox(height: 6),
             Text(
               message,

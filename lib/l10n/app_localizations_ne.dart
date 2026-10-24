@@ -3608,6 +3608,153 @@ class AppLocalizationsNe extends AppLocalizations {
   String get errTransformTimeout => 'सर्भरले उत्तर दिन धेरै समय लियो।';
 
   @override
+  String get errContractDrift =>
+      'सर्भरले यो एपले बुझ्न नसक्ने जवाफ पठायो। कृपया फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get errRequestFailed => 'अनुरोध पूरा हुन सकेन।';
+
+  @override
+  String get errAuthInvalidCredentials => 'इमेल वा पासवर्ड गलत छ।';
+
+  @override
+  String get errAuthEmailUnverified =>
+      'जारी राख्न आफ्नो इमेल प्रमाणित गर्नुहोस्।';
+
+  @override
+  String get errAuthAccountDisabled => 'यो खाता निष्क्रिय गरिएको छ।';
+
+  @override
+  String get errAuthSocialFailed =>
+      'प्रदायकसँग साइन-इन असफल भयो। फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get errInsufficientCoins => 'पर्याप्त क्विन छैन।';
+
+  @override
+  String get errPlanUpgradeRequired =>
+      'यो प्रयोग गर्न आफ्नो प्लान अपग्रेड गर्नुहोस्।';
+
+  @override
+  String get errFeatureDisabled => 'यो सुविधा अहिले उपलब्ध छैन।';
+
+  @override
+  String get errIdempotencyConflict => 'त्यो कार्य पहिले नै प्रक्रियामा छ।';
+
+  @override
+  String get errMaintenance =>
+      'एप मर्मतमा छ। कृपया छिट्टै फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get streakRepairNoMissedDay =>
+      'तपाईंले दिन छुटाउनुभएको छैन — मर्मत गर्न केही छैन।';
+
+  @override
+  String get streakRepairWindowClosed => 'छुटेको दिनको मर्मत अवधि सकियो।';
+
+  @override
+  String get streakRepairMonthLimit =>
+      'तपाईंले यो महिनाका सबै मर्मत प्रयोग गरिसक्नुभयो।';
+
+  @override
+  String get streakRepairNoCoins => 'क्विन पर्याप्त छैन — एउटा मर्मत 50 पर्छ।';
+
+  @override
+  String get streakRepairDeclined => 'सर्भरले मर्मत अस्वीकार गर्यो।';
+
+  @override
+  String get streakWagerAlreadyRunning => 'तपाईंको पहिले नै दाउ चलिरहेको छ।';
+
+  @override
+  String get streakWagerMinStake => 'न्यूनतम दाउ 50 क्विन हो।';
+
+  @override
+  String get streakWagerTooShort => 'दाउ कम्तीमा 3 दिन चल्नुपर्छ।';
+
+  @override
+  String get streakWagerNoCoins => 'त्यो दाउका लागि क्विन पर्याप्त छैन।';
+
+  @override
+  String get streakWagerDuplicate =>
+      'त्यो दाउ पहिले नै पेश भइसकेको छ — ताजा गर्न तान्नुहोस्।';
+
+  @override
+  String get streakWagerNotOpened => 'दाउ खोल्न सकिएन।';
+
+  @override
+  String get streakRepairUpToDate =>
+      'मर्मत गर्ने छुटेको दिन छैन — तपाईं अपडेट हुनुहुन्छ।';
+
+  @override
+  String streakRepairMonthlyUse(Object count) {
+    return 'मासिक मर्मत सीमा पुगी ($count प्रयोग)।';
+  }
+
+  @override
+  String get streakRepairCosts50 =>
+      'एउटा मर्मत 50 क्विन लिन्छ — पहिले टपअप गर्नुहोस्।';
+
+  @override
+  String get streakRepairUnavailableNow => 'अहिले मर्मत उपलब्ध छैन।';
+
+  @override
+  String get battlePhaseSecuring => 'जडान सुरक्षित गर्दै…';
+
+  @override
+  String get battlePhaseConnecting => 'रियलटाइममा जोडिँदै…';
+
+  @override
+  String get battlePhaseSearching => 'प्रतिस्पर्धी खोज्दै…';
+
+  @override
+  String get battlePhaseMatchFailed => 'खेल असफल भयो';
+
+  @override
+  String get battlePhasePreparing => 'लडाइँ तयार गर्दै…';
+
+  @override
+  String get contentQuizReadyEmpty => 'तयार, तर कुनै प्रश्न फर्काइएन';
+
+  @override
+  String get contentQuizReady => 'गर्न तयार';
+
+  @override
+  String get contentQuizGenerating => 'तयार गरिँदै…';
+
+  @override
+  String get contentQuizFailed => 'बनाउन सकिएन';
+
+  @override
+  String get contentQuizPending => 'तयार हुन पर्खँदै';
+
+  @override
+  String get difficultyEasy => 'सजिलो';
+
+  @override
+  String get difficultyMedium => 'मध्यम';
+
+  @override
+  String get difficultyHard => 'कठिन';
+
+  @override
+  String get difficultyExpert => 'विशेषज्ञ';
+
+  @override
+  String get difficultyMixed => 'मिश्रित';
+
+  @override
+  String get todayTitle => 'आज';
+
+  @override
+  String get appLockPromptTitle => 'CivilCal खोल्नुहोस्';
+
+  @override
+  String get appLockPromptReason => 'जारी राख्न प्रमाणीकरण गर्नुहोस्';
+
+  @override
+  String get notificationChannelDaily => 'दैनिक क्विज';
+
+  @override
   String lifelineWrongRemoved(Object count) {
     return '$count गलत विकल्प हटाइयो।';
   }
@@ -3953,5 +4100,117 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String routeNotFound(Object path) {
     return 'मार्ग फेला परेन: $path';
+  }
+
+  @override
+  String get errAuthLoginFailed => 'लगइन असफल भयो।';
+
+  @override
+  String get errAuthRegisterFailed => 'दर्ता असफल भयो।';
+
+  @override
+  String get errAuthRefreshFailed => 'टोकन नवीकरण असफल भयो।';
+
+  @override
+  String get errAuthSocialSignInFailed => 'सोशल साइन-इन असफल भयो।';
+
+  @override
+  String get errNetworkDuringAuth =>
+      'सर्भरसम्म पुग्न सकिएन। फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get quizCompleteTitle => 'क्विज सम्पन्न';
+
+  @override
+  String get quizShareTitleFallback => 'CivilCal क्विज';
+
+  @override
+  String get profileFallbackName => 'इन्जिनियर';
+
+  @override
+  String get aiKeysHealthUnknown => 'अज्ञात';
+
+  @override
+  String get lifelineModeLocked => 'यो मोडमा उपलब्ध छैन';
+
+  @override
+  String lifelineCostShort(Object name, Object coins) {
+    return '$name · $coins क्विन';
+  }
+
+  @override
+  String get calcResultServer => 'सर्भरबाट गणना भयो';
+
+  @override
+  String get formulaTitleFallback => 'सूत्र';
+
+  @override
+  String stepLabelFallback(Object index) {
+    return 'चरण $index';
+  }
+
+  @override
+  String economyPurchased(Object name) {
+    return '$name किनियो';
+  }
+
+  @override
+  String get homeFeaturedCourse => 'चुनिएको कोर्स';
+
+  @override
+  String get battleNoQuestionsFromServer =>
+      'सर्भरले कुनै प्रश्न नपठाई खेल खोल्यो, त्यसैले खेल्न केही छैन।';
+
+  @override
+  String get socialShareLinkMissing => 'त्यो सेयर लिंक फेला परेन।';
+
+  @override
+  String get socialShareMomentFallback =>
+      'मैले भर्खरै CivilCal मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।';
+
+  @override
+  String get streakInsuranceFailed => 'बीमा किन्न सकिएन।';
+
+  @override
+  String get libraryReviewFailed => 'समीक्षा असफल भयो';
+
+  @override
+  String get libraryAnonymousAuthor => 'बेनाम';
+
+  @override
+  String get leaderboardTierBronze => 'कांसा';
+
+  @override
+  String get syllabusUntitled => 'शीर्षकविहीन पाठ्यक्रम';
+
+  @override
+  String get liveEventFallbackTitle => 'प्रत्यक्ष कार्यक्रम';
+
+  @override
+  String get contestFallbackTitle => 'प्रतियोगिता';
+
+  @override
+  String contestTitleNumbered(Object id) {
+    return 'प्रतियोगिता #$id';
+  }
+
+  @override
+  String contestUserNumbered(Object id) {
+    return 'प्रयोगकर्ता #$id';
+  }
+
+  @override
+  String liveEventTitleNumbered(Object id) {
+    return 'प्रत्यक्ष कार्यक्रम #$id';
+  }
+
+  @override
+  String trackTitleNumbered(Object id) {
+    return 'ट्र्याक #$id';
+  }
+
+  @override
+  String knowledgeAtomNumbered(Object id) {
+    return 'ज्ञान एटम #$id';
   }
 }

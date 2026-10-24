@@ -100,7 +100,7 @@ class BattleResultScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _ResultColumn(player: me, isWinner: isWin, isMe: true),
-                  Text(l10n.battleVs, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                  Text(l10n.battleVs, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   _ResultColumn(player: opp, isWinner: !isWin, isMe: false),
                 ],
               ),

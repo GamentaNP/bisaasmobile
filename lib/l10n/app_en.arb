@@ -2696,6 +2696,58 @@
   "errCancelled": "The request was cancelled.",
   "errBadCertificate": "The server certificate could not be verified.",
   "errTransformTimeout": "The server took too long to deliver the response.",
+  "errContractDrift": "The server sent a response this app does not understand. Please try again.",
+  "errRequestFailed": "The request could not be completed.",
+  "errAuthInvalidCredentials": "Email or password is incorrect.",
+  "errAuthEmailUnverified": "Verify your email address to continue.",
+  "errAuthAccountDisabled": "This account has been disabled.",
+  "errAuthSocialFailed": "Sign-in with the provider failed. Try again.",
+  "errInsufficientCoins": "Not enough coins.",
+  "errPlanUpgradeRequired": "Upgrade your plan to use this.",
+  "errFeatureDisabled": "This feature is currently unavailable.",
+  "errIdempotencyConflict": "That action is already being processed.",
+  "errMaintenance": "The app is under maintenance. Please try again soon.",
+  "streakRepairNoMissedDay": "You have not missed a day — nothing to repair.",
+  "streakRepairWindowClosed": "The repair window for a missed day has closed.",
+  "streakRepairMonthLimit": "You have used all repairs allowed this month.",
+  "streakRepairNoCoins": "Not enough coins — a repair costs 50.",
+  "streakRepairDeclined": "Repair was declined by the server.",
+  "streakWagerAlreadyRunning": "You already have a wager running.",
+  "streakWagerMinStake": "The minimum stake is 50 coins.",
+  "streakWagerTooShort": "A wager must run for at least 3 days.",
+  "streakWagerNoCoins": "Not enough coins for that stake.",
+  "streakWagerDuplicate": "That wager was already submitted — pull to refresh.",
+  "streakWagerNotOpened": "Wager could not be opened.",
+  "streakRepairUpToDate": "No missed day to repair — you are up to date.",
+  "streakRepairMonthlyUse": "Monthly repair limit reached ({count} used).",
+  "@streakRepairMonthlyUse": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "streakRepairCosts50": "A repair costs 50 coins — top up first.",
+  "streakRepairUnavailableNow": "No repair available right now.",
+  "battlePhaseSecuring": "Securing connection…",
+  "battlePhaseConnecting": "Connecting to realtime…",
+  "battlePhaseSearching": "Searching for opponent…",
+  "battlePhaseMatchFailed": "Match failed",
+  "battlePhasePreparing": "Preparing battle…",
+  "contentQuizReadyEmpty": "Ready, but no questions were returned",
+  "contentQuizReady": "Ready to take",
+  "contentQuizGenerating": "Being prepared…",
+  "contentQuizFailed": "Could not be generated",
+  "contentQuizPending": "Waiting to be prepared",
+  "difficultyEasy": "Easy",
+  "difficultyMedium": "Medium",
+  "difficultyHard": "Hard",
+  "difficultyExpert": "Expert",
+  "difficultyMixed": "Mixed",
+  "todayTitle": "Today",
+  "appLockPromptTitle": "Unlock CivilCal",
+  "appLockPromptReason": "Authenticate to continue",
+  "notificationChannelDaily": "Daily Quiz",
   "lifelineWrongRemoved": "{count} wrong option(s) removed.",
   "@lifelineWrongRemoved": {
     "placeholders": {
@@ -3035,6 +3087,96 @@
   "@routeNotFound": {
     "placeholders": {
       "path": {
+        "type": "Object"
+      }
+    }
+  },
+  "errAuthLoginFailed": "Login failed",
+  "errAuthRegisterFailed": "Registration failed",
+  "errAuthRefreshFailed": "Token refresh failed",
+  "errAuthSocialSignInFailed": "Social sign-in failed",
+  "errNetworkDuringAuth": "Could not reach the server. Try again.",
+  "quizCompleteTitle": "Quiz Complete",
+  "quizShareTitleFallback": "CivilCal Quiz",
+  "profileFallbackName": "Engineer",
+  "aiKeysHealthUnknown": "unknown",
+  "lifelineModeLocked": "Not available in this mode",
+  "lifelineCostShort": "{name} · {coins} coins",
+  "@lifelineCostShort": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "coins": {
+        "type": "Object"
+      }
+    }
+  },
+  "calcResultServer": "Calculated (server)",
+  "formulaTitleFallback": "Formula",
+  "stepLabelFallback": "Step {index}",
+  "@stepLabelFallback": {
+    "placeholders": {
+      "index": {
+        "type": "Object"
+      }
+    }
+  },
+  "economyPurchased": "Purchased {name}",
+  "@economyPurchased": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeFeaturedCourse": "Featured course",
+  "battleNoQuestionsFromServer": "The server opened the match without sending any questions, so there is nothing to play.",
+  "socialShareLinkMissing": "That share link could not be found.",
+  "socialShareMomentFallback": "I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.",
+  "streakInsuranceFailed": "Insurance could not be bought.",
+  "libraryReviewFailed": "Review failed",
+  "libraryAnonymousAuthor": "Anonymous",
+  "leaderboardTierBronze": "Bronze",
+  "syllabusUntitled": "Untitled syllabus",
+  "liveEventFallbackTitle": "Live Event",
+  "contestFallbackTitle": "Contest",
+  "contestTitleNumbered": "Contest #{id}",
+  "@contestTitleNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "contestUserNumbered": "User #{id}",
+  "@contestUserNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "liveEventTitleNumbered": "Live Event #{id}",
+  "@liveEventTitleNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "trackTitleNumbered": "Track #{id}",
+  "@trackTitleNumbered": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "knowledgeAtomNumbered": "Knowledge Atom #{id}",
+  "@knowledgeAtomNumbered": {
+    "placeholders": {
+      "id": {
         "type": "Object"
       }
     }

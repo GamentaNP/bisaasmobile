@@ -53,7 +53,9 @@ class BattleMatch {
   const BattleMatch({
     required this.id,
     required this.status,
-    this.opponentLabel = 'Searching…',
+    // Placeholder for a mapped server field that no screen renders yet. Empty,
+    // not 'Searching…' — an unrendered field has no business carrying copy.
+    this.opponentLabel = '',
     this.player1 = const BattlePlayer(uid: 'p1', displayName: 'You', avatarUrl: ''),
     this.player2 = const BattlePlayer(uid: 'p2', displayName: 'Opponent', avatarUrl: ''),
     this.questions = const [],

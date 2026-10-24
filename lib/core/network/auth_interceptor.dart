@@ -4,6 +4,7 @@ library;
 
 import 'package:dio/dio.dart';
 
+import '../../app/localization/l10n.dart';
 import '../connectivity/api_reachability.dart';
 import '../security/token_manager.dart';
 import 'api_exception.dart';
@@ -63,7 +64,7 @@ class AuthInterceptor extends Interceptor {
       final apiEx = ApiException(
         statusCode: err.response!.statusCode!,
         code: ApiErrorCode.unknown,
-        message: err.message ?? 'Network error',
+        message: err.message ?? appL10n().errRequestFailed,
         requestId: reqId,
       );
       return handler.reject(

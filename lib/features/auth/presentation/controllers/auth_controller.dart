@@ -30,9 +30,11 @@ final tokenManagerProvider = Provider<TokenManager>((ref) {
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final remote = ref.watch(authRemoteDataSourceProvider);
   final tokenManager = ref.watch(tokenManagerProvider);
+  final socialGateway = ref.watch(socialSignInGatewayProvider);
   return AuthRepositoryImpl(
     remoteDataSource: remote,
     tokenManager: tokenManager,
+    socialSignInGateway: socialGateway,
   );
 });
 

@@ -184,7 +184,7 @@ class StreakController extends Notifier<StreakState> {
         state = state.copyWith(isSelfServiceBusy: false);
         return null;
       }
-      final reason = res.message ?? 'Insurance could not be bought.';
+      final reason = res.message ?? appL10n().streakInsuranceFailed;
       state = state.copyWith(isSelfServiceBusy: false, selfServiceError: reason);
       return reason;
     } catch (e, st) {
@@ -243,22 +243,22 @@ class StreakController extends Notifier<StreakState> {
   /// The server reports refusals via `error.details.reason` with these slugs.
   /// Surface the human meaning rather than the raw identifier.
   static String _repairReason(String? message) => switch (message) {
-        'not_missed_one_day' => 'You have not missed a day — nothing to repair.',
-        'repair_window_expired' => 'The repair window for that missed day has closed.',
-        'monthly_repair_limit_reached' => 'You have used all repairs allowed this month.',
-        'insufficient_balance' => 'Not enough coins — a repair costs 50.',
-        null => 'Repair was declined by the server.',
+        'not_missed_one_day' => appL10n().streakRepairNoMissedDay,
+        'repair_window_expired' => appL10n().streakRepairWindowClosed,
+        'monthly_repair_limit_reached' => appL10n().streakRepairMonthLimit,
+        'insufficient_balance' => appL10n().streakRepairNoCoins,
+        null => appL10n().streakRepairDeclined,
         _ => message,
       };
 
   /// Same treatment for wagers (routes/api/v1/quiz.php:274-295).
   static String _wagerReason(String? reason) => switch (reason) {
-        'active_wager' => 'You already have a wager running.',
-        'coins_too_low' => 'The minimum stake is 50 coins.',
-        'days_too_short' => 'A wager must run for at least 3 days.',
-        'insufficient_balance' => 'Not enough coins for that stake.',
-        'duplicate_key' => 'That wager was already submitted — pull to refresh.',
-        null => 'Wager could not be opened.',
+        'active_wager' => appL10n().streakWagerAlreadyRunning,
+        'coins_too_low' => appL10n().streakWagerMinStake,
+        'days_too_short' => appL10n().streakWagerTooShort,
+        'insufficient_balance' => appL10n().streakWagerNoCoins,
+        'duplicate_key' => appL10n().streakWagerDuplicate,
+        null => appL10n().streakWagerNotOpened,
         _ => reason,
       };
 

@@ -69,11 +69,9 @@ class BattleArenaScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  state.error ??
-                      'The server opened the match without sending any '
-                          'questions, so there is nothing to play.',
+                  state.error ?? l10n.battleNoQuestionsFromServer,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 16),
                 FilledButton.icon(

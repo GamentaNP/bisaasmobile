@@ -144,7 +144,7 @@ class _HeaderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFFF97316), Color(0xFFEA580C)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+        gradient: AppColors.streakGradient,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -448,12 +448,12 @@ class _RepairCard extends ConsumerWidget {
           : appL10n().streakMissedDayWhen(when);
     }
     return switch (e.reason) {
-      'not_missed_one_day' => 'No missed day to repair — you are up to date.',
-      'repair_window_expired' => 'The repair window for your missed day has closed.',
+      'not_missed_one_day' => appL10n().streakRepairUpToDate,
+      'repair_window_expired' => appL10n().streakRepairWindowClosed,
       'monthly_repair_limit_reached' =>
-        'Monthly repair limit reached (${e.repairsUsedThisMonth} used).',
-      'insufficient_balance' => 'A repair costs 50 coins — top up first.',
-      _ => 'No repair available right now.',
+        appL10n().streakRepairMonthlyUse(e.repairsUsedThisMonth),
+      'insufficient_balance' => appL10n().streakRepairCosts50,
+      _ => appL10n().streakRepairUnavailableNow,
     };
   }
 }

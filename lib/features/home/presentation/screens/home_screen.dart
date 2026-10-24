@@ -343,7 +343,7 @@ class HomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            title ?? 'Structural Analysis & Design (RCC)',
+            title ?? l10n.homeFeaturedCourse,
             style: theme.textTheme.titleSmall,
           ),
           const SizedBox(height: 10),

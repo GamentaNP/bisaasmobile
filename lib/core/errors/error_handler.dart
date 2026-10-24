@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
+import '../../app/localization/l10n.dart';
 import '../network/api_exception.dart';
+import '../network/api_failure.dart';
 import 'failures.dart';
 
 /// Maps any thrown object → [Failure] for presentation layer.
@@ -16,14 +18,19 @@ abstract final class ErrorHandler {
       return NetworkFailure.fromApi(error);
     }
     if (error is DioException) {
-      final api = error.error;
-      if (api is ApiException) return NetworkFailure.fromApi(api);
-      if (error.type == DioExceptionType.connectionTimeout ||
-          error.type == DioExceptionType.receiveTimeout ||
-          error.type == DioExceptionType.connectionError) {
-        return const NetworkFailure('Connection failed. Check internet.');
-      }
-      return NetworkFailure(error.message ?? 'Network error');
+      // `toApiException` is the one place that knows how to speak for a
+      // transport failure — timeout, unreachable host, bad certificate — and
+      // it does so in the user's language. Duplicating that mapping here is
+      // how hardcoded English fallbacks came to exist.
+      final inner = error.error;
+      if (inner is ApiException) return NetworkFailure.fromApi(inner);
+      return NetworkFailure.fromApi(toApiException(error));
+    }
+    // The server answered 2xx with a body the documented contract does not
+    // describe. Rare, never the user's fault, and printing the exception type
+    // at them is not an answer.
+    if (error is ContractViolation) {
+      return NetworkFailure(appL10n().errContractDrift);
     }
     return NetworkFailure(error.toString());
   }

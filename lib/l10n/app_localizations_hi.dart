@@ -3606,6 +3606,155 @@ class AppLocalizationsHi extends AppLocalizations {
   String get errTransformTimeout => 'सर्वर को जवाब देने में बहुत समय लगा।';
 
   @override
+  String get errContractDrift =>
+      'सर्वर ने ऐसा जवाब भेजा जिसे यह ऐप नहीं समझ पाई। कृपया फिर से कोशिश करें।';
+
+  @override
+  String get errRequestFailed => 'अनुरोध पूरा नहीं हो सका।';
+
+  @override
+  String get errAuthInvalidCredentials => 'ईमेल या पासवर्ड गलत है।';
+
+  @override
+  String get errAuthEmailUnverified =>
+      'जारी रखने के लिए अपना ईमेल सत्यापित करें।';
+
+  @override
+  String get errAuthAccountDisabled => 'यह खाता निष्क्रिय कर दिया गया है।';
+
+  @override
+  String get errAuthSocialFailed =>
+      'प्रोवाइडर से साइन-इन विफल हुआ। फिर से कोशिश करें।';
+
+  @override
+  String get errInsufficientCoins => 'पर्याप्त कॉइन नहीं।';
+
+  @override
+  String get errPlanUpgradeRequired =>
+      'इसे उपयोग करने के लिए अपना प्लान अपग्रेड करें।';
+
+  @override
+  String get errFeatureDisabled => 'यह सुविधा अभी उपलब्ध नहीं है।';
+
+  @override
+  String get errIdempotencyConflict => 'वह क्रिया पहले से प्रोसेस हो रही है।';
+
+  @override
+  String get errMaintenance =>
+      'ऐप रखरखाव में है। कृपया जल्द ही फिर से कोशिश करें।';
+
+  @override
+  String get streakRepairNoMissedDay =>
+      'आपने कोई दिन नहीं छोड़ा — मरम्मत करने के लिए कुछ नहीं।';
+
+  @override
+  String get streakRepairWindowClosed =>
+      'छोड़े गए दिन की मरम्मत अवधि समाप्त हो गई।';
+
+  @override
+  String get streakRepairMonthLimit =>
+      'आपने इस महीने की सारी मरम्मतें उपयोग कर ली हैं।';
+
+  @override
+  String get streakRepairNoCoins =>
+      'कॉइन पर्याप्त नहीं — एक मरम्मत के 50 चाहिए।';
+
+  @override
+  String get streakRepairDeclined => 'सर्वर ने मरम्मत अस्वीकार कर दी।';
+
+  @override
+  String get streakWagerAlreadyRunning => 'आपकी एक शर्त पहले से चल रही है।';
+
+  @override
+  String get streakWagerMinStake => 'न्यूनतम शर्त 50 कॉइन है।';
+
+  @override
+  String get streakWagerTooShort => 'शर्त कम से कम 3 दिन चलनी चाहिए।';
+
+  @override
+  String get streakWagerNoCoins => 'उस शर्त के लिए कॉइन पर्याप्त नहीं।';
+
+  @override
+  String get streakWagerDuplicate =>
+      'वह शर्त पहले ही सबमिट हो चुकी है — रिफ्रेश के लिए नीचे खींचें।';
+
+  @override
+  String get streakWagerNotOpened => 'शर्त नहीं खोली जा सकी।';
+
+  @override
+  String get streakRepairUpToDate =>
+      'मरम्मत के लिए कोई छोड़ा दिन नहीं — आप अप-टू-डेट हैं।';
+
+  @override
+  String streakRepairMonthlyUse(Object count) {
+    return 'मासिक मरम्मत सीमा पूरी ($count उपयोग)।';
+  }
+
+  @override
+  String get streakRepairCosts50 =>
+      'एक मरम्मत में 50 कॉइन लगते हैं — पहले टॉप-अप करें।';
+
+  @override
+  String get streakRepairUnavailableNow => 'अभी मरम्मत उपलब्ध नहीं।';
+
+  @override
+  String get battlePhaseSecuring => 'कनेक्शन सुरक्षित कर रहे हैं…';
+
+  @override
+  String get battlePhaseConnecting => 'रियलटाइम से जुड़ रहे हैं…';
+
+  @override
+  String get battlePhaseSearching => 'प्रतिद्वंद्वी खोज रहे हैं…';
+
+  @override
+  String get battlePhaseMatchFailed => 'मैच विफल हुआ';
+
+  @override
+  String get battlePhasePreparing => 'बैटल तैयार कर रहे हैं…';
+
+  @override
+  String get contentQuizReadyEmpty => 'तैयार, लेकिन कोई प्रश्न नहीं लौटा';
+
+  @override
+  String get contentQuizReady => 'शुरू करने के लिए तैयार';
+
+  @override
+  String get contentQuizGenerating => 'तैयार किया जा रहा है…';
+
+  @override
+  String get contentQuizFailed => 'बनाया नहीं जा सका';
+
+  @override
+  String get contentQuizPending => 'तैयार होने का इंतज़ार';
+
+  @override
+  String get difficultyEasy => 'आसान';
+
+  @override
+  String get difficultyMedium => 'मध्यम';
+
+  @override
+  String get difficultyHard => 'कठिन';
+
+  @override
+  String get difficultyExpert => 'विशेषज्ञ';
+
+  @override
+  String get difficultyMixed => 'मिश्रित';
+
+  @override
+  String get todayTitle => 'आज';
+
+  @override
+  String get appLockPromptTitle => 'CivilCal अनलॉक करें';
+
+  @override
+  String get appLockPromptReason => 'जारी रखने के लिए प्रमाणित करें';
+
+  @override
+  String get notificationChannelDaily => 'डेली क्विज़';
+
+  @override
   String lifelineWrongRemoved(Object count) {
     return '$count गलत विकल्प हटा दिए गए।';
   }
@@ -3951,5 +4100,117 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String routeNotFound(Object path) {
     return 'रूट नहीं मिला: $path';
+  }
+
+  @override
+  String get errAuthLoginFailed => 'लॉगिन विफल हुआ।';
+
+  @override
+  String get errAuthRegisterFailed => 'रजिस्ट्रेशन विफल हुआ।';
+
+  @override
+  String get errAuthRefreshFailed => 'टोकन रिफ्रेश विफल हुआ।';
+
+  @override
+  String get errAuthSocialSignInFailed => 'सोशल साइन-इन विफल हुआ।';
+
+  @override
+  String get errNetworkDuringAuth =>
+      'सर्वर तक नहीं पहुँच सके। फिर से कोशिश करें।';
+
+  @override
+  String get quizCompleteTitle => 'क्विज़ पूर्ण';
+
+  @override
+  String get quizShareTitleFallback => 'CivilCal क्विज़';
+
+  @override
+  String get profileFallbackName => 'इंजीनियर';
+
+  @override
+  String get aiKeysHealthUnknown => 'अज्ञात';
+
+  @override
+  String get lifelineModeLocked => 'इस मोड में उपलब्ध नहीं';
+
+  @override
+  String lifelineCostShort(Object name, Object coins) {
+    return '$name · $coins कॉइन';
+  }
+
+  @override
+  String get calcResultServer => 'सर्वर से गणना हुई';
+
+  @override
+  String get formulaTitleFallback => 'सूत्र';
+
+  @override
+  String stepLabelFallback(Object index) {
+    return 'चरण $index';
+  }
+
+  @override
+  String economyPurchased(Object name) {
+    return '$name खरीदा गया';
+  }
+
+  @override
+  String get homeFeaturedCourse => 'चुनिंदा कोर्स';
+
+  @override
+  String get battleNoQuestionsFromServer =>
+      'सर्वर ने बिना कोई प्रश्न भेजे मैच खोला, इसलिए खेलने के लिए कुछ नहीं है।';
+
+  @override
+  String get socialShareLinkMissing => 'वह शेयर लिंक नहीं मिला।';
+
+  @override
+  String get socialShareMomentFallback =>
+      'मैंने अभी CivilCal पर प्रगति की — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।';
+
+  @override
+  String get streakInsuranceFailed => 'बीमा नहीं खरीदा जा सका।';
+
+  @override
+  String get libraryReviewFailed => 'समीक्षा विफल हुई';
+
+  @override
+  String get libraryAnonymousAuthor => 'गुमनाम';
+
+  @override
+  String get leaderboardTierBronze => 'कांस्य';
+
+  @override
+  String get syllabusUntitled => 'शीर्षकहीन पाठ्यक्रम';
+
+  @override
+  String get liveEventFallbackTitle => 'लाइव कार्यक्रम';
+
+  @override
+  String get contestFallbackTitle => 'प्रतियोगिता';
+
+  @override
+  String contestTitleNumbered(Object id) {
+    return 'प्रतियोगिता #$id';
+  }
+
+  @override
+  String contestUserNumbered(Object id) {
+    return 'उपयोगकर्ता #$id';
+  }
+
+  @override
+  String liveEventTitleNumbered(Object id) {
+    return 'लाइव कार्यक्रम #$id';
+  }
+
+  @override
+  String trackTitleNumbered(Object id) {
+    return 'ट्रैक #$id';
+  }
+
+  @override
+  String knowledgeAtomNumbered(Object id) {
+    return 'ज्ञान एटम #$id';
   }
 }

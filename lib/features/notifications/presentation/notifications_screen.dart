@@ -140,7 +140,7 @@ class _Tile extends StatelessWidget {
         leading: Icon(
           _iconFor(item.type),
           size: 22,
-          color: unread ? AppColors.brand : Colors.grey,
+          color: unread ? AppColors.brand : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         title: Text(
           item.title,
@@ -151,7 +151,7 @@ class _Tile extends StatelessWidget {
         ),
         subtitle: item.body.isEmpty
             ? null
-            : Text(item.body, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            : Text(item.body, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -165,7 +165,7 @@ class _Tile extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-            Text(_day(item.createdAt), style: const TextStyle(fontSize: 10, color: Colors.grey)),
+            Text(_day(item.createdAt), style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import '../../app/localization/l10n.dart';
 import '../storage/preferences.dart';
 import 'biometric_auth.dart';
 
@@ -59,15 +60,15 @@ class AppLock extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   /// Biometric challenge; devices without biometrics never stay locked.
-  /// [reason] is shown by the OS prompt — callers localize it.
-  Future<void> challenge({String reason = 'Unlock CivilCal'}) async {
+  /// [reason] is shown by the OS prompt — null renders the localized default.
+  Future<void> challenge({String? reason}) async {
     final can = await _bio.canCheck;
     if (!can) {
       _locked = false;
       notifyListeners();
       return;
     }
-    final ok = await _bio.authenticate(reason: reason);
+    final ok = await _bio.authenticate(reason: reason ?? appL10n().appLockPromptTitle);
     _locked = !ok;
     notifyListeners();
   }

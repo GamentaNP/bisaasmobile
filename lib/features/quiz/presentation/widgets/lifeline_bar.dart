@@ -77,7 +77,7 @@ class _LifelineChip extends StatelessWidget {
   /// The server decides availability; we only explain *why* it is unavailable.
   String? get _blockedReason {
     if (lifeline.lockedByMode) {
-      return lifeline.lockReason ?? 'Not available in this mode';
+      return lifeline.lockReason ?? appL10n().lifelineModeLocked;
     }
     if (lifeline.isAvailable) return null;
     // Not purchasable and not banked — say which of the two is the problem.
@@ -103,7 +103,7 @@ class _LifelineChip extends StatelessWidget {
           ? l10n.lifelineCost(lifeline.name, lifeline.costCoins)
           : l10n.lifelineUnavailable(lifeline.name, reason),
       child: Tooltip(
-        message: reason ?? '${lifeline.name} · ${lifeline.costCoins} coins',
+        message: reason ?? l10n.lifelineCostShort(lifeline.name, lifeline.costCoins),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: usable && !busy ? onTap : null,

@@ -106,15 +106,15 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(t.title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                                  if (t.trackType != null) Text(t.trackType!, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                  if (t.trackType != null) Text(t.trackType!, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                                 ],
                               ),
                             ),
                             if (t.status != null)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(color: (t.status == 'published' ? AppColors.correctGreen : Colors.grey).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                                child: Text(t.status!, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: t.status == 'published' ? AppColors.correctGreen : Colors.grey)),
+                                decoration: BoxDecoration(color: (t.status == 'published' ? AppColors.correctGreen : theme.colorScheme.onSurfaceVariant).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                                child: Text(t.status!, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: t.status == 'published' ? AppColors.correctGreen : theme.colorScheme.onSurfaceVariant)),
                               ),
                           ],
                         ),
@@ -126,15 +126,15 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
                         Row(
                           children: [
                             if (t.syllabusNodesCount != null) ...[
-                              const Icon(Icons.account_tree_rounded, size: 14, color: Colors.grey),
+                              Icon(Icons.account_tree_rounded, size: 14, color: theme.colorScheme.onSurfaceVariant),
                               const SizedBox(width: 4),
-                              Text(l10n.learningNodesCount(t.syllabusNodesCount ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text(l10n.learningNodesCount(t.syllabusNodesCount ?? 0), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                               const SizedBox(width: 12),
                             ],
                             if (t.goalsCount != null) ...[
-                              const Icon(Icons.flag_rounded, size: 14, color: Colors.grey),
+                              Icon(Icons.flag_rounded, size: 14, color: theme.colorScheme.onSurfaceVariant),
                               const SizedBox(width: 4),
-                              Text(l10n.learningGoalsCount(t.goalsCount ?? 0), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text(l10n.learningGoalsCount(t.goalsCount ?? 0), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                             ],
                             const Spacer(),
                             FilledButton.tonalIcon(

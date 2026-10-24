@@ -72,13 +72,13 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: Text(goal.track?.title ?? 'Track #${goal.trackId}', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                            child: Text(goal.track?.title ?? l10n.trackTitleNumbered(goal.trackId), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                           ),
                           if (goal.status != null)
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(color: (goal.isActive ? AppColors.correctGreen : Colors.grey).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                              child: Text(goal.status!, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: goal.isActive ? AppColors.correctGreen : Colors.grey)),
+                              decoration: BoxDecoration(color: (goal.isActive ? AppColors.correctGreen : theme.colorScheme.onSurfaceVariant).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                              child: Text(goal.status!, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: goal.isActive ? AppColors.correctGreen : theme.colorScheme.onSurfaceVariant)),
                             ),
                         ],
                       ),
@@ -109,7 +109,7 @@ class _LearningGoalDetailScreenState extends ConsumerState<LearningGoalDetailScr
                               const SizedBox(height: 8),
                               ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: r.readinessFraction, minHeight: 8, backgroundColor: Colors.white, color: AppColors.xpGold)),
                               const SizedBox(height: 6),
-                              Text(l10n.learningMastery(r.readiness, r.topicCount), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              Text(l10n.learningMastery(r.readiness, r.topicCount), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         ),
@@ -173,7 +173,7 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
-      child: Row(children: [SizedBox(width: 110, child: Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey))), Expanded(child: Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)))]),
+      child: Row(children: [SizedBox(width: 110, child: Text(label, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant))), Expanded(child: Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)))]),
     );
   }
 }

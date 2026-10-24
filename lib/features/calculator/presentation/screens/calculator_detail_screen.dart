@@ -394,7 +394,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
         const SizedBox(height: 8),
         Text(
           l10n.calcNoSchema,
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 12),
         ...List.generate(_legacyFields.length, (i) {
@@ -490,7 +490,7 @@ class _HeaderCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(config.label, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(config.calculateEndpoint, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey)),
+          Text(config.calculateEndpoint, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
@@ -563,9 +563,9 @@ class _ResultCard extends StatelessWidget {
             children: [
               const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen, size: 18),
               const SizedBox(width: 8),
-              Text(result.message ?? 'Calculated (server)', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
+              Text(result.message ?? l10n.calcResultServer, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
               const Spacer(),
-              Text(l10n.calcInputsCount(result.inputs.length), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              Text(l10n.calcInputsCount(result.inputs.length), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           ),
           const SizedBox(height: 10),

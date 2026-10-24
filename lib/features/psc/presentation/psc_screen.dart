@@ -61,7 +61,7 @@ class PscScreen extends ConsumerWidget {
           (m['id'] ?? '') as String,
           (m['question_count'] ?? m['questions_count'] ?? '') as String,
         ),
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                   trailing: const Icon(Icons.arrow_forward_rounded),
                   onTap: () async {

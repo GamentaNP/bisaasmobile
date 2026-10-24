@@ -7,10 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/analytics/analytics_service.dart';
 import '../core/logging/app_logger.dart';
+import '../core/security/token_manager.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
 import '../core/sync/sync_worker.dart';
 import '../features/auth/presentation/controllers/auth_controller.dart';
-import '../l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart' show AppLocalizations;
 import '../shared/widgets/app_lock_overlay.dart';
 import 'localization/app_languages.dart';
 import 'localization/locale_controller.dart';
@@ -32,6 +33,11 @@ class CivilCalApp extends ConsumerStatefulWidget {
 class _CivilCalAppState extends ConsumerState<CivilCalApp>
     with WidgetsBindingObserver {
   late final AppRouter _appRouter;
+
+  /// Captured in initState — `ref` must not be used from `dispose()`, and the
+  /// listener registered for session loss has to be removed there.
+  late final TokenManager _tokenManager = ref.read(tokenManagerProvider);
+
   StreamSubscription<Uri>? _deepLinkSub;
   StreamSubscription<String?>? _pushNavSub;
   SyncWorker? _syncWorker;
@@ -41,13 +47,33 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _appRouter = AppRouter(ref.read(tokenManagerProvider));
+    _appRouter = AppRouter(_tokenManager);
     _startSync();
     _listenDeepLinks();
     _listenPushNavigation();
     _listenAuthForPushAndAnalytics();
+    _listenForSessionLoss();
     _askForConsentOnce();
     _warmAppConfigAfterFirstFrame();
+  }
+
+  /// When the token disappears *without* the auth controller knowing — a
+  /// failed mid-session refresh clears it inside the interceptor chain —
+  /// re-resolve the controller so every screen watching it drops to the
+  /// signed-out state instead of rendering a ghost user.
+  ///
+  /// Navigation itself is handled by the router's `refreshListenable`; this
+  /// only keeps the provider state honest.
+  void _listenForSessionLoss() {
+    _tokenManager.addListener(_onSessionPresenceChanged);
+  }
+
+  Future<void> _onSessionPresenceChanged() async {
+    if (!mounted) return;
+    final token = await _tokenManager.readToken();
+    if (mounted && (token == null || token.isEmpty)) {
+      ref.invalidate(authControllerProvider);
+    }
   }
 
   /// Starts `GET /app/config` once the first frame is on screen.
@@ -76,11 +102,31 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
   /// gate reads an undecided state as "not granted". This only makes the choice
   /// available, which is the other half of the obligation. The sheet is not
   /// dismissible because there has to be a decision on record.
+  ///
+  /// The sheet is pushed through the go_router Navigator directly: the app
+  /// root sits above that Navigator, so `showModalBottomSheet`'s
+  /// `Navigator.of(context)` lookup would throw from here — and the platform
+  /// error handler swallowed the throw, silently skipping first-run consent.
   Future<void> _askForConsentOnce() async {
     final consent = await ref.read(consentProvider.future);
     if (consent.decided) return;
     if (!mounted) return;
-    await ConsentSheet.show(context);
+    NavigatorState? nav;
+    // The router mounts with the first frame, which on a low-end device can
+    // take seconds — a fixed short retry silently skipped first-run consent
+    // on the QA phone. Poll up to 10s; this runs once per install.
+    for (var attempt = 0; attempt < 20 && nav == null; attempt++) {
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      nav = _appRouter.router.routerDelegate.navigatorKey.currentState;
+    }
+    if (!mounted) return;
+    if (nav == null) {
+      AppLogger.w('consent sheet skipped: navigator never mounted');
+      return;
+    }
+    AppLogger.i('showing first-run consent sheet');
+    await ConsentSheet.showWith(nav);
   }
 
   void _startSync() {
@@ -172,6 +218,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _tokenManager.removeListener(_onSessionPresenceChanged);
     unawaited(_deepLinkSub?.cancel());
     unawaited(_pushNavSub?.cancel());
     _syncWorker?.stop();
@@ -181,7 +228,12 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    // No AppLocalizations lookup here — this widget sits ABOVE the
+    // MaterialApp that registers the delegates, so the lookup is null on the
+    // first frame and the release ErrorWidget (a plain grey screen) is all a
+    // real device ever painted. The OS task-switcher title is the brand name
+    // in every locale on purpose.
+    const title = 'CivilCal';
     // The base font family is Latin-only, so the theme is rebuilt for the active
     // script. Switching language therefore re-themes the whole app rather than
     // only changing translated strings — otherwise Nepali/Chinese/Arabic text
@@ -191,7 +243,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     final dark = AppTheme.forLocale(Brightness.dark, languageCode: locale?.languageCode);
 
     return MaterialApp.router(
-      title: l10n.appTitle,
+      title: title,
       theme: light,
       darkTheme: dark,
       themeMode: ThemeMode.system,

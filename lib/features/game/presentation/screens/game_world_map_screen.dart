@@ -164,11 +164,11 @@ class _ChapterSection extends StatelessWidget {
                     gradient: locked
                         ? null
                         : const LinearGradient(colors: [AppColors.brand, Color(0xFF8B5CF6)]),
-                    color: locked ? Colors.grey.shade300 : null,
+                    color: locked ? Theme.of(context).colorScheme.surfaceContainerHighest : null,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(children: [
-                    if (locked) const Icon(Icons.lock_rounded, size: 14, color: Colors.grey)
+                    if (locked) Icon(Icons.lock_rounded, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant)
                     else const Icon(Icons.map_rounded, size: 14, color: Colors.white),
                     const SizedBox(width: 6),
                     Text(
@@ -176,7 +176,7 @@ class _ChapterSection extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        color: locked ? Colors.grey : Colors.white,
+                        color: locked ? Theme.of(context).colorScheme.onSurfaceVariant : Colors.white,
                       ),
                     ),
                   ]),
@@ -262,7 +262,7 @@ class _ZigZagPath extends StatelessWidget {
                   toX: positions[i + 1] + nodeSize / 2,
                   fromY: 0,
                   toY: rowHeight,
-                  color: levels[i].isCompleted ? AppColors.correctGreen : Colors.grey.shade300,
+                  color: levels[i].isCompleted ? AppColors.correctGreen : Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
             ),
@@ -330,9 +330,9 @@ class _LevelNode extends StatelessWidget {
   final double nodeSize;
   final int? courseId;
 
-  Color get _bgColor {
+  Color _bgColor(BuildContext context) {
     if (level.isCompleted) return AppColors.correctGreen;
-    if (level.isLocked) return Colors.grey.shade300;
+    if (level.isLocked) return Theme.of(context).colorScheme.surfaceContainerHighest;
     if (level.isCurrent) return AppColors.brand;
     return AppColors.brand.withValues(alpha: 0.75);
   }
@@ -350,12 +350,12 @@ class _LevelNode extends StatelessWidget {
             width: nodeSize,
             height: nodeSize,
             decoration: BoxDecoration(
-              color: _bgColor,
+              color: _bgColor(context),
               shape: BoxShape.circle,
               border: Border.all(
                 color: level.isCurrent
                     ? Colors.white
-                    : _bgColor.withValues(alpha: 0.4),
+                    : _bgColor(context).withValues(alpha: 0.4),
                 width: level.isCurrent ? 4 : 2,
               ),
               boxShadow: level.isCurrent
@@ -370,7 +370,7 @@ class _LevelNode extends StatelessWidget {
                 if (level.isBoss)
                   const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 28)
                 else if (locked)
-                  const Icon(Icons.lock_rounded, color: Colors.grey, size: 22)
+                  Icon(Icons.lock_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 22)
                 else
                   Text(
                     '${level.levelNumber}',
@@ -387,7 +387,7 @@ class _LevelNode extends StatelessWidget {
                 children: List.generate(3, (i) => Icon(
                   i < level.starsEarned ? Icons.star_rounded : Icons.star_outline_rounded,
                   size: 12,
-                  color: i < level.starsEarned ? AppColors.xpGold : Colors.grey.shade300,
+                  color: i < level.starsEarned ? AppColors.xpGold : Theme.of(context).colorScheme.onSurfaceVariant,
                 )),
               ),
             ),
@@ -420,11 +420,11 @@ class _ErrorBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.wifi_off_rounded, size: 48, color: Colors.grey),
+            Icon(Icons.wifi_off_rounded, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
             const SizedBox(height: 12),
             Text(l10n.gameWorldMapFailed, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text('$error', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            Text('$error', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
             const SizedBox(height: 16),
             FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh_rounded), label: Text(l10n.retry)),
           ],

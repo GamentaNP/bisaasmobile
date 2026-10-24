@@ -38,13 +38,16 @@ void main() {
       expect(e.isAuthError, isTrue);
     });
 
-    test('422 with field errors marks validation', () {
+    test('422 marks validation even without an error envelope', () {
+      // The top-level `errors` shape the guide once promised was never
+      // shipped by the server, so it is not parsed: field errors come from
+      // error.details only. A bare 422 still marks validation via status.
       final e = ApiException.fromJson(422, {
         'message': 'The given data was invalid.',
         'errors': {'email': ['The email must be a valid email address.']},
       });
       expect(e.isValidation, isTrue);
-      expect(e.errors?['email'], isNotNull);
+      expect(e.fieldErrors, isNull);
     });
 
     test('validation field errors come from error.details (the real wire shape)', () {
@@ -86,28 +89,50 @@ void main() {
       expect(ApiErrorCode.fromRaw('IDEMPOTENCY_KEY_REQUIRED'), ApiErrorCode.idempotencyKeyRequired);
     });
 
-    test('MAINTENANCE_MODE 503 marks isMaintenance', () {
-      final e = ApiException.fromJson(503, {
-        'error': {'code': 'MAINTENANCE_MODE', 'message': 'Under maintenance'},
-      });
-      expect(e.isMaintenance, isTrue);
-      expect(ApiException.fromJson(500, {
-        'error': {'code': 'INTERNAL_ERROR', 'message': 'x'},
-      }).isMaintenance, isFalse);
+    test('isMaintenance keys on MAINTENANCE_MODE only, never on bare 503', () {
+      // The server registry maps SERVICE_UNAVAILABLE and the whole AI/gateway
+      // family to 503 as well (ApiErrorCode.php) — those feature-scoped
+      // refusals must stay retryable, not route to the kill-switch screen.
+      expect(
+        ApiException.fromJson(503, {
+          'error': {'code': 'MAINTENANCE_MODE', 'message': 'Under maintenance'},
+        }).isMaintenance,
+        isTrue,
+      );
+      expect(
+        ApiException.fromJson(503, {
+          'error': {'code': 'SERVICE_UNAVAILABLE', 'message': 'Circuit open'},
+        }).isMaintenance,
+        isFalse,
+      );
+      // Unmapped AI-family codes resolve to `unknown` and must not match.
+      expect(
+        ApiException.fromJson(503, {
+          'error': {'code': 'AI_PROVIDER_CIRCUIT_OPEN', 'message': 'x'},
+        }).isMaintenance,
+        isFalse,
+      );
+      expect(
+        ApiException.fromJson(500, {
+          'error': {'code': 'INTERNAL_ERROR', 'message': 'x'},
+        }).isMaintenance,
+        isFalse,
+      );
     });
   });
 
   group('ErrorHandler', () {
-    test('validation ApiException → ValidationFailure with field errors', () {
+    test('validation without error.details → ValidationFailure, no field errors', () {
       final f = ErrorHandler.handle(
         ApiException.fromJson(422, {
           'message': 'Invalid input',
+          // The top-level `errors` shape was never shipped by the server
+          // and is not parsed; there is nothing to lift per-field.
           'errors': {'email': ['bad']},
         }),
       );
       expect(f, isA<ValidationFailure>());
-      final vf = f as ValidationFailure;
-      expect(vf.fieldErrors?['email'], isNotNull);
+      expect((f as ValidationFailure).fieldErrors, isNull);
     });
 
     test('validation from error.details → ValidationFailure with field errors', () {
@@ -135,6 +160,19 @@ void main() {
       expect(f.message, 'Scheduled maintenance');
     });
 
+    test('SERVICE_UNAVAILABLE 503 → NetworkFailure, never MaintenanceFailure', () {
+      // Feature-scoped unavailability (AI circuit open, gateway not
+      // configured, …) shares status 503 with the kill switch; only the
+      // code tells them apart.
+      final f = ErrorHandler.handle(
+        ApiException.fromJson(503, {
+          'error': {'code': 'SERVICE_UNAVAILABLE', 'message': 'Circuit open'},
+        }),
+      );
+      expect(f, isA<NetworkFailure>());
+      expect(f, isNot(isA<MaintenanceFailure>()));
+    });
+
     test('DioException carrying ApiException unwraps to NetworkFailure', () {
       final apiEx = ApiException.fromJson(403, {
         'error': {'code': 'FORBIDDEN', 'message': 'No access'},
@@ -154,7 +192,9 @@ void main() {
         requestOptions: RequestOptions(path: '/x'),
         type: DioExceptionType.connectionTimeout,
       ));
-      expect(f.message, 'Connection failed. Check internet.');
+      // Must stay in lockstep with the shipped `errTimeout` copy the l10n
+      // audit froze (bdcdb9e) — the old literal drifted once already.
+      expect(f.message, 'The request timed out. Check your connection and try again.');
     });
 
     test('unknown errors become NetworkFailure without crashing', () {

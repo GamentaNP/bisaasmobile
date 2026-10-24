@@ -263,7 +263,7 @@ class BookDetailScreen extends ConsumerWidget {
                 Text(l10n.booksChapterTest, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 8),
                 // The server's own status, not an optimistic "your test is ready".
-                Text(quiz.statusLabel),
+                Text(quizStatusLabel(l10n, quiz)),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -405,3 +405,16 @@ class _Message extends StatelessWidget {
     );
   }
 }
+
+/// The quiz's generation state in the user's language. The copy lives here,
+/// next to the widget that renders it — the entity is pure Dart and cannot
+/// reach the localisations.
+String quizStatusLabel(AppLocalizations l10n, ContentQuiz quiz) =>
+    switch (quiz.generationStatus) {
+      GenerationStatus.ready => quiz.questionIds.isEmpty
+          ? l10n.contentQuizReadyEmpty
+          : l10n.contentQuizReady,
+      GenerationStatus.generating => l10n.contentQuizGenerating,
+      GenerationStatus.failed => l10n.contentQuizFailed,
+      GenerationStatus.pending => l10n.contentQuizPending,
+    };

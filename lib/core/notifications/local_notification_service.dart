@@ -24,6 +24,31 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: (response) =>
           _taps.add(response.payload),
     );
+    await _ensureAndroidChannels();
+  }
+
+  /// Pre-creates the Android channels. A background FCM `notification` payload
+  /// can arrive before any foreground mirror has ever run; the manifest points
+  /// `default_notification_channel_id` at `civilcal_default`, and without this
+  /// the channel would not exist yet — FCM would invent its own
+  /// "Miscellaneous" channel the user cannot silence per-feature.
+  Future<void> _ensureAndroidChannels() async {
+    final impl = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (impl == null) return;
+    final defaultChannel = AndroidNotificationChannel(
+      'civilcal_default',
+      // Brand name — the same proper noun in every locale.
+      'CivilCal',
+      importance: Importance.high,
+    );
+    final dailyChannel = AndroidNotificationChannel(
+      'civilcal_daily',
+      appL10n().notificationChannelDaily,
+      importance: Importance.high,
+    );
+    await impl.createNotificationChannel(defaultChannel);
+    await impl.createNotificationChannel(dailyChannel);
   }
 
   Future<void> show({
@@ -60,10 +85,10 @@ class LocalNotificationService {
       title: appL10n().notificationDailyTitle,
       body: appL10n().notificationDailyBody,
       scheduledDate: _nextInstanceOfTime(8, 0),
-      notificationDetails: const NotificationDetails(
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'civilcal_daily',
-          'Daily Quiz',
+          appL10n().notificationChannelDaily,
           importance: Importance.high,
         ),
       ),

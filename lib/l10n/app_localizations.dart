@@ -6121,6 +6121,276 @@ abstract class AppLocalizations {
   /// **'The server took too long to deliver the response.'**
   String get errTransformTimeout;
 
+  /// No description provided for @errContractDrift.
+  ///
+  /// In en, this message translates to:
+  /// **'The server sent a response this app does not understand. Please try again.'**
+  String get errContractDrift;
+
+  /// No description provided for @errRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The request could not be completed.'**
+  String get errRequestFailed;
+
+  /// No description provided for @errAuthInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or password is incorrect.'**
+  String get errAuthInvalidCredentials;
+
+  /// No description provided for @errAuthEmailUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email address to continue.'**
+  String get errAuthEmailUnverified;
+
+  /// No description provided for @errAuthAccountDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled.'**
+  String get errAuthAccountDisabled;
+
+  /// No description provided for @errAuthSocialFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in with the provider failed. Try again.'**
+  String get errAuthSocialFailed;
+
+  /// No description provided for @errInsufficientCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough coins.'**
+  String get errInsufficientCoins;
+
+  /// No description provided for @errPlanUpgradeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade your plan to use this.'**
+  String get errPlanUpgradeRequired;
+
+  /// No description provided for @errFeatureDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is currently unavailable.'**
+  String get errFeatureDisabled;
+
+  /// No description provided for @errIdempotencyConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'That action is already being processed.'**
+  String get errIdempotencyConflict;
+
+  /// No description provided for @errMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'The app is under maintenance. Please try again soon.'**
+  String get errMaintenance;
+
+  /// No description provided for @streakRepairNoMissedDay.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not missed a day — nothing to repair.'**
+  String get streakRepairNoMissedDay;
+
+  /// No description provided for @streakRepairWindowClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'The repair window for a missed day has closed.'**
+  String get streakRepairWindowClosed;
+
+  /// No description provided for @streakRepairMonthLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You have used all repairs allowed this month.'**
+  String get streakRepairMonthLimit;
+
+  /// No description provided for @streakRepairNoCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough coins — a repair costs 50.'**
+  String get streakRepairNoCoins;
+
+  /// No description provided for @streakRepairDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair was declined by the server.'**
+  String get streakRepairDeclined;
+
+  /// No description provided for @streakWagerAlreadyRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a wager running.'**
+  String get streakWagerAlreadyRunning;
+
+  /// No description provided for @streakWagerMinStake.
+  ///
+  /// In en, this message translates to:
+  /// **'The minimum stake is 50 coins.'**
+  String get streakWagerMinStake;
+
+  /// No description provided for @streakWagerTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'A wager must run for at least 3 days.'**
+  String get streakWagerTooShort;
+
+  /// No description provided for @streakWagerNoCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough coins for that stake.'**
+  String get streakWagerNoCoins;
+
+  /// No description provided for @streakWagerDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'That wager was already submitted — pull to refresh.'**
+  String get streakWagerDuplicate;
+
+  /// No description provided for @streakWagerNotOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Wager could not be opened.'**
+  String get streakWagerNotOpened;
+
+  /// No description provided for @streakRepairUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No missed day to repair — you are up to date.'**
+  String get streakRepairUpToDate;
+
+  /// No description provided for @streakRepairMonthlyUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly repair limit reached ({count} used).'**
+  String streakRepairMonthlyUse(Object count);
+
+  /// No description provided for @streakRepairCosts50.
+  ///
+  /// In en, this message translates to:
+  /// **'A repair costs 50 coins — top up first.'**
+  String get streakRepairCosts50;
+
+  /// No description provided for @streakRepairUnavailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'No repair available right now.'**
+  String get streakRepairUnavailableNow;
+
+  /// No description provided for @battlePhaseSecuring.
+  ///
+  /// In en, this message translates to:
+  /// **'Securing connection…'**
+  String get battlePhaseSecuring;
+
+  /// No description provided for @battlePhaseConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to realtime…'**
+  String get battlePhaseConnecting;
+
+  /// No description provided for @battlePhaseSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for opponent…'**
+  String get battlePhaseSearching;
+
+  /// No description provided for @battlePhaseMatchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Match failed'**
+  String get battlePhaseMatchFailed;
+
+  /// No description provided for @battlePhasePreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing battle…'**
+  String get battlePhasePreparing;
+
+  /// No description provided for @contentQuizReadyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready, but no questions were returned'**
+  String get contentQuizReadyEmpty;
+
+  /// No description provided for @contentQuizReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to take'**
+  String get contentQuizReady;
+
+  /// No description provided for @contentQuizGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Being prepared…'**
+  String get contentQuizGenerating;
+
+  /// No description provided for @contentQuizFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not be generated'**
+  String get contentQuizFailed;
+
+  /// No description provided for @contentQuizPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to be prepared'**
+  String get contentQuizPending;
+
+  /// No description provided for @difficultyEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get difficultyEasy;
+
+  /// No description provided for @difficultyMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get difficultyMedium;
+
+  /// No description provided for @difficultyHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get difficultyHard;
+
+  /// No description provided for @difficultyExpert.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert'**
+  String get difficultyExpert;
+
+  /// No description provided for @difficultyMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed'**
+  String get difficultyMixed;
+
+  /// No description provided for @todayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayTitle;
+
+  /// No description provided for @appLockPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock CivilCal'**
+  String get appLockPromptTitle;
+
+  /// No description provided for @appLockPromptReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to continue'**
+  String get appLockPromptReason;
+
+  /// No description provided for @notificationChannelDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Quiz'**
+  String get notificationChannelDaily;
+
   /// No description provided for @lifelineWrongRemoved.
   ///
   /// In en, this message translates to:
@@ -6650,6 +6920,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Route not found: {path}'**
   String routeNotFound(Object path);
+
+  /// No description provided for @errAuthLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed'**
+  String get errAuthLoginFailed;
+
+  /// No description provided for @errAuthRegisterFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed'**
+  String get errAuthRegisterFailed;
+
+  /// No description provided for @errAuthRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Token refresh failed'**
+  String get errAuthRefreshFailed;
+
+  /// No description provided for @errAuthSocialSignInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Social sign-in failed'**
+  String get errAuthSocialSignInFailed;
+
+  /// No description provided for @errNetworkDuringAuth.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server. Try again.'**
+  String get errNetworkDuringAuth;
+
+  /// No description provided for @quizCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Complete'**
+  String get quizCompleteTitle;
+
+  /// No description provided for @quizShareTitleFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'CivilCal Quiz'**
+  String get quizShareTitleFallback;
+
+  /// No description provided for @profileFallbackName.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineer'**
+  String get profileFallbackName;
+
+  /// No description provided for @aiKeysHealthUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown'**
+  String get aiKeysHealthUnknown;
+
+  /// No description provided for @lifelineModeLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available in this mode'**
+  String get lifelineModeLocked;
+
+  /// No description provided for @lifelineCostShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {coins} coins'**
+  String lifelineCostShort(Object name, Object coins);
+
+  /// No description provided for @calcResultServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated (server)'**
+  String get calcResultServer;
+
+  /// No description provided for @formulaTitleFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Formula'**
+  String get formulaTitleFallback;
+
+  /// No description provided for @stepLabelFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {index}'**
+  String stepLabelFallback(Object index);
+
+  /// No description provided for @economyPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased {name}'**
+  String economyPurchased(Object name);
+
+  /// No description provided for @homeFeaturedCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured course'**
+  String get homeFeaturedCourse;
+
+  /// No description provided for @battleNoQuestionsFromServer.
+  ///
+  /// In en, this message translates to:
+  /// **'The server opened the match without sending any questions, so there is nothing to play.'**
+  String get battleNoQuestionsFromServer;
+
+  /// No description provided for @socialShareLinkMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'That share link could not be found.'**
+  String get socialShareLinkMissing;
+
+  /// No description provided for @socialShareMomentFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.'**
+  String get socialShareMomentFallback;
+
+  /// No description provided for @streakInsuranceFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance could not be bought.'**
+  String get streakInsuranceFailed;
+
+  /// No description provided for @libraryReviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Review failed'**
+  String get libraryReviewFailed;
+
+  /// No description provided for @libraryAnonymousAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get libraryAnonymousAuthor;
+
+  /// No description provided for @leaderboardTierBronze.
+  ///
+  /// In en, this message translates to:
+  /// **'Bronze'**
+  String get leaderboardTierBronze;
+
+  /// No description provided for @syllabusUntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled syllabus'**
+  String get syllabusUntitled;
+
+  /// No description provided for @liveEventFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Event'**
+  String get liveEventFallbackTitle;
+
+  /// No description provided for @contestFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contest'**
+  String get contestFallbackTitle;
+
+  /// No description provided for @contestTitleNumbered.
+  ///
+  /// In en, this message translates to:
+  /// **'Contest #{id}'**
+  String contestTitleNumbered(Object id);
+
+  /// No description provided for @contestUserNumbered.
+  ///
+  /// In en, this message translates to:
+  /// **'User #{id}'**
+  String contestUserNumbered(Object id);
+
+  /// No description provided for @liveEventTitleNumbered.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Event #{id}'**
+  String liveEventTitleNumbered(Object id);
+
+  /// No description provided for @trackTitleNumbered.
+  ///
+  /// In en, this message translates to:
+  /// **'Track #{id}'**
+  String trackTitleNumbered(Object id);
+
+  /// No description provided for @knowledgeAtomNumbered.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge Atom #{id}'**
+  String knowledgeAtomNumbered(Object id);
 }
 
 class _AppLocalizationsDelegate

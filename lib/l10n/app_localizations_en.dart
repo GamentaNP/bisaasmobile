@@ -3600,6 +3600,152 @@ class AppLocalizationsEn extends AppLocalizations {
       'The server took too long to deliver the response.';
 
   @override
+  String get errContractDrift =>
+      'The server sent a response this app does not understand. Please try again.';
+
+  @override
+  String get errRequestFailed => 'The request could not be completed.';
+
+  @override
+  String get errAuthInvalidCredentials => 'Email or password is incorrect.';
+
+  @override
+  String get errAuthEmailUnverified => 'Verify your email address to continue.';
+
+  @override
+  String get errAuthAccountDisabled => 'This account has been disabled.';
+
+  @override
+  String get errAuthSocialFailed =>
+      'Sign-in with the provider failed. Try again.';
+
+  @override
+  String get errInsufficientCoins => 'Not enough coins.';
+
+  @override
+  String get errPlanUpgradeRequired => 'Upgrade your plan to use this.';
+
+  @override
+  String get errFeatureDisabled => 'This feature is currently unavailable.';
+
+  @override
+  String get errIdempotencyConflict =>
+      'That action is already being processed.';
+
+  @override
+  String get errMaintenance =>
+      'The app is under maintenance. Please try again soon.';
+
+  @override
+  String get streakRepairNoMissedDay =>
+      'You have not missed a day — nothing to repair.';
+
+  @override
+  String get streakRepairWindowClosed =>
+      'The repair window for a missed day has closed.';
+
+  @override
+  String get streakRepairMonthLimit =>
+      'You have used all repairs allowed this month.';
+
+  @override
+  String get streakRepairNoCoins => 'Not enough coins — a repair costs 50.';
+
+  @override
+  String get streakRepairDeclined => 'Repair was declined by the server.';
+
+  @override
+  String get streakWagerAlreadyRunning => 'You already have a wager running.';
+
+  @override
+  String get streakWagerMinStake => 'The minimum stake is 50 coins.';
+
+  @override
+  String get streakWagerTooShort => 'A wager must run for at least 3 days.';
+
+  @override
+  String get streakWagerNoCoins => 'Not enough coins for that stake.';
+
+  @override
+  String get streakWagerDuplicate =>
+      'That wager was already submitted — pull to refresh.';
+
+  @override
+  String get streakWagerNotOpened => 'Wager could not be opened.';
+
+  @override
+  String get streakRepairUpToDate =>
+      'No missed day to repair — you are up to date.';
+
+  @override
+  String streakRepairMonthlyUse(Object count) {
+    return 'Monthly repair limit reached ($count used).';
+  }
+
+  @override
+  String get streakRepairCosts50 => 'A repair costs 50 coins — top up first.';
+
+  @override
+  String get streakRepairUnavailableNow => 'No repair available right now.';
+
+  @override
+  String get battlePhaseSecuring => 'Securing connection…';
+
+  @override
+  String get battlePhaseConnecting => 'Connecting to realtime…';
+
+  @override
+  String get battlePhaseSearching => 'Searching for opponent…';
+
+  @override
+  String get battlePhaseMatchFailed => 'Match failed';
+
+  @override
+  String get battlePhasePreparing => 'Preparing battle…';
+
+  @override
+  String get contentQuizReadyEmpty => 'Ready, but no questions were returned';
+
+  @override
+  String get contentQuizReady => 'Ready to take';
+
+  @override
+  String get contentQuizGenerating => 'Being prepared…';
+
+  @override
+  String get contentQuizFailed => 'Could not be generated';
+
+  @override
+  String get contentQuizPending => 'Waiting to be prepared';
+
+  @override
+  String get difficultyEasy => 'Easy';
+
+  @override
+  String get difficultyMedium => 'Medium';
+
+  @override
+  String get difficultyHard => 'Hard';
+
+  @override
+  String get difficultyExpert => 'Expert';
+
+  @override
+  String get difficultyMixed => 'Mixed';
+
+  @override
+  String get todayTitle => 'Today';
+
+  @override
+  String get appLockPromptTitle => 'Unlock CivilCal';
+
+  @override
+  String get appLockPromptReason => 'Authenticate to continue';
+
+  @override
+  String get notificationChannelDaily => 'Daily Quiz';
+
+  @override
   String lifelineWrongRemoved(Object count) {
     return '$count wrong option(s) removed.';
   }
@@ -3943,5 +4089,116 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String routeNotFound(Object path) {
     return 'Route not found: $path';
+  }
+
+  @override
+  String get errAuthLoginFailed => 'Login failed';
+
+  @override
+  String get errAuthRegisterFailed => 'Registration failed';
+
+  @override
+  String get errAuthRefreshFailed => 'Token refresh failed';
+
+  @override
+  String get errAuthSocialSignInFailed => 'Social sign-in failed';
+
+  @override
+  String get errNetworkDuringAuth => 'Could not reach the server. Try again.';
+
+  @override
+  String get quizCompleteTitle => 'Quiz Complete';
+
+  @override
+  String get quizShareTitleFallback => 'CivilCal Quiz';
+
+  @override
+  String get profileFallbackName => 'Engineer';
+
+  @override
+  String get aiKeysHealthUnknown => 'unknown';
+
+  @override
+  String get lifelineModeLocked => 'Not available in this mode';
+
+  @override
+  String lifelineCostShort(Object name, Object coins) {
+    return '$name · $coins coins';
+  }
+
+  @override
+  String get calcResultServer => 'Calculated (server)';
+
+  @override
+  String get formulaTitleFallback => 'Formula';
+
+  @override
+  String stepLabelFallback(Object index) {
+    return 'Step $index';
+  }
+
+  @override
+  String economyPurchased(Object name) {
+    return 'Purchased $name';
+  }
+
+  @override
+  String get homeFeaturedCourse => 'Featured course';
+
+  @override
+  String get battleNoQuestionsFromServer =>
+      'The server opened the match without sending any questions, so there is nothing to play.';
+
+  @override
+  String get socialShareLinkMissing => 'That share link could not be found.';
+
+  @override
+  String get socialShareMomentFallback =>
+      'I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.';
+
+  @override
+  String get streakInsuranceFailed => 'Insurance could not be bought.';
+
+  @override
+  String get libraryReviewFailed => 'Review failed';
+
+  @override
+  String get libraryAnonymousAuthor => 'Anonymous';
+
+  @override
+  String get leaderboardTierBronze => 'Bronze';
+
+  @override
+  String get syllabusUntitled => 'Untitled syllabus';
+
+  @override
+  String get liveEventFallbackTitle => 'Live Event';
+
+  @override
+  String get contestFallbackTitle => 'Contest';
+
+  @override
+  String contestTitleNumbered(Object id) {
+    return 'Contest #$id';
+  }
+
+  @override
+  String contestUserNumbered(Object id) {
+    return 'User #$id';
+  }
+
+  @override
+  String liveEventTitleNumbered(Object id) {
+    return 'Live Event #$id';
+  }
+
+  @override
+  String trackTitleNumbered(Object id) {
+    return 'Track #$id';
+  }
+
+  @override
+  String knowledgeAtomNumbered(Object id) {
+    return 'Knowledge Atom #$id';
   }
 }

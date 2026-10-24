@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/config/app_config.dart';
 import '../../../app/providers.dart';
-import '../../../core/network/api_exception.dart';
 
 /// Whether a corpus is worth offering as an entry point.
 ///
@@ -85,28 +84,20 @@ final corpusStatusProvider = FutureProvider.family<CorpusStatus, String>((
   if (!_enabled(ref.watch(appConfigValueProvider), code)) {
     return CorpusStatus(code: code, availability: CorpusAvailability.empty);
   }
-  try {
-    final count = await ref.watch(_corpusCountProvider(code).future);
-    return CorpusStatus(
-      code: code,
-      availability: count == 0
-          ? CorpusAvailability.empty
-          : CorpusAvailability.available,
-      count: count,
-    );
-  } on ApiException catch (e) {
-    // A 401 means the user is signed out, not that the corpus is empty. Hiding
-    // Library because the user has not logged in yet would be wrong.
-    if (e.statusCode == 401) {
-      return const CorpusStatus(
-        code: '',
-        availability: CorpusAvailability.unknown,
-      );
-    }
-    return CorpusStatus(code: code, availability: CorpusAvailability.unknown);
-  } on Object {
+  // -1 is the "probe failed" sentinel: a 401 (signed out), a 5xx, any
+  // transport failure — all leave the corpus visible but unmeasured. The
+  // count provider itself therefore never completes with an error, which
+  // matters: an erroring family future hung its consumers in Riverpod 3.
+  final count = await ref.watch(_corpusCountProvider(code).future);
+  if (count < 0) {
     return CorpusStatus(code: code, availability: CorpusAvailability.unknown);
   }
+  return CorpusStatus(
+    code: code,
+    availability:
+        count == 0 ? CorpusAvailability.empty : CorpusAvailability.available,
+    count: count,
+  );
 });
 
 final _corpusCountProvider = FutureProvider.family<int, String>((ref, code) {
@@ -122,12 +113,16 @@ final _corpusCountProvider = FutureProvider.family<int, String>((ref, code) {
         queryParameters: const {'per_page': 1},
       );
 
-  return switch (code) {
-    'library' => _count(() => probe('/library/files')),
-    'books' => _count(() => probe('/books')),
-    'syllabus' => _count(() => probe('/syllabi')),
-    _ => throw ArgumentError('Unknown corpus: $code'),
-  };
+  Future<int> countFor() => switch (code) {
+        'library' => _count(() => probe('/library/files')),
+        'books' => _count(() => probe('/books')),
+        'syllabus' => _count(() => probe('/syllabi')),
+        _ => Future<int>.error(ArgumentError('Unknown corpus: $code')),
+      };
+
+  // The probe failing is a measurement failure, not an empty corpus — and it
+  // must not error this provider (see the sentinel contract above).
+  return countFor().onError<Object>((_, __) => -1);
 });
 
 /// Reads a count from either a top-level `total`, a `meta.total`, or the length

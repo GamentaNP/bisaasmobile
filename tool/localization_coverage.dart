@@ -23,6 +23,7 @@ import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 
 /// Widgets whose first positional argument is the visible text.
@@ -227,13 +228,29 @@ class _Visitor extends RecursiveAstVisitor<void> {
     }
   }
 
-  /// The string branches of a conditional, at any depth.
+  /// The string branches of a conditional, at any depth. A `switch`
+  /// *expression* (`String _phaseText(BattlePhase p) => switch (p) {
+  /// BattlePhase.searching => 'Searching…', … }`) is the same thing — its
+  /// branches are the copy — so its case expressions are recorded too. A
+  /// `?? ` fallback (`message: server ?? 'Login failed'`) puts the copy on
+  /// the right-hand side of a binary expression.
   void _recordConditional(Object? argument, String kind) {
     if (argument is! Expression) return;
     final expression = argument;
     if (expression is ConditionalExpression) {
       _recordConditional(expression.thenExpression, kind);
       _recordConditional(expression.elseExpression, kind);
+      return;
+    }
+    if (expression is SwitchExpression) {
+      for (final clause in expression.cases) {
+        _recordConditional(clause.expression, kind);
+      }
+      return;
+    }
+    if (expression is BinaryExpression && expression.operator.type == TokenType.QUESTION_QUESTION) {
+      _recordConditional(expression.leftOperand, kind);
+      _recordConditional(expression.rightOperand, kind);
       return;
     }
     if (expression is StringLiteral) {
@@ -280,6 +297,40 @@ class _Visitor extends RecursiveAstVisitor<void> {
     } else {
       _recordConditional(expression, 'getter:$name');
     }
+  }
+
+  /// `this.title = 'Something went wrong'` — a constructor's default value
+  /// is copy a user reads whenever the caller omits the argument, and it is
+  /// exactly where an English fallback hides (39 screens shared one).
+  void _checkDefaultParameter(FormalParameter node) {
+    final name = node.name?.lexeme ?? '';
+    if (_inLog || name.isEmpty) return;
+    if (!_isTextParam(name) && !_messageName.hasMatch(name)) return;
+    final defaultValue = node.defaultClause?.value;
+    if (defaultValue == null) return;
+    if (defaultValue is StringLiteral) {
+      _record(defaultValue, 'default:$name');
+    } else {
+      _recordConditional(defaultValue, 'default:$name');
+    }
+  }
+
+  @override
+  void visitFieldFormalParameter(FieldFormalParameter node) {
+    _checkDefaultParameter(node);
+    super.visitFieldFormalParameter(node);
+  }
+
+  @override
+  void visitRegularFormalParameter(RegularFormalParameter node) {
+    _checkDefaultParameter(node);
+    super.visitRegularFormalParameter(node);
+  }
+
+  @override
+  void visitSuperFormalParameter(SuperFormalParameter node) {
+    _checkDefaultParameter(node);
+    super.visitSuperFormalParameter(node);
   }
 
   @override

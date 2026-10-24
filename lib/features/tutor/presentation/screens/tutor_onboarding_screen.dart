@@ -93,7 +93,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(l10n.tutorPersonalised, style: TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 2),
-                    Text(l10n.tutorOnboardingExplain, style: TextStyle(fontSize: 12, color: Colors.grey, height: 1.3)),
+                    Text(l10n.tutorOnboardingExplain, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant, height: 1.3)),
                   ]),
                 ),
               ],
@@ -108,7 +108,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(12)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(l10n.tutorSessionLabel(state.session!.sessionId.isEmpty ? '— (offline preview)' : state.session!.sessionId), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                Text(l10n.tutorSessionLabel(state.session!.sessionId.isEmpty ? '— (offline preview)' : state.session!.sessionId), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                 if (state.session!.prompt != null) ...[
                   const SizedBox(height: 8),
                   Text(state.session!.prompt!, style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic)),
@@ -187,7 +187,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
           const SizedBox(height: 12),
           Text(
             l10n.tutorSavedToAccount,
-            style: TextStyle(fontSize: 11, color: Colors.grey),
+            style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],

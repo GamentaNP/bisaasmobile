@@ -1,5 +1,8 @@
+import 'package:bisaasmobile/features/book/presentation/screens/book_screens.dart';
 import 'package:bisaasmobile/features/quiz/data/datasources/content_quiz_remote_data_source.dart';
 import 'package:bisaasmobile/features/quiz/domain/entities/content_quiz.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -72,14 +75,16 @@ void main() {
   });
 
   group('ContentQuiz state a screen depends on', () {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+
     test('a freshly created quiz is not startable', () {
       expect(pending.canStart, isFalse);
-      expect(pending.statusLabel, 'Waiting to be prepared');
+      expect(quizStatusLabel(l10n, pending), 'Waiting to be prepared');
     });
 
     test('a ready quiz with questions is startable', () {
       expect(ready.canStart, isTrue);
-      expect(ready.statusLabel, 'Ready to take');
+      expect(quizStatusLabel(l10n, ready), 'Ready to take');
     });
 
     test('the scope is carried through so the caller can describe it', () {
@@ -96,7 +101,7 @@ void main() {
         generationStatus: GenerationStatus.ready,
       );
       expect(inconsistent.canStart, isFalse);
-      expect(inconsistent.statusLabel, contains('no questions'));
+      expect(quizStatusLabel(l10n, inconsistent), contains('no questions'));
     });
   });
 

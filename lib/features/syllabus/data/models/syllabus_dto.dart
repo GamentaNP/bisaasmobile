@@ -1,3 +1,4 @@
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/syllabus.dart';
 
 /// Wire models for the Syllabus Engine.
@@ -69,7 +70,7 @@ class SyllabusVersionDto {
     return SyllabusVersionDto(SyllabusVersion(
       publicId: publicId,
       versionCode: _toStrOrNull(json['version_code']) ?? publicId,
-      title: _toStrOrNull(json['title']) ?? 'Untitled syllabus',
+      title: _toStrOrNull(json['title']) ?? appL10n().syllabusUntitled,
       titleNe: _toStrOrNull(json['title_ne']),
       status: _toStrOrNull(json['status']) ?? 'unknown',
       effectiveFrom: _toDateOrNull(json['effective_from']),

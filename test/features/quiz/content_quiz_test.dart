@@ -1,11 +1,17 @@
+import 'package:bisaasmobile/features/book/presentation/screens/book_screens.dart';
 import 'package:bisaasmobile/features/quiz/domain/entities/content_quiz.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Generation is asynchronous and server-side, so the state that matters here is
 /// the one where the client must *not* claim a test is ready. These tests pin the
-/// honesty of `canStart` and `statusLabel` against a status the server may one
-/// day send that this client has not seen.
+/// honesty of `canStart` and the localized status copy (which lives next to the
+/// widget that renders it, in `book_screens.dart`) against a status the server
+/// may one day send that this client has not seen.
 void main() {
+  final l10n = lookupAppLocalizations(const Locale('en'));
+
   group('GenerationStatus', () {
     test('parses the known statuses', () {
       expect(GenerationStatus.byName('pending'), GenerationStatus.pending);
@@ -72,7 +78,7 @@ void main() {
 
     test('a ready quiz with questions can start', () {
       expect(ready.canStart, isTrue);
-      expect(ready.statusLabel, 'Ready to take');
+      expect(quizStatusLabel(l10n, ready), 'Ready to take');
     });
 
     test('a pending quiz cannot start', () {
@@ -84,7 +90,7 @@ void main() {
         questionIds: [1, 2, 3],
       );
       expect(pending.canStart, isFalse);
-      expect(pending.statusLabel, 'Waiting to be prepared');
+      expect(quizStatusLabel(l10n, pending), 'Waiting to be prepared');
     });
 
     test('a generating quiz says so rather than "ready"', () {
@@ -95,7 +101,7 @@ void main() {
         questionIds: [1, 2],
       );
       expect(generating.canStart, isFalse);
-      expect(generating.statusLabel, 'Being prepared…');
+      expect(quizStatusLabel(l10n, generating), 'Being prepared…');
     });
 
     test('a failed quiz says so', () {
@@ -105,7 +111,7 @@ void main() {
         generationStatus: GenerationStatus.failed,
       );
       expect(failed.canStart, isFalse);
-      expect(failed.statusLabel, 'Could not be generated');
+      expect(quizStatusLabel(l10n, failed), 'Could not be generated');
     });
 
     test('ready with no question ids cannot start, and says why', () {
@@ -119,8 +125,8 @@ void main() {
         questionIds: [],
       );
       expect(inconsistent.canStart, isFalse);
-      expect(inconsistent.statusLabel, isNot('Ready to take'));
-      expect(inconsistent.statusLabel, contains('no questions'));
+      expect(quizStatusLabel(l10n, inconsistent), isNot('Ready to take'));
+      expect(quizStatusLabel(l10n, inconsistent), contains('no questions'));
     });
 
     test('the question count is not trusted as a substitute for the ids', () {

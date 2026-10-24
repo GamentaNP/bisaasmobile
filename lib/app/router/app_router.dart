@@ -92,6 +92,10 @@ class AppRouter {
     // Route transitions in a release log are pure noise and can leak
     // screen names into device logs — debug builds only.
     debugLogDiagnostics: kDebugMode,
+    // The token manager notifies on persist/clear, so a logout or a failed
+    // mid-session refresh re-runs the guard immediately instead of waiting
+    // for the next navigation to discover the dead token.
+    refreshListenable: _tokens,
     redirect: (context, state) => RouteGuards.authGuard(context, state, _tokens),
     routes: [
       GoRoute(

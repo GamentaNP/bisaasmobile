@@ -106,7 +106,7 @@ class QuizResultScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    session?.title ?? 'Quiz Complete',
+                    session?.title ?? l10n.quizCompleteTitle,
                     textAlign: TextAlign.center,
                     style: AppTypography.bodyMedium.copyWith(
                       color: Colors.white.withValues(alpha: 0.92),
@@ -404,7 +404,7 @@ Future<void> _shareResult(
 }) async {
   final l10n = AppLocalizations.of(context)!;
   final pct = (accuracy * 100).round();
-  final title = quizState.session?.title ?? 'CivilCal Quiz';
+  final title = quizState.session?.title ?? l10n.quizShareTitleFallback;
   final grade = pct >= 80 ? 'Excellent' : pct >= 50 ? 'Good Job' : 'Keep Practicing';
   final clientCopy = 'I scored $correct/$totalQ ($pct%) on "$title" — $grade! '
       'XP +$xpEarned · Coins +$coinsEarned '

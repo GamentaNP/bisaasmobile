@@ -69,4 +69,44 @@ void main() {
       expect(result, isFalse);
     });
   });
+
+  group('session notifications', () {
+    // The go_router refreshListenable depends on these: without a notification
+    // on persist/clear, a logout or a failed refresh leaves the user on a
+    // protected screen until the next navigation.
+    test('persist notifies listeners', () async {
+      when(() => mockStorage.write(key: 'auth_token', value: 'token123'))
+          .thenAnswer((_) async {});
+
+      var notified = 0;
+      tokenManager.addListener(() => notified++);
+
+      await tokenManager.persist(token: 'token123');
+      expect(notified, 1);
+    });
+
+    test('clear notifies listeners', () async {
+      when(() => mockStorage.delete(key: 'auth_token'))
+          .thenAnswer((_) async {});
+      when(() => mockStorage.delete(key: 'auth_expires_at'))
+          .thenAnswer((_) async {});
+
+      var notified = 0;
+      tokenManager.addListener(() => notified++);
+
+      await tokenManager.clear();
+      expect(notified, 1);
+    });
+
+    test('reading does not notify', () async {
+      when(() => mockStorage.read(key: 'auth_token'))
+          .thenAnswer((_) async => 'tok');
+
+      var notified = 0;
+      tokenManager.addListener(() => notified++);
+
+      await tokenManager.readToken();
+      expect(notified, 0);
+    });
+  });
 }

@@ -6,7 +6,12 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class TokenManager {
+/// Notifies listeners whenever the session presence may have changed
+/// ([persist] / [clear]). The go_router instance listens to this
+/// (`refreshListenable`) so the auth guard re-runs at the moment a token
+/// appears or disappears — logout and a failed mid-session refresh otherwise
+/// leave the user on a protected screen until the next navigation.
+class TokenManager extends ChangeNotifier {
   TokenManager({FlutterSecureStorage? storage})
       : _s = storage ?? const FlutterSecureStorage();
 
@@ -52,6 +57,7 @@ class TokenManager {
     await _s.write(key: _kToken, value: token);
     if (expiresAt != null) await _s.write(key: _kExpiresAt, value: expiresAt);
     if (deviceName != null) await _s.write(key: _kDeviceName, value: deviceName);
+    notifyListeners();
   }
 
   Future<void> setDeviceName(String name) => _s.write(key: _kDeviceName, value: name);
@@ -60,6 +66,7 @@ class TokenManager {
     await _s.delete(key: _kToken);
     await _s.delete(key: _kExpiresAt);
     // keep deviceName — stable per install
+    notifyListeners();
   }
 
   /// True when `expires_at` is < 7 days away (or missing and caller wants proactive check).

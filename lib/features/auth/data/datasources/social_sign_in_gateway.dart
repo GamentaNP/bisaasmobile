@@ -136,8 +136,13 @@ class PlatformSocialSignInGateway implements SocialSignInGateway {
   Future<void> signOut(SocialProvider provider) async {
     switch (provider) {
       case SocialProvider.google:
+        // Only when this session actually used the SDK — constructing and
+        // initializing the plugin just to sign out a user who signed in with
+        // a password is pure platform-channel noise.
+        final existing = _google;
+        if (!_googleInitialised || existing == null) return;
         try {
-          await _googleInstance().signOut();
+          await existing.signOut();
         } on Object {
           // Signing out locally is best-effort; the server token is revoked
           // by `POST /auth/logout` regardless.

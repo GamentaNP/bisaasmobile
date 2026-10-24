@@ -72,7 +72,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35)), borderRadius: BorderRadius.circular(12)),
-                  child: Column(children: [Icon(Icons.checkroom_rounded, size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.35)), const SizedBox(height: 8), Text(l10n.storeNothingEquipped, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)), const SizedBox(height: 4), Text(l10n.storeNothingEquippedBody, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey))]),
+                  child: Column(children: [Icon(Icons.checkroom_rounded, size: 28, color: theme.colorScheme.onSurface.withValues(alpha: 0.35)), const SizedBox(height: 8), Text(l10n.storeNothingEquipped, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)), const SizedBox(height: 4), Text(l10n.storeNothingEquippedBody, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))]),
                 )
               else
                 ...wardrobe.slots.map((slot) => _SlotTile(
@@ -85,10 +85,10 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               const SizedBox(height: 8),
               Text(l10n.storeAvailableToEquip, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              Text(l10n.storeEquipHint, style: TextStyle(fontSize: 11, color: Colors.grey)),
+              Text(l10n.storeEquipHint, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
               const SizedBox(height: 10),
               if (catalog == null || catalog.assets.isEmpty)
-                Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Center(child: Text(l10n.storeNoAssets, style: TextStyle(fontSize: 11, color: Colors.grey))))
+                Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Center(child: Text(l10n.storeNoAssets, style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant))))
               else
                 ...catalog.assets.take(6).map((a) => Card(
                       margin: const EdgeInsets.only(bottom: 8),
@@ -96,7 +96,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         dense: true,
                         leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: _rarityColor(a.rarity).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: Icon(_iconForAsset(a.category), size: 16, color: _rarityColor(a.rarity))),
                         title: Text(a.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                        subtitle: Text(l10n.storeAssetMeta(a.category ?? a.slug, a.rarity, a.priceCoins), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                        subtitle: Text(l10n.storeAssetMeta(a.category ?? a.slug, a.rarity, a.priceCoins), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                         trailing: _EquipButton(
                           isEquipping: _equippingSlot == a.category,
                           isOwned: a.isOwned,
@@ -137,7 +137,7 @@ class _SlotTile extends StatelessWidget {
         dense: true,
         leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)), child: Icon(_iconForSlot(slot.slot), size: 16, color: AppColors.brand)),
         title: Text(slot.slot, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-        subtitle: Text(equipped != null ? '${equipped.name}  ${equipped.rarity}' : l10n.storeEmptyEquip, style: TextStyle(fontSize: 11, color: equipped != null ? AppColors.correctGreen : Colors.grey)),
+        subtitle: Text(equipped != null ? '${equipped.name}  ${equipped.rarity}' : l10n.storeEmptyEquip, style: TextStyle(fontSize: 11, color: equipped != null ? AppColors.correctGreen : Theme.of(context).colorScheme.onSurfaceVariant)),
         trailing: isEquipping
             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
             : equipped != null

@@ -99,11 +99,11 @@ class _ContestCard extends StatelessWidget {
   final Contest contest;
   final VoidCallback onTap;
 
-  Color _statusColor(String status) {
+  Color _statusColor(BuildContext context, String status) {
     return switch (status.toLowerCase()) {
       'active' => AppColors.correctGreen,
       'upcoming' => AppColors.brand,
-      'ended' => Colors.grey,
+      'ended' => Theme.of(context).colorScheme.onSurfaceVariant,
       _ => AppColors.streakOrange,
     };
   }
@@ -121,7 +121,7 @@ class _ContestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final color = _statusColor(contest.status);
+    final color = _statusColor(context, contest.status);
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,

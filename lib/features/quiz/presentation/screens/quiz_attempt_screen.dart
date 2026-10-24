@@ -150,7 +150,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              state.errorMessage ?? 'Network error',
+              state.errorMessage ?? l10n.errRequestFailed,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),

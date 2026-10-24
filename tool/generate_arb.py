@@ -2149,6 +2149,64 @@ add("errUnreachable", "Could not reach the server. Check your connection and try
 add("errCancelled", "The request was cancelled.", "अनुरोध रद्द गरियो।", "अनुरोध रद्द कर दिया गया।")
 add("errBadCertificate", "The server certificate could not be verified.", "सर्भरको प्रमाणपत्र प्रमाणित गर्न सकिएन।", "सर्वर का प्रमाणपत्र सत्यापित नहीं हो सका।")
 add("errTransformTimeout", "The server took too long to deliver the response.", "सर्भरले उत्तर दिन धेरै समय लियो।", "सर्वर को जवाब देने में बहुत समय लगा।")
+add("errContractDrift", "The server sent a response this app does not understand. Please try again.", "सर्भरले यो एपले बुझ्न नसक्ने जवाफ पठायो। कृपया फेरि प्रयास गर्नुहोस्।", "सर्वर ने ऐसा जवाब भेजा जिसे यह ऐप नहीं समझ पाई। कृपया फिर से कोशिश करें।")
+
+# ── error-code fallbacks — shown only when the server's error body carries no
+#    message (the server's own localized copy always wins when present) ──────
+add("errRequestFailed", "The request could not be completed.", "अनुरोध पूरा हुन सकेन।", "अनुरोध पूरा नहीं हो सका।")
+add("errAuthInvalidCredentials", "Email or password is incorrect.", "इमेल वा पासवर्ड गलत छ।", "ईमेल या पासवर्ड गलत है।")
+add("errAuthEmailUnverified", "Verify your email address to continue.", "जारी राख्न आफ्नो इमेल प्रमाणित गर्नुहोस्।", "जारी रखने के लिए अपना ईमेल सत्यापित करें।")
+add("errAuthAccountDisabled", "This account has been disabled.", "यो खाता निष्क्रिय गरिएको छ।", "यह खाता निष्क्रिय कर दिया गया है।")
+add("errAuthSocialFailed", "Sign-in with the provider failed. Try again.", "प्रदायकसँग साइन-इन असफल भयो। फेरि प्रयास गर्नुहोस्।", "प्रोवाइडर से साइन-इन विफल हुआ। फिर से कोशिश करें।")
+add("errInsufficientCoins", "Not enough coins.", "पर्याप्त क्विन छैन।", "पर्याप्त कॉइन नहीं।")
+add("errPlanUpgradeRequired", "Upgrade your plan to use this.", "यो प्रयोग गर्न आफ्नो प्लान अपग्रेड गर्नुहोस्।", "इसे उपयोग करने के लिए अपना प्लान अपग्रेड करें।")
+add("errFeatureDisabled", "This feature is currently unavailable.", "यो सुविधा अहिले उपलब्ध छैन।", "यह सुविधा अभी उपलब्ध नहीं है।")
+add("errIdempotencyConflict", "That action is already being processed.", "त्यो कार्य पहिले नै प्रक्रियामा छ।", "वह क्रिया पहले से प्रोसेस हो रही है।")
+add("errMaintenance", "The app is under maintenance. Please try again soon.", "एप मर्मतमा छ। कृपया छिट्टै फेरि प्रयास गर्नुहोस्।", "ऐप रखरखाव में है। कृपया जल्द ही फिर से कोशिश करें।")
+
+# ── streak self-service refusals (server reason slugs → copy) ───────────────
+add("streakRepairNoMissedDay", "You have not missed a day — nothing to repair.", "तपाईंले दिन छुटाउनुभएको छैन — मर्मत गर्न केही छैन।", "आपने कोई दिन नहीं छोड़ा — मरम्मत करने के लिए कुछ नहीं।")
+add("streakRepairWindowClosed", "The repair window for a missed day has closed.", "छुटेको दिनको मर्मत अवधि सकियो।", "छोड़े गए दिन की मरम्मत अवधि समाप्त हो गई।")
+add("streakRepairMonthLimit", "You have used all repairs allowed this month.", "तपाईंले यो महिनाका सबै मर्मत प्रयोग गरिसक्नुभयो।", "आपने इस महीने की सारी मरम्मतें उपयोग कर ली हैं।")
+add("streakRepairNoCoins", "Not enough coins — a repair costs 50.", "क्विन पर्याप्त छैन — एउटा मर्मत 50 पर्छ।", "कॉइन पर्याप्त नहीं — एक मरम्मत के 50 चाहिए।")
+add("streakRepairDeclined", "Repair was declined by the server.", "सर्भरले मर्मत अस्वीकार गर्यो।", "सर्वर ने मरम्मत अस्वीकार कर दी।")
+add("streakWagerAlreadyRunning", "You already have a wager running.", "तपाईंको पहिले नै दाउ चलिरहेको छ।", "आपकी एक शर्त पहले से चल रही है।")
+add("streakWagerMinStake", "The minimum stake is 50 coins.", "न्यूनतम दाउ 50 क्विन हो।", "न्यूनतम शर्त 50 कॉइन है।")
+add("streakWagerTooShort", "A wager must run for at least 3 days.", "दाउ कम्तीमा 3 दिन चल्नुपर्छ।", "शर्त कम से कम 3 दिन चलनी चाहिए।")
+add("streakWagerNoCoins", "Not enough coins for that stake.", "त्यो दाउका लागि क्विन पर्याप्त छैन।", "उस शर्त के लिए कॉइन पर्याप्त नहीं।")
+add("streakWagerDuplicate", "That wager was already submitted — pull to refresh.", "त्यो दाउ पहिले नै पेश भइसकेको छ — ताजा गर्न तान्नुहोस्।", "वह शर्त पहले ही सबमिट हो चुकी है — रिफ्रेश के लिए नीचे खींचें।")
+add("streakWagerNotOpened", "Wager could not be opened.", "दाउ खोल्न सकिएन।", "शर्त नहीं खोली जा सकी।")
+add("streakRepairUpToDate", "No missed day to repair — you are up to date.", "मर्मत गर्ने छुटेको दिन छैन — तपाईं अपडेट हुनुहुन्छ।", "मरम्मत के लिए कोई छोड़ा दिन नहीं — आप अप-टू-डेट हैं।")
+add("streakRepairMonthlyUse", "Monthly repair limit reached ({count} used).", "मासिक मर्मत सीमा पुगी ({count} प्रयोग)।", "मासिक मरम्मत सीमा पूरी ({count} उपयोग)।", ["count"])
+add("streakRepairCosts50", "A repair costs 50 coins — top up first.", "एउटा मर्मत 50 क्विन लिन्छ — पहिले टपअप गर्नुहोस्।", "एक मरम्मत में 50 कॉइन लगते हैं — पहले टॉप-अप करें।")
+add("streakRepairUnavailableNow", "No repair available right now.", "अहिले मर्मत उपलब्ध छैन।", "अभी मरम्मत उपलब्ध नहीं।")
+
+# ── battle matchmaking phases ───────────────────────────────────────────────
+add("battlePhaseSecuring", "Securing connection…", "जडान सुरक्षित गर्दै…", "कनेक्शन सुरक्षित कर रहे हैं…")
+add("battlePhaseConnecting", "Connecting to realtime…", "रियलटाइममा जोडिँदै…", "रियलटाइम से जुड़ रहे हैं…")
+add("battlePhaseSearching", "Searching for opponent…", "प्रतिस्पर्धी खोज्दै…", "प्रतिद्वंद्वी खोज रहे हैं…")
+add("battlePhaseMatchFailed", "Match failed", "खेल असफल भयो", "मैच विफल हुआ")
+add("battlePhasePreparing", "Preparing battle…", "लडाइँ तयार गर्दै…", "बैटल तैयार कर रहे हैं…")
+
+# ── content-quiz generation states ──────────────────────────────────────────
+add("contentQuizReadyEmpty", "Ready, but no questions were returned", "तयार, तर कुनै प्रश्न फर्काइएन", "तैयार, लेकिन कोई प्रश्न नहीं लौटा")
+add("contentQuizReady", "Ready to take", "गर्न तयार", "शुरू करने के लिए तैयार")
+add("contentQuizGenerating", "Being prepared…", "तयार गरिँदै…", "तैयार किया जा रहा है…")
+add("contentQuizFailed", "Could not be generated", "बनाउन सकिएन", "बनाया नहीं जा सका")
+add("contentQuizPending", "Waiting to be prepared", "तयार हुन पर्खँदै", "तैयार होने का इंतज़ार")
+
+# ── difficulty bands ────────────────────────────────────────────────────────
+add("difficultyEasy", "Easy", "सजिलो", "आसान")
+add("difficultyMedium", "Medium", "मध्यम", "मध्यम")
+add("difficultyHard", "Hard", "कठिन", "कठिन")
+add("difficultyExpert", "Expert", "विशेषज्ञ", "विशेषज्ञ")
+add("difficultyMixed", "Mixed", "मिश्रित", "मिश्रित")
+
+# ── shared section header + app lock prompts ────────────────────────────────
+add("todayTitle", "Today", "आज", "आज")
+add("appLockPromptTitle", "Unlock CivilCal", "CivilCal खोल्नुहोस्", "CivilCal अनलॉक करें")
+add("appLockPromptReason", "Authenticate to continue", "जारी राख्न प्रमाणीकरण गर्नुहोस्", "जारी रखने के लिए प्रमाणित करें")
+add("notificationChannelDaily", "Daily Quiz", "दैनिक क्विज", "डेली क्विज़")
 
 # ── the lifelines ───────────────────────────────────────────────────────────
 add("lifelineWrongRemoved", "{count} wrong option(s) removed.", "{count} गलत विकल्प हटाइयो।", "{count} गलत विकल्प हटा दिए गए।", ["count"])
@@ -2356,6 +2414,51 @@ add(
     ["version"],
 )
 add("routeNotFound", "Route not found: {path}", "मार्ग फेला परेन: {path}", "रूट नहीं मिला: {path}", ["path"])
+
+# ── the last hardcoded-fallback sweep (2026-10) ──────────────────────────────
+# Fallback copy in data sources, DTOs and `??` chains — the strings a user
+# reads exactly when something has already gone wrong.
+add("errAuthLoginFailed", "Login failed", "लगइन असफल भयो।", "लॉगिन विफल हुआ।")
+add("errAuthRegisterFailed", "Registration failed", "दर्ता असफल भयो।", "रजिस्ट्रेशन विफल हुआ।")
+add("errAuthRefreshFailed", "Token refresh failed", "टोकन नवीकरण असफल भयो।", "टोकन रिफ्रेश विफल हुआ।")
+add("errAuthSocialSignInFailed", "Social sign-in failed", "सोशल साइन-इन असफल भयो।", "सोशल साइन-इन विफल हुआ।")
+add("errNetworkDuringAuth", "Could not reach the server. Try again.", "सर्भरसम्म पुग्न सकिएन। फेरि प्रयास गर्नुहोस्।", "सर्वर तक नहीं पहुँच सके। फिर से कोशिश करें।")
+add("quizCompleteTitle", "Quiz Complete", "क्विज सम्पन्न", "क्विज़ पूर्ण")
+add("quizShareTitleFallback", "CivilCal Quiz", "CivilCal क्विज", "CivilCal क्विज़")
+add("profileFallbackName", "Engineer", "इन्जिनियर", "इंजीनियर")
+add("aiKeysHealthUnknown", "unknown", "अज्ञात", "अज्ञात")
+add("lifelineModeLocked", "Not available in this mode", "यो मोडमा उपलब्ध छैन", "इस मोड में उपलब्ध नहीं")
+add("lifelineCostShort", "{name} · {coins} coins", "{name} · {coins} क्विन", "{name} · {coins} कॉइन", ["name", "coins"])
+add("calcResultServer", "Calculated (server)", "सर्भरबाट गणना भयो", "सर्वर से गणना हुई")
+add("formulaTitleFallback", "Formula", "सूत्र", "सूत्र")
+add("stepLabelFallback", "Step {index}", "चरण {index}", "चरण {index}", ["index"])
+add("economyPurchased", "Purchased {name}", "{name} किनियो", "{name} खरीदा गया", ["name"])
+add("homeFeaturedCourse", "Featured course", "चुनिएको कोर्स", "चुनिंदा कोर्स")
+add(
+    "battleNoQuestionsFromServer",
+    "The server opened the match without sending any questions, so there is nothing to play.",
+    "सर्भरले कुनै प्रश्न नपठाई खेल खोल्यो, त्यसैले खेल्न केही छैन।",
+    "सर्वर ने बिना कोई प्रश्न भेजे मैच खोला, इसलिए खेलने के लिए कुछ नहीं है।",
+)
+add("socialShareLinkMissing", "That share link could not be found.", "त्यो सेयर लिंक फेला परेन।", "वह शेयर लिंक नहीं मिला।")
+add(
+    "socialShareMomentFallback",
+    "I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.",
+    "मैले भर्खरै CivilCal मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।",
+    "मैंने अभी CivilCal पर प्रगति की — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।",
+)
+add("streakInsuranceFailed", "Insurance could not be bought.", "बीमा किन्न सकिएन।", "बीमा नहीं खरीदा जा सका।")
+add("libraryReviewFailed", "Review failed", "समीक्षा असफल भयो", "समीक्षा विफल हुई")
+add("libraryAnonymousAuthor", "Anonymous", "बेनाम", "गुमनाम")
+add("leaderboardTierBronze", "Bronze", "कांसा", "कांस्य")
+add("syllabusUntitled", "Untitled syllabus", "शीर्षकविहीन पाठ्यक्रम", "शीर्षकहीन पाठ्यक्रम")
+add("liveEventFallbackTitle", "Live Event", "प्रत्यक्ष कार्यक्रम", "लाइव कार्यक्रम")
+add("contestFallbackTitle", "Contest", "प्रतियोगिता", "प्रतियोगिता")
+add("contestTitleNumbered", "Contest #{id}", "प्रतियोगिता #{id}", "प्रतियोगिता #{id}", ["id"])
+add("contestUserNumbered", "User #{id}", "प्रयोगकर्ता #{id}", "उपयोगकर्ता #{id}", ["id"])
+add("liveEventTitleNumbered", "Live Event #{id}", "प्रत्यक्ष कार्यक्रम #{id}", "लाइव कार्यक्रम #{id}", ["id"])
+add("trackTitleNumbered", "Track #{id}", "ट्र्याक #{id}", "ट्रैक #{id}", ["id"])
+add("knowledgeAtomNumbered", "Knowledge Atom #{id}", "ज्ञान एटम #{id}", "ज्ञान एटम #{id}", ["id"])
 
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.

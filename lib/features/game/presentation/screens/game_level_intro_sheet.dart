@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
@@ -239,10 +240,10 @@ class GameLevelIntroSheet extends StatelessWidget {
   }
 
   static String _difficultyLabel(String band) => switch (band) {
-        'easy' => 'Easy',
-        'medium' => 'Medium',
-        'hard' => 'Hard',
-        'mixed' => 'Mixed',
+        'easy' => appL10n().difficultyEasy,
+        'medium' => appL10n().difficultyMedium,
+        'hard' => appL10n().difficultyHard,
+        'mixed' => appL10n().difficultyMixed,
         _ => band,
       };
 

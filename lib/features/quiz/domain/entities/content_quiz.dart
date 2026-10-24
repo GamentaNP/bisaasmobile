@@ -77,14 +77,4 @@ class ContentQuiz {
   /// as a substitute: a record with 0 ids and a `ready` status is a server bug,
   /// and offering a start button would be a lie.
   bool get canStart => generationStatus.isReady && questionIds.isNotEmpty;
-
-  /// Wording that matches the actual state, so a pending test is never presented
-  /// as a finished one.
-  String get statusLabel => switch (generationStatus) {
-        GenerationStatus.ready =>
-          questionIds.isEmpty ? 'Ready, but no questions were returned' : 'Ready to take',
-        GenerationStatus.generating => 'Being prepared…',
-        GenerationStatus.failed => 'Could not be generated',
-        GenerationStatus.pending => 'Waiting to be prepared',
-      };
 }
