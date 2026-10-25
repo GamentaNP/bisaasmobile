@@ -33,10 +33,8 @@ class PscRemoteDataSource {
     final res = await _dio.post<Map<String, dynamic>>('/psc/blueprints/$id/exam');
     final body = res.data;
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
+      throw const ContractViolation('Empty response body');
+    }
     final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
     return env.data ?? body['data'] as Map<String, dynamic>?;
   }
@@ -47,10 +45,8 @@ class PscRemoteDataSource {
     final res = await _dio.put<Map<String, dynamic>>('/psc/blueprints/$id/submission', data: payload);
     final body = res.data;
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
+      throw const ContractViolation('Empty response body');
+    }
     final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
     return env.data ?? body['data'] as Map<String, dynamic>?;
   }

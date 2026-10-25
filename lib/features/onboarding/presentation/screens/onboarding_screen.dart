@@ -21,7 +21,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   String _selectedExam = 'Loksewa / Civil PSC';
   int _dailyMinutes = 30;
-  String _experienceLevel = 'Graduate';
+  // Must be one of _levels' titles — a default that matches no option leaves
+  // page 3 rendering nothing as selected and persists a value the profile
+  // screens do not recognise.
+  String _experienceLevel = 'Engineering Student';
 
   final _exams = const [
     {
