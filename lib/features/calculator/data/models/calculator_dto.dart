@@ -79,8 +79,8 @@ class CalculatorConfigDto {
     this.fields = const [],
     this.stepsInResponse = false,
     this.defaults = const {},
-    this.outputDimensions = const [],
-    this.calculationModes = const [],
+    this.outputDimensions = const {},
+    this.calculationModes = const {},
   });
 
   factory CalculatorConfigDto.fromJson(Map<String, dynamic> j) =>
@@ -97,13 +97,20 @@ class CalculatorConfigDto {
             .map(CalculatorField.fromJson)
             .toList(),
         stepsInResponse: (j['steps_in_response'] as bool?) ?? false,
-        defaults: (j['defaults'] as Map<String, dynamic>?) ?? const {},
-        outputDimensions: ((j['output_dimensions'] as List?) ?? const [])
-            .whereType<Map<String, dynamic>>()
-            .toList(),
-        calculationModes: ((j['calculation_modes'] as List?) ?? const [])
-            .whereType<Map<String, dynamic>>()
-            .toList(),
+        // The wire key is `default_payload` (server registry schemas);
+        // `defaults` is tolerated as a legacy alias.
+        defaults: (j['default_payload'] as Map<String, dynamic>?) ??
+            (j['defaults'] as Map<String, dynamic>?) ??
+            const {},
+        // API guide §9.1: output_dimensions is an OBJECT keyed by wire-field
+        // (dotted paths for nested leaves), {dimension, canonical_unit} per
+        // key, canonical_unit nullable. "The key is always present; an empty
+        // object is a normal answer." calculation_modes is likewise an object
+        // whose keys are the accepted mode values (shared geometry schemas).
+        outputDimensions: (j['output_dimensions'] as Map<String, dynamic>?) ??
+            const <String, dynamic>{},
+        calculationModes: (j['calculation_modes'] as Map<String, dynamic>?) ??
+            const <String, dynamic>{},
       );
 
   final String domain;
@@ -115,8 +122,8 @@ class CalculatorConfigDto {
   final List<CalculatorField> fields;
   final bool stepsInResponse;
   final Map<String, dynamic> defaults;
-  final List<Map<String, dynamic>> outputDimensions;
-  final List<Map<String, dynamic>> calculationModes;
+  final Map<String, dynamic> outputDimensions;
+  final Map<String, dynamic> calculationModes;
 
   CalculatorConfig toDomain() => CalculatorConfig(
     domain: domain,

@@ -99,8 +99,8 @@ class CalculatorConfig {
     this.fields = const [],
     this.stepsInResponse = false,
     this.defaults = const {},
-    this.outputDimensions = const [],
-    this.calculationModes = const [],
+    this.outputDimensions = const {},
+    this.calculationModes = const {},
   });
 
   final String domain;
@@ -122,8 +122,16 @@ class CalculatorConfig {
 
   /// Server-supplied default values keyed by `field.name`.
   final Map<String, dynamic> defaults;
-  final List<Map<String, dynamic>> outputDimensions;
-  final List<Map<String, dynamic>> calculationModes;
+
+  /// API guide §9.1 — wire-field key → {dimension, canonical_unit}. Keys
+  /// address result fields on the `/calculate` response (dotted paths for
+  /// nested leaves); `canonical_unit` is nullable and is never inferred from
+  /// a field name. Empty object = no curated dimension map, a normal answer.
+  final Map<String, dynamic> outputDimensions;
+
+  /// Shared geometry schemas: mode value (shape/solid) → that mode's own
+  /// inputs/specs. Keys are the values accepted by `/calculate`.
+  final Map<String, dynamic> calculationModes;
 }
 
 @immutable
