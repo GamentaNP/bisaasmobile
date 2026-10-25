@@ -313,7 +313,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
               if (calcState.result!.status != null) const SizedBox(height: 12),
               if (config.stepsInResponse) StepByStepSolution(steps: calcState.result!.steps),
               if (config.stepsInResponse) const SizedBox(height: 12),
-              _ResultCard(result: calcState.result!),
+              _ResultCard(result: calcState.result!, outputDimensions: config.outputDimensions),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _sharing
@@ -542,13 +542,43 @@ class _ErrorCard extends StatelessWidget {
 }
 
 class _ResultCard extends StatelessWidget {
-  const _ResultCard({required this.result});
+  const _ResultCard({required this.result, required this.outputDimensions});
   final CalculationResult result;
+
+  /// API guide §9.1 — wire-field key → {dimension, canonical_unit}. Keys
+  /// address the fields of `result.data`, so the unit label rides the same
+  /// key; `canonical_unit` may be null, and then no unit is shown (never
+  /// inferred from the field name).
+  final Map<String, dynamic> outputDimensions;
+
+  static String _humanize(String key) => key.replaceAll('_', ' ');
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final pretty = const JsonEncoder.withIndent('  ').convert(result.data);
+    final entries = result.data.entries.toList();
+    final theme = Theme.of(context);
+
+    String? unitOf(String key) {
+      final meta = outputDimensions[key];
+      if (meta is Map<String, dynamic>) return meta['canonical_unit'] as String?;
+      return null;
+    }
+
+    // Prose (recommendations, formula basis) reads as paragraphs; scalars
+    // read as labeled rows; anything nested stays in the raw block below.
+    final prose = entries
+        .where((e) => e.value is String && (e.value as String).trim().length > 48)
+        .toList();
+    final scalars = entries
+        .where((e) =>
+            !prose.contains(e) &&
+            (e.value is num || e.value is bool || e.value is String))
+        .toList();
+    final rest = entries
+        .where((e) => !prose.contains(e) && !scalars.contains(e))
+        .toList();
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -563,22 +593,98 @@ class _ResultCard extends StatelessWidget {
             children: [
               const Icon(Icons.check_circle_rounded, color: AppColors.correctGreen, size: 18),
               const SizedBox(width: 8),
-              Text(result.message ?? l10n.calcResultServer, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
-              const Spacer(),
-              Text(l10n.calcInputsCount(result.inputs.length), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              Expanded(
+                child: Text(result.message ?? l10n.calcResultServer, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.correctGreen)),
+              ),
+              Text(l10n.calcInputsCount(result.inputs.length), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
             ],
           ),
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2)),
+          if (scalars.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final e in scalars) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _humanize(e.key),
+                            style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        if (e.value is bool)
+                          Icon(
+                            e.value == true
+                                ? Icons.check_rounded
+                                : Icons.close_rounded,
+                            size: 16,
+                            color: e.value == true
+                                ? AppColors.correctGreen
+                                : AppColors.wrongRed,
+                          )
+                        else
+                          Text(
+                            (e.value as Object?).toString(),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                          ),
+                        if (e.value is! bool)
+                          Text(
+                            ' ${unitOf(e.key) ?? ''}',
+                            style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                      ],
+                    ),
+                    if (e != scalars.last) const SizedBox(height: 6),
+                  ],
+                ],
+              ),
             ),
-            child: SelectableText(pretty, style: const TextStyle(fontFamily: 'monospace', fontSize: 12, height: 1.4)),
-          ),
+          ],
+          for (final e in prose) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2)),
+              ),
+              child: Text(
+                (e.value as String).trim(),
+                style: TextStyle(fontSize: 13, height: 1.45, color: theme.colorScheme.onSurface),
+              ),
+            ),
+          ],
+          if (rest.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2)),
+              ),
+              child: SelectableText(
+                const JsonEncoder.withIndent('  ').convert({
+                  for (final e in rest) e.key: e.value,
+                }),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12, height: 1.4),
+              ),
+            ),
+          ],
         ],
       ),
     );
