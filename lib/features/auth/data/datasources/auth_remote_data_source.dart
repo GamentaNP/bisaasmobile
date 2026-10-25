@@ -108,6 +108,25 @@ class AuthRemoteDataSource {
     }
   }
 
+  /// Store-policy account deletion — `DELETE /api/v1/account`. The server
+  /// erases the account and revokes its PATs. Failures propagate: a 403
+  /// means an active subscription blocks deletion, anything else is
+  /// surfaced as a typed [ApiException] carrying the status.
+  Future<void> deleteAccount() async {
+    try {
+      await _dio.delete<void>('/account');
+    } on DioException catch (e) {
+      throw ApiException(
+        statusCode: e.response?.statusCode ?? 500,
+        code: ApiErrorCode.unknown,
+        message: e.response?.data is Map<String, dynamic>
+            ? ((e.response!.data as Map<String, dynamic>)['message'] as String? ??
+                appL10n().errRequestFailed)
+            : appL10n().errRequestFailed,
+      );
+    }
+  }
+
   /// Rotates the current single-use PAT before it expires. The interceptor
   /// handles emergency 401 rotation; this method is used on cold start so a
   /// healthy session is not allowed to drift into an avoidable expiry window.

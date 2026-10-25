@@ -4,7 +4,6 @@ library;
 
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +14,7 @@ import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/providers.dart';
 import '../../../../app/theme/script_fonts.dart';
 import '../../../../core/logging/app_logger.dart';
+import '../../../../core/network/api_exception.dart';
 import '../../../../core/security/biometric_auth.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/profile/presentation/controllers/profile_skills_controller.dart';
@@ -43,7 +43,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   /// Store-policy account deletion: `DELETE /api/v1/account` (server-side
-  /// erasure), then clear local token + session. Confirmation requires
+  /// erasure, local session cleared by the repository). Confirmation requires
   /// typing DELETE to prevent accidental taps.
   Future<void> _deleteAccount() async {
     final l10n = AppLocalizations.of(context)!;
@@ -56,15 +56,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     setState(() => _deleting = true);
     try {
-      await ref.read(dioProvider).delete<dynamic>('/account');
-    } on DioException catch (e) {
+      await ref.read(authRepositoryProvider).deleteAccount();
+    } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _deleting = false);
-      final status = e.response?.statusCode;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            status == 403
+            e.statusCode == 403
                 ? l10n.settingsSubscriptionActive
                 : l10n.settingsDeleteFailed,
           ),
@@ -81,13 +80,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (!mounted) return;
     setState(() => _deleting = false);
-    // Server revoked the PAT with the account; clear locally regardless.
-    try {
-      await ref.read(authControllerProvider.notifier).logout();
-    } catch (e) {
-      AppLogger.w('Post-delete logout failed: $e');
-    }
-    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.settingsAccountDeleted)),
     );

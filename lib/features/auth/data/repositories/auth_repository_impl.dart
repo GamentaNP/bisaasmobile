@@ -117,6 +117,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> deleteAccount() async {
+    await _remoteDataSource.deleteAccount();
+    // The server erased the account and revoked its PATs. Clear the local
+    // session so the router's refreshListenable drops the user on the login
+    // screen; the same token-loss listener unregisters the FCM device token.
+    await _tokenManager.clear();
+  }
+
+  @override
   Future<User?> getCurrentUser() async {
     final token = await _tokenManager.readToken();
     if (token == null || token.isEmpty) return null;

@@ -18,6 +18,12 @@ abstract class AuthRepository {
 
   Future<void> logout();
 
+  /// Store-policy account deletion (`DELETE /api/v1/account`): the server
+  /// erases the account and revokes its PATs, the local session is cleared
+  /// afterwards. Throws a typed API exception — a 403 means an active
+  /// subscription blocks deletion.
+  Future<void> deleteAccount();
+
   Future<User?> getCurrentUser();
 
   Future<void> forgotPassword({required String email});
