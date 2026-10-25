@@ -220,10 +220,30 @@ void main() {
       expect(f.message, 'The request timed out. Check your connection and try again.');
     });
 
-    test('unknown errors become NetworkFailure without crashing', () {
+    test('unknown client-side faults render localized copy, never Dart internals',
+        () {
+      // Regression: a TypeError (e.g. contract drift in a DTO) used to
+      // surface its raw type-cast string in the UI — a Dart runtime error
+      // is not user copy. The exception still reaches the crash reporter
+      // through the global handlers; the banner shows the generic copy.
       final f = ErrorHandler.handle(StateError('weird'));
+
+      // A genuine TypeError, exactly like the one the calculator DTO
+      // produced when it cast the server's object payload as a list.
+      Object? caught;
+      try {
+        final asList = <String, dynamic>{};
+        asList as List<dynamic>;
+      } catch (e) {
+        caught = e;
+      }
+      final cast = ErrorHandler.handle(caught!);
+
       expect(f, isA<NetworkFailure>());
-      expect(f.message, contains('weird'));
+      expect(f.message, 'The request could not be completed.');
+      expect(cast, isA<NetworkFailure>());
+      expect(cast.message, 'The request could not be completed.');
+      expect(cast.message, isNot(contains('subtype')));
     });
   });
 }

@@ -32,6 +32,10 @@ abstract final class ErrorHandler {
     if (error is ContractViolation) {
       return NetworkFailure(appL10n().errContractDrift);
     }
-    return NetworkFailure(error.toString());
+    // Anything else is a client-side fault (TypeError, StateError, …). A
+    // Dart runtime error string is not user copy — same principle as the
+    // ContractViolation branch above; the real exception still reaches the
+    // crash reporter through the global handlers.
+    return NetworkFailure(appL10n().errRequestFailed);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/core/network/api_exception.dart';
 import 'package:bisaasmobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:bisaasmobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bisaasmobile/features/auth/presentation/screens/reset_password_screen.dart';
@@ -47,12 +48,21 @@ void main() {
   }
 
   void stubFailure(String message) {
+    // A server rejection is an ApiException carrying the server's message —
+    // the handler preserves it verbatim. (A StateError here would test the
+    // generic client-fault fallback instead, which renders localized copy.)
     when(() => repo.resetPassword(
           token: any(named: 'token'),
           email: any(named: 'email'),
           password: any(named: 'password'),
           passwordConfirmation: any(named: 'passwordConfirmation'),
-        )).thenThrow(StateError(message));
+        )).thenThrow(
+      ApiException(
+        statusCode: 400,
+        code: ApiErrorCode.unknown,
+        message: message,
+      ),
+    );
   }
 
   Widget host({String? token, String? email}) => ProviderScope(
