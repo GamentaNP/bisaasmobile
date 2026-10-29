@@ -16,7 +16,7 @@
 
 ## Stack
 
-Flutter **3.47.2** (stable, `C:\src\flutter`) · Dart **3.13.2** · Riverpod + go_router + Dio + Drift + flutter_secure_storage · Firebase (FCM/Analytics/Crashlytics/RemoteConfig). See `pubspec.yaml` and `.metadata` for pins.
+Flutter **3.47.2** (stable, `C:\src\flutter`) · Dart **3.13.2** · Riverpod + go_router + Dio + Drift + flutter_secure_storage · Firebase (FCM/Analytics/Crashlytics). **Remote Config is not used** — it was removed because it disagreed with the operator's flags; operator control runs through `GET /api/v1/app/config` (feature flags, maintenance, min-version floor). See `pubspec.yaml` and `.metadata` for pins.
 
 ## API contract (read before you code)
 
@@ -32,14 +32,73 @@ Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` �
 
 ### Backend URLs
 
-| Flavor | Host | Run flag |
+**Cleartext HTTP is blocked in every build — including debug** (`network_security_config.xml`, W2.6). Plain `http://…` will never connect from Android, no matter the define. Use the https forms below; debug builds carry a dev-only certificate shim that tolerates Laragon's self-signed cert for the allowed dev hosts.
+
+| Target | Host | Command |
 |--------|------|----------|
-| dev (Laragon) | `http://bisaas.test` | `--dart-define=ENV=dev` (default) |
-| dev Android emulator | `http://10.0.2.2` | `--dart-define=API_HOST=http://10.0.2.2` |
+| Chrome / Windows desktop (dev) | `https://bisaas.test` | `--dart-define=ENV=dev` (default) |
+| Android emulator (dev) | `https://10.0.2.2` | `--dart-define=API_HOST=https://10.0.2.2 --dart-define=ENV=dev` |
+| **Physical Android device (dev)** | `https://localhost:8443` | `--dart-define=API_HOST=https://localhost:8443 --dart-define=ENV=dev` **plus `adb reverse tcp:8443 tcp:443`** |
 | staging | `https://staging.bisaas.com` | `--dart-define=ENV=staging` |
 | prod | `https://bisaas.com` | `--dart-define=ENV=prod` |
 
 Override raw: `--dart-define=API_BASE_URL=https://x/api/v1`.
+
+### Physical device — the adb-reverse tunnel (this is the step everyone skips)
+
+**0. The backend must actually be running.** The app cannot work without the
+Laravel server: open **Laragon → Start All** (Apache + PostgreSQL), then verify
+with `curl -sk https://bisaas.test/api/v1/app/config` → expect `"success":true`.
+If Apache keeps dying, start it detached:
+`powershell Start-Process C:\laragon\bin\apache\httpd-2.4.68-260617-Win64-VS18\bin\httpd.exe -ArgumentList '-d','C:/laragon/bin/apache/httpd-2.4.68-260617-Win64-VS18' -WindowStyle Hidden`.
+
+**0b. The default :443 vhost must serve the bisaas app.** The tunnel arrives
+with SNI `localhost`, which matches no `auto.*.test` vhost name and lands on
+`C:\laragon\etc\apache2\sites-enabled\00-default.conf`'s `_default_:443` block —
+it must contain `DocumentRoot "C:/laragon/www/bisaas/public"`. That file lives
+**outside** both repos (Laragon's own config, hand-maintained — nothing
+re-creates the fix if it regresses). If the phone gets a plain Apache **404**,
+this is why; verify with
+`curl -sk --resolve localhost:443:127.0.0.1 https://localhost/api/v1/app/config`.
+
+`bisaas.test` does not resolve on a phone and cleartext is blocked, so a debug
+build on a physical device reaches the Laragon backend through a **localhost
+HTTPS tunnel**:
+
+```powershell
+# 1. Build with the tunnel host baked in (debug only — never point a release at Laragon)
+flutter build apk --debug --dart-define=ENV=dev --dart-define=API_HOST=https://localhost:8443
+
+# 2. Install
+adb install -r build\app\outputs\flutter-apk\app-debug.apk
+
+# 3. Re-assert the tunnel — installing, rebooting, replugging or an adb-server
+#    restart CLEARS it. If login says "Could not reach the server", run this first.
+adb reverse tcp:8443 tcp:443
+```
+
+The phone's `https://localhost:8443` then lands on the host's Apache :443,
+whose default vhost answers `localhost` with Laragon's cert — which the debug
+cert shim accepts (dev env only; the shim is compiled out of release/profile
+builds).
+
+MIUI gotchas (Redmi 6A and friends):
+- Settings → Developer options → **"Install via USB"** and **"USB debugging
+  (Security settings)"** must both be on, or MIUI silently refuses adb installs
+  (`INSTALL_FAILED_USER_RESTRICTED: Install canceled by user`, **no dialog on
+  screen** — MIUI resets these toggles after security sweeps/updates, so if
+  installs suddenly stop working, check them first).
+- **Wi-Fi-transport adb silently breaks `adb reverse`** — the mapping looks
+  listed but no listener works. Verify `adb devices -l` shows a `usb:` marker
+  (`adb -s SERIAL usb` forces it).
+- With reverse working, the listener lives **on the phone** — a host-side
+  `curl https://127.0.0.1:8443` always fails with exit 7 and proves nothing.
+- MIUI also needs ~1.5–3 GB free for a debug install; the debug APK is ~265 MB
+  (all four ABIs — the release APK is ~95 MB, arm-only) and odex expansion needs
+  headroom (`adb shell dumpsys diskstats` → Data-Free).
+
+Dev login fixtures (local-only seeder `bisaas/database/seeders/LocalTestUserSeeder.php`):
+`user@bisaas.test` / `BisaasLocal!2026`, email verified.
 
 ## Project structure (Clean Arch + feature-first)
 
@@ -67,7 +126,7 @@ From `FLUTTER_APP_MASTER_PLAN_2026.md:212`. Features never import each other —
 ### Prereqs already done in this setup
 
 - Flutter SDK **3.47.2** at `C:\src\flutter` on user `PATH` (restart shell after first install, or ` $env:Path = "C:\src\flutter\bin;$env:Path"` for current shell).
-- `flutter doctor` baseline: `[√] Flutter, [√] Chrome, [X] Android toolchain, [X] Visual Studio` — see `flutter doctor -v`.
+- `flutter doctor`: **fully green** ("No issues found!") — Android SDK 36 at `C:\Users\Bishwo\AppData\Local\Android\Sdk`, Temurin JDK 17, licences accepted. If the machine's global `ANDROID_HOME` points at a dead path, override it per-shell.
 
 ### Complete the Android toolchain (one-time, ~2 GB, needs admin)
 
@@ -96,19 +155,39 @@ flutter analyze && flutter test
 
 flutter run -d chrome  --dart-define=ENV=dev               # web vs bisaas.test
 flutter run -d windows --dart-define=ENV=dev               # windows
-flutter run -d android --dart-define=ENV=dev               # needs Android SDK (above)
-# emulator can't resolve bisaas.test → use:
-flutter run -d android --dart-define=API_HOST=http://10.0.2.2 --dart-define=ENV=dev
+# emulator can't resolve bisaas.test and http is blocked → use:
+flutter run -d android --dart-define=API_HOST=https://10.0.2.2 --dart-define=ENV=dev
+# physical device → build + install via the tunnel recipe in the section above
 ```
 
 Build:
 
 ```bash
-flutter build apk --dart-define=ENV=prod
-flutter build appbundle --dart-define=ENV=prod
-flutter build web --dart-define=ENV=prod
-flutter build windows --dart-define=ENV=prod
+# dev/debug APK for a physical device (tunnel define — see section above)
+flutter build apk --debug --dart-define=ENV=dev --dart-define=API_HOST=https://localhost:8443
+
+# release/prod builds fail CLOSED without signing material + cert pins
+# (android/key.properties + CERT_PIN_1/2 in dart_defines/production.json — both checked in CI):
+flutter build apk       --release --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=build/symbols
+flutter build appbundle --release --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=build/symbols
+flutter build web   --dart-define-from-file=dart_defines/production.json
+flutter build windows --dart-define=ENV=prod --dart-define-from-file=dart_defines/production.json
 ```
+
+## Device tests (on a real phone)
+
+`device_tests/` is its own package (it depends on `integration_test`, which must
+never leak into the app's release AAB):
+
+```bash
+cd device_tests && flutter pub get && flutter analyze
+cd device_tests && flutter test integration_test -d DEVICE_ID
+```
+
+The suite boots the real app stack on the phone (engine, plugins, platform
+channels, navigation) and runs 7 smoke tests + 1 live-API test gated behind
+`RUN_LIVE_TESTS`. After any install, re-assert `adb reverse tcp:8443 tcp:443`
+first — the live test talks to the backend through the same tunnel.
 
 ## AI-agent checklist
 

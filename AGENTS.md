@@ -173,6 +173,15 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   adb reverse tcp:8443 tcp:443    # re-assert — install and reboot clear it
   ```
 
+  **The tunnel also depends on Laragon's `_default_:443` vhost**
+  (`C:\laragon\etc\apache2\sites-enabled\00-default.conf`, outside both repos)
+  carrying `DocumentRoot "C:/laragon/www/bisaas/public"`: the phone connects
+  with SNI `localhost`, which matches no `auto.*.test` vhost name, so it lands
+  on the default block — without that DocumentRoot Apache answers a plain 404
+  and login says "Could not reach the server". Fixed there on 2026-10-29;
+  nothing in either repo restores it if it regresses. Probe:
+  `curl -sk --resolve localhost:443:127.0.0.1 https://localhost/api/v1/app/config`.
+
   Never point a release/profile build at Laragon: the cert shim is compiled out of non-debug
   builds by design, so the self-signed cert is rejected.
 - **minSdk is 26** (Android 8.0; lowered from 28 on 2026-10-24 so the cheapest

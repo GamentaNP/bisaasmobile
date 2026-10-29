@@ -31,6 +31,12 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // The QA handset (Redmi 6A) is armeabi-v7a only and the device has
+        // ~1-3 GB free at best; a fat debug APK (all four ABIs of the engine +
+        // plugins) fails to install with INSUFFICIENT_STORAGE. Ship arm32 only.
+        ndk {
+            abiFilters += listOf("armeabi-v7a")
+        }
     }
 
     buildTypes {
