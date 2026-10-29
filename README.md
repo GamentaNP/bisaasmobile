@@ -88,6 +88,17 @@ MIUI gotchas (Redmi 6A and friends):
   (`INSTALL_FAILED_USER_RESTRICTED: Install canceled by user`, **no dialog on
   screen** — MIUI resets these toggles after security sweeps/updates, so if
   installs suddenly stop working, check them first).
+- **When MIUI still denies with the toggles on** (a reboot does not fix it),
+  install through the Play-Store installer identity — this bypasses the
+  restriction and worked on 2026-10-29:
+  ```powershell
+  adb push app-debug.apk /data/local/tmp/dt.apk
+  adb shell pm install -t -r -i com.android.vending /data/local/tmp/dt.apk
+  ```
+  (Run from Git Bash, prefix both commands with `MSYS_NO_PATHCONV=1` or the
+  phone path gets mangled.) Reinstalls of an existing package then go through
+  plain `adb install -r` again. Clean up the staged copy afterwards:
+  `adb shell rm /data/local/tmp/dt.apk`.
 - **Wi-Fi-transport adb silently breaks `adb reverse`** — the mapping looks
   listed but no listener works. Verify `adb devices -l` shows a `usb:` marker
   (`adb -s SERIAL usb` forces it).
