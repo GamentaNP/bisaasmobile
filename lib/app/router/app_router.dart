@@ -13,6 +13,10 @@ import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/arcade/domain/entities/arcade_mode.dart';
+import '../../features/arcade/presentation/screens/arcade_hub_screen.dart';
+import '../../features/arcade/presentation/screens/arcade_play_screen.dart';
+import '../../features/arcade/presentation/screens/arcade_result_screen.dart';
 import '../../features/battle/presentation/screens/battle_arena_screen.dart';
 import '../../features/battle/presentation/screens/battle_matchmaking_screen.dart';
 import '../../features/battle/presentation/screens/battle_result_screen.dart';
@@ -293,6 +297,27 @@ class AppRouter {
             path: 'result',
             name: RouteNames.battleResult,
             builder: (context, state) => const BattleResultScreen(),
+          ),
+        ],
+      ),
+      // Arcade — three server-backed run modes. Full-screen like Battle: a
+      // run has its own timer and must not share the tab shell's chrome.
+      GoRoute(
+        path: '/arcade',
+        name: RouteNames.arcade,
+        builder: (context, state) => const ArcadeHubScreen(),
+        routes: [
+          GoRoute(
+            path: 'play',
+            name: RouteNames.arcadePlay,
+            builder: (context, state) => ArcadePlayScreen(
+              mode: state.extra is ArcadeMode ? state.extra! as ArcadeMode : null,
+            ),
+          ),
+          GoRoute(
+            path: 'result',
+            name: RouteNames.arcadeResult,
+            builder: (context, state) => const ArcadeResultScreen(),
           ),
         ],
       ),

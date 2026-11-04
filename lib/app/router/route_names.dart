@@ -16,6 +16,11 @@ abstract final class RouteNames {
   static const battle = 'battle';
   static const battleMatchmaking = 'battle-matchmaking';
   static const battleResult = 'battle-result';
+
+  /// Server-backed arcade runs (survival / lightning / true-or-false).
+  static const arcade = 'arcade';
+  static const arcadePlay = 'arcade-play';
+  static const arcadeResult = 'arcade-result';
   static const eice = 'eice';
   static const psc = 'psc';
   static const social = 'social';

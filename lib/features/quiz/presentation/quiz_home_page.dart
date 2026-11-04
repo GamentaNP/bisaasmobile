@@ -90,7 +90,7 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
         icon: Icons.videogame_asset_rounded,
         title: l10n.modesArcadeTitle,
         body: l10n.modesArcadeBody,
-        route: null,
+        route: '/arcade',
       ),
     ];
     showModalBottomSheet<void>(
@@ -213,6 +213,14 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: _PracticeBanner(onTap: () => context.go('/practice')),
+            ),
+            // The arcade is the timed, scored counterpart to the untimed
+            // practice drill. It gets a visible row rather than a mention in
+            // the help sheet: the sheet used to advertise it with no
+            // destination behind the row.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: _ArcadeBanner(onTap: () => context.go('/arcade')),
             ),
             Expanded(
               child: FutureBuilder<List<_QuizTopic>>(
@@ -445,6 +453,62 @@ class _PracticeBanner extends StatelessWidget {
                 ),
               ),
               Icon(Icons.chevron_right_rounded, color: AppColors.brand, size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point to the arcade: three timed, server-scored run modes.
+///
+/// Purple rather than brand green so it reads as a different kind of activity
+/// from the world map and the practice drill above it.
+class _ArcadeBanner extends StatelessWidget {
+  const _ArcadeBanner({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Material(
+      color: AppColors.violet.withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(Icons.videogame_asset_rounded,
+                  color: AppColors.violet, size: 24),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.arcadeTitle,
+                      style: TextStyle(
+                        color: AppColors.violet,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      l10n.arcadeSubtitle,
+                      style: TextStyle(
+                          color: AppColors.textTertiaryDark, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded,
+                  color: AppColors.violet, size: 24),
             ],
           ),
         ),
