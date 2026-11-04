@@ -136,7 +136,6 @@ flutter:
   assets:
     - assets/images/
     - assets/animations/
-    - assets/translations/
   fonts:
     - family: InstrumentSans
       fonts:

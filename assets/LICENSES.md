@@ -1,41 +1,61 @@
-# Asset Licenses
+# Asset licenses
 
-This file tracks the source URL and license of every third-party visual asset bundled with Bisaasmobile (CivilCal).
+The source and licence of every third-party visual asset bundled with
+CivilCal. **Rule:** only OFL / CC0 / "free for commercial use" assets may be
+bundled. Update this file whenever an asset is added or replaced.
 
-> **Rule:** Only assets with a "Free for commercial use" / OFL / CC0 / similar permissive license may be bundled. Update this file when adding or replacing any asset.
+Verified against the tree on 2026-11-04.
 
-## Fonts (OFL — Open Font License)
-| File | Source | License |
+## Fonts — all OFL 1.1
+
+| File (under `assets/fonts/`) | Source | Licence |
 |---|---|---|
-| `assets/fonts/InstrumentSans-Regular.ttf` | https://fonts.google.com/specimen/Instrument+Sans | OFL 1.1 |
-| `assets/fonts/InstrumentSans-Medium.ttf` | https://fonts.google.com/specimen/Instrument+Sans | OFL 1.1 |
-| `assets/fonts/InstrumentSans-SemiBold.ttf` | https://fonts.google.com/specimen/Instrument+Sans | OFL 1.1 |
-| `assets/fonts/InstrumentSans-Bold.ttf` | https://fonts.google.com/specimen/Instrument+Sans | OFL 1.1 |
-| `assets/fonts/NotoSansDevanagari-Regular.ttf` | https://fonts.google.com/noto/specimen/Noto+Sans+Devanagari | OFL 1.1 |
+| `InstrumentSans-Regular.ttf`, `-Medium`, `-SemiBold`, `-Bold` | https://fonts.google.com/specimen/Instrument+Sans | OFL 1.1 |
+| `noto/NotoSansDevanagari-Regular.ttf` | https://fonts.google.com/noto/specimen/Noto+Sans+Devanagari | OFL 1.1 |
+| `noto/NotoSansArabic-Regular.ttf` | https://fonts.google.com/noto/specimen/Noto+Sans+Arabic | OFL 1.1 |
+| `noto/NotoSansBengali-Regular.ttf` | https://fonts.google.com/noto/specimen/Noto+Sans+Bengali | OFL 1.1 |
+| `noto/NotoSansTamil-Regular.ttf` | https://fonts.google.com/noto/specimen/Noto+Sans+Tamil | OFL 1.1 |
+| `noto/NotoSansTelugu-Regular.ttf` | https://fonts.google.com/noto/specimen/Noto+Sans+Telugu | OFL 1.1 |
 
-## Lottie Animations (LottieFiles)
-> **Status (2026-08-30):** Placeholders shipped (`*.json` minimal valid Lottie schema). Replace each with the production file downloaded from lottiefiles.com — search terms per `docs/mobileapp/STATUS_2026-08-30.md` §Block 1.
+The Noto faces are the per-glyph fallbacks behind `lib/app/theme/script_fonts.dart`:
+a script the Instrument/Devanagari pair cannot draw falls through to the
+matching Noto face, so a Bengali or Tamil string renders instead of showing
+boxes. They ship so the fallback works offline.
 
-| File | Search term on lottiefiles.com | Required license | Source URL | Downloaded |
-|---|---|---|---|---|
-| `level_up.json` | "level up stars" | Free for commercial use | _fill in_ | ☐ |
-| `achievement_unlock.json` | "trophy unlock" | Free for commercial use | _fill in_ | ☐ |
-| `confetti.json` | "confetti celebration" | Free for commercial use | _fill in_ | ☐ |
-| `correct_answer.json` | "checkmark success" | Free for commercial use | _fill in_ | ☐ |
-| `wrong_answer.json` | "incorrect x" | Free for commercial use | _fill in_ | ☐ |
-| `streak_fire.json` | "fire flame loop" | Free for commercial use | _fill in_ | ☐ |
-| `battle_win.json` | "victory crown" | Free for commercial use | _fill in_ | ☐ |
-| `battle_lose.json` | "game over" | Free for commercial use | _fill in_ | ☐ |
-| `loading_engineering.json` | "engineering gear" | Free for commercial use | _fill in_ | ☐ |
+## Animations — project placeholders
 
-## Brand SVGs (custom)
-| File | Source | License |
-|---|---|---|
-| `logo.svg`, `logo_dark.svg`, `logo_icon.svg` | Custom — Bisaas team | All rights reserved (project) |
-| `onboarding_{1,2,3}.svg` | Custom — Bisaas team | All rights reserved (project) |
-| `empty_quiz.svg`, `empty_calculator.svg`, `offline.svg`, `battle_vs.svg` | Custom — Bisaas team | All rights reserved (project) |
+All nine files under `assets/animations/` are **minimal valid Lottie schemas
+written for this project**, not downloaded artwork:
 
-## Compliance Notes
-- Play Store review checks that fonts are OFL-licensed and animations are commercially usable.
-- All third-party assets are replaced at the source URL listed above; if a license changes, the asset must be replaced or removed.
-- This file is referenced in `MOBILE_API_INTEGRATION_GUIDE.md` mobile section and audited during the W0 governance gate.
+| File | Intended production asset |
+|---|---|
+| `level_up.json` | "level up stars" |
+| `achievement_unlock.json` | "trophy unlock" |
+| `confetti.json` | "confetti celebration" |
+| `correct_answer.json` | "checkmark success" |
+| `wrong_answer.json` | "incorrect x" |
+| `streak_fire.json` | "fire flame loop" |
+| `battle_win.json` | "victory crown" |
+| `battle_lose.json` | "game over" |
+| `loading_engineering.json` | "engineering gear" |
+
+Because they are original placeholders, there is **no third-party licence to
+record** — and nothing to attribute. If one is replaced with a downloaded
+LottieFiles asset, add its source URL and licence to this table **in the same
+commit**, and confirm the licence permits commercial use (LottieFiles hosts
+both free and paid licences; the file itself does not tell you which).
+
+## Brand SVGs — custom, project-owned
+
+`logo.svg`, `logo_dark.svg`, `logo_icon.svg`, `onboarding_{1,2,3}.svg`,
+`empty_quiz.svg`, `empty_calculator.svg`, `offline.svg`, `battle_vs.svg` —
+created for Bisaas. All rights reserved by the project.
+
+## Compliance notes
+
+- Play review does not audit font licences line by line, but a takedown
+  request is the real risk; OFL requires attribution, which this file
+  provides. Keep the licence text available if the fonts are redistributed
+  outside the APK.
+- An asset whose licence changes must be replaced or removed at the same time
+  as this file is updated.

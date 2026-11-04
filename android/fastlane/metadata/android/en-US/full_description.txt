@@ -16,7 +16,7 @@ STUDY OFFLINE
 Download course packs, notes and question sets for the subjects you are revising. They stay on your phone, so they work on a train with no signal. When you get back online, your answers sync automatically.
 
 BUILT FOR EVERY DAY
-Nepali, Hindi and English. Light on battery and data. App Lock with your fingerprint or face. Works on a budget phone — the app is built for Android 9 and up, and the whole thing runs on a small download.
+Nepali, Hindi and English. Light on battery and data. App Lock with your fingerprint or face. Works on a budget phone — the app is built for Android 8.0 and up, and the whole thing runs on a small download.
 
 TRUSTED WITH YOUR DATA
 We never sell your information and we do not track you across other apps. Analytics are opt-in and can be switched off at any time in Settings, and you can erase your data from the same place. Your sign-in token is kept in the device's secure keystore, and the app's data is excluded from backups.

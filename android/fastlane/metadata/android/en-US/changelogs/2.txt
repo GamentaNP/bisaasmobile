@@ -1,0 +1,6 @@
+First public release.
+• 170+ engineering calculators with step-by-step solutions
+• Daily quiz, practice drills and syllabus-guided study
+• Streaks, coins and achievements — earn them by studying
+• Nepali, Hindi and English interface
+• Works offline for downloaded packs
