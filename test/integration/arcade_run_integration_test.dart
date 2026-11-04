@@ -15,6 +15,7 @@
 library;
 
 import 'package:bisaasmobile/app/providers.dart';
+import 'package:bisaasmobile/features/arcade/domain/entities/arcade_category.dart';
 import 'package:bisaasmobile/features/arcade/domain/entities/arcade_mode.dart';
 import 'package:bisaasmobile/features/arcade/presentation/controllers/arcade_controller.dart';
 import 'package:dio/dio.dart';
@@ -275,5 +276,43 @@ void main() {
     expect(state().phase, ArcadePhase.failed);
     expect(state().error, isNotNull);
     expect(state().questions, isEmpty);
+  });
+
+  test('a category too small for the mode keeps the server 422, status intact',
+      () async {
+    // Measured against the dev backend on 2026-11-04: a real category with six
+    // playable questions answers exactly this shape. The screen turns the
+    // status into local copy, so the status has to survive the transport.
+    api.on(
+      'POST',
+      '/quiz/lightning/start',
+      FakeRoute.error(
+        422,
+        'UNPROCESSABLE_ENTITY',
+        'Lightning Round needs at least 10 auto-gradable questions.',
+        details: {
+          'category_id': [
+            'Lightning Round needs at least 10 auto-gradable questions.',
+          ],
+        },
+      ),
+    );
+
+    container = boot(api);
+    await controller().start(
+      ArcadeMode.lightning,
+      category: const ArcadeCategory(
+        id: 200,
+        name: 'Nepali',
+        courseId: 38,
+        courseName: 'public-service-commission',
+      ),
+    );
+
+    expect(state().phase, ArcadePhase.failed);
+    expect(state().error!.statusCode, 422);
+    // The request did carry the scope the user picked.
+    final start = api.indexOfRequest('POST', '/quiz/lightning/start');
+    expect(api.jsonBodyOf(start)['category_id'], 200);
   });
 }

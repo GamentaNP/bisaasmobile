@@ -45,9 +45,15 @@ class ArcadePlayScreen extends ConsumerWidget {
     }
 
     if (run.phase == ArcadePhase.failed) {
+      // A 422 from a mode start is the server saying "this category has too
+      // few auto-gradable questions for that mode". Its message is an English
+      // sentence, and this app promises three languages — so the common,
+      // actionable case gets local copy instead of the raw server text.
+      final isTooSmall = run.error?.statusCode == 422;
       return _RunFailure(
-        message: ErrorHandler.handle(run.error ?? StateError('arcade'))
-            .message,
+        message: isTooSmall
+            ? l10n.arcadeCategoryTooSmall
+            : ErrorHandler.handle(run.error ?? StateError('arcade')).message,
         onRetry: mode == null && run.mode == null
             ? null
             : () => ref.read(arcadeControllerProvider.notifier).start(
