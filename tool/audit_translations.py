@@ -38,9 +38,12 @@ ALLOWED_LATIN = {
     # acronyms and units
     "XP", "AI", "API", "MP", "PM", "MB", "KB", "GB", "MPa", "kPa", "kN",
     "UI", "URL", "MCQ", "MCQs", "PSC", "EICE", "FSRS", "DELETE",
-    # product, organisation and place names
+    # product, organisation, course and place names. "Arcade Games" is the
+    # name of a course the server publishes; translating it inside one
+    # sentence while the course list shows the English title would be the
+    # inconsistency this audit exists to catch.
     "CivilCal", "BiSaaS", "Bisaas", "Civil", "Loksewa", "Nepal", "Elite",
-    "Quiz", "Google", "Apple",
+    "Quiz", "Google", "Apple", "Arcade", "Games",
     # API field, endpoint and service names, which are wire values
     "credits", "description", "metadata", "source", "library", "api", "download",
     "MasteryService", "computeReadiness", "Goal", "ID", "Tracks", "Laravel",
