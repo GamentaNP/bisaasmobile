@@ -1,16 +1,20 @@
 import 'package:bisaasmobile/core/network/api_failure.dart';
+import 'package:bisaasmobile/core/security/tenant_store.dart';
 import 'package:bisaasmobile/core/security/token_manager.dart';
 import 'package:bisaasmobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:bisaasmobile/features/auth/data/datasources/social_sign_in_gateway.dart';
 import 'package:bisaasmobile/features/auth/data/models/auth_response_dto.dart';
 import 'package:bisaasmobile/features/auth/data/models/user_dto.dart';
 import 'package:bisaasmobile/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 
 class MockTokenManager extends Mock implements TokenManager {}
+
+class _MockSecureStorage extends Mock implements FlutterSecureStorage {}
 
 /// Records sign-out calls so the repository's best-effort platform cleanup
 /// can be asserted without a device.
@@ -40,16 +44,23 @@ void main() {
   late MockAuthRemoteDataSource remote;
   late MockTokenManager tokens;
   late RecordingGateway gateway;
+  late _MockSecureStorage tenantStorage;
+  late TenantStore tenants;
   late AuthRepositoryImpl repo;
 
   setUp(() {
     remote = MockAuthRemoteDataSource();
     tokens = MockTokenManager();
     gateway = RecordingGateway();
+    tenantStorage = _MockSecureStorage();
+    when(() => tenantStorage.delete(key: 'selected_tenant_id'))
+        .thenAnswer((_) async {});
+    tenants = TenantStore(storage: tenantStorage);
     repo = AuthRepositoryImpl(
       remoteDataSource: remote,
       tokenManager: tokens,
       socialSignInGateway: gateway,
+      tenantStore: tenants,
     );
 
     when(() => tokens.persist(
@@ -184,6 +195,19 @@ void main() {
       expect(gateway.signOutCalls, [SocialProvider.google]);
     });
 
+    test('clears the organization selection with the session', () async {
+      // The next user of this device must not inherit an assertion. A stale
+      // tenant id against a credential stamped with another (or no) tenant is
+      // a guaranteed TENANT_MISMATCH — or, worse, a request into the wrong
+      // organization if the membership happens to back it.
+      when(() => remote.logout()).thenAnswer((_) async {});
+
+      await repo.logout();
+
+      verify(() => tenantStorage.delete(key: 'selected_tenant_id')).called(1);
+      expect(await tenants.read(), isNull);
+    });
+
     test('a failing SDK sign-out still clears the local session', () async {
       when(() => remote.logout()).thenAnswer((_) async {});
       final failingGateway = _ThrowingGateway();
@@ -191,6 +215,7 @@ void main() {
         remoteDataSource: remote,
         tokenManager: tokens,
         socialSignInGateway: failingGateway,
+        tenantStore: tenants,
       );
 
       await repo2.logout();

@@ -4213,4 +4213,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String knowledgeAtomNumbered(Object id) {
     return 'ज्ञान एटम #$id';
   }
+
+  @override
+  String get errTenantMismatch =>
+      'यह सत्र किसी दूसरे संगठन में साइन इन है। जारी रखने के लिए फिर से साइन इन करें।';
+
+  @override
+  String get errTenantInactive => 'यह संगठन अब सक्रिय नहीं है।';
 }

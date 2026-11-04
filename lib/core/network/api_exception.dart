@@ -18,6 +18,14 @@ enum ApiErrorCode {
   authRegistrationDisabled('AUTH_REGISTRATION_DISABLED'),
   unauthorized('UNAUTHORIZED'),
   forbidden('FORBIDDEN'),
+  /// `TENANT_MISMATCH` — the `X-Tenant` assertion disagrees with the
+  /// credential, or names an organization the user is not an active member of.
+  /// Mirrors `App\Http\Support\ApiErrorCode::TenantMismatch` and
+  /// `EnforceTenantScope`. The remedy is a fresh login, not a retry, so it is
+  /// kept distinct from a bare `FORBIDDEN`.
+  tenantMismatch('TENANT_MISMATCH'),
+  /// `TENANT_INACTIVE` — the organization exists but is no longer active.
+  tenantInactive('TENANT_INACTIVE'),
   validationError('VALIDATION_ERROR'),
   idempotencyConflict('IDEMPOTENCY_CONFLICT'),
   idempotencyKeyRequired('IDEMPOTENCY_KEY_REQUIRED'),
@@ -77,6 +85,8 @@ String localizedCodeFallback(int statusCode, ApiErrorCode code) {
     ApiErrorCode.featureDisabled => l10n.errFeatureDisabled,
     ApiErrorCode.idempotencyConflict => l10n.errIdempotencyConflict,
     ApiErrorCode.maintenanceMode => l10n.errMaintenance,
+    ApiErrorCode.tenantMismatch => l10n.errTenantMismatch,
+    ApiErrorCode.tenantInactive => l10n.errTenantInactive,
     _ => localizedStatusMessage(statusCode),
   };
 }
@@ -121,6 +131,19 @@ class ApiException implements Exception {
       code == ApiErrorCode.authUnauthenticated ||
       code == ApiErrorCode.authTokenExpired ||
       statusCode == 401;
+
+  /// The server refused this request because the organizational scope did not
+  /// match the credential.
+  ///
+  /// Keyed on the code, not on 403: most 403s are a permission refusal that
+  /// retrying cannot fix either, but they do not mean "your session belongs to
+  /// a different organization". Branching on the status would offer a
+  /// re-login to someone who simply lacks a role.
+  bool get isTenantMismatch => code == ApiErrorCode.tenantMismatch;
+
+  /// The organization the credential resolves to is closed. A new login does
+  /// not reopen it, so the UI must not offer one ([isTenantMismatch] does).
+  bool get isTenantInactive => code == ApiErrorCode.tenantInactive;
 
   bool get isValidation => code == ApiErrorCode.validationError || statusCode == 422;
 

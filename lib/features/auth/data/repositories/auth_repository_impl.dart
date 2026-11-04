@@ -1,5 +1,6 @@
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/security/tenant_store.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -11,13 +12,20 @@ class AuthRepositoryImpl implements AuthRepository {
     required AuthRemoteDataSource remoteDataSource,
     required TokenManager tokenManager,
     required SocialSignInGateway socialSignInGateway,
+    required TenantStore tenantStore,
   })  : _remoteDataSource = remoteDataSource,
         _tokenManager = tokenManager,
-        _socialSignInGateway = socialSignInGateway;
+        _socialSignInGateway = socialSignInGateway,
+        _tenantStore = tenantStore;
 
   final AuthRemoteDataSource _remoteDataSource;
   final TokenManager _tokenManager;
   final SocialSignInGateway _socialSignInGateway;
+
+  /// The organization selection is session state: it must die with the
+  /// credential. Requiring it here (rather than reaching for `.shared`) is what
+  /// makes that verifiable in a test.
+  final TenantStore _tenantStore;
 
   @override
   Future<User> login({
@@ -97,6 +105,11 @@ class AuthRepositoryImpl implements AuthRepository {
       await _remoteDataSource.logout();
     } finally {
       await _tokenManager.clear();
+      // The next user of this device (or the next sign-in as the same user)
+      // must not inherit an organization assertion from this session. A stale
+      // id would 403 TENANT_MISMATCH against a credential stamped with a
+      // different (or no) tenant.
+      await _tenantStore.clear();
       // Best-effort: clear the platform SDK session so the Google account
       // picker does not keep offering the account after logout. Apple has no
       // SDK-side session to clear. The server token is revoked by
@@ -123,6 +136,8 @@ class AuthRepositoryImpl implements AuthRepository {
     // session so the router's refreshListenable drops the user on the login
     // screen; the same token-loss listener unregisters the FCM device token.
     await _tokenManager.clear();
+    // The erased account's organization must not survive as a selection.
+    await _tenantStore.clear();
   }
 
   @override

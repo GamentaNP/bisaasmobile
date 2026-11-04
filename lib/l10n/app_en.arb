@@ -3180,5 +3180,7 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "errTenantMismatch": "This session is signed in to a different organization. Sign in again to continue.",
+  "errTenantInactive": "This organization is no longer active."
 }

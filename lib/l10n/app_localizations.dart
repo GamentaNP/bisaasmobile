@@ -7106,6 +7106,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Knowledge Atom #{id}'**
   String knowledgeAtomNumbered(Object id);
+
+  /// No description provided for @errTenantMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This session is signed in to a different organization. Sign in again to continue.'**
+  String get errTenantMismatch;
+
+  /// No description provided for @errTenantInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'This organization is no longer active.'**
+  String get errTenantInactive;
 }
 
 class _AppLocalizationsDelegate

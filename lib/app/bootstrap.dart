@@ -18,6 +18,7 @@ import '../core/network/response_cache_store.dart';
 import '../core/notifications/local_notification_service.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../core/security/app_security.dart';
+import '../core/security/tenant_store.dart';
 import '../core/security/token_manager.dart';
 import '../core/storage/database/app_database.dart';
 import '../core/storage/preferences.dart';
@@ -73,6 +74,9 @@ Future<void> bootstrap() async {
     await DioClient.init(
       tokens: tokens,
       cache: ResponseCacheStore(AppDatabase.instance()),
+      // The organization selection rides the same session and the same Dio
+      // chain; passing it explicitly keeps the wiring visible in one place.
+      tenants: TenantStore.shared,
     );
 
   // `GET /app/config` is NOT fetched here.

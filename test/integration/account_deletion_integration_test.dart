@@ -13,10 +13,12 @@
 library;
 
 import 'package:bisaasmobile/core/network/api_exception.dart';
+import 'package:bisaasmobile/core/security/tenant_store.dart';
 import 'package:bisaasmobile/core/security/token_manager.dart';
 import 'package:bisaasmobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:bisaasmobile/features/auth/data/datasources/social_sign_in_gateway.dart';
 import 'package:bisaasmobile/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -26,19 +28,26 @@ class _MockTokenManager extends Mock implements TokenManager {}
 
 class _MockGateway extends Mock implements SocialSignInGateway {}
 
+class _MockSecureStorage extends Mock implements FlutterSecureStorage {}
+
 void main() {
   late FakeApi api;
   late _MockTokenManager tokens;
+  late _MockSecureStorage tenantStorage;
   late AuthRepositoryImpl repo;
 
   setUp(() {
     api = FakeApi(<String, FakeRoute>{});
     tokens = _MockTokenManager();
     when(() => tokens.clear()).thenAnswer((_) async {});
+    tenantStorage = _MockSecureStorage();
+    when(() => tenantStorage.delete(key: 'selected_tenant_id'))
+        .thenAnswer((_) async {});
     repo = AuthRepositoryImpl(
       remoteDataSource: AuthRemoteDataSource(dioFor(api)),
       tokenManager: tokens,
       socialSignInGateway: _MockGateway(),
+      tenantStore: TenantStore(storage: tenantStorage),
     );
   });
 

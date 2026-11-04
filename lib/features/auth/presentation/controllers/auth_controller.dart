@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/security/tenant_store.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
 import '../../data/datasources/social_sign_in_gateway.dart';
@@ -27,6 +28,13 @@ final tokenManagerProvider = Provider<TokenManager>((ref) {
   return TokenManager.shared;
 });
 
+/// The organization selection, exposed for the organization feature as well.
+///
+/// Defined here rather than in a feature because it is app-wide session state
+/// (the Dio chain reads it), and the alternative — one feature importing
+/// another — is exactly what the architecture rule forbids.
+final tenantStoreProvider = Provider<TenantStore>((ref) => TenantStore.shared);
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final remote = ref.watch(authRemoteDataSourceProvider);
   final tokenManager = ref.watch(tokenManagerProvider);
@@ -35,6 +43,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     remoteDataSource: remote,
     tokenManager: tokenManager,
     socialSignInGateway: socialGateway,
+    tenantStore: ref.watch(tenantStoreProvider),
   );
 });
 

@@ -4201,4 +4201,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String knowledgeAtomNumbered(Object id) {
     return 'Knowledge Atom #$id';
   }
+
+  @override
+  String get errTenantMismatch =>
+      'This session is signed in to a different organization. Sign in again to continue.';
+
+  @override
+  String get errTenantInactive => 'This organization is no longer active.';
 }

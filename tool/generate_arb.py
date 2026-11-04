@@ -2460,6 +2460,13 @@ add("liveEventTitleNumbered", "Live Event #{id}", "प्रत्यक्ष �
 add("trackTitleNumbered", "Track #{id}", "ट्र्याक #{id}", "ट्रैक #{id}", ["id"])
 add("knowledgeAtomNumbered", "Knowledge Atom #{id}", "ज्ञान एटम #{id}", "ज्ञान एटम #{id}", ["id"])
 
+# ── organizations (tenancy) ──────────────────────────────────────────────────
+# ADR-002 renames the user-facing word to "organization"; the API calls it a
+# tenant and keeps doing so. These strings never say "tenant", and the error
+# copy is an instruction (sign in again) rather than a diagnosis.
+add("errTenantMismatch", "This session is signed in to a different organization. Sign in again to continue.", "यो सत्र फरक संस्थामा साइन इन छ। जारी राख्न फेरि साइन इन गर्नुहोस्।", "यह सत्र किसी दूसरे संगठन में साइन इन है। जारी रखने के लिए फिर से साइन इन करें।")
+add("errTenantInactive", "This organization is no longer active.", "यो संस्था अब सक्रिय छैन।", "यह संगठन अब सक्रिय नहीं है।")
+
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.
 #

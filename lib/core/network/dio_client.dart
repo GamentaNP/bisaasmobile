@@ -11,6 +11,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../app/config/api_config.dart';
 import '../../app/config/env.dart';
+import '../security/tenant_store.dart';
 import '../security/token_manager.dart';
 import 'auth_interceptor.dart';
 import 'certificate_pinning.dart';
@@ -24,6 +25,7 @@ import 'request_id_interceptor.dart';
 import 'response_cache_interceptor.dart';
 import 'response_cache_store.dart';
 import 'retry_interceptor.dart';
+import 'tenant_interceptor.dart';
 
 class DioClient {
   DioClient._(this.dio, this.reachability, this._cache);
@@ -59,6 +61,7 @@ class DioClient {
   static Future<DioClient> init({
     required TokenManager tokens,
     ResponseCacheStore? cache,
+    TenantStore? tenants,
   }) async {
     if (_instance != null) return _instance!;
     final dio = Dio(
@@ -102,6 +105,14 @@ class DioClient {
       // runs, which is what lets the cache below key on the caller's credential
       // rather than treating every signed-in user as the same reader.
       AuthInterceptor(tokens, reachability),
+      // The organization assertion, after the credential it asserts against.
+      //
+      // It must sit before the cache and the coalescer: both key on the
+      // credential fingerprint, and the assertion is the only thing that
+      // distinguishes two organizations reached with the same multi-membership
+      // token. (Today only public data is cached, so this is defence in depth,
+      // not a live leak.)
+      TenantInterceptor(tenants ?? TenantStore.shared),
       // Serves a cached body first and revalidates behind the user.
       //
       // MUST sit after AuthInterceptor and before RequestCoalescer:
