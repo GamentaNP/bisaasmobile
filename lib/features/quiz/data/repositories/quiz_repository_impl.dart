@@ -67,8 +67,14 @@ class QuizRepositoryImpl implements QuizRepository {
   }
 
   @override
-  Future<QuizResult> finishAttempt(String attemptId) async {
-    final dto = await _remote.finishAttempt(attemptId);
+  Future<QuizResult> finishAttempt(
+    String attemptId, {
+    String? idempotencyKey,
+  }) async {
+    final dto = await _remote.finishAttempt(
+      attemptId,
+      idempotencyKey: idempotencyKey,
+    );
     return dto.toDomain();
   }
 }

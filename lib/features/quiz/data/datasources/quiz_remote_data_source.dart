@@ -467,14 +467,23 @@ class QuizRemoteDataSource {
 
   // ── Complete attempt ───────────────────────────────────────────────────────
 
-  Future<QuizResultDto> finishAttempt(String attemptId) async {
+  Future<QuizResultDto> finishAttempt(
+    String attemptId, {
+    String? idempotencyKey,
+  }) async {
     // Idempotency-Key is mandatory on completion (server 422s without it —
     // same middleware as start/answer).
+    //
+    // [idempotencyKey] is the caller's key, stable across retries. Completion
+    // credits coins and XP; a retry after a lost response that minted a new
+    // key would ask the server for a second completion instead of replaying
+    // the first. The default exists for fire-once callers.
+    final key = idempotencyKey ?? _uuid.v4();
     final res = await _dio.put<Map<String, dynamic>>(
       // Canonical transition verb is PUT; the POST `/complete` form is
       // `attempts.complete.transition-alias` (quiz.php:187-192).
       '/quiz/attempts/$attemptId/completion',
-      options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
+      options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
     if (body == null) {

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
@@ -28,6 +29,90 @@ import '../../../../core/network/api_failure.dart';
 class BattleRemoteDataSource {
   const BattleRemoteDataSource(this._dio);
   final Dio _dio;
+
+  static const _uuid = Uuid();
+
+  /// A required object under `data`. A response the client cannot read throws;
+  /// it never becomes a fabricated lobby.
+  Map<String, dynamic> _requireData(
+    Map<String, dynamic>? body,
+    String endpoint,
+  ) {
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
+    final data = body['data'];
+    if (data is Map<String, dynamic>) return data;
+    throw ContractViolation(
+      'Expected an object under `data`',
+      endpoint: endpoint,
+    );
+  }
+
+  /// `POST /quiz/battle-rooms` — a private lobby owned by the caller.
+  ///
+  /// Every field is sent explicitly because the server validates each one:
+  /// `mode` is constrained to `LobbyService::SUPPORTED_MODES`, `queue_type`
+  /// to `unranked|ranked`, and `wager_coins` is required (0 is allowed).
+  Future<Map<String, dynamic>> createLobby({
+    required String mode,
+    int wagerCoins = 0,
+    String queueType = 'unranked',
+    String? idempotencyKey,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/quiz/battle-rooms',
+      data: <String, dynamic>{
+        'mode': mode,
+        'queue_type': queueType,
+        'wager_coins': wagerCoins,
+      },
+      options: Options(
+        headers: {'Idempotency-Key': idempotencyKey ?? _uuid.v4()},
+      ),
+    );
+    return _requireData(res.data, '/quiz/battle-rooms');
+  }
+
+  /// `POST /quiz/battle-rooms/{lobby}/invitations` — invite by email.
+  ///
+  /// The server requires an Idempotency-Key here (the call sends a
+  /// notification), so a retry with the same key does not invite twice.
+  Future<Map<String, dynamic>> inviteToLobby({
+    required int lobbyId,
+    required String email,
+    String? idempotencyKey,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/quiz/battle-rooms/$lobbyId/invitations',
+      data: <String, dynamic>{'email': email},
+      options: Options(
+        headers: {'Idempotency-Key': idempotencyKey ?? _uuid.v4()},
+      ),
+    );
+    return _requireData(
+      res.data,
+      '/quiz/battle-rooms/{lobby}/invitations',
+    );
+  }
+
+  /// `PUT /quiz/invitations/{notification}/acceptance` — the invited user
+  /// joins the lobby. Returns the lobby the notification pointed at.
+  Future<Map<String, dynamic>> acceptLobbyInvitation({
+    required int notificationId,
+    String? idempotencyKey,
+  }) async {
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/invitations/$notificationId/acceptance',
+      options: Options(
+        headers: {'Idempotency-Key': idempotencyKey ?? _uuid.v4()},
+      ),
+    );
+    return _requireData(
+      res.data,
+      '/quiz/invitations/{notification}/acceptance',
+    );
+  }
 
   /// `data` out of the envelope.
   ///

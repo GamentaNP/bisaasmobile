@@ -389,7 +389,13 @@ class QuizController extends Notifier<QuizState> {
 
     late final QuizResult result;
     try {
-      result = await _repo.finishAttempt(attemptId);
+      // Derived from the attempt, not minted here: a retry of the same
+      // completion (dropped response, retry button) must present the same key,
+      // or the server sees a second completion and credits the reward twice.
+      result = await _repo.finishAttempt(
+        attemptId,
+        idempotencyKey: 'quiz-complete-$attemptId',
+      );
     } catch (e) {
       state = state.copyWith(
         phase: QuizPhase.error,

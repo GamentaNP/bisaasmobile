@@ -31,6 +31,10 @@ abstract class QuizRepository {
     int? timeTakenSeconds,
   });
 
-  /// Finish the attempt — POST /api/v1/quiz/attempts/{attemptId}/complete
-  Future<QuizResult> finishAttempt(String attemptId);
+  /// Finish the attempt — PUT /api/v1/quiz/attempts/{attemptId}/completion
+  ///
+  /// [idempotencyKey] must be the same value on a retry: completion credits
+  /// coins/XP, and a new key makes the server treat the retry as a second
+  /// operation.
+  Future<QuizResult> finishAttempt(String attemptId, {String? idempotencyKey});
 }

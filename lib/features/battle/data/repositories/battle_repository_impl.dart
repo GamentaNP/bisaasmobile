@@ -2,6 +2,7 @@
 
 import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/battle.dart';
+import '../../domain/entities/battle_lobby.dart';
 import '../../domain/repositories/battle_repository.dart';
 import '../datasources/battle_remote_data_source.dart';
 
@@ -72,4 +73,64 @@ class BattleRepositoryImpl implements BattleRepository {
 
   @override
   Future<List<Map<String, dynamic>>> getLeaderboard(String boardId) => _remote.getLeaderboard(boardId);
+
+  @override
+  Future<BattleLobby> createLobby({
+    required String mode,
+    int wagerCoins = 0,
+    String? idempotencyKey,
+  }) async {
+    final m = await _remote.createLobby(
+      mode: mode,
+      wagerCoins: wagerCoins,
+      idempotencyKey: idempotencyKey,
+    );
+    return _lobby(m, '/quiz/battle-rooms');
+  }
+
+  @override
+  Future<BattleInvitation> inviteToLobby({
+    required int lobbyId,
+    required String email,
+    String? idempotencyKey,
+  }) async {
+    final m = await _remote.inviteToLobby(
+      lobbyId: lobbyId,
+      email: email,
+      idempotencyKey: idempotencyKey,
+    );
+    try {
+      return BattleInvitation.fromJson(m);
+    } on FormatException catch (e) {
+      throw ContractViolation(
+        'Invitation payload not understood: ${e.message}',
+        endpoint: '/quiz/battle-rooms/{lobby}/invitations',
+      );
+    }
+  }
+
+  @override
+  Future<BattleLobby> acceptLobbyInvitation({
+    required int notificationId,
+    String? idempotencyKey,
+  }) async {
+    final m = await _remote.acceptLobbyInvitation(
+      notificationId: notificationId,
+      idempotencyKey: idempotencyKey,
+    );
+    return _lobby(m, '/quiz/invitations/{notification}/acceptance');
+  }
+
+  /// A lobby payload the client cannot read is contract drift, not an empty
+  /// room: the id is the handle every later call needs.
+  BattleLobby _lobby(Map<String, dynamic> json, String endpoint) {
+    try {
+      return BattleLobby.fromJson(json);
+    } on FormatException catch (e) {
+      throw ContractViolation(
+        'Lobby payload not understood: ${e.message}',
+        endpoint: endpoint,
+      );
+    }
+  }
 }

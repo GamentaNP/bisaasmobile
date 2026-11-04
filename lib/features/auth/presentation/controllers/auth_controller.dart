@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../app/providers.dart' show pushServiceProvider;
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/dio_client.dart';
@@ -138,6 +139,18 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<void> logout() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      // Delete the push token BEFORE the credential is cleared.
+      //
+      // `DELETE /device-tokens/{token}` is an authenticated route; the auth
+      // listener in `app.dart` used to unregister after the auth state went
+      // null, which is after `repo.logout()` has deleted the bearer. The
+      // server answered 401, `unregisterToken` swallowed it, and the device
+      // stayed registered for pushes after sign-out. The service is
+      // best-effort, so doing it here cannot block the logout.
+      final push = ref.read(pushServiceProvider);
+      if (push != null) {
+        await push.unregisterToken();
+      }
       final repo = ref.read(authRepositoryProvider);
       await repo.logout();
       return null;
