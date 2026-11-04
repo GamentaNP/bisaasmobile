@@ -18,9 +18,9 @@
          -api) merge `com.google.android.gms.permission.AD_ID` and
          `android.permission.ACCESS_ADSERVICES_AD_ID` into every app that
          uses Analytics or Crashlytics. The app makes no advertising use of
-         them, and `docs/privacy_policy.md` says so, so leaving them in would
-         mean the artifact contradicts the disclosure: the app *could* read
-         the user's advertising id and identify them across apps, while the
+         them, and `docs/legal/privacy-policy-en.md` says so, so leaving them
+         in would mean the artifact contradicts the disclosure: the app *could*
+         read the user's advertising id and identify them across apps, while the
          policy claims it does not.
 
          Removing them is Google's documented opt-out. The Firebase

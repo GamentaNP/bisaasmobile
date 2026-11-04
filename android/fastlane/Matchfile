@@ -1,7 +1,7 @@
 # Fastlane Match — code signing via a private git repo.
 # Usage: `fastlane match appstore --readonly` (CI) / `fastlane match develop` (local).
 # Requires: `MATCH_PASSWORD` (and `MATCH_GIT_URL`/`MATCH_GIT_BASIC_AUTHORIZATION` in CI).
-# Docs: docs/FIREBASE_SETUP.md + FLUTTER_SENIOR_REVIEW §18.
+# Docs: docs/FIREBASE_SETUP.md + docs/release_checklist.md §4.
 
 git_url("https://github.com/bisaas/civilcal-certificates.git")
 

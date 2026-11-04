@@ -22,8 +22,8 @@ signal all leave the device before the user has chosen anything.
 |---|---|---|
 | Does your app collect or share any of the required user data types? | **Yes** | see the table below |
 | Is all of the user data collected by your app encrypted in transit? | **Yes** | TLS 1.2+ on every API call, plus certificate pinning in release builds (`lib/core/network/certificate_pinning.dart`) |
-| Do you provide a way for users to request that their data is deleted? | **Yes** | in-app erasure at Settings → Privacy → Data stored about this device (`lib/features/privacy/presentation/privacy_data_screen.dart`), plus `DELETE /api/v1/visitor-data` and account deletion by email |
-| Is the data collected shared with third parties? | **Yes, limited** | Firebase (Google) — crash reporting, analytics, push. No data is shared for advertising. |
+| Do you provide a way for users to request that their data is deleted? | **Yes** | In-app account deletion (Settings → Delete Account → `DELETE /api/v1/account`), in-app erasure of the anonymous visitor profile (`lib/features/privacy/presentation/privacy_data_screen.dart`, `DELETE /api/v1/visitor-data`), and a web deletion URL for users who cannot open the app (Play requires one). |
+| Is the data collected shared with third parties? | **Yes, limited** | Google Firebase — crash reporting (Crashlytics), opt-in analytics, push (FCM) and live battle lobbies (Realtime Database); Talsec freeRASP for the device-integrity verdict; the configured AI provider for tutor/calculator prompts. **No data is shared for advertising.** |
 | Is data collected used for tracking? | **No** | no advertising SDK, no cross-app tracking, `NSPrivacyTracking = false` |
 | Does the app collect the **Advertising ID**? | **No** | The advertising-id permissions that Firebase's measurement libraries merge in are removed at manifest-merge time (`tools:node="remove"` in `android/app/src/main/AndroidManifest.xml`). Without them the Firebase installation id is a random UUID rather than a value derived from the advertising id, so the app cannot identify a user across apps. See §3.3. |
 | Do you offer a way to opt out of analytics? | **Yes** | Settings → Privacy → Analytics, and the consent sheet on first launch |
@@ -40,14 +40,16 @@ attribution.** There is no ad SDK in the dependency tree.
 | Contact info — Email address | Yes | Yes | No | App functionality |
 | Identifiers — User ID | Yes | Yes | No | App functionality |
 | Identifiers — Device ID | Yes | Yes | No | App functionality |
-| Usage data — Product interaction | Yes (opt-in) | No — tied to a device identifier, not to the account | No | Analytics |
+| Usage data — Product interaction | Yes (opt-in) | **Yes** — `AnalyticsService.setUserId` attaches the account id to events | Analytics |
 | Diagnostics — Crash data | Yes | Yes | No | App functionality |
 | Diagnostics — Other diagnostic data | Yes | Yes | No | App functionality |
 
-Apple's privacy manifest
-(`ios/Runner/PrivacyInfo.xcprivacy`) declares exactly this set, with
-`NSPrivacyTracking = false` and an empty
-`NSPrivacyTrackingDomains`.
+Apple's privacy manifest (`ios/Runner/PrivacyInfo.xcprivacy`) declares the same
+six types, with `NSPrivacyTracking = false` and an empty
+`NSPrivacyTrackingDomains`. **Corrected 2026-11-04:** it previously omitted
+`EmailAddress`, and this table claimed product interaction was unlinked while
+the manifest — correctly — says linked. Both were fixed in the manifest, not
+just here, because Apple validates the manifest at upload.
 
 ---
 
@@ -58,9 +60,9 @@ Apple's privacy manifest
 | Data | Where it is produced | Purpose | Play category |
 |---|---|---|---|
 | Email address | `POST /api/v1/auth/login`, `/auth/register` | Sign-in, account recovery | Contact info → Email address |
-| Password | Sent to the server, stored **only** as a hash server-side; the client keeps it in `flutter_secure_storage` until the exchange completes and never writes it to disk or logs it (`lib/core/security/token_manager.dart`) | Authentication | Not collected (transient) |
+| Password | Sent to the server and stored **only** as a hash server-side. The client never persists it — `TokenManager` stores the token, its expiry and the device name, nothing else | Authentication | Not collected (transient) |
 | Display name, profile picture, preferred language | `PUT /api/v1/me`, `POST /api/v1/me/avatar` | Profile | Personal info → User name; Photos (only if you pick one) |
-| Referral code | `POST /api/v1/referrals/claim` | Rewards | Financial info → Purchase history (reward balances) |
+| Referral code | `POST /api/v1/referrals/claim` | Rewards | Personal info → Other info (it is an identifier, not a purchase history) |
 
 ### 3.2 Learning activity — collected while you use the app
 
@@ -148,16 +150,19 @@ this table.
 These are **not** code problems. Each one needs a decision or a value
 that only the founder can supply.
 
-- [ ] **Retention windows.** The store forms do not require them, but the
-      published policy does. The client guarantees what it can: the
-      install id and the cached answers are deleted with the app, the
-      push token is deleted on logout, and the server prunes idempotency
-      keys after 7 days. The server's retention policy for quiz history,
-      crash logs and analytics events needs to be published here.
+- [x] **Retention windows.** Answered on 2026-11-04: the policy's retention
+      table (`docs/legal/privacy-policy-en.md` §5) now states them — account
+      and study data 30 days after deletion (90 in backups), crash reports 90
+      days, usage events 14 months then aggregates, anonymous visitor profile
+      13 months after last visit, server logs 30 days, calculator telemetry 7
+      days. Keep the policy and the server's prune schedules in step.
 - [ ] **Firebase data region.** Confirm `asia-southeast1` is the right
       region for the launch market.
-- [ ] **Sentry.** If a DSN is ever configured, add it to the third-party
-      table and to the Play "data shared with third parties" answer.
+- [ ] **Sentry.** The SDK is bundled but sends nothing — no `SENTRY_DSN` is
+      configured in `dart_defines/production.json`. Either configure it (and
+      then add it to this table, the policy's third-party list and the Play
+      "shared with third parties" answer in the same change) or remove the
+      dependency.
 - [ ] **The `freeRASP` iOS gap.** `IOS_TEAM_ID` in
       `dart_defines/production.json` is still the placeholder
       `__REPLACE_WITH_APPLE_TEAM_ID__`, so **iOS builds do not run the

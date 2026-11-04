@@ -1,8 +1,8 @@
 # CivilCal Terms of Service
 
-**Effective date:** 2026-10-25
+**Effective date:** 2026-11-04 (supersedes the 2026-10-25 version)
 **Operator:** Bisaas (the "Service"), product name CivilCal
-**Contact:** support@civilcal.app
+**Contact:** support@bisaas.com
 
 By creating an account or using the CivilCal app you agree to these terms.
 
@@ -10,9 +10,10 @@ By creating an account or using the CivilCal app you agree to these terms.
 
 CivilCal is an exam-preparation app for civil engineering students: daily
 quizzes, courses, a question library, an AI tutor, streaks, coins and
-leaderboards. All grading, rewards, rankings and subscriptions are decided on
-our servers. The app is a window onto that service; results shown locally can
-always be overruled by the server.
+leaderboards. **The app is free.** There is no subscription and no
+real-money purchase anywhere in it. All grading, rewards and rankings are
+decided on our servers; the app is a window onto that service, and results
+shown locally can always be overruled by the server.
 
 ## 2. Accounts
 
@@ -31,12 +32,15 @@ alter rankings outside the server; reverse-engineer the app to circumvent
 limits; or use the AI tutor to produce content that violates law or exam
 rules. We may suspend accounts that abuse the service.
 
-## 4. Coins and purchases
+## 4. Coins and in-app items
 
 Coins are a virtual study currency inside CivilCal. They have **no cash
-value**, cannot be bought or sold outside the app, and expire with the
-account. Any purchases are processed by Google Play (or the App Store); refunds
-follow the store's policy and applicable law. Rewards are granted by the
+value**, cannot be bought or sold — inside the app or outside it — and expire
+with the account. Coins are earned by studying and are spent on in-app
+cosmetic items: avatar frames, badges, themes and titles. Nothing in CivilCal
+is sold for real money, no payment is processed by Google Play or the App
+Store on our behalf, and there is therefore nothing to refund; any charge you
+find on a store account did not come from this app. Rewards are granted by the
 server and may be corrected when fraud or errors are detected.
 
 ## 5. AI features
@@ -83,4 +87,4 @@ protections in your country of residence.
 
 ## 11. Contact
 
-Bisaas — support@civilcal.app
+Bisaas — support@bisaas.com

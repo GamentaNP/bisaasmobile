@@ -10,7 +10,7 @@ import 'package:bisaasmobile/core/network/api_exception.dart';
 import 'package:bisaasmobile/core/network/auth_interceptor.dart';
 import 'package:bisaasmobile/core/security/token_manager.dart';
 
-/// Security tamper matrix (FLUTTER_SENIOR_REVIEW §15 / plan Task 20 spec 100).
+/// Security tamper matrix (invariants 4 and 6 in docs/PROJECT_STATE.md §4).
 ///
 /// Verifies the client never trusts forged/absent credentials and never leaks
 /// a session when the token is tampered with. These complement (not duplicate)
