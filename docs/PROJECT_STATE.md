@@ -25,12 +25,12 @@ those is a server answer the client renders.
 
 | Measure | Value | How to re-measure |
 |---|---|---|
-| Dart files under `lib/` | 360 | `find lib -name '*.dart' \| wc -l` |
+| Dart files under `lib/` | 371 | `find lib -name '*.dart' \| wc -l` |
 | Feature modules | 34 | `ls lib/features \| wc -l` |
-| Host test files | 117 | `find test -name '*_test.dart' \| wc -l` |
-| Host test declarations | 1,185 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
+| Host test files | 120 | `find test -name '*_test.dart' \| wc -l` |
+| Host test declarations | 1,199 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
 | Device smoke tests | 8 + 1 live-only | `device_tests/integration_test/device_smoke_test.dart` |
-| Translations | 1,192 messages × en/ne/hi | `python -I -c "import json;print(len([k for k in json.load(open('lib/l10n/app_en.arb'))if not k.startswith('@')]))"` |
+| Translations | 1,234 messages × en/ne/hi | `python -I -c "import json;print(len([k for k in json.load(open('lib/l10n/app_en.arb'))if not k.startswith('@')]))"` |
 | App version | `1.0.2+2` | `pubspec.yaml` |
 | SDK floor / target | minSdk 26 (Android 8.0) / targetSdk 36 / compileSdk 37 | `android/app/build.gradle.kts:134-172` |
 | Release AAB | 79,848,351 bytes (76.1 MiB), upload-key signed | `flutter build appbundle --release …` |
@@ -55,8 +55,10 @@ Shipped surfaces, all server-backed: auth (email, Google, Apple), guest
 funnel, daily quiz, practice and bookmark drills, mock tests, syllabus and
 book readers, numerical practice, calculator suite (schema-driven), economy
 (wallet, shop, premium), gamification (streak, missions, check-in, spin,
-world map), battle (offline bot kernel + online lobbies), library,
-notifications, referrals, share, profile/settings, trilingual UI.
+world map), battle (offline bot kernel + online lobbies), **arcade**
+(Survival, Lightning, True/False — timed runs started, ended and scored by
+the server, with an optional category scope), library, notifications,
+referrals, share, profile/settings, trilingual UI.
 
 ## 4. Invariants the code holds — do not regress these
 

@@ -7,7 +7,7 @@
 > **Last verified against code + live dev DB:** 2026-09-28 for the server
 > backlog (§7); **2026-11-04** for the client status (§6, §9) and for G1's
 > current state. The client numbers were re-measured at `0cee095` —
-> 1,192 messages per locale — so treat any older count in prose as history.
+> 1,234 messages per locale — so treat any older count in prose as history.
 
 ---
 
@@ -172,7 +172,7 @@ not a feature to re-implement.
   mixed-language UI that no check notices.
 
 **Client gap status:** closed for the three shipped locales. The catalogue is
-**1,192 messages in each of `app_en` / `app_ne` / `app_hi`**, and the
+**1,234 messages in each of `app_en` / `app_ne` / `app_hi`**, and the
 coverage + consistency gates run in CI. Rendering is solved and interface
 strings are translated for those three; any *further* locale is still absent
 (`es fr ar bn ta te zh`), which is §9's list — not a gap in the current UI.
@@ -311,10 +311,10 @@ forget in a 5th.
 | ARB coverage gate in CI | **DONE** (`49c7145`) |
 | `Accept-Language` sent on every request | **DONE** |
 | `PATCH /api/v1/me/locale` persistence | **DONE** (writes `users.locale` only) |
-| ARB catalogue | **1,192 messages** in each of `app_en`, `app_ne`, `app_hi` |
+| ARB catalogue | **1,234 messages** in each of `app_en`, `app_ne`, `app_hi` |
 | Interface translations for `es fr ar bn ta te zh` | **absent** |
 
-Nepali and Hindi are both at **100% of the 1,192-message catalogue**, verified
+Nepali and Hindi are both at **100% of the 1,234-message catalogue**, verified
 by the CI gate (`tool/arb_coverage.dart` + `test/l10n/arb_coverage_test.dart`).
 Twelve keys per locale are byte-identical to English on purpose — unit
 symbols (`%`, `XP`) and brand names (`CivilCal`) — and the translation audit

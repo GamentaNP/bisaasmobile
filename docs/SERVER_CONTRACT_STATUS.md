@@ -28,12 +28,13 @@ integration tests plus the on-device run against Laragon):
 | Share | Three share kinds enabled; permalink route serves a shared calculation |
 | Tenancy | `GET /me/tenants` outside the tenant-scoped group, active tenants only, ordered by `name`,`id` — see [TENANT_SWITCHER_CONTRACT.md](TENANT_SWITCHER_CONTRACT.md) |
 | Calculator schemas | Enum fields are `select` with `options`; 18 fields that advertised free text were fixed server-side and the client renders them generically |
+| Arcade runs | `POST /quiz/survival/start`, `/quiz/lightning/start`, `/quiz/true-false/start` (optional `category_id`, idempotency required); questions from `GET /quiz/attempts/{attempt}`; answers, `PUT …/completion`, `GET …/results`, `PUT …/abandonment` — the five other arcade values in the server enum have no mobile start route and are deliberately not offered |
 
 ## 2. Client-side adoption gaps (the server is ahead of us)
 
 | # | Gap | Effect | What to do |
 |---|---|---|---|
-| A1 | `GET /quiz/attempts/{attempt}` is never called by the client | An interrupted attempt cannot be resumed; the user restarts | Wire it into the practice/quiz data source before claiming "resume" in copy |
+| A1 | `GET /quiz/attempts/{attempt}` is **adopted by the arcade only** (`lib/features/arcade/data/datasources/arcade_remote_data_source.dart`); the quiz and practice data sources still never call it | The arcade can start and resume a run because its start route returns only an id. An interrupted *study* attempt still cannot be resumed | Wire it into the practice/quiz data source before claiming "resume" in study copy |
 | A2 | Topic drills match on `GET /quiz/questions?search=` because the client has no `topic_id` filter | A topic drill can miss questions whose text does not contain the topic name | Adopt a server-side `topic_id` filter if one is published; until then the screen stays honest about what it searches |
 
 Both are recorded in code comments (`practice_remote_data_source.dart:146,214`)
