@@ -28,9 +28,9 @@ those is a server answer the client renders.
 | Dart files under `lib/` | 371 | `find lib -name '*.dart' \| wc -l` |
 | Feature modules | 34 | `ls lib/features \| wc -l` |
 | Host test files | 120 | `find test -name '*_test.dart' \| wc -l` |
-| Host test declarations | 1,199 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
+| Host test declarations | 1,200 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
 | Device smoke tests | 8 + 1 live-only | `device_tests/integration_test/device_smoke_test.dart` |
-| Translations | 1,234 messages × en/ne/hi | `python -I -c "import json;print(len([k for k in json.load(open('lib/l10n/app_en.arb'))if not k.startswith('@')]))"` |
+| Translations | 1,235 messages × en/ne/hi | `python -I -c "import json;print(len([k for k in json.load(open('lib/l10n/app_en.arb'))if not k.startswith('@')]))"` |
 | App version | `1.0.2+2` | `pubspec.yaml` |
 | SDK floor / target | minSdk 26 (Android 8.0) / targetSdk 36 / compileSdk 37 | `android/app/build.gradle.kts:134-172` |
 | Release AAB | 79,848,351 bytes (76.1 MiB), upload-key signed | `flutter build appbundle --release …` |

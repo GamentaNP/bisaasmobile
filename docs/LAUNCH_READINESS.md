@@ -112,7 +112,7 @@ fails closed: the release refuses to make a request, by design.
   shipping ABIs bundled.
 - Security gate in CI: gitleaks, OSV dependency scan, and an artifact scan
   that unpacks the real APK and fails on forbidden content.
-- Trilingual UI: 1,234 messages × en/ne/hi, coverage + consistency audits in
+- Trilingual UI: 1,235 messages × en/ne/hi, coverage + consistency audits in
   CI.
 - App Links: `docs/ASSETLINKS.json` generated from the upload certificate and
   checked against `SIGNING_CERT_HASH`.

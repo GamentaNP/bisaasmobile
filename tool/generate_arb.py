@@ -2545,6 +2545,11 @@ add("arcadeBackToArcade", "Back to arcade", "आर्केडमा फर्�
 add("arcadeLoadError", "The run could not start.", "रन सुरु हुन सकेन।", "रन शुरू नहीं हो सका।")
 add("arcadeEmptyTitle", "No questions for this category yet", "यो श्रेणीमा अझै प्रश्न छैनन्", "इस श्रेणी में अभी प्रश्न नहीं हैं")
 add("arcadeEmptyBody", "Try another category, or play with any category.", "अर्को श्रेणी प्रयास गर्नुहोस्, वा कुनै पनि श्रेणीमा खेल्नुहोस्।", "दूसरी श्रेणी आज़माएँ, या किसी भी श्रेणी में खेलें।")
+# The server answers 422 with an English sentence when a category has too few
+# auto-gradable questions for the mode. Showing that sentence to a Nepali
+# reader is an English error in a translated app, so the client says it in the
+# user's language instead.
+add("arcadeCategoryTooSmall", "This category cannot run this mode yet — not enough questions. Try another category, or play without one.", "यो श्रेणीमा यो मोड चलाउन अझै पर्याप्त प्रश्न छैनन्। अर्को श्रेणी प्रयास गर्नुहोस्, वा श्रेणीबिना खेल्नुहोस्।", "इस श्रेणी में यह मोड अभी नहीं चल सकता — पर्याप्त प्रश्न नहीं हैं। दूसरी श्रेणी आज़माएँ, या बिना श्रेणी खेलें।")
 add("arcadeRetry", "Try again", "फेरि प्रयास गर्नुहोस्", "फिर कोशिश करें")
 
 # ── write ────────────────────────────────────────────────────────────────────

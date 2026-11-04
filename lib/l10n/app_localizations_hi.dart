@@ -4454,5 +4454,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'दूसरी श्रेणी आज़माएँ, या किसी भी श्रेणी में खेलें।';
 
   @override
+  String get arcadeCategoryTooSmall =>
+      'इस श्रेणी में यह मोड अभी नहीं चल सकता — पर्याप्त प्रश्न नहीं हैं। दूसरी श्रेणी आज़माएँ, या बिना श्रेणी खेलें।';
+
+  @override
   String get arcadeRetry => 'फिर कोशिश करें';
 }

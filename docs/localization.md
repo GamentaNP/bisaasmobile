@@ -28,7 +28,7 @@ half-happen.
 
 ## 2. What is translated today
 
-**Everything.** 1,234 messages, in English, Nepali and Hindi, covering
+**Everything.** 1,235 messages, in English, Nepali and Hindi, covering
 every screen in the app:
 
 | Area | Screens |
@@ -118,7 +118,7 @@ dart run tool/localization_coverage.dart --verbose  # every string, with a line 
 
 ## 5. Known gaps
 
-- **`hi` has had less review than `ne`.** Both have the same 1,234
+- **`hi` has had less review than `ne`.** Both have the same 1,235
   messages, so the coverage is identical, but the launch market is Nepal
   and the Hindi copy has not been read by a Hindi speaker. The
   mechanical defects a machine translation produces — a term spelled two

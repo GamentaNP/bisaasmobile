@@ -4443,5 +4443,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try another category, or play with any category.';
 
   @override
+  String get arcadeCategoryTooSmall =>
+      'This category cannot run this mode yet — not enough questions. Try another category, or play without one.';
+
+  @override
   String get arcadeRetry => 'Try again';
 }

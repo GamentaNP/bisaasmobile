@@ -28,7 +28,7 @@ integration tests plus the on-device run against Laragon):
 | Share | Three share kinds enabled; permalink route serves a shared calculation |
 | Tenancy | `GET /me/tenants` outside the tenant-scoped group, active tenants only, ordered by `name`,`id` — see [TENANT_SWITCHER_CONTRACT.md](TENANT_SWITCHER_CONTRACT.md) |
 | Calculator schemas | Enum fields are `select` with `options`; 18 fields that advertised free text were fixed server-side and the client renders them generically |
-| Arcade runs | `POST /quiz/survival/start`, `/quiz/lightning/start`, `/quiz/true-false/start` (optional `category_id`, idempotency required); questions from `GET /quiz/attempts/{attempt}`; answers, `PUT …/completion`, `GET …/results`, `PUT …/abandonment` — the five other arcade values in the server enum have no mobile start route and are deliberately not offered |
+| Arcade runs | `POST /quiz/survival/start`, `/quiz/lightning/start`, `/quiz/true-false/start` (optional `category_id`, idempotency required; a category short of the mode's minimum answers 422 and the client says so in the user's language); questions from `GET /quiz/attempts/{attempt}`; answers, `PUT …/completion`, `GET …/results`, `PUT …/abandonment` — the five other arcade values in the server enum have no mobile start route and are deliberately not offered |
 
 ## 2. Client-side adoption gaps (the server is ahead of us)
 

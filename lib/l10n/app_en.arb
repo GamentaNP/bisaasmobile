@@ -3306,5 +3306,6 @@
   "arcadeLoadError": "The run could not start.",
   "arcadeEmptyTitle": "No questions for this category yet",
   "arcadeEmptyBody": "Try another category, or play with any category.",
+  "arcadeCategoryTooSmall": "This category cannot run this mode yet — not enough questions. Try another category, or play without one.",
   "arcadeRetry": "Try again"
 }

@@ -7527,6 +7527,12 @@ abstract class AppLocalizations {
   /// **'Try another category, or play with any category.'**
   String get arcadeEmptyBody;
 
+  /// No description provided for @arcadeCategoryTooSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'This category cannot run this mode yet — not enough questions. Try another category, or play without one.'**
+  String get arcadeCategoryTooSmall;
+
   /// No description provided for @arcadeRetry.
   ///
   /// In en, this message translates to:
