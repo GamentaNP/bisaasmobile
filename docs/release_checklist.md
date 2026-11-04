@@ -20,9 +20,9 @@ settings that only the account owner can touch.
 | Unit + integration tests | `flutter test` | CI, `analyze-test` job |
 | Test coverage | `flutter test --coverage` then `dart scripts/coverage_check.dart --min=55` | CI, `analyze-test` job |
 | Device-test analysis | `cd device_tests && flutter analyze` | CI, `device-tests-analyze` job |
-| Debug APK builds | `flutter build apk --debug` | CI, `build-android` job |
-| Release APK builds | `flutter build apk --release --dart-define-from-file=dart_defines/production.json` | manual / release pipeline |
-| Release AAB builds | `flutter build appbundle --release --dart-define-from-file=dart_defines/production.json` | manual / release pipeline |
+| Device tests on an emulator | `cd device_tests && flutter test integration_test -d emulator-5554` | CI, `Device tests` workflow (API 28 + 30) |
+| Release APK + AAB build | `flutter build apk --release …` / `flutter build appbundle --release …` | CI, `build-android` job — **`main` only** |
+| Obfuscated artifact scan | `bash scripts/scan_release_artifact.sh <apk>` | CI, `Mobile Security Gate` workflow |
 | Device tests on hardware | `cd device_tests && flutter test integration_test -d DEVICE_ID` | needs a physical device |
 
 A release build must also be **obfuscated** and **split-debug-info**d,
@@ -56,8 +56,8 @@ but a value that is still a placeholder will not do.
 | `APP_STORE_ID` | `dart_defines/production.json` | **missing** | The iOS force-update link falls back to the support page instead of the App Store listing. Add `"APP_STORE_ID": "1234567890"` once Apple issues it. |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_SERVER_CLIENT_ID` | `--dart-define` | **missing** | Google sign-in is hidden entirely (which is correct behaviour, not a crash — see §4). |
 | `APPLE_CLIENT_ID`, `APPLE_REDIRECT_URI` | `--dart-define` | **missing** | Sign in with Apple is hidden entirely. The redirect URI is required on Android and web; on iOS the "Sign in with Apple" capability must also be enabled on the App ID in the Apple Developer portal. |
-| `android/key.properties` | `android/key.properties` (gitignored) | **absent** | The Gradle build refuses a release. See §3. |
-| `android/play-service.json` | `android/play-service.json` (gitignored) | **absent** | `fastlane supply` aborts in all three lanes. The Play Appfile already points at it; CI materialises it from the `PLAY_SERVICE_JSON_BASE64` secret. |
+| `android/key.properties` | `android/key.properties` (gitignored) | present on the founder machine, **absent in a fresh clone** | The Gradle build refuses a release. See §3. |
+| `android/fastlane/play-service.json` | `android/fastlane/play-service.json` (gitignored) | **absent** | `fastlane supply` aborts in all three lanes. The Play Appfile resolves `play-service.json` relative to `android/fastlane/`; CI materialises it from the `PLAY_SERVICE_JSON_BASE64` secret. |
 | Play / ASC API keys | CI secrets | — | `fastlane supply` / `deliver` / `upload_to_testflight` cannot authenticate. |
 | `MATCH_PASSWORD` | CI secret | — | `fastlane match` cannot decrypt the signing certificates. |
 | Apple numeric App Store ID | App Store Connect | — | See `APP_STORE_ID` above. |
@@ -100,15 +100,22 @@ but a value that is still a placeholder will not do.
 
    ```bash
    cd android
+   version=$(grep -E '^version:' ../pubspec.yaml | sed -E 's/^version:[[:space:]]*//' | cut -d+ -f2)
    fastlane supply --package_name com.bisaas.bisaasmobile \
      --metadata_path fastlane/metadata/android \
-     --skip_upload_apk --skip_upload_images --release_notes \
-     $(jq -r .version ../pubspec.yaml | cut -d+ -f1)
+     --skip_upload_apk --skip_upload_images \
+     --release_notes "$(cat fastlane/metadata/android/en-US/changelogs/$version.txt)"
    ```
 
-   The screenshots under `fastlane/metadata/android/*/images/` are
-   **missing** and have to be produced on a device. Play requires at
-   least two phone screenshots; without them the listing is rejected.
+   **Do not use `jq` to read `pubspec.yaml`** — it is YAML, not JSON, so
+   `jq -r .version` fails and takes the whole command with it. The `grep`
+   above is the same extraction CI uses (`ci.yml`, "Resolve app version").
+
+   The screenshots already exist — 8 of them, captured on the Redmi 6A
+   against the live backend — but they live in `docs/store-assets/`, not in
+   the upload tree. Copy them to `android/fastlane/metadata/android/*/images/`
+   before running `supply` without `--skip_upload_images`; Play requires at
+   least two phone screenshots.
 
 5. Fill in the **Data safety** form from
    `docs/data_safety_inventory.md`. It already answers every question
@@ -148,7 +155,9 @@ but a value that is still a placeholder will not do.
 4. Confirm the store links resolve: `https://bisaas.com/privacy` and
    `https://bisaas.com/support` must be live pages. They are referenced
    by `ios/fastlane/metadata/*/privacy_url.txt` and `support_url.txt`,
-   and by the iOS force-update fallback.
+   and by the iOS force-update fallback. **This is currently blocked** —
+   `bisaas.com` redirects to a domain broker. See
+   `LAUNCH_READINESS.md` §"The one fact that decides everything".
 
 5. The social sign-in buttons are **hidden** when their client ids are
    not configured. That is deliberate — a button that is guaranteed to
@@ -198,11 +207,13 @@ rest of the security plan assumes.
 ## 6. Also required before the first public release
 
 - [ ] The privacy policy is published at a stable URL and the app's
-      Settings → Privacy links to it. `docs/privacy_policy.md` is the
-      source; the §6 "Open items" list in
-      `docs/data_safety_inventory.md` marks what still needs a decision.
-- [ ] The Play listing has phone screenshots (at least two) and the App
-      Store listing has at least one screenshot per required device size.
+      Settings → Privacy links to it. `docs/legal/privacy-policy-en.md` is
+      the source (with `-ne` and `-hi` alongside); the Policy compliance
+      section of `docs/data_safety_inventory.md` marks what still needs a
+      decision.
+- [ ] The Play listing has phone screenshots (8 exist in `docs/store-assets/`)
+      and the App Store listing has at least one screenshot per required
+      device size (still missing).
 - [ ] The App Store "App privacy" labels are filled in from
       `docs/data_safety_inventory.md` §2.
 - [ ] The `App Links` verification file is published at

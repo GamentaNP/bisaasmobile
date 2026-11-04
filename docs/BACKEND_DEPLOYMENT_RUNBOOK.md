@@ -2,8 +2,9 @@
 
 This is the critical path of the launch: **no tester can get past login until
 this server exists.** Copy-paste order matters. Written against the actual
-stack of `C:\laragon\www\bisaas` (Laravel ~13.34, PHP ^8.3, PostgreSQL,
-Passport PATs, kreait Firebase, many scheduled jobs).
+stack of `C:\laragon\www\bisaas` (Laravel 13.34, **PHP ^8.4**, PostgreSQL,
+**Sanctum personal access tokens** — Passport is installed but the mobile API
+does not use it — kreait Firebase, 173 scheduled jobs).
 
 Time: ~2–3 hours first run. Requires: a VPS (2 vCPU / 4 GB is enough to
 start), a domain you own pointed at it, and the bisaas repo pushed to a git
@@ -30,23 +31,23 @@ apt -y install git curl unzip nginx postgresql redis-server ufw
 ufw allow OpenSSH && ufw allow 'Nginx Full' && ufw --force enable
 ```
 
-## 3. PHP 8.3 FPM + extensions
+## 3. PHP 8.4 FPM + extensions
 
 Laragon parity: pdo_pgsql, bcmath, intl, zip, gd, exif, mbstring, xml, curl.
 
 ```bash
 add-apt-repository -y ppa:ondrej/php && apt update
-apt -y install php8.3-fpm php8.3-cli php8.3-pgsql php8.3-redis php8.3-bcmath \
-  php8.3-intl php8.3-zip php8.3-gd php8.3-exif php8.3-mbstring php8.3-xml \
-  php8.3-curl php8.3-opcache
+apt -y install php8.4-fpm php8.4-cli php8.4-pgsql php8.4-redis php8.4-bcmath \
+  php8.4-intl php8.4-zip php8.4-gd php8.4-exif php8.4-mbstring php8.4-xml \
+  php8.4-curl php8.4-opcache
 # opcache on, JIT off (safe default):
-cat >/etc/php/8.3/fpm/conf.d/90-app.ini <<'EOF'
+cat >/etc/php/8.4/fpm/conf.d/90-app.ini <<'EOF'
 opcache.enable=1
 opcache.validate_timestamps=1
 opcache.revalidate_freq=60
 memory_limit=512M
 EOF
-systemctl restart php8.3-fpm
+systemctl restart php8.4-fpm
 ```
 
 Composer:
@@ -118,20 +119,21 @@ chown deploy:deploy /var/www/secrets/firebase-service-account.json && chmod 600 
 Use the same Firebase project as the app (`bisaas-realtime-123` per
 `android/app/google-services.json`).
 
-## 7. Migrate, seed, passport
+## 7. Migrate, seed, storage link
 
 ```bash
 php artisan migrate --force
 php artisan db:seed --force            # operator decides which seeders; content seeds are big
-php artisan passport:keys              # RSA keys for the bearer PATs the mobile app uses
 php artisan storage:link               # spatie media-library file URLs
 php artisan config:cache && php artisan route:cache && php artisan event:cache
 ```
 
 ## 8. Queue worker + scheduler (systemd)
 
-The scheduler carries ~15 jobs including every-5-minute ones — without it the
-economy and AI rollups stop.
+The scheduler carries **173 jobs** (`routes/console.php`), including
+every-5-minute ones — without it the economy and AI rollups stop. The mobile
+tokens are **Sanctum** personal access tokens (`auth:sanctum`), so there is no
+`passport:keys` step.
 
 ```bash
 sudo tee /etc/systemd/system/bisaas-queue.service >/dev/null <<'EOF'
@@ -171,14 +173,14 @@ server {
 
     location /.well-known/assetlinks.json {
         default_type application/json;
-        try_files /assetlinks.json =404;   # put the file in public/.well-known/ — see §11
+        try_files $uri =404;               # serves public/.well-known/assetlinks.json — see §11
     }
 
     location / { try_files $uri $uri/ /index.php?$query_string; }
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.4-fpm.sock;
     }
     location ~ /\.(?!well-known) { deny all; }
 }
@@ -253,7 +255,9 @@ verification mails — set at least a working mailer.
 
 ---
 
-## After the server is live — the client flip (this repo, Phase B)
+## After the server is live — the client flip (this repo)
 
-Four small changes, then hardware QA: see `docs/PLAY_STORE_READINESS.md` §1
-steps 4–5. Do not flip `env.dart` until §12 above passes.
+Point the app at the new host, regenerate the certificate pins from the live
+TLS chain, deploy `assetlinks.json`, then run the hardware smoke pass. The
+ordered version is `docs/LAUNCH_READINESS.md` §"Critical path"; do not change
+`dart_defines/production.json` until §12 above passes.

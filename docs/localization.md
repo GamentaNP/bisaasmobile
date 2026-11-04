@@ -28,7 +28,7 @@ half-happen.
 
 ## 2. What is translated today
 
-**Everything.** 1087 messages, in English, Nepali and Hindi, covering
+**Everything.** 1,192 messages, in English, Nepali and Hindi, covering
 every screen in the app:
 
 | Area | Screens |
@@ -45,20 +45,17 @@ every screen in the app:
 | The app itself | privacy choices, stored data, settings, force update, maintenance, offline banner, error and empty states |
 | **Failures** | the whole error catalogue — every status code and every transport failure — because an error message is the copy a user reads most often |
 
-**Fourteen strings in the whole of `lib/` are not translated**, and all
-fourteen are correct:
+**Twenty-six literals in the whole of `lib/` are not translated**, and every
+one of them is correct. They fall into three groups, and the test keeps them
+in three separate sets so the reason is visible at the definition:
 
-| String | Why |
-|---|---|
-| `support@bisaas.com` | An email address, not copy. Translating it would break it. |
-| `OK (cached)` | A synthetic HTTP status message. It is never shown to a user. |
-| The debug auto-login button | It only exists in a `kDebugMode` build, so it is compiled out of a release. |
-| `C` | The avatar fallback: the first letter of the display name. |
-| Seven sync-queue reasons | `an empty endpoint`, `a path with surrounding whitespace`, … They explain why a queued endpoint was refused; they end up in an `ArgumentError` and in the log. |
-| `correctness`, `duration` | **Protocol values.** The battle kernel and the server agree on those strings; translating them would break the contract rather than translate it. |
-| `shuffle:{…}` | A roster-sampling label for the log. |
+| Group | Count | Examples and why |
+|---|---|---|
+| Addresses and non-copy values | 6 | `support@bisaas.com`, `privacy@bisaas.com`, the synthetic `offline@bisaas.test`, `OK (cached)` (a synthetic HTTP status, never shown), the `kDebugMode`-only auto-login button, and `C` (the avatar fallback, i.e. the first letter of the display name). |
+| Brand names | 10 | `CivilCal`, `OpenAI`, `Google Gemini`, `Anthropic`, `DeepSeek`, `Groq`, `Mistral`, `OpenRouter`, `Google`, `Apple`. Translating a proper noun makes it wrong, not Nepali. |
+| Developer diagnostics | 10 | Seven sync-queue rejection reasons, `correctness`, `duration` (**protocol values** the battle kernel and server agree on), and `shuffle:{…}`. These reach an `ArgumentError` or a log line, never a screen. |
 
-`test/app/localization_coverage_test.dart` holds the list, so an
+`test/app/localization_coverage_test.dart` holds the three lists, so an
 exemption is visible rather than hidden.
 
 ---
@@ -70,6 +67,7 @@ Four tools, all checked in:
 | Tool | What it does |
 |---|---|
 | `tool/generate_arb.py` | The master copy table. English, Nepali and Hindi sit side by side in one file and the script writes the three ARB files from it, so the locales cannot drift apart. It also **validates** that every `{placeholder}` in a message is declared — a mismatch is a build-time error, not a screen that quietly stayed English. |
+| `tool/arb_coverage.dart` | The completeness gate. It proves every master-table key exists in all three ARBs, that no ARB carries a key the table does not, and that no value is empty or still holds an English placeholder. Also exercised by `test/l10n/arb_coverage_test.dart`. |
 | `tool/localization_coverage.dart` | Parses every file under `lib/` with the Dart analyzer and reports the string literals that reach the user. It sees the widget text positions, the string branches of a conditional, the copy a function **returns**, a copy **variable**, a map value under a copy-ish key, and the first argument of a private constructor — and it **skips** log lines, constant initialisers and protocol labels. A literal with no letter in it — a counter, a separator — is skipped, because a screen full of numbers is not untranslated copy. |
 | `tool/apply_localization.py` | Rewrites those literals to `l10n.<key>`. It removes the `const` chain the literal sat in (a getter call is not a constant expression) and calls the generated member with the original interpolated expressions, because a message with placeholders is a method and not a getter. |
 | `tool/apply_localization_plumbing.py` | Adds the import and the `l10n` binding the rewritten strings need. |
@@ -77,8 +75,8 @@ Four tools, all checked in:
 And the test that holds the line:
 
 **`test/app/localization_coverage_test.dart`** asserts that **the whole
-app** contains no hardcoded user-facing string, apart from the four
-documented exceptions. There is no ratchet to widen and no tier to
+app** contains no hardcoded user-facing string, apart from the 26
+documented exceptions above. There is no ratchet to widen and no tier to
 finish: the boundary is the edge of the app.
 
 Run the measurement by hand:
@@ -120,7 +118,7 @@ dart run tool/localization_coverage.dart --verbose  # every string, with a line 
 
 ## 5. Known gaps
 
-- **`hi` has had less review than `ne`.** Both have the same 1087
+- **`hi` has had less review than `ne`.** Both have the same 1,192
   messages, so the coverage is identical, but the launch market is Nepal
   and the Hindi copy has not been read by a Hindi speaker. The
   mechanical defects a machine translation produces — a term spelled two

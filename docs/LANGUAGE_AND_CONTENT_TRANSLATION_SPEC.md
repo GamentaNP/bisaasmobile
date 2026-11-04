@@ -4,7 +4,10 @@
 > have to be re-explained in conversation again.
 > **Scope:** the whole Bisaas product (web, admin, API, Flutter client). Business
 > logic is server-authoritative; the Flutter client renders and localises only.
-> **Last verified against code + live dev DB:** 2026-09-28.
+> **Last verified against code + live dev DB:** 2026-09-28 for the server
+> backlog (§7); **2026-11-04** for the client status (§6, §9) and for G1's
+> current state. The client numbers were re-measured at `0cee095` —
+> 1,192 messages per locale — so treat any older count in prose as history.
 
 ---
 
@@ -151,14 +154,16 @@ not a feature to re-implement.
 - Tests cover Khmer, Sinhala, Thai, Lao, Hebrew, Georgian, Armenian, Ethiopic,
   Myanmar, Tibetan, Malayalam, Kannada, Oriya, Gujarati, Gurmukhi — none of which
   are in the app's language registry. That is the point.
-- The **language registry is server-driven** (`49c7145`): `AppLanguages.adopt()`
-  installs a registry from `GET /api/v1/languages` and the seeded list is only
-  the fallback, so adding a language worldwide is a server change rather than a
-  client release. English is always retained and sorted first, because it is the
-  canonical fallback — a server that omits it, or an empty response, must not
-  leave the app with no language. Direction is derived from the **script**, not
-  from the server's `direction` field, so a server that wrongly reports Arabic
-  as `ltr` cannot make Arabic lay out left-to-right.
+- The **language registry is server-driven in design, not yet in practice**
+  (`49c7145`): `AppLanguages.adopt()` can install a registry from
+  `GET /api/v1/languages`, but the server does **not** expose that route yet
+  (it exposes `country-languages` only), so `adopt()` is currently exercised
+  by tests and the seeded list is what ships. English is always retained and
+  sorted first, because it is the canonical fallback — a server that omits it,
+  or an empty response, must not leave the app with no language. Direction is
+  derived from the **script**, not from the server's `direction` field, so a
+  server that wrongly reports Arabic as `ltr` cannot make Arabic lay out
+  left-to-right.
 - **ARB coverage is gated in CI** (`49c7145`): `tool/arb_coverage.dart` reports
   per-locale coverage, untranslated keys, dead keys and placeholder drift, and
   exits non-zero when a locale is incomplete. This is necessary because
@@ -166,8 +171,11 @@ not a feature to re-implement.
   English at runtime, so a 90%-translated locale otherwise ships a
   mixed-language UI that no check notices.
 
-**Remaining client gap:** the ARB catalogue has **21 keys against ~266 English
-source files**. Rendering is solved; *interface strings* are not. See §9.
+**Client gap status:** closed for the three shipped locales. The catalogue is
+**1,192 messages in each of `app_en` / `app_ne` / `app_hi`**, and the
+coverage + consistency gates run in CI. Rendering is solved and interface
+strings are translated for those three; any *further* locale is still absent
+(`es fr ar bn ta te zh`), which is §9's list — not a gap in the current UI.
 
 ---
 
@@ -177,19 +185,22 @@ Verified 2026-09-28 against source and the live dev database. These are ordered 
 severity. The backend is owned by another agent; this section is the contract that
 work must satisfy.
 
-### G1 — There is no working translated-content read path. **Blocking.**
+### G1 — The translated-content read path exists but is not verified-only. **Partially resolved.**
 
-`quiz_question_translations` has **0 rows**. `QuestionTranslationService::resolve()`
-is **never called from any controller**. No API resource returns a `translations`
-key. Consequence: even with 100% translated content, every learner would see
-English. The write side is built and reviewed; the read side does not exist.
+*Resolved since this section was written:* `QuestionTranslationService::resolve()`
+**is** now called on the attempt and exam read paths
+(`QuizAttemptController.php:520`, `QuizExamController.php:462`), so a
+translated question reaches a learner rather than being dropped.
 
-Required: resolve a translation on the question-serving path
-(`GET /api/v1/quiz/questions`, `/courses/{course}/questions`, `/quiz/daily`,
-`/concepts/{concept}/questions`, `/questions/{question}/content`) using
-`QuestionTranslationService::translationFor()` with the caller's locale and
-`question_view_mode`, honouring the verified-only rule, and fall back to the
-authored text when no verified translation exists.
+*Still open, and the actual risk now:* both call sites pass
+`allowAutoTranslated: true`, so a machine translation is served with the same
+authority as a human-verified one — which contradicts the verified-only rule
+this spec states in §3 R3 / §4.3. The tables were also empty when this was
+written; they are populated now, which makes the flag matter.
+
+Required: serve `auto_translated` rows only behind an explicit
+`question_view_mode` opt-in (or mark them in the payload so the client can
+label them), and fall back to the authored text otherwise.
 
 ### G2 — No `locale` parameter on question retrieval. **Blocking.**
 
@@ -212,7 +223,7 @@ question-serving route.
 | `TranslationCorpusReadinessService::SouthAsianTargetLocales` | `ne, hi, bn, ta, te` |
 | `AiTranslationService::SUPPORTED_LANGUAGES` | 11 codes incl. `zh`, `de`, `ja`, `ko`, `pt` — **disconnected from `languages`** |
 | `country_language_map.default_locale` values | 62 rows |
-| Client `AppLanguages.all` | 10 codes incl. `zh` — **disconnected from `languages`** |
+| Client `AppLanguages.all` | **3 codes: `en`, `ne`, `hi`** (`app_languages.dart:123`) — the seed is the shipping list until the server publishes `/languages` |
 
 Required: one source of truth. Either `languages` becomes the registry that
 validates, or `config('app.supported_locales')` is generated from it. `zh` must be
@@ -296,16 +307,18 @@ forget in a 5th.
 | Font/script rendering, all scripts | **DONE** (`d938dd5`) |
 | RTL layout (Arabic, Hebrew, Urdu, Persian) | **DONE** — direction derived from script, not from the server |
 | Language picker, native-name labels | **DONE** |
-| Language registry server-driven | **DONE** (`49c7145`) — awaits `GET /languages` (G4) |
+| Language registry server-driven | **DESIGNED, NOT LIVE** — `AppLanguages.adopt()` exists (`49c7145`) but the server has no `GET /api/v1/languages` yet (G4) |
 | ARB coverage gate in CI | **DONE** (`49c7145`) |
 | `Accept-Language` sent on every request | **DONE** |
 | `PATCH /api/v1/me/locale` persistence | **DONE** (writes `users.locale` only) |
-| ARB catalogue | **21 keys / ~266 English files** — `app_en`, `app_ne`, `app_hi` only |
+| ARB catalogue | **1,192 messages** in each of `app_en`, `app_ne`, `app_hi` |
 | Interface translations for `es fr ar bn ta te zh` | **absent** |
 
-Nepali and Hindi are both at **100% of the 21-key template**, verified by the CI
-gate. `CivilCal` is byte-identical to English in both, which is correct — it is a
-brand name, and the coverage tool reports it as the only untranslated key.
+Nepali and Hindi are both at **100% of the 1,192-message catalogue**, verified
+by the CI gate (`tool/arb_coverage.dart` + `test/l10n/arb_coverage_test.dart`).
+Twelve keys per locale are byte-identical to English on purpose — unit
+symbols (`%`, `XP`) and brand names (`CivilCal`) — and the translation audit
+treats them as correct rather than as untranslated copy.
 
 Interface strings are **not** machine-written. Generating them without a human or
 MT review would be fabricating translations. Adding a language is one ARB file

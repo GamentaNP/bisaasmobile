@@ -20,13 +20,13 @@ Flutter **3.47.2** (stable, `C:\src\flutter`) · Dart **3.13.2** · Riverpod + g
 
 ## API contract (read before you code)
 
-- **BasePath = `/api/v1` only** — `lib/app/config/api_config.dart:4`. No header negotiation, no unversioned paths.
+- **BasePath = `/api/v1` only** — `lib/app/config/api_config.dart:12`. No header negotiation, no unversioned paths.
 - **Headers:** `Accept: application/json` always + `Accept-Language` for i18n. 429 respects `Retry-After`; log `X-Request-Id`.
 - **Envelope:** `{success, data, message, pagination, timestamp, api_version}` → `lib/core/network/api_response.dart:12`.
 - **Errors:** `ApiErrorCode` mirrors `App\Http\Support\ApiErrorCode` — `lib/core/network/api_exception.dart:8`. Unknown codes → generic.
 - **Auth:** `POST /api/v1/auth/login` → bearer PAT stored in Keychain/Keystore via `TokenManager` (`lib/core/security/token_manager.dart:16`). Never `SharedPreferences`.
 - **Refresh:** When `expires_at < 7d`, `POST /api/v1/auth/refresh` with `X-Device-Name` (single-use rotation, persist atomically). Any 401 → logout.
-- **Idempotency:** `Idempotency-Key: <uuid>` on `POST /quiz/attempts/start`, purchases, etc.
+- **Idempotency:** `Idempotency-Key: <uuid>` on `POST /quiz/attempts` (start), answer submission, completion, purchases and lifeline use. A retry reuses the key; a new key on a retry is how a double-credit happens.
 
 Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` · live spec: `GET /api/v1/openapi.json`.
 
@@ -41,6 +41,12 @@ Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` �
 | **Physical Android device (dev)** | `https://localhost:8443` | `--dart-define=API_HOST=https://localhost:8443 --dart-define=ENV=dev` **plus `adb reverse tcp:8443 tcp:443`** |
 | staging | `https://staging.bisaas.com` | `--dart-define=ENV=staging` |
 | prod | `https://bisaas.com` | `--dart-define=ENV=prod` |
+
+> **The prod row is not live.** On 2026-11-04 `bisaas.com` resolves to a
+> parking page (`302 → hugedomains.com`), while `dart_defines/production.json`
+> points `API_HOST` at it. A release build installs and cannot log in. The
+> domain decision is the first item in
+> [`docs/LAUNCH_READINESS.md`](docs/LAUNCH_READINESS.md).
 
 Override raw: `--dart-define=API_BASE_URL=https://x/api/v1`.
 
@@ -147,15 +153,45 @@ winget install --id EclipseAdoptium.Temurin.17.JDK -e --accept-package-agreement
 
 # Android Studio (installs SDK + platform-tools + emulator)
 winget install --id Google.AndroidStudio -e --accept-package-agreements
-# Open Android Studio → SDK Manager → SDK Platforms: API 34 + 35
-#                              → SDK Tools: Android SDK Build-Tools, Platform-Tools, Emulator
+# Open Android Studio → SDK Manager → SDK Platforms: API 37 (compileSdk 37)
+#                              → SDK Tools: Android SDK Build-Tools 36, Platform-Tools, Emulator
 flutter doctor --android-licenses   # accept all
 flutter doctor -v                   # should become [√] Android toolchain
 ```
 
-Minimal CLI alternative (no Studio UI): `https://developer.android.com/studio#command-tools` → unzip to `%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest` → `sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"`.
+Minimal CLI alternative (no Studio UI): `https://developer.android.com/studio#command-tools` → unzip to `%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest` → `sdkmanager "platform-tools" "platforms;android-37.0" "build-tools;36.0.0"`.
+
+This machine already has all of it — see the toolchain section of `AGENTS.md`.
+The steps above are the recovery path for a fresh machine.
 
 Windows desktop (optional): install Visual Studio 2022 with **Desktop development with C++**.
+
+### Emulator and device
+
+Create an AVD that matches what CI runs, so a failure reproduces: Android Studio
+→ **Tools → Device Manager → Create Device** → Pixel → system image **API 28**
+(the QA floor) and, if you want the second case, **API 30** — both x86_64.
+
+```bash
+flutter emulators                                  # list AVDs
+flutter run -d emulator-5554 --dart-define=ENV=dev \
+  --dart-define=API_HOST=https://10.0.2.2          # emulator → host; http is blocked
+```
+
+Wireless debugging (Android 11+): Developer Options → Wireless debugging →
+*Pair device with pairing code*, then `adb pair <ip>:<port>` and
+`adb connect <ip>:<port>`.
+
+| Symptom | Fix |
+|---|---|
+| `cmdline-tools` missing | SDK Manager → SDK Tools → "Android SDK Command-line Tools (latest)" |
+| Emulator won't boot / is unusably slow | Enable hardware virtualisation in BIOS; on modern Intel use **AEHD** or WHPX — HAXM is discontinued |
+| `adb: device offline` | Toggle USB debugging off/on, re-plug |
+| `flutter run` can't find the device | `adb kill-server && adb start-server` |
+| White screen on launch | Check the Firebase bootstrap log — a missing `google-services.json` is expected on a fresh clone and must not stop login from rendering |
+
+Profile a real build with `flutter run --profile`, then DevTools → Performance
+while walking a quiz attempt: target every frame < 16 ms.
 
 ### Run
 
@@ -178,7 +214,10 @@ Build:
 flutter build apk --debug --dart-define=ENV=dev --dart-define=API_HOST=https://localhost:8443
 
 # release/prod builds fail CLOSED without signing material + cert pins
-# (android/key.properties + CERT_PIN_1/2 in dart_defines/production.json — both checked in CI):
+# (android/key.properties + CERT_PIN_1/2 in dart_defines/production.json).
+# CI enforces the pins; when the keystore secret is absent it builds an
+# explicitly debug-signed artifact for the artifact scan — that artifact is
+# not publishable and the build log says so.
 flutter build apk       --release --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=build/symbols
 flutter build appbundle --release --dart-define-from-file=dart_defines/production.json --obfuscate --split-debug-info=build/symbols
 flutter build web   --dart-define-from-file=dart_defines/production.json
@@ -196,7 +235,7 @@ cd device_tests && flutter test integration_test -d DEVICE_ID
 ```
 
 The suite boots the real app stack on the phone (engine, plugins, platform
-channels, navigation) and runs 7 smoke tests + 1 live-API test gated behind
+channels, navigation) and runs 8 smoke tests + 1 live-API test gated behind
 `RUN_LIVE_TESTS`. After any install, re-assert `adb reverse tcp:8443 tcp:443`
 first — the live test talks to the backend through the same tunnel.
 

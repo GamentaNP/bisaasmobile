@@ -18,13 +18,23 @@ If a rule conflicts between `bisaas` and `bisaasmobile`, `bisaas` wins for API c
 ## Branch & release posture (2026-11-04)
 
 - The only branches are **`main`** (default; renamed from `master` — its CI is retargeted to `main` + `development`) and **`development`** (working), locally and on GitHub, kept **byte-identical**: finish work, fast-forward `main` to it, push both. Prove (`git merge-base --is-ancestor <b> development`) before deleting any other branch; Dependabot re-proposals regenerate on their own.
-- The Android artifact builds from `main` only (`deploy_android.yml`); nothing auto-deploys from a push — releases are deliberate.
+- The Android artifact is built by CI **from `main` only** (`ci.yml` → `build-android`, gated on `github.ref == 'refs/heads/main'`); `deploy_android.yml` builds the same artifact on a `v*` tag or a manual dispatch. Nothing deploys on a plain push — releases are deliberate.
+
+## Where the documentation lives
+
+`docs/README.md` is the index: one line per document, which one is
+authoritative for what, and which retired documents were replaced by which.
+Start there before trusting any dated file.
+
+- Current measured state: `docs/PROJECT_STATE.md`
+- What blocks launch: `docs/LAUNCH_READINESS.md`
+- What the server delivers vs owes: `docs/SERVER_CONTRACT_STATUS.md`
 
 ## API Contract — versioned, never drift
 
-- **BasePath = `/api/v1` only.** No header negotiation. No unversioned `/api/...` calls. See `lib/app/config/api_config.dart:4`.
+- **BasePath = `/api/v1` only.** No header negotiation. No unversioned `/api/...` calls. See `lib/app/config/api_config.dart:12`.
 - **Always send `Accept: application/json`** + `Accept-Language` when localized. Without it, error bodies may be HTML/Inertia.
-- **Envelope:** `{success, data, message, pagination, timestamp, api_version}` — see `docs/MOBILE_API_INTEGRATION_GUIDE.md:73` and `lib/core/network/api_response.dart:12`.
+- **Envelope:** `{success, data, message, pagination, timestamp, api_version}` — see `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md` (it lives in the server repo, not here) and `lib/core/network/api_response.dart:12`.
 - **Error codes:** `ApiErrorCode` registry (`App\Http\Support\ApiErrorCode` on server, mirrored in `lib/core/network/api_exception.dart:8`). Treat unknowns as generic.
 - **Auth:** Bearer PAT from `POST /api/v1/auth/login` (or register/social). Stored ONLY in `flutter_secure_storage` via `lib/core/security/token_manager.dart:16`, never SharedPreferences.
 - **Social login:** the client obtains an **id_token** from the platform SDK and posts it to `POST /auth/social/google` or `POST /auth/social/apple`. The server verifies it with Socialite in stateless mode. The client never sees a provider access token and never holds a client secret.
@@ -66,8 +76,8 @@ product decision about offline answering — do not turn it on by accident.
 
 ## Local backend reference
 
-- Default dev backend: `http://bisaas.test` (Laragon + PostgreSQL) — see `lib/app/config/env.dart:18`. Chrome/web can hit it directly; Android emulator must use `http://10.0.2.2` mapping.
-- Production: `https://bisaas.com` (or whatever `APP_URL` is on the server). Never hardcode hosts in features — import from `ApiConfig`.
+- Default dev backend: `https://bisaas.test` (Laragon + PostgreSQL) — see `lib/app/config/env.dart:18`. Chrome/web can hit it directly; the Android emulator uses `https://10.0.2.2` (`--dart-define=API_HOST=https://10.0.2.2`). **Plain `http://` never connects**: `networkSecurityConfig` blocks cleartext in every build, including debug.
+- Production: `https://bisaas.com` per `dart_defines/production.json` — **not live on 2026-11-04** (the domain 302s to a parking page). See `docs/LAUNCH_READINESS.md`. Never hardcode hosts in features — import from `ApiConfig`.
 - **Do not** add `/api/v1` twice: `ApiConfig.baseUrl` already ends with `/api/v1`.
 
 ## Flutter stack pins (keep in sync with pubspec.yaml)
@@ -121,7 +131,7 @@ Rules:
 - Before adding a calculation, confirm the backend is source of truth — do not duplicate calculator math on-device except for offline preview (and then reconcile with server on sync).
 - Every network call honors `X-Request-Id` logging, `X-RateLimit-*` backoff, and `Retry-After` on 429.
 - No `env()`-style secrets in committed code; flavor config lives in `lib/app/config/env.dart` + `--dart-define`.
-- **Do not add a hardcoded user-facing string.** The app is fully translated into English, Nepali and Hindi — 1087 messages — and a string that is not in `lib/l10n/app_*.arb` reaches a Nepali reader in English. Add the key to `tool/generate_arb.py` (English, Nepali and Hindi on one line each, with the placeholder names), run `python tool/generate_arb.py && flutter gen-l10n`, and read it through `AppLocalizations.of(context)!` — or `appL10n()` outside a widget. `test/app/localization_coverage_test.dart` asserts that the whole app has no hardcoded user-facing string. See `docs/localization.md`.
+- **Do not add a hardcoded user-facing string.** The app is fully translated into English, Nepali and Hindi — **1,192 messages in each locale** — and a string that is not in `lib/l10n/app_*.arb` reaches a Nepali reader in English. Add the key to `tool/generate_arb.py` (English, Nepali and Hindi on one line each, with the placeholder names), run `python tool/generate_arb.py && flutter gen-l10n`, and read it through `AppLocalizations.of(context)!` — or `appL10n()` outside a widget. `test/app/localization_coverage_test.dart` asserts that the whole app has no hardcoded user-facing string. `docs/localization.md` is the single source for the pipeline and the current counts.
 
 ## Runbook
 
@@ -144,7 +154,7 @@ pins are both present. Both fail **closed**, and both are checked in CI
 
 | Define | Source | Required for |
 |---|---|---|
-| `CERT_PIN_1` (+ `CERT_PIN_2` backup) | `dart_defines/production.json` | Any non-dev build. A production build with no usable pin is refused **twice**: the Gradle script fails the build (so CI catches it), and the runtime refuses to start (so a device cannot run an unpinned release). `lib/core/network/certificate_pinning.dart`, `android/app/build.gradle.kts`. |
+| `CERT_PIN_1` (+ `CERT_PIN_2` backup) | `dart_defines/production.json` | A production build (`ENV=prod`). A production build with no usable pin is refused **twice**: the Gradle script fails the build (so CI catches it), and the runtime refuses to start (so a device cannot run an unpinned release). `lib/core/network/certificate_pinning.dart`, `android/app/build.gradle.kts`. Staging deliberately uses standard validation instead — the pins defend the production host. |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_SERVER_CLIENT_ID` | `--dart-define` | Google sign-in. Without the *server* client id the SDK issues no `id_token` and the server answers `AUTH_SOCIAL_FAILED`. |
 | `APPLE_CLIENT_ID` / `APPLE_REDIRECT_URI` | `--dart-define` | Apple sign-in. The redirect URI is required on Android and web. On iOS the **"Sign in with Apple" capability** must also be enabled on the App ID in the Apple Developer portal, and `ios/Runner/Runner.entitlements` (already wired via `CODE_SIGN_ENTITLEMENTS`) must stay in the project. |
 | `ENV` | `--dart-define=ENV=prod` | Selects the flavor. The dev certificate shim is compiled out of any non-debug build, and a production host is never in the permissive host set. |
@@ -197,7 +207,7 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   Flutter's engine for 3.47.2 references the API-34 type
   `UiModeManager.ContrastChangeListener` from its accessibility bridge, so **TalkBack does not work
   on API 26–33** — the engine catches the `NoClassDefFoundError` and disables the bridge. The app
-  itself runs fine. See `docs/MOBILE_REMAINING_WORK_2026-09-27.md` §3 item V.
+  itself runs fine. See `docs/PROJECT_STATE.md` §5 C5.
 - **Firebase is active.** `android/app/google-services.json` exists (project
   `bisaas-realtime-123`), so the conditional google-services Gradle plugin applies and FCM /
   Crashlytics / Analytics are live. **Remote Config is not used** — it was removed because it

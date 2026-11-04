@@ -1,48 +1,53 @@
-# Firebase Setup — Bisaasmobile (CivilCal)
+# Firebase — what is actually provisioned
 
-> **Status (2026-08-30):** Setup script generated. Real `google-services.json` and `GoogleService-Info.plist` are **gitignored** — see `C:\laragon\www\bisaasmobile\.gitignore`. The bootstrap in `lib/app/bootstrap.dart` no-ops safely if Firebase is not initialised so dev builds still run.
+**Verified 2026-11-04.** One Firebase project, one Android config file, no
+flavours and no Remote Config. This file replaces the two-project / three-
+flavour setup it used to describe, which never matched the tree.
 
-## 1. Create Firebase Projects
+| Fact | Value |
+|---|---|
+| Project | **`bisaas-realtime-123`** (single project for all environments) |
+| Android package | `com.bisaas.bisaasmobile` |
+| Android config | `android/app/google-services.json` — **gitignored**, present only on the founder's machine |
+| iOS bundle | `com.bisaas.bisaasmobile` |
+| iOS config | `ios/Runner/GoogleService-Info.plist` — gitignored |
+| Gradle plugin | applied **conditionally** when the config file exists (`android/app/build.gradle.kts:16`) |
+| Services in use | Analytics, Crashlytics, Cloud Messaging, Realtime Database |
+| **Not** in use | **Remote Config** — removed on purpose. It disagreed with the operator's flags; feature flags, maintenance and the min-version floor come from `GET /api/v1/app/config`. |
 
-Create **two** Firebase projects (dev / prod):
+## Consequences of the config being gitignored
 
-| Env | Project ID | Console URL |
-|---|---|---|
-| Dev | `civilcal-dev` | https://console.firebase.google.com/project/civilcal-dev |
-| Prod | `civilcal-prod` | https://console.firebase.google.com/project/civilcal-prod |
+A fresh clone — and **every CI run** — has no Firebase config. That is
+deliberate and handled:
 
-## 2. Android
+- `lib/app/bootstrap.dart` short-circuits `Firebase.initializeApp()`; the app
+  runs, and every local path (quiz, calculator, library, settings) works.
+- Push registration, Analytics, Crashlytics and the RTDB battle path are
+  disabled in that state. CI's device tests therefore assert the *graceful
+  absence* path, not push delivery. Push must be verified on a machine that
+  has the config file (the Redmi 6A run does).
+- A release built without the config file is not publishable: push would be
+  dead for every user. Check `android/app/google-services.json` exists before
+  building a store artifact.
 
-### 2.1 Register Android App (both projects)
-- Package name: `com.bisaas.civilcal`
-- Debug SHA-1: `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android`
-- Release SHA-1: from Fastlane keystore
+## Android registration (when the file must be regenerated)
 
-### 2.2 Download `google-services.json`
-- Dev → `android/app/google-services-dev.json`
-- Prod → `android/app/google-services-prod.json`
+1. Firebase Console → project `bisaas-realtime-123` → Add app → Android →
+   package `com.bisaas.bisaasmobile`.
+2. Add the **release** SHA-1/SHA-256 from the upload keystore (Play App
+   Signing re-signs the artifact, so also add the app-signing SHA-1 from Play
+   Console once enrolled — Google Sign-In and Dynamic Links fail without it).
+3. Download `google-services.json` into `android/app/`. Do not commit it.
 
-### 2.3 Wire flavor switching in `android/app/build.gradle.kts`
-Already wired via the `flutter.dev` / `flutter.staging` / `flutter.prod` flavors. The Gradle plugin uses `apply plugin: "com.google.gms.google-services"` and the file is referenced via the flavor's source set in `android/app/src/{dev,staging,prod}/google-services.json`. See `C:\laragon\www\bisaasmobile\android\app\build.gradle.kts` for the current wiring.
+## iOS registration
 
-## 3. iOS
+1. Add app → iOS → bundle `com.bisaas.bisaasmobile`.
+2. Download `GoogleService-Info.plist` into `ios/Runner/` and add it to the
+   Runner target in Xcode (drag into the project, "Copy items if needed").
+3. Upload an APNs auth key (Cloud Messaging → iOS configuration). Without it,
+   push to iOS silently fails.
 
-### 3.1 Register iOS App
-- Bundle ID: `com.bisaas.civilcal`
-- Download `GoogleService-Info.plist`
-- Place in `ios/Runner/GoogleService-Info.plist` (gitignored)
-- Open `ios/Runner.xcworkspace` in Xcode and add the plist to the Runner target
-
-## 4. Enable Firebase Services
-
-In both projects, enable:
-- **Analytics** — auto + custom events (already wired in `AnalyticsService`)
-- **Crashlytics** — required for crash reporting
-- **Cloud Messaging (FCM)** — required for push; upload APNs key for iOS
-- **Remote Config** — define keys: `force_update_min_version`, `feature_eice_enabled`, `feature_battle_enabled`
-- **Realtime Database** — required for Battle mode (see `C:\laragon\www\bisaas\docs\mobileapp\RTDB_BATTLE_SCHEMA.md`)
-
-## 5. RTDB Security Rules (Battle Mode)
+## Realtime Database rules (battle)
 
 ```json
 {
@@ -50,29 +55,27 @@ In both projects, enable:
     "battles": {
       "$lobbyId": {
         ".read": "auth != null",
-        ".write": false,
-        "player1": { ".read": "auth != null" },
-        "player2": { ".read": "auth != null" }
+        ".write": false
       }
     }
   }
 }
 ```
 
-**Rule:** clients NEVER write to RTDB. Server (Firebase Admin SDK) handles all writes.
+Clients **read** lobby state; every write comes from the server through the
+Admin SDK. Keep `.write: false` — a client that can write to a lobby can fake
+a battle result.
 
-## 6. Verify
-
-After the config files are in place:
+## Verify
 
 ```bash
-cd C:\laragon\www\bisaasmobile
 flutter pub get
-flutter run --dart-define=ENV=dev --dart-define=API_HOST=http://10.0.2.2
-# On login, verify the app posts to POST /api/v1/device-tokens
-# In Firebase Console → Engage → Cloud Messaging, send a test push
+# emulator, with the backend reachable over TLS
+flutter run --dart-define=ENV=dev --dart-define=API_HOST=https://10.0.2.2
+
+# on login, the app registers the device:
+#   POST /api/v1/device-tokens {token, platform}
+# then send a test push from Console → Engage → Cloud Messaging
 ```
 
-## 7. Local Dev Without Firebase
-
-If `google-services.json` is absent, `lib/app/bootstrap.dart` short-circuits `Firebase.initializeApp()`. The app still works for offline quiz practice, calculator, and any other local-only path. Push, Analytics, Crashlytics, RemoteConfig, and Battle mode are all disabled in this state.
+A cleartext `http://` host will not connect at all — see `README.md`.

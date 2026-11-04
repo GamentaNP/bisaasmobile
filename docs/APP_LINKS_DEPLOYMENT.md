@@ -1,5 +1,11 @@
 # Android App Links — the file that must be served, and how to verify it
 
+> **Prerequisite, currently unmet (2026-11-04):** `bisaas.com` does not serve
+> this application — it 302s to a domain broker. The file below cannot be
+> deployed until the domain resolves to the app server and serves TLS. See
+> [LAUNCH_READINESS.md](LAUNCH_READINESS.md). Everything else in this file
+> stays correct once that is done.
+
 Android verifies `https://bisaas.com` links against a file published by the
 **server**, not by this app:
 
