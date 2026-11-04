@@ -3352,7 +3352,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get modesArcadeBody =>
-      'Arcade Games कोर्समा समय सीमित आर्केड स्प्रिन्ट — हर राउन्ड सर्भरले स्कोर गर्छ।';
+      'समयबद्ध रन — सर्वाइभल, लाइटनिङ र सही/गलत — हर राउन्ड सर्भरले स्कोर गर्छ।';
 
   @override
   String get modesArcadeTitle => 'आर्केड खेलहरू';
@@ -4315,4 +4315,142 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get organizationRequired => 'जारी राख्न संस्था छान्नुहोस्।';
+
+  @override
+  String get arcadeTitle => 'आर्केड';
+
+  @override
+  String get arcadeSubtitle =>
+      'छोटा, समयबद्ध राउन्ड। हरेक उत्तर सर्भरले स्कोर गर्छ।';
+
+  @override
+  String get arcadeServerScored => 'सर्भर-स्कोर';
+
+  @override
+  String get arcadeSurvivalTitle => 'सर्वाइभल';
+
+  @override
+  String get arcadeSurvivalBody =>
+      'अन्त्यहीन रन — एउटा गलत उत्तरले अन्त्य गर्छ।';
+
+  @override
+  String get arcadeLightningTitle => 'लाइटनिङ';
+
+  @override
+  String get arcadeLightningBody => 'दस प्रश्न, प्रत्येकमा पाँच सेकेन्ड।';
+
+  @override
+  String get arcadeTrueFalseTitle => 'सही वा गलत';
+
+  @override
+  String get arcadeTrueFalseBody => 'तीस छिटो प्रश्न, प्रत्येकमा पाँच सेकेन्ड।';
+
+  @override
+  String arcadeRuleQuestions(Object count) {
+    return '$count प्रश्न';
+  }
+
+  @override
+  String arcadeRuleSeconds(Object seconds) {
+    return 'प्रति प्रश्न $seconds सेकेन्ड';
+  }
+
+  @override
+  String get arcadeRuleUntilMiss => 'एक गल्तीले रन अन्त्य हुन्छ';
+
+  @override
+  String get arcadeAnyCategory => 'कुनै पनि श्रेणी';
+
+  @override
+  String get arcadeChooseCategory => 'श्रेणी छान्नुहोस्';
+
+  @override
+  String get arcadeChooseCourse => 'कोर्स छान्नुहोस्';
+
+  @override
+  String get arcadeCategoryClear => 'हटाउनुहोस्';
+
+  @override
+  String get arcadeCategoryHint => 'वैकल्पिक — सबै मोडमा लागू।';
+
+  @override
+  String get arcadeCategoryError => 'श्रेणीहरू लोड हुन सकेनन्।';
+
+  @override
+  String get arcadeStartRun => 'रन सुरु गर्नुहोस्';
+
+  @override
+  String get arcadeStarting => 'सुरु हुँदैछ…';
+
+  @override
+  String arcadeQuestionProgress(Object current, Object total) {
+    return 'प्रश्न $current / $total';
+  }
+
+  @override
+  String arcadeTimeLeft(Object seconds) {
+    return '$seconds सेकेन्ड बाँकी';
+  }
+
+  @override
+  String get arcadeTimeUp => 'समय सकियो';
+
+  @override
+  String get arcadeAnswerSaved => 'उत्तर सुरक्षित — स्कोर अन्त्यमा खुल्छ।';
+
+  @override
+  String get arcadeQuitTitle => 'यो रन छोड्ने?';
+
+  @override
+  String get arcadeQuitBody => 'प्रयास रद्द हुनेछ र स्कोर हुँदैन।';
+
+  @override
+  String get arcadeQuitConfirm => 'छोड्नुहोस्';
+
+  @override
+  String get arcadeQuitCancel => 'खेल्दै रहनुहोस्';
+
+  @override
+  String get arcadeGameOver => 'रन समाप्त';
+
+  @override
+  String get arcadeGameOverBody =>
+      'एउटा गलत उत्तरले यो रन अन्त्य गर्‍यो। स्कोर सर्भरले गर्‍यो।';
+
+  @override
+  String get arcadeResultTitle => 'रनको नतिजा';
+
+  @override
+  String get arcadeScore => 'स्कोर';
+
+  @override
+  String get arcadeCorrect => 'सही';
+
+  @override
+  String get arcadeWrong => 'गलत';
+
+  @override
+  String get arcadeSkipped => 'नउत्तरिएको';
+
+  @override
+  String get arcadeAccuracy => 'शुद्धता';
+
+  @override
+  String get arcadePlayAgain => 'फेरि खेल्नुहोस्';
+
+  @override
+  String get arcadeBackToArcade => 'आर्केडमा फर्कनुहोस्';
+
+  @override
+  String get arcadeLoadError => 'रन सुरु हुन सकेन।';
+
+  @override
+  String get arcadeEmptyTitle => 'यो श्रेणीमा अझै प्रश्न छैनन्';
+
+  @override
+  String get arcadeEmptyBody =>
+      'अर्को श्रेणी प्रयास गर्नुहोस्, वा कुनै पनि श्रेणीमा खेल्नुहोस्।';
+
+  @override
+  String get arcadeRetry => 'फेरि प्रयास गर्नुहोस्';
 }

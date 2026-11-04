@@ -2409,7 +2409,7 @@
   "modesPracticeBody": "बुकमार्क और कमज़ोर विषयों से बिना समय-सीमा अभ्यास। सर्वर-ग्रेडेड, लेकिन XP या रैंकिंग असर नहीं।",
   "modesDailyBody": "हर दिन एक नया सेट — स्ट्रीक बनाए रखने के लिए बोनस XP।",
   "modesBattleBody": "दूसरे खिलाड़ी से 1v1 मुकाबला — वही सवाल, तेज़ सही जवाब जीतता है।",
-  "modesArcadeBody": "Arcade Games कोर्स पर समय-सीमित आर्केड स्प्रिंट — हर राउंड सर्वर स्कोर करता है।",
+  "modesArcadeBody": "समयबद्ध रन — सर्वाइवल, लाइटनिंग और सही/गलत — हर राउंड सर्वर स्कोर करता है।",
   "modesArcadeTitle": "आर्केड गेम्स",
   "modesGotIt": "समझ गया",
   "pscTitle": "PSC / लोकसेवा",
@@ -3233,5 +3233,78 @@
       }
     }
   },
-  "organizationRequired": "जारी रखने के लिए संगठन चुनें।"
+  "organizationRequired": "जारी रखने के लिए संगठन चुनें।",
+  "arcadeTitle": "आर्केड",
+  "arcadeSubtitle": "छोटे, समयबद्ध राउंड। हर उत्तर सर्वर स्कोर करता है।",
+  "arcadeServerScored": "सर्वर-स्कोर",
+  "arcadeSurvivalTitle": "सर्वाइवल",
+  "arcadeSurvivalBody": "अंतहीन रन — एक गलत उत्तर इसे समाप्त कर देता है।",
+  "arcadeLightningTitle": "लाइटनिंग",
+  "arcadeLightningBody": "दस प्रश्न, हर एक के लिए पाँच सेकंड।",
+  "arcadeTrueFalseTitle": "सही या गलत",
+  "arcadeTrueFalseBody": "तीस तेज़ प्रश्न, हर एक के लिए पाँच सेकंड।",
+  "arcadeRuleQuestions": "{count} प्रश्न",
+  "@arcadeRuleQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeRuleSeconds": "प्रति प्रश्न {seconds} सेकंड",
+  "@arcadeRuleSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeRuleUntilMiss": "एक गलती रन समाप्त करती है",
+  "arcadeAnyCategory": "कोई भी श्रेणी",
+  "arcadeChooseCategory": "श्रेणी चुनें",
+  "arcadeChooseCourse": "कोर्स चुनें",
+  "arcadeCategoryClear": "हटाएँ",
+  "arcadeCategoryHint": "वैकल्पिक — सभी मोड पर लागू।",
+  "arcadeCategoryError": "श्रेणियाँ लोड नहीं हो सकीं।",
+  "arcadeStartRun": "रन शुरू करें",
+  "arcadeStarting": "शुरू हो रहा है…",
+  "arcadeQuestionProgress": "प्रश्न {current} / {total}",
+  "@arcadeQuestionProgress": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeTimeLeft": "{seconds} सेकंड शेष",
+  "@arcadeTimeLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeTimeUp": "समय समाप्त",
+  "arcadeAnswerSaved": "उत्तर सहेजा गया — स्कोर अंत में खुलेगा।",
+  "arcadeQuitTitle": "यह रन छोड़ें?",
+  "arcadeQuitBody": "यह प्रयास छोड़ दिया जाएगा और स्कोर नहीं होगा।",
+  "arcadeQuitConfirm": "छोड़ें",
+  "arcadeQuitCancel": "खेलते रहें",
+  "arcadeGameOver": "रन समाप्त",
+  "arcadeGameOverBody": "एक गलत उत्तर ने यह रन समाप्त किया। स्कोर सर्वर ने दिया।",
+  "arcadeResultTitle": "रन का परिणाम",
+  "arcadeScore": "स्कोर",
+  "arcadeCorrect": "सही",
+  "arcadeWrong": "गलत",
+  "arcadeSkipped": "अनुत्तरित",
+  "arcadeAccuracy": "सटीकता",
+  "arcadePlayAgain": "फिर खेलें",
+  "arcadeBackToArcade": "आर्केड पर लौटें",
+  "arcadeLoadError": "रन शुरू नहीं हो सका।",
+  "arcadeEmptyTitle": "इस श्रेणी में अभी प्रश्न नहीं हैं",
+  "arcadeEmptyBody": "दूसरी श्रेणी आज़माएँ, या किसी भी श्रेणी में खेलें।",
+  "arcadeRetry": "फिर कोशिश करें"
 }

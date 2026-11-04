@@ -5734,7 +5734,7 @@ abstract class AppLocalizations {
   /// No description provided for @modesArcadeBody.
   ///
   /// In en, this message translates to:
-  /// **'Timed arcade sprints on the Arcade Games course — every round scored by the server.'**
+  /// **'Timed runs — Survival, Lightning and True/False — every round scored by the server.'**
   String get modesArcadeBody;
 
   /// No description provided for @modesArcadeTitle.
@@ -7280,6 +7280,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose an organization to continue.'**
   String get organizationRequired;
+
+  /// No description provided for @arcadeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arcade'**
+  String get arcadeTitle;
+
+  /// No description provided for @arcadeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Short, timed runs. The server scores every answer.'**
+  String get arcadeSubtitle;
+
+  /// No description provided for @arcadeServerScored.
+  ///
+  /// In en, this message translates to:
+  /// **'Server-scored'**
+  String get arcadeServerScored;
+
+  /// No description provided for @arcadeSurvivalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Survival'**
+  String get arcadeSurvivalTitle;
+
+  /// No description provided for @arcadeSurvivalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Endless run — one wrong answer ends it.'**
+  String get arcadeSurvivalBody;
+
+  /// No description provided for @arcadeLightningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning'**
+  String get arcadeLightningTitle;
+
+  /// No description provided for @arcadeLightningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ten questions, five seconds each.'**
+  String get arcadeLightningBody;
+
+  /// No description provided for @arcadeTrueFalseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'True or False'**
+  String get arcadeTrueFalseTitle;
+
+  /// No description provided for @arcadeTrueFalseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Thirty rapid prompts, five seconds each.'**
+  String get arcadeTrueFalseBody;
+
+  /// No description provided for @arcadeRuleQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions'**
+  String arcadeRuleQuestions(Object count);
+
+  /// No description provided for @arcadeRuleSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s per question'**
+  String arcadeRuleSeconds(Object seconds);
+
+  /// No description provided for @arcadeRuleUntilMiss.
+  ///
+  /// In en, this message translates to:
+  /// **'One miss ends the run'**
+  String get arcadeRuleUntilMiss;
+
+  /// No description provided for @arcadeAnyCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Any category'**
+  String get arcadeAnyCategory;
+
+  /// No description provided for @arcadeChooseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get arcadeChooseCategory;
+
+  /// No description provided for @arcadeChooseCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a course'**
+  String get arcadeChooseCourse;
+
+  /// No description provided for @arcadeCategoryClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get arcadeCategoryClear;
+
+  /// No description provided for @arcadeCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional — scopes every mode.'**
+  String get arcadeCategoryHint;
+
+  /// No description provided for @arcadeCategoryError.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories could not be loaded.'**
+  String get arcadeCategoryError;
+
+  /// No description provided for @arcadeStartRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Start run'**
+  String get arcadeStartRun;
+
+  /// No description provided for @arcadeStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get arcadeStarting;
+
+  /// No description provided for @arcadeQuestionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current} of {total}'**
+  String arcadeQuestionProgress(Object current, Object total);
+
+  /// No description provided for @arcadeTimeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s left'**
+  String arcadeTimeLeft(Object seconds);
+
+  /// No description provided for @arcadeTimeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Time\'s up'**
+  String get arcadeTimeUp;
+
+  /// No description provided for @arcadeAnswerSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer saved — the score unlocks at the end.'**
+  String get arcadeAnswerSaved;
+
+  /// No description provided for @arcadeQuitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this run?'**
+  String get arcadeQuitTitle;
+
+  /// No description provided for @arcadeQuitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The attempt will be abandoned and will not be scored.'**
+  String get arcadeQuitBody;
+
+  /// No description provided for @arcadeQuitConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get arcadeQuitConfirm;
+
+  /// No description provided for @arcadeQuitCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep playing'**
+  String get arcadeQuitCancel;
+
+  /// No description provided for @arcadeGameOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Run over'**
+  String get arcadeGameOver;
+
+  /// No description provided for @arcadeGameOverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A wrong answer ended this run. The server scored it.'**
+  String get arcadeGameOverBody;
+
+  /// No description provided for @arcadeResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run result'**
+  String get arcadeResultTitle;
+
+  /// No description provided for @arcadeScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get arcadeScore;
+
+  /// No description provided for @arcadeCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get arcadeCorrect;
+
+  /// No description provided for @arcadeWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong'**
+  String get arcadeWrong;
+
+  /// No description provided for @arcadeSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Unanswered'**
+  String get arcadeSkipped;
+
+  /// No description provided for @arcadeAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy'**
+  String get arcadeAccuracy;
+
+  /// No description provided for @arcadePlayAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Play again'**
+  String get arcadePlayAgain;
+
+  /// No description provided for @arcadeBackToArcade.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to arcade'**
+  String get arcadeBackToArcade;
+
+  /// No description provided for @arcadeLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'The run could not start.'**
+  String get arcadeLoadError;
+
+  /// No description provided for @arcadeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions for this category yet'**
+  String get arcadeEmptyTitle;
+
+  /// No description provided for @arcadeEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another category, or play with any category.'**
+  String get arcadeEmptyBody;
+
+  /// No description provided for @arcadeRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get arcadeRetry;
 }
 
 class _AppLocalizationsDelegate

@@ -2409,7 +2409,7 @@
   "modesPracticeBody": "Untimed drills from your bookmarks and weak topics. Server-graded, but no XP and no rank effect.",
   "modesDailyBody": "One fresh set every day — bonus XP for keeping your streak alive.",
   "modesBattleBody": "A 1v1 duel against another player — same questions, faster correct answers win.",
-  "modesArcadeBody": "Timed arcade sprints on the Arcade Games course — every round scored by the server.",
+  "modesArcadeBody": "Timed runs — Survival, Lightning and True/False — every round scored by the server.",
   "modesArcadeTitle": "Arcade Games",
   "modesGotIt": "Got it",
   "pscTitle": "PSC / Loksewa",
@@ -3233,5 +3233,78 @@
       }
     }
   },
-  "organizationRequired": "Choose an organization to continue."
+  "organizationRequired": "Choose an organization to continue.",
+  "arcadeTitle": "Arcade",
+  "arcadeSubtitle": "Short, timed runs. The server scores every answer.",
+  "arcadeServerScored": "Server-scored",
+  "arcadeSurvivalTitle": "Survival",
+  "arcadeSurvivalBody": "Endless run — one wrong answer ends it.",
+  "arcadeLightningTitle": "Lightning",
+  "arcadeLightningBody": "Ten questions, five seconds each.",
+  "arcadeTrueFalseTitle": "True or False",
+  "arcadeTrueFalseBody": "Thirty rapid prompts, five seconds each.",
+  "arcadeRuleQuestions": "{count} questions",
+  "@arcadeRuleQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeRuleSeconds": "{seconds}s per question",
+  "@arcadeRuleSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeRuleUntilMiss": "One miss ends the run",
+  "arcadeAnyCategory": "Any category",
+  "arcadeChooseCategory": "Choose a category",
+  "arcadeChooseCourse": "Pick a course",
+  "arcadeCategoryClear": "Clear",
+  "arcadeCategoryHint": "Optional — scopes every mode.",
+  "arcadeCategoryError": "Categories could not be loaded.",
+  "arcadeStartRun": "Start run",
+  "arcadeStarting": "Starting…",
+  "arcadeQuestionProgress": "Question {current} of {total}",
+  "@arcadeQuestionProgress": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeTimeLeft": "{seconds}s left",
+  "@arcadeTimeLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
+  "arcadeTimeUp": "Time's up",
+  "arcadeAnswerSaved": "Answer saved — the score unlocks at the end.",
+  "arcadeQuitTitle": "Leave this run?",
+  "arcadeQuitBody": "The attempt will be abandoned and will not be scored.",
+  "arcadeQuitConfirm": "Leave",
+  "arcadeQuitCancel": "Keep playing",
+  "arcadeGameOver": "Run over",
+  "arcadeGameOverBody": "A wrong answer ended this run. The server scored it.",
+  "arcadeResultTitle": "Run result",
+  "arcadeScore": "Score",
+  "arcadeCorrect": "Correct",
+  "arcadeWrong": "Wrong",
+  "arcadeSkipped": "Unanswered",
+  "arcadeAccuracy": "Accuracy",
+  "arcadePlayAgain": "Play again",
+  "arcadeBackToArcade": "Back to arcade",
+  "arcadeLoadError": "The run could not start.",
+  "arcadeEmptyTitle": "No questions for this category yet",
+  "arcadeEmptyBody": "Try another category, or play with any category.",
+  "arcadeRetry": "Try again"
 }

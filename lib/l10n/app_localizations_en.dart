@@ -3344,7 +3344,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modesArcadeBody =>
-      'Timed arcade sprints on the Arcade Games course — every round scored by the server.';
+      'Timed runs — Survival, Lightning and True/False — every round scored by the server.';
 
   @override
   String get modesArcadeTitle => 'Arcade Games';
@@ -4305,4 +4305,143 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get organizationRequired => 'Choose an organization to continue.';
+
+  @override
+  String get arcadeTitle => 'Arcade';
+
+  @override
+  String get arcadeSubtitle =>
+      'Short, timed runs. The server scores every answer.';
+
+  @override
+  String get arcadeServerScored => 'Server-scored';
+
+  @override
+  String get arcadeSurvivalTitle => 'Survival';
+
+  @override
+  String get arcadeSurvivalBody => 'Endless run — one wrong answer ends it.';
+
+  @override
+  String get arcadeLightningTitle => 'Lightning';
+
+  @override
+  String get arcadeLightningBody => 'Ten questions, five seconds each.';
+
+  @override
+  String get arcadeTrueFalseTitle => 'True or False';
+
+  @override
+  String get arcadeTrueFalseBody => 'Thirty rapid prompts, five seconds each.';
+
+  @override
+  String arcadeRuleQuestions(Object count) {
+    return '$count questions';
+  }
+
+  @override
+  String arcadeRuleSeconds(Object seconds) {
+    return '${seconds}s per question';
+  }
+
+  @override
+  String get arcadeRuleUntilMiss => 'One miss ends the run';
+
+  @override
+  String get arcadeAnyCategory => 'Any category';
+
+  @override
+  String get arcadeChooseCategory => 'Choose a category';
+
+  @override
+  String get arcadeChooseCourse => 'Pick a course';
+
+  @override
+  String get arcadeCategoryClear => 'Clear';
+
+  @override
+  String get arcadeCategoryHint => 'Optional — scopes every mode.';
+
+  @override
+  String get arcadeCategoryError => 'Categories could not be loaded.';
+
+  @override
+  String get arcadeStartRun => 'Start run';
+
+  @override
+  String get arcadeStarting => 'Starting…';
+
+  @override
+  String arcadeQuestionProgress(Object current, Object total) {
+    return 'Question $current of $total';
+  }
+
+  @override
+  String arcadeTimeLeft(Object seconds) {
+    return '${seconds}s left';
+  }
+
+  @override
+  String get arcadeTimeUp => 'Time\'s up';
+
+  @override
+  String get arcadeAnswerSaved =>
+      'Answer saved — the score unlocks at the end.';
+
+  @override
+  String get arcadeQuitTitle => 'Leave this run?';
+
+  @override
+  String get arcadeQuitBody =>
+      'The attempt will be abandoned and will not be scored.';
+
+  @override
+  String get arcadeQuitConfirm => 'Leave';
+
+  @override
+  String get arcadeQuitCancel => 'Keep playing';
+
+  @override
+  String get arcadeGameOver => 'Run over';
+
+  @override
+  String get arcadeGameOverBody =>
+      'A wrong answer ended this run. The server scored it.';
+
+  @override
+  String get arcadeResultTitle => 'Run result';
+
+  @override
+  String get arcadeScore => 'Score';
+
+  @override
+  String get arcadeCorrect => 'Correct';
+
+  @override
+  String get arcadeWrong => 'Wrong';
+
+  @override
+  String get arcadeSkipped => 'Unanswered';
+
+  @override
+  String get arcadeAccuracy => 'Accuracy';
+
+  @override
+  String get arcadePlayAgain => 'Play again';
+
+  @override
+  String get arcadeBackToArcade => 'Back to arcade';
+
+  @override
+  String get arcadeLoadError => 'The run could not start.';
+
+  @override
+  String get arcadeEmptyTitle => 'No questions for this category yet';
+
+  @override
+  String get arcadeEmptyBody =>
+      'Try another category, or play with any category.';
+
+  @override
+  String get arcadeRetry => 'Try again';
 }
