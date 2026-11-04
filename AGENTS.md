@@ -15,6 +15,11 @@ Flutter **never** grades quizzes, mints coins, unlocks achievements, ranks leade
 
 If a rule conflicts between `bisaas` and `bisaasmobile`, `bisaas` wins for API contract, `bisaasmobile` wins for Flutter idioms — but the file system boundary never blurs.
 
+## Branch & release posture (2026-11-04)
+
+- The only branches are **`main`** (default; renamed from `master` — its CI is retargeted to `main` + `development`) and **`development`** (working), locally and on GitHub, kept **byte-identical**: finish work, fast-forward `main` to it, push both. Prove (`git merge-base --is-ancestor <b> development`) before deleting any other branch; Dependabot re-proposals regenerate on their own.
+- The Android artifact builds from `main` only (`deploy_android.yml`); nothing auto-deploys from a push — releases are deliberate.
+
 ## API Contract — versioned, never drift
 
 - **BasePath = `/api/v1` only.** No header negotiation. No unversioned `/api/...` calls. See `lib/app/config/api_config.dart:4`.
