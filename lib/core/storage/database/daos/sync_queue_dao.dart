@@ -3,13 +3,19 @@ import 'package:drift/drift.dart';
 import '../app_database.dart';
 
 class SyncQueueDao {
-  SyncQueueDao(this.db);
+  /// [now] is the queue's clock. Injectable so a test can advance time past a
+  /// backoff window instead of sleeping through one: the retry is exactly what
+  /// the idempotency guarantee depends on, and a test that has to wait 30 real
+  /// seconds to observe the second attempt is not a test anyone writes.
+  SyncQueueDao(this.db, {DateTime Function()? now}) : _now = now ?? DateTime.now;
+
   final AppDatabase db;
+  final DateTime Function() _now;
 
   /// Items worth attempting now: under the retry cap and past their backoff.
   /// Ordered oldest-first so dependent operations flush in enqueue order.
   Future<List<SyncQueueData>> pending() {
-    final now = DateTime.now();
+    final now = _now();
     return (db.select(db.syncQueue)
           ..where(
             (t) =>

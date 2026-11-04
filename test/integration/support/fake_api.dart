@@ -27,7 +27,7 @@ import 'package:dio/dio.dart';
 
 /// One canned response.
 class FakeRoute {
-  const FakeRoute(this.statusCode, this.body);
+  const FakeRoute(this.statusCode, this.body, {this.headers = const {}});
 
   /// A 200 with the canonical success envelope around [data].
   factory FakeRoute.ok(Map<String, dynamic> data, {String? message}) =>
@@ -78,6 +78,11 @@ class FakeRoute {
 
   final int statusCode;
   final Map<String, dynamic> body;
+
+  /// Extra response headers. The API's replay semantics live in a header
+  /// (`X-Idempotent-Replay: true`), so a test of duplicate handling has to be
+  /// able to send one.
+  final Map<String, String> headers;
 }
 
 /// A scripted `HttpClientAdapter`.
@@ -86,6 +91,16 @@ class FakeApi implements HttpClientAdapter {
 
   /// Routes keyed by `"METHOD /path"`, e.g. `"GET /quiz/questions"`.
   final Map<String, FakeRoute> routes;
+
+  /// Routes that answer differently on successive calls, keyed the same way.
+  ///
+  /// A retry cannot be proven with a route that always answers the same
+  /// thing: "the second attempt carried the same Idempotency-Key" is only a
+  /// statement about a second attempt if the first one failed. The last
+  /// scripted response repeats once the list is exhausted, so a three-attempt
+  /// test can script `[500, 429, 200]` without counting calls.
+  final Map<String, List<FakeRoute>> _sequences = {};
+  final Map<String, int> _sequenceCursor = {};
 
   /// Every request that was made, in order.
   final List<RequestOptions> requests = [];
@@ -97,6 +112,32 @@ class FakeApi implements HttpClientAdapter {
   void on(String method, String path, FakeRoute route) {
     routes['$method $path'] = route;
   }
+
+  /// Registers responses to be consumed in order on successive calls.
+  void onSequence(String method, String path, List<FakeRoute> responses) {
+    _sequences['$method $path'] = List<FakeRoute>.unmodifiable(responses);
+    _sequenceCursor['$method $path'] = 0;
+  }
+
+  /// The value of [name] on the nth request, or null when absent.
+  ///
+  /// Compares case-insensitively: HTTP header names are case-insensitive, and
+  /// a test that fails because a client wrote `idempotency-key` instead of
+  /// `Idempotency-Key` would be testing spelling, not behaviour.
+  String? headerOf(int index, String name) {
+    if (index >= requests.length) return null;
+    for (final entry in requests[index].headers.entries) {
+      if (entry.key.toLowerCase() == name.toLowerCase()) {
+        return entry.value?.toString();
+      }
+    }
+    return null;
+  }
+
+  /// How many requests hit [method] and a path ending in [pathSuffix].
+  int countOf(String method, String pathSuffix) => requests
+      .where((r) => r.method == method && r.path.endsWith(pathSuffix))
+      .length;
 
   /// The query parameters of the nth request, or an empty map.
   Map<String, dynamic> queryOf(int index) {
@@ -147,7 +188,15 @@ class FakeApi implements HttpClientAdapter {
   ) async {
     requests.add(options);
     final key = '${options.method} ${options.path}';
-    final route = routes[key];
+    final sequence = _sequences[key];
+    FakeRoute? route;
+    if (sequence != null && sequence.isNotEmpty) {
+      final cursor = _sequenceCursor[key] ?? 0;
+      route = sequence[cursor < sequence.length ? cursor : sequence.length - 1];
+      _sequenceCursor[key] = cursor + 1;
+    } else {
+      route = routes[key];
+    }
     if (route == null) {
       misses.add(key);
       return ResponseBody.fromString(
@@ -169,6 +218,7 @@ class FakeApi implements HttpClientAdapter {
       route.statusCode,
       headers: {
         Headers.contentTypeHeader: [Headers.jsonContentType],
+        for (final h in route.headers.entries) h.key: [h.value],
       },
     );
   }

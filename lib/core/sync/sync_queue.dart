@@ -7,9 +7,17 @@ import '../storage/database/app_database.dart';
 import '../storage/database/daos/sync_queue_dao.dart';
 
 class SyncQueueService {
-  SyncQueueService(this._dao, {Uuid? uuid}) : _uuid = uuid ?? const Uuid();
+  SyncQueueService(this._dao, {Uuid? uuid, DateTime Function()? now})
+      : _uuid = uuid ?? const Uuid(),
+        _now = now ?? DateTime.now;
+
   final SyncQueueDao _dao;
   final Uuid _uuid;
+
+  /// The clock the backoff deadline is computed from. Same injectable seam as
+  /// [SyncQueueDao]: both sides must agree on "now", or a test that advances
+  /// one clock would see the row as due on one side and not the other.
+  final DateTime Function() _now;
 
   /// Enqueues one offline operation.
   ///
@@ -184,6 +192,13 @@ Future<int> enqueueSnapshot({
   Future<void> remove(int id) => _dao.remove(id);
 
   /// Backoff after a failed attempt — linear-ish, capped under the retry limit.
-  Future<void> bump(int id, int attempts) =>
-      _dao.bump(id, DateTime.now().add(Duration(seconds: 30 * (attempts + 1))));
+  ///
+  /// Deliberately does NOT touch `idempotency_key` or `payload`: a retried row
+  /// must present the same key to the server on every attempt. Minting a new
+  /// one here is the whole bug class this method exists to avoid — the server
+  /// would see a brand-new operation and duplicate the write.
+  Future<void> bump(int id, int attempts) => _dao.bump(
+        id,
+        _now().add(Duration(seconds: 30 * (attempts + 1))),
+      );
 }
