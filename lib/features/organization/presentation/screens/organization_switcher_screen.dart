@@ -1,10 +1,11 @@
 /// The organization switcher — only truthful when a list actually exists.
 ///
-/// Reachable from Settings only when `OrganizationContext.switcherAvailable`
-/// is true. A deep link or a build whose directory disappeared still lands
-/// here; in that case the screen says there is nothing to switch rather than
-/// rendering an empty list, a guessed organization, or a button that cannot
-/// work.
+/// The list comes from `GET /api/v1/me/tenants`, the server's own answer to
+/// "which organizations may this credential assert". Reachable from Settings
+/// only when `OrganizationContext.switcherAvailable` is true. A deep link that
+/// arrives with no rows still lands here; in that case the screen says there
+/// is nothing to switch rather than rendering an empty list or a guessed
+/// organization.
 library;
 
 import 'package:flutter/material.dart';
@@ -37,8 +38,12 @@ class OrganizationSwitcherScreen extends ConsumerWidget {
                 Text(l10n.errRequestFailed, textAlign: TextAlign.center),
                 const SizedBox(height: 16),
                 FilledButton(
-                  onPressed: () =>
-                      ref.invalidate(organizationControllerProvider),
+                  onPressed: () {
+                    // The list is cached separately; a retry has to re-ask the
+                    // server, not just rebuild from the cached failure.
+                    ref.invalidate(organizationMembershipsProvider);
+                    ref.invalidate(organizationControllerProvider);
+                  },
                   child: Text(l10n.retry),
                 ),
               ],

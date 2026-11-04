@@ -1,10 +1,11 @@
 /// A membership-bearing organization the caller may act as.
 ///
 /// ADR-002 calls this "organization" in product copy and keeps `tenant` in the
-/// API and schema. This entity is the product-side view: the fields a switcher
-/// needs, and nothing else. It is deliberately **not** parsed from any
-/// endpoint today — there is no membership-list endpoint (see
-/// `OrganizationDirectory`).
+/// API and schema. This entity is the product-side view: the fields
+/// `GET /api/v1/me/tenants` publishes, and nothing else.
+///
+/// The server withholds inactive organizations and lapsed memberships, so
+/// every row is an `X-Tenant` value `EnforceTenantScope` accepts.
 library;
 
 class Organization {

@@ -1,77 +1,41 @@
-# Organization switcher — the API contract the client needs
+# Organization switcher — the API contract (delivered)
 
-**Status:** proposal. No server route exists for this today, and the client does
-not invent one (`AGENTS.md`: verify a route before calling it).
+**Status:** **delivered by the server on 2026-11-04** and wired in the client.
+This file started as a proposal; the server shipped the route while the client
+work was in flight, so the "what is missing" section is kept only as history.
 
-**Row:** TN-09 (Flutter organization context + switcher) / P5-22.
+**Rows:** TN-09 (Flutter organization context + switcher) / P5-22.
 
-## What the client already has (2026-11-04)
-
-* `TenantStore` persists one optional organization id in
-  `flutter_secure_storage`, cleared on logout, account deletion and
-  `TENANT_MISMATCH`.
-* `TenantInterceptor` sends `X-Tenant: <id>` **only** when that selection
-  exists. Single-membership users keep working through the credential stamp.
-* `403 TENANT_MISMATCH` is a typed `ApiErrorCode.tenantMismatch`, the local
-  selection is cleared, and the UI offers re-authentication.
-* A switcher screen exists, but it is only reachable when a list is available.
-  Today the only source is the compile-time
-  `--dart-define=TENANT_DIRECTORY='[{"id":1,"name":"…"}]'`; with no define the
-  settings entry is hidden and a deep link shows "no organizations available".
-
-## What is missing
-
-The caller's memberships cannot be enumerated. Verified against
-`C:\laragon\www\bisaas`:
-
-| Surface | What it returns |
-|---|---|
-| `GET /api/v1/me` | user only — no tenant |
-| OpenAPI (`/api/v1/openapi.json`) | no membership-list path |
-| `/tenant-invitations/{token}/acceptance` | accepts one invitation; lists nothing |
-| `/tenants/{slug}/sso/*` | per-slug SSO; requires knowing the slug already |
-
-`TenantTokenStamper` deliberately stamps **nothing** for a user with more than
-one active membership, and `EnforceTenantScope` answers `TENANT_MISMATCH` for
-that user unless they assert a membership-backed `X-Tenant`. So a
-multi-organization user can authenticate but cannot discover which ids are
-valid — the one thing the switcher needs.
-
-## Proposed route
+## The route
 
 ```
 GET /api/v1/me/tenants
 Authorization: Bearer <PAT>
-X-Tenant: not required
 ```
 
-**Scope:** credential-scoped. Return the organizations the *authenticated user*
-has an **active** `quiz_tenant_memberships` row in (or owns via
-`quiz_tenants.owner_id`). Never return the platform pool, never another user's
-memberships, never an organization the caller can only reach by id.
+Deliberately **outside** the tenant-scoped v1 group (`routes/api/v1.php:150`,
+`App\Http\Controllers\Api\V1\Me\MeTenantsController`). The users it serves —
+multi-membership bearer clients holding an unstamped token — are the ones
+`EnforceTenantScope` fails closed on with `403 TENANT_MISMATCH`; inheriting
+`tenant.scope` here would leave that ambiguity permanently unresolvable.
 
-**Response** (canonical envelope, `data` is a list):
+**Scope:** credential-scoped. Active memberships **plus active owned
+organizations** (ownership counts as membership in `EnforceTenantScope`).
+Inactive organizations and lapsed memberships are withheld, so every returned
+id is an `X-Tenant` value the middleware accepts.
+
+**Response** (canonical envelope, note the `tenants` key):
 
 ```json
 {
   "success": true,
-  "data": [
-    {
-      "id": 12,
-      "name": "Acme Engineering",
-      "slug": "acme-engineering",
-      "role": "admin",
-      "is_active": true
-    },
-    {
-      "id": 34,
-      "name": "Kathmandu Chapter",
-      "slug": "kathmandu-chapter",
-      "role": "learner",
-      "is_active": false
-    }
-  ],
-  "message": "ok",
+  "data": {
+    "tenants": [
+      { "id": 12, "name": "Acme Engineering", "slug": "acme-engineering", "role": "admin" },
+      { "id": 34, "name": "Kathmandu Chapter", "slug": "kathmandu-chapter", "role": "owner" }
+    ]
+  },
+  "message": "Tenant memberships retrieved",
   "timestamp": "2026-11-04T00:00:00+00:00",
   "api_version": "v1"
 }
@@ -79,36 +43,39 @@ memberships, never an organization the caller can only reach by id.
 
 Field contract:
 
-| Field | Type | Rules |
+| Field | Type | Notes |
 |---|---|---|
 | `id` | integer | `quiz_tenants.id`; what the client sends as `X-Tenant` |
-| `name` | string | display name, non-empty |
+| `name` | string | display name |
 | `slug` | string | `quiz_tenants.slug` |
-| `role` | string | stored role: `owner` \| `admin` \| `educator` \| `learner` |
-| `is_active` | boolean | mirrors `QuizTenant::isActive()`; an inactive organization is listed so the client can explain it, but cannot be selected |
+| `role` | string | stored role; an owned organization without a membership row reports `owner` |
 
-**Ordering:** active organizations first, then by `name`. **Size:** a user's
-membership count is bounded by invitations/SCIM; if the server ever expects a
-large list it should paginate with the same cursor contract as the four
-question collections, and the client will add the walk here. For now a plain
-list under `data` is enough.
+**Ordering:** `name`, then `id`. **Size:** a bounded snapshot, not a paginated
+collection — a user's memberships are a handful by construction, so there is no
+cursor. **Errors:** ordinary envelope; `401 AUTH_UNAUTHENTICATED` when the
+bearer is missing or invalid. No `X-Tenant` is required or expected.
 
-**Errors:** ordinary envelope — `401 AUTH_UNAUTHENTICATED` when the bearer is
-missing/invalid. This route must **not** require `X-Tenant` and must not be
-tenant-scoped: it is the route a user calls *because* they do not yet know
-which organization to assert.
+## What the client does with it
 
-## Client work when the route ships
+| Piece | Where |
+|---|---|
+| Fetch + parse (`data.tenants`) | `lib/features/organization/data/organization_remote_data_source.dart` |
+| Entity (id, name, slug, role) | `lib/features/organization/domain/entities/organization.dart` |
+| Cached list + selection state | `organizationMembershipsProvider`, `organizationControllerProvider` |
+| Switcher screen (only reachable with a list) | `lib/features/organization/presentation/screens/organization_switcher_screen.dart` |
+| Persistent selection (secure storage, cleared on logout/mismatch) | `lib/core/security/tenant_store.dart` |
+| `X-Tenant` assertion + `TENANT_MISMATCH` handling | `lib/core/network/tenant_interceptor.dart` |
 
-1. Add `OrganizationRemoteDataSource.fetchMemberships()` calling
-   `/me/tenants`, parsing with `Organization.fromJson` (already implemented).
-2. In `OrganizationDirectory`, replace the compile-time source with that call
-   when the user is authenticated; keep the define as an operator override for
-   provisioned builds.
-3. The settings tile and the switcher screen need no change: they already read
-   `OrganizationContext.organizations`.
-4. Pick one policy for `is_active: false`: list-and-disable (current screen) or
-   hide. The screen currently disables, so that decision is already made.
+A failure fetching the list propagates (the screen offers Retry); it never
+renders as "you belong to no organizations". Zero rows is a legitimate answer
+and hides the switcher entry — it is not an error.
 
-Nothing in the client may derive memberships from anything else — no guessing
-an id, no "first organization" fallback, no local role inference.
+## History — what was missing before 2026-11-04
+
+`GET /me` returned no tenant and the OpenAPI document listed no
+membership-enumerating path; `TenantTokenStamper` refuses to stamp anything for
+a multi-membership user; `EnforceTenantScope` answers `TENANT_MISMATCH` for
+that user unless they assert a backed `X-Tenant`. The client therefore could
+not enumerate the ids a switcher needs, and the initial scaffold used a
+compile-time `--dart-define` list as an operator override. That define is gone:
+the server list is now the only source, so no build can invent an organization.

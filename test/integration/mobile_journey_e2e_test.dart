@@ -45,6 +45,7 @@ import 'package:bisaasmobile/features/auth/presentation/controllers/auth_control
 import 'package:bisaasmobile/features/battle/data/datasources/battle_remote_data_source.dart';
 import 'package:bisaasmobile/features/battle/data/repositories/battle_repository_impl.dart';
 import 'package:bisaasmobile/features/economy/data/datasources/economy_remote_data_source.dart';
+import 'package:bisaasmobile/features/organization/data/organization_remote_data_source.dart';
 import 'package:bisaasmobile/features/quiz/data/datasources/quiz_remote_data_source.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -228,8 +229,39 @@ void main() {
     );
     expect(stored['auth_token'], 'pat-2', reason: 'rotation replaces the PAT');
 
-    // P5-22: an explicit organization selection rides every later request.
-    await tenants.select(7);
+    // TN-09/P5-22: the switcher's list is the server's, and the selection it
+    // produces rides every later request.
+    api.on(
+      'GET',
+      '/me/tenants',
+      FakeRoute.ok(<String, dynamic>{
+        'tenants': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 7,
+            'name': 'Acme Engineering',
+            'slug': 'acme',
+            'role': 'owner',
+          },
+        ],
+      }),
+    );
+    final organizations = await OrganizationRemoteDataSource(
+      container.read(dioProvider),
+    ).fetchMemberships();
+    expect(organizations.single.id, 7);
+    final membershipsIndex = api.indexOfRequest('GET', '/me/tenants');
+    expect(
+      api.headerOf(membershipsIndex, 'Authorization'),
+      'Bearer pat-2',
+    );
+    expect(
+      api.headerOf(membershipsIndex, 'X-Tenant'),
+      isNull,
+      reason:
+          'the list is how a user who cannot resolve a tenant finds one; '
+          'asserting before knowing it would 403',
+    );
+    await tenants.select(organizations.single.id);
 
     // ── LEG 2 — quiz: start → answer → complete ──────────────────────────────
     api

@@ -25,6 +25,7 @@ import 'package:bisaasmobile/app/config/api_config.dart';
 import 'package:bisaasmobile/app/router/deep_link_handler.dart';
 import 'package:bisaasmobile/app/router/route_names.dart';
 import 'package:bisaasmobile/core/consent/consent_screens.dart';
+import 'package:bisaasmobile/core/security/tenant_store.dart';
 import 'package:bisaasmobile/core/storage/preferences.dart';
 import 'package:bisaasmobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -157,6 +158,27 @@ void main() {
       expect(RouteNames.contests, isNotEmpty);
       expect(RouteNames.liveEvents, isNotEmpty);
       expect(RouteNames.coaching, isNotEmpty);
+      expect(RouteNames.organization, isNotEmpty);
+    });
+  });
+
+  group('organization selection on a device', () {
+    testWidgets('persists in the platform keystore and clears on demand', (
+      tester,
+    ) async {
+      // `TenantStore` is the only place the X-Tenant assertion comes from, and
+      // its storage rule is flutter_secure_storage — a platform channel a
+      // host-side test can only mock. A second instance proves the value went
+      // to the platform store rather than to an in-memory field.
+      final store = TenantStore();
+      await store.clear();
+      expect(await store.read(), isNull);
+
+      await store.select(4242);
+      expect(await TenantStore().read(), 4242);
+
+      await store.clear();
+      expect(await TenantStore().read(), isNull);
     });
   });
 

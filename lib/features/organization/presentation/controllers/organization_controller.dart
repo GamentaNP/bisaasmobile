@@ -9,10 +9,11 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/network/dio_client.dart';
 import '../../../../core/security/tenant_providers.dart';
 import '../../../../core/security/tenant_store.dart';
 import '../../../../core/security/token_manager.dart';
-import '../../data/organization_directory.dart';
+import '../../data/organization_remote_data_source.dart';
 import '../../domain/entities/organization.dart';
 
 class OrganizationContext {
@@ -25,7 +26,10 @@ class OrganizationContext {
   /// The persisted selection, or null when the user has not chosen one.
   final int? selectedId;
 
-  /// Null when no truthful list exists (see [OrganizationDirectory]).
+  /// The organizations the server says the caller may assert.
+  ///
+  /// Null only while the list is genuinely unknown; an empty list is a real
+  /// answer (a platform-pool user) and also means "no switcher".
   final List<Organization>? organizations;
 
   /// The last tenant refusal the server reported, if any.
@@ -53,18 +57,18 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
   @override
   Future<OrganizationContext> build() async {
     final store = ref.watch(tenantStoreProvider);
-    final directory = ref.watch(organizationDirectoryProvider);
-    final organizations = directory.available;
+    // Cached in its own provider: the store listener below invalidates this
+    // controller on every selection change, and a membership fetch per tap
+    // would be both wasteful and a new way to fail at exactly the wrong moment.
+    final organizations = await ref.watch(
+      organizationMembershipsProvider.future,
+    );
     var selectedId = await store.read();
 
-    // A selection this build's directory does not offer is stale (the list was
-    // reprovisioned, or the organization was removed). Drop it *before*
-    // subscribing, so the clear cannot invalidate the build that is running.
-    // When there is no directory at all the selection is left alone — the
-    // server remains the authority on whether the membership is real.
-    if (selectedId != null &&
-        organizations != null &&
-        !organizations.any((o) => o.id == selectedId)) {
+    // A selection the server no longer lists is stale (membership revoked, or
+    // the organization was deleted). Drop it *before* subscribing, so the
+    // clear cannot invalidate the build that is running.
+    if (selectedId != null && !organizations.any((o) => o.id == selectedId)) {
       await store.clear();
       selectedId = null;
     }
@@ -85,8 +89,8 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
 
   /// Selects [organizationId] and asserts it on subsequent requests.
   ///
-  /// Refuses an id the directory did not offer. The directory is the only
-  /// truthful source of ids; accepting an arbitrary integer here would be the
+  /// Refuses an id the server did not list. That list is the only truthful
+  /// source of assertable ids; accepting an arbitrary integer here would be the
   /// client choosing a scope, which the server contract explicitly rejects.
   Future<void> use(int organizationId) async {
     final current = await future;
@@ -126,9 +130,30 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
       ref.read(tenantStoreProvider).acknowledgeFailure();
 }
 
-/// The organization list, or a source that reports it has none.
-final organizationDirectoryProvider = Provider<OrganizationDirectory>(
-  (ref) => OrganizationDirectory(),
+/// The membership list endpoint. `DioClient` is initialized in `bootstrap()`;
+/// a provider that is read before that is a wiring bug, not an empty list.
+final organizationRemoteDataSourceProvider =
+    Provider<OrganizationRemoteDataSource>((ref) {
+      if (!DioClient.isInitialized) {
+        throw StateError('DioClient not init — see bootstrap.dart');
+      }
+      return OrganizationRemoteDataSource(DioClient.instance.dio);
+    });
+
+/// The caller's assertable organizations, fetched once and shared.
+///
+/// A failure propagates: a network error must not render as "you belong to no
+/// organizations", which is the same silent-empty-list bug the rest of the
+/// app forbids. The switcher screen offers a retry.
+final organizationMembershipsProvider = FutureProvider<List<Organization>>(
+  (ref) {
+    return ref.watch(organizationRemoteDataSourceProvider).fetchMemberships();
+  },
+  // Riverpod 3 retries a failed provider with exponential backoff by default.
+  // That would keep the switcher in a loading/retrying state and hide the
+  // failure from the screen's own Retry button; the user decides when to try
+  // again, and the error has to reach them first.
+  retry: (retryCount, error) => null,
 );
 
 /// Clears the local credential. A provider rather than a direct
@@ -141,4 +166,5 @@ final endSessionProvider = Provider<Future<void> Function()>(
 final organizationControllerProvider =
     AsyncNotifierProvider<OrganizationController, OrganizationContext>(
       OrganizationController.new,
+      retry: (retryCount, error) => null,
     );
