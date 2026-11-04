@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bisaas.bisaasmobile",
+      "sha256_cert_fingerprints": [
+        "21:D8:6E:E5:00:01:3B:5E:BE:13:E2:13:C9:6F:C2:DB:74:1F:AA:B8:EB:7D:95:8C:B7:19:B4:58:21:8A:D4:1E"
+      ]
+    }
+  }
+]
