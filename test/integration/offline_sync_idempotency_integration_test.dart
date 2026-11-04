@@ -74,10 +74,10 @@ void main() {
   }
 
   SyncManager managerFor(FakeApi api) => SyncManager(
-        queue: queue,
-        dio: dioWithAuth(api),
-        connectivity: connectivity,
-      );
+    queue: queue,
+    dio: dioWithAuth(api),
+    connectivity: connectivity,
+  );
 
   Future<List<SyncQueueData>> rows() => db.select(db.syncQueue).get();
 
@@ -190,15 +190,19 @@ void main() {
       // response was lost. It answers the replay with the stored response and
       // `X-Idempotent-Replay: true`; the client must treat that as done.
       final api = FakeApi(<String, FakeRoute>{})
-        ..on('PUT', '/calculation-snapshots', FakeRoute(
-          200,
-          <String, dynamic>{
-            'success': true,
-            'data': <String, dynamic>{'synced': 1},
-            'message': 'replayed',
-          },
-          headers: const <String, String>{'X-Idempotent-Replay': 'true'},
-        ));
+        ..on(
+          'PUT',
+          '/calculation-snapshots',
+          FakeRoute(
+            200,
+            <String, dynamic>{
+              'success': true,
+              'data': <String, dynamic>{'synced': 1},
+              'message': 'replayed',
+            },
+            headers: const <String, String>{'X-Idempotent-Replay': 'true'},
+          ),
+        );
 
       await queue.enqueueSnapshot(
         domain: 'civil',

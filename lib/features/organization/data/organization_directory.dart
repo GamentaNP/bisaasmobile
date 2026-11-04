@@ -32,7 +32,7 @@ import '../domain/entities/organization.dart';
 
 class OrganizationDirectory {
   OrganizationDirectory({String? source})
-      : _source = source ?? const String.fromEnvironment(defineKey);
+    : _source = source ?? const String.fromEnvironment(defineKey);
 
   /// The compile-time source, for builds that are provisioned explicitly.
   ///

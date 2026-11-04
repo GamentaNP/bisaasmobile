@@ -91,7 +91,8 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
   Future<void> use(int organizationId) async {
     final current = await future;
     final organizations = current.organizations;
-    final offered = organizations?.any(
+    final offered =
+        organizations?.any(
           (o) => o.id == organizationId && o.isActive,
         ) ??
         false;
@@ -139,5 +140,5 @@ final endSessionProvider = Provider<Future<void> Function()>(
 
 final organizationControllerProvider =
     AsyncNotifierProvider<OrganizationController, OrganizationContext>(
-  OrganizationController.new,
-);
+      OrganizationController.new,
+    );

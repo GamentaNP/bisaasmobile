@@ -35,10 +35,12 @@ void main() {
     storage = _MockSecureStorage();
     when(() => storage.read(key: 'selected_tenant_id'))
         .thenAnswer((_) async => null);
-    when(() => storage.write(
-          key: 'selected_tenant_id',
-          value: any(named: 'value'),
-        )).thenAnswer((_) async {});
+    when(
+      () => storage.write(
+        key: 'selected_tenant_id',
+        value: any(named: 'value'),
+      ),
+    ).thenAnswer((_) async {});
     when(() => storage.delete(key: 'selected_tenant_id'))
         .thenAnswer((_) async {});
   });
@@ -66,7 +68,11 @@ void main() {
 
     test('present when an organization is selected', () async {
       final api = FakeApi(<String, FakeRoute>{})
-        ..on('GET', '/quiz/courses', FakeRoute.ok(<String, dynamic>{'ok': true}));
+        ..on(
+          'GET',
+          '/quiz/courses',
+          FakeRoute.ok(<String, dynamic>{'ok': true}),
+        );
       final tenants = store();
       await tenants.select(42);
 
@@ -82,7 +88,11 @@ void main() {
       when(() => storage.read(key: 'selected_tenant_id'))
           .thenAnswer((_) async => 'not-a-number');
       final api = FakeApi(<String, FakeRoute>{})
-        ..on('GET', '/quiz/courses', FakeRoute.ok(<String, dynamic>{'ok': true}));
+        ..on(
+          'GET',
+          '/quiz/courses',
+          FakeRoute.ok(<String, dynamic>{'ok': true}),
+        );
 
       await dioFor_(api, store()).get<dynamic>('/quiz/courses');
 
@@ -93,7 +103,11 @@ void main() {
       // A retried RequestOptions is a clone; if the header were copied it would
       // outlive the selection that justified it.
       final api = FakeApi(<String, FakeRoute>{})
-        ..on('GET', '/quiz/courses', FakeRoute.ok(<String, dynamic>{'ok': true}));
+        ..on(
+          'GET',
+          '/quiz/courses',
+          FakeRoute.ok(<String, dynamic>{'ok': true}),
+        );
       final tenants = store();
       final dio = dioFor_(api, tenants);
 
@@ -136,40 +150,46 @@ void main() {
       fail('expected the request to fail');
     }
 
-    test('403 TENANT_MISMATCH keeps its code through the failure mapper', () async {
-      final error = await failWith(
-        403,
-        'TENANT_MISMATCH',
-        tenants: store(),
-        selected: 42,
-      );
-
-      expect(error.code, ApiErrorCode.tenantMismatch);
-      expect(error.isTenantMismatch, isTrue);
-      expect(error.isTenantInactive, isFalse);
-      // Distinct from a permission refusal: the remedy is a new login.
-      expect(error.code, isNot(ApiErrorCode.forbidden));
-    });
-
-    test('the refused selection is cleared, and the failure is recorded', () async {
-      final api = FakeApi(<String, FakeRoute>{})
-        ..on(
-          'GET',
-          '/quiz/attempts/history',
-          FakeRoute.error(403, 'TENANT_MISMATCH', 'Refused.'),
+    test(
+      '403 TENANT_MISMATCH keeps its code through the failure mapper',
+      () async {
+        final error = await failWith(
+          403,
+          'TENANT_MISMATCH',
+          tenants: store(),
+          selected: 42,
         );
-      final tenants = store();
-      await tenants.select(42);
 
-      await expectLater(
-        dioFor_(api, tenants).get<dynamic>('/quiz/attempts/history'),
-        throwsA(anything),
-      );
+        expect(error.code, ApiErrorCode.tenantMismatch);
+        expect(error.isTenantMismatch, isTrue);
+        expect(error.isTenantInactive, isFalse);
+        // Distinct from a permission refusal: the remedy is a new login.
+        expect(error.code, isNot(ApiErrorCode.forbidden));
+      },
+    );
 
-      expect(await tenants.read(), isNull);
-      expect(tenants.failure, TenantFailure.mismatch);
-      verify(() => storage.delete(key: 'selected_tenant_id')).called(1);
-    });
+    test(
+      'the refused selection is cleared, and the failure is recorded',
+      () async {
+        final api = FakeApi(<String, FakeRoute>{})
+          ..on(
+            'GET',
+            '/quiz/attempts/history',
+            FakeRoute.error(403, 'TENANT_MISMATCH', 'Refused.'),
+          );
+        final tenants = store();
+        await tenants.select(42);
+
+        await expectLater(
+          dioFor_(api, tenants).get<dynamic>('/quiz/attempts/history'),
+          throwsA(anything),
+        );
+
+        expect(await tenants.read(), isNull);
+        expect(tenants.failure, TenantFailure.mismatch);
+        verify(() => storage.delete(key: 'selected_tenant_id')).called(1);
+      },
+    );
 
     test('the next request after a mismatch asserts nothing', () async {
       // Retrying with the refused header would 403 forever; retrying *without*
@@ -181,7 +201,11 @@ void main() {
           '/quiz/attempts/history',
           FakeRoute.error(403, 'TENANT_MISMATCH', 'Refused.'),
         )
-        ..on('GET', '/quiz/courses', FakeRoute.ok(<String, dynamic>{'ok': true}));
+        ..on(
+          'GET',
+          '/quiz/courses',
+          FakeRoute.ok(<String, dynamic>{'ok': true}),
+        );
       final tenants = store();
       await tenants.select(42);
       final dio = dioFor_(api, tenants);
@@ -206,19 +230,22 @@ void main() {
       expect(tenants.failure, isNull);
     });
 
-    test('TENANT_INACTIVE is recorded but does not promise a re-login', () async {
-      final tenants = store();
-      final error = await failWith(
-        403,
-        'TENANT_INACTIVE',
-        tenants: tenants,
-        selected: 42,
-      );
+    test(
+      'TENANT_INACTIVE is recorded but does not promise a re-login',
+      () async {
+        final tenants = store();
+        final error = await failWith(
+          403,
+          'TENANT_INACTIVE',
+          tenants: tenants,
+          selected: 42,
+        );
 
-      expect(error.isTenantInactive, isTrue);
-      expect(error.isTenantMismatch, isFalse);
-      expect(tenants.failure, TenantFailure.inactive);
-      expect(await tenants.read(), isNull);
-    });
+        expect(error.isTenantInactive, isTrue);
+        expect(error.isTenantMismatch, isFalse);
+        expect(tenants.failure, TenantFailure.inactive);
+        expect(await tenants.read(), isNull);
+      },
+    );
   });
 }

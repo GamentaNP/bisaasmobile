@@ -71,7 +71,10 @@ void main() {
       // first tap appeared to do nothing. Before `insertOrIgnore` this was an
       // unhandled SqliteException, not a dedupe.
       const key = 'retry-after-visible-no-op';
-      await queue.enqueue(endpoint: '/calculation-snapshots', idempotencyKey: key);
+      await queue.enqueue(
+        endpoint: '/calculation-snapshots',
+        idempotencyKey: key,
+      );
 
       await expectLater(
         queue.enqueue(endpoint: '/calculation-snapshots', idempotencyKey: key),
@@ -106,45 +109,56 @@ void main() {
   });
 
   group('a retry never becomes a new operation', () {
-    test('backoff preserves the key, the payload and the row identity', () async {
-      const key = 'stable-across-retries';
-      const body = '{"snapshots":[{"domain":"civil","input_payload":{"a":1}}]}';
+    test(
+      'backoff preserves the key, the payload and the row identity',
+      () async {
+        const key = 'stable-across-retries';
+        const body =
+            '{"snapshots":[{"domain":"civil","input_payload":{"a":1}}]}';
 
-      await queue.enqueue(
-        endpoint: '/calculation-snapshots',
-        method: 'PUT',
-        payload: body,
-        idempotencyKey: key,
-      );
-      final before = (await rows()).single;
+        await queue.enqueue(
+          endpoint: '/calculation-snapshots',
+          method: 'PUT',
+          payload: body,
+          idempotencyKey: key,
+        );
+        final before = (await rows()).single;
 
-      await queue.bump(before.id, before.attempts);
+        await queue.bump(before.id, before.attempts);
 
-      final after = (await rows()).single;
-      expect(after.id, before.id, reason: 'a retry continues the same row');
-      expect(after.idempotencyKey, key, reason: 'the key is the operation identity');
-      expect(after.payload, body);
-      expect(after.endpoint, before.endpoint);
-      expect(after.method, before.method);
-      expect(after.attempts, before.attempts + 1);
-    });
+        final after = (await rows()).single;
+        expect(after.id, before.id, reason: 'a retry continues the same row');
+        expect(
+          after.idempotencyKey,
+          key,
+          reason: 'the key is the operation identity',
+        );
+        expect(after.payload, body);
+        expect(after.endpoint, before.endpoint);
+        expect(after.method, before.method);
+        expect(after.attempts, before.attempts + 1);
+      },
+    );
 
-    test('the row is not due again until the backoff window has passed', () async {
-      await queue.enqueue(endpoint: '/a', idempotencyKey: 'k');
-      final row = (await rows()).single;
+    test(
+      'the row is not due again until the backoff window has passed',
+      () async {
+        await queue.enqueue(endpoint: '/a', idempotencyKey: 'k');
+        final row = (await rows()).single;
 
-      await queue.bump(row.id, row.attempts);
-      expect(
-        await queue.pending(),
-        isEmpty,
-        reason: 'a dead endpoint must not spin on every sync tick',
-      );
+        await queue.bump(row.id, row.attempts);
+        expect(
+          await queue.pending(),
+          isEmpty,
+          reason: 'a dead endpoint must not spin on every sync tick',
+        );
 
-      // 30 s for attempt 0 → 60 s for attempt 1. Advancing the injectable
-      // clock is what makes this a test rather than a sleep.
-      clock = clock.add(const Duration(seconds: 31));
-      expect((await queue.pending()).single.id, row.id);
-    });
+        // 30 s for attempt 0 → 60 s for attempt 1. Advancing the injectable
+        // clock is what makes this a test rather than a sleep.
+        clock = clock.add(const Duration(seconds: 31));
+        expect((await queue.pending()).single.id, row.id);
+      },
+    );
 
     test('bumping never rewrites the key, even repeatedly', () async {
       await queue.enqueue(endpoint: '/a', idempotencyKey: 'never-rotate');

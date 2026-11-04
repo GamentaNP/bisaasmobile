@@ -33,10 +33,12 @@ void main() {
     storage = _MockSecureStorage();
     when(() => storage.read(key: 'selected_tenant_id'))
         .thenAnswer((_) async => null);
-    when(() => storage.write(
-          key: 'selected_tenant_id',
-          value: any(named: 'value'),
-        )).thenAnswer((_) async {});
+    when(
+      () => storage.write(
+        key: 'selected_tenant_id',
+        value: any(named: 'value'),
+      ),
+    ).thenAnswer((_) async {});
     when(() => storage.delete(key: 'selected_tenant_id'))
         .thenAnswer((_) async {});
     tenants = TenantStore(storage: storage);
@@ -46,12 +48,14 @@ void main() {
     OrganizationDirectory? directory,
     Future<void> Function()? endSession,
   }) {
-    final container = ProviderContainer(overrides: [
-      tenantStoreProvider.overrideWithValue(tenants),
-      if (directory != null)
-        organizationDirectoryProvider.overrideWithValue(directory),
-      endSessionProvider.overrideWithValue(endSession ?? () async {}),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        tenantStoreProvider.overrideWithValue(tenants),
+        if (directory != null)
+          organizationDirectoryProvider.overrideWithValue(directory),
+        endSessionProvider.overrideWithValue(endSession ?? () async {}),
+      ],
+    );
     addTearDown(container.dispose);
     return container;
   }
@@ -61,8 +65,7 @@ void main() {
       final container = containerWith(
         directory: OrganizationDirectory(source: ''),
       );
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
 
       expect(state.organizations, isNull);
       expect(state.switcherAvailable, isFalse);
@@ -73,8 +76,7 @@ void main() {
       final container = containerWith(
         directory: OrganizationDirectory(source: '{"id":7,"name":"Acme"}'),
       );
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
 
       expect(state.organizations, isNull);
       expect(state.switcherAvailable, isFalse);
@@ -88,8 +90,7 @@ void main() {
           source: '[{"id":"7","name":"Acme"},{"id":9,"name":"Other"}]',
         ),
       );
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
 
       expect(state.organizations, isNull);
     });
@@ -121,8 +122,7 @@ void main() {
       final container = containerWith(
         directory: OrganizationDirectory(source: _twoOrganizations),
       );
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
 
       expect(state.switcherAvailable, isTrue);
       expect(state.organizations, hasLength(2));
@@ -142,8 +142,7 @@ void main() {
         () => storage.write(key: 'selected_tenant_id', value: '7'),
       ).called(1);
       expect(await tenants.read(), 7);
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
       expect(state.selectedId, 7);
       expect(state.selected?.name, 'Acme Engineering');
     });
@@ -168,15 +167,13 @@ void main() {
         directory: OrganizationDirectory(source: _twoOrganizations),
       );
 
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
 
       expect(state.selectedId, isNull);
       verify(() => storage.delete(key: 'selected_tenant_id')).called(1);
     });
 
-    test('without a directory a stored id is left for the server to judge',
-        () async {
+    test('without a directory a stored id is left for the server to judge', () async {
       // The directory is a convenience for the switch surface, not an
       // authority on membership. A provisioned build that lost its define
       // must not silently stop asserting a selection the server still accepts.
@@ -186,8 +183,7 @@ void main() {
         directory: OrganizationDirectory(source: ''),
       );
 
-      final state =
-          await container.read(organizationControllerProvider.future);
+      final state = await container.read(organizationControllerProvider.future);
 
       expect(state.selectedId, 7);
       expect(state.switcherAvailable, isFalse);
@@ -198,37 +194,43 @@ void main() {
   });
 
   group('the failure path', () {
-    test('a mismatch clears the selection and offers re-authentication',
-        () async {
-      final container = containerWith(
-        directory: OrganizationDirectory(source: _twoOrganizations),
-      );
-      await container.read(organizationControllerProvider.future);
-      await container.read(organizationControllerProvider.notifier).use(7);
+    test(
+      'a mismatch clears the selection and offers re-authentication',
+      () async {
+        final container = containerWith(
+          directory: OrganizationDirectory(source: _twoOrganizations),
+        );
+        await container.read(organizationControllerProvider.future);
+        await container.read(organizationControllerProvider.notifier).use(7);
 
-      await tenants.reportFailure(TenantFailure.mismatch);
-      final state =
-          await container.read(organizationControllerProvider.future);
+        await tenants.reportFailure(TenantFailure.mismatch);
+        final state = await container.read(
+          organizationControllerProvider.future,
+        );
 
-      expect(state.selectedId, isNull);
-      expect(state.failure, TenantFailure.mismatch);
-      expect(state.requiresReauthentication, isTrue);
-    });
+        expect(state.selectedId, isNull);
+        expect(state.failure, TenantFailure.mismatch);
+        expect(state.requiresReauthentication, isTrue);
+      },
+    );
 
-    test('an inactive organization does not promise a new login will help',
-        () async {
-      final container = containerWith(
-        directory: OrganizationDirectory(source: _twoOrganizations),
-      );
-      await container.read(organizationControllerProvider.future);
+    test(
+      'an inactive organization does not promise a new login will help',
+      () async {
+        final container = containerWith(
+          directory: OrganizationDirectory(source: _twoOrganizations),
+        );
+        await container.read(organizationControllerProvider.future);
 
-      await tenants.reportFailure(TenantFailure.inactive);
-      final state =
-          await container.read(organizationControllerProvider.future);
+        await tenants.reportFailure(TenantFailure.inactive);
+        final state = await container.read(
+          organizationControllerProvider.future,
+        );
 
-      expect(state.failure, TenantFailure.inactive);
-      expect(state.requiresReauthentication, isFalse);
-    });
+        expect(state.failure, TenantFailure.inactive);
+        expect(state.requiresReauthentication, isFalse);
+      },
+    );
 
     test('signing in again clears the tenant and the credential', () async {
       var ended = 0;
@@ -239,7 +241,9 @@ void main() {
       await container.read(organizationControllerProvider.future);
       await container.read(organizationControllerProvider.notifier).use(7);
 
-      await container.read(organizationControllerProvider.notifier).signInAgain();
+      await container
+          .read(organizationControllerProvider.notifier)
+          .signInAgain();
 
       expect(ended, 1, reason: 'the credential must not survive the refusal');
       expect(await tenants.read(), isNull);

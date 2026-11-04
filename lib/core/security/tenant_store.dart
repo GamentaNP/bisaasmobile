@@ -43,7 +43,7 @@ enum TenantFailure {
 
 class TenantStore extends ChangeNotifier {
   TenantStore({FlutterSecureStorage? storage})
-      : _s = storage ?? const FlutterSecureStorage();
+    : _s = storage ?? const FlutterSecureStorage();
 
   /// Process-wide instance, mirroring `TokenManager.shared`. One secure
   /// storage, one selection, one source for every request in the Dio chain.

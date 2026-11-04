@@ -45,7 +45,9 @@ class Organization {
     }
     final name = json['name'];
     if (name is! String || name.trim().isEmpty) {
-      throw const FormatException('organization name must be a non-empty string');
+      throw const FormatException(
+        'organization name must be a non-empty string',
+      );
     }
     final slug = json['slug'];
     final role = json['role'];
