@@ -191,6 +191,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider);
     final lock = ref.watch(appLockProvider);
+    // Hidden, not disabled, when this build has no truthful list: a control
+    // that is guaranteed to have nothing to switch is worse than no control.
+    final organization = ref.watch(organizationSwitcherStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
@@ -237,6 +240,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/ai/keys'),
           ),
+          if (organization.available) ...[
+            const Divider(height: 1),
+            _SectionHeader(l10n.organization),
+            ListTile(
+              leading: const Icon(Icons.business_outlined),
+              title: Text(l10n.organizationSwitchTitle),
+              subtitle: Text(
+                organization.selectedName ?? l10n.organizationNone,
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              onTap: () => context.push('/settings/organization'),
+            ),
+          ],
           const Divider(height: 1),
           _SectionHeader(l10n.settingsAccountSection),
           ListTile(

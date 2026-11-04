@@ -2467,6 +2467,24 @@ add("knowledgeAtomNumbered", "Knowledge Atom #{id}", "ज्ञान एटम 
 add("errTenantMismatch", "This session is signed in to a different organization. Sign in again to continue.", "यो सत्र फरक संस्थामा साइन इन छ। जारी राख्न फेरि साइन इन गर्नुहोस्।", "यह सत्र किसी दूसरे संगठन में साइन इन है। जारी रखने के लिए फिर से साइन इन करें।")
 add("errTenantInactive", "This organization is no longer active.", "यो संस्था अब सक्रिय छैन।", "यह संगठन अब सक्रिय नहीं है।")
 
+# ── organization switcher (TN-09) ───────────────────────────────────────────
+# ADR-002 says "organization" in product copy; the API still says tenant. The
+# switcher is only reachable when a truthful list exists — these strings are
+# the surface for that list and for the two ways a tenant request can fail.
+add("organization", "Organization", "संस्था", "संगठन")
+add("organizationSwitchTitle", "Switch organization", "संस्था परिवर्तन गर्नुहोस्", "संगठन बदलें")
+add("organizationSwitchSubtitle", "Choose which organization this app should use.", "यो एपले कुन संस्था प्रयोग गर्ने हो छान्नुहोस्।", "चुनें कि यह ऐप किस संगठन का उपयोग करे।")
+add("organizationCurrent", "Current organization", "हालको संस्था", "वर्तमान संगठन")
+add("organizationNone", "No organization selected", "कुनै संस्था छानिएको छैन", "कोई संगठन चयनित नहीं")
+add("organizationUnavailable", "No organizations are available on this device.", "यो उपकरणमा कुनै संस्था उपलब्ध छैन।", "इस डिवाइस पर कोई संगठन उपलब्ध नहीं है।")
+add("organizationSignInAgain", "Sign in again", "फेरि साइन इन गर्नुहोस्", "फिर से साइन इन करें")
+add("organizationMismatchTitle", "Organization mismatch", "संस्था मेल खाएन", "संगठन मेल नहीं खाया")
+add("organizationMismatchBody", "This session no longer matches the organization you selected. Sign in again to continue.", "यो सत्र तपाईंले छान्नुभएको संस्थासँग अब मेल खाँदैन। जारी राख्न फेरि साइन इन गर्नुहोस्।", "यह सत्र अब आपके चयनित संगठन से मेल नहीं खाता। जारी रखने के लिए फिर से साइन इन करें।")
+add("organizationInactiveTitle", "Organization unavailable", "संस्था उपलब्ध छैन", "संगठन उपलब्ध नहीं")
+add("organizationInactiveBody", "This organization has been deactivated. Contact your administrator.", "यो संस्था निष्क्रिय गरिएको छ। आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।", "यह संगठन निष्क्रिय कर दिया गया है। अपने प्रशासक से संपर्क करें।")
+add("organizationNowUsing", "Now using {name}", "अब {name} प्रयोग हुँदैछ", "अब {name} का उपयोग हो रहा है", ["name"])
+add("organizationRequired", "Choose an organization to continue.", "जारी राख्न संस्था छान्नुहोस्।", "जारी रखने के लिए संगठन चुनें।")
+
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.
 #

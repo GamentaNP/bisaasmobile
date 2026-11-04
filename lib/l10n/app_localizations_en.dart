@@ -4208,4 +4208,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errTenantInactive => 'This organization is no longer active.';
+
+  @override
+  String get organization => 'Organization';
+
+  @override
+  String get organizationSwitchTitle => 'Switch organization';
+
+  @override
+  String get organizationSwitchSubtitle =>
+      'Choose which organization this app should use.';
+
+  @override
+  String get organizationCurrent => 'Current organization';
+
+  @override
+  String get organizationNone => 'No organization selected';
+
+  @override
+  String get organizationUnavailable =>
+      'No organizations are available on this device.';
+
+  @override
+  String get organizationSignInAgain => 'Sign in again';
+
+  @override
+  String get organizationMismatchTitle => 'Organization mismatch';
+
+  @override
+  String get organizationMismatchBody =>
+      'This session no longer matches the organization you selected. Sign in again to continue.';
+
+  @override
+  String get organizationInactiveTitle => 'Organization unavailable';
+
+  @override
+  String get organizationInactiveBody =>
+      'This organization has been deactivated. Contact your administrator.';
+
+  @override
+  String organizationNowUsing(Object name) {
+    return 'Now using $name';
+  }
+
+  @override
+  String get organizationRequired => 'Choose an organization to continue.';
 }

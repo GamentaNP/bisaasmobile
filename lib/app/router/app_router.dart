@@ -68,6 +68,7 @@ import '../../features/quiz/presentation/screens/quiz_funnel_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_intro_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_result_route.dart';
 import '../../features/quiz/presentation/screens/quiz_review_screen.dart';
+import '../../features/organization/presentation/screens/organization_switcher_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/streak/presentation/screens/streak_screen.dart';
 import '../../features/leaderboard/presentation/screens/leaderboard_screen.dart';
@@ -299,6 +300,16 @@ class AppRouter {
         path: '/settings',
         name: RouteNames.settings,
         builder: (context, state) => const SettingsScreen(),
+        routes: [
+          // The switch is only offered when a truthful list exists; the screen
+          // itself renders an "unavailable" state for a deep link that arrives
+          // without one, rather than an empty switcher.
+          GoRoute(
+            path: 'organization',
+            name: RouteNames.organization,
+            builder: (context, state) => const OrganizationSwitcherScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/ai/usage',

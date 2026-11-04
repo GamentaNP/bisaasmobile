@@ -4220,4 +4220,49 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get errTenantInactive => 'यह संगठन अब सक्रिय नहीं है।';
+
+  @override
+  String get organization => 'संगठन';
+
+  @override
+  String get organizationSwitchTitle => 'संगठन बदलें';
+
+  @override
+  String get organizationSwitchSubtitle =>
+      'चुनें कि यह ऐप किस संगठन का उपयोग करे।';
+
+  @override
+  String get organizationCurrent => 'वर्तमान संगठन';
+
+  @override
+  String get organizationNone => 'कोई संगठन चयनित नहीं';
+
+  @override
+  String get organizationUnavailable =>
+      'इस डिवाइस पर कोई संगठन उपलब्ध नहीं है।';
+
+  @override
+  String get organizationSignInAgain => 'फिर से साइन इन करें';
+
+  @override
+  String get organizationMismatchTitle => 'संगठन मेल नहीं खाया';
+
+  @override
+  String get organizationMismatchBody =>
+      'यह सत्र अब आपके चयनित संगठन से मेल नहीं खाता। जारी रखने के लिए फिर से साइन इन करें।';
+
+  @override
+  String get organizationInactiveTitle => 'संगठन उपलब्ध नहीं';
+
+  @override
+  String get organizationInactiveBody =>
+      'यह संगठन निष्क्रिय कर दिया गया है। अपने प्रशासक से संपर्क करें।';
+
+  @override
+  String organizationNowUsing(Object name) {
+    return 'अब $name का उपयोग हो रहा है';
+  }
+
+  @override
+  String get organizationRequired => 'जारी रखने के लिए संगठन चुनें।';
 }

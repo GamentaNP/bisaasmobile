@@ -4220,4 +4220,48 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get errTenantInactive => 'यो संस्था अब सक्रिय छैन।';
+
+  @override
+  String get organization => 'संस्था';
+
+  @override
+  String get organizationSwitchTitle => 'संस्था परिवर्तन गर्नुहोस्';
+
+  @override
+  String get organizationSwitchSubtitle =>
+      'यो एपले कुन संस्था प्रयोग गर्ने हो छान्नुहोस्।';
+
+  @override
+  String get organizationCurrent => 'हालको संस्था';
+
+  @override
+  String get organizationNone => 'कुनै संस्था छानिएको छैन';
+
+  @override
+  String get organizationUnavailable => 'यो उपकरणमा कुनै संस्था उपलब्ध छैन।';
+
+  @override
+  String get organizationSignInAgain => 'फेरि साइन इन गर्नुहोस्';
+
+  @override
+  String get organizationMismatchTitle => 'संस्था मेल खाएन';
+
+  @override
+  String get organizationMismatchBody =>
+      'यो सत्र तपाईंले छान्नुभएको संस्थासँग अब मेल खाँदैन। जारी राख्न फेरि साइन इन गर्नुहोस्।';
+
+  @override
+  String get organizationInactiveTitle => 'संस्था उपलब्ध छैन';
+
+  @override
+  String get organizationInactiveBody =>
+      'यो संस्था निष्क्रिय गरिएको छ। आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।';
+
+  @override
+  String organizationNowUsing(Object name) {
+    return 'अब $name प्रयोग हुँदैछ';
+  }
+
+  @override
+  String get organizationRequired => 'जारी राख्न संस्था छान्नुहोस्।';
 }

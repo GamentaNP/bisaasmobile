@@ -25,6 +25,9 @@ abstract final class RouteNames {
   static const downloads = 'downloads';
   static const profile = 'profile';
   static const settings = 'settings';
+
+  /// Organization context + switcher (only reachable when a list exists).
+  static const organization = 'organization';
   // AI — own usage analytics and bring-your-own-key management.
   static const aiUsage = 'ai-usage';
   static const aiKeys = 'ai-keys';

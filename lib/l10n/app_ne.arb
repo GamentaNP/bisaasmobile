@@ -3182,5 +3182,25 @@
     }
   },
   "errTenantMismatch": "यो सत्र फरक संस्थामा साइन इन छ। जारी राख्न फेरि साइन इन गर्नुहोस्।",
-  "errTenantInactive": "यो संस्था अब सक्रिय छैन।"
+  "errTenantInactive": "यो संस्था अब सक्रिय छैन।",
+  "organization": "संस्था",
+  "organizationSwitchTitle": "संस्था परिवर्तन गर्नुहोस्",
+  "organizationSwitchSubtitle": "यो एपले कुन संस्था प्रयोग गर्ने हो छान्नुहोस्।",
+  "organizationCurrent": "हालको संस्था",
+  "organizationNone": "कुनै संस्था छानिएको छैन",
+  "organizationUnavailable": "यो उपकरणमा कुनै संस्था उपलब्ध छैन।",
+  "organizationSignInAgain": "फेरि साइन इन गर्नुहोस्",
+  "organizationMismatchTitle": "संस्था मेल खाएन",
+  "organizationMismatchBody": "यो सत्र तपाईंले छान्नुभएको संस्थासँग अब मेल खाँदैन। जारी राख्न फेरि साइन इन गर्नुहोस्।",
+  "organizationInactiveTitle": "संस्था उपलब्ध छैन",
+  "organizationInactiveBody": "यो संस्था निष्क्रिय गरिएको छ। आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।",
+  "organizationNowUsing": "अब {name} प्रयोग हुँदैछ",
+  "@organizationNowUsing": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "organizationRequired": "जारी राख्न संस्था छान्नुहोस्।"
 }

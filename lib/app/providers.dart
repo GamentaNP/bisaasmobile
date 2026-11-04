@@ -35,6 +35,7 @@ import '../features/quiz/data/datasources/quiz_local_data_source.dart';
 import '../features/social/data/datasources/social_remote_data_source.dart';
 import '../features/social/data/repositories/social_repository_impl.dart';
 import '../features/social/domain/entities/social.dart';
+import '../features/organization/presentation/controllers/organization_controller.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   if (!DioClient.isInitialized) {
@@ -256,3 +257,17 @@ final socialProofProvider =
 // (practiceRemoteDataSourceProvider, practiceRepositoryProvider, practiceControllerProvider,
 //  practiceBookmarksProvider, practiceAttemptHistoryProvider)
 // and automatically use [dioProvider] via DioClient.instance.dio.
+
+// ── Organization context ───────────────────────────────────────────────────
+// Settings must not import the organization feature (features never import
+// each other), so the one signal it needs is re-exported here. The list behind
+// it is the build's own directory: when there is none, `available` is false
+// and the settings entry does not render at all.
+final organizationSwitcherStateProvider =
+    Provider<({bool available, String? selectedName})>((ref) {
+  final context = ref.watch(organizationControllerProvider).value;
+  return (
+    available: context?.switcherAvailable ?? false,
+    selectedName: context?.selected?.name,
+  );
+});

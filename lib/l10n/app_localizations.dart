@@ -7118,6 +7118,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This organization is no longer active.'**
   String get errTenantInactive;
+
+  /// No description provided for @organization.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization'**
+  String get organization;
+
+  /// No description provided for @organizationSwitchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch organization'**
+  String get organizationSwitchTitle;
+
+  /// No description provided for @organizationSwitchSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which organization this app should use.'**
+  String get organizationSwitchSubtitle;
+
+  /// No description provided for @organizationCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current organization'**
+  String get organizationCurrent;
+
+  /// No description provided for @organizationNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No organization selected'**
+  String get organizationNone;
+
+  /// No description provided for @organizationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No organizations are available on this device.'**
+  String get organizationUnavailable;
+
+  /// No description provided for @organizationSignInAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again'**
+  String get organizationSignInAgain;
+
+  /// No description provided for @organizationMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization mismatch'**
+  String get organizationMismatchTitle;
+
+  /// No description provided for @organizationMismatchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This session no longer matches the organization you selected. Sign in again to continue.'**
+  String get organizationMismatchBody;
+
+  /// No description provided for @organizationInactiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization unavailable'**
+  String get organizationInactiveTitle;
+
+  /// No description provided for @organizationInactiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This organization has been deactivated. Contact your administrator.'**
+  String get organizationInactiveBody;
+
+  /// No description provided for @organizationNowUsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Now using {name}'**
+  String organizationNowUsing(Object name);
+
+  /// No description provided for @organizationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an organization to continue.'**
+  String get organizationRequired;
 }
 
 class _AppLocalizationsDelegate

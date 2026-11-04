@@ -3182,5 +3182,25 @@
     }
   },
   "errTenantMismatch": "This session is signed in to a different organization. Sign in again to continue.",
-  "errTenantInactive": "This organization is no longer active."
+  "errTenantInactive": "This organization is no longer active.",
+  "organization": "Organization",
+  "organizationSwitchTitle": "Switch organization",
+  "organizationSwitchSubtitle": "Choose which organization this app should use.",
+  "organizationCurrent": "Current organization",
+  "organizationNone": "No organization selected",
+  "organizationUnavailable": "No organizations are available on this device.",
+  "organizationSignInAgain": "Sign in again",
+  "organizationMismatchTitle": "Organization mismatch",
+  "organizationMismatchBody": "This session no longer matches the organization you selected. Sign in again to continue.",
+  "organizationInactiveTitle": "Organization unavailable",
+  "organizationInactiveBody": "This organization has been deactivated. Contact your administrator.",
+  "organizationNowUsing": "Now using {name}",
+  "@organizationNowUsing": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "organizationRequired": "Choose an organization to continue."
 }

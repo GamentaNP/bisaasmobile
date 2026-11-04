@@ -3182,5 +3182,25 @@
     }
   },
   "errTenantMismatch": "यह सत्र किसी दूसरे संगठन में साइन इन है। जारी रखने के लिए फिर से साइन इन करें।",
-  "errTenantInactive": "यह संगठन अब सक्रिय नहीं है।"
+  "errTenantInactive": "यह संगठन अब सक्रिय नहीं है।",
+  "organization": "संगठन",
+  "organizationSwitchTitle": "संगठन बदलें",
+  "organizationSwitchSubtitle": "चुनें कि यह ऐप किस संगठन का उपयोग करे।",
+  "organizationCurrent": "वर्तमान संगठन",
+  "organizationNone": "कोई संगठन चयनित नहीं",
+  "organizationUnavailable": "इस डिवाइस पर कोई संगठन उपलब्ध नहीं है।",
+  "organizationSignInAgain": "फिर से साइन इन करें",
+  "organizationMismatchTitle": "संगठन मेल नहीं खाया",
+  "organizationMismatchBody": "यह सत्र अब आपके चयनित संगठन से मेल नहीं खाता। जारी रखने के लिए फिर से साइन इन करें।",
+  "organizationInactiveTitle": "संगठन उपलब्ध नहीं",
+  "organizationInactiveBody": "यह संगठन निष्क्रिय कर दिया गया है। अपने प्रशासक से संपर्क करें।",
+  "organizationNowUsing": "अब {name} का उपयोग हो रहा है",
+  "@organizationNowUsing": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "organizationRequired": "जारी रखने के लिए संगठन चुनें।"
 }
