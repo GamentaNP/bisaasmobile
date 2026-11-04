@@ -55,9 +55,10 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
   }
 
   /// The "how do I actually play this?" sheet. The five play modes are
-  /// scattered across tabs (Daily and Battle live on the home tab, Worlds and
-  /// Practice here, Arcade inside a course); one place names them all and
-  /// says what each is for.
+  /// scattered across tabs (Daily and Battle live on the home tab; Worlds,
+  /// Practice and Arcade here); one place names them all and says what each
+  /// is for. Every row now has a destination — the Arcade row used to be the
+  /// one that did not.
   void _showModesSheet() {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
