@@ -69,9 +69,13 @@ jobs:
           disable-animations: true
           # The app is not signed with the upload key here and does not need
           # to be: this is a test build, never a published artifact.
+          # One shell command, deliberately. A bare `cd` on its own line is at
+          # the mercy of how the action batches the script; the run on
+          # 2026-11-04 executed `flutter test` from the repo root and failed
+          # with "cannot run without a dependency on package:integration_test"
+          # — the app does not depend on it by design; device_tests does.
           script: |
-            cd device_tests
-            flutter test integration_test -d emulator-5554
+            cd device_tests && flutter pub get && flutter test integration_test -d emulator-5554
           # The emulator images for API 28 are the least reliable of the two;
           # a timeout there is a runner problem, not an app problem.
           timeout-minutes: 45

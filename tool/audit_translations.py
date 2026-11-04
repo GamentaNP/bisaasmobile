@@ -25,7 +25,11 @@ import os
 import re
 import sys
 
-BASE = r"C:\laragon\www\bisaasmobile"
+# Resolved from this file, not hardcoded: CI checks the repository out at
+# /home/runner/work/..., and a Windows absolute path made this audit fail with
+# FileNotFoundError on every Linux run (found 2026-11-04 on the first green-CI
+# attempt after the branch consolidation).
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ARB = os.path.join(BASE, "lib", "l10n")
 
 DEVANAGARI = re.compile(r"[\u0900-\u097F]")
