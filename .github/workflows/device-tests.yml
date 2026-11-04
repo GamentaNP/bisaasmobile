@@ -12,9 +12,9 @@ name: Device tests
 
 on:
   push:
-    branches: [master, main]
+    branches: [main, development]
   pull_request:
-    branches: [master, main]
+    branches: [main, development]
 
 jobs:
   android-emulator:

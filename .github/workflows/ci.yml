@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [master, main, develop]
+    branches: [main, development]
   pull_request:
-    branches: [master, main, develop]
+    branches: [main, development]
 
 jobs:
   analyze-test:
@@ -18,7 +18,12 @@ jobs:
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter analyze
-      - run: flutter test --coverage
+      # Capped concurrency: the default fans out to every core, and on a
+      # many-core runner that made a handful of widget tests hit their
+      # per-test timeout at random (observed 2026-11-04: 3 timeouts in a
+      # 1,651-test run, all passing individually and on rerun). A stable
+      # suite is worth a couple of minutes.
+      - run: flutter test --coverage --concurrency=4
       # A floor, not a target: it stops regressions without failing every
       # PR that adds an uncovered line. It was 40% when the suite was half
       # the size it is now; the measured coverage is 57.9%, so the floor

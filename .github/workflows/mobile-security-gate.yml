@@ -15,9 +15,9 @@ name: Mobile Security Gate
 
 on:
   push:
-    branches: [master, main, develop, development]
+    branches: [main, development]
   pull_request:
-    branches: [master, main, develop, development]
+    branches: [main, development]
   workflow_dispatch:
 
 permissions:
@@ -77,7 +77,7 @@ jobs:
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter analyze --fatal-infos
-      - run: flutter test
+      - run: flutter test --concurrency=4
 
   artifact-gate:
     name: Obfuscated release build + artifact scan
