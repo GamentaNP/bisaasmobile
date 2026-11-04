@@ -3310,6 +3310,57 @@ class AppLocalizationsNe extends AppLocalizations {
   String get coursesBrowseQuestions => 'प्रश्नहरू हेर्नुहोस्';
 
   @override
+  String get coursesWhatYouGet =>
+      'हरेक कोर्स वास्तविक प्रश्न बैंक हो — नाम नराखीकनै खोल्नुहोस् र खेल्नुहोस्। उत्तरहरू सर्भरले ग्रेड गर्छ।';
+
+  @override
+  String get coursesSearchHint => 'कोर्स खोज्नुहोस्…';
+
+  @override
+  String coursesNoneFound(Object query) {
+    return '\"$query\" सँग मिल्ने कुनै कोर्स छैन';
+  }
+
+  @override
+  String pageOf(Object current, Object total) {
+    return 'पृष्ठ $current/$total';
+  }
+
+  @override
+  String get previousPage => 'अघिल्लो';
+
+  @override
+  String get nextPage => 'अर्को';
+
+  @override
+  String get quizModesHelp => 'मोडहरू कसरी चल्छन्';
+
+  @override
+  String get modesWorldsBody =>
+      'स्तर यात्रा — अध्याय, तारा र बोस। समय सीमित, सर्भर-ग्रेडेड; XP र र्‍याङ्किङमा गनिन्छ।';
+
+  @override
+  String get modesPracticeBody =>
+      'बुकमार्क र कमजोर विषयबाट समय सीमा बिनाको अभ्यास। सर्भर-ग्रेडेड, तर XP वा र्‍याङ्किङ असर छैन।';
+
+  @override
+  String get modesDailyBody => 'हरेक दिन एक नयाँ सेट — स्ट्रिक जोगाउन बोनस XP।';
+
+  @override
+  String get modesBattleBody =>
+      'अर्को खेलाडीसँग 1v1 भिडन्त — उही प्रश्न, छिटो सही उत्तर जित्छ।';
+
+  @override
+  String get modesArcadeBody =>
+      'Arcade Games कोर्समा समय सीमित आर्केड स्प्रिन्ट — हर राउन्ड सर्भरले स्कोर गर्छ।';
+
+  @override
+  String get modesArcadeTitle => 'आर्केड खेलहरू';
+
+  @override
+  String get modesGotIt => 'बुझें';
+
+  @override
   String get pscTitle => 'PSC / लोकसेवा';
 
   @override

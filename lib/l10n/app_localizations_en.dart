@@ -3301,6 +3301,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coursesBrowseQuestions => 'Browse questions';
 
   @override
+  String get coursesWhatYouGet =>
+      'Every course is a real question bank — no enrollment needed, open one and play. Answers are graded by the server.';
+
+  @override
+  String get coursesSearchHint => 'Search courses…';
+
+  @override
+  String coursesNoneFound(Object query) {
+    return 'No courses match \"$query\"';
+  }
+
+  @override
+  String pageOf(Object current, Object total) {
+    return 'Page $current of $total';
+  }
+
+  @override
+  String get previousPage => 'Previous';
+
+  @override
+  String get nextPage => 'Next';
+
+  @override
+  String get quizModesHelp => 'How the modes work';
+
+  @override
+  String get modesWorldsBody =>
+      'A level journey — chapters, stars and bosses. Timed and server-graded; it counts for XP and ranking.';
+
+  @override
+  String get modesPracticeBody =>
+      'Untimed drills from your bookmarks and weak topics. Server-graded, but no XP and no rank effect.';
+
+  @override
+  String get modesDailyBody =>
+      'One fresh set every day — bonus XP for keeping your streak alive.';
+
+  @override
+  String get modesBattleBody =>
+      'A 1v1 duel against another player — same questions, faster correct answers win.';
+
+  @override
+  String get modesArcadeBody =>
+      'Timed arcade sprints on the Arcade Games course — every round scored by the server.';
+
+  @override
+  String get modesArcadeTitle => 'Arcade Games';
+
+  @override
+  String get modesGotIt => 'Got it';
+
+  @override
   String get pscTitle => 'PSC / Loksewa';
 
   @override

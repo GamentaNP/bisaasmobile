@@ -2381,6 +2381,37 @@
     }
   },
   "coursesBrowseQuestions": "Browse questions",
+  "coursesWhatYouGet": "Every course is a real question bank — no enrollment needed, open one and play. Answers are graded by the server.",
+  "coursesSearchHint": "Search courses…",
+  "coursesNoneFound": "No courses match \"{query}\"",
+  "@coursesNoneFound": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "pageOf": "Page {current} of {total}",
+  "@pageOf": {
+    "placeholders": {
+      "current": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "previousPage": "Previous",
+  "nextPage": "Next",
+  "quizModesHelp": "How the modes work",
+  "modesWorldsBody": "A level journey — chapters, stars and bosses. Timed and server-graded; it counts for XP and ranking.",
+  "modesPracticeBody": "Untimed drills from your bookmarks and weak topics. Server-graded, but no XP and no rank effect.",
+  "modesDailyBody": "One fresh set every day — bonus XP for keeping your streak alive.",
+  "modesBattleBody": "A 1v1 duel against another player — same questions, faster correct answers win.",
+  "modesArcadeBody": "Timed arcade sprints on the Arcade Games course — every round scored by the server.",
+  "modesArcadeTitle": "Arcade Games",
+  "modesGotIt": "Got it",
   "pscTitle": "PSC / Loksewa",
   "pscBlueprintsFailed": "Could not load the PSC blueprints.\n{reason}",
   "@pscBlueprintsFailed": {

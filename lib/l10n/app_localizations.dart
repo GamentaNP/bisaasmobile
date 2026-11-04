@@ -5665,6 +5665,90 @@ abstract class AppLocalizations {
   /// **'Browse questions'**
   String get coursesBrowseQuestions;
 
+  /// No description provided for @coursesWhatYouGet.
+  ///
+  /// In en, this message translates to:
+  /// **'Every course is a real question bank — no enrollment needed, open one and play. Answers are graded by the server.'**
+  String get coursesWhatYouGet;
+
+  /// No description provided for @coursesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses…'**
+  String get coursesSearchHint;
+
+  /// No description provided for @coursesNoneFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match \"{query}\"'**
+  String coursesNoneFound(Object query);
+
+  /// No description provided for @pageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} of {total}'**
+  String pageOf(Object current, Object total);
+
+  /// No description provided for @previousPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previousPage;
+
+  /// No description provided for @nextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextPage;
+
+  /// No description provided for @quizModesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How the modes work'**
+  String get quizModesHelp;
+
+  /// No description provided for @modesWorldsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A level journey — chapters, stars and bosses. Timed and server-graded; it counts for XP and ranking.'**
+  String get modesWorldsBody;
+
+  /// No description provided for @modesPracticeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Untimed drills from your bookmarks and weak topics. Server-graded, but no XP and no rank effect.'**
+  String get modesPracticeBody;
+
+  /// No description provided for @modesDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'One fresh set every day — bonus XP for keeping your streak alive.'**
+  String get modesDailyBody;
+
+  /// No description provided for @modesBattleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A 1v1 duel against another player — same questions, faster correct answers win.'**
+  String get modesBattleBody;
+
+  /// No description provided for @modesArcadeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed arcade sprints on the Arcade Games course — every round scored by the server.'**
+  String get modesArcadeBody;
+
+  /// No description provided for @modesArcadeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arcade Games'**
+  String get modesArcadeTitle;
+
+  /// No description provided for @modesGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get modesGotIt;
+
   /// No description provided for @pscTitle.
   ///
   /// In en, this message translates to:

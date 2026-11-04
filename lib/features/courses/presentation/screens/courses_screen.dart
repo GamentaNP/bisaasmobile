@@ -7,10 +7,17 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/corpus_availability.dart';
+import '../../../../shared/utils/display_name.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
+import '../../../../shared/widgets/page_controls.dart';
 import '../../../quiz/presentation/screens/quiz_browser_screen.dart';
 import '../../../../l10n/app_localizations.dart';
+
+/// Cards per page. The server publishes the catalog as one unpaginated list,
+/// so paging happens here — a player must be able to see how much is left
+/// instead of scrolling 90+ tiles of bulk-imported academic courses.
+const _coursesPerPage = 24;
 
 /// Courses — `GET /api/v1/quiz/courses` (public catalog, no auth required).
 ///
@@ -43,11 +50,26 @@ final _coursesProvider = FutureProvider<List<QuizCourseEntry>>((ref) async {
   );
 });
 
-class CoursesScreen extends ConsumerWidget {
+class CoursesScreen extends ConsumerStatefulWidget {
   const CoursesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CoursesScreen> createState() => _CoursesScreenState();
+}
+
+class _CoursesScreenState extends ConsumerState<CoursesScreen> {
+  String _query = '';
+  int _page = 0;
+
+  void _onQuery(String q) {
+    setState(() {
+      _query = q;
+      _page = 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final coursesAsync = ref.watch(_coursesProvider);
@@ -69,6 +91,36 @@ class CoursesScreen extends ConsumerWidget {
                   l10n.coursesNoneBody,
             );
           }
+          final q = _query.trim().toLowerCase();
+          final filtered = q.isEmpty
+              ? courses
+              : courses
+                  .where((c) =>
+                      c.title.toLowerCase().contains(q) ||
+                      c.description.toLowerCase().contains(q))
+                  .toList();
+          if (filtered.isEmpty) {
+            return ListView(
+              children: [
+                _SearchField(onChanged: _onQuery),
+                Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: EmptyState(
+                    icon: Icons.search_off_rounded,
+                    title: l10n.coursesNoneFound(_query.trim()),
+                    subtitle: l10n.coursesWhatYouGet,
+                  ),
+                ),
+              ],
+            );
+          }
+          final totalPages = (filtered.length + _coursesPerPage - 1) ~/ _coursesPerPage;
+          final page = _page.clamp(0, totalPages - 1);
+          final start = page * _coursesPerPage;
+          final visible = filtered.sublist(
+            start,
+            (start + _coursesPerPage).clamp(0, filtered.length),
+          );
           return CustomScrollView(
             slivers: [
               // Three separate corpora with their own readers, so none of them can
@@ -96,21 +148,37 @@ class CoursesScreen extends ConsumerWidget {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    l10n.coursesTracksCount(courses.length),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SearchField(onChanged: _onQuery),
+                      const SizedBox(height: 10),
+                      Text(
+                        l10n.coursesTracksCount(filtered.length),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color:
+                              theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.coursesWhatYouGet,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color:
+                              theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                 sliver: SliverGrid(
                   delegate: SliverChildBuilderDelegate(
                     (context, i) {
-                      final course = courses[i];
+                      final course = visible[i];
                       final color =
                           AppColors.coursePalette[i % AppColors.coursePalette.length];
                       return _CourseCard(
@@ -120,7 +188,7 @@ class CoursesScreen extends ConsumerWidget {
                             context.go('/quiz/browse?course=${course.id}'),
                       );
                     },
-                    childCount: courses.length,
+                    childCount: visible.length,
                   ),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -136,10 +204,48 @@ class CoursesScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              SliverToBoxAdapter(
+                child: PageControls(
+                  current: page + 1,
+                  total: totalPages,
+                  onPrev: page > 0 ? () => setState(() => _page--) : null,
+                  onNext: page < totalPages - 1
+                      ? () => setState(() => _page++)
+                      : null,
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// The catalog search box — pure client-side filtering of what the server
+/// already sent; nothing is re-fetched.
+class _SearchField extends StatelessWidget {
+  const _SearchField({required this.onChanged});
+
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return TextField(
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        hintText: AppLocalizations.of(context)!.coursesSearchHint,
+        prefixIcon: const Icon(Icons.search_rounded, size: 20),
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide:
+              BorderSide(color: theme.colorScheme.outlineVariant, width: 0.8),
+        ),
       ),
     );
   }
@@ -189,7 +295,7 @@ class _CourseCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              course.title,
+              humanizeName(course.title),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

@@ -6,6 +6,13 @@ import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/errors/error_handler.dart';
+import '../../../shared/utils/display_name.dart';
+import '../../../shared/widgets/page_controls.dart';
+
+/// Course rows per page under the banners. The same catalog the Courses tab
+/// paginates at 24; here the rows sit under two banners, so 10 per page keeps
+/// one mode banner plus a course row pair above the fold.
+const _coursesPerPage = 10;
 
 /// Quiz home — server-driven course cards (no invented slugs: attempts can
 /// only be started against ids the server knows, see QuizRemoteDataSource).
@@ -18,6 +25,7 @@ class QuizHomePage extends ConsumerStatefulWidget {
 
 class _QuizHomePageState extends ConsumerState<QuizHomePage> {
   late Future<List<_QuizTopic>> _courses;
+  int _page = 0;
 
   @override
   void initState() {
@@ -46,6 +54,124 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
     context.go('/quiz/${topic.id}');
   }
 
+  /// The "how do I actually play this?" sheet. The five play modes are
+  /// scattered across tabs (Daily and Battle live on the home tab, Worlds and
+  /// Practice here, Arcade inside a course); one place names them all and
+  /// says what each is for.
+  void _showModesSheet() {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final rows = <({IconData icon, String title, String body, String? route})>[
+      (
+        icon: Icons.public_rounded,
+        title: l10n.quizPlayWorlds,
+        body: l10n.modesWorldsBody,
+        route: '/game/worlds',
+      ),
+      (
+        icon: Icons.edit_note_rounded,
+        title: l10n.quizPracticeDrill,
+        body: l10n.modesPracticeBody,
+        route: '/practice',
+      ),
+      (
+        icon: Icons.local_fire_department_rounded,
+        title: l10n.homeDaily,
+        body: l10n.modesDailyBody,
+        route: null,
+      ),
+      (
+        icon: Icons.sports_kabaddi_rounded,
+        title: l10n.homeBattle,
+        body: l10n.modesBattleBody,
+        route: '/battle',
+      ),
+      (
+        icon: Icons.videogame_asset_rounded,
+        title: l10n.modesArcadeTitle,
+        body: l10n.modesArcadeBody,
+        route: null,
+      ),
+    ];
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.quizModesHelp,
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              for (final row in rows)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: row.route == null
+                        ? null
+                        : () {
+                            Navigator.of(sheetContext).pop();
+                            context.go(row.route!);
+                          },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(row.icon, size: 22, color: AppColors.brand),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(row.title,
+                                    style: theme.textTheme.titleSmall
+                                        ?.copyWith(
+                                            fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 2),
+                                Text(
+                                  row.body,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (row.route != null)
+                            Icon(Icons.chevron_right_rounded,
+                                size: 20,
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.4)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                  child: Text(l10n.modesGotIt),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -56,10 +182,22 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Text(
-                l10n.quizHomeTitle,
-                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.quizHomeTitle,
+                      style: theme.textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.quizModesHelp,
+                    onPressed: _showModesSheet,
+                    icon: const Icon(Icons.help_outline_rounded),
+                  ),
+                ],
               ),
             ),
             // The world map is the primary, gamified path (chapters, stars,
@@ -100,74 +238,105 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
                       message: l10n.quizHomeEmptyBody,
                     );
                   }
-                  return ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                    itemCount: topics.length,
-                    itemBuilder: (context, index) {
-                      final topic = topics[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: () => _openQuiz(topic),
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(12),
+                  final totalPages =
+                      (topics.length + _coursesPerPage - 1) ~/ _coursesPerPage;
+                  final page = _page.clamp(0, totalPages - 1);
+                  final start = page * _coursesPerPage;
+                  final visible = topics.sublist(
+                    start,
+                    (start + _coursesPerPage).clamp(0, topics.length),
+                  );
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                          itemCount: visible.length,
+                          itemBuilder: (context, index) {
+                            final topic = visible[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: () => _openQuiz(topic),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: AppColors.brand.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: theme.colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: theme.colorScheme.outlineVariant
+                                          .withValues(alpha: 0.3),
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.assignment_rounded,
-                                    color: AppColors.brand,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        topic.title,
-                                        style: theme.textTheme.titleSmall
-                                            ?.copyWith(fontWeight: FontWeight.bold),
-                                      ),
-                                      if (topic.desc.isNotEmpty) ...[
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          topic.desc,
-                                          style: theme.textTheme.bodySmall?.copyWith(
-                                            color: theme.colorScheme.onSurface
-                                                .withValues(alpha: 0.5),
-                                          ),
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.brand
+                                              .withValues(alpha: 0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
-                                      ],
+                                        child: const Icon(
+                                          Icons.assignment_rounded,
+                                          color: AppColors.brand,
+                                          size: 24,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              humanizeName(topic.title),
+                                              style: theme.textTheme.titleSmall
+                                                  ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            if (topic.desc.isNotEmpty) ...[
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                topic.desc,
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                  color: theme.colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.5),
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Icon(
+                                        Icons.play_circle_filled_rounded,
+                                        color: AppColors.brand,
+                                        size: 32,
+                                      ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                const Icon(
-                                  Icons.play_circle_filled_rounded,
-                                  color: AppColors.brand,
-                                  size: 32,
-                                ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                      PageControls(
+                        current: page + 1,
+                        total: totalPages,
+                        onPrev: page > 0 ? () => setState(() => _page--) : null,
+                        onNext: page < totalPages - 1
+                            ? () => setState(() => _page++)
+                            : null,
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                   );
                 },
               ),
