@@ -7,12 +7,6 @@ class EconomyRepositoryImpl implements EconomyRepository {
   final EconomyRemoteDataSource _remote;
 
   @override
-  Future<EconomyInventoryBundle> getInventory({int activityLimit = 10}) async {
-    final dto = await _remote.getInventory(activityLimit: activityLimit);
-    return dto.toDomain();
-  }
-
-  @override
   Future<List<DonorLeaderboardEntry>> getDonationLeaderboard() async {
     final dtos = await _remote.getDonationLeaderboard();
     return dtos.map((d) => d.toDomain()).toList();
@@ -51,46 +45,4 @@ class EconomyRepositoryImpl implements EconomyRepository {
     final dto = await _remote.getWalletCategories(period: period);
     return dto.toDomain();
   }
-
-  @override
-  Future<List<ShopItem>> getShopItems() async {
-    final dtos = await _remote.getShopItems();
-    return dtos.map((d) => d.toDomain()).toList();
-  }
-
-  @override
-  Future<ShopPurchaseResult> purchaseShopItem({
-    required ShopItemType type,
-    required String key,
-    int quantity = 1,
-    String? idempotencyKey,
-  }) async {
-    final dto = await _remote.purchaseShopItem(
-      type: type,
-      key: key,
-      quantity: quantity,
-      idempotencyKey: idempotencyKey,
-    );
-    return ShopPurchaseResult(
-      success: dto.success,
-      itemKey: dto.itemKey,
-      itemType: dto.itemType,
-      quantity: dto.quantity,
-      coinsSpent: dto.coinsSpent,
-      coinBalance: dto.coinBalance,
-      message: dto.message,
-    );
-  }
-
-  @override
-  Future<void> sellResource({
-    required String resource,
-    int quantity = 1,
-    String? idempotencyKey,
-  }) =>
-      _remote.sellResource(
-        resource: resource,
-        quantity: quantity,
-        idempotencyKey: idempotencyKey,
-      );
 }

@@ -244,8 +244,8 @@ class StoreController extends Notifier<StoreState> {
 
   /// REMOVED 2026-09-27: `fetchMarket()` existed only to call
   /// `GET /api/v1/store/market`, a route the server has never had. It could only
-  /// ever 404 into an empty list. The store screen now links to the real
-  /// trading surface (`/economy/shop` and `/economy/inventory`).
+  /// ever 404 into an empty list. The material trading surface behind it was
+  /// retired with the city economy.
 
   Future<void> refreshAll() async {
     await Future.wait([fetchCatalog(), fetchWardrobe()]);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/store_controller.dart';
@@ -134,37 +133,6 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
                 child: Row(children: [Icon(state.lastPurchaseResult!.success ? Icons.check_circle_rounded : Icons.error_outline_rounded, size: 16, color: state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.lastPurchaseResult!.message ?? (state.lastPurchaseResult!.success ? 'Success' : 'Failed'), style: TextStyle(fontSize: 12, color: state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed)))]),
               ),
             ],
-            const SizedBox(height: 18),
-            // ── Trading ─────────────────────────────────────────────────────
-            // There is no community resale marketplace: GET /store/market has
-            // never existed on the server. Point at the real coin-trading
-            // surface (the economy shop) instead of a permanent placeholder.
-            Text(l10n.storeTrading, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(
-              l10n.storeTradingExplain,
-              style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.go('/economy/shop'),
-                    icon: const Icon(Icons.storefront_rounded, size: 18),
-                    label: Text(l10n.storeCoinShop),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.go('/economy/inventory'),
-                    icon: const Icon(Icons.sell_rounded, size: 18),
-                    label: Text(l10n.storeSellItems),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

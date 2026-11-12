@@ -1,15 +1,12 @@
 /// Cross-layer integration tests for the economy and the premium store.
 ///
-/// Both surfaces used to swallow failures into an empty list, and both used
-/// to model a server shape the server never sent — the shop modelled USD
-/// coin packs the server does not sell, and the store's DTO read an integer
-/// id as a string and threw on every row. These tests pin the corrected
-/// contract end to end.
+/// Both surfaces used to swallow failures into an empty list, and the store
+/// DTO used to read an integer id as a string and throw on every row. These
+/// tests pin the corrected contract end to end.
 library;
 
 import 'package:bisaasmobile/features/economy/data/datasources/economy_remote_data_source.dart';
 import 'package:bisaasmobile/features/economy/data/repositories/economy_repository_impl.dart';
-import 'package:bisaasmobile/features/economy/domain/entities/economy.dart';
 import 'package:bisaasmobile/features/economy/domain/repositories/economy_repository.dart';
 import 'package:bisaasmobile/features/store/data/datasources/store_remote_data_source.dart';
 import 'package:bisaasmobile/features/store/data/repositories/store_repository_impl.dart';
@@ -19,86 +16,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'support/fake_api.dart';
 
 void main() {
-  group('the coin shop', () {
+  group('the economy wallet', () {
     late FakeApi api;
     late EconomyRepository repository;
 
     setUp(() {
       api = FakeApi(<String, FakeRoute>{});
       repository = EconomyRepositoryImpl(EconomyRemoteDataSource(dioFor(api)));
-    });
-
-    test('the catalogue is the resources and bundles, priced in coins',
-        () async {
-      api.on(
-        'GET',
-        '/economy/shop',
-        FakeRoute.ok(<String, dynamic>{
-          'resources': <Map<String, dynamic>>[
-            <String, dynamic>{
-              'id': 7,
-              'key': 'cement_bag',
-              'name': 'Cement Bag',
-              'category': 'material',
-              'base_price_coins': 120,
-              'sell_price_coins': 60,
-            },
-          ],
-          'bundles': <Map<String, dynamic>>[
-            <String, dynamic>{
-              'id': 2,
-              'key': 'starter_bundle',
-              'name': 'Starter Bundle',
-              'price_coins': 500,
-              'original_price_coins': 700,
-            },
-          ],
-        }),
-      );
-
-      final items = await repository.getShopItems();
-
-      expect(items, hasLength(2));
-      final resource = items.firstWhere((i) => i.type == ShopItemType.resource);
-      final bundle = items.firstWhere((i) => i.type == ShopItemType.bundle);
-      expect(resource.id, 7);
-      expect(resource.key, 'cement_bag');
-      expect(resource.priceCoins, 120);
-      expect(bundle.key, 'starter_bundle');
-      expect(bundle.priceCoins, 500);
-      expect(bundle.discountCoins, 200);
-    });
-
-    test('a purchase sends the body the server validates', () async {
-      api.on(
-        'POST',
-        '/economy/shop/purchase',
-        FakeRoute.ok(<String, dynamic>{
-          'type': 'bundle',
-          'key': 'starter_bundle',
-          'quantity': 2,
-          'coins_spent': 1000,
-          'coin_balance': 4200,
-        }),
-      );
-
-      final result = await repository.purchaseShopItem(
-        type: ShopItemType.bundle,
-        key: 'starter_bundle',
-        quantity: 2,
-        idempotencyKey: 'idem-1',
-      );
-
-      expect(result.success, isTrue);
-      expect(result.coinsSpent, 1000);
-      expect(result.coinBalance, 4200);
-
-      final body = api.jsonBodyOf(0);
-      expect(body['type'], 'bundle');
-      expect(body['key'], 'starter_bundle');
-      expect(body['quantity'], 2);
-      expect(body.containsKey('pack_id'), isFalse);
-      expect(api.requests.single.headers['Idempotency-Key'], 'idem-1');
     });
 
     test('the ledger is walked with a cursor, never a page number', () async {
@@ -183,40 +107,43 @@ void main() {
       repository = StoreRepositoryImpl(StoreRemoteDataSource(dioFor(api)));
     });
 
-    test('an integer id from the server does not break the catalogue', () async {
-      api.on(
-        'GET',
-        '/store/assets',
-        FakeRoute.envelope(<String, dynamic>{
-          'success': true,
-          'data': <String, dynamic>{
-            'items': <Map<String, dynamic>>[
-              <String, dynamic>{
-                'id': 5,
-                'slug': 'frame_gold',
-                'name': 'Golden Frame',
-                'category': 'avatar_frame',
-                'rarity': 'rare',
-                'price_coins': 500,
-              },
-            ],
-          },
-          'pagination': <String, dynamic>{
-            'type': 'cursor',
-            'per_page': 25,
-            'count': 1,
-            'has_more': false,
-          },
-        }),
-      );
+    test(
+      'an integer id from the server does not break the catalogue',
+      () async {
+        api.on(
+          'GET',
+          '/store/assets',
+          FakeRoute.envelope(<String, dynamic>{
+            'success': true,
+            'data': <String, dynamic>{
+              'items': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 5,
+                  'slug': 'frame_gold',
+                  'name': 'Golden Frame',
+                  'category': 'avatar_frame',
+                  'rarity': 'rare',
+                  'price_coins': 500,
+                },
+              ],
+            },
+            'pagination': <String, dynamic>{
+              'type': 'cursor',
+              'per_page': 25,
+              'count': 1,
+              'has_more': false,
+            },
+          }),
+        );
 
-      final catalog = await repository.getAssets();
+        final catalog = await repository.getAssets();
 
-      expect(catalog.items, hasLength(1));
-      expect(catalog.items.first.id, '5');
-      expect(catalog.items.first.slug, 'frame_gold');
-      expect(catalog.items.first.priceCoins, 500);
-    });
+        expect(catalog.items, hasLength(1));
+        expect(catalog.items.first.id, '5');
+        expect(catalog.items.first.slug, 'frame_gold');
+        expect(catalog.items.first.priceCoins, 500);
+      },
+    );
 
     test('the catalogue is walked with a cursor, not a page number', () async {
       api.on(
@@ -271,43 +198,29 @@ void main() {
     });
 
     test('the slot names are the ones the client offers', () {
-      expect(
-        StoreRemoteDataSource.wardrobeSlots,
-        <String>[
-          'avatar_frame',
-          'avatar',
-          'quiz_theme',
-          'sound_pack',
-          'mascot',
-        ],
-      );
+      expect(StoreRemoteDataSource.wardrobeSlots, <String>[
+        'avatar_frame',
+        'avatar',
+        'quiz_theme',
+        'sound_pack',
+        'mascot',
+      ]);
     });
   });
 
   group('failures are failures', () {
-    test('a 500 on the shop surfaces as an error, not an empty catalogue',
-        () async {
-      final api = FakeApi(<String, FakeRoute>{
-        'GET /economy/shop': FakeRoute.error(500, 'INTERNAL_ERROR', 'boom'),
-      });
-      final repository =
-          EconomyRepositoryImpl(EconomyRemoteDataSource(dioFor(api)));
+    test(
+      'a 500 on the store surfaces as an error, not an empty catalogue',
+      () async {
+        final api = FakeApi(<String, FakeRoute>{
+          'GET /store/assets': FakeRoute.error(500, 'INTERNAL_ERROR', 'boom'),
+        });
+        final repository = StoreRepositoryImpl(
+          StoreRemoteDataSource(dioFor(api)),
+        );
 
-      await expectLater(
-        repository.getShopItems(),
-        throwsA(isA<Exception>()),
-      );
-    });
-
-    test('a 500 on the store surfaces as an error, not an empty catalogue',
-        () async {
-      final api = FakeApi(<String, FakeRoute>{
-        'GET /store/assets': FakeRoute.error(500, 'INTERNAL_ERROR', 'boom'),
-      });
-      final repository =
-          StoreRepositoryImpl(StoreRemoteDataSource(dioFor(api)));
-
-      await expectLater(repository.getAssets(), throwsA(isA<Exception>()));
-    });
+        await expectLater(repository.getAssets(), throwsA(isA<Exception>()));
+      },
+    );
   });
 }

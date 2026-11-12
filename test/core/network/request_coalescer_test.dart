@@ -152,8 +152,8 @@ void main() {
 
     test('POST is never coalesced - two buyers must create two orders', () async {
       await Future.wait([
-        dio.post<dynamic>('/economy/shop/purchase', data: {'sku': 'x'}),
-        dio.post<dynamic>('/economy/shop/purchase', data: {'sku': 'x'}),
+        dio.post<dynamic>('/store/assets/x/purchase', data: {'sku': 'x'}),
+        dio.post<dynamic>('/store/assets/x/purchase', data: {'sku': 'x'}),
       ]);
 
       expect(

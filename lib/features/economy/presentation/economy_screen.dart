@@ -8,11 +8,11 @@ import '../../../app/theme/app_colors.dart';
 import '../../auth/presentation/controllers/auth_controller.dart';
 
 /// Economy hub — destinations inside Profile (5 tabs stay Home/Play/Calculate/Learn/Profile per task_plan.md R4).
-/// Routes: /economy/wallet (balance+ledger grouped by day), /economy/shop (materials and bundles), /economy/inventory (resources).
+/// Routes: /economy/wallet (balance+ledger grouped by day), /store (cosmetics),
+/// /store/wardrobe (equip owned cosmetics).
 ///
 /// Every one of these is a **live** endpoint: `GET /economy/wallet`,
-/// `GET /economy/wallet/ledger`, `GET /economy/shop`,
-/// `POST /economy/shop/purchase`, `GET /economy/resources/inventory`,
+/// `GET /economy/wallet/ledger`, `GET /store/assets`, `GET /store/wardrobe`,
 /// `GET /donations/leaderboard|feed`, `POST /donations/freeze-streak`.
 /// There is no beta placeholder mode: a failure is a failure and the screen
 /// shows it with a retry.
@@ -40,8 +40,6 @@ class EconomyScreen extends ConsumerWidget {
           Text(l10n.economyLiveExplain, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: 16),
           _HubTile(icon: Icons.account_balance_wallet_rounded, title: l10n.economyWalletTile, subtitle: l10n.economyWalletTileSub, route: '/economy/wallet'),
-          _HubTile(icon: Icons.shopping_bag_rounded, title: l10n.economyShopTile, subtitle: l10n.economyShopTileSub, route: '/economy/shop'),
-          _HubTile(icon: Icons.inventory_2_rounded, title: l10n.economyInventoryTile, subtitle: l10n.economyInventoryTileSub, route: '/economy/inventory'),
           const Divider(height: 24),
           _HubTile(icon: Icons.diamond_rounded, title: l10n.economyStoreTile, subtitle: l10n.economyStoreTileSub, route: '/store'),
           _HubTile(icon: Icons.checkroom_rounded, title: l10n.economyWardrobeTile, subtitle: l10n.economyWardrobeTileSub, route: '/store/wardrobe'),

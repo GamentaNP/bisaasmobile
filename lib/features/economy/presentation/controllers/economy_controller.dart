@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../app/localization/l10n.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/economy_remote_data_source.dart';
@@ -10,7 +9,9 @@ import '../../domain/entities/economy.dart';
 import '../../domain/repositories/economy_repository.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
-final economyRemoteDataSourceProvider = Provider<EconomyRemoteDataSource>((ref) {
+final economyRemoteDataSourceProvider = Provider<EconomyRemoteDataSource>((
+  ref,
+) {
   return EconomyRemoteDataSource(DioClient.instance.dio);
 });
 
@@ -24,9 +25,6 @@ class EconomyState {
   const EconomyState({
     this.isLoading = false,
     this.error,
-    this.inventoryBundle,
-    this.isInventoryLoading = false,
-    this.inventoryError,
     this.leaderboard = const [],
     this.isLeaderboardLoading = false,
     this.leaderboardError,
@@ -44,23 +42,13 @@ class EconomyState {
     this.walletCategories,
     this.isCategoriesLoading = false,
     this.categoriesError,
-    this.shopItems = const [],
-    this.isShopLoading = false,
-    this.shopError,
     this.isFreezingStreak = false,
     this.freezeMessage,
     this.lastFreezeResult,
-    this.isPurchasing = false,
-    this.purchaseError,
-    this.purchaseMessage,
   });
 
   final bool isLoading;
   final String? error;
-
-  final EconomyInventoryBundle? inventoryBundle;
-  final bool isInventoryLoading;
-  final String? inventoryError;
 
   final List<DonorLeaderboardEntry> leaderboard;
   final bool isLeaderboardLoading;
@@ -89,42 +77,28 @@ class EconomyState {
   final bool isCategoriesLoading;
   final String? categoriesError;
 
-  /// The coin shop catalogue: materials and bundles.
-  final List<ShopItem> shopItems;
-  final bool isShopLoading;
-  final String? shopError;
-
   final bool isFreezingStreak;
   final String? freezeMessage;
   final FreezeStreakResult? lastFreezeResult;
 
-  final bool isPurchasing;
-  final String? purchaseError;
-  final String? purchaseMessage;
-
   /// True when any surface is currently failing.
   ///
-  /// There is no "beta placeholder" mode any more: every economy endpoint the
-  /// app calls exists on the server, so a failure is a failure and the UI
-  /// shows it instead of silently rendering an empty catalogue.
+  /// Every economy endpoint the app calls exists on the server, so a failure
+  /// is a failure and the UI shows it instead of silently rendering an empty
+  /// catalogue.
   bool get hasErrors =>
       error != null ||
-      inventoryError != null ||
       leaderboardError != null ||
       feedError != null ||
       walletError != null ||
       ledgerError != null ||
-      categoriesError != null ||
-      shopError != null;
+      categoriesError != null;
 
   static const _sentinel = Object();
 
   EconomyState copyWith({
     bool? isLoading,
     Object? error = _sentinel,
-    Object? inventoryBundle = _sentinel,
-    bool? isInventoryLoading,
-    Object? inventoryError = _sentinel,
     List<DonorLeaderboardEntry>? leaderboard,
     bool? isLeaderboardLoading,
     Object? leaderboardError = _sentinel,
@@ -142,48 +116,49 @@ class EconomyState {
     Object? walletCategories = _sentinel,
     bool? isCategoriesLoading,
     Object? categoriesError = _sentinel,
-    List<ShopItem>? shopItems,
-    bool? isShopLoading,
-    Object? shopError = _sentinel,
     bool? isFreezingStreak,
     Object? freezeMessage = _sentinel,
     Object? lastFreezeResult = _sentinel,
-    bool? isPurchasing,
-    Object? purchaseError = _sentinel,
-    Object? purchaseMessage = _sentinel,
   }) {
     return EconomyState(
       isLoading: isLoading ?? this.isLoading,
       error: error == _sentinel ? this.error : error as String?,
-      inventoryBundle: inventoryBundle == _sentinel ? this.inventoryBundle : inventoryBundle as EconomyInventoryBundle?,
-      isInventoryLoading: isInventoryLoading ?? this.isInventoryLoading,
-      inventoryError: inventoryError == _sentinel ? this.inventoryError : inventoryError as String?,
       leaderboard: leaderboard ?? this.leaderboard,
       isLeaderboardLoading: isLeaderboardLoading ?? this.isLeaderboardLoading,
-      leaderboardError: leaderboardError == _sentinel ? this.leaderboardError : leaderboardError as String?,
+      leaderboardError: leaderboardError == _sentinel
+          ? this.leaderboardError
+          : leaderboardError as String?,
       feed: feed ?? this.feed,
       isFeedLoading: isFeedLoading ?? this.isFeedLoading,
       feedError: feedError == _sentinel ? this.feedError : feedError as String?,
       wallet: wallet == _sentinel ? this.wallet : wallet as Wallet?,
       isWalletLoading: isWalletLoading ?? this.isWalletLoading,
-      walletError: walletError == _sentinel ? this.walletError : walletError as String?,
+      walletError: walletError == _sentinel
+          ? this.walletError
+          : walletError as String?,
       ledger: ledger ?? this.ledger,
       isLedgerLoading: isLedgerLoading ?? this.isLedgerLoading,
-      ledgerError: ledgerError == _sentinel ? this.ledgerError : ledgerError as String?,
+      ledgerError: ledgerError == _sentinel
+          ? this.ledgerError
+          : ledgerError as String?,
       ledgerHasMore: ledgerHasMore ?? this.ledgerHasMore,
-      ledgerCursor: ledgerCursor == _sentinel ? this.ledgerCursor : ledgerCursor as String?,
-      walletCategories: walletCategories == _sentinel ? this.walletCategories : walletCategories as WalletCategories?,
+      ledgerCursor: ledgerCursor == _sentinel
+          ? this.ledgerCursor
+          : ledgerCursor as String?,
+      walletCategories: walletCategories == _sentinel
+          ? this.walletCategories
+          : walletCategories as WalletCategories?,
       isCategoriesLoading: isCategoriesLoading ?? this.isCategoriesLoading,
-      categoriesError: categoriesError == _sentinel ? this.categoriesError : categoriesError as String?,
-      shopItems: shopItems ?? this.shopItems,
-      isShopLoading: isShopLoading ?? this.isShopLoading,
-      shopError: shopError == _sentinel ? this.shopError : shopError as String?,
+      categoriesError: categoriesError == _sentinel
+          ? this.categoriesError
+          : categoriesError as String?,
       isFreezingStreak: isFreezingStreak ?? this.isFreezingStreak,
-      freezeMessage: freezeMessage == _sentinel ? this.freezeMessage : freezeMessage as String?,
-      lastFreezeResult: lastFreezeResult == _sentinel ? this.lastFreezeResult : lastFreezeResult as FreezeStreakResult?,
-      isPurchasing: isPurchasing ?? this.isPurchasing,
-      purchaseError: purchaseError == _sentinel ? this.purchaseError : purchaseError as String?,
-      purchaseMessage: purchaseMessage == _sentinel ? this.purchaseMessage : purchaseMessage as String?,
+      freezeMessage: freezeMessage == _sentinel
+          ? this.freezeMessage
+          : freezeMessage as String?,
+      lastFreezeResult: lastFreezeResult == _sentinel
+          ? this.lastFreezeResult
+          : lastFreezeResult as FreezeStreakResult?,
     );
   }
 }
@@ -199,20 +174,6 @@ class EconomyController extends Notifier<EconomyState> {
 
   String _msg(Object e) => e.toString();
 
-  // ── Inventory (live) ──────────────────────────────────────────────────────
-
-  Future<void> fetchInventory({int activityLimit = 10}) async {
-    state = state.copyWith(isInventoryLoading: true, inventoryError: null);
-    try {
-      final bundle = await _repo.getInventory(activityLimit: activityLimit);
-      state = state.copyWith(inventoryBundle: bundle, isInventoryLoading: false);
-    } catch (e, st) {
-      AppLogger.w('economy fetchInventory failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isInventoryLoading: false, inventoryError: _msg(e));
-    }
-  }
-
   // ── Donations (live) ──────────────────────────────────────────────────────
 
   Future<void> fetchLeaderboard() async {
@@ -223,7 +184,10 @@ class EconomyController extends Notifier<EconomyState> {
     } catch (e, st) {
       AppLogger.w('economy fetchLeaderboard failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLeaderboardLoading: false, leaderboardError: _msg(e));
+      state = state.copyWith(
+        isLeaderboardLoading: false,
+        leaderboardError: _msg(e),
+      );
     }
   }
 
@@ -240,10 +204,18 @@ class EconomyController extends Notifier<EconomyState> {
   }
 
   Future<FreezeStreakResult?> freezeStreak() async {
-    state = state.copyWith(isFreezingStreak: true, freezeMessage: null, lastFreezeResult: null);
+    state = state.copyWith(
+      isFreezingStreak: true,
+      freezeMessage: null,
+      lastFreezeResult: null,
+    );
     try {
       final res = await _repo.freezeStreak(idempotencyKey: _uuid.v4());
-      state = state.copyWith(isFreezingStreak: false, lastFreezeResult: res, freezeMessage: res.message);
+      state = state.copyWith(
+        isFreezingStreak: false,
+        lastFreezeResult: res,
+        freezeMessage: res.message,
+      );
       return res;
     } catch (e, st) {
       AppLogger.w('economy freezeStreak failed: $e');
@@ -271,7 +243,11 @@ class EconomyController extends Notifier<EconomyState> {
   ///
   /// The endpoint is cursor-paginated, so [cursor] is the `next_cursor` the
   /// server handed out — there is no page number to jump to.
-  Future<void> fetchLedger({String? cursor, int perPage = 20, bool append = false}) async {
+  Future<void> fetchLedger({
+    String? cursor,
+    int perPage = 20,
+    bool append = false,
+  }) async {
     state = state.copyWith(isLedgerLoading: true, ledgerError: null);
     try {
       final ledger = await _repo.getLedger(cursor: cursor, perPage: perPage);
@@ -293,82 +269,30 @@ class EconomyController extends Notifier<EconomyState> {
     state = state.copyWith(isCategoriesLoading: true, categoriesError: null);
     try {
       final categories = await _repo.getWalletCategories(period: period);
-      state = state.copyWith(walletCategories: categories, isCategoriesLoading: false);
+      state = state.copyWith(
+        walletCategories: categories,
+        isCategoriesLoading: false,
+      );
     } catch (e, st) {
       AppLogger.w('economy fetchWalletCategories failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCategoriesLoading: false, categoriesError: _msg(e));
-    }
-  }
-
-  // ── Coin shop ──────────────────────────────────────────────────────────────
-
-  /// Loads the shop catalogue.
-  ///
-  /// There is no "beta placeholder" branch any more: `GET /economy/shop` is a
-  /// live endpoint, so an empty catalogue is an empty catalogue and a failure
-  /// is a failure. The old code inferred "degraded" from an empty list, which
-  /// hid a real catalogue behind a BETA banner whenever the DTO threw.
-  Future<void> fetchShopItems() async {
-    state = state.copyWith(isShopLoading: true, shopError: null);
-    try {
-      final items = await _repo.getShopItems();
-      state = state.copyWith(shopItems: items, isShopLoading: false);
-    } catch (e, st) {
-      AppLogger.w('economy fetchShopItems failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isShopLoading: false, shopError: _msg(e));
-    }
-  }
-
-  /// Buys a shop row with coins.
-  ///
-  /// The Idempotency-Key is minted once per user action and reused for a
-  /// retry of that same action, so a dropped response never double-charges.
-  Future<ShopPurchaseResult?> purchaseShopItem(ShopItem item, {int quantity = 1}) async {
-    state = state.copyWith(isPurchasing: true, purchaseError: null, purchaseMessage: null);
-    try {
-      final result = await _repo.purchaseShopItem(
-        type: item.type,
-        key: item.key,
-        quantity: quantity,
-        idempotencyKey: _uuid.v4(),
-      );
-      if (!result.success) {
-        state = state.copyWith(
-          isPurchasing: false,
-          purchaseError: result.message ?? 'Purchase failed',
-        );
-        return result;
-      }
       state = state.copyWith(
-        isPurchasing: false,
-        purchaseMessage: result.message ?? appL10n().economyPurchased(item.name),
+        isCategoriesLoading: false,
+        categoriesError: _msg(e),
       );
-      // The wallet and the ledger both moved.
-      await fetchWallet();
-      await fetchLedger();
-      await fetchShopItems();
-      return result;
-    } catch (e, st) {
-      AppLogger.w('economy purchaseShopItem ${item.key} failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isPurchasing: false, purchaseError: _msg(e));
-      return null;
     }
   }
 
   Future<void> refreshAll() async {
     await Future.wait([
-      fetchInventory(),
       fetchLeaderboard(),
       fetchFeed(),
       fetchWallet(),
       fetchLedger(),
       fetchWalletCategories(),
-      fetchShopItems(),
     ]);
   }
 }
 
-final economyControllerProvider = NotifierProvider<EconomyController, EconomyState>(EconomyController.new);
+final economyControllerProvider =
+    NotifierProvider<EconomyController, EconomyState>(EconomyController.new);

@@ -20,7 +20,6 @@ abstract class StoreRepository {
 
   /// `getMarket()` was removed 2026-09-27 — it called `GET /store/market`,
   /// which has never existed on the server. There is no community resale
-  /// marketplace; coin trading lives in the economy group
-  /// (`GET /economy/shop`, `POST /economy/market/sells`), reached from the
-  /// Economy tab.
+  /// marketplace; the material trading surface was retired with the city
+  /// economy.
 }

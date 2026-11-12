@@ -44,11 +44,9 @@ abstract final class RouteNames {
   static const tutorOnboarding = 'tutor-onboarding';
   static const coaching = 'coaching';
   static const coachingDashboard = 'coaching-dashboard';
-  // Economy — wallet/ledger/shop/inventory (WO-1/WO-2 beta, inventory live)
+  // Economy — wallet/ledger
   static const economy = 'economy';
   static const economyWallet = 'economy-wallet';
-  static const economyShop = 'economy-shop';
-  static const economyInventory = 'economy-inventory';
   // Store — premium assets / wardrobe (WO-3 beta)
   static const store = 'store';
   static const wardrobe = 'wardrobe';

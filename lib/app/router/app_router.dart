@@ -25,8 +25,6 @@ import '../../features/calculator/presentation/screens/calculator_detail_screen.
 import '../../features/calculator/presentation/screens/calculator_history_screen.dart';
 import '../../features/courses/presentation/screens/courses_screen.dart';
 import '../../features/economy/presentation/economy_screen.dart';
-import '../../features/economy/presentation/screens/inventory_screen.dart';
-import '../../features/economy/presentation/screens/shop_screen.dart';
 import '../../features/economy/presentation/screens/wallet_screen.dart';
 import '../../features/gamification/presentation/screens/achievements_screen.dart';
 import '../../features/gamification/presentation/screens/rewards_screen.dart';
@@ -424,8 +422,6 @@ class AppRouter {
       ),
       GoRoute(path: '/economy', name: RouteNames.economy, builder: (context, state) => const EconomyScreen()),
       GoRoute(path: '/economy/wallet', name: RouteNames.economyWallet, builder: (context, state) => const WalletScreen()),
-      GoRoute(path: '/economy/shop', name: RouteNames.economyShop, builder: (context, state) => const ShopScreen()),
-      GoRoute(path: '/economy/inventory', name: RouteNames.economyInventory, builder: (context, state) => const InventoryScreen()),
       GoRoute(path: '/store', name: RouteNames.store, builder: (context, state) => const PremiumStoreScreen()),
       GoRoute(path: '/store/wardrobe', name: RouteNames.wardrobe, builder: (context, state) => const WardrobeScreen()),
       GoRoute(
