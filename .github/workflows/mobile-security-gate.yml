@@ -60,7 +60,7 @@ jobs:
         # `@v2` failed to resolve and took the whole gate down with it
         # ("Unable to resolve action ... unable to find version v2", observed
         # 2026-11-04). Bump deliberately.
-        uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
+        uses: google/osv-scanner-action/osv-scanner-action@v2.7.1
         with:
           scan-args: |-
             --format=table
