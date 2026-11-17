@@ -137,7 +137,7 @@ class AppRouter {
       ),
       GoRoute(
         // Reached from civilcal://reset-password?token=...&email=... and from
-        // the emailed https://bisaas.com/reset-password?token=... link.
+        // the emailed https://lovemcq.com/reset-password?token=... link.
         //
         // This route did not exist, so the deep-link handler pointed the token
         // at /forgot-password, which has no token parameter — the token was

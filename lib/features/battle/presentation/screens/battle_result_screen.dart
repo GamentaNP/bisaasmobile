@@ -135,7 +135,7 @@ class BattleResultScreen extends ConsumerWidget {
 
   Future<void> _share(BuildContext context, bool isWin, BattlePlayer me, BattlePlayer opp) async {
     final l10n = AppLocalizations.of(context)!;
-    final msg = 'I just ${isWin ? "won" : "fought"} a battle on CivilCal: ${me.score}-${opp.score} vs ${opp.displayName}! Try me: https://bisaas.com';
+    final msg = 'I just ${isWin ? "won" : "fought"} a battle on CivilCal: ${me.score}-${opp.score} vs ${opp.displayName}! Try me: https://lovemcq.com';
     try {
       await SharePlus.instance.share(ShareParams(text: msg, subject: 'CivilCal Battle Result'));
     } catch (_) {

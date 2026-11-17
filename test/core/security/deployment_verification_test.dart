@@ -13,7 +13,9 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bisaasmobile/core/network/app_update_gate.dart';
 import 'package:bisaasmobile/core/network/certificate_pinning.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Reads a repository file relative to the package root.
@@ -191,6 +193,30 @@ void main() {
         reason: 'no ATS exception may be declared',
       );
       expect(atsBlock, contains('<false/>'));
+    });
+  });
+
+  group('store identity', () {
+    test('the update links resolve to the shipped package', () {
+      expect(StoreLinks.packageId, 'com.beardbishwo.lovemcq');
+      expect(
+        StoreLinks.forPlatform(
+          platform: 'android',
+          fallback: TargetPlatform.android,
+        ),
+        'https://play.google.com/store/apps/details?id=com.beardbishwo.lovemcq',
+      );
+    });
+
+    test('the iOS fallback support page is on the production host', () {
+      expect(StoreLinks.supportUrl, startsWith('https://lovemcq.com/'));
+    });
+
+    test('the production defines agree with the store identity', () {
+      final defines = _readDefines('dart_defines/production.json');
+
+      expect(defines['ANDROID_PACKAGE_NAME'], StoreLinks.packageId);
+      expect(defines['IOS_BUNDLE_ID'], 'com.beardbishwo.lovemcq');
     });
   });
 }

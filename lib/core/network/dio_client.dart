@@ -178,7 +178,7 @@ class DioClient {
       }
         // A production host is never a development host, even when a debug
         // build is pointed at it with `--dart-define=API_HOST=…`. Accepting a
-        // self-signed certificate for `bisaas.com` would hand anyone who can
+        // self-signed certificate for `lovemcq.com` would hand anyone who can
         // intercept the connection a working MITM against the live API.
         ..removeWhere((h) => CertificatePinning.productionHosts.contains(h))
         ..removeWhere((h) => h.isEmpty);

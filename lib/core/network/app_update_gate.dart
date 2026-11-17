@@ -67,11 +67,17 @@ class AppUpdateGate extends ChangeNotifier {
 class StoreLinks {
   const StoreLinks._();
 
-  static const packageId = 'com.bisaas.bisaasmobile';
+  /// The applicationId of the shipped build. Must match
+  /// `android/app/build.gradle.kts` or the Play Store update link resolves to
+  /// an app that does not exist.
+  static const packageId = String.fromEnvironment(
+    'ANDROID_PACKAGE_NAME',
+    defaultValue: 'com.beardbishwo.lovemcq',
+  );
 
   /// Where the support page lives. Used as the iOS fallback before the app
   /// has a numeric App Store ID.
-  static const supportUrl = 'https://bisaas.com/support';
+  static const supportUrl = 'https://lovemcq.com/contact';
 
   /// The numeric App Store ID, e.g. `1234567890`. Supplied at build time by
   /// `dart_defines/production.json` once the app has been published.

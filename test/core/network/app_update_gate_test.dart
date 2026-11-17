@@ -171,7 +171,7 @@ void main() {
       );
       expect(
         StoreLinks.forPlatform(platform: 'android'),
-        'https://play.google.com/store/apps/details?id=com.bisaas.bisaasmobile',
+        'https://play.google.com/store/apps/details?id=com.beardbishwo.lovemcq',
       );
     });
 
@@ -187,7 +187,7 @@ void main() {
     });
 
     test('never builds an App Store URL out of the bundle id', () {
-      // `apps.apple.com/app/idcom.bisaas.bisaasmobile` is not a URL — the
+      // `apps.apple.com/app/idcom.beardbishwo.lovemcq` is not a URL — the
       // App Store takes a numeric ID and has no package-name lookup. Without
       // an ID the link must go somewhere that actually resolves.
       final url = StoreLinks.forPlatform(
@@ -195,7 +195,7 @@ void main() {
         fallback: TargetPlatform.iOS,
         appStoreId: '',
       );
-      expect(url, isNot(contains('idcom.bisaas.bisaasmobile')));
+      expect(url, isNot(contains('idcom.beardbishwo.lovemcq')));
       expect(url, StoreLinks.supportUrl);
       expect(url, startsWith('https://'));
     });
