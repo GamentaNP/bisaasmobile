@@ -44,9 +44,9 @@ void main() {
   });
 
   group('the deep link the server mints', () {
-    test('https://bisaas.com/s/{token} routes into the app', () {
+    test('https://lovemcq.com/s/{token} routes into the app', () {
       expect(
-        DeepLinkHandler.parse(Uri.parse('https://bisaas.com/s/tok_123')),
+        DeepLinkHandler.parse(Uri.parse('https://lovemcq.com/s/tok_123')),
         '/social/share/tok_123',
       );
     });

@@ -9,11 +9,23 @@
 ///     --dart-define=CERT_PIN_2=sha256/BBBB...  # (backup pin — rotate safely)
 ///
 /// Compute a pin:
-///   openssl s_client -connect bisaas.com:443 </dev/null \
+///   openssl s_client -connect lovemcq.com:443 </dev/null \
 ///     | openssl x509 -outform DER \
 ///     | openssl dgst -sha256 -binary \
 ///     | openssl base64
 /// Then prefix with `sha256/`.
+///
+/// HOSTING NOTE (lovemcq.com): production sits behind Cloudflare, which
+/// serves a Let's Encrypt `YE1` edge certificate valid for roughly 90 days
+/// and rotates it automatically (current leaf: 2026-11-14 -> 2027-02-12).
+/// Two consequences:
+///   - The two slots currently carry the SAME live leaf pin. There is no
+///     future certificate to pre-pin, so the backup slot is a rotation
+///     placeholder until a stable-key certificate exists.
+///   - Re-pin on every renewal (or before Feb 2027) or the release will
+///     stop trusting the edge. For a Play Store build, prefer a Cloudflare
+///     custom certificate with a key you control, or drop leaf pinning for
+///     the zone deliberately - never ship a stale pin.
 ///
 /// Fail-safe by construction:
 /// - When pins are configured, any certificate that does not match is rejected
@@ -42,7 +54,7 @@
 /// term (CA key compromise response, some automated renewals). The stronger
 /// practice is SPKI pinning of the INTERMEDIATE CA:
 ///
-///   openssl s_client -connect bisaas.com:443 -showcerts </dev/null \
+///   openssl s_client -connect lovemcq.com:443 -showcerts </dev/null \
 ///     | openssl x509 -in /dev/stdin -outform DER ...   # 2nd cert in chain
 ///     | openssl dgst -sha256 -binary | openssl base64
 ///
@@ -99,12 +111,12 @@ abstract final class CertificatePinning {
   ///
   /// The dev certificate shim (`DioClient`) allows a self-signed certificate
   /// for the configured base URL's host. That is right for `bisaas.test` and
-  /// wrong for `bisaas.com`: a debug build pointed at production must not
+  /// wrong for `lovemcq.com`: a debug build pointed at production must not
   /// accept a forged certificate for it.
   static const productionHosts = <String>{
-    'bisaas.com',
-    'www.bisaas.com',
-    'staging.bisaas.com',
+    'lovemcq.com',
+    'www.lovemcq.com',
+    'staging.lovemcq.com',
   };
 
   /// Applies pinning to [adapter] for [host].

@@ -876,7 +876,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String profileShareCardText(Object level) {
-    return 'मेरो CivilCal प्रोफाइल — तह $level इन्जिनियर। https://bisaas.com';
+    return 'मेरो CivilCal प्रोफाइल — तह $level इन्जिनियर। https://lovemcq.com';
   }
 
   @override
@@ -4091,7 +4091,7 @@ class AppLocalizationsNe extends AppLocalizations {
     Object xp,
     Object coins,
   ) {
-    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins CivilCal (BiSaaS) बाट। प्रयास: https://bisaas.com';
+    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins CivilCal (BiSaaS) बाट। प्रयास: https://lovemcq.com';
   }
 
   @override

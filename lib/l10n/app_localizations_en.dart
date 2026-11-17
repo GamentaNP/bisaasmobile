@@ -876,7 +876,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String profileShareCardText(Object level) {
-    return 'My CivilCal profile — Level $level Engineer. https://bisaas.com';
+    return 'My CivilCal profile — Level $level Engineer. https://lovemcq.com';
   }
 
   @override
@@ -4083,7 +4083,7 @@ class AppLocalizationsEn extends AppLocalizations {
     Object xp,
     Object coins,
   ) {
-    return 'I scored $correct/$total ($percent%) on \"$title\" — $grade! XP +$xp, Coins +$coins via CivilCal (BiSaaS). Try: https://bisaas.com';
+    return 'I scored $correct/$total ($percent%) on \"$title\" — $grade! XP +$xp, Coins +$coins via CivilCal (BiSaaS). Try: https://lovemcq.com';
   }
 
   @override

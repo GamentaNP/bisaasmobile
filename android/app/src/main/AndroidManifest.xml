@@ -79,14 +79,14 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="civilcal"/>
             </intent-filter>
-            <!-- App Links (https) — requires assetlinks.json at
-                 https://bisaas.com/.well-known/assetlinks.json for autoVerify. -->
+            <!-- App Links (https) - requires assetlinks.json at
+                 https://lovemcq.com/.well-known/assetlinks.json for autoVerify. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="https" android:host="bisaas.com"/>
-                <data android:scheme="https" android:host="www.bisaas.com"/>
+                <data android:scheme="https" android:host="lovemcq.com"/>
+                <data android:scheme="https" android:host="www.lovemcq.com"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

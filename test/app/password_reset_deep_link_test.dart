@@ -46,7 +46,7 @@ void main() {
     // users actually tap on a phone.
     test('reads the token from the path segment', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('https://bisaas.com/reset-password/abc123?email=a%40b.com'),
+        Uri.parse('https://lovemcq.com/reset-password/abc123?email=a%40b.com'),
       );
       expect(location, isNotNull);
       expect(location, contains('token=abc123'));
@@ -55,21 +55,21 @@ void main() {
 
     test('works on the www host too', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('https://www.bisaas.com/reset-password/abc123?email=a%40b.com'),
+        Uri.parse('https://www.lovemcq.com/reset-password/abc123?email=a%40b.com'),
       );
       expect(location, contains('token=abc123'));
     });
 
     test('accepts a query-form token as a fallback', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('https://bisaas.com/reset-password?token=abc123&email=a%40b.com'),
+        Uri.parse('https://lovemcq.com/reset-password?token=abc123&email=a%40b.com'),
       );
       expect(location, contains('token=abc123'));
     });
 
     test('a token with URL-unsafe characters is encoded, not dropped', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('https://bisaas.com/reset-password/tok%3Den%2Bwith%2Fchars'),
+        Uri.parse('https://lovemcq.com/reset-password/tok%3Den%2Bwith%2Fchars'),
       );
       expect(location, isNotNull);
       expect(location, isNot(contains(' ')));
@@ -89,11 +89,11 @@ void main() {
     });
 
     test('https quiz app link', () {
-      expect(DeepLinkHandler.parse(Uri.parse('https://bisaas.com/quiz/abc')), '/quiz/abc');
+      expect(DeepLinkHandler.parse(Uri.parse('https://lovemcq.com/quiz/abc')), '/quiz/abc');
     });
 
     test('an unknown https path is unhandled rather than misrouted', () {
-      expect(DeepLinkHandler.parse(Uri.parse('https://bisaas.com/pricing')), isNull);
+      expect(DeepLinkHandler.parse(Uri.parse('https://lovemcq.com/pricing')), isNull);
     });
   });
 

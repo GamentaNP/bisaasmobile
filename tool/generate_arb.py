@@ -517,9 +517,9 @@ add("profileUpdated", "Profile updated", "प्रोफाइल अद्य�
 add("profileUpdateFailed", "Update failed: {reason}", "अद्यावधिक असफल: {reason}", "अपडेट विफल: {reason}", ["reason"])
 add(
     "profileShareCardText",
-    "My CivilCal profile — Level {level} Engineer. https://bisaas.com",
-    "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://bisaas.com",
-    "मेरा CivilCal प्रोफ़ाइल — स्तर {level} इंजीनियर। https://bisaas.com",
+    "My CivilCal profile — Level {level} Engineer. https://lovemcq.com",
+    "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://lovemcq.com",
+    "मेरा CivilCal प्रोफ़ाइल — स्तर {level} इंजीनियर। https://lovemcq.com",
     ["level"],
 )
 add("profileShareFailed", "Share failed: {reason}", "साझेदारी असफल: {reason}", "साझा करना विफल: {reason}", ["reason"])
@@ -2389,11 +2389,11 @@ add(
 add(
     "quizShareResult",
     "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! "
-    "XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com",
+    "XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://lovemcq.com",
     "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! "
-    "XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://bisaas.com",
+    "XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://lovemcq.com",
     "मैंने \"{title}\" पर {correct}/{total} ({percent}%) अंक किए — {grade}! "
-    "XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://bisaas.com",
+    "XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://lovemcq.com",
     ["correct", "total", "percent", "title", "grade", "xp", "coins"],
 )
 add("quizGradeExcellent", "Excellent", "उत्कृष्ट", "बहुत बढ़िया")

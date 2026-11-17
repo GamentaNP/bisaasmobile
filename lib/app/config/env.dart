@@ -24,9 +24,11 @@ extension AppEnvX on AppEnv {
     if (override.isNotEmpty) return override;
 
     return switch (this) {
-      AppEnv.prod => 'https://bisaas.com',
-      // staging host — replace when DNS is live
-      AppEnv.staging => 'https://staging.bisaas.com',
+      // Production web + API of record (Cloudflare-fronted Laravel).
+      AppEnv.prod => 'https://lovemcq.com',
+      // No staging host is deployed yet; keep it distinct from prod so a
+      // staging build can never silently write to the live database.
+      AppEnv.staging => 'https://staging.lovemcq.com',
       // Local Laragon (Laragon auto-generates self-signed cert). Chrome/Windows can resolve bisaas.test;
       // Android emulator needs 10.0.2.2 (or 10.0.2.2:443) — set via --dart-define=API_HOST=https://10.0.2.2
       // Cleartext http:// is forbidden by network_security_config.xml (W2.6);

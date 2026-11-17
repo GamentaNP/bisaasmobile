@@ -1597,7 +1597,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileShareCardText.
   ///
   /// In en, this message translates to:
-  /// **'My CivilCal profile — Level {level} Engineer. https://bisaas.com'**
+  /// **'My CivilCal profile — Level {level} Engineer. https://lovemcq.com'**
   String profileShareCardText(Object level);
 
   /// No description provided for @profileShareFailed.
@@ -6892,7 +6892,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizShareResult.
   ///
   /// In en, this message translates to:
-  /// **'I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com'**
+  /// **'I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://lovemcq.com'**
   String quizShareResult(
     Object correct,
     Object total,

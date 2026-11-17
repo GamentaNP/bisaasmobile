@@ -1,11 +1,12 @@
 {
   "ENV": "prod",
-  "API_HOST": "https://bisaas.com",
-  "API_BASE_URL": "https://bisaas.com/api/v1",
+  "API_HOST": "https://lovemcq.com",
+  "API_BASE_URL": "https://lovemcq.com/api/v1",
+  "ANDROID_PACKAGE_NAME": "com.beardbishwo.lovemcq",
   "SIGNING_CERT_HASH": "sha256/Idhu5QABO16+E+ITyW/C23QfqrjrfZWMtxm0WCGK1B4=",
-  "IOS_BUNDLE_ID": "com.bisaas.bisaasmobile",
+  "IOS_BUNDLE_ID": "com.beardbishwo.lovemcq",
   "IOS_TEAM_ID": "__REPLACE_WITH_APPLE_TEAM_ID__",
   "SECURITY_WATCHER_MAIL": "security@bisaas.com",
-  "CERT_PIN_1": "sha256/sMXJpL2FVDZCuIHtcrJ+Z7MXFU1rD9LE+ahHgNxvbqo=",
-  "CERT_PIN_2": "sha256/brzvtCELCIZUo4sD/qPX0ccRtPsd3DY6RfmxpOU9oB4="
+  "CERT_PIN_1": "sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ=",
+  "CERT_PIN_2": "sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ="
 }

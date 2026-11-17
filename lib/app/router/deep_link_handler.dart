@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
-/// Parses `civilcal://` and `https://bisaas.com/*` deep links.
+/// Parses `civilcal://` and `https://lovemcq.com/*` deep links.
 /// Returns router location or null if not handled.
 abstract final class DeepLinkHandler {
-  static const appHosts = {'bisaas.com', 'www.bisaas.com'};
+  static const appHosts = {'lovemcq.com', 'www.lovemcq.com'};
 
   static String? parse(Uri uri) {
     // civilcal://reset-password?token=...&email=...
@@ -25,13 +25,13 @@ abstract final class DeepLinkHandler {
       }
     }
 
-    // https://bisaas.com/* app links.
+    // https://lovemcq.com/* app links.
     if (appHosts.contains(uri.host) && uri.pathSegments.isNotEmpty) {
       if (uri.pathSegments.first == 'quiz' && uri.pathSegments.length > 1) {
         return '/quiz/${uri.pathSegments[1]}';
       }
 
-      // A share link is `https://bisaas.com/s/{token}` — the same shape the
+      // A share link is `https://lovemcq.com/s/{token}` — the same shape the
       // server publishes (`GrowthController::link` → `url('/s/'.$token)`).
       // Without this the recipient's phone opens the browser instead of the
       // in-app guest sandbox.

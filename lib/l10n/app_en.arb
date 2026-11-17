@@ -540,7 +540,7 @@
       }
     }
   },
-  "profileShareCardText": "My CivilCal profile — Level {level} Engineer. https://bisaas.com",
+  "profileShareCardText": "My CivilCal profile — Level {level} Engineer. https://lovemcq.com",
   "@profileShareCardText": {
     "placeholders": {
       "level": {
@@ -3065,7 +3065,7 @@
   },
   "numericalNotCorrect": "Not correct. Try again or view the worked solution.",
   "quizAnswerSavedNote": "Answer saved — the breakdown unlocks on the results screen.",
-  "quizShareResult": "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://bisaas.com",
+  "quizShareResult": "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://lovemcq.com",
   "@quizShareResult": {
     "placeholders": {
       "correct": {

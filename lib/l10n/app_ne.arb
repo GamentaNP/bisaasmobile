@@ -540,7 +540,7 @@
       }
     }
   },
-  "profileShareCardText": "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://bisaas.com",
+  "profileShareCardText": "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://lovemcq.com",
   "@profileShareCardText": {
     "placeholders": {
       "level": {
@@ -3065,7 +3065,7 @@
   },
   "numericalNotCorrect": "गलत छ। फेरि प्रयास गर्नुहोस् वा चरणबद्ध समाधान हेर्नुहोस्।",
   "quizAnswerSavedNote": "उत्तर सुरक्षित भयो — विवरण नतिजाको स्क्रिनमा खुल्छ।",
-  "quizShareResult": "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://bisaas.com",
+  "quizShareResult": "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://lovemcq.com",
   "@quizShareResult": {
     "placeholders": {
       "correct": {

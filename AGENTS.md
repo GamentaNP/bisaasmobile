@@ -77,7 +77,7 @@ product decision about offline answering — do not turn it on by accident.
 ## Local backend reference
 
 - Default dev backend: `https://bisaas.test` (Laragon + PostgreSQL) — see `lib/app/config/env.dart:18`. Chrome/web can hit it directly; the Android emulator uses `https://10.0.2.2` (`--dart-define=API_HOST=https://10.0.2.2`). **Plain `http://` never connects**: `networkSecurityConfig` blocks cleartext in every build, including debug.
-- Production: `https://bisaas.com` per `dart_defines/production.json` — **not live on 2026-11-04** (the domain 302s to a parking page). See `docs/LAUNCH_READINESS.md`. Never hardcode hosts in features — import from `ApiConfig`.
+- Production: `https://lovemcq.com` per `dart_defines/production.json` (live 2026-11-17 — web + `/api/v1` both answer 200). Never hardcode hosts in features - import from `ApiConfig`. Android package id is `com.beardbishwo.lovemcq`; App Links identity is served by the Laravel server from the admin panel (see `docs/APP_LINKS_DEPLOYMENT.md`).
 - **Do not** add `/api/v1` twice: `ApiConfig.baseUrl` already ends with `/api/v1`.
 
 ## Flutter stack pins (keep in sync with pubspec.yaml)

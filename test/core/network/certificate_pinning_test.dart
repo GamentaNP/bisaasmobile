@@ -70,11 +70,11 @@ void main() {
 
       CertificatePinning.apply(
         adapter,
-        host: 'bisaas.com',
+        host: 'lovemcq.com',
         pins: <String>[pin],
       );
 
-      expect(adapter.validateCertificate!(cert, 'bisaas.com', 443), isTrue);
+      expect(adapter.validateCertificate!(cert, 'lovemcq.com', 443), isTrue);
     });
 
     test('a certificate that is not on the pin list is rejected', () {
@@ -83,11 +83,11 @@ void main() {
 
       CertificatePinning.apply(
         adapter,
-        host: 'bisaas.com',
+        host: 'lovemcq.com',
         pins: <String>[CertificatePinning.pinFor(pinned)!],
       );
 
-      expect(adapter.validateCertificate!(other, 'bisaas.com', 443), isFalse);
+      expect(adapter.validateCertificate!(other, 'lovemcq.com', 443), isFalse);
     });
 
     test('an uncomputable certificate is rejected — fail closed', () {
@@ -95,11 +95,11 @@ void main() {
 
       CertificatePinning.apply(
         adapter,
-        host: 'bisaas.com',
+        host: 'lovemcq.com',
         pins: <String>[CertificatePinning.pinFor(pinned)!],
       );
 
-      expect(adapter.validateCertificate!(null, 'bisaas.com', 443), isFalse);
+      expect(adapter.validateCertificate!(null, 'lovemcq.com', 443), isFalse);
     });
 
     test('a dev host is never pinned', () {
@@ -122,7 +122,7 @@ void main() {
       // adapter is left on standard validation (no prod env in tests).
       CertificatePinning.apply(
         adapter,
-        host: 'staging.bisaas.com',
+        host: 'staging.lovemcq.com',
         pins: const <String>['__REPLACE_WITH_STAGING_CERT_HASH__'],
       );
       expect(adapter.validateCertificate, isNull);
@@ -130,7 +130,7 @@ void main() {
       // A real pin still installs the check.
       CertificatePinning.apply(
         adapter,
-        host: 'staging.bisaas.com',
+        host: 'staging.lovemcq.com',
         pins: <String>[pin],
       );
       expect(adapter.validateCertificate, isNotNull);

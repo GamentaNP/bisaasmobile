@@ -35,9 +35,16 @@ class AppSecurity {
     'SIGNING_CERT_HASH',
     defaultValue: '',
   );
+  /// Android applicationId the freeRASP check binds to. Must match
+  /// `android/app/build.gradle.kts` or every release build reports
+  /// `appIntegrity` (a tampered package) against itself.
+  static const _androidPackageName = String.fromEnvironment(
+    'ANDROID_PACKAGE_NAME',
+    defaultValue: 'com.beardbishwo.lovemcq',
+  );
   static const _iosBundleId = String.fromEnvironment(
     'IOS_BUNDLE_ID',
-    defaultValue: 'com.bisaas.bisaasmobile',
+    defaultValue: 'com.beardbishwo.lovemcq',
   );
   static const _iosTeamId = String.fromEnvironment(
     'IOS_TEAM_ID',
@@ -201,7 +208,7 @@ class AppSecurity {
     AndroidConfig? androidConfig;
     if (Platform.isAndroid && signingHash != null) {
       androidConfig = AndroidConfig(
-        packageName: 'com.bisaas.bisaasmobile',
+        packageName: _androidPackageName,
         signingCertHashes: [signingHash],
         supportedStores: [
           'com.android.vending', // Google Play

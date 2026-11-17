@@ -89,7 +89,7 @@ void main() {
       // a forged certificate for the live API.
       expect(
         CertificatePinning.productionHosts,
-        containsAll(<String>['bisaas.com', 'www.bisaas.com']),
+        containsAll(<String>['lovemcq.com', 'www.lovemcq.com']),
       );
     });
 

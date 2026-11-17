@@ -141,7 +141,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.bisaas.bisaasmobile"
+        applicationId = "com.beardbishwo.lovemcq"
         // Master plan 1.3 named Android 10 (API 29) as the floor. Security plan
         // W2.6 then *raised* it to 29 and retired the CPH1909 (API 27) device.
         //
