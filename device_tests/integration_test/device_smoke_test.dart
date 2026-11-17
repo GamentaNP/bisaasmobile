@@ -47,10 +47,10 @@ void main() {
 
   group('deep links', () {
     test('a share link routes to the in-app guest sandbox', () {
-      // The server mints `https://bisaas.com/s/{token}` — the exact shape the
+      // The server mints `https://lovemcq.com/s/{token}` - the exact shape the
       // recipient's phone receives. It must open the app, not a browser.
       expect(
-        DeepLinkHandler.parse(Uri.parse('https://bisaas.com/s/tok_123')),
+        DeepLinkHandler.parse(Uri.parse('https://lovemcq.com/s/tok_123')),
         '/social/share/tok_123',
       );
       expect(
@@ -61,7 +61,9 @@ void main() {
 
     test('the password-reset link shape is still routed', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('https://bisaas.com/reset-password/abc123?email=a@b.test'),
+        Uri.parse(
+          'https://lovemcq.com/reset-password/abc123?email=a@b.test',
+        ),
       );
       expect(location, contains('/reset-password'));
       expect(location, contains('token=abc123'));
@@ -70,7 +72,16 @@ void main() {
 
     test('an unrelated link is not hijacked', () {
       expect(
-        DeepLinkHandler.parse(Uri.parse('https://bisaas.com/blog/hello')),
+        DeepLinkHandler.parse(Uri.parse('https://lovemcq.com/blog/hello')),
+        isNull,
+      );
+    });
+
+    test('the retired host is no longer claimed', () {
+      // bisaas.com was the pre-2026-11 production host. If a stale link still
+      // resolves, the app would claim a domain it no longer owns end to end.
+      expect(
+        DeepLinkHandler.parse(Uri.parse('https://bisaas.com/s/tok_123')),
         isNull,
       );
     });
