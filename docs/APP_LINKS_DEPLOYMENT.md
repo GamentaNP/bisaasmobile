@@ -81,3 +81,58 @@ adb shell pm verify-app-links --re-verify com.beardbishwo.lovemcq
 `get-app-links` must report `verified` for `lovemcq.com`. Until then, an
 `https://lovemcq.com/...` link opens a browser; the `civilcal://` scheme is
 unaffected and always works.
+
+---
+
+# Apple — prepared, disabled (2026-11-17)
+
+iOS ships with everything Apple needs **except the account**, and is inert until
+the values below exist. Nothing has to be coded later; this is configuration
+only.
+
+## What is already in place
+
+| Piece | Where | State |
+|---|---|---|
+| Sign in with Apple entitlement | `ios/Runner/Runner.entitlements` → `com.apple.developer.applesignin` | present, wired into all three Runner configs via `CODE_SIGN_ENTITLEMENTS` |
+| Universal-link hosts | same file → `com.apple.developer.associated-domains` | `applinks:lovemcq.com`, `applinks:www.lovemcq.com` |
+| AASA route | server `GET /.well-known/apple-app-site-association` → `PwaIdentityController` | live, currently serves the `TEAM_ID` placeholder |
+| Server id_token verification | web repo `app/Services/SocialAuth/AppleIdTokenVerifier.php` | live — RS256 against Apple's JWKS, iss/aud/exp enforced |
+| Apple endpoint switch | `services.apple.client_id` (DB, GoogleSettings) | **empty → 403 `AUTH_SOCIAL_DISABLED`** |
+| Mobile Apple button switch | `APPLE_CLIENT_ID` define | **empty → button never rendered** |
+
+Because both switches are empty, an App Store reviewer sees no Apple button at
+all, and a hand-rolled request to `POST /api/v1/auth/social/apple` gets a stable
+403 instead of a misleading auth failure.
+
+## Enable steps (when Apple devices + account exist)
+
+1. **Apple Developer portal** → Identifiers → the App ID
+   `com.beardbishwo.lovemcq`:
+   - enable **Sign in with Apple**,
+   - enable **Associated Domains**.
+   Create a **Services ID** too only if web Sign in with Apple is wanted.
+2. Copy the **Team ID** and save it in
+   `/admin` → Mobile App Settings → “Store identity & app links” → iOS app ID
+   field (format `TEAMID.com.beardbishwo.lovemcq`). The AASA file then serves
+   the real `appID` and universal links begin verifying on iOS.
+3. `/admin` → Google Settings → Apple OAuth → save the client ID (the
+   **bundle id**, `com.beardbishwo.lovemcq`; comma-separate a web Services ID if
+   one exists). This flips the server endpoint from 403 to token verification.
+4. `dart_defines/production.json`: set `APPLE_CLIENT_ID` to the same bundle id
+   (`APPLE_REDIRECT_URI` only for web). Rebuild — the button appears wherever
+   `SignInWithApple.isAvailable()` is true.
+5. `IOS_TEAM_ID` in the same file: replace `__REPLACE_WITH_APPLE_TEAM_ID__`.
+6. Run `flutter test test/core/security/deployment_verification_test.dart` —
+   the `apple readiness` group flips from “disabled” to the enabled
+   expectations once the values are real (update that group deliberately).
+
+## Verify on an iPhone
+
+```bash
+curl -s https://lovemcq.com/.well-known/apple-app-site-association | jq .applinks
+```
+
+`details[].appID` must be `<TEAM_ID>.com.beardbishwo.lovemcq` — no placeholder,
+no `REPLACE_WITH`. Then tap an `https://lovemcq.com/...` link in Messages or
+Notes: it must open the app, not Safari.

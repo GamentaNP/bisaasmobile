@@ -219,4 +219,36 @@ void main() {
       expect(defines['IOS_BUNDLE_ID'], 'com.beardbishwo.lovemcq');
     });
   });
+
+  group('apple readiness', () {
+    test('apple sign-in ships disabled until an Apple account exists', () {
+      final defines = _readDefines('dart_defines/production.json');
+
+      expect(
+        defines['APPLE_CLIENT_ID'],
+        isEmpty,
+        reason:
+            'an empty APPLE_CLIENT_ID is the switch that hides the Apple '
+            'button and keeps the server endpoint on AUTH_SOCIAL_DISABLED',
+      );
+      expect(defines['APPLE_REDIRECT_URI'], isEmpty);
+    });
+
+    test('universal links are declared against the production host', () {
+      final entitlements = _read('ios/Runner/Runner.entitlements');
+
+      expect(
+        entitlements,
+        contains('com.apple.developer.associated-domains'),
+      );
+      expect(entitlements, contains('applinks:lovemcq.com'));
+      expect(entitlements, contains('applinks:www.lovemcq.com'));
+    });
+
+    test('sign in with apple keeps its entitlement for the enable step', () {
+      final entitlements = _read('ios/Runner/Runner.entitlements');
+
+      expect(entitlements, contains('com.apple.developer.applesignin'));
+    });
+  });
 }

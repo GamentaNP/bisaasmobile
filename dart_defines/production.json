@@ -6,6 +6,8 @@
   "SIGNING_CERT_HASH": "sha256/Idhu5QABO16+E+ITyW/C23QfqrjrfZWMtxm0WCGK1B4=",
   "IOS_BUNDLE_ID": "com.beardbishwo.lovemcq",
   "IOS_TEAM_ID": "__REPLACE_WITH_APPLE_TEAM_ID__",
+  "APPLE_CLIENT_ID": "",
+  "APPLE_REDIRECT_URI": "",
   "SECURITY_WATCHER_MAIL": "security@bisaas.com",
   "CERT_PIN_1": "sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ=",
   "CERT_PIN_2": "sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ="

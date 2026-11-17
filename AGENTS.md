@@ -156,7 +156,7 @@ pins are both present. Both fail **closed**, and both are checked in CI
 |---|---|---|
 | `CERT_PIN_1` (+ `CERT_PIN_2` backup) | `dart_defines/production.json` | A production build (`ENV=prod`). A production build with no usable pin is refused **twice**: the Gradle script fails the build (so CI catches it), and the runtime refuses to start (so a device cannot run an unpinned release). `lib/core/network/certificate_pinning.dart`, `android/app/build.gradle.kts`. Staging deliberately uses standard validation instead — the pins defend the production host. |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_SERVER_CLIENT_ID` | `--dart-define` | Google sign-in. Without the *server* client id the SDK issues no `id_token` and the server answers `AUTH_SOCIAL_FAILED`. |
-| `APPLE_CLIENT_ID` / `APPLE_REDIRECT_URI` | `--dart-define` | Apple sign-in. The redirect URI is required on Android and web. On iOS the **"Sign in with Apple" capability** must also be enabled on the App ID in the Apple Developer portal, and `ios/Runner/Runner.entitlements` (already wired via `CODE_SIGN_ENTITLEMENTS`) must stay in the project. |
+| `APPLE_CLIENT_ID` / `APPLE_REDIRECT_URI` | `--dart-define` | Apple sign-in. **Deliberately empty in `dart_defines/production.json`** — Apple ships disabled until an Apple Developer account and devices exist. An empty `APPLE_CLIENT_ID` hides the button, and the server also refuses `POST /api/v1/auth/social/apple` with `AUTH_SOCIAL_DISABLED` until its own client id is saved. Enable later by setting the bundle id (`com.beardbishwo.lovemcq`) in both places; the redirect URI is only needed for a web Sign in with Apple flow. On iOS the **"Sign in with Apple" capability** must also be enabled on the App ID, and `ios/Runner/Runner.entitlements` must stay wired via `CODE_SIGN_ENTITLEMENTS`. |
 | `ENV` | `--dart-define=ENV=prod` | Selects the flavor. The dev certificate shim is compiled out of any non-debug build, and a production host is never in the permissive host set. |
 
 Social buttons whose provider is not configured are **hidden**, not shown
@@ -249,6 +249,16 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   `com.apple.developer.applesignin` entitlement), wired into the three Runner build
   configurations via `CODE_SIGN_ENTITLEMENTS`. The capability must also be enabled on the
   App ID in the Apple Developer portal — a build-time setting that cannot be checked in.
+  **Apple is prepared, not enabled (2026-11-17).** The entitlement and the server-side
+  id_token verifier are in place, but `APPLE_CLIENT_ID` is empty and no admin Apple client
+  id is saved, so the button is hidden and the endpoint answers `AUTH_SOCIAL_DISABLED`.
+  Enabling it later is configuration only: Apple Developer App ID with Sign in with Apple
+  and Associated Domains, Team ID into the admin panel, `APPLE_CLIENT_ID` into
+  `dart_defines/production.json`.
+- **Universal links** are declared in the same entitlements file
+  (`applinks:lovemcq.com`, `applinks:www.lovemcq.com`). They stay inert while the served
+  `apple-app-site-association` carries the `TEAM_ID` placeholder, which is intentional —
+  no code change is needed once the Team ID exists.
 
 ## Android toolchain (Windows 11) — INSTALLED
 

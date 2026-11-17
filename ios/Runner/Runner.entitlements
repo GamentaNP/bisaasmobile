@@ -7,17 +7,35 @@
 
 	  The `sign_in_with_apple` plugin needs this entitlement to return an
 	  identity token on iOS. Without it the Apple button fails at runtime
-	  with an authorization error even though the app builds fine — which is
+	  with an authorization error even though the app builds fine - which is
 	  exactly the kind of failure that only shows up on a device.
 
 	  Enabling it also requires the "Sign in with Apple" capability on the
-	  App ID in the Apple Developer portal, and `APPLE_CLIENT_ID` /
-	  `APPLE_REDIRECT_URI` compiled in (see AGENTS.md → release
-	  configuration).
+	  App ID in the Apple Developer portal, and `APPLE_CLIENT_ID` compiled in
+	  (see AGENTS.md release configuration). Apple sign-in is DISABLED today:
+	  `APPLE_CLIENT_ID` is empty in dart_defines/production.json, so the
+	  button is never rendered and the server refuses the endpoint.
 	-->
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>
+	</array>
+
+	<!--
+	  Universal links (https://lovemcq.com/...).
+
+	  Prepared but inert until the Apple Developer App ID has the Associated
+	  Domains capability and the server's
+	  /.well-known/apple-app-site-association carries the real Team ID
+	  (admin panel -> Mobile App Settings -> Store identity & app links).
+	  With the placeholder TEAM_ID today iOS simply keeps opening links in the
+	  browser - no code change is needed later, only the capability and the
+	  Team ID.
+	-->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:lovemcq.com</string>
+		<string>applinks:www.lovemcq.com</string>
 	</array>
 </dict>
 </plist>
