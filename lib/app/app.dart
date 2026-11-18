@@ -22,6 +22,7 @@ import 'package:bisaasmobile/core/consent/consent_screens.dart';
 import 'force_update_screen.dart';
 import 'maintenance_screen.dart';
 import 'router/app_router.dart';
+import 'tenant_failure_gate.dart';
 import 'theme/app_theme.dart';
 
 class CivilCalApp extends ConsumerStatefulWidget {
@@ -262,7 +263,13 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
         // unsupported build cannot be repaired by waiting — so it is checked
         // first and the maintenance gate nests inside it.
         child: ForceUpdateGate(
-          child: MaintenanceGate(child: child ?? const SizedBox.shrink()),
+          child: MaintenanceGate(
+            // Tenant refusals are user-session scoped, so they sit inside the
+            // operator-wide kill switches: a maintenance window or a forced
+            // update wins over a closed workspace. The gate reads TenantStore
+            // reactively and never re-fetches, so it cannot form a retry loop.
+            child: TenantFailureGate(child: child ?? const SizedBox.shrink()),
+          ),
         ),
       ),
     );

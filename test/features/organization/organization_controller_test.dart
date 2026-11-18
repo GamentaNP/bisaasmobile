@@ -228,6 +228,29 @@ void main() {
       },
     );
 
+    test(
+      'the failure state carries the server-named id and workspace name',
+      () async {
+        final container = containerWith(organizations: const [_acme]);
+        await container.read(organizationControllerProvider.future);
+        await container.read(organizationControllerProvider.notifier).use(7);
+
+        await tenants.reportFailure(
+          TenantFailure.inactive,
+          tenantId: 7,
+        );
+        final state = await container.read(
+          organizationControllerProvider.future,
+        );
+
+        expect(state.failure, TenantFailure.inactive);
+        expect(state.failureTenantId, 7);
+        expect(state.failureTenantName, 'Acme Engineering');
+        expect(state.workspaceClosed, isTrue);
+        expect(state.requiresReauthentication, isFalse);
+      },
+    );
+
     test('signing in again clears the tenant and the credential', () async {
       var ended = 0;
       final container = containerWith(

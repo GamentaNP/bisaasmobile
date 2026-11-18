@@ -58,40 +58,47 @@ class TenantInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    final failure = _failureOf(err);
-    if (failure != null) {
+    final refusal = _failureOf(err);
+    if (refusal != null) {
       // Awaited: the stale assertion has to be gone before the caller reacts.
       // A re-login request that still carried it would 403 for the same reason
       // and look like a credentials problem.
-      await _tenants.reportFailure(failure);
+      await _tenants.reportFailure(
+        refusal.kind,
+        tenantId: refusal.tenantId,
+      );
     }
     handler.next(err);
   }
 
-  /// The tenant failure this error represents, if any.
+  /// The tenant refusal this error represents, if any — plus the id the
+  /// server named in `error.details.tenant_id` (a display diagnostic only).
   ///
   /// Reads the already-mapped [ApiException] when present. `AuthInterceptor`
   /// maps JSON error bodies, but interceptor `onError` runs in reverse order:
   /// this one sits after auth on the request path, so on the way out it runs
   /// *before* auth has mapped the body. Both shapes therefore have to be
   /// understood.
-  TenantFailure? _failureOf(DioException err) {
+  ({TenantFailure kind, int? tenantId})? _failureOf(DioException err) {
     final mapped = err.error;
-    if (mapped is ApiException) return _kindOf(mapped);
-
-    final body = err.response?.data;
-    if (body is Map<String, dynamic>) {
-      return _kindOf(
-        ApiException.fromJson(err.response?.statusCode ?? 0, body),
-      );
+    ApiException? exception;
+    if (mapped is ApiException) {
+      exception = mapped;
+    } else {
+      final body = err.response?.data;
+      if (body is Map<String, dynamic>) {
+        exception = ApiException.fromJson(err.response?.statusCode ?? 0, body);
+      }
     }
+    if (exception == null) return null;
 
-    return null;
-  }
+    final kind = switch (exception) {
+      _ when exception.isTenantMismatch => TenantFailure.mismatch,
+      _ when exception.isTenantInactive => TenantFailure.inactive,
+      _ => null,
+    };
+    if (kind == null) return null;
 
-  TenantFailure? _kindOf(ApiException exception) {
-    if (exception.isTenantMismatch) return TenantFailure.mismatch;
-    if (exception.isTenantInactive) return TenantFailure.inactive;
-    return null;
+    return (kind: kind, tenantId: exception.tenantId);
   }
 }

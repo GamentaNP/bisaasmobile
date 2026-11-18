@@ -247,5 +247,36 @@ void main() {
         expect(await tenants.read(), isNull);
       },
     );
+
+    test('error.details.tenant_id reaches the failure state', () async {
+      // The server names the closed workspace in details.tenant_id; the global
+      // gate needs it (and the remembered name) to tell the user *which*
+      // workspace closed instead of showing a generic refusal.
+      final tenants = store();
+      await tenants.select(42);
+      final api = FakeApi(<String, FakeRoute>{})
+        ..on(
+          'GET',
+          '/quiz/attempts/history',
+          FakeRoute.error(
+            403,
+            'TENANT_INACTIVE',
+            'Closed.',
+            details: <String, dynamic>{'tenant_id': 42},
+          ),
+        );
+
+      await expectLater(
+        dioFor_(api, tenants).get<dynamic>('/quiz/attempts/history'),
+        throwsA(anything),
+      );
+
+      expect(tenants.failure, TenantFailure.inactive);
+      expect(tenants.failureTenantId, 42);
+      // The assertion that caused the refusal is gone; the id is diagnostic
+      // only and must never be re-sent.
+      expect(await tenants.read(), isNull);
+      expect(api.headerOf(0, 'X-Tenant'), '42');
+    });
   });
 }

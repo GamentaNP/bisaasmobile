@@ -69,6 +69,24 @@ class TenantStore extends ChangeNotifier {
   TenantFailure? get failure => _failure;
   TenantFailure? _failure;
 
+  /// The id the server named when it refused the tenant, from
+  /// `error.details.tenant_id`. Diagnostic only — never asserted again.
+  int? get failureTenantId => _failureTenantId;
+  int? _failureTenantId;
+
+  /// The friendly name we remembered for that id, when we have one.
+  ///
+  /// Inactive organizations are withheld from `/me/tenants`, so the membership
+  /// list cannot name them. The only honest source is the name shown to the
+  /// user at selection time. Null when the refusal named an id we never chose.
+  String? get failureTenantName => _failureTenantName;
+  String? _failureTenantName;
+
+  /// Name of the currently selected workspace, remembered in memory so a
+  /// later refusal can still name it after the assertion has been cleared.
+  String? get selectedName => _selectedName;
+  String? _selectedName;
+
   /// The selected organization id, or null when the user has not selected one.
   ///
   /// A stored value that is not a positive integer is treated as absent
@@ -87,8 +105,10 @@ class TenantStore extends ChangeNotifier {
   /// Records an explicit selection.
   ///
   /// Persisted before it is announced, so a listener that navigates
-  /// immediately cannot race a write that has not landed.
-  Future<void> select(int tenantId) async {
+  /// immediately cannot race a write that has not landed. [name] is kept only
+  /// in memory: it is display data for a later failure screen, never an
+  /// assertion and never session state that has to survive a process restart.
+  Future<void> select(int tenantId, {String? name}) async {
     if (tenantId <= 0) {
       throw ArgumentError.value(
         tenantId,
@@ -99,7 +119,10 @@ class TenantStore extends ChangeNotifier {
     await _s.write(key: _kTenantId, value: '$tenantId');
     _cached = tenantId;
     _loaded = true;
+    _selectedName = (name == null || name.trim().isEmpty) ? null : name;
     _failure = null;
+    _failureTenantId = null;
+    _failureTenantName = null;
     notifyListeners();
   }
 
@@ -109,6 +132,10 @@ class TenantStore extends ChangeNotifier {
     await _s.delete(key: _kTenantId);
     _cached = null;
     _loaded = true;
+    _selectedName = null;
+    _failure = null;
+    _failureTenantId = null;
+    _failureTenantName = null;
     notifyListeners();
   }
 
@@ -116,11 +143,31 @@ class TenantStore extends ChangeNotifier {
   ///
   /// The selection is cleared because it is the thing the server just refused;
   /// keeping it would make every subsequent request fail the same way. What is
-  /// kept is [failure], so the UI can offer re-authentication instead of
-  /// rendering a generic error or an empty screen.
-  Future<void> reportFailure(TenantFailure kind) async {
-    await clear();
+  /// kept is [failure] (plus the server-named [tenantId] and the remembered
+  /// name), so the global gate can tell the user which workspace was refused
+  /// and offer the right remedy instead of a generic error or an empty screen.
+  ///
+  /// The remembered name is captured *before* the selection is forgotten:
+  /// an inactive organization is withheld from `/me/tenants`, so this is the
+  /// only place a display name for it can still come from.
+  Future<void> reportFailure(
+    TenantFailure kind, {
+    int? tenantId,
+    String? tenantName,
+  }) async {
+    final rememberedId = _cached;
+    final rememberedName = _selectedName;
+
+    await _s.delete(key: _kTenantId);
+    _cached = null;
+    _loaded = true;
+    _selectedName = null;
+
     _failure = kind;
+    _failureTenantId = tenantId;
+    _failureTenantName =
+        tenantName ??
+        (tenantId != null && tenantId == rememberedId ? rememberedName : null);
     notifyListeners();
   }
 

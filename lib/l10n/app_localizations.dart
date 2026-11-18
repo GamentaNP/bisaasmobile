@@ -7281,6 +7281,42 @@ abstract class AppLocalizations {
   /// **'Choose an organization to continue.'**
   String get organizationRequired;
 
+  /// No description provided for @tenantGateMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your workspace again'**
+  String get tenantGateMismatchTitle;
+
+  /// No description provided for @tenantGateMismatchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not confirm which workspace you are using. Sign in again to choose it.'**
+  String get tenantGateMismatchBody;
+
+  /// No description provided for @tenantGateInactiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace closed'**
+  String get tenantGateInactiveTitle;
+
+  /// No description provided for @tenantGateInactiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This workspace is no longer active. Contact your administrator for help.'**
+  String get tenantGateInactiveBody;
+
+  /// No description provided for @tenantGateInactiveNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'The workspace \"{name}\" is closed. Contact your administrator for help.'**
+  String tenantGateInactiveNamed(Object name);
+
+  /// No description provided for @tenantGateSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get tenantGateSignOut;
+
   /// No description provided for @arcadeTitle.
   ///
   /// In en, this message translates to:

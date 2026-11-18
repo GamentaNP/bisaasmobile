@@ -4317,6 +4317,28 @@ class AppLocalizationsNe extends AppLocalizations {
   String get organizationRequired => 'जारी राख्न संस्था छान्नुहोस्।';
 
   @override
+  String get tenantGateMismatchTitle => 'आफ्नो संस्था फेरि छान्नुहोस्';
+
+  @override
+  String get tenantGateMismatchBody =>
+      'तपाईं कुन संस्था प्रयोग गर्दै हुनुहुन्छ भनी पुष्टि गर्न सकिएन। छान्न फेरि साइन इन गर्नुहोस्।';
+
+  @override
+  String get tenantGateInactiveTitle => 'संस्था बन्द';
+
+  @override
+  String get tenantGateInactiveBody =>
+      'यो संस्था अब सक्रिय छैन। सहायताका लागि आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।';
+
+  @override
+  String tenantGateInactiveNamed(Object name) {
+    return '\"$name\" संस्था बन्द छ। सहायताका लागि आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।';
+  }
+
+  @override
+  String get tenantGateSignOut => 'साइन आउट';
+
+  @override
   String get arcadeTitle => 'आर्केड';
 
   @override

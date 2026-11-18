@@ -21,6 +21,8 @@ class OrganizationContext {
     required this.selectedId,
     required this.organizations,
     required this.failure,
+    this.failureTenantId,
+    this.failureTenantName,
   });
 
   /// The persisted selection, or null when the user has not chosen one.
@@ -34,6 +36,13 @@ class OrganizationContext {
 
   /// The last tenant refusal the server reported, if any.
   final TenantFailure? failure;
+
+  /// The id the server named in `error.details.tenant_id`, if it did.
+  /// Diagnostic only — never asserted again.
+  final int? failureTenantId;
+
+  /// The workspace name for [failureTenantId] when we have one, else null.
+  final String? failureTenantName;
 
   /// A switcher is renderable only when there is a list to render.
   bool get switcherAvailable =>
@@ -51,6 +60,9 @@ class OrganizationContext {
 
   /// A mismatch is fixed by signing in again; an inactive organization is not.
   bool get requiresReauthentication => failure == TenantFailure.mismatch;
+
+  /// The workspace is closed — re-authenticating cannot reopen it.
+  bool get workspaceClosed => failure == TenantFailure.inactive;
 }
 
 class OrganizationController extends AsyncNotifier<OrganizationContext> {
@@ -84,6 +96,8 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
       selectedId: selectedId,
       organizations: organizations,
       failure: store.failure,
+      failureTenantId: store.failureTenantId,
+      failureTenantName: store.failureTenantName,
     );
   }
 
@@ -95,19 +109,22 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
   Future<void> use(int organizationId) async {
     final current = await future;
     final organizations = current.organizations;
+    // Every row the server published is assertable — it withholds inactive
+    // ones, so there is no local is_active check to make. A guessed id is the
+    // only thing this guard has to reject.
     final offered =
-        organizations?.any(
-          (o) => o.id == organizationId && o.isActive,
-        ) ??
-        false;
+        organizations?.any((o) => o.id == organizationId) ?? false;
     if (!offered) {
       throw ArgumentError.value(
         organizationId,
         'organizationId',
-        'is not an active organization offered by this build',
+        'is not an organization offered by this build',
       );
     }
-    await ref.read(tenantStoreProvider).select(organizationId);
+    final name = organizations!
+        .firstWhere((o) => o.id == organizationId)
+        .name;
+    await ref.read(tenantStoreProvider).select(organizationId, name: name);
   }
 
   /// Stops asserting an organization. Single-membership users fall back to the

@@ -3234,6 +3234,19 @@
     }
   },
   "organizationRequired": "जारी रखने के लिए संगठन चुनें।",
+  "tenantGateMismatchTitle": "अपना कार्यक्षेत्र फिर से चुनें",
+  "tenantGateMismatchBody": "हमें पता नहीं चल सका कि आप किस कार्यक्षेत्र का उपयोग कर रहे हैं। चुनने के लिए फिर से साइन इन करें।",
+  "tenantGateInactiveTitle": "कार्यक्षेत्र बंद",
+  "tenantGateInactiveBody": "यह कार्यक्षेत्र अब सक्रिय नहीं है। सहायता के लिए अपने प्रशासक से संपर्क करें।",
+  "tenantGateInactiveNamed": "\"{name}\" कार्यक्षेत्र बंद है। सहायता के लिए अपने प्रशासक से संपर्क करें।",
+  "@tenantGateInactiveNamed": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "tenantGateSignOut": "साइन आउट",
   "arcadeTitle": "आर्केड",
   "arcadeSubtitle": "छोटे, समयबद्ध राउंड। हर उत्तर सर्वर स्कोर करता है।",
   "arcadeServerScored": "सर्वर-स्कोर",

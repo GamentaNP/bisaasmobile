@@ -5,7 +5,10 @@
 /// `GET /api/v1/me/tenants` publishes, and nothing else.
 ///
 /// The server withholds inactive organizations and lapsed memberships, so
-/// every row is an `X-Tenant` value `EnforceTenantScope` accepts.
+/// every row is an `X-Tenant` value `EnforceTenantScope` accepts. There is no
+/// `is_active` field on the wire and no inactive row to render — an
+/// organization that closes mid-session is reported as `TENANT_INACTIVE` on a
+/// request and handled by the global gate, not by a locally-computed flag.
 library;
 
 class Organization {
@@ -14,7 +17,6 @@ class Organization {
     required this.name,
     this.slug,
     this.role,
-    this.isActive = true,
   });
 
   /// `quiz_tenants.id` — the value that travels in `X-Tenant`.
@@ -28,12 +30,7 @@ class Organization {
   /// role.
   final String? role;
 
-  /// An inactive organization cannot be acted as (`EnforceTenantScope` aborts
-  /// 403 "Tenant inactive"). The switcher shows it disabled rather than hiding
-  /// it, so a user whose workspace was closed understands why.
-  final bool isActive;
-
-  /// Parses the shape the proposed `GET /api/v1/me/tenants` would publish.
+  /// Parses the shape of `GET /api/v1/me/tenants`.
   ///
   /// Throws [FormatException] on a payload it cannot trust, rather than
   /// fabricating an id or an empty name: an id is what the assertion sends,
@@ -52,13 +49,11 @@ class Organization {
     }
     final slug = json['slug'];
     final role = json['role'];
-    final isActive = json['is_active'];
     return Organization(
       id: id,
       name: name,
       slug: slug is String && slug.isNotEmpty ? slug : null,
       role: role is String && role.isNotEmpty ? role : null,
-      isActive: isActive is! bool || isActive,
     );
   }
 }

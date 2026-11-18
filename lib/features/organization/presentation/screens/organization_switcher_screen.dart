@@ -147,16 +147,15 @@ class _OrganizationTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return Card(
       child: ListTile(
-        // An inactive organization is shown, not hidden: a user whose
-        // workspace was closed needs to see why it cannot be used.
-        enabled: organization.isActive && !selected,
-        leading: Icon(
-          organization.isActive ? Icons.business_outlined : Icons.block,
-        ),
+        // The server withholds inactive organizations, so every row here is
+        // assertable. A closed workspace is reported as TENANT_INACTIVE on the
+        // next request and handled by the global gate, not by a disabled tile.
+        enabled: !selected,
+        leading: const Icon(Icons.business_outlined),
         title: Text(organization.name),
         subtitle: organization.slug == null ? null : Text(organization.slug!),
         trailing: selected ? const Icon(Icons.check) : null,
-        onTap: organization.isActive && !selected
+        onTap: !selected
             ? () async {
                 await ref
                     .read(organizationControllerProvider.notifier)

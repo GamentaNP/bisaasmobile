@@ -188,6 +188,21 @@ class ApiException implements Exception {
     return null;
   }
 
+  /// The organization the server named in `error.details.tenant_id`.
+  ///
+  /// Sent on `TENANT_INACTIVE` (and may accompany `TENANT_MISMATCH`) so the
+  /// client can tell the user *which* workspace was refused. This is a
+  /// diagnostic only — it is never used to choose or assert a scope; the only
+  /// assertable ids remain the ones `GET /me/tenants` publishes.
+  int? get tenantId {
+    final d = details;
+    if (d is! Map) return null;
+    final raw = d['tenant_id'];
+    if (raw is int) return raw;
+    if (raw is String) return int.tryParse(raw);
+    return null;
+  }
+
   @override
   String toString() =>
       // The **raw** code, not the Dart enum name: the wire value is what the

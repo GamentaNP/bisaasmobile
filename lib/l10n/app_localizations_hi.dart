@@ -4319,6 +4319,28 @@ class AppLocalizationsHi extends AppLocalizations {
   String get organizationRequired => 'जारी रखने के लिए संगठन चुनें।';
 
   @override
+  String get tenantGateMismatchTitle => 'अपना कार्यक्षेत्र फिर से चुनें';
+
+  @override
+  String get tenantGateMismatchBody =>
+      'हमें पता नहीं चल सका कि आप किस कार्यक्षेत्र का उपयोग कर रहे हैं। चुनने के लिए फिर से साइन इन करें।';
+
+  @override
+  String get tenantGateInactiveTitle => 'कार्यक्षेत्र बंद';
+
+  @override
+  String get tenantGateInactiveBody =>
+      'यह कार्यक्षेत्र अब सक्रिय नहीं है। सहायता के लिए अपने प्रशासक से संपर्क करें।';
+
+  @override
+  String tenantGateInactiveNamed(Object name) {
+    return '\"$name\" कार्यक्षेत्र बंद है। सहायता के लिए अपने प्रशासक से संपर्क करें।';
+  }
+
+  @override
+  String get tenantGateSignOut => 'साइन आउट';
+
+  @override
   String get arcadeTitle => 'आर्केड';
 
   @override

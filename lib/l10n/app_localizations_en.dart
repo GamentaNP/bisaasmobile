@@ -4307,6 +4307,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get organizationRequired => 'Choose an organization to continue.';
 
   @override
+  String get tenantGateMismatchTitle => 'Choose your workspace again';
+
+  @override
+  String get tenantGateMismatchBody =>
+      'We could not confirm which workspace you are using. Sign in again to choose it.';
+
+  @override
+  String get tenantGateInactiveTitle => 'Workspace closed';
+
+  @override
+  String get tenantGateInactiveBody =>
+      'This workspace is no longer active. Contact your administrator for help.';
+
+  @override
+  String tenantGateInactiveNamed(Object name) {
+    return 'The workspace \"$name\" is closed. Contact your administrator for help.';
+  }
+
+  @override
+  String get tenantGateSignOut => 'Sign out';
+
+  @override
   String get arcadeTitle => 'Arcade';
 
   @override

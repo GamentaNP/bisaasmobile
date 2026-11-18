@@ -2499,6 +2499,17 @@ add("organizationInactiveBody", "This organization has been deactivated. Contact
 add("organizationNowUsing", "Now using {name}", "अब {name} प्रयोग हुँदैछ", "अब {name} का उपयोग हो रहा है", ["name"])
 add("organizationRequired", "Choose an organization to continue.", "जारी राख्न संस्था छान्नुहोस्।", "जारी रखने के लिए संगठन चुनें।")
 
+# ── global tenant gate ────────────────────────────────────────────────────────
+# The interceptor records TENANT_MISMATCH / TENANT_INACTIVE in TenantStore and
+# the gate above the router takes over the whole surface. Product copy says
+# "workspace"/"organization", never the API word "tenant".
+add("tenantGateMismatchTitle", "Choose your workspace again", "आफ्नो संस्था फेरि छान्नुहोस्", "अपना कार्यक्षेत्र फिर से चुनें")
+add("tenantGateMismatchBody", "We could not confirm which workspace you are using. Sign in again to choose it.", "तपाईं कुन संस्था प्रयोग गर्दै हुनुहुन्छ भनी पुष्टि गर्न सकिएन। छान्न फेरि साइन इन गर्नुहोस्।", "हमें पता नहीं चल सका कि आप किस कार्यक्षेत्र का उपयोग कर रहे हैं। चुनने के लिए फिर से साइन इन करें।")
+add("tenantGateInactiveTitle", "Workspace closed", "संस्था बन्द", "कार्यक्षेत्र बंद")
+add("tenantGateInactiveBody", "This workspace is no longer active. Contact your administrator for help.", "यो संस्था अब सक्रिय छैन। सहायताका लागि आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।", "यह कार्यक्षेत्र अब सक्रिय नहीं है। सहायता के लिए अपने प्रशासक से संपर्क करें।")
+add("tenantGateInactiveNamed", "The workspace \"{name}\" is closed. Contact your administrator for help.", "\"{name}\" संस्था बन्द छ। सहायताका लागि आफ्नो प्रशासकलाई सम्पर्क गर्नुहोस्।", "\"{name}\" कार्यक्षेत्र बंद है। सहायता के लिए अपने प्रशासक से संपर्क करें।", ["name"])
+add("tenantGateSignOut", "Sign out", "साइन आउट", "साइन आउट")
+
 # ── Arcade ───────────────────────────────────────────────────────────────────
 # Three server-backed run modes (survival / lightning / true-or-false). The
 # copy never claims instant right/wrong: the API withholds grading until the

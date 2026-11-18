@@ -3234,6 +3234,19 @@
     }
   },
   "organizationRequired": "Choose an organization to continue.",
+  "tenantGateMismatchTitle": "Choose your workspace again",
+  "tenantGateMismatchBody": "We could not confirm which workspace you are using. Sign in again to choose it.",
+  "tenantGateInactiveTitle": "Workspace closed",
+  "tenantGateInactiveBody": "This workspace is no longer active. Contact your administrator for help.",
+  "tenantGateInactiveNamed": "The workspace \"{name}\" is closed. Contact your administrator for help.",
+  "@tenantGateInactiveNamed": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "tenantGateSignOut": "Sign out",
   "arcadeTitle": "Arcade",
   "arcadeSubtitle": "Short, timed runs. The server scores every answer.",
   "arcadeServerScored": "Server-scored",
