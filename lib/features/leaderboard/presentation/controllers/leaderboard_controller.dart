@@ -144,13 +144,22 @@ class LeaderboardController extends Notifier<LeaderboardState> {
 
   Future<Map<String, dynamic>?> submitScore({
     required String mode,
-    required int score,
-    required int correct,
-    required int total,
-    required int streak,
+    int? attemptId,
+    int? score,
+    int? correct,
+    int? total,
+    int? streak,
   }) async {
     try {
-      final res = await _repo.submitScore(mode: mode, score: score, correct: correct, total: total, streak: streak);
+      // attemptId is authoritative — the server derives every metric from it.
+      final res = await _repo.submitScore(
+        mode: mode,
+        attemptId: attemptId,
+        score: score,
+        correct: correct,
+        total: total,
+        streak: streak,
+      );
       // Refresh current leaderboard after submit if selected
       if (state.selectedLeaderboardId != null) {
         await fetchLeaderboard(state.selectedLeaderboardId!);

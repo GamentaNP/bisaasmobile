@@ -368,7 +368,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Text(
           // Was: "Help our IRT calibration engine tailor initial question
           // difficulty to your stage." Nothing reads this answer back —
-          // PATCH /me accepts only name/username/email, so there is nowhere on
+          // PATCH /me accepts only `name` (username/email have authoritative
+          // flows of their own), so there is nowhere on
           // the server to persist it and nothing consumes it locally either.
           l10n.onboardingCurrentLevelBody,
           style: AppTypography.bodyMedium.copyWith(

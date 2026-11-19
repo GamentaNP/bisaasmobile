@@ -37,6 +37,15 @@ enum ApiErrorCode {
   maintenanceMode('MAINTENANCE_MODE'),
   webhookSecretNotConfigured('WEBHOOK_SECRET_NOT_CONFIGURED'),
   webhookUnauthorized('WEBHOOK_UNAUTHORIZED'),
+  // New server codes from the API/DB hardening waves. They map to generic
+  // localized copy (the server's own `message` wins), but registering them
+  // keeps `fromRaw` stable and avoids a silent `unknown` classification.
+  noActiveExam('NO_ACTIVE_EXAM'),
+  noReport('NO_REPORT'),
+  noPrediction('NO_PREDICTION'),
+  genericCheckoutDisabled('GENERIC_CHECKOUT_DISABLED'),
+  examSectionLocked('EXAM_SECTION_LOCKED'),
+  webhookMisconfigured('WEBHOOK_MISCONFIGURED'),
   internalError('INTERNAL_ERROR'),
   serviceUnavailable('SERVICE_UNAVAILABLE'),
   upgradeRequired('UPGRADE_REQUIRED'),

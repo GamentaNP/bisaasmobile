@@ -91,12 +91,17 @@ class LeaderboardRemoteDataSource {
     );
   }
 
+  /// Submit a leaderboard score. The server is authoritative: it recomputes
+  /// score/correct/total/streak from the completed attempt identified by
+  /// [attemptId]. The legacy score fields are accepted but NEVER sent — the
+  /// server ignores them, and sending them is a contract drift.
   Future<Map<String, dynamic>> submitScore({
     required String mode,
-    required int score,
-    required int correct,
-    required int total,
-    required int streak,
+    int? attemptId,
+    int? score,
+    int? correct,
+    int? total,
+    int? streak,
     String? idempotencyKey,
   }) async {
     final key = idempotencyKey ?? _uuid.v4();
@@ -104,10 +109,7 @@ class LeaderboardRemoteDataSource {
       '/quiz/leaderboard',
       data: {
         'mode': mode,
-        'score': score,
-        'correct': correct,
-        'total': total,
-        'streak': streak,
+        'attempt_id': ?attemptId,
       },
       options: Options(headers: {'Idempotency-Key': key}),
     );

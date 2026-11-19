@@ -15,13 +15,22 @@ class LeaderboardRepositoryImpl implements LeaderboardRepository {
   @override
   Future<Map<String, dynamic>> submitScore({
     required String mode,
-    required int score,
-    required int correct,
-    required int total,
-    required int streak,
+    int? attemptId,
+    int? score,
+    int? correct,
+    int? total,
+    int? streak,
     String? idempotencyKey,
   }) =>
-      _remote.submitScore(mode: mode, score: score, correct: correct, total: total, streak: streak, idempotencyKey: idempotencyKey);
+      _remote.submitScore(
+        mode: mode,
+        attemptId: attemptId,
+        score: score,
+        correct: correct,
+        total: total,
+        streak: streak,
+        idempotencyKey: idempotencyKey,
+      );
 
   @override
   Future<List<DonorLeaderboardEntry>> getDonationLeaderboard() => _remote.getDonationLeaderboard();
