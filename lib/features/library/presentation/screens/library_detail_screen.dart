@@ -222,8 +222,9 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
                       onPressed: state.isReviewsLoading
                           ? null
                           : () {
-                              final next = (state.reviewsPagination!.currentPage ?? 1) + 1;
-                              ref.read(libraryControllerProvider.notifier).fetchReviews(widget.slug, page: next, append: true);
+                              final next = state.reviewsPagination!.nextCursor;
+                              if (next == null || next.isEmpty) return;
+                              ref.read(libraryControllerProvider.notifier).fetchReviews(widget.slug, cursor: next, append: true);
                             },
                       child: Text(l10n.libraryLoadMoreReviews),
                     ),

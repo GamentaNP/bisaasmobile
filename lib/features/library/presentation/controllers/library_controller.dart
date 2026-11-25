@@ -362,10 +362,14 @@ class LibraryController extends Notifier<LibraryState> {
 
   // ── Reviews ─────────────────────────────────────────────────────────────
 
-  Future<void> fetchReviews(String slug, {int page = 1, int perPage = 15, bool append = false}) async {
+  Future<void> fetchReviews(String slug, {
+    String? cursor,
+    int perPage = 15,
+    bool append = false,
+  }) async {
     state = state.copyWith(isReviewsLoading: true, reviewsError: null);
     try {
-      final paginated = await _repo.getReviews(slug, page: page, perPage: perPage);
+      final paginated = await _repo.getReviews(slug, cursor: cursor, perPage: perPage);
       final newReviews = append ? [...state.reviews, ...paginated.items] : paginated.items;
       state = state.copyWith(
         reviews: newReviews,
@@ -385,7 +389,7 @@ class LibraryController extends Notifier<LibraryState> {
       final review = await _repo.submitReview(slug, rating: rating, comment: comment);
       state = state.copyWith(isSubmittingReview: false);
       // Refresh reviews after submit
-      await fetchReviews(slug, page: 1);
+      await fetchReviews(slug);
       // Also refresh file to update rating counts
       try {
         await fetchFile(slug);
@@ -434,10 +438,10 @@ class LibraryController extends Notifier<LibraryState> {
 
   // ── My unlocks ──────────────────────────────────────────────────────────
 
-  Future<void> fetchMyUnlocks({int page = 1, int perPage = 20, bool append = false}) async {
+  Future<void> fetchMyUnlocks({String? cursor, int perPage = 20, bool append = false}) async {
     state = state.copyWith(isMyUnlocksLoading: true, myUnlocksError: null);
     try {
-      final paginated = await _repo.getMyUnlocks(page: page, perPage: perPage);
+      final paginated = await _repo.getMyUnlocks(cursor: cursor, perPage: perPage);
       final newItems = append ? [...state.myUnlocks, ...paginated.items] : paginated.items;
       state = state.copyWith(myUnlocks: newItems, isMyUnlocksLoading: false);
     } catch (e, st) {

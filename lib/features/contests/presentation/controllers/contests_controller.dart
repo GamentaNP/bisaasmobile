@@ -25,8 +25,7 @@ class ContestsState {
     this.items = const [],
     this.isLoading = false,
     this.error,
-    this.total,
-    this.currentPage = 1,
+    this.nextCursor,
     this.perPage = 20,
     this.hasMore = false,
   });
@@ -34,8 +33,9 @@ class ContestsState {
   final List<Contest> items;
   final bool isLoading;
   final String? error;
-  final int? total;
-  final int currentPage;
+
+  /// Opaque continuation token from the cursor envelope — never a page number.
+  final String? nextCursor;
   final int perPage;
   final bool hasMore;
 
@@ -43,8 +43,7 @@ class ContestsState {
     List<Contest>? items,
     bool? isLoading,
     Object? error = const Object(),
-    int? total,
-    int? currentPage,
+    Object? nextCursor = const Object(),
     int? perPage,
     bool? hasMore,
   }) =>
@@ -52,8 +51,9 @@ class ContestsState {
         items: items ?? this.items,
         isLoading: isLoading ?? this.isLoading,
         error: error == const Object() ? this.error : error as String?,
-        total: total ?? this.total,
-        currentPage: currentPage ?? this.currentPage,
+        nextCursor: nextCursor == const Object()
+            ? this.nextCursor
+            : nextCursor as String?,
         perPage: perPage ?? this.perPage,
         hasMore: hasMore ?? this.hasMore,
       );
@@ -67,13 +67,22 @@ class ContestsController extends Notifier<ContestsState> {
 
   String _msg(Object e) => e is ApiException ? e.message : e.toString();
 
-  Future<void> fetchContests({int page = 1, int perPage = 20, bool append = false}) async {
+  Future<void> fetchContests({
+    String? cursor,
+    int perPage = 20,
+    bool append = false,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final res = await _repo.getContests(page: page, perPage: perPage);
+      final res = await _repo.getContests(cursor: cursor, perPage: perPage);
       final newItems = append ? [...state.items, ...res.items] : res.items;
-      final hasMore = res.total != null ? newItems.length < res.total! : res.items.length == perPage;
-      state = state.copyWith(items: newItems, isLoading: false, total: res.total, currentPage: page, perPage: perPage, hasMore: hasMore);
+      state = state.copyWith(
+        items: newItems,
+        isLoading: false,
+        nextCursor: res.nextCursor,
+        perPage: perPage,
+        hasMore: res.hasMore,
+      );
     } catch (e, st) {
       AppLogger.w('contests fetch failed: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
@@ -81,7 +90,7 @@ class ContestsController extends Notifier<ContestsState> {
     }
   }
 
-  Future<void> refresh() => fetchContests(page: 1);
+  Future<void> refresh() => fetchContests();
 }
 
 // ── Detail state ────────────────────────────────────────────────────────────

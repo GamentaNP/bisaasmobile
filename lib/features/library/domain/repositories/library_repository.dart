@@ -30,11 +30,11 @@ abstract class LibraryRepository {
   /// Returns a signed, short-lived download URL. Must be unlocked first (403 otherwise).
   Future<String> getDownloadUrl(String slug);
 
-  Future<Paginated<LibraryReview>> getReviews(String slug, {int page, int perPage});
+  Future<Paginated<LibraryReview>> getReviews(String slug, {String? cursor, int perPage});
 
   Future<LibraryReview> submitReview(String slug, {required int rating, String? comment});
 
-  Future<Paginated<LibraryUnlockItem>> getMyUnlocks({int page, int perPage});
+  Future<Paginated<LibraryUnlockItem>> getMyUnlocks({String? cursor, int perPage});
 
   Future<List<LibraryFile>> getTrending();
 

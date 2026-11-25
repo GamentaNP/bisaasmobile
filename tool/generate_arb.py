@@ -2563,6 +2563,46 @@ add("arcadeEmptyBody", "Try another category, or play with any category.", "अ�
 add("arcadeCategoryTooSmall", "This category cannot run this mode yet — not enough questions. Try another category, or play without one.", "यो श्रेणीमा यो मोड चलाउन अझै पर्याप्त प्रश्न छैनन्। अर्को श्रेणी प्रयास गर्नुहोस्, वा श्रेणीबिना खेल्नुहोस्।", "इस श्रेणी में यह मोड अभी नहीं चल सकता — पर्याप्त प्रश्न नहीं हैं। दूसरी श्रेणी आज़माएँ, या बिना श्रेणी खेलें।")
 add("arcadeRetry", "Try again", "फेरि प्रयास गर्नुहोस्", "फिर कोशिश करें")
 
+# ── truthful offline/quiz copy (review P0) ────────────────────────────────────
+# A failure must never claim that an answer was queued and will be reconciled:
+# the write outbox is deliberately unwired. Say only what is true.
+add("quizAnswerNotSent", "Your answer could not be sent. Please try again.", "तपाईंको उत्तर पठाउन सकिएन। कृपया फेरि प्रयास गर्नुहोस्।", "आपका उत्तर भेजा नहीं जा सका। कृपया फिर से प्रयास करें।")
+add("quizOfflinePracticeUngraded", "Offline practice — this answer is not graded.", "अफलाइन अभ्यास — यो उत्तरको ग्रेड गरिएको छैन।", "ऑफ़लाइन अभ्यास — इस उत्तर का ग्रेड नहीं दिया गया।")
+add("quizEmptySession", "This quiz has no questions yet. Please try another.", "यो क्विज़मा अझै प्रश्न छैनन्। कृपया अर्को प्रयास गर्नुहोस्।", "इस क्विज़ में अभी कोई प्रश्न नहीं है। कृपया दूसरा आज़माएँ।")
+add("quizIntroScoredAtEnd", "Your score is shown when you finish the quiz.", "क्विज़ सकिएपछि तपाईंको स्कोर देखाइन्छ।", "क्विज़ पूरा होने पर आपका स्कोर दिखाया जाता है।")
+
+# ── onboarding choices (review P1 — every option is localized) ────────────────
+add("onbExamLoksewa", "Loksewa / Civil PSC", "लोकसेवा / नागरिक PSC", "लोकसेवा / सिविल PSC")
+add("onbExamLoksewaDesc", "Assistant Sub-Engineer, Sub-Engineer, & Engineer exams", "सहायक उप-इन्जिनियर, उप-इन्जिनियर र इन्जिनियर परीक्षा", "सहायक उप-इंजीनियर, उप-इंजीनियर और इंजीनियर परीक्षाएँ")
+add("onbExamGate", "GATE / Indian PSC", "GATE / भारतीय PSC", "GATE / भारतीय PSC")
+add("onbExamGateDesc", "Graduate Aptitude Test & State Engineering Services", "स्नातक योग्यता परीक्षा र राज्य इन्जिनियरिङ सेवा", "स्नातक योग्यता परीक्षा और राज्य इंजीनियरिंग सेवाएँ")
+add("onbExamSsc", "SSC JE / Diploma", "SSC JE / डिप्लोमा", "SSC JE / डिप्लोमा")
+add("onbExamSscDesc", "Junior Engineer Technical & General Practice", "जुनियर इन्जिनियर प्राविधिक र सामान्य अभ्यास", "जूनियर इंजीनियर तकनीकी और सामान्य अभ्यास")
+add("onbExamUniversity", "University Semester Exams", "विश्वविद्यालय सेमिस्टर परीक्षा", "विश्वविद्यालय सेमिस्टर परीक्षाएँ")
+add("onbExamUniversityDesc", "Structural, Geotechnical, Surveying, & Fluid Mechanics", "संरचना, भू-प्राविधिक, सर्वेक्षण र तरल यान्त्रिकी", "संरचना, भू-तकनीकी, सर्वेक्षण और तरल यांत्रिकी")
+add("onbGoalCasual", "Casual Review", "सामान्य समीक्षा", "सामान्य समीक्षा")
+add("onbGoalCasualDesc", "10-15 daily questions to maintain streak", "स्ट्रिक कायम राख्न दिनमा १०–१५ प्रश्न", "स्ट्रीक बनाए रखने के लिए दिन में 10–15 प्रश्न")
+add("onbGoalFocused", "Focused Mastery", "केन्द्रित निपुणता", "केंद्रित निपुणता")
+add("onbGoalFocusedDesc", "25-30 questions + formula revisions", "२५–३० प्रश्न र सूत्र पुनरावलोकन", "25–30 प्रश्न + सूत्र पुनरावलोकन")
+add("onbGoalIntensive", "Intensive Sprint", "तीव्र अभ्यास", "तीव्र स्प्रिंट")
+add("onbGoalIntensiveDesc", "Mock exam practice & comprehensive tests", "मक परीक्षा अभ्यास र व्यापक परीक्षा", "मॉक परीक्षा अभ्यास और व्यापक परीक्षाएँ")
+add("onbLevelStudent", "Engineering Student", "इन्जिनियरिङ विद्यार्थी", "इंजीनियरिंग छात्र")
+add("onbLevelStudentDesc", "Currently enrolled in Civil Engineering diploma/degree", "हाल नागरिक इन्जिनियरिङ डिप्लोमा/डिग्रीमा अध्ययनरत", "वर्तमान में सिविल इंजीनियरिंग डिप्लोमा/डिग्री में नामांकित")
+add("onbLevelGraduate", "Graduate / Job Seeker", "स्नातक / रोजगारी खोजी", "स्नातक / नौकरी चाहने वाले")
+add("onbLevelGraduateDesc", "Actively preparing for competitive technical exams", "प्रतिस्पर्धी प्राविधिक परीक्षाको तयारीमा", "प्रतिस्पर्धी तकनीकी परीक्षाओं की तैयारी में")
+add("onbLevelEngineer", "Practicing Engineer", "अभ्यासरत इन्जिनियर", "व्यावसायिक इंजीनियर")
+add("onbLevelEngineerDesc", "Refreshing core theory and design standards", "मूल सिद्धान्त र डिजाइन मापदण्ड पुनरावलोकन", "मूल सिद्धांत और डिज़ाइन मानकों का पुनरावलोकन")
+
+# ── remaining surfaces (review P1/P2) ─────────────────────────────────────────
+add("authPasswordUpdatedNotice", "Password updated. Sign in with your new password.", "पासवर्ड अपडेट भयो। नयाँ पासवर्डले साइन इन गर्नुहोस्।", "पासवर्ड अपडेट हो गया। नए पासवर्ड से साइन इन करें।")
+add("notifToday", "Today", "आज", "आज")
+add("notifYesterday", "Yesterday", "हिजो", "कल")
+add("notifDaysAgo", "{count} days ago", "{count} दिन अघि", "{count} दिन पहले", ["count"])
+add("tutorPromptExample1", "Explain soil compaction in simple terms", "माटोको कम्प्याक्शन सरल शब्दमा व्याख्या गर्नुहोस्", "मिट्टी के कॉम्पैक्शन को सरल शब्दों में समझाएँ")
+add("tutorPromptExample2", "Help me plan this week's study", "यो हप्ताको अध्ययन योजना बनाउन मद्दत गर्नुहोस्", "इस सप्ताह की पढ़ाई की योजना बनाने में मदद करें")
+add("walletUpdated", "Updated", "अपडेट गरिएको", "अपडेट किया गया")
+add("battleMatchStartingIn", "Match found — starting in {seconds}s", "प्रतियोगी भेटियो — {seconds} सेकेन्डमा सुरु", "प्रतियोगी मिल गया — {seconds} सेकंड में शुरू", ["seconds"])
+
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.
 #

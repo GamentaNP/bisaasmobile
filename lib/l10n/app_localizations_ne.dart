@@ -4479,4 +4479,115 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get arcadeRetry => 'फेरि प्रयास गर्नुहोस्';
+
+  @override
+  String get quizAnswerNotSent =>
+      'तपाईंको उत्तर पठाउन सकिएन। कृपया फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get quizOfflinePracticeUngraded =>
+      'अफलाइन अभ्यास — यो उत्तरको ग्रेड गरिएको छैन।';
+
+  @override
+  String get quizEmptySession =>
+      'यो क्विजमा अझै प्रश्न छैनन्। कृपया अर्को प्रयास गर्नुहोस्।';
+
+  @override
+  String get quizIntroScoredAtEnd => 'क्विज सकिएपछि तपाईंको स्कोर देखाइन्छ।';
+
+  @override
+  String get onbExamLoksewa => 'लोकसेवा / नागरिक PSC';
+
+  @override
+  String get onbExamLoksewaDesc =>
+      'सहायक उप-इन्जिनियर, उप-इन्जिनियर र इन्जिनियर परीक्षा';
+
+  @override
+  String get onbExamGate => 'GATE / भारतीय PSC';
+
+  @override
+  String get onbExamGateDesc =>
+      'स्नातक योग्यता परीक्षा र राज्य इन्जिनियरिङ सेवा';
+
+  @override
+  String get onbExamSsc => 'SSC JE / डिप्लोमा';
+
+  @override
+  String get onbExamSscDesc => 'जुनियर इन्जिनियर प्राविधिक र सामान्य अभ्यास';
+
+  @override
+  String get onbExamUniversity => 'विश्वविद्यालय सेमिस्टर परीक्षा';
+
+  @override
+  String get onbExamUniversityDesc =>
+      'संरचना, भू-प्राविधिक, सर्वेक्षण र तरल यान्त्रिकी';
+
+  @override
+  String get onbGoalCasual => 'सामान्य समीक्षा';
+
+  @override
+  String get onbGoalCasualDesc => 'स्ट्रिक कायम राख्न दिनमा १०–१५ प्रश्न';
+
+  @override
+  String get onbGoalFocused => 'केन्द्रित निपुणता';
+
+  @override
+  String get onbGoalFocusedDesc => '२५–३० प्रश्न र सूत्र पुनरावलोकन';
+
+  @override
+  String get onbGoalIntensive => 'तीव्र अभ्यास';
+
+  @override
+  String get onbGoalIntensiveDesc => 'मक परीक्षा अभ्यास र व्यापक परीक्षा';
+
+  @override
+  String get onbLevelStudent => 'इन्जिनियरिङ विद्यार्थी';
+
+  @override
+  String get onbLevelStudentDesc =>
+      'हाल नागरिक इन्जिनियरिङ डिप्लोमा/डिग्रीमा अध्ययनरत';
+
+  @override
+  String get onbLevelGraduate => 'स्नातक / रोजगारी खोजी';
+
+  @override
+  String get onbLevelGraduateDesc => 'प्रतिस्पर्धी प्राविधिक परीक्षाको तयारीमा';
+
+  @override
+  String get onbLevelEngineer => 'अभ्यासरत इन्जिनियर';
+
+  @override
+  String get onbLevelEngineerDesc =>
+      'मूल सिद्धान्त र डिजाइन मापदण्ड पुनरावलोकन';
+
+  @override
+  String get authPasswordUpdatedNotice =>
+      'पासवर्ड अपडेट भयो। नयाँ पासवर्डले साइन इन गर्नुहोस्।';
+
+  @override
+  String get notifToday => 'आज';
+
+  @override
+  String get notifYesterday => 'हिजो';
+
+  @override
+  String notifDaysAgo(Object count) {
+    return '$count दिन अघि';
+  }
+
+  @override
+  String get tutorPromptExample1 =>
+      'माटोको कम्प्याक्शन सरल शब्दमा व्याख्या गर्नुहोस्';
+
+  @override
+  String get tutorPromptExample2 =>
+      'यो हप्ताको अध्ययन योजना बनाउन मद्दत गर्नुहोस्';
+
+  @override
+  String get walletUpdated => 'अपडेट गरिएको';
+
+  @override
+  String battleMatchStartingIn(Object seconds) {
+    return 'प्रतियोगी भेटियो — $seconds सेकेन्डमा सुरु';
+  }
 }

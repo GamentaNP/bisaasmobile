@@ -183,9 +183,31 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     final total = session.durationSeconds;
     final timerColor = _timerColor(remaining, total);
     final progress = (state.currentIndex + 1) / session.totalQuestions;
+    final retryOption =
+        state.errorMessage != null ? state.selectedOptionId : null;
 
     return Column(
       children: [
+        if (retryOption != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    state.errorMessage!,
+                    style: const TextStyle(color: AppColors.wrongRed),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => ref
+                      .read(quizControllerProvider.notifier)
+                      .selectAnswer(retryOption),
+                  child: Text(l10n.retry),
+                ),
+              ],
+            ),
+          ),
         // ── Top bar ───────────────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

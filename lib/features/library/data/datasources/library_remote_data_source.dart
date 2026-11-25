@@ -185,14 +185,16 @@ class LibraryRemoteDataSource {
 
   // ── Reviews (paginated) ─────────────────────────────────────────────────
 
+  /// Reviews are cursor-only: `page` is ignored by the server and `page=2`
+  /// would append the first page again forever.
   Future<({List<LibraryReviewDto> items, Pagination? pagination})> getReviews(
     String slug, {
-    int page = 1,
+    String? cursor,
     int perPage = 15,
   }) async {
     final res = await _dio.get<Map<String, dynamic>>(
       '/library/files/$slug/reviews',
-      queryParameters: {'page': page, 'per_page': perPage},
+      queryParameters: cursorQuery(cursor: cursor, perPage: perPage),
     );
     final body = res.data;
     if (body == null) {
@@ -273,12 +275,12 @@ class LibraryRemoteDataSource {
   // ── My unlocks (paginated) ──────────────────────────────────────────────
 
   Future<({List<LibraryUnlockItemDto> items, Pagination? pagination})> getMyUnlocks({
-    int page = 1,
+    String? cursor,
     int perPage = 20,
   }) async {
     final res = await _dio.get<Map<String, dynamic>>(
       '/library/me/unlocks',
-      queryParameters: {'page': page, 'per_page': perPage},
+      queryParameters: cursorQuery(cursor: cursor, perPage: perPage),
     );
     final body = res.data;
     if (body == null) {

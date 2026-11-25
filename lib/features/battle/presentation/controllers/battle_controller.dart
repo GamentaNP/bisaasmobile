@@ -169,14 +169,27 @@ class BattleController extends Notifier<BattleState> {
     });
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       final m = state.match;
-      if (m == null || state.phase != BattlePhase.inProgress) return;
+      // An answered question must keep the clock running: the ticker is what
+      // opens the next question window. Only a terminal phase stops it.
+      if (m == null ||
+          (state.phase != BattlePhase.inProgress &&
+              state.phase != BattlePhase.answered)) {
+        return;
+      }
       final started = DateTime.fromMillisecondsSinceEpoch(m.startedAtMs ?? DateTime.now().millisecondsSinceEpoch);
       final elapsedSec = DateTime.now().difference(started).inSeconds;
       final intoQuestion = elapsedSec % m.perQuestionSeconds;
       final left = m.perQuestionSeconds - intoQuestion;
       final idx = elapsedSec ~/ m.perQuestionSeconds;
       if (idx != state.currentQuestionIndex && idx < m.questions.length) {
-        state = state.copyWith(currentQuestionIndex: idx, secondsLeftInQuestion: left, selectedOptionId: null, opponentAnsweredThisQ: false);
+        // Re-arm the next question — `answered` is not a terminal state.
+        state = state.copyWith(
+          currentQuestionIndex: idx,
+          secondsLeftInQuestion: left,
+          selectedOptionId: null,
+          opponentAnsweredThisQ: false,
+          phase: BattlePhase.inProgress,
+        );
       } else {
         state = state.copyWith(secondsLeftInQuestion: left);
       }

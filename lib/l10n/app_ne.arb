@@ -3320,5 +3320,51 @@
   "arcadeEmptyTitle": "यो श्रेणीमा अझै प्रश्न छैनन्",
   "arcadeEmptyBody": "अर्को श्रेणी प्रयास गर्नुहोस्, वा कुनै पनि श्रेणीमा खेल्नुहोस्।",
   "arcadeCategoryTooSmall": "यो श्रेणीमा यो मोड चलाउन अझै पर्याप्त प्रश्न छैनन्। अर्को श्रेणी प्रयास गर्नुहोस्, वा श्रेणीबिना खेल्नुहोस्।",
-  "arcadeRetry": "फेरि प्रयास गर्नुहोस्"
+  "arcadeRetry": "फेरि प्रयास गर्नुहोस्",
+  "quizAnswerNotSent": "तपाईंको उत्तर पठाउन सकिएन। कृपया फेरि प्रयास गर्नुहोस्।",
+  "quizOfflinePracticeUngraded": "अफलाइन अभ्यास — यो उत्तरको ग्रेड गरिएको छैन।",
+  "quizEmptySession": "यो क्विजमा अझै प्रश्न छैनन्। कृपया अर्को प्रयास गर्नुहोस्।",
+  "quizIntroScoredAtEnd": "क्विज सकिएपछि तपाईंको स्कोर देखाइन्छ।",
+  "onbExamLoksewa": "लोकसेवा / नागरिक PSC",
+  "onbExamLoksewaDesc": "सहायक उप-इन्जिनियर, उप-इन्जिनियर र इन्जिनियर परीक्षा",
+  "onbExamGate": "GATE / भारतीय PSC",
+  "onbExamGateDesc": "स्नातक योग्यता परीक्षा र राज्य इन्जिनियरिङ सेवा",
+  "onbExamSsc": "SSC JE / डिप्लोमा",
+  "onbExamSscDesc": "जुनियर इन्जिनियर प्राविधिक र सामान्य अभ्यास",
+  "onbExamUniversity": "विश्वविद्यालय सेमिस्टर परीक्षा",
+  "onbExamUniversityDesc": "संरचना, भू-प्राविधिक, सर्वेक्षण र तरल यान्त्रिकी",
+  "onbGoalCasual": "सामान्य समीक्षा",
+  "onbGoalCasualDesc": "स्ट्रिक कायम राख्न दिनमा १०–१५ प्रश्न",
+  "onbGoalFocused": "केन्द्रित निपुणता",
+  "onbGoalFocusedDesc": "२५–३० प्रश्न र सूत्र पुनरावलोकन",
+  "onbGoalIntensive": "तीव्र अभ्यास",
+  "onbGoalIntensiveDesc": "मक परीक्षा अभ्यास र व्यापक परीक्षा",
+  "onbLevelStudent": "इन्जिनियरिङ विद्यार्थी",
+  "onbLevelStudentDesc": "हाल नागरिक इन्जिनियरिङ डिप्लोमा/डिग्रीमा अध्ययनरत",
+  "onbLevelGraduate": "स्नातक / रोजगारी खोजी",
+  "onbLevelGraduateDesc": "प्रतिस्पर्धी प्राविधिक परीक्षाको तयारीमा",
+  "onbLevelEngineer": "अभ्यासरत इन्जिनियर",
+  "onbLevelEngineerDesc": "मूल सिद्धान्त र डिजाइन मापदण्ड पुनरावलोकन",
+  "authPasswordUpdatedNotice": "पासवर्ड अपडेट भयो। नयाँ पासवर्डले साइन इन गर्नुहोस्।",
+  "notifToday": "आज",
+  "notifYesterday": "हिजो",
+  "notifDaysAgo": "{count} दिन अघि",
+  "@notifDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPromptExample1": "माटोको कम्प्याक्शन सरल शब्दमा व्याख्या गर्नुहोस्",
+  "tutorPromptExample2": "यो हप्ताको अध्ययन योजना बनाउन मद्दत गर्नुहोस्",
+  "walletUpdated": "अपडेट गरिएको",
+  "battleMatchStartingIn": "प्रतियोगी भेटियो — {seconds} सेकेन्डमा सुरु",
+  "@battleMatchStartingIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  }
 }

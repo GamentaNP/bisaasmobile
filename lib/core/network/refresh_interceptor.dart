@@ -33,8 +33,13 @@ class RefreshInterceptor extends Interceptor {
       return;
     }
 
-    // Queue while another refresh is in-flight.
+    // Queue while another refresh is in-flight. Bound the queue so a cold
+    // start with dozens of 401s cannot monopolise the client indefinitely.
     if (_isRefreshing) {
+      if (_queue.length >= 20) {
+        handler.next(err);
+        return;
+      }
       _queue.add((opts: opts, handler: handler));
       return;
     }
@@ -69,27 +74,20 @@ class RefreshInterceptor extends Interceptor {
       await _tokens.persist(token: token, expiresAt: expiresAt);
       AppLogger.i('Token refreshed; retrying ${opts.path}');
 
-      // Retry original — marked so a second 401 cannot loop the refresh.
-      final replayOpts = opts
-        ..headers['Authorization'] = 'Bearer $token'
-        ..extra['skipAuthRefresh'] = true;
-      final response = await _dio.fetch<dynamic>(replayOpts);
-      handler.resolve(response);
-
-      // Drain queue — same replays share the rotated token.
-      for (final q in _queue) {
-        final queuedOpts = q.opts
-          ..headers['Authorization'] = 'Bearer $token'
-          ..extra['skipAuthRefresh'] = true;
-        try {
-          final r = await _dio.fetch<dynamic>(queuedOpts);
-          q.handler.resolve(r);
-        } on DioException catch (e) {
-          q.handler.next(e);
-        }
-      }
+      // Everything below is request replay, NOT refresh. A 500 or timeout on
+      // replay must surface as that request's error — never clear a session
+      // whose rotation just succeeded.
+      await _replay(opts, token, handler);
+      final queued = List<
+              ({RequestOptions opts, ErrorInterceptorHandler handler})>.from(
+          _queue);
       _queue.clear();
+      // Replays are independent: run them concurrently instead of serially.
+      await Future.wait(
+        queued.map((q) => _replayQueued(q, token)),
+      );
     } catch (e, st) {
+      // Only a failed refresh/rotation reaches here.
       AppLogger.e('Refresh failed — clearing session', e, st);
       await _tokens.clear();
       handler.next(err);
@@ -99,6 +97,43 @@ class RefreshInterceptor extends Interceptor {
       _queue.clear();
     } finally {
       _isRefreshing = false;
+    }
+  }
+
+  /// Never throws: a replay failure belongs to the replaying request.
+  Future<void> _replay(
+    RequestOptions opts,
+    String token,
+    ErrorInterceptorHandler handler,
+  ) async {
+    final replayOpts = opts
+      ..headers['Authorization'] = 'Bearer $token'
+      ..extra['skipAuthRefresh'] = true;
+    try {
+      handler.resolve(await _dio.fetch<dynamic>(replayOpts));
+    } on DioException catch (e) {
+      handler.next(e);
+    } catch (e, st) {
+      AppLogger.w('Request replay failed: $e', e, st);
+      handler.next(DioException(requestOptions: replayOpts, error: e));
+    }
+  }
+
+  /// Never throws: one queued failure must not cancel the other replays.
+  Future<void> _replayQueued(
+    ({RequestOptions opts, ErrorInterceptorHandler handler}) q,
+    String token,
+  ) async {
+    final queuedOpts = q.opts
+      ..headers['Authorization'] = 'Bearer $token'
+      ..extra['skipAuthRefresh'] = true;
+    try {
+      q.handler.resolve(await _dio.fetch<dynamic>(queuedOpts));
+    } on DioException catch (e) {
+      q.handler.next(e);
+    } catch (e, st) {
+      AppLogger.w('Queued request replay failed: $e', e, st);
+      q.handler.next(DioException(requestOptions: queuedOpts, error: e));
     }
   }
 }

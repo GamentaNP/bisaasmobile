@@ -56,8 +56,8 @@ class LibraryRepositoryImpl implements LibraryRepository {
   Future<String> getDownloadUrl(String slug) => _remote.getDownloadUrl(slug);
 
   @override
-  Future<Paginated<LibraryReview>> getReviews(String slug, {int page = 1, int perPage = 15}) async {
-    final res = await _remote.getReviews(slug, page: page, perPage: perPage);
+  Future<Paginated<LibraryReview>> getReviews(String slug, {String? cursor, int perPage = 15}) async {
+    final res = await _remote.getReviews(slug, cursor: cursor, perPage: perPage);
     return Paginated<LibraryReview>(
       items: res.items.map((d) => d.toDomain()).toList(),
       pagination: res.pagination,
@@ -71,8 +71,8 @@ class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @override
-  Future<Paginated<LibraryUnlockItem>> getMyUnlocks({int page = 1, int perPage = 20}) async {
-    final res = await _remote.getMyUnlocks(page: page, perPage: perPage);
+  Future<Paginated<LibraryUnlockItem>> getMyUnlocks({String? cursor, int perPage = 20}) async {
+    final res = await _remote.getMyUnlocks(cursor: cursor, perPage: perPage);
     return Paginated<LibraryUnlockItem>(
       items: res.items.map((d) => d.toDomain()).toList(),
       pagination: res.pagination,

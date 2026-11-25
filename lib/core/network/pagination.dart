@@ -7,19 +7,17 @@
 ///  * **Cursor** — `pagination = {per_page, count, has_more, next_cursor,
 ///    prev_cursor}`.
 ///
-/// §4.1 moves four question-family collections to cursor (deprecation started
-/// 2026-09-08, sunset `Mon, 07 Mar 2027`):
+/// Cursor is now the **only** v1 shape for the question-family collections:
 ///
 ///  * `GET /quiz/questions`
 ///  * `GET /quiz/courses/{course:id}/questions`
 ///  * `GET /quiz/attempts/history`
 ///  * `GET /library/files`
 ///
-/// The server already defaults those four to the cursor shape
-/// (`ServesQuestionCollections::wantsCursorPagination` → cursor unless
-/// `?pagination=offset` is asked for), so a client that still sends
-/// `?page=2` silently gets page one forever. This module is the single place
-/// that knows how to walk either shape.
+/// The server removed the offset shape early (2026-11-05) and answers 400
+/// `BAD_REQUEST` for any `?pagination=` value other than `cursor`/absent.
+/// `next_cursor` is the sole continuation token; sending `?page=2` to these
+/// collections is silently ignored and returns page one forever.
 ///
 /// Two rules the module enforces:
 ///

@@ -155,9 +155,10 @@ class PushNotificationService {
         id: message.hashCode & 0x7fffffff,
         title: notification.title ?? 'CivilCal',
         body: notification.body ?? '',
-        payload:
-            message.data['deep_link'] as String? ??
-            message.data['route'] as String?,
+        payload: NotificationHandler.safeRoute(
+          message.data['deep_link'] as String? ??
+              message.data['route'] as String?,
+        ),
       );
     } catch (e, st) {
       AppLogger.w('Local push notification failed: $e', e, st);
@@ -231,7 +232,8 @@ class PushNotificationService {
   }
 
   void _onMessage(RemoteMessage m) {
-    AppLogger.i('FCM onMessage ${m.messageId} data=${m.data}');
+    // Never log the payload: reset links carry a token and email.
+    AppLogger.i('FCM onMessage ${m.messageId}');
     unawaited(
       _logAnalytics(
         AnalyticsEvents.notificationOpen,
@@ -244,7 +246,7 @@ class PushNotificationService {
   }
 
   void _onOpened(RemoteMessage m) {
-    AppLogger.i('FCM onOpened ${m.data}');
+    AppLogger.i('FCM onOpened ${m.messageId}');
     unawaited(
       _logAnalytics(
         AnalyticsEvents.notificationOpen,
@@ -255,8 +257,9 @@ class PushNotificationService {
     // Notification taps route via NotificationHandler.routeFor, falling back
     // to an explicit deep_link/route data payload when the server sends one.
     _nav.add(
-      m.data['deep_link'] as String? ??
-          m.data['route'] as String? ??
+      NotificationHandler.safeRoute(
+            m.data['deep_link'] as String? ?? m.data['route'] as String?,
+          ) ??
           NotificationHandler.routeFor(m.data),
     );
   }

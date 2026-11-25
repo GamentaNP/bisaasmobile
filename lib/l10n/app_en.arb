@@ -3320,5 +3320,51 @@
   "arcadeEmptyTitle": "No questions for this category yet",
   "arcadeEmptyBody": "Try another category, or play with any category.",
   "arcadeCategoryTooSmall": "This category cannot run this mode yet — not enough questions. Try another category, or play without one.",
-  "arcadeRetry": "Try again"
+  "arcadeRetry": "Try again",
+  "quizAnswerNotSent": "Your answer could not be sent. Please try again.",
+  "quizOfflinePracticeUngraded": "Offline practice — this answer is not graded.",
+  "quizEmptySession": "This quiz has no questions yet. Please try another.",
+  "quizIntroScoredAtEnd": "Your score is shown when you finish the quiz.",
+  "onbExamLoksewa": "Loksewa / Civil PSC",
+  "onbExamLoksewaDesc": "Assistant Sub-Engineer, Sub-Engineer, & Engineer exams",
+  "onbExamGate": "GATE / Indian PSC",
+  "onbExamGateDesc": "Graduate Aptitude Test & State Engineering Services",
+  "onbExamSsc": "SSC JE / Diploma",
+  "onbExamSscDesc": "Junior Engineer Technical & General Practice",
+  "onbExamUniversity": "University Semester Exams",
+  "onbExamUniversityDesc": "Structural, Geotechnical, Surveying, & Fluid Mechanics",
+  "onbGoalCasual": "Casual Review",
+  "onbGoalCasualDesc": "10-15 daily questions to maintain streak",
+  "onbGoalFocused": "Focused Mastery",
+  "onbGoalFocusedDesc": "25-30 questions + formula revisions",
+  "onbGoalIntensive": "Intensive Sprint",
+  "onbGoalIntensiveDesc": "Mock exam practice & comprehensive tests",
+  "onbLevelStudent": "Engineering Student",
+  "onbLevelStudentDesc": "Currently enrolled in Civil Engineering diploma/degree",
+  "onbLevelGraduate": "Graduate / Job Seeker",
+  "onbLevelGraduateDesc": "Actively preparing for competitive technical exams",
+  "onbLevelEngineer": "Practicing Engineer",
+  "onbLevelEngineerDesc": "Refreshing core theory and design standards",
+  "authPasswordUpdatedNotice": "Password updated. Sign in with your new password.",
+  "notifToday": "Today",
+  "notifYesterday": "Yesterday",
+  "notifDaysAgo": "{count} days ago",
+  "@notifDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPromptExample1": "Explain soil compaction in simple terms",
+  "tutorPromptExample2": "Help me plan this week's study",
+  "walletUpdated": "Updated",
+  "battleMatchStartingIn": "Match found — starting in {seconds}s",
+  "@battleMatchStartingIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  }
 }

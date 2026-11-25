@@ -1,7 +1,10 @@
 import '../entities/contest.dart';
 
 abstract class ContestsRepository {
-  Future<({List<Contest> items, int? total, int? perPage, int? currentPage})> getContests({int page = 1, int perPage = 20});
+  Future<({List<Contest> items, String? nextCursor, bool hasMore})> getContests({
+    String? cursor,
+    int perPage = 20,
+  });
   Future<ContestDetail> getContest(int id);
   Future<Map<String, dynamic>> getJoinIntent(int id);
   Future<int> joinContest(int id, {String? joinIntent, String? idempotencyKey});

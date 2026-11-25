@@ -20,7 +20,7 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(contestsControllerProvider.notifier).fetchContests(page: 1));
+    Future.microtask(() => ref.read(contestsControllerProvider.notifier).fetchContests());
   }
 
   Future<void> _onRefresh() async {
@@ -56,7 +56,7 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
       return ListView(
         children: [
           const SizedBox(height: 80),
-          ErrorView(message: state.error!, onRetry: () => ref.read(contestsControllerProvider.notifier).fetchContests(page: 1)),
+          ErrorView(message: state.error!, onRetry: () => ref.read(contestsControllerProvider.notifier).fetchContests()),
         ],
       );
     }
@@ -80,7 +80,7 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
               child: state.isLoading
                   ? const CircularProgressIndicator()
                   : OutlinedButton.icon(
-                      onPressed: () => ref.read(contestsControllerProvider.notifier).fetchContests(page: state.currentPage + 1, append: true),
+                      onPressed: () => ref.read(contestsControllerProvider.notifier).fetchContests(cursor: state.nextCursor, append: true),
                       icon: const Icon(Icons.expand_more_rounded),
                       label: Text(l10n.commonLoadMore),
                     ),

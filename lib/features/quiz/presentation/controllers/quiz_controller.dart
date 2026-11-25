@@ -79,6 +79,16 @@ class QuizController extends Notifier<QuizState> {
       final session = await _repo.getQuizSession(quizId, categoryId: categoryId);
       final isOfflineCache = session.title.startsWith('Offline Practice');
 
+      // A zero-question session cannot be played and must never be seeded on
+      // the server: startAttempt would grade 20 questions the user never saw.
+      if (session.questions.isEmpty) {
+        state = state.copyWith(
+          phase: QuizPhase.error,
+          errorMessage: appL10n().quizEmptySession,
+        );
+        return;
+      }
+
       // 2. Start attempt on server — offline if cache served or network down
       String attemptId;
       bool isOffline = isOfflineCache;
@@ -173,7 +183,7 @@ class QuizController extends Notifier<QuizState> {
         xpEarned: 0,
         coinsEarned: 0,
         correctOptionId: '',
-        explanation: 'Offline practice — answer saved. Reconnect to see the result.',
+        explanation: appL10n().quizOfflinePracticeUngraded,
       );
       final updatedAnswers = Map<String, AttemptResult>.from(state.answers)
         ..[question.id] = result;
@@ -211,23 +221,20 @@ class QuizController extends Notifier<QuizState> {
             : (result.isCorrect ? state.comboCount + 1 : 0),
         totalXpEarned: state.totalXpEarned + result.xpEarned,
         totalCoinsEarned: state.totalCoinsEarned + result.coinsEarned,
+        errorMessage: null,
       );
       try {
         await ref.read(analyticsProvider).log(AnalyticsEvents.quizAnswer, params: {'is_correct': result.isCorrect ? 1 : 0});
       } catch (_) {}
     } catch (e) {
-      // On network failure: still advance but mark as unsynced
+      // The write outbox is deliberately unwired: nothing is queued and
+      // nothing reconciles. Keep the question in `answering` with the
+      // selection intact so the user can retry instead of being told a lie.
+      AppLogger.w('quiz answer submit failed: $e');
       state = state.copyWith(
-        phase: QuizPhase.feedback,
-        lastResult: AttemptResult(
-          questionId: question.id,
-          selectedOptionId: optionId,
-          isCorrect: false,
-          xpEarned: 0,
-          coinsEarned: 0,
-          correctOptionId: '',
-          explanation: 'Offline — answer queued. XP/coins will reconcile on reconnect.',
-        ),
+        phase: QuizPhase.answering,
+        lastResult: null,
+        errorMessage: appL10n().quizAnswerNotSent,
       );
     }
   }
@@ -246,6 +253,7 @@ class QuizController extends Notifier<QuizState> {
       currentIndex: state.currentIndex + 1,
       lastResult: null,
       selectedOptionId: null,
+      errorMessage: null,
       // Lifeline effects are per-question; the next question starts clean.
       hiddenOptionKeys: const {},
       lifelineNotice: null,

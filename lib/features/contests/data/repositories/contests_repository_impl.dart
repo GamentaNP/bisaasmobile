@@ -7,11 +7,15 @@ class ContestsRepositoryImpl implements ContestsRepository {
   final ContestsRemoteDataSource _remote;
 
   @override
-  Future<({List<Contest> items, int? total, int? perPage, int? currentPage})> getContests({int page = 1, int perPage = 20}) async {
-    final res = await _remote.getContests(page: page, perPage: perPage);
+  Future<({List<Contest> items, String? nextCursor, bool hasMore})> getContests({
+    String? cursor,
+    int perPage = 20,
+  }) async {
+    final res = await _remote.getContests(cursor: cursor, perPage: perPage);
     final items = res.items.map((d) => d.toDomain()).toList();
     final p = res.pagination;
-    return (items: items, total: p?.total, perPage: p?.perPage, currentPage: p?.currentPage);
+    final hasMore = p?.hasMore ?? (p?.nextCursor != null);
+    return (items: items, nextCursor: p?.nextCursor, hasMore: hasMore);
   }
 
   @override

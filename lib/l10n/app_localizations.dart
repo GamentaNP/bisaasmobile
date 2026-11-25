@@ -7574,6 +7574,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get arcadeRetry;
+
+  /// No description provided for @quizAnswerNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer could not be sent. Please try again.'**
+  String get quizAnswerNotSent;
+
+  /// No description provided for @quizOfflinePracticeUngraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline practice — this answer is not graded.'**
+  String get quizOfflinePracticeUngraded;
+
+  /// No description provided for @quizEmptySession.
+  ///
+  /// In en, this message translates to:
+  /// **'This quiz has no questions yet. Please try another.'**
+  String get quizEmptySession;
+
+  /// No description provided for @quizIntroScoredAtEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Your score is shown when you finish the quiz.'**
+  String get quizIntroScoredAtEnd;
+
+  /// No description provided for @onbExamLoksewa.
+  ///
+  /// In en, this message translates to:
+  /// **'Loksewa / Civil PSC'**
+  String get onbExamLoksewa;
+
+  /// No description provided for @onbExamLoksewaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant Sub-Engineer, Sub-Engineer, & Engineer exams'**
+  String get onbExamLoksewaDesc;
+
+  /// No description provided for @onbExamGate.
+  ///
+  /// In en, this message translates to:
+  /// **'GATE / Indian PSC'**
+  String get onbExamGate;
+
+  /// No description provided for @onbExamGateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Graduate Aptitude Test & State Engineering Services'**
+  String get onbExamGateDesc;
+
+  /// No description provided for @onbExamSsc.
+  ///
+  /// In en, this message translates to:
+  /// **'SSC JE / Diploma'**
+  String get onbExamSsc;
+
+  /// No description provided for @onbExamSscDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Junior Engineer Technical & General Practice'**
+  String get onbExamSscDesc;
+
+  /// No description provided for @onbExamUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'University Semester Exams'**
+  String get onbExamUniversity;
+
+  /// No description provided for @onbExamUniversityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Structural, Geotechnical, Surveying, & Fluid Mechanics'**
+  String get onbExamUniversityDesc;
+
+  /// No description provided for @onbGoalCasual.
+  ///
+  /// In en, this message translates to:
+  /// **'Casual Review'**
+  String get onbGoalCasual;
+
+  /// No description provided for @onbGoalCasualDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'10-15 daily questions to maintain streak'**
+  String get onbGoalCasualDesc;
+
+  /// No description provided for @onbGoalFocused.
+  ///
+  /// In en, this message translates to:
+  /// **'Focused Mastery'**
+  String get onbGoalFocused;
+
+  /// No description provided for @onbGoalFocusedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'25-30 questions + formula revisions'**
+  String get onbGoalFocusedDesc;
+
+  /// No description provided for @onbGoalIntensive.
+  ///
+  /// In en, this message translates to:
+  /// **'Intensive Sprint'**
+  String get onbGoalIntensive;
+
+  /// No description provided for @onbGoalIntensiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Mock exam practice & comprehensive tests'**
+  String get onbGoalIntensiveDesc;
+
+  /// No description provided for @onbLevelStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineering Student'**
+  String get onbLevelStudent;
+
+  /// No description provided for @onbLevelStudentDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently enrolled in Civil Engineering diploma/degree'**
+  String get onbLevelStudentDesc;
+
+  /// No description provided for @onbLevelGraduate.
+  ///
+  /// In en, this message translates to:
+  /// **'Graduate / Job Seeker'**
+  String get onbLevelGraduate;
+
+  /// No description provided for @onbLevelGraduateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Actively preparing for competitive technical exams'**
+  String get onbLevelGraduateDesc;
+
+  /// No description provided for @onbLevelEngineer.
+  ///
+  /// In en, this message translates to:
+  /// **'Practicing Engineer'**
+  String get onbLevelEngineer;
+
+  /// No description provided for @onbLevelEngineerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Refreshing core theory and design standards'**
+  String get onbLevelEngineerDesc;
+
+  /// No description provided for @authPasswordUpdatedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated. Sign in with your new password.'**
+  String get authPasswordUpdatedNotice;
+
+  /// No description provided for @notifToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get notifToday;
+
+  /// No description provided for @notifYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get notifYesterday;
+
+  /// No description provided for @notifDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String notifDaysAgo(Object count);
+
+  /// No description provided for @tutorPromptExample1.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain soil compaction in simple terms'**
+  String get tutorPromptExample1;
+
+  /// No description provided for @tutorPromptExample2.
+  ///
+  /// In en, this message translates to:
+  /// **'Help me plan this week\'s study'**
+  String get tutorPromptExample2;
+
+  /// No description provided for @walletUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get walletUpdated;
+
+  /// No description provided for @battleMatchStartingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Match found — starting in {seconds}s'**
+  String battleMatchStartingIn(Object seconds);
 }
 
 class _AppLocalizationsDelegate

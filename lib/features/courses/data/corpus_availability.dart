@@ -125,22 +125,36 @@ final _corpusCountProvider = FutureProvider.family<int, String>((ref, code) {
   return countFor().onError<Object>((_, __) => -1);
 });
 
-/// Reads a count from either a top-level `total`, a `meta.total`, or the length
-/// of `data`, because the three corpora serialise pagination differently.
+/// Reads the published page count. `total` no longer exists on v1 cursor
+/// envelopes, so `pagination.count` is the only authoritative number; when a
+/// server omits it we can only report whether the corpus is non-empty.
 Future<int> _count(
   Future<Response<Map<String, dynamic>>> Function() request,
 ) async {
   final response = await request();
   final body = response.data;
   if (body == null) return 0;
-  final data = body['data'];
+
+  for (final key in const ['pagination', 'meta']) {
+    final block = body[key];
+    if (block is Map && block['count'] is num) {
+      return (block['count'] as num).toInt();
+    }
+  }
+  // Legacy deployments still publish `total`; harmless to honour when the
+  // cursor envelope omitted `count`.
   final meta = body['meta'];
-  if (meta is Map && meta['total'] is num)
+  if (meta is Map && meta['total'] is num) {
     return (meta['total'] as num).toInt();
+  }
   if (body['total'] is num) return (body['total'] as num).toInt();
+  final data = body['data'];
   if (data is List) return data.length;
   if (data is Map) {
-    if (data['total'] is num) return (data['total'] as num).toInt();
+    final nested = data['pagination'];
+    if (nested is Map && nested['count'] is num) {
+      return (nested['count'] as num).toInt();
+    }
     for (final key in const ['files', 'books', 'syllabi', 'items', 'results']) {
       if (data[key] is List) return (data[key] as List).length;
     }

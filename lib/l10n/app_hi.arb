@@ -3320,5 +3320,51 @@
   "arcadeEmptyTitle": "इस श्रेणी में अभी प्रश्न नहीं हैं",
   "arcadeEmptyBody": "दूसरी श्रेणी आज़माएँ, या किसी भी श्रेणी में खेलें।",
   "arcadeCategoryTooSmall": "इस श्रेणी में यह मोड अभी नहीं चल सकता — पर्याप्त प्रश्न नहीं हैं। दूसरी श्रेणी आज़माएँ, या बिना श्रेणी खेलें।",
-  "arcadeRetry": "फिर कोशिश करें"
+  "arcadeRetry": "फिर कोशिश करें",
+  "quizAnswerNotSent": "आपका उत्तर भेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
+  "quizOfflinePracticeUngraded": "ऑफ़लाइन अभ्यास — इस उत्तर का ग्रेड नहीं दिया गया।",
+  "quizEmptySession": "इस क्विज़ में अभी कोई प्रश्न नहीं है। कृपया दूसरा आज़माएँ।",
+  "quizIntroScoredAtEnd": "क्विज़ पूरा होने पर आपका स्कोर दिखाया जाता है।",
+  "onbExamLoksewa": "लोकसेवा / सिविल PSC",
+  "onbExamLoksewaDesc": "सहायक उप-इंजीनियर, उप-इंजीनियर और इंजीनियर परीक्षाएँ",
+  "onbExamGate": "GATE / भारतीय PSC",
+  "onbExamGateDesc": "स्नातक योग्यता परीक्षा और राज्य इंजीनियरिंग सेवाएँ",
+  "onbExamSsc": "SSC JE / डिप्लोमा",
+  "onbExamSscDesc": "जूनियर इंजीनियर तकनीकी और सामान्य अभ्यास",
+  "onbExamUniversity": "विश्वविद्यालय सेमिस्टर परीक्षाएँ",
+  "onbExamUniversityDesc": "संरचना, भू-तकनीकी, सर्वेक्षण और तरल यांत्रिकी",
+  "onbGoalCasual": "सामान्य समीक्षा",
+  "onbGoalCasualDesc": "स्ट्रीक बनाए रखने के लिए दिन में 10–15 प्रश्न",
+  "onbGoalFocused": "केंद्रित निपुणता",
+  "onbGoalFocusedDesc": "25–30 प्रश्न + सूत्र पुनरावलोकन",
+  "onbGoalIntensive": "तीव्र स्प्रिंट",
+  "onbGoalIntensiveDesc": "मॉक परीक्षा अभ्यास और व्यापक परीक्षाएँ",
+  "onbLevelStudent": "इंजीनियरिंग छात्र",
+  "onbLevelStudentDesc": "वर्तमान में सिविल इंजीनियरिंग डिप्लोमा/डिग्री में नामांकित",
+  "onbLevelGraduate": "स्नातक / नौकरी चाहने वाले",
+  "onbLevelGraduateDesc": "प्रतिस्पर्धी तकनीकी परीक्षाओं की तैयारी में",
+  "onbLevelEngineer": "व्यावसायिक इंजीनियर",
+  "onbLevelEngineerDesc": "मूल सिद्धांत और डिज़ाइन मानकों का पुनरावलोकन",
+  "authPasswordUpdatedNotice": "पासवर्ड अपडेट हो गया। नए पासवर्ड से साइन इन करें।",
+  "notifToday": "आज",
+  "notifYesterday": "कल",
+  "notifDaysAgo": "{count} दिन पहले",
+  "@notifDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorPromptExample1": "मिट्टी के कॉम्पैक्शन को सरल शब्दों में समझाएँ",
+  "tutorPromptExample2": "इस सप्ताह की पढ़ाई की योजना बनाने में मदद करें",
+  "walletUpdated": "अपडेट किया गया",
+  "battleMatchStartingIn": "प्रतियोगी मिल गया — {seconds} सेकंड में शुरू",
+  "@battleMatchStartingIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  }
 }

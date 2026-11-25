@@ -291,16 +291,14 @@ class ReaderController extends Notifier<ReaderState> {
 
   Future<void> nextPage() async {
     if (state.page == null) return;
-    _session.stop();
-    _session.reset();
+    // The stopwatch is per *session*, not per page. Stopping and resetting it
+    // here made every session with a page turn report zero time on exit.
     state = state.copyWith(pageNumber: state.pageNumber + 1, clearCreditMessage: true);
     await _loadPage();
   }
 
   Future<void> previousPage() async {
     if (state.pageNumber <= 1) return;
-    _session.stop();
-    _session.reset();
     state = state.copyWith(pageNumber: state.pageNumber - 1, clearCreditMessage: true);
     await _loadPage();
   }
@@ -314,7 +312,6 @@ class ReaderController extends Notifier<ReaderState> {
   /// server change that still awards on a void cannot be hidden by the client.
   Future<void> syncProgress() async {
     final seconds = _session.elapsed.inSeconds;
-    _session.reset();
     if (seconds <= 0) return;
     try {
       final progress = await _repo.reportProgress(
@@ -335,6 +332,10 @@ class ReaderController extends Notifier<ReaderState> {
       // A failed sync is not the reader's problem to solve; the next page change
       // will report again.
       AppLogger.w('reader progress sync failed: $e');
+    } finally {
+      // Count the time once. Reset only after the report has been attempted,
+      // so a retry cannot double-report the same seconds.
+      _session.reset();
     }
   }
 

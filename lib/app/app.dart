@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/analytics/analytics_service.dart';
 import '../core/logging/app_logger.dart';
+import '../core/notifications/notification_handler.dart';
 import '../core/security/token_manager.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
 import '../core/sync/sync_worker.dart';
@@ -163,8 +164,11 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     final push = ref.read(pushServiceProvider);
     if (push == null) return;
     _pushNavSub = push.navigationRequests.listen((payload) {
-      if (payload == null || payload.isEmpty) return;
-      final uri = Uri.tryParse(payload);
+      // Push payloads are untrusted — validate before handing them to the
+      // router (no credential-bearing or arbitrary paths).
+      final target = NotificationHandler.safeRoute(payload);
+      if (target == null) return;
+      final uri = Uri.tryParse(target);
       if (uri != null && uri.scheme.isNotEmpty) {
         final location = _appRouter.handleDeepLink(uri);
         if (location != null) {
@@ -172,7 +176,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
           return;
         }
       }
-      if (payload.startsWith('/')) _appRouter.router.go(payload);
+      if (target.startsWith('/')) _appRouter.router.go(target);
     });
   }
 

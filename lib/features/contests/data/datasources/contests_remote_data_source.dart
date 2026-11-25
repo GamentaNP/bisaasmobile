@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/pagination.dart';
 import '../models/contest_dto.dart';
 
 /// Verified routes:
@@ -17,10 +18,15 @@ class ContestsRemoteDataSource {
   final Dio _dio;
   static const _uuid = Uuid();
 
-  Future<({List<ContestDto> items, Pagination? pagination})> getContests({int page = 1, int perPage = 20}) async {
+  /// `/quiz/contests` is cursor-only. Sending `page` is silently ignored by
+  /// the server and yields the first page forever.
+  Future<({List<ContestDto> items, Pagination? pagination})> getContests({
+    String? cursor,
+    int perPage = 20,
+  }) async {
     final res = await _dio.get<Map<String, dynamic>>(
       '/quiz/contests',
-      queryParameters: {'page': page, 'per_page': perPage},
+      queryParameters: cursorQuery(cursor: cursor, perPage: perPage),
     );
     final body = res.data;
     if (body == null) {

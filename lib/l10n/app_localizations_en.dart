@@ -4470,4 +4470,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get arcadeRetry => 'Try again';
+
+  @override
+  String get quizAnswerNotSent =>
+      'Your answer could not be sent. Please try again.';
+
+  @override
+  String get quizOfflinePracticeUngraded =>
+      'Offline practice — this answer is not graded.';
+
+  @override
+  String get quizEmptySession =>
+      'This quiz has no questions yet. Please try another.';
+
+  @override
+  String get quizIntroScoredAtEnd =>
+      'Your score is shown when you finish the quiz.';
+
+  @override
+  String get onbExamLoksewa => 'Loksewa / Civil PSC';
+
+  @override
+  String get onbExamLoksewaDesc =>
+      'Assistant Sub-Engineer, Sub-Engineer, & Engineer exams';
+
+  @override
+  String get onbExamGate => 'GATE / Indian PSC';
+
+  @override
+  String get onbExamGateDesc =>
+      'Graduate Aptitude Test & State Engineering Services';
+
+  @override
+  String get onbExamSsc => 'SSC JE / Diploma';
+
+  @override
+  String get onbExamSscDesc => 'Junior Engineer Technical & General Practice';
+
+  @override
+  String get onbExamUniversity => 'University Semester Exams';
+
+  @override
+  String get onbExamUniversityDesc =>
+      'Structural, Geotechnical, Surveying, & Fluid Mechanics';
+
+  @override
+  String get onbGoalCasual => 'Casual Review';
+
+  @override
+  String get onbGoalCasualDesc => '10-15 daily questions to maintain streak';
+
+  @override
+  String get onbGoalFocused => 'Focused Mastery';
+
+  @override
+  String get onbGoalFocusedDesc => '25-30 questions + formula revisions';
+
+  @override
+  String get onbGoalIntensive => 'Intensive Sprint';
+
+  @override
+  String get onbGoalIntensiveDesc => 'Mock exam practice & comprehensive tests';
+
+  @override
+  String get onbLevelStudent => 'Engineering Student';
+
+  @override
+  String get onbLevelStudentDesc =>
+      'Currently enrolled in Civil Engineering diploma/degree';
+
+  @override
+  String get onbLevelGraduate => 'Graduate / Job Seeker';
+
+  @override
+  String get onbLevelGraduateDesc =>
+      'Actively preparing for competitive technical exams';
+
+  @override
+  String get onbLevelEngineer => 'Practicing Engineer';
+
+  @override
+  String get onbLevelEngineerDesc =>
+      'Refreshing core theory and design standards';
+
+  @override
+  String get authPasswordUpdatedNotice =>
+      'Password updated. Sign in with your new password.';
+
+  @override
+  String get notifToday => 'Today';
+
+  @override
+  String get notifYesterday => 'Yesterday';
+
+  @override
+  String notifDaysAgo(Object count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get tutorPromptExample1 => 'Explain soil compaction in simple terms';
+
+  @override
+  String get tutorPromptExample2 => 'Help me plan this week\'s study';
+
+  @override
+  String get walletUpdated => 'Updated';
+
+  @override
+  String battleMatchStartingIn(Object seconds) {
+    return 'Match found — starting in ${seconds}s';
+  }
 }
