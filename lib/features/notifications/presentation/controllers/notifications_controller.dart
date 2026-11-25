@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
-import '../../../../core/network/dio_client.dart';
+import 'package:dio/dio.dart';
+
+import '../../../../app/providers.dart';
 import '../../domain/notification_item.dart';
 
 /// Remote calls for the notification inbox.
@@ -15,10 +17,10 @@ import '../../domain/notification_item.dart';
 ///   PUT  /notifications/read-all
 class NotificationsRemoteDataSource {
   const NotificationsRemoteDataSource(this._dio);
-  final DioClient _dio;
+  final Dio _dio;
 
   Future<List<NotificationItem>> fetch() async {
-    final res = await _dio.dio.get<Map<String, dynamic>>('/notifications');
+    final res = await _dio.get<Map<String, dynamic>>('/notifications');
     final body = res.data;
     if (body == null) {
       throw const ContractViolation(
@@ -67,16 +69,16 @@ class NotificationsRemoteDataSource {
 
   /// Returns true only when the server accepted the transition.
   Future<void> markRead(String id) async {
-    await _dio.dio.put<void>('/notifications/$id/read');
+    await _dio.put<void>('/notifications/$id/read');
   }
 
   Future<void> markAllRead() async {
-    await _dio.dio.put<void>('/notifications/read-all');
+    await _dio.put<void>('/notifications/read-all');
   }
 }
 
 final notificationsRemoteProvider = Provider<NotificationsRemoteDataSource>(
-  (ref) => NotificationsRemoteDataSource(DioClient.instance),
+  (ref) => NotificationsRemoteDataSource(ref.watch(dioProvider)),
 );
 
 /// Owns the inbox so a read/unread change can be applied optimistically and

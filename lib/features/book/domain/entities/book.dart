@@ -9,7 +9,7 @@ library;
 /// awarded XP while the server voided it would be telling the user something
 /// false.
 
-import '../../../../app/localization/l10n.dart';
+import '../../../../l10n/app_localizations.dart';
 
 
 /// A book in the catalog.
@@ -126,13 +126,16 @@ class BookChapter {
   bool get costsCoins => (coinUnlockPrice ?? 0) > 0;
 
   /// A readable page range, or null when the end is unknown.
-  String? get pageRangeLabel {
+  ///
+  /// The copy comes from [l10n], supplied by the caller: an entity stays pure
+  /// Dart and never reaches into a binding or the preferences store.
+  String? pageRangeLabel(AppLocalizations l10n) {
     final start = startPage;
     if (start == null) return null;
     final end = endPage;
-    if (end == null) return appL10n().bookPageRangeOpen(start);
-    if (end <= start) return appL10n().bookPageRangeSingle(start);
-    return appL10n().bookPageRange(start, end);
+    if (end == null) return l10n.bookPageRangeOpen(start);
+    if (end <= start) return l10n.bookPageRangeSingle(start);
+    return l10n.bookPageRange(start, end);
   }
 
   /// The title in the reader's language, falling back to English.
@@ -214,12 +217,15 @@ class ReadingCredit {
       xpAwarded > 0 || coinsAwarded > 0 || topicCompleted || chapterCompleted;
 
   /// A sentence that never claims a reward the server did not award.
-  String? get outcomeMessage {
+  ///
+  /// [l10n] is passed in rather than looked up globally so this verdict is
+  /// deterministic and testable without a Flutter binding.
+  String? outcomeMessage(AppLocalizations l10n) {
     if (voided) {
       final reason = voidReason?.trim();
       return reason == null || reason.isEmpty
-          ? appL10n().bookSessionNotCounted
-          : appL10n().bookSessionNotCountedReason(reason);
+          ? l10n.bookSessionNotCounted
+          : l10n.bookSessionNotCountedReason(reason);
     }
     if (xpAwarded > 0 || coinsAwarded > 0) {
       final parts = <String>[];

@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/localization/l10n.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/syllabus_remote_data_source.dart';
 import '../../data/repositories/syllabus_repository_impl.dart';
 import '../../domain/entities/syllabus.dart';
 import '../../domain/repositories/syllabus_repository.dart';
 
 final syllabusRemoteDataSourceProvider = Provider<SyllabusRemoteDataSource>(
-  (ref) => SyllabusRemoteDataSource(DioClient.instance.dio),
+  (ref) => SyllabusRemoteDataSource(ref.watch(dioProvider)),
 );
 
 final syllabusRepositoryProvider = Provider<SyllabusRepository>(

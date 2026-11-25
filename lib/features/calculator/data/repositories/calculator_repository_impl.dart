@@ -4,7 +4,6 @@ import '../../domain/entities/calculator.dart';
 import '../../domain/entities/calculator_assistant.dart';
 import '../../domain/repositories/calculator_repository.dart';
 import '../datasources/calculator_remote_data_source.dart';
-import '../models/calculator_dto.dart';
 
 class CalculatorRepositoryImpl implements CalculatorRepository {
   const CalculatorRepositoryImpl(this._remote, [this._queue]);
@@ -17,7 +16,10 @@ class CalculatorRepositoryImpl implements CalculatorRepository {
   final SyncQueueService? _queue;
 
   @override
-  Future<CalculatorCatalogDto> getCatalog() => _remote.getCatalog();
+  Future<CalculatorCatalog> getCatalog() async {
+    final dto = await _remote.getCatalog();
+    return dto.toDomain();
+  }
 
   @override
   Future<CalculatorConfig> getConfig(String domain, String slug) => _remote.getConfig(domain, slug);
@@ -76,18 +78,19 @@ class CalculatorRepositoryImpl implements CalculatorRepository {
   Future<List<Map<String, dynamic>>> getHistory(String domain, String slug) => _remote.getHistory(domain, slug);
 
   @override
-  Future<CalculatorPermalinkDto> createPermalink({
+  Future<CalculatorPermalink> createPermalink({
     required String domain,
     required String calculatorSlug,
     required Map<String, dynamic> inputs,
     required Map<String, dynamic> results,
-  }) {
-    return _remote.createPermalink(
+  }) async {
+    final dto = await _remote.createPermalink(
       domain: domain,
       calculatorSlug: calculatorSlug,
       inputs: inputs,
       results: results,
     );
+    return dto.toDomain();
   }
 
   @override

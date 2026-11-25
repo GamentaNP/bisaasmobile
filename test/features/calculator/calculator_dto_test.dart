@@ -58,6 +58,46 @@ void main() {
       expect(dto.totalCalculators, 0);
       expect(dto.domains, isEmpty);
     });
+
+    test('toDomain exposes catalog groups as domain entities', () {
+      final catalog = CalculatorCatalogDto.fromJson({
+        'total_calculators': 1,
+        'domains': [
+          {
+            'domain': 'civil',
+            'label': 'Civil',
+            'calculators': [
+              {'slug': 'beam-deflection', 'domain': 'civil', 'label': 'Beam Deflection'},
+            ],
+          },
+        ],
+      }).toDomain();
+      expect(catalog, isA<CalculatorCatalog>());
+      expect(catalog.totalCalculators, 1);
+      expect(catalog.domains, hasLength(1));
+      expect(catalog.domains.first, isA<CalculatorDomain>());
+      expect(catalog.domains.first.calculators.first.path, '/civil/beam-deflection');
+    });
+  });
+
+  group('CalculatorPermalinkDto', () {
+    test('toDomain carries the canonical shareable url', () {
+      final dto = CalculatorPermalinkDto.fromJson({
+        'url': 'https://lovemcq.com/c/abc123',
+        'ulid': 'abc123',
+        'standalone_url': 'https://lovemcq.com/s/abc123',
+        'report_url': 'https://lovemcq.com/r/abc123',
+      });
+      expect(dto.toDomain(), isA<CalculatorPermalink>());
+      expect(dto.toDomain().url, 'https://lovemcq.com/c/abc123');
+    });
+
+    test('missing url still fails at the data boundary', () {
+      expect(
+        () => CalculatorPermalinkDto.fromJson(const {}),
+        throwsA(isA<FormatException>()),
+      );
+    });
   });
 
   group('CalculatorConfigDto', () {

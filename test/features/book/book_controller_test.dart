@@ -2,6 +2,8 @@ import 'package:bisaasmobile/features/book/data/datasources/book_remote_data_sou
 import 'package:bisaasmobile/features/book/data/repositories/book_repository_impl.dart';
 import 'package:bisaasmobile/features/book/domain/entities/book.dart';
 import 'package:bisaasmobile/features/book/presentation/controllers/book_controller.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -16,6 +18,7 @@ class MockBookRemote extends Mock implements BookRemoteDataSource {}
 /// survives into a fresh problem, or a progress sync that quietly reports success
 /// on an unreadable response.
 void main() {
+  final l10n = lookupAppLocalizations(const Locale('en'));
   late MockBookRemote remote;
 
   setUpAll(() => registerFallbackValue(<String, double>{}));
@@ -216,7 +219,7 @@ void main() {
       // syncProgress() returns early at zero seconds — without a real elapsed
       // session this test passes vacuously and never exercises the error path.
       await Future<void>.delayed(const Duration(milliseconds: 1100));
-      await c.read(readerControllerProvider(target).notifier).syncProgress();
+      await c.read(readerControllerProvider(target).notifier).syncProgress(l10n);
       verify(
         () => remote.reportProgress(
           bookId: any(named: 'bookId'),
@@ -246,7 +249,7 @@ void main() {
       addTearDown(c.dispose);
       c.read(readerControllerProvider(target));
       await settle(c);
-      await c.read(readerControllerProvider(target).notifier).syncProgress();
+      await c.read(readerControllerProvider(target).notifier).syncProgress(l10n);
       final s = c.read(readerControllerProvider(target));
       expect(s.lastCreditMessage, isNull);
       expect(s.error, isNull,

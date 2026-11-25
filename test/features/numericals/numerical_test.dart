@@ -1,4 +1,6 @@
 import 'package:bisaasmobile/features/numericals/domain/entities/numerical.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The behaviour that matters here is the one the server enforces by omission:
@@ -8,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// withholding rather than the arithmetic — the arithmetic is server-side and the
 /// client never sees it.
 void main() {
+  final l10n = lookupAppLocalizations(const Locale('en'));
+
   group('NumericalCheck never leaks a withheld answer', () {
     test('a wrong attempt has no final answer', () {
       const check = NumericalCheck(correct: false, finalAnswer: null, unit: 'kN');
@@ -18,15 +22,15 @@ void main() {
 
     test('the outcome label for a wrong attempt states no value', () {
       const check = NumericalCheck(correct: false, unit: 'kN');
-      expect(check.outcomeLabel, isNot(contains('kN')));
-      expect(check.outcomeLabel, contains('Not correct'));
+      expect(check.outcomeLabel(l10n), isNot(contains('kN')));
+      expect(check.outcomeLabel(l10n), contains('Not correct'));
     });
 
     test('a correct attempt reveals the answer and the unit', () {
       const check = NumericalCheck(correct: true, finalAnswer: 12.5, unit: 'kN');
       expect(check.revealsAnswer, isTrue);
-      expect(check.outcomeLabel, contains('12.5'));
-      expect(check.outcomeLabel, contains('kN'));
+      expect(check.outcomeLabel(l10n), contains('12.5'));
+      expect(check.outcomeLabel(l10n), contains('kN'));
     });
 
     test('a correct attempt with no value still says Correct', () {
@@ -34,14 +38,14 @@ void main() {
       // "Correct · null".
       const check = NumericalCheck(correct: true, finalAnswer: null);
       expect(check.revealsAnswer, isFalse);
-      expect(check.outcomeLabel, 'Correct');
+      expect(check.outcomeLabel(l10n), 'Correct');
     });
 
     test('a missing unit does not leave a dangling separator', () {
       const check = NumericalCheck(correct: true, finalAnswer: 3);
       expect(check.unitSuffix, isEmpty);
-      expect(check.outcomeLabel.trim(), 'Correct · 3');
-      expect(check.outcomeLabel, isNot(endsWith(' ')));
+      expect(check.outcomeLabel(l10n).trim(), 'Correct · 3');
+      expect(check.outcomeLabel(l10n), isNot(endsWith(' ')));
     });
 
     test('needsReview is surfaced so a flagged answer is not treated as verified', () {

@@ -5,18 +5,13 @@ import '../../../core/consent/consent_controller.dart';
 import '../../../core/consent/consent_state.dart';
 import '../../../core/logging/app_logger.dart';
 import '../../../core/network/api_exception.dart';
-import '../../../core/network/dio_client.dart';
-import '../data/datasources/privacy_remote_data_source.dart';
-import '../domain/entities/visitor_data.dart';
+import '../data/providers/privacy_providers.dart';
 import '../../../l10n/app_localizations.dart';
 
-final privacyRemoteDataSourceProvider = Provider<PrivacyRemoteDataSource>(
-  (ref) => PrivacyRemoteDataSource(DioClient.instance.dio),
-);
-
-final visitorDataProvider = FutureProvider<VisitorData?>(
-  (ref) => ref.watch(privacyRemoteDataSourceProvider).getVisitorData(),
-);
+// Kept at the old location for existing watchers and overrides; both names
+// now resolve to the providers composed in the feature's data layer.
+export '../data/providers/privacy_providers.dart'
+    show privacyRemoteDataSourceProvider, privacyRepositoryProvider, visitorDataProvider;
 
 /// What the server holds about this anonymous visitor, and the Art. 15/17
 /// self-service controls.
@@ -139,7 +134,7 @@ class PrivacyDataScreen extends ConsumerWidget {
     if (confirmed != true || !context.mounted) return;
 
     try {
-      await ref.read(privacyRemoteDataSourceProvider).eraseVisitorData();
+      await ref.read(privacyRepositoryProvider).eraseVisitorData();
       ref.invalidate(visitorDataProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

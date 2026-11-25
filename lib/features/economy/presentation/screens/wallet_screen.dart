@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../app/feature_bridges.dart';
 import '../../../../app/theme/app_colors.dart';
-import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/economy_controller.dart';
 import '../../domain/entities/economy.dart';
 import '../../../../l10n/app_localizations.dart';

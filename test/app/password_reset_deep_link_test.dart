@@ -1,5 +1,7 @@
 import 'package:bisaasmobile/app/router/deep_link_handler.dart';
 import 'package:bisaasmobile/features/auth/domain/password_policy.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Regression cover for a user-blocking defect: the password-reset email
@@ -10,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// never reached a screen, so the user was asked to request another email —
 /// forever. `POST /auth/reset-password` has always existed and accepts it.
 void main() {
+  final l10n = lookupAppLocalizations(const Locale('en'));
+
   group('custom scheme reset links', () {
     test('carries the token through to the reset screen', () {
       final location = DeepLinkHandler.parse(
@@ -102,27 +106,27 @@ void main() {
     // mismatched confirmation -> "confirmation does not match". The server's
     // Password::default() is min:8 ONLY - no mixed-case/number/symbol rule.
     test('rejects shorter than the server minimum', () {
-      expect(PasswordPolicy.validate('abc1234'), isNotNull);
-      expect(PasswordPolicy.validate('abcd1234'), isNull);
+      expect(PasswordPolicy.validate(l10n, 'abc1234'), isNotNull);
+      expect(PasswordPolicy.validate(l10n, 'abcd1234'), isNull);
     });
 
     test('rejects empty', () {
-      expect(PasswordPolicy.validate(''), isNotNull);
+      expect(PasswordPolicy.validate(l10n, ''), isNotNull);
     });
 
     test('accepts a password the server accepts, without inventing rules', () {
       // No uppercase, no symbol. The server takes it, so the client must too -
       // stricter client rules would reject a valid password with no explanation.
-      expect(PasswordPolicy.validate('abcd1234'), isNull);
+      expect(PasswordPolicy.validate(l10n, 'abcd1234'), isNull);
     });
 
     test('requires the confirmation to match', () {
-      expect(PasswordPolicy.validateConfirmation('abcd1234', 'zzzz9999'), isNotNull);
-      expect(PasswordPolicy.validateConfirmation('abcd1234', 'abcd1234'), isNull);
+      expect(PasswordPolicy.validateConfirmation(l10n, 'abcd1234', 'zzzz9999'), isNotNull);
+      expect(PasswordPolicy.validateConfirmation(l10n, 'abcd1234', 'abcd1234'), isNull);
     });
 
     test('requires a confirmation at all', () {
-      expect(PasswordPolicy.validateConfirmation('abcd1234', ''), isNotNull);
+      expect(PasswordPolicy.validateConfirmation(l10n, 'abcd1234', ''), isNotNull);
     });
   });
 }

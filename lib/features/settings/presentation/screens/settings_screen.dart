@@ -1,5 +1,4 @@
 /// Settings — app language, biometric app lock, and session logout.
-// ignore_for_file: simple_directive_paths
 library;
 
 import 'dart:async';
@@ -9,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 
+import '../../../../app/feature_bridges.dart';
 import '../../../../app/localization/app_languages.dart';
 import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/providers.dart';
@@ -16,8 +16,6 @@ import '../../../../app/theme/script_fonts.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/security/biometric_auth.dart';
-import '../../../../features/auth/presentation/controllers/auth_controller.dart';
-import '../../../../features/profile/presentation/controllers/profile_skills_controller.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../app/localization/l10n.dart';
 
@@ -34,7 +32,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // AuthRepositoryImpl.logout clears the token (best-effort server call);
     // the app-shell auth listener unregisters the FCM device token.
     try {
-      await ref.read(authControllerProvider.notifier).logout();
+      await ref.read(signOutActionProvider)();
     } catch (e) {
       AppLogger.w('Logout failed: $e');
     }
@@ -56,7 +54,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     setState(() => _deleting = true);
     try {
-      await ref.read(authRepositoryProvider).deleteAccount();
+      await ref.read(deleteAccountActionProvider)();
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _deleting = false);
@@ -136,7 +134,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final code = selected?.languageCode;
       if (code != null) {
         try {
-          await ref.read(profileRemoteDataSourceProvider).updateLocale(code);
+          await ref.read(syncLocaleActionProvider)(code);
         } catch (_) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(

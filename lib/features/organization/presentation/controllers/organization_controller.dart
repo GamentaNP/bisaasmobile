@@ -9,7 +9,7 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../../../core/security/tenant_providers.dart';
 import '../../../../core/security/tenant_store.dart';
 import '../../../../core/security/token_manager.dart';
@@ -147,14 +147,12 @@ class OrganizationController extends AsyncNotifier<OrganizationContext> {
       ref.read(tenantStoreProvider).acknowledgeFailure();
 }
 
-/// The membership list endpoint. `DioClient` is initialized in `bootstrap()`;
-/// a provider that is read before that is a wiring bug, not an empty list.
+/// The membership list endpoint. The Dio comes from [dioProvider], which is
+/// wired in `bootstrap()`; reading it before that is a wiring bug, not an
+/// empty list.
 final organizationRemoteDataSourceProvider =
     Provider<OrganizationRemoteDataSource>((ref) {
-      if (!DioClient.isInitialized) {
-        throw StateError('DioClient not init — see bootstrap.dart');
-      }
-      return OrganizationRemoteDataSource(DioClient.instance.dio);
+      return OrganizationRemoteDataSource(ref.watch(dioProvider));
     });
 
 /// The caller's assertable organizations, fetched once and shared.

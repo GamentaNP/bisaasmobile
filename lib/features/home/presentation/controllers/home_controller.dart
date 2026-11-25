@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/home_remote_data_source.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/entities/dashboard_data.dart';
 import '../../domain/repositories/home_repository.dart';
 
 final homeRemoteDataSourceProvider = Provider<HomeRemoteDataSource>((ref) {
-  final dio = DioClient.instance.dio;
+  final dio = ref.watch(dioProvider);
   return HomeRemoteDataSource(dio);
 });
 

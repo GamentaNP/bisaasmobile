@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../logging/app_logger.dart';
 import '../network/api_exception.dart';
-import '../network/dio_client.dart';
+import '../../app/providers.dart';
 import '../storage/preferences.dart';
 import 'consent_state.dart';
 
@@ -86,14 +86,11 @@ class ConsentController extends AsyncNotifier<ConsentState> {
     // The report is best-effort. Recording the choice locally is what actually
     // gates collection; the server copy is an audit artefact, so a failure here
     // is logged and dropped rather than surfaced as an error the user cannot act
-    // on. It is also skipped entirely before bootstrap has built the client,
-    // which is the case in tests and in any early-boot caller.
-    if (!DioClient.isInitialized) {
-      AppLogger.w('cookie-consent not reported: the network layer is not up yet');
-      return;
-    }
+    // on. Reading the Dio through the provider keeps this layer off the
+    // singleton; before bootstrap the read throws and is caught below.
     try {
-      await DioClient.instance.dio.put<Map<String, dynamic>>(
+      final dio = ref.read(dioProvider);
+      await dio.put<Map<String, dynamic>>(
         '/public/cookie-consent',
         data: consent.toRequestBody(),
       );

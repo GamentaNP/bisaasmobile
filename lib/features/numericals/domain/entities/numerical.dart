@@ -9,7 +9,7 @@ library;
 /// that cached or displayed the answer from a failed attempt would have turned
 /// the practice surface into an answer oracle. [NumericalCheck.finalAnswer] is
 /// therefore nullable and the UI must not substitute anything for it.
-import '../../../../app/localization/l10n.dart';
+import '../../../../l10n/app_localizations.dart';
 
 
 import 'package:flutter/foundation.dart';
@@ -86,13 +86,16 @@ class NumericalCheck {
   bool get revealsAnswer => correct && finalAnswer != null;
 
   /// A message that never states a value the server withheld.
-  String get outcomeLabel => correct
-      ? appL10n().numericalsCorrect(
+  ///
+  /// [l10n] is supplied by the presentation layer — the entity itself stays
+  /// pure Dart and does not read the active locale from a global.
+  String outcomeLabel(AppLocalizations l10n) => correct
+      ? l10n.numericalsCorrect(
           finalAnswer == null
               ? ''
               : ' · ${formatNumber(finalAnswer!)}$unitSuffix',
         )
-      : appL10n().numericalNotCorrect;
+      : l10n.numericalNotCorrect;
 
   String get unitSuffix => unit == null ? '' : ' $unit';
 }

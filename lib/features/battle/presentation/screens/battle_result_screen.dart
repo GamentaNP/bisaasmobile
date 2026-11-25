@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/battle_remote_data_source.dart';
 import '../../domain/battle_outcome.dart';
 import '../../domain/entities/battle.dart';
@@ -25,7 +25,7 @@ final battleOutcomeProvider = FutureProvider.family<BattleOutcome, String>((
   ref,
   battleId,
 ) async {
-  final raw = await BattleRemoteDataSource(DioClient.instance.dio).getResults(battleId);
+  final raw = await BattleRemoteDataSource(ref.watch(dioProvider)).getResults(battleId);
   return BattleOutcome.fromResults(raw, currentUserId: null);
 });
 

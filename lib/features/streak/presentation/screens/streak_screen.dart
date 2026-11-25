@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
-import '../../data/models/streak_dto.dart';
 import '../../domain/entities/streak.dart';
+import '../../domain/entities/streak_self_service.dart';
 import '../controllers/streak_controller.dart';
 import '../widgets/streak_calendar.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -439,7 +439,7 @@ class _RepairCard extends ConsumerWidget {
     );
   }
 
-  static String _describe(StreakRepairEligibilityDto? e) {
+  static String _describe(StreakRepairEligibility? e) {
     if (e == null) return appL10n().streakCheckingRepair;
     if (e.eligible) {
       final when = e.missedDate?.toLocal().toString().split('.').first;

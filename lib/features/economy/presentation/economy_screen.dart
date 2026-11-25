@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/feature_bridges.dart';
 import '../../../app/theme/app_colors.dart';
-import '../../auth/presentation/controllers/auth_controller.dart';
 
 /// Economy hub — destinations inside Profile (5 tabs stay Home/Play/Calculate/Learn/Profile per task_plan.md R4).
 /// Routes: /economy/wallet (balance+ledger grouped by day), /store (cosmetics),

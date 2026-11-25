@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/ai_settings_remote_data_source.dart';
 
 import '../../data/repositories/ai_settings_repository_impl.dart';
@@ -12,7 +12,7 @@ import '../../../../app/localization/l10n.dart';
 
 final aiSettingsRemoteDataSourceProvider =
     Provider<AiSettingsRemoteDataSource>((ref) {
-  return AiSettingsRemoteDataSource(DioClient.instance.dio);
+  return AiSettingsRemoteDataSource(ref.watch(dioProvider));
 });
 
 final aiSettingsRepositoryProvider = Provider<AiSettingsRepository>((ref) {

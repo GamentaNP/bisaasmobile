@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../app/feature_bridges.dart';
 import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
@@ -10,12 +11,7 @@ import '../../../../core/logging/app_logger.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
-import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../calculator/presentation/controllers/calculator_controller.dart';
-import '../../../game/game_providers.dart';
-import '../../../gamification/presentation/screens/rewards_screen.dart';
 import '../../domain/entities/dashboard_data.dart';
-import '../controllers/home_controller.dart';
 import '../../../../l10n/app_localizations.dart';
 
 /// Home — player HUD (streak / coins / XP), daily-streak hero, the real world

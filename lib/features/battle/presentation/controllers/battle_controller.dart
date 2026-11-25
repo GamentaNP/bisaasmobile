@@ -10,14 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/battle_remote_data_source.dart';
 import '../../data/repositories/battle_repository_impl.dart';
 import '../../domain/entities/battle.dart';
 import '../../domain/repositories/battle_repository.dart';
 
 final battleRemoteDataSourceProvider = Provider<BattleRemoteDataSource>((ref) {
-  return BattleRemoteDataSource(DioClient.instance.dio);
+  return BattleRemoteDataSource(ref.watch(dioProvider));
 });
 
 final battleRepositoryProvider = Provider<BattleRepository>((ref) {
@@ -221,7 +221,7 @@ class BattleController extends Notifier<BattleState> {
     }
     final timeTakenMs = ((m.perQuestionSeconds - state.secondsLeftInQuestion).clamp(0, m.perQuestionSeconds)) * 1000;
     try {
-      final dio = DioClient.instance.dio;
+      final dio = ref.read(dioProvider);
       // PUT, not POST: the server registers this transition canonically as PUT
       // and keeps POST only as `answer.transition-alias` until the freeze.
       await dio.put<dynamic>('/quiz/battles/${m.id}/answer', data: {

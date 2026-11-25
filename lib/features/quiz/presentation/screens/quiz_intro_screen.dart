@@ -7,7 +7,7 @@ import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_shadows.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/network/api_failure.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../../../shared/widgets/app_bar.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
@@ -43,7 +43,7 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
 
   Future<QuizListEntry> _load() async {
     final l10n = AppLocalizations.of(context)!;
-    final dio = DioClient.instance.dio;
+    final dio = ref.read(dioProvider);
     // Course metadata: find the course in the active catalog.
     final coursesRes =
         await dio.get<Map<String, dynamic>>('/quiz/courses');

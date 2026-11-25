@@ -4,18 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/network/dio_client.dart';
 import '../../../l10n/app_localizations.dart';
-import '../data/search_remote_data_source.dart';
-
-final _searchDataSourceProvider = Provider<SearchRemoteDataSource>((ref) {
-  return SearchRemoteDataSource(DioClient.instance.dio);
-});
-
-final _searchProvider = FutureProvider.family<List<Map<String, dynamic>>, String>((ref, q) async {
-  if (q.trim().isEmpty) return [];
-  return ref.watch(_searchDataSourceProvider).searchQuestions(q);
-});
+import '../data/providers/search_providers.dart';
 
 /// Global search — `GET /quiz/questions?search=...` (server query builder 7.3).
 /// [initialQuery] lets other features (e.g. calculator "Practice Questions")
@@ -36,7 +26,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final results = _q.isEmpty ? null : ref.watch(_searchProvider(_q));
+    final results = _q.isEmpty ? null : ref.watch(searchResultsProvider(_q));
     return Scaffold(
       appBar: AppBar(title: Text(l10n.searchTitle)),
       body: Column(
@@ -60,20 +50,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         itemCount: list.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 8),
                         itemBuilder: (context, i) {
-                          final row = list[i];
-                          final slug = (row['quiz_slug'] ?? row['course_slug'] ?? '')
-                              .toString();
-                          final canOpen = slug.isNotEmpty;
+                          final hit = list[i];
+                          final canOpen = hit.canOpen;
                           return Card(
                             child: ListTile(
                               title: Text(
-                                (row['body'] ?? row['title'] ?? '').toString(),
+                                hit.title,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(fontSize: 13),
                               ),
                               subtitle: Text(
-                                (row['subject_slug'] ?? '').toString(),
+                                hit.subjectSlug,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Theme.of(context)
@@ -85,7 +73,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   ? const Icon(Icons.chevron_right_rounded)
                                   : null,
                               onTap: canOpen
-                                  ? () => context.push('/quiz/$slug')
+                                  ? () => context.push('/quiz/${hit.targetSlug}')
                                   : null,
                             ),
                           );
@@ -105,7 +93,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         const SizedBox(height: 12),
                         OutlinedButton.icon(
                           onPressed: () =>
-                              ref.invalidate(_searchProvider(_q)),
+                              ref.invalidate(searchResultsProvider(_q)),
                           icon: const Icon(Icons.refresh_rounded),
                           label: Text(l10n.retry),
                         ),

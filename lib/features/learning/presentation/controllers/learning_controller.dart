@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/learning_remote_data_source.dart';
 import '../../data/repositories/learning_repository_impl.dart';
 import '../../domain/entities/learning.dart';
@@ -15,7 +15,7 @@ import '../../../../app/localization/l10n.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
 final learningRemoteDataSourceProvider = Provider<LearningRemoteDataSource>((ref) {
-  return LearningRemoteDataSource(DioClient.instance.dio);
+  return LearningRemoteDataSource(ref.watch(dioProvider));
 });
 
 final learningRepositoryProvider = Provider<LearningRepository>((ref) {

@@ -1,4 +1,4 @@
-import 'package:bisaasmobile/app/localization/l10n.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
 
 /// Password policy, mirrored from the server so the client never sends a
 /// request it knows will be rejected.
@@ -25,18 +25,25 @@ class PasswordPolicy {
   static const int minLength = 8;
 
   /// Returns a user-facing message, or null when [password] is acceptable.
-  static String? validate(String password) {
-    if (password.isEmpty) return appL10n().authPasswordRequired;
+  ///
+  /// [l10n] is passed in by the screen so the rule stays pure Dart and its
+  /// result is deterministic without a Flutter binding.
+  static String? validate(AppLocalizations l10n, String password) {
+    if (password.isEmpty) return l10n.authPasswordRequired;
     if (password.length < minLength) {
-      return appL10n().authPasswordTooShort(minLength);
+      return l10n.authPasswordTooShort(minLength);
     }
     return null;
   }
 
   /// Confirms the two fields match, mirroring the server's `confirmed` rule.
-  static String? validateConfirmation(String password, String confirmation) {
-    if (confirmation.isEmpty) return appL10n().authPasswordConfirmRequired;
-    if (password != confirmation) return appL10n().authPasswordMismatch;
+  static String? validateConfirmation(
+    AppLocalizations l10n,
+    String password,
+    String confirmation,
+  ) {
+    if (confirmation.isEmpty) return l10n.authPasswordConfirmRequired;
+    if (password != confirmation) return l10n.authPasswordMismatch;
     return null;
   }
 }

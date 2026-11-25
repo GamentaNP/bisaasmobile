@@ -1,6 +1,6 @@
 import '../datasources/streak_remote_data_source.dart';
-import '../models/streak_dto.dart';
 import '../../domain/entities/streak.dart';
+import '../../domain/entities/streak_self_service.dart';
 import '../../domain/repositories/streak_repository.dart';
 
 class StreakRepositoryImpl implements StreakRepository {
@@ -20,24 +20,44 @@ class StreakRepositoryImpl implements StreakRepository {
   }
 
   @override
-  Future<StreakRepairEligibilityDto> getRepairEligibility() => _remote.getRepairEligibility();
+  Future<StreakRepairEligibility> getRepairEligibility() async {
+    final dto = await _remote.getRepairEligibility();
+    return dto.toDomain();
+  }
 
   @override
-  Future<StreakRepairResultDto> repairStreak() => _remote.repairStreak();
+  Future<StreakRepairResult> repairStreak() async {
+    final dto = await _remote.repairStreak();
+    return dto.toDomain();
+  }
 
   @override
-  Future<StreakInsuranceStatusDto> getInsuranceStatus() => _remote.getInsuranceStatus();
+  Future<StreakInsuranceStatus> getInsuranceStatus() async {
+    final dto = await _remote.getInsuranceStatus();
+    return dto.toDomain();
+  }
 
   @override
-  Future<StreakInsuranceResultDto> buyInsurance() => _remote.buyInsurance();
+  Future<StreakInsuranceResult> buyInsurance() async {
+    final dto = await _remote.buyInsurance();
+    return dto.toDomain();
+  }
 
   @override
-  Future<StreakInsuranceUsedDto> useInsurance() => _remote.useInsurance();
+  Future<StreakInsuranceUsed> useInsurance() async {
+    final dto = await _remote.useInsurance();
+    return dto.toDomain();
+  }
 
   @override
-  Future<StreakWagerStatusDto> getActiveWager() => _remote.getActiveWager();
+  Future<StreakWagerStatus> getActiveWager() async {
+    final dto = await _remote.getActiveWager();
+    return dto.toDomain();
+  }
 
   @override
-  Future<StreakWagerOpenedDto> openWager({int coins = 100, int days = 7}) =>
-      _remote.openWager(coins: coins, days: days);
+  Future<StreakWagerOpened> openWager({int coins = 100, int days = 7}) async {
+    final dto = await _remote.openWager(coins: coins, days: days);
+    return dto.toDomain();
+  }
 }

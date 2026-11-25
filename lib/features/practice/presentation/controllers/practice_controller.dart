@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/api_response.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../../../shared/domain/paginated.dart';
 import '../../data/datasources/practice_remote_data_source.dart';
 import '../../data/repositories/practice_repository_impl.dart';
@@ -13,7 +13,7 @@ import '../../domain/repositories/practice_repository.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
 final practiceRemoteDataSourceProvider = Provider<PracticeRemoteDataSource>((ref) {
-  return PracticeRemoteDataSource(DioClient.instance.dio);
+  return PracticeRemoteDataSource(ref.watch(dioProvider));
 });
 
 final practiceRepositoryProvider = Provider<PracticeRepository>((ref) {

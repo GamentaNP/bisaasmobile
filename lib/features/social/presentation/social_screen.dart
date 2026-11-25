@@ -272,7 +272,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
       AppLogger.w('share link mint failed: $e');
     }
 
-    final text = link?.shareText ?? l10n.socialShareMomentFallback;
+    final text = link?.shareText(l10n) ?? l10n.socialShareMomentFallback;
     final url = link?.url;
 
     try {

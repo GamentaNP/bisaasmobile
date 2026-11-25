@@ -160,3 +160,38 @@ class CalculationResult {
     return raw.cast<Map<String, dynamic>>();
   }
 }
+
+/// One domain group of the public calculator catalog.
+@immutable
+class CalculatorDomain {
+  const CalculatorDomain({
+    required this.domain,
+    required this.label,
+    required this.calculators,
+  });
+
+  final String domain;
+  final String label;
+  final List<Calculator> calculators;
+}
+
+/// `GET /api/v1/calculators` — the catalog grouped by domain.
+@immutable
+class CalculatorCatalog {
+  const CalculatorCatalog({
+    required this.totalCalculators,
+    required this.domains,
+  });
+
+  final int totalCalculators;
+  final List<CalculatorDomain> domains;
+}
+
+/// A minted shareable calculator permalink (`POST /calculator/permalinks`).
+@immutable
+class CalculatorPermalink {
+  const CalculatorPermalink({required this.url});
+
+  /// The canonical shareable url.
+  final String url;
+}

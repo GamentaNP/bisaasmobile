@@ -5,7 +5,7 @@ library;
 /// Server-authoritative throughout: referral attribution, reward amounts and
 /// statuses are computed by the server and rendered here. The client never
 /// decides that a referral "counted", and never mints a reward.
-import '../../../../app/localization/l10n.dart';
+import '../../../../l10n/app_localizations.dart';
 
 
 import 'package:meta/meta.dart';
@@ -175,13 +175,16 @@ class ShareLink {
   final String? copyBody;
 
   /// The text to put in front of the share sheet.
-  String get shareText {
+  ///
+  /// [l10n] supplies the fallback only when the server sent no copy; the
+  /// entity never looks up the active locale itself.
+  String shareText(AppLocalizations l10n) {
     final title = copyTitle;
     final body = copyBody;
     if (title != null && body != null) return '$title\n$body';
     if (body != null) return body;
     if (title != null) return title;
-    return appL10n().socialTryThis;
+    return l10n.socialTryThis;
   }
 }
 

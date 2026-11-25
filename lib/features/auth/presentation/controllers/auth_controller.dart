@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../app/providers.dart' show pushServiceProvider;
+import '../../../../app/providers.dart' show dioProvider, pushServiceProvider;
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../../../core/security/tenant_providers.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
@@ -13,7 +12,7 @@ import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
-  final dio = DioClient.instance.dio;
+  final dio = ref.watch(dioProvider);
   return AuthRemoteDataSource(dio);
 });
 

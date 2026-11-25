@@ -1,9 +1,8 @@
 import '../entities/calculator.dart';
 import '../entities/calculator_assistant.dart';
-import '../../data/models/calculator_dto.dart';
 
 abstract class CalculatorRepository {
-  Future<CalculatorCatalogDto> getCatalog();
+  Future<CalculatorCatalog> getCatalog();
   Future<CalculatorConfig> getConfig(String domain, String slug);
   Future<CalculationResult> calculate({
     required String domain,
@@ -19,7 +18,7 @@ abstract class CalculatorRepository {
   /// The sibling `POST /api/v1/share` is snapshot-only — it demands a
   /// `calculable_id` + `calculable_type` pair the client cannot mint — so
   /// the permalink route is the one a mobile client can actually use.
-  Future<CalculatorPermalinkDto> createPermalink({
+  Future<CalculatorPermalink> createPermalink({
     required String domain,
     required String calculatorSlug,
     required Map<String, dynamic> inputs,

@@ -57,6 +57,8 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     _listenForSessionLoss();
     _askForConsentOnce();
     _warmAppConfigAfterFirstFrame();
+    // Consent-gated: the gate drops this until the user has decided.
+    unawaited(ref.read(analyticsProvider).log(AnalyticsEvents.appOpen));
   }
 
   /// When the token disappears *without* the auth controller knowing — a
@@ -190,11 +192,15 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
       final analytics = ref.read(analyticsProvider);
       final push = ref.read(pushServiceProvider);
       if (isIn) {
+        // Link events to the account behind the consent gate; without this
+        // no per-user funnel or cross-session retention can be computed.
+        unawaited(analytics.identifyUser(next.value?.id));
         unawaited(analytics.log(AnalyticsEvents.login));
         if (push != null) {
           unawaited(push.init().then((_) => push.registerToken()));
         }
       } else {
+        unawaited(analytics.identifyUser(null));
         unawaited(analytics.log(AnalyticsEvents.logout));
         if (push != null) unawaited(push.unregisterToken());
       }

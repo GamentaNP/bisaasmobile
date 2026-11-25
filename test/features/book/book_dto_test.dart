@@ -1,4 +1,6 @@
 import 'package:bisaasmobile/features/book/data/models/book_dto.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Shapes verified against `app/Http/Resources/Api/V1/Book/*Resource.php` and
@@ -9,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// the awarded amounts. A client that rendered the award regardless of the void
 /// would be telling the user they earned something the server refused.
 void main() {
+  final l10n = lookupAppLocalizations(const Locale('en'));
+
   group('BookDto', () {
     final row = <String, dynamic>{
       'id': 7,
@@ -107,7 +111,7 @@ void main() {
       })!.chapter;
       expect(c.id, 3);
       expect(c.learningObjectives, hasLength(1));
-      expect(c.pageRangeLabel, 'p. 41–68');
+      expect(c.pageRangeLabel(l10n), 'p. 41–68');
       expect(c.costsCoins, isTrue);
       expect(c.titleFor(preferNative: true), 'सीमा विश्लेषण');
       expect(c.titleFor(preferNative: false), 'Limit Analysis');
@@ -123,13 +127,13 @@ void main() {
         'end_page': 9999,
       })!.chapter;
       expect(c.endPage, isNull);
-      expect(c.pageRangeLabel, 'p. 41+');
-      expect(c.pageRangeLabel, isNot(contains('9999')));
+      expect(c.pageRangeLabel(l10n), 'p. 41+');
+      expect(c.pageRangeLabel(l10n), isNot(contains('9999')));
     });
 
     test('a chapter with no start page has no range label at all', () {
       final c = BookChapterDto.fromJson(<String, dynamic>{'id': 1, 'title': 'X'})!.chapter;
-      expect(c.pageRangeLabel, isNull);
+      expect(c.pageRangeLabel(l10n), isNull);
     });
 
     test('a single-page chapter shows one page, not a backwards range', () {
@@ -139,7 +143,7 @@ void main() {
         'start_page': 10,
         'end_page': 10,
       })!.chapter;
-      expect(c.pageRangeLabel, 'p. 10');
+      expect(c.pageRangeLabel(l10n), 'p. 10');
     });
 
     test('an end before the start is clamped to a single page', () {
@@ -149,7 +153,7 @@ void main() {
         'start_page': 50,
         'end_page': 10,
       })!.chapter;
-      expect(c.pageRangeLabel, 'p. 50');
+      expect(c.pageRangeLabel(l10n), 'p. 50');
     });
 
     test('an empty title_ne falls back to English', () {
@@ -180,9 +184,9 @@ void main() {
       expect(c.voided, isFalse);
       expect(c.xpAwarded, 40);
       expect(c.hasAward, isTrue);
-      expect(c.outcomeMessage, contains('+40 XP'));
-      expect(c.outcomeMessage, contains('+5 coins'));
-      expect(c.outcomeMessage, contains('topic complete'));
+      expect(c.outcomeMessage(l10n), contains('+40 XP'));
+      expect(c.outcomeMessage(l10n), contains('+5 coins'));
+      expect(c.outcomeMessage(l10n), contains('topic complete'));
     });
 
     test('a voided session says so and does not read as an award', () {
@@ -197,7 +201,7 @@ void main() {
       })!.credit;
       expect(c.voided, isTrue);
       expect(c.hasAward, isFalse);
-      final message = c.outcomeMessage!;
+      final message = c.outcomeMessage(l10n)!;
       expect(message, contains('not counted'));
       expect(message, contains('too fast'));
       expect(message, isNot(contains('+')));
@@ -208,7 +212,7 @@ void main() {
         'voided': true,
         'void_reason': null,
       })!.credit;
-      final message = c.outcomeMessage!;
+      final message = c.outcomeMessage(l10n)!;
       expect(message, contains('not counted'));
       expect(message, isNot(contains('+')));
     });
@@ -232,7 +236,7 @@ void main() {
         'coins_awarded': 5,
       })!.credit;
       expect(c.voided, isTrue);
-      expect(c.outcomeMessage, contains('not counted'));
+      expect(c.outcomeMessage(l10n), contains('not counted'));
     });
 
     test('no award and no void means nothing to say', () {
@@ -242,7 +246,7 @@ void main() {
         'coins_awarded': 0,
       })!.credit;
       expect(c.hasAward, isFalse);
-      expect(c.outcomeMessage, isNull);
+      expect(c.outcomeMessage(l10n), isNull);
     });
 
     test('a block with no recognisable keys is not a credit at all', () {

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/tutor_remote_data_source.dart';
 import '../../data/repositories/tutor_repository_impl.dart';
 import '../../domain/entities/tutor.dart';
@@ -12,7 +12,7 @@ import '../../../../core/consent/consent_gate.dart';
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final tutorRemoteDataSourceProvider = Provider<TutorRemoteDataSource>((ref) {
-  return TutorRemoteDataSource(DioClient.instance.dio);
+  return TutorRemoteDataSource(ref.watch(dioProvider));
 });
 
 final tutorRepositoryProvider = Provider<TutorRepository>((ref) {

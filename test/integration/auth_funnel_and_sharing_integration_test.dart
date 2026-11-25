@@ -12,11 +12,15 @@ import 'package:bisaasmobile/features/quiz/data/datasources/quiz_remote_data_sou
 import 'package:bisaasmobile/features/social/data/datasources/social_remote_data_source.dart';
 import 'package:bisaasmobile/features/social/data/repositories/social_repository_impl.dart';
 import 'package:bisaasmobile/features/social/domain/repositories/social_repository.dart';
+import 'package:bisaasmobile/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_api.dart';
 
 void main() {
+  final l10n = lookupAppLocalizations(const Locale('en'));
+
   group('password sign-in', () {
     late FakeApi api;
     late AuthRemoteDataSource remote;
@@ -255,7 +259,7 @@ void main() {
       expect(link, isNotNull);
       expect(link.token, 'tok_123');
       expect(link.url, 'https://bisaas.com/s/tok_123');
-      expect(link.shareText, contains('CivilCal'));
+      expect(link.shareText(l10n), contains('CivilCal'));
 
       final body = api.jsonBodyOf(0);
       expect(body['kind'], 'streak');

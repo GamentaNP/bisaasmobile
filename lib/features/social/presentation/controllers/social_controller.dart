@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/social_remote_data_source.dart';
 import '../../data/repositories/social_repository_impl.dart';
 import '../../domain/entities/social.dart';
@@ -11,7 +11,7 @@ import '../../domain/repositories/social_repository.dart';
 import '../../../../app/localization/l10n.dart';
 
 final socialRemoteDataSourceProvider = Provider<SocialRemoteDataSource>(
-  (ref) => SocialRemoteDataSource(DioClient.instance.dio),
+  (ref) => SocialRemoteDataSource(ref.watch(dioProvider)),
 );
 
 final socialRepositoryProvider = Provider<SocialRepository>(

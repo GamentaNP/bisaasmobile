@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/book_remote_data_source.dart';
 import '../../data/repositories/book_repository_impl.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/repositories/book_repository.dart';
 
 final bookRemoteDataSourceProvider = Provider<BookRemoteDataSource>(
-  (ref) => BookRemoteDataSource(DioClient.instance.dio),
+  (ref) => BookRemoteDataSource(ref.watch(dioProvider)),
 );
 
 final bookRepositoryProvider = Provider<BookRepository>(
@@ -310,7 +311,7 @@ class ReaderController extends Notifier<ReaderState> {
   /// A voided session is shown as voided, with the server's reason. The award
   /// amounts are read from the response even when the session was voided, so a
   /// server change that still awards on a void cannot be hidden by the client.
-  Future<void> syncProgress() async {
+  Future<void> syncProgress(AppLocalizations l10n) async {
     final seconds = _session.elapsed.inSeconds;
     if (seconds <= 0) return;
     try {
@@ -326,7 +327,7 @@ class ReaderController extends Notifier<ReaderState> {
       }
       state = state.copyWith(
         progress: progress,
-        lastCreditMessage: progress.credit?.outcomeMessage,
+        lastCreditMessage: progress.credit?.outcomeMessage(l10n),
       );
     } catch (e) {
       // A failed sync is not the reader's problem to solve; the next page change

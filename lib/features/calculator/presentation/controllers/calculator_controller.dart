@@ -6,18 +6,16 @@ import '../../../../app/providers.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/calculator_remote_data_source.dart';
 import '../../data/repositories/calculator_repository_impl.dart';
 import '../../domain/entities/calculator.dart';
 import '../../domain/repositories/calculator_repository.dart';
-import '../../data/models/calculator_dto.dart';
 import 'calculator_request_idempotency.dart';
 
 // ──Providers──────────────────────────────────────────────────────────────
 final calculatorRemoteDataSourceProvider = Provider<CalculatorRemoteDataSource>(
   (ref) {
-    return CalculatorRemoteDataSource(DioClient.instance.dio);
+    return CalculatorRemoteDataSource(ref.watch(dioProvider));
   },
 );
 
@@ -32,7 +30,7 @@ final calculatorRepositoryProvider = Provider<CalculatorRepository>((ref) {
   );
 });
 
-final calculatorCatalogProvider = FutureProvider<CalculatorCatalogDto>((
+final calculatorCatalogProvider = FutureProvider<CalculatorCatalog>((
   ref,
 ) async {
   final repo = ref.watch(calculatorRepositoryProvider);

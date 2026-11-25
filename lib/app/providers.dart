@@ -30,14 +30,13 @@ import '../core/storage/database/daos/sync_queue_dao.dart';
 import '../core/storage/preferences.dart';
 import '../core/consent/consent_gate.dart';
 import '../core/sync/sync_manager.dart';
+import '../features/social/presentation/controllers/social_controller.dart';
 import '../features/tutor/presentation/controllers/tutor_controller.dart';
 import '../shared/domain/learning_read_models.dart';
 import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
 import '../features/quiz/data/datasources/quiz_local_data_source.dart';
-import '../features/social/data/datasources/social_remote_data_source.dart';
-import '../features/social/data/repositories/social_repository_impl.dart';
 import '../features/social/domain/entities/social.dart';
 import '../features/organization/presentation/controllers/organization_controller.dart';
 
@@ -242,9 +241,9 @@ final hasSessionProvider = FutureProvider<bool>((ref) async {
 final socialProofProvider =
     FutureProvider.family<SocialProof?, ({String subject, int id})>(
   (ref, key) {
-    final repo = SocialRepositoryImpl(
-      SocialRemoteDataSource(ref.watch(dioProvider)),
-    );
+    // One object graph: reuse the feature's provider so an override there
+    // affects every consumer, including this app-wide one.
+    final repo = ref.watch(socialRepositoryProvider);
     return repo.getProof(subject: key.subject, id: key.id);
   },
 );

@@ -1,4 +1,5 @@
 import 'package:bisaasmobile/features/streak/data/models/streak_dto.dart';
+import 'package:bisaasmobile/features/streak/domain/entities/streak_self_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// DTO coverage for the streak self-service cluster
@@ -160,6 +161,85 @@ void main() {
       expect(dto.opened, isTrue);
       expect(dto.coinBalance, 400);
       expect(dto.wager!.coins, 100);
+    });
+  });
+
+  group('DTO → domain mapping', () {
+    test('repair eligibility keeps only the fields the UI reads', () {
+      final entity = StreakRepairEligibilityDto.fromJson(const {
+        'eligible': true,
+        'reason': 'not_missed_one_day',
+        'missedDate': '2026-09-20',
+        'repairsUsedThisMonth': 2,
+      }).toDomain();
+      expect(entity, isA<StreakRepairEligibility>());
+      expect(entity.eligible, isTrue);
+      expect(entity.reason, 'not_missed_one_day');
+      expect(entity.missedDate, DateTime.parse('2026-09-20'));
+      expect(entity.repairsUsedThisMonth, 2);
+    });
+
+    test('repair outcome keeps the refusal reason used for the error message', () {
+      final entity = StreakRepairResultDto.fromJson(const {
+        'error': {'reason': 'insufficient_balance'},
+      }).toDomain();
+      expect(entity, isA<StreakRepairResult>());
+      expect(entity.repaired, isFalse);
+      expect(entity.reason, 'insufficient_balance');
+    });
+
+    test('insurance status and outcomes map to entities', () {
+      final status = StreakInsuranceStatusDto.fromJson(const {
+        'activeCount': 1,
+        'maxActive': 3,
+        'costCoins': 200,
+        'canPurchase': true,
+      }).toDomain();
+      expect(status, isA<StreakInsuranceStatus>());
+      expect(status.activeCount, 1);
+      expect(status.maxActive, 3);
+      expect(status.costCoins, 200);
+      expect(status.canPurchase, isTrue);
+
+      final bought = StreakInsuranceResultDto.fromJson(const {
+        'purchased': true,
+        'message': 'ok',
+      }).toDomain();
+      expect(bought, isA<StreakInsuranceResult>());
+      expect(bought.purchased, isTrue);
+      expect(bought.message, 'ok');
+
+      final used = StreakInsuranceUsedDto.fromJson(const {
+        'streak': {'current_streak': 9},
+      }).toDomain();
+      expect(used, isA<StreakInsuranceUsed>());
+      expect(used.used, isTrue);
+    });
+
+    test('wager status and opened outcome map their nested wager', () {
+      final status = StreakWagerStatusDto.fromJson(const {
+        'wager': {
+          'coins': 250,
+          'days': 7,
+          'current': 3,
+          'progressPercent': 43,
+          'reward': 500,
+        },
+        'currentStreak': 3,
+      }).toDomain();
+      expect(status, isA<StreakWagerStatus>());
+      expect(status.currentStreak, 3);
+      expect(status.wager, isA<StreakWager>());
+      expect(status.wager!.coins, 250);
+      expect(status.wager!.progressPercent, 43);
+
+      final opened = StreakWagerOpenedDto.fromJson(const {
+        'wager': {'coins': 100},
+        'error': {'reason': 'active_wager'},
+      }).toDomain();
+      expect(opened, isA<StreakWagerOpened>());
+      expect(opened.opened, isTrue);
+      expect(opened.reason, 'active_wager');
     });
   });
 }

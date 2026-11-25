@@ -4,14 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/script_fonts.dart';
 import '../../../core/logging/app_logger.dart';
-import '../../../core/network/dio_client.dart';
-import '../data/datasources/numerical_remote_data_source.dart';
+import '../data/providers/numerical_providers.dart';
 import '../domain/entities/numerical.dart';
+import '../domain/repositories/numerical_repository.dart';
 import '../../../l10n/app_localizations.dart';
 
-final numericalRemoteDataSourceProvider = Provider<NumericalRemoteDataSource>(
-  (ref) => NumericalRemoteDataSource(DioClient.instance.dio),
-);
+// The data-source provider now lives in the feature's data layer. It is
+// re-exported here so existing overrides still target the same instance.
+export '../data/providers/numerical_providers.dart'
+    show numericalRemoteDataSourceProvider, numericalRepositoryProvider;
 
 class NumericalState {
   const NumericalState({
@@ -78,13 +79,13 @@ class NumericalController extends Notifier<NumericalState> {
     return const NumericalState();
   }
 
-  NumericalRemoteDataSource get _remote => ref.read(numericalRemoteDataSourceProvider);
+  NumericalRepository get _repo => ref.read(numericalRepositoryProvider);
 
   Future<void> randomize() async {
     if (state.isLoading) return;
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      final problem = await _remote.randomize(numericalId);
+      final problem = await _repo.randomize(numericalId);
       if (problem == null) {
         state = state.copyWith(isLoading: false, error: 'This problem could not be loaded.');
         return;
@@ -112,7 +113,7 @@ class NumericalController extends Notifier<NumericalState> {
     }
     state = state.copyWith(submitting: true, clearError: true);
     try {
-      final check = await _remote.checkAnswer(numericalId, answer);
+      final check = await _repo.checkAnswer(numericalId, answer);
       if (check == null) {
         state = state.copyWith(submitting: false, error: 'Could not grade that answer');
         return;
@@ -128,7 +129,7 @@ class NumericalController extends Notifier<NumericalState> {
     if (state.submitting) return;
     state = state.copyWith(submitting: true, clearError: true);
     try {
-      final solution = await _remote.solve(
+      final solution = await _repo.solve(
         numericalId,
         parameters: state.problem?.parameters,
       );
@@ -320,9 +321,7 @@ class _Verdict extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            check.correct
-                ? l10n.numericalsCorrect(check.revealsAnswer ? ' · ${formatNumber(check.finalAnswer!)}${check.unitSuffix}' : '')
-                : l10n.numericalsNotCorrect,
+            check.outcomeLabel(l10n),
             style: theme.textTheme.bodyMedium,
           ),
           if (check.needsReview)

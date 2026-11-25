@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/feature_bridges.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
-import '../../../tutor/presentation/controllers/tutor_controller.dart';
 import '../controllers/practice_controller.dart';
 import '../practice_session_args.dart';
 import '../../domain/entities/practice.dart';

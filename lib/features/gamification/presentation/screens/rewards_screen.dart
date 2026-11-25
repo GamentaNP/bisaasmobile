@@ -5,15 +5,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../../../shared/widgets/chunky/chunky_button.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/error_view.dart';
-import '../../data/datasources/rewards_remote_data_source.dart';
-import '../../data/models/rewards_dto.dart';
+import '../../data/providers/rewards_providers.dart';
+import '../../domain/entities/rewards.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// Rewards — daily check-in and the spin wheel.
+// `feature_bridges.dart` re-exports `checkInStatusProvider` from this file for
+// the home card, and other callers may reach the status providers here; keep
+// those names available at their old location while the definitions live in
+// the feature's data/provider layer.
+export '../../data/providers/rewards_providers.dart'
+    show checkInStatusProvider, rewardsRepositoryProvider, spinStatusProvider;
+
+/// Prize colours are presentation: the domain carries only the server's hex
+/// string. The fallback is the same slate tone the DTO used before.
+Color _prizeColor(String hex) {
+  final digits = hex.replaceFirst('#', '');
+  final value = int.tryParse(digits, radix: 16);
+  if (value == null) return const Color(0xFF94A3B8);
+  return Color(digits.length == 6 ? 0xFF000000 | value : value);
+}
+
+/// Rewards - daily check-in and the spin wheel.
 ///
 /// Both features are live server-side (`/rewards/daily-checkin*`,
 /// `/rewards/spin*`). The spin endpoints answer **raw JSON outside the
@@ -26,18 +41,6 @@ class RewardsScreen extends ConsumerStatefulWidget {
   ConsumerState<RewardsScreen> createState() => _RewardsScreenState();
 }
 
-final rewardsDataSourceProvider = Provider<RewardsRemoteDataSource>((ref) {
-  return RewardsRemoteDataSource(DioClient.instance.dio);
-});
-
-final checkInStatusProvider = FutureProvider.autoDispose<CheckInStatusDto>((ref) {
-  return ref.watch(rewardsDataSourceProvider).getCheckInStatus();
-});
-
-final spinStatusProvider = FutureProvider.autoDispose<SpinStatusDto>((ref) {
-  return ref.watch(rewardsDataSourceProvider).getSpinStatus();
-});
-
 class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   bool _claiming = false;
   bool _spinning = false;
@@ -45,7 +48,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   Future<void> _claimCheckIn() async {
     setState(() => _claiming = true);
     try {
-      final result = await ref.read(rewardsDataSourceProvider).claimCheckIn();
+      final result = await ref.read(rewardsRepositoryProvider).claimCheckIn();
       ref.invalidate(checkInStatusProvider);
       if (!mounted) return;
       _toast(
@@ -66,7 +69,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   Future<void> _spin() async {
     setState(() => _spinning = true);
     try {
-      final result = await ref.read(rewardsDataSourceProvider).spin();
+      final result = await ref.read(rewardsRepositoryProvider).spin();
       ref.invalidate(spinStatusProvider);
       if (!mounted) return;
       _toast(
@@ -145,7 +148,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
 class _CheckInCard extends StatelessWidget {
   const _CheckInCard({required this.status, required this.busy, required this.onClaim});
 
-  final AsyncValue<CheckInStatusDto> status;
+  final AsyncValue<CheckInStatus> status;
   final bool busy;
   final VoidCallback onClaim;
 
@@ -213,7 +216,7 @@ class _CheckInCard extends StatelessWidget {
 class _SpinCard extends StatelessWidget {
   const _SpinCard({required this.status, required this.busy, required this.onSpin});
 
-  final AsyncValue<SpinStatusDto> status;
+  final AsyncValue<SpinStatus> status;
   final bool busy;
   final VoidCallback onSpin;
 
@@ -252,12 +255,12 @@ class _SpinCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: p.color.withValues(alpha: 0.14),
+                          color: _prizeColor(p.colorHex).withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
                           p.label,
-                          style: AppTypography.labelSmall.copyWith(color: p.color),
+                          style: AppTypography.labelSmall.copyWith(color: _prizeColor(p.colorHex)),
                         ),
                       ),
                   ],
@@ -293,7 +296,7 @@ class _SpinCard extends StatelessWidget {
 class _SpinWheel extends StatefulWidget {
   const _SpinWheel({required this.prizes, required this.spinning});
 
-  final List<SpinPrizeDto> prizes;
+  final List<SpinPrize> prizes;
   final bool spinning;
 
   @override
@@ -376,7 +379,7 @@ class _SpinWheelState extends State<_SpinWheel> with SingleTickerProviderStateMi
 class _WheelPainter extends CustomPainter {
   _WheelPainter(this.prizes);
 
-  final List<SpinPrizeDto> prizes;
+  final List<SpinPrize> prizes;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -387,7 +390,7 @@ class _WheelPainter extends CustomPainter {
 
     final paint = Paint()..style = PaintingStyle.fill;
     for (var i = 0; i < prizes.length; i++) {
-      paint.color = prizes[i].color;
+      paint.color = _prizeColor(prizes[i].colorHex);
       canvas.drawArc(rect, -math.pi / 2 + i * sweep, sweep, true, paint);
     }
 

@@ -43,7 +43,7 @@ class BookReaderScreen extends ConsumerWidget {
       // Leaving the reader is the natural moment to report the session, so the
       // time is credited rather than lost.
       onPopInvokedWithResult: (didPop, _) {
-        if (didPop) notifier.syncProgress();
+        if (didPop) notifier.syncProgress(l10n);
       },
       child: Scaffold(
         appBar: AppBar(

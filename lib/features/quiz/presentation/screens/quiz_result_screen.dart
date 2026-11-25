@@ -10,11 +10,11 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/logging/app_logger.dart';
+import '../../../../shared/widgets/answer_feedback_lottie.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
+import '../../../../shared/widgets/lottie_overlay.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
-import '../../../gamification/presentation/widgets/answer_feedback_lottie.dart';
-import '../../../gamification/presentation/widgets/lottie_overlay.dart';
 import '../state/quiz_state.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -95,21 +95,23 @@ class QuizResultScreen extends StatelessWidget {
                     child: Icon(
                       accuracy >= 0.8 ? Icons.emoji_events : Icons.military_tech,
                       size: 64,
-                      color: Colors.white,
+                      // Dark ink on the bright green hero: white-on-green is
+                      // ~2.1:1, below WCAG AA even for large text.
+                      color: AppColors.textPrimaryLight,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     gradeLabel,
                     style: AppTypography.headlineMedium
-                        .copyWith(color: Colors.white, fontSize: 34),
+                        .copyWith(color: AppColors.textPrimaryLight, fontSize: 34),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     session?.title ?? l10n.quizCompleteTitle,
                     textAlign: TextAlign.center,
                     style: AppTypography.bodyMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.92),
+                      color: AppColors.textPrimaryLight,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

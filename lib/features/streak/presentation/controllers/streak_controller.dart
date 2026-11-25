@@ -2,18 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/streak_remote_data_source.dart';
-import '../../data/models/streak_dto.dart';
 import '../../data/repositories/streak_repository_impl.dart';
 import '../../domain/entities/streak.dart';
+import '../../domain/entities/streak_self_service.dart';
 import '../../domain/repositories/streak_repository.dart';
 import '../../../../app/localization/l10n.dart';
 
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final streakRemoteDataSourceProvider = Provider<StreakRemoteDataSource>((ref) {
-  return StreakRemoteDataSource(DioClient.instance.dio);
+  return StreakRemoteDataSource(ref.watch(dioProvider));
 });
 
 final streakRepositoryProvider = Provider<StreakRepository>((ref) {
@@ -51,13 +51,13 @@ class StreakState {
   final bool lastFreezeSuccess;
 
   /// `GET /quiz/streak/repair` — drives whether the Repair action is live.
-  final StreakRepairEligibilityDto? repairEligibility;
+  final StreakRepairEligibility? repairEligibility;
 
   /// `GET /quiz/streak/insurance` — banked tokens, cost, purchase eligibility.
-  final StreakInsuranceStatusDto? insurance;
+  final StreakInsuranceStatus? insurance;
 
   /// `GET /quiz/streak/wager` — null when no wager is active.
-  final StreakWagerStatusDto? wager;
+  final StreakWagerStatus? wager;
 
   /// True while a repair/insurance/wager mutation is in flight.
   final bool isSelfServiceBusy;
@@ -85,9 +85,9 @@ class StreakState {
         lastFreezeSuccess: lastFreezeSuccess ?? this.lastFreezeSuccess,
         repairEligibility: repairEligibility == const Object()
             ? this.repairEligibility
-            : repairEligibility as StreakRepairEligibilityDto?,
-        insurance: insurance == const Object() ? this.insurance : insurance as StreakInsuranceStatusDto?,
-        wager: wager == const Object() ? this.wager : wager as StreakWagerStatusDto?,
+            : repairEligibility as StreakRepairEligibility?,
+        insurance: insurance == const Object() ? this.insurance : insurance as StreakInsuranceStatus?,
+        wager: wager == const Object() ? this.wager : wager as StreakWagerStatus?,
         isSelfServiceBusy: isSelfServiceBusy ?? this.isSelfServiceBusy,
         selfServiceError:
             selfServiceError == const Object() ? this.selfServiceError : selfServiceError as String?,
@@ -131,16 +131,16 @@ class StreakController extends Notifier<StreakState> {
 
     final results = await Future.wait([
       guard(_repo.getRepairEligibility,
-          const StreakRepairEligibilityDto(eligible: false)),
+          const StreakRepairEligibility(eligible: false)),
       guard(_repo.getInsuranceStatus,
-          const StreakInsuranceStatusDto(activeCount: 0, maxActive: 0, costCoins: 0, canPurchase: false)),
-      guard(_repo.getActiveWager, const StreakWagerStatusDto(wager: null, currentStreak: 0)),
+          const StreakInsuranceStatus(activeCount: 0, maxActive: 0, costCoins: 0, canPurchase: false)),
+      guard(_repo.getActiveWager, const StreakWagerStatus(wager: null, currentStreak: 0)),
     ]);
 
     state = state.copyWith(
-      repairEligibility: results[0] as StreakRepairEligibilityDto,
-      insurance: results[1] as StreakInsuranceStatusDto,
-      wager: results[2] as StreakWagerStatusDto,
+      repairEligibility: results[0] as StreakRepairEligibility,
+      insurance: results[1] as StreakInsuranceStatus,
+      wager: results[2] as StreakWagerStatus,
     );
   }
 

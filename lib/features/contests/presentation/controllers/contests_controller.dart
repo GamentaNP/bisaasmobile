@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/contests_remote_data_source.dart';
 import '../../data/repositories/contests_repository_impl.dart';
 import '../../domain/entities/contest.dart';
@@ -11,7 +11,7 @@ import '../../domain/repositories/contests_repository.dart';
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final contestsRemoteDataSourceProvider = Provider<ContestsRemoteDataSource>((ref) {
-  return ContestsRemoteDataSource(DioClient.instance.dio);
+  return ContestsRemoteDataSource(ref.watch(dioProvider));
 });
 
 final contestsRepositoryProvider = Provider<ContestsRepository>((ref) {

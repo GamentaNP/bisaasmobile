@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/store_remote_data_source.dart';
 import '../../data/repositories/store_repository_impl.dart';
 import '../../domain/entities/store.dart';
@@ -10,7 +10,7 @@ import '../../domain/repositories/store_repository.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
 final storeRemoteDataSourceProvider = Provider<StoreRemoteDataSource>((ref) {
-  return StoreRemoteDataSource(DioClient.instance.dio);
+  return StoreRemoteDataSource(ref.watch(dioProvider));
 });
 
 final storeRepositoryProvider = Provider<StoreRepository>((ref) {

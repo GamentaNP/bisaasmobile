@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../data/datasources/library_remote_data_source.dart';
 import '../../data/repositories/library_repository_impl.dart';
@@ -12,7 +12,7 @@ import '../../../../core/network/api_response.dart';
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final libraryRemoteDataSourceProvider = Provider<LibraryRemoteDataSource>((ref) {
-  return LibraryRemoteDataSource(DioClient.instance.dio);
+  return LibraryRemoteDataSource(ref.watch(dioProvider));
 });
 
 final libraryRepositoryProvider = Provider<LibraryRepository>((ref) {

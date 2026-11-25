@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/visitor_data.dart';
 import '../../../../core/network/api_failure.dart';
 
@@ -86,7 +85,7 @@ class PrivacyRemoteDataSource {
   /// check [VisitorData.canEraseHere] first so the button is not offered, but
   /// the state can change server-side between the read and the delete.
   Future<void> eraseVisitorData() async {
-    await DioClient.instance.dio.delete<void>('/visitor-data');
+    await _dio.delete<void>('/visitor-data');
   }
 
   /// Records one anonymous intent interaction.
@@ -100,7 +99,7 @@ class PrivacyRemoteDataSource {
     int? subjectId,
   }) async {
     try {
-      final res = await DioClient.instance.dio.post<Map<String, dynamic>>(
+      final res = await _dio.post<Map<String, dynamic>>(
         '/visitor-events',
         data: {
           'event': event,

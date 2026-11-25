@@ -171,7 +171,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                           onPressed: () => setState(() => _obscure = !_obscure),
                         ),
                       ),
-                      validator: (v) => PasswordPolicy.validate(v ?? ''),
+                      validator: (v) => PasswordPolicy.validate(l10n, v ?? ''),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -188,6 +188,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         prefixIcon: Icon(Icons.lock_reset_rounded),
                       ),
                       validator: (v) => PasswordPolicy.validateConfirmation(
+                        l10n,
                         _password.text,
                         v ?? '',
                       ),

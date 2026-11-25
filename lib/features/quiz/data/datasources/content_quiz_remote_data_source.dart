@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_response.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../domain/entities/content_quiz.dart';
 import '../../../../core/network/api_failure.dart';
 
 final contentQuizRemoteDataSourceProvider = Provider<ContentQuizRemoteDataSource>(
-  (ref) => ContentQuizRemoteDataSource(DioClient.instance.dio),
+  (ref) => ContentQuizRemoteDataSource(ref.watch(dioProvider)),
 );
 
 /// Tests-from-content, verified against `routes/api/v1/content-quizzes.php`:

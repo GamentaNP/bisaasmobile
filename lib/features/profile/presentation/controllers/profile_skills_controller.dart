@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/profile_remote_data_source.dart';
 import '../../data/models/skill_axes_dto.dart';
 
 final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((ref) {
-  return ProfileRemoteDataSource(DioClient.instance.dio);
+  return ProfileRemoteDataSource(ref.watch(dioProvider));
 });
 
 /// Radar axes from `GET /profile/skills`. Empty list = no graded answers yet.

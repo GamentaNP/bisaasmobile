@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/live_events_remote_data_source.dart';
 import '../../data/repositories/live_events_repository_impl.dart';
 import '../../domain/entities/live_event.dart';
@@ -11,7 +11,7 @@ import '../../domain/repositories/live_events_repository.dart';
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final liveEventsRemoteDataSourceProvider = Provider<LiveEventsRemoteDataSource>((ref) {
-  return LiveEventsRemoteDataSource(DioClient.instance.dio);
+  return LiveEventsRemoteDataSource(ref.watch(dioProvider));
 });
 
 final liveEventsRepositoryProvider = Provider<LiveEventsRepository>((ref) {

@@ -2,12 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../domain/entities/quiz_funnel.dart';
 import '../../data/datasources/quiz_remote_data_source.dart';
 
 final quizFunnelRemoteDataSourceProvider = Provider<QuizRemoteDataSource>((ref) {
-  return QuizRemoteDataSource(DioClient.instance.dio);
+  return QuizRemoteDataSource(ref.watch(dioProvider));
 });
 
 /// Which funnel to load.

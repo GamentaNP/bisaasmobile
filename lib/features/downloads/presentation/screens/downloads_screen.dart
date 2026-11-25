@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
-import '../../../../core/storage/database/daos/quiz_dao.dart';
+import '../../data/providers/downloads_providers.dart';
+import '../../domain/entities/offline_stats.dart';
 import '../../../../l10n/app_localizations.dart';
 
 /// Offline content manager. Surfaces what the app has cached locally for
@@ -24,35 +24,19 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
 
   /// Re-reads the offline stats. Held as a field because `FutureBuilder` needs
   /// a stable future across rebuilds.
-  late Future<_OfflineStats?> _statsFuture = _loadStats();
+  late Future<OfflineStats?> _statsFuture = _loadStats();
 
   void _reload() => setState(() => _statsFuture = _loadStats());
 
-  Future<_OfflineStats?> _loadStats() async {
-    final db = ref.read(appDatabaseProvider);
-    final dao = QuizDao(db);
-    final rows = await dao.all();
-    if (rows.isEmpty) return _OfflineStats.empty;
-    final subjects = rows.map((r) => r.subjectSlug).where((s) => s.isNotEmpty).toSet();
-    final bytes = rows.fold<int>(0, (sum, r) => sum + r.body.length + r.optionsJson.length);
-    final newest = rows
-        .map((r) => r.cachedAt)
-        .whereType<DateTime>()
-        .fold<DateTime?>(null, (a, b) => a == null || b.isAfter(a) ? b : a);
-    return _OfflineStats(
-      questions: rows.length,
-      subjects: subjects.length,
-      approxKb: (bytes / 1024).ceil(),
-      lastCached: newest,
-    );
-  }
+  Future<OfflineStats?> _loadStats() =>
+      ref.read(downloadsRepositoryProvider).getStats();
 
   Future<void> _prefetch() async {
     setState(() {
       _busy = true;
       _message = null;
     });
-    final ok = await ref.read(dailyQuizPrefetcherProvider).prefetchOnce();
+    final ok = await ref.read(downloadsRepositoryProvider).prefetchOnce();
     if (!mounted) return;
     setState(() {
       _busy = false;
@@ -75,7 +59,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     );
     if (confirmed != true || !mounted) return;
     setState(() => _busy = true);
-    await QuizDao(ref.read(appDatabaseProvider)).clear();
+    await ref.read(downloadsRepositoryProvider).clear();
     if (!mounted) return;
     setState(() {
       _busy = false;
@@ -88,7 +72,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profileOffline)),
-      body: FutureBuilder<_OfflineStats?>(
+      body: FutureBuilder<OfflineStats?>(
         future: _statsFuture,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
@@ -185,20 +169,6 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     String two(int n) => n.toString().padLeft(2, '0');
     return '${local.year}-${two(local.month)}-${two(local.day)} ${two(local.hour)}:${two(local.minute)}';
   }
-}
-
-class _OfflineStats {
-  const _OfflineStats({
-    required this.questions,
-    required this.subjects,
-    required this.approxKb,
-    this.lastCached,
-  });
-  static const empty = _OfflineStats(questions: 0, subjects: 0, approxKb: 0);
-  final int questions;
-  final int subjects;
-  final int approxKb;
-  final DateTime? lastCached;
 }
 
 class _StatCard extends StatelessWidget {

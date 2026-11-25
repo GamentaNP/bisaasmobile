@@ -1,5 +1,3 @@
-// ignore_for_file: unawaited_futures
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -24,6 +22,7 @@ class BattleMatchmakingScreen extends ConsumerStatefulWidget {
 class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScreen> {
   int _countdown = 3;
   Timer? _countdownTimer;
+  bool _ticking = false;
 
   @override
   void initState() {
@@ -44,22 +43,41 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
   void _startCountdown() {
     _countdown = 3;
     _countdownTimer?.cancel();
-    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) async {
+    _ticking = false;
+    // Timer ticks are not serialised. Awaiting a platform channel inside the
+    // callback used to let several ticks overlap, skip numbers and navigate
+    // twice. Decide the tick synchronously, vibrate fire-and-forget.
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (_ticking) return;
+      _ticking = true;
       try {
-        if (await Vibration.hasVibrator() == true) {
-          Vibration.vibrate(duration: 30);
+        if (!mounted) {
+          t.cancel();
+          return;
         }
-      } catch (_) {}
-      if (!mounted) return;
-      setState(() => _countdown--);
-      if (_countdown <= 0) {
-        t.cancel();
-        // go_router only: `pushReplacementNamed` throws here because
-        // MaterialApp.router has no onGenerateRoute. The arena is the PARENT
-        // route `/battle`; the sibling screens already use context.go.
-        context.go('/battle');
+        setState(() => _countdown--);
+        unawaited(_vibrate());
+        if (_countdown <= 0) {
+          t.cancel();
+          // go_router only: `pushReplacementNamed` throws here because
+          // MaterialApp.router has no onGenerateRoute. The arena is the PARENT
+          // route `/battle`; the sibling screens already use context.go.
+          context.go('/battle');
+        }
+      } finally {
+        _ticking = false;
       }
     });
+  }
+
+  Future<void> _vibrate() async {
+    try {
+      if (await Vibration.hasVibrator() == true) {
+        await Vibration.vibrate(duration: 30);
+      }
+    } catch (_) {
+      // A missing vibrator is not a matchmaking failure.
+    }
   }
 
   @override
@@ -73,7 +91,42 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(battleControllerProvider);
     if (state.phase == BattlePhase.countdown || _countdownTimer?.isActive == true) {
-      return Scaffold(body: Center(child: Text('$_countdown', style: const TextStyle(fontSize: 96, fontWeight: FontWeight.bold, color: AppColors.brand))));
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.battleMatchStartingIn(_countdown),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 12),
+              Semantics(
+                label: l10n.battleMatchStartingIn(_countdown),
+                child: Text(
+                  '$_countdown',
+                  style: const TextStyle(
+                    fontSize: 72,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.brand,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () {
+                  _countdownTimer?.cancel();
+                  ref.read(battleControllerProvider.notifier).reset();
+                  context.go('/home');
+                },
+                icon: const Icon(Icons.close_rounded),
+                label: Text(l10n.commonCancel),
+              ),
+            ],
+          ),
+        ),
+      );
     }
     return Scaffold(
       appBar: AppBar(

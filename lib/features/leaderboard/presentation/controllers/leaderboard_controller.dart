@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../app/providers.dart';
 import '../../data/datasources/leaderboard_remote_data_source.dart';
 import '../../data/repositories/leaderboard_repository_impl.dart';
 import '../../domain/entities/leaderboard.dart';
@@ -11,7 +11,7 @@ import '../../domain/repositories/leaderboard_repository.dart';
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final leaderboardRemoteDataSourceProvider = Provider<LeaderboardRemoteDataSource>((ref) {
-  return LeaderboardRemoteDataSource(DioClient.instance.dio);
+  return LeaderboardRemoteDataSource(ref.watch(dioProvider));
 });
 
 final leaderboardRepositoryProvider = Provider<LeaderboardRepository>((ref) {

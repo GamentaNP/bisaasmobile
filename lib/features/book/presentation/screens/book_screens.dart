@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/feature_bridges.dart';
 import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/theme/script_fonts.dart';
 import '../../../../core/logging/app_logger.dart';
-import '../../../quiz/data/datasources/content_quiz_remote_data_source.dart';
-import '../../../quiz/domain/entities/content_quiz.dart';
 import '../../domain/entities/book.dart';
 import '../controllers/book_controller.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -326,7 +325,7 @@ class _ChapterTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final title = chapter.titleFor(preferNative: preferNative);
-    final range = chapter.pageRangeLabel;
+    final range = chapter.pageRangeLabel(l10n);
 
     return ListTile(
       contentPadding: EdgeInsets.zero,

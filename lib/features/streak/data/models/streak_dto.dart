@@ -1,6 +1,7 @@
 
 
 import '../../domain/entities/streak.dart';
+import '../../domain/entities/streak_self_service.dart';
 
 int? _asInt(Object? v) {
   if (v == null) return null;
@@ -128,6 +129,13 @@ class StreakRepairEligibilityDto {
   final DateTime? missedDate;
   final DateTime? expiresAt;
   final int repairsUsedThisMonth;
+
+  StreakRepairEligibility toDomain() => StreakRepairEligibility(
+        eligible: eligible,
+        reason: reason,
+        missedDate: missedDate,
+        repairsUsedThisMonth: repairsUsedThisMonth,
+      );
 }
 
 /// GET /quiz/streak/insurance — how many auto-repair tokens are banked.
@@ -151,6 +159,13 @@ class StreakInsuranceStatusDto {
   final int maxActive;
   final int costCoins;
   final bool canPurchase;
+
+  StreakInsuranceStatus toDomain() => StreakInsuranceStatus(
+        activeCount: activeCount,
+        maxActive: maxActive,
+        costCoins: costCoins,
+        canPurchase: canPurchase,
+      );
 }
 
 /// POST /quiz/streak/insurance/use — a banked token auto-repaired the streak.
@@ -173,6 +188,8 @@ class StreakInsuranceUsedDto {
   final bool used;
   final StreakDto? streak;
   final int activeInsuranceCount;
+
+  StreakInsuranceUsed toDomain() => StreakInsuranceUsed(used: used);
 }
 
 /// POST /quiz/streak/repair result.
@@ -215,6 +232,12 @@ class StreakRepairResultDto {
 
   /// `error.details.reason` on a 422, e.g. `insufficient_balance`.
   final String? reason;
+
+  StreakRepairResult toDomain() => StreakRepairResult(
+        repaired: repaired,
+        message: message,
+        reason: reason,
+      );
 }
 
 /// POST /quiz/streak/insurance result.
@@ -238,6 +261,9 @@ class StreakInsuranceResultDto {
   final String? message;
   final int? activeInsuranceCount;
   final int? coinBalance;
+
+  StreakInsuranceResult toDomain() =>
+      StreakInsuranceResult(purchased: purchased, message: message);
 }
 
 /// Active wager payload (nested in GET /quiz/streak/wager).
@@ -275,6 +301,14 @@ class StreakWagerDto {
   final int reward;
   final DateTime? won;
   final DateTime? lost;
+
+  StreakWager toDomain() => StreakWager(
+        coins: coins,
+        days: days,
+        current: current,
+        progressPercent: progressPercent,
+        reward: reward,
+      );
 }
 
 /// GET /quiz/streak/wager envelope.
@@ -290,6 +324,11 @@ class StreakWagerStatusDto {
 
   final StreakWagerDto? wager;
   final int currentStreak;
+
+  StreakWagerStatus toDomain() => StreakWagerStatus(
+        wager: wager?.toDomain(),
+        currentStreak: currentStreak,
+      );
 }
 
 /// POST /quiz/streak/wager result.
@@ -321,4 +360,10 @@ class StreakWagerOpenedDto {
 
   /// `error.details.reason` on a 422, e.g. `active_wager`, `insufficient_balance`.
   final String? reason;
+
+  StreakWagerOpened toDomain() => StreakWagerOpened(
+        opened: opened,
+        message: message,
+        reason: reason,
+      );
 }

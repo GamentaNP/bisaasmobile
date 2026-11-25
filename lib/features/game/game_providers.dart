@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/network/dio_client.dart';
+import '../../app/providers.dart';
 import 'data/datasources/game_remote_data_source.dart';
 import 'data/models/game_models.dart';
 import 'data/models/mission_dto.dart';
@@ -8,7 +8,7 @@ import 'data/models/mission_dto.dart';
 // ── Providers ──────────────────────────────────────────────────────────────
 
 final gameRemoteDataSourceProvider = Provider<GameRemoteDataSource>((ref) {
-  return GameRemoteDataSource(DioClient.instance.dio);
+  return GameRemoteDataSource(ref.watch(dioProvider));
 });
 
 /// All active worlds (lightweight list).

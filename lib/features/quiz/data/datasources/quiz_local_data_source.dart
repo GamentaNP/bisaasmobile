@@ -5,7 +5,6 @@ import 'package:drift/drift.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/sync/daily_pack_cache.dart';
 import '../../../../core/storage/database/app_database.dart';
-import '../../../../core/storage/database/daos/quiz_dao.dart';
 import '../models/quiz_dto.dart';
 import '../../../../app/localization/l10n.dart';
 
@@ -15,29 +14,34 @@ import '../../../../app/localization/l10n.dart';
 /// (XP/coins/rank) = never cache. Questions are public content — cache long,
 /// refresh on next successful remote fetch.
 class QuizLocalDataSource implements DailyPackCache {
-  QuizLocalDataSource(this._db) : _dao = QuizDao(_db);
+  QuizLocalDataSource(this._db);
   final AppDatabase _db;
-  final QuizDao _dao;
 
   Future<void> cacheSession(QuizSessionDto dto) async {
     try {
-      for (final q in dto.questions) {
-        await _dao.upsert(
-          QuestionsCompanion(
-            remoteId: Value(q.id),
-            quizId: Value(dto.id),
-            subjectSlug: Value(q.subjectSlug),
-            body: Value(q.body),
-            optionsJson: Value(q.optionsToJson()),
-            correctOptionId: Value(q.correctOptionId),
-            explanation: Value(q.explanation),
-            difficulty: Value(q.difficulty),
-            marksPositive: Value(q.marksPositive),
-            marksNegative: Value(q.marksNegative),
-            cachedAt: Value(DateTime.now()),
-          ),
-        );
-      }
+      final now = DateTime.now();
+      final rows = dto.questions
+          .map(
+            (q) => QuestionsCompanion(
+              remoteId: Value(q.id),
+              quizId: Value(dto.id),
+              subjectSlug: Value(q.subjectSlug),
+              body: Value(q.body),
+              optionsJson: Value(q.optionsToJson()),
+              correctOptionId: Value(q.correctOptionId),
+              explanation: Value(q.explanation),
+              difficulty: Value(q.difficulty),
+              marksPositive: Value(q.marksPositive),
+              marksNegative: Value(q.marksNegative),
+              cachedAt: Value(now),
+            ),
+          )
+          .toList();
+      // One transaction, one round trip to the DB isolate instead of one per
+      // question — a 200-question pack used to stall the midnight prefetch.
+      await _db.batch(
+        (batch) => batch.insertAllOnConflictUpdate(_db.questions, rows),
+      );
       AppLogger.i('QuizLocal: cached ${dto.questions.length} Qs for ${dto.id}');
     } catch (e, st) {
       AppLogger.w('QuizLocal cacheSession failed: $e');
@@ -60,11 +64,13 @@ class QuizLocalDataSource implements DailyPackCache {
   }) async {
     if (questions.isEmpty) return;
     try {
+      final now = DateTime.now();
+      final rows = <QuestionsCompanion>[];
       for (final raw in questions) {
         final id = raw['id'];
         if (id == null) continue;
         final options = raw['options'];
-        await _dao.upsert(
+        rows.add(
           QuestionsCompanion(
             remoteId: Value(id.toString()),
             quizId: Value(quizId),
@@ -75,10 +81,13 @@ class QuizLocalDataSource implements DailyPackCache {
             optionsJson: Value(jsonEncode(options is List ? options : const [])),
             // Never populated from the pack — grading is server-side.
             correctOptionId: const Value.absent(),
-            cachedAt: Value(DateTime.now()),
+            cachedAt: Value(now),
           ),
         );
       }
+      await _db.batch(
+        (batch) => batch.insertAllOnConflictUpdate(_db.questions, rows),
+      );
       AppLogger.i('QuizLocal: cached daily pack ${questions.length} Qs for $quizId');
     } catch (e, st) {
       AppLogger.w('QuizLocal cacheDailyPack failed: $e');

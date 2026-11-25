@@ -44,6 +44,12 @@ class CalculatorDomainDto {
   final String domain;
   final String label;
   final List<CalculatorDto> calculators;
+
+  CalculatorDomain toDomain() => CalculatorDomain(
+        domain: domain,
+        label: label,
+        calculators: calculators.map((c) => c.toDomain()).toList(),
+      );
 }
 
 class CalculatorCatalogDto {
@@ -66,6 +72,11 @@ class CalculatorCatalogDto {
 
   List<Calculator> toDomainsFlat() =>
       domains.expand((d) => d.calculators.map((c) => c.toDomain())).toList();
+
+  CalculatorCatalog toDomain() => CalculatorCatalog(
+        totalCalculators: totalCalculators,
+        domains: domains.map((d) => d.toDomain()).toList(),
+      );
 }
 
 class CalculatorConfigDto {
@@ -178,4 +189,6 @@ class CalculatorPermalinkDto {
   /// A url that resolves to the PDF/report artefact.
   final String? reportUrl;
   final String? expiresAt;
+
+  CalculatorPermalink toDomain() => CalculatorPermalink(url: url);
 }

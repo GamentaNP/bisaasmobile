@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:bisaasmobile/features/calculator/data/datasources/calculator_remote_data_source.dart';
-import 'package:bisaasmobile/features/calculator/data/models/calculator_dto.dart';
 import 'package:bisaasmobile/features/calculator/domain/entities/calculator.dart';
 import 'package:bisaasmobile/features/calculator/domain/entities/calculator_assistant.dart';
 import 'package:bisaasmobile/features/calculator/domain/repositories/calculator_repository.dart';
@@ -16,7 +15,7 @@ class _FailingCalculatorRepository implements CalculatorRepository {
   final List<String> idempotencyKeys = [];
 
   @override
-  Future<CalculatorCatalogDto> getCatalog() => throw UnimplementedError();
+  Future<CalculatorCatalog> getCatalog() => throw UnimplementedError();
 
   @override
   Future<CalculatorConfig> getConfig(String domain, String slug) =>
@@ -41,7 +40,7 @@ class _FailingCalculatorRepository implements CalculatorRepository {
       throw UnimplementedError();
 
   @override
-  Future<CalculatorPermalinkDto> createPermalink({
+  Future<CalculatorPermalink> createPermalink({
     required String domain,
     required String calculatorSlug,
     required Map<String, dynamic> inputs,

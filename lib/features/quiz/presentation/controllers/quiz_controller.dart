@@ -1,17 +1,14 @@
+// ignore_for_file: omit_local_variable_types
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-
-// ignore_for_file: omit_local_variable_types
-
-import 'package:dio/dio.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/lifeline_remote_data_source.dart';
 import '../../data/datasources/quiz_local_data_source.dart';
 import '../../data/datasources/quiz_remote_data_source.dart';
@@ -25,7 +22,7 @@ import '../../../../app/localization/l10n.dart';
 // ── Providers ──────────────────────────────────────────────────────────────
 
 final quizRemoteDataSourceProvider = Provider<QuizRemoteDataSource>((ref) {
-  return QuizRemoteDataSource(DioClient.instance.dio);
+  return QuizRemoteDataSource(ref.watch(dioProvider));
 });
 
 final quizLocalDataSourceProvider = Provider<QuizLocalDataSource>((ref) {
@@ -40,7 +37,7 @@ final quizRepositoryProvider = Provider<QuizRepository>((ref) {
 });
 
 final lifelineRemoteDataSourceProvider = Provider<LifelineRemoteDataSource>((ref) {
-  return LifelineRemoteDataSource(DioClient.instance.dio);
+  return LifelineRemoteDataSource(ref.watch(dioProvider));
 });
 
 final quizControllerProvider =

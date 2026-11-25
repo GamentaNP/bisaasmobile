@@ -1,37 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/feature_bridges.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../home/presentation/controllers/home_controller.dart';
-import '../../data/providers/achievements_providers.dart';
-import '../../domain/entities/achievements.dart';
+import '../../../../shared/utils/achievement_rarity_color.dart';
 import '../widgets/xp_progress_bar.dart';
 
 // Keep the public names available at their old location for existing callers.
+export '../../../../shared/utils/achievement_rarity_color.dart'
+    show AchievementRarityColor;
 export '../../data/providers/achievements_providers.dart'
     show achievementsDataProvider;
 export '../../domain/entities/achievements.dart'
     show AchievementEntry, AchievementsData;
-
-/// Rarity colours are presentation, not server data.
-extension AchievementRarityColor on AchievementEntry {
-  Color get rarityColor {
-    switch (rarity) {
-      case 'legendary':
-        return const Color(0xFFEAB308);
-      case 'epic':
-        return const Color(0xFFA855F7);
-      case 'rare':
-        return const Color(0xFF22D3EE);
-      case 'uncommon':
-        return const Color(0xFF10B981);
-      default:
-        return const Color(0xFF94A3B8);
-    }
-  }
-}
 
 /// Achievements screen — server-authoritative.
 ///

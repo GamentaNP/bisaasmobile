@@ -48,8 +48,7 @@ class QuizRemoteDataSource {
 
   // ── Courses as quiz list (server has no /quiz/quizzes) ────────────────────
 
-  Future<List<Map<String, dynamic>>> getQuizList({String? subjectSlug}) async {
-    // subjectSlug maps to course slug filter if needed — currently ignored, returns all courses
+  Future<List<Map<String, dynamic>>> getQuizList() async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/courses');
     final body = res.data;
     if (body == null) {

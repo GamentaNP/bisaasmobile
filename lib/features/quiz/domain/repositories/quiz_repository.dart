@@ -3,7 +3,7 @@ import '../entities/attempt_result.dart';
 
 abstract class QuizRepository {
   /// Fetch list of available quizzes/topics from GET /api/v1/quiz/courses
-  Future<List<Map<String, dynamic>>> getQuizList({String? subjectSlug});
+  Future<List<Map<String, dynamic>>> getQuizList();
 
   /// Fetch questions for a course from GET /api/v1/quiz/courses/{id}/questions
   /// [categoryId] narrows the pool to one course category.

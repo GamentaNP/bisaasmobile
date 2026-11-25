@@ -2,6 +2,8 @@
 
 import 'dart:ui' show Color;
 
+import '../../domain/entities/rewards.dart';
+
 /// Daily check-in and spin-wheel DTOs.
 ///
 /// Verified live 2026-09-27 against the monetization routes
@@ -41,6 +43,13 @@ class CheckInStatusDto {
   final int nextReward;
 
   bool get canClaim => !claimedToday && todayReward > 0;
+
+  CheckInStatus toDomain() => CheckInStatus(
+        claimedToday: claimedToday,
+        streakDay: streakDay,
+        todayReward: todayReward,
+        nextReward: nextReward,
+      );
 }
 
 /// Result of `POST /rewards/daily-checkin`.
@@ -69,6 +78,14 @@ class CheckInResultDto {
   final int newBalance;
   final int streakDay;
   final String? reason;
+
+  CheckInResult toDomain() => CheckInResult(
+        credited: credited,
+        amount: amount,
+        newBalance: newBalance,
+        streakDay: streakDay,
+        reason: reason,
+      );
 }
 
 /// One prize slice on the spin wheel.
@@ -112,6 +129,17 @@ class SpinPrizeDto {
     if (value == null) return const Color(0xFF94A3B8);
     return Color(hex.length == 6 ? 0xFF000000 | value : value);
   }
+
+  SpinPrize toDomain() => SpinPrize(
+        type: type,
+        coins: coins,
+        xp: xp,
+        lifelineSlug: lifelineSlug,
+        lifelineQuantity: lifelineQuantity,
+        label: label,
+        colorHex: colorHex,
+        rarity: rarity,
+      );
 }
 
 /// `GET /rewards/spin/status` — raw body, no envelope.
@@ -130,6 +158,12 @@ class SpinStatusDto {
   final bool canSpin;
   final List<SpinPrizeDto> prizes;
   final DateTime? nextSpinAt;
+
+  SpinStatus toDomain() => SpinStatus(
+        canSpin: canSpin,
+        prizes: prizes.map((p) => p.toDomain()).toList(growable: false),
+        nextSpinAt: nextSpinAt,
+      );
 }
 
 /// `POST /rewards/spin` — raw body, no envelope. `spun: false` + `reason` is a
@@ -171,6 +205,19 @@ class SpinResultDto {
   final int? prizeIndex;
   final int? newBalance;
   final String? reason;
+
+  SpinResult toDomain() => SpinResult(
+        spun: spun,
+        type: type,
+        coins: coins,
+        xp: xp,
+        lifelineSlug: lifelineSlug,
+        lifelineQuantity: lifelineQuantity,
+        label: label,
+        prizeIndex: prizeIndex,
+        newBalance: newBalance,
+        reason: reason,
+      );
 }
 
 int? _asInt(Object? v) {

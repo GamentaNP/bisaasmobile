@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../../../tutor/domain/entities/tutor.dart';
+import '../../../../shared/domain/learning_read_models.dart';
 import '../controllers/coaching_controller.dart';
 import '../../domain/entities/coaching.dart';
 

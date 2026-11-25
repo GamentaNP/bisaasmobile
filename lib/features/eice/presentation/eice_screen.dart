@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
-import '../../../core/network/dio_client.dart';
-import '../data/eice_remote_data_source.dart';
+import '../data/providers/eice_providers.dart';
+import '../domain/entities/eice_data.dart';
 import 'widgets/payload_view.dart';
 
-final eiceRemoteProvider =
-    Provider<EiceRemoteDataSource>((ref) => EiceRemoteDataSource(DioClient.instance.dio));
+// Kept at its old location: widget tests override the data source through
+// this name, and the repository provider watches the same instance.
+export '../data/providers/eice_providers.dart' show eiceRemoteProvider;
 
 /// Prefer the server's own message — it is written for users ("No active
 /// target exam found."), whereas `ApiException.toString()` is not.
@@ -33,7 +34,7 @@ class EiceScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final src = ref.read(eiceRemoteProvider);
+    final repo = ref.watch(eiceRepositoryProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.eiceTitle)),
       body: ListView(
@@ -46,18 +47,18 @@ class EiceScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           _Card(
             title: l10n.eiceCoach,
-            fetcher: src.getCoach,
+            fetcher: repo.getCoach,
           ),
-          // Triage has no exam-less route — it needs the numeric exam id that
+          // Triage has no exam-less route - it needs the numeric exam id that
           // only the coach response carries, so it waits on that.
-          _TriageCard(coach: src.getCoach, triage: src.getTriage),
+          _TriageCard(coach: repo.getCoach, triage: repo.getTriage),
           _CardList(
             title: l10n.eiceSprint,
-            fetcher: src.getSprint,
+            fetcher: repo.getSprint,
           ),
           _Card(
             title: l10n.eiceWeeklyReport,
-            fetcher: src.getWeekly,
+            fetcher: repo.getWeekly,
           ),
         ],
       ),
@@ -68,14 +69,14 @@ class EiceScreen extends ConsumerWidget {
 class _Card extends StatefulWidget {
   const _Card({required this.title, required this.fetcher});
   final String title;
-  final Future<Map<String, dynamic>?> Function() fetcher;
+  final Future<EicePayload?> Function() fetcher;
 
   @override
   State<_Card> createState() => _CardState();
 }
 
 class _CardState extends State<_Card> {
-  Map<String, dynamic>? data;
+  EicePayload? data;
   bool loading = false;
   String? err;
 
@@ -143,7 +144,7 @@ class _CardState extends State<_Card> {
                 ],
               ),
             if (!loading && err == null && data != null)
-              PayloadView(data: data),
+              PayloadView(data: data?.raw),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -161,14 +162,14 @@ class _CardState extends State<_Card> {
 class _CardList extends StatefulWidget {
   const _CardList({required this.title, required this.fetcher});
   final String title;
-  final Future<List<Map<String, dynamic>>> Function() fetcher;
+  final Future<List<EicePayload>> Function() fetcher;
 
   @override
   State<_CardList> createState() => _CardListState();
 }
 
 class _CardListState extends State<_CardList> {
-  List<Map<String, dynamic>> items = [];
+  List<EicePayload> items = [];
   bool loading = false;
   String? err;
 
@@ -234,7 +235,7 @@ class _CardListState extends State<_CardList> {
                 ],
               ),
             if (err == null && !loading && items.isNotEmpty)
-              PayloadView(data: items),
+              PayloadView(data: items.map((e) => e.raw).toList()),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -253,15 +254,15 @@ class _CardListState extends State<_CardList> {
 /// it keeps the id derivation in one place instead of guessing one.
 class _TriageCard extends StatefulWidget {
   const _TriageCard({required this.coach, required this.triage});
-  final Future<Map<String, dynamic>?> Function() coach;
-  final Future<Map<String, dynamic>?> Function(int examId) triage;
+  final Future<EicePayload?> Function() coach;
+  final Future<EicePayload?> Function(int examId) triage;
 
   @override
   State<_TriageCard> createState() => _TriageCardState();
 }
 
 class _TriageCardState extends State<_TriageCard> {
-  Map<String, dynamic>? data;
+  EicePayload? data;
   bool loading = false;
   String? err;
 
@@ -301,14 +302,9 @@ class _TriageCardState extends State<_TriageCard> {
     }
   }
 
-  /// `exam_id` is the server's own field on the coach payload.
-  static int? _examIdOf(Map<String, dynamic>? coach) {
-    if (coach == null) return null;
-    final raw = coach['exam_id'] ?? coach['examId'];
-    if (raw is int) return raw;
-    if (raw is String) return int.tryParse(raw);
-    return null;
-  }
+  /// `exam_id` is the server's own field on the coach payload; reading it is
+  /// now the entity's job rather than an ad-hoc map lookup in the widget.
+  static int? _examIdOf(EicePayload? coach) => coach?.examId;
 
   @override
   void initState() {
@@ -349,7 +345,7 @@ class _TriageCardState extends State<_TriageCard> {
                 ],
               ),
             if (!loading && err == null && data != null)
-              PayloadView(data: data),
+              PayloadView(data: data?.raw),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(

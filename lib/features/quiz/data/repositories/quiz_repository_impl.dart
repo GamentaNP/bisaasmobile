@@ -13,8 +13,7 @@ class QuizRepositoryImpl implements QuizRepository {
   final QuizLocalDataSource? _local;
 
   @override
-  Future<List<Map<String, dynamic>>> getQuizList({String? subjectSlug}) =>
-      _remote.getQuizList(subjectSlug: subjectSlug);
+  Future<List<Map<String, dynamic>>> getQuizList() => _remote.getQuizList();
 
   @override
   Future<QuizSession> getQuizSession(String quizId, {int? categoryId}) async {
