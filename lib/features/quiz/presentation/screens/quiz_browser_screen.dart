@@ -249,14 +249,15 @@ class QuizListEntry {
   final int? xpReward;
 }
 
-/// Solid category fills + matching extrusion shadows (Duolongo style).
+/// Solid category fills + matching extrusion shadows, aligned to the web
+/// brand palette (indigo/blue first).
 const _kCategoryColors = [
-  Color(0xFF58CC02), // brand green
-  Color(0xFF1CB0F6), // blue
-  Color(0xFFCE82FF), // purple
-  Color(0xFFFF9600), // orange
-  Color(0xFFFF4B4B), // red
-  Color(0xFFFFC800), // gold
+  Color(0xFF4B62ED), // brand primary
+  Color(0xFF0EA5E9), // blue
+  Color(0xFFA855F7), // purple
+  Color(0xFFD97706), // amber
+  Color(0xFFE7000B), // red
+  Color(0xFFF59E0B), // gold
 ];
 
 const _kCategoryIcons = [

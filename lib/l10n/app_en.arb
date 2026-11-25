@@ -127,8 +127,8 @@
       }
     }
   },
-  "onboardingTargetExamTitle": "Target Examination",
-  "onboardingTargetExamBody": "Sets the syllabus this account studies towards.",
+  "onboardingTargetExamTitle": "Study Field",
+  "onboardingTargetExamBody": "Choose the field you want to study.",
   "onboardingDailyGoalTitle": "Daily Practice Goal",
   "onboardingDailyGoalBody": "How much time would you like to dedicate each day? You can change this anytime.",
   "onboardingMinutesPerDay": "{minutes} mins / day — {label}",
@@ -3345,6 +3345,8 @@
   "onbLevelGraduateDesc": "Actively preparing for competitive technical exams",
   "onbLevelEngineer": "Practicing Engineer",
   "onbLevelEngineerDesc": "Refreshing core theory and design standards",
+  "onbGoalSerious": "Serious Prep",
+  "onbGoalBeast": "Beast Mode",
   "authPasswordUpdatedNotice": "Password updated. Sign in with your new password.",
   "notifToday": "Today",
   "notifYesterday": "Yesterday",

@@ -97,23 +97,22 @@ class QuizResultScreen extends StatelessWidget {
                     child: Icon(
                       accuracy >= 0.8 ? Icons.emoji_events : Icons.military_tech,
                       size: 64,
-                      // Dark ink on the bright green hero: white-on-green is
-                      // ~2.1:1, below WCAG AA even for large text.
-                      color: AppColors.textPrimaryLight,
+                      // White on the indigo brand gradient is ~6:1 (WCAG AA).
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     gradeLabel,
                     style: AppTypography.headlineMedium
-                        .copyWith(color: AppColors.textPrimaryLight, fontSize: 34),
+                        .copyWith(color: Colors.white, fontSize: 34),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     session?.title ?? l10n.quizCompleteTitle,
                     textAlign: TextAlign.center,
                     style: AppTypography.bodyMedium.copyWith(
-                      color: AppColors.textPrimaryLight,
+                      color: Colors.white.withValues(alpha: 0.92),
                       fontWeight: FontWeight.w700,
                     ),
                   ),

@@ -1,18 +1,29 @@
+library;
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../app/theme/app_colors.dart';
-import '../../../../core/analytics/analytics_service.dart';
-import '../../../../core/consent/consent_gate.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/storage/preferences.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../data/providers/onboarding_options_providers.dart';
+import '../../domain/entities/onboarding_options.dart';
 
+/// Three-step wizard whose options come exclusively from
+/// `GET /quiz/onboarding/options`. Nothing on this screen is invented locally:
+/// the domain ids, goal minutes and education-level ids displayed here are the
+/// ones persisted, and the only local copy is the translation of the goal
+/// presets' stable `value` keys.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -24,99 +35,87 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _pageController = PageController();
   int _currentPage = 0;
 
-  // Selection state is a stable slug, never display copy. The canonical
-  // English storage key is attached only when saving (see _storedExamValue),
-  // so an existing stored choice keeps resolving in any display language.
-  String _selectedExam = 'loksewa';
-  int _dailyMinutes = 30;
-  // Must be one of _levels' ids — a default that matches no option leaves
-  // page 3 rendering nothing as selected and persists a value the profile
-  // screens do not recognise.
-  String _experienceLevel = 'student';
+  // Server ids, never display copy. Initialised from the server catalogue on
+  // the first frame that has data (and resolved against any stored choice).
+  int? _selectedDomainId;
+  int _dailyMinutes = 0;
+  int? _selectedLevelId;
+  bool _initialized = false;
 
-  /// The storage contract: a canonical, language-neutral English key for each
-  /// option. The app used to persist its English display copy; keeping these
-  /// keys as the stored values means an existing selection still resolves and
-  /// changing the reader's language cannot change what was saved.
-  static const _legacyExamIds = <String, String>{
+  // Legacy *stored* values from the invented-option builds. Kept only to
+  // resolve existing selections; nothing new is ever written in this shape.
+  static const _legacyExamValues = <String, String>{
     'Loksewa / Civil PSC': 'loksewa',
     'GATE / Indian PSC': 'gate',
     'SSC JE / Diploma': 'ssc',
     'University Semester Exams': 'university',
   };
-  static const _legacyLevelIds = <String, String>{
+  static const _legacyLevelValues = <String, String>{
     'Engineering Student': 'student',
     'Graduate / Job Seeker': 'graduate',
     'Practicing Engineer': 'engineer',
   };
 
-  /// Accept both a legacy English key and a slug, so a stored choice from
-  /// an older build still resolves to the same option.
-  static String _readExamId(String? stored) =>
-      _legacyExamIds[stored] ?? stored ?? 'loksewa';
-  static String _readLevelId(String? stored) =>
-      _legacyLevelIds[stored] ?? stored ?? 'student';
+  void _initialize(OnboardingOptions options) {
+    if (_initialized) return;
+    _initialized = true;
+    final prefs = Preferences.instance;
+    _selectedDomainId = _resolveDomainId(options.domains, prefs.selectedExam);
+    _dailyMinutes =
+        _resolveMinutes(options.goalIntensities, prefs.dailyGoalMinutes);
+    _selectedLevelId =
+        _resolveLevelId(options.educationLevels, prefs.experienceLevel);
+  }
 
-  static String _storedExamValue(String id) => _legacyExamIds.entries
-      .firstWhere((e) => e.value == id, orElse: () => MapEntry('loksewa', 'loksewa'))
-      .key;
-  static String _storedLevelValue(String id) => _legacyLevelIds.entries
-      .firstWhere((e) => e.value == id,
-          orElse: () => MapEntry('Engineering Student', 'student'))
-      .key;
+  /// A stored server id wins; a legacy slug/copy is looked up by slug/name;
+  /// anything unresolvable falls back to the server's first domain.
+  static int _resolveDomainId(List<DomainOption> domains, String? stored) {
+    final storedId = int.tryParse(stored ?? '');
+    if (storedId != null && domains.any((d) => d.id == storedId)) return storedId;
+    final legacy = _legacyExamValues[stored] ?? stored;
+    for (final domain in domains) {
+      if (domain.slug == legacy || domain.name == stored) return domain.id;
+    }
+    return domains.first.id;
+  }
 
-  final _exams = const [
-    {'id': 'loksewa', 'icon': Icons.account_balance_rounded},
-    {'id': 'gate', 'icon': Icons.school_rounded},
-    {'id': 'ssc', 'icon': Icons.engineering_rounded},
-    {'id': 'university', 'icon': Icons.menu_book_rounded},
-  ];
+  static int _resolveLevelId(
+    List<EducationLevelOption> levels,
+    String? stored,
+  ) {
+    final storedId = int.tryParse(stored ?? '');
+    if (storedId != null && levels.any((l) => l.id == storedId)) return storedId;
+    final legacy = _legacyLevelValues[stored] ?? stored;
+    for (final level in levels) {
+      if (level.name == legacy || level.name == stored) return level.id;
+    }
+    return levels.first.id;
+  }
 
-  final _goals = const [
-    {'minutes': 15, 'id': 'casual', 'icon': Icons.timer_outlined},
-    {'minutes': 30, 'id': 'focused', 'icon': Icons.timer_rounded},
-    {'minutes': 60, 'id': 'intensive', 'icon': Icons.bolt_rounded},
-  ];
+  /// Keep a stored minute value only when a server intensity still publishes
+  /// it; otherwise start at the first server preset.
+  static int _resolveMinutes(List<GoalIntensityOption> goals, int stored) {
+    if (goals.any((g) => g.defaultMinutes == stored)) return stored;
+    return goals.first.defaultMinutes;
+  }
 
-  final _levels = const [
-    {'id': 'student', 'icon': Icons.person_outline},
-    {'id': 'graduate', 'icon': Icons.workspace_premium_outlined},
-    {'id': 'engineer', 'icon': Icons.architecture_rounded},
-  ];
-
-  /// The visible title and description of an exam option, in the reader's
-  /// language. The id is what gets persisted; the copy never is.
-  ({String title, String desc}) _examCopy(String id, AppLocalizations l10n) =>
-      switch (id) {
-        'gate' => (title: l10n.onbExamGate, desc: l10n.onbExamGateDesc),
-        'ssc' => (title: l10n.onbExamSsc, desc: l10n.onbExamSscDesc),
-        'university' =>
-          (title: l10n.onbExamUniversity, desc: l10n.onbExamUniversityDesc),
-        _ => (title: l10n.onbExamLoksewa, desc: l10n.onbExamLoksewaDesc),
-      };
-
-  ({String label, String desc}) _goalCopy(String id, AppLocalizations l10n) =>
-      switch (id) {
-        'focused' => (label: l10n.onbGoalFocused, desc: l10n.onbGoalFocusedDesc),
-        'intensive' =>
-          (label: l10n.onbGoalIntensive, desc: l10n.onbGoalIntensiveDesc),
-        _ => (label: l10n.onbGoalCasual, desc: l10n.onbGoalCasualDesc),
-      };
-
-  ({String title, String desc}) _levelCopy(String id, AppLocalizations l10n) =>
-      switch (id) {
-        'graduate' =>
-          (title: l10n.onbLevelGraduate, desc: l10n.onbLevelGraduateDesc),
-        'engineer' =>
-          (title: l10n.onbLevelEngineer, desc: l10n.onbLevelEngineerDesc),
-        _ => (title: l10n.onbLevelStudent, desc: l10n.onbLevelStudentDesc),
+  /// The server sends an English `label`; the reader gets a localized one.
+  /// The `value` is the stable key, not display copy.
+  static String _goalLabel(String value, AppLocalizations l10n) => switch (value) {
+        'serious' => l10n.onbGoalSerious,
+        'beast' => l10n.onbGoalBeast,
+        _ => l10n.onbGoalCasual,
       };
 
   Future<void> _completeOnboarding() async {
+    final domainId = _selectedDomainId;
+    final levelId = _selectedLevelId;
+    if (domainId == null || levelId == null) return;
+
     final prefs = Preferences.instance;
-    await prefs.setSelectedExam(_storedExamValue(_selectedExam));
+    await prefs.setSelectedExam(domainId.toString());
     await prefs.setDailyGoalMinutes(_dailyMinutes);
-    await prefs.setExperienceLevel(_storedLevelValue(_experienceLevel));
+    await prefs.setExperienceLevel(levelId.toString());
     await prefs.setOnboardingDone(true);
 
     // The completion transition, not the first-frame app_open. Through the
@@ -149,9 +148,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final optionsAsync = ref.watch(onboardingOptionsProvider);
+    final options = optionsAsync.value;
+    if (options != null) _initialize(options);
+
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(gradient: Theme.of(context).brightness == Brightness.dark ? AppColors.auroraBackground : null, color: Theme.of(context).scaffoldBackgroundColor),
+        decoration: BoxDecoration(
+          gradient: isDark ? AppColors.auroraBackground : null,
+          color: theme.scaffoldBackgroundColor,
+        ),
         child: SafeArea(
           child: Column(
             children: [
@@ -169,7 +175,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: _completeOnboarding,
+                      onPressed: options == null ? null : _completeOnboarding,
                       child: Text(l10n.commonSkip),
                     ),
                   ],
@@ -194,16 +200,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
               const SizedBox(height: 16),
 
-              // PageView
+              // Server-backed steps. Loading and failure never render an
+              // invented option list.
               Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (page) => setState(() => _currentPage = page),
-                  children: [
-                    _buildExamStep(theme),
-                    _buildGoalStep(theme),
-                    _buildLevelStep(theme),
-                  ],
+                child: optionsAsync.when(
+                  data: (loaded) => PageView(
+                    controller: _pageController,
+                    onPageChanged: (page) => setState(() => _currentPage = page),
+                    children: [
+                      _buildDomainStep(theme, loaded),
+                      _buildGoalStep(theme, loaded),
+                      _buildLevelStep(theme, loaded),
+                    ],
+                  ),
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => ErrorView(
+                    message: e.toString(),
+                    onRetry: () => ref.invalidate(onboardingOptionsProvider),
+                  ),
                 ),
               ),
 
@@ -211,8 +225,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Padding(
                 padding: const EdgeInsets.all(24),
                 child: GradientButton(
-                  label: _currentPage == 2 ? l10n.onboardingStartLearning : l10n.onboardingContinue,
-                  onPressed: _nextPage,
+                  label: _currentPage == 2
+                      ? l10n.onboardingStartLearning
+                      : l10n.onboardingContinue,
+                  onPressed: options == null ? null : _nextPage,
                   icon: _currentPage == 2
                       ? Icons.rocket_launch_rounded
                       : Icons.arrow_forward_rounded,
@@ -225,7 +241,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  Widget _buildExamStep(ThemeData theme) {
+  Widget _buildDomainStep(ThemeData theme, OnboardingOptions options) {
     final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -244,23 +260,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        ..._exams.map((exam) {
-          final id = exam['id']! as String;
-          final copy = _examCopy(id, l10n);
-          final isSelected = _readExamId(_selectedExam) == id;
+        ...options.domains.map((domain) {
+          final isSelected = _selectedDomainId == domain.id;
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: GlassmorphicCard(
               glow: isSelected,
-              onTap: () => setState(() => _selectedExam = id),
+              onTap: () => setState(() => _selectedDomainId = domain.id),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? AppColors.brandGradient
-                          : null,
+                      gradient: isSelected ? AppColors.brandGradient : null,
                       color: isSelected
                           ? null
                           : theme.brightness == Brightness.dark
@@ -269,31 +281,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       borderRadius: AppRadii.smAll,
                     ),
                     child: Icon(
-                      exam['icon']! as IconData,
+                      Icons.school_rounded,
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          copy.title,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          copy.desc,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: theme.brightness == Brightness.dark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      domain.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   if (isSelected)
@@ -307,7 +305,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  Widget _buildGoalStep(ThemeData theme) {
+  Widget _buildGoalStep(ThemeData theme, OnboardingOptions options) {
     final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -326,14 +324,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        ..._goals.map((goal) {
-          final copy = _goalCopy(goal['id']! as String, l10n);
-          final isSelected = _dailyMinutes == goal['minutes'];
+        ...options.goalIntensities.map((goal) {
+          final isSelected = _dailyMinutes == goal.defaultMinutes;
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: GlassmorphicCard(
               glow: isSelected,
-              onTap: () => setState(() => _dailyMinutes = goal['minutes']! as int),
+              onTap: () => setState(() => _dailyMinutes = goal.defaultMinutes),
               child: Row(
                 children: [
                   Container(
@@ -348,31 +345,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       borderRadius: AppRadii.smAll,
                     ),
                     child: Icon(
-                      goal['icon']! as IconData,
+                      Icons.timer_rounded,
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.onboardingMinutesPerDay(goal['minutes']! as int, copy.label),
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          copy.desc,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: theme.brightness == Brightness.dark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      l10n.onboardingMinutesPerDay(
+                        goal.defaultMinutes,
+                        _goalLabel(goal.value, l10n),
+                      ),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   if (isSelected)
@@ -386,7 +372,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  Widget _buildLevelStep(ThemeData theme) {
+  Widget _buildLevelStep(ThemeData theme, OnboardingOptions options) {
     final l10n = AppLocalizations.of(context)!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -397,11 +383,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          // Was: "Help our IRT calibration engine tailor initial question
-          // difficulty to your stage." Nothing reads this answer back —
-          // PATCH /me accepts only `name` (username/email have authoritative
-          // flows of their own), so there is nowhere on
-          // the server to persist it and nothing consumes it locally either.
           l10n.onboardingCurrentLevelBody,
           style: AppTypography.bodyMedium.copyWith(
             color: theme.brightness == Brightness.dark
@@ -410,15 +391,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        ..._levels.map((level) {
-          final id = level['id']! as String;
-          final copy = _levelCopy(id, l10n);
-          final isSelected = _readLevelId(_experienceLevel) == id;
+        ...options.educationLevels.map((level) {
+          final isSelected = _selectedLevelId == level.id;
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: GlassmorphicCard(
               glow: isSelected,
-              onTap: () => setState(() => _experienceLevel = id),
+              onTap: () => setState(() => _selectedLevelId = level.id),
               child: Row(
                 children: [
                   Container(
@@ -433,31 +412,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       borderRadius: AppRadii.smAll,
                     ),
                     child: Icon(
-                      level['icon']! as IconData,
+                      Icons.person_outline,
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          copy.title,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          copy.desc,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: theme.brightness == Brightness.dark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      level.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   if (isSelected)

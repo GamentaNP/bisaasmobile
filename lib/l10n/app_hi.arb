@@ -127,8 +127,8 @@
       }
     }
   },
-  "onboardingTargetExamTitle": "लक्षित परीक्षा",
-  "onboardingTargetExamBody": "यह तय करता है कि यह खाता किस पाठ्यक्रम की ओर पढ़ेगा।",
+  "onboardingTargetExamTitle": "अध्ययन क्षेत्र",
+  "onboardingTargetExamBody": "अपने अध्ययन का क्षेत्र चुनें।",
   "onboardingDailyGoalTitle": "दैनिक अभ्यास का लक्ष्य",
   "onboardingDailyGoalBody": "आप रोज़ाना कितना समय देना चाहेंगे? आप कभी भी बदल सकते हैं।",
   "onboardingMinutesPerDay": "{minutes} मिनट / दिन — {label}",
@@ -3345,6 +3345,8 @@
   "onbLevelGraduateDesc": "प्रतिस्पर्धी तकनीकी परीक्षाओं की तैयारी में",
   "onbLevelEngineer": "व्यावसायिक इंजीनियर",
   "onbLevelEngineerDesc": "मूल सिद्धांत और डिज़ाइन मानकों का पुनरावलोकन",
+  "onbGoalSerious": "गंभीर तैयारी",
+  "onbGoalBeast": "अति तीव्र अभ्यास",
   "authPasswordUpdatedNotice": "पासवर्ड अपडेट हो गया। नए पासवर्ड से साइन इन करें।",
   "notifToday": "आज",
   "notifYesterday": "कल",

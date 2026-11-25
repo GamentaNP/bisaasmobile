@@ -236,11 +236,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get onboardingTargetExamTitle => 'Target Examination';
+  String get onboardingTargetExamTitle => 'Study Field';
 
   @override
-  String get onboardingTargetExamBody =>
-      'Sets the syllabus this account studies towards.';
+  String get onboardingTargetExamBody => 'Choose the field you want to study.';
 
   @override
   String get onboardingDailyGoalTitle => 'Daily Practice Goal';
@@ -4554,6 +4553,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onbLevelEngineerDesc =>
       'Refreshing core theory and design standards';
+
+  @override
+  String get onbGoalSerious => 'Serious Prep';
+
+  @override
+  String get onbGoalBeast => 'Beast Mode';
 
   @override
   String get authPasswordUpdatedNotice =>

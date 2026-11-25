@@ -170,12 +170,12 @@ add("authVerifyEmailBanner", "Verify your email to unlock every feature.", "स�
 add("authSplashTagline", "BiSaaS Engineering Learning Ecosystem", "बिसास इन्जिनियरिङ लर्निङ इकोसिस्टम", "बिसास इंजीनियरिंग लर्निंग इकोसिस्टम")
 add("authInvalidEmail", "Enter a valid email", "मान्य इमेल लेख्नुहोस्", "मान्य ईमेल दर्ज करें")
 add("onboardingStepOf", "Step {current} of {total}", "चरण {current} / {total}", "चरण {current} / {total}", ["current", "total"])
-add("onboardingTargetExamTitle", "Target Examination", "लक्षित परीक्षा", "लक्षित परीक्षा")
+add("onboardingTargetExamTitle", "Study Field", "अध्ययन क्षेत्र", "अध्ययन क्षेत्र")
 add(
     "onboardingTargetExamBody",
-    "Sets the syllabus this account studies towards.",
-    "यो खाताले कुन पाठ्यक्रमतर्फ अध्ययन गर्छ तो तोक्न्छ।",
-    "यह तय करता है कि यह खाता किस पाठ्यक्रम की ओर पढ़ेगा।",
+    "Choose the field you want to study.",
+    "तपाईंले अध्ययन गर्न चाहेको क्षेत्र छान्नुहोस्।",
+    "अपने अध्ययन का क्षेत्र चुनें।",
 )
 add("onboardingDailyGoalTitle", "Daily Practice Goal", "दैनिक अभ्यासको लक्ष्य", "दैनिक अभ्यास का लक्ष्य")
 add(
@@ -2605,6 +2605,11 @@ add("onbLevelGraduate", "Graduate / Job Seeker", "स्नातक / रोज
 add("onbLevelGraduateDesc", "Actively preparing for competitive technical exams", "प्रतिस्पर्धी प्राविधिक परीक्षाको तयारीमा", "प्रतिस्पर्धी तकनीकी परीक्षाओं की तैयारी में")
 add("onbLevelEngineer", "Practicing Engineer", "अभ्यासरत इन्जिनियर", "व्यावसायिक इंजीनियर")
 add("onbLevelEngineerDesc", "Refreshing core theory and design standards", "मूल सिद्धान्त र डिजाइन मापदण्ड पुनरावलोकन", "मूल सिद्धांत और डिज़ाइन मानकों का पुनरावलोकन")
+# The server publishes `casual`/`serious`/`beast` as goal intensities. `casual`
+# reuses onbGoalCasual; these two are the missing localized labels. The server's
+# English `label` is never rendered.
+add("onbGoalSerious", "Serious Prep", "गम्भीर तयारी", "गंभीर तैयारी")
+add("onbGoalBeast", "Beast Mode", "अति तीव्र अभ्यास", "अति तीव्र अभ्यास")
 
 # ── remaining surfaces (review P1/P2) ─────────────────────────────────────────
 add("authPasswordUpdatedNotice", "Password updated. Sign in with your new password.", "पासवर्ड अपडेट भयो। नयाँ पासवर्डले साइन इन गर्नुहोस्।", "पासवर्ड अपडेट हो गया। नए पासवर्ड से साइन इन करें।")

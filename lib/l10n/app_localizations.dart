@@ -511,13 +511,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTargetExamTitle.
   ///
   /// In en, this message translates to:
-  /// **'Target Examination'**
+  /// **'Study Field'**
   String get onboardingTargetExamTitle;
 
   /// No description provided for @onboardingTargetExamBody.
   ///
   /// In en, this message translates to:
-  /// **'Sets the syllabus this account studies towards.'**
+  /// **'Choose the field you want to study.'**
   String get onboardingTargetExamBody;
 
   /// No description provided for @onboardingDailyGoalTitle.
@@ -7718,6 +7718,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refreshing core theory and design standards'**
   String get onbLevelEngineerDesc;
+
+  /// No description provided for @onbGoalSerious.
+  ///
+  /// In en, this message translates to:
+  /// **'Serious Prep'**
+  String get onbGoalSerious;
+
+  /// No description provided for @onbGoalBeast.
+  ///
+  /// In en, this message translates to:
+  /// **'Beast Mode'**
+  String get onbGoalBeast;
 
   /// No description provided for @authPasswordUpdatedNotice.
   ///

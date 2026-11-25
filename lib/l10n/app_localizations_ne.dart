@@ -236,11 +236,11 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String get onboardingTargetExamTitle => 'लक्षित परीक्षा';
+  String get onboardingTargetExamTitle => 'अध्ययन क्षेत्र';
 
   @override
   String get onboardingTargetExamBody =>
-      'यो खाताले कुन पाठ्यक्रमतर्फ अध्ययन गर्छ तो तोक्न्छ।';
+      'तपाईंले अध्ययन गर्न चाहेको क्षेत्र छान्नुहोस्।';
 
   @override
   String get onboardingDailyGoalTitle => 'दैनिक अभ्यासको लक्ष्य';
@@ -4561,6 +4561,12 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get onbLevelEngineerDesc =>
       'मूल सिद्धान्त र डिजाइन मापदण्ड पुनरावलोकन';
+
+  @override
+  String get onbGoalSerious => 'गम्भीर तयारी';
+
+  @override
+  String get onbGoalBeast => 'अति तीव्र अभ्यास';
 
   @override
   String get authPasswordUpdatedNotice =>
