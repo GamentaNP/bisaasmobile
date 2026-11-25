@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../domain/entities/quiz_funnel.dart';
 import '../../data/datasources/quiz_remote_data_source.dart';
@@ -62,8 +63,6 @@ class QuizFunnelController extends Notifier<QuizFunnelState> {
   QuizRemoteDataSource get _remote =>
       ref.read(quizFunnelRemoteDataSourceProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   /// Loads the funnel bundle for [tier].
   ///
   /// A failure is surfaced as an error rather than an empty bundle: the user
@@ -84,8 +83,8 @@ class QuizFunnelController extends Notifier<QuizFunnelState> {
       );
     } catch (e, st) {
       AppLogger.w('quiz funnel load (${tier.name}) failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 

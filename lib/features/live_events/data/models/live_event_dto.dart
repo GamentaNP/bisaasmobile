@@ -1,23 +1,8 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/live_event.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 class LiveEventDto {
   const LiveEventDto({
@@ -43,20 +28,20 @@ class LiveEventDto {
   factory LiveEventDto.fromJson(Map<String, dynamic> j) {
     // Handle both snake_case and camelCase keys for tolerance
     return LiveEventDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       title: (j['title'] as String?) ?? appL10n().liveEventFallbackTitle,
       description: j['description'] as String?,
       eventType: (j['event_type'] as String?) ?? (j['eventType'] as String?) ?? 'quiz',
       status: (j['status'] as String?) ?? 'scheduled',
-      questionCount: _asInt(j['question_count'] ?? j['questionCount']) ?? 0,
-      startsAt: _asDate(j['starts_at'] ?? j['startsAt']) ?? DateTime.now(),
-      endsAt: _asDate(j['ends_at'] ?? j['endsAt']),
-      questionDurationSeconds: _asInt(j['question_duration_seconds'] ?? j['questionDurationSeconds']) ?? 30,
-      maxParticipants: _asInt(j['max_participants'] ?? j['maxParticipants']),
-      activeParticipantCount: _asInt(j['active_participant_count'] ?? j['activeParticipantCount']) ?? 0,
-      waitlistedParticipantCount: _asInt(j['waitlisted_participant_count'] ?? j['waitlistedParticipantCount']) ?? 0,
-      entryFeeCoins: _asInt(j['entry_fee_coins'] ?? j['entryFeeCoins']) ?? 0,
-      prizePoolCoins: _asInt(j['prize_pool_coins'] ?? j['prizePoolCoins']) ?? 0,
+      questionCount: wireInt(j['question_count'] ?? j['questionCount']) ?? 0,
+      startsAt: wireDate(j['starts_at'] ?? j['startsAt']) ?? DateTime.now(),
+      endsAt: wireDate(j['ends_at'] ?? j['endsAt']),
+      questionDurationSeconds: wireInt(j['question_duration_seconds'] ?? j['questionDurationSeconds']) ?? 30,
+      maxParticipants: wireInt(j['max_participants'] ?? j['maxParticipants']),
+      activeParticipantCount: wireInt(j['active_participant_count'] ?? j['activeParticipantCount']) ?? 0,
+      waitlistedParticipantCount: wireInt(j['waitlisted_participant_count'] ?? j['waitlistedParticipantCount']) ?? 0,
+      entryFeeCoins: wireInt(j['entry_fee_coins'] ?? j['entryFeeCoins']) ?? 0,
+      prizePoolCoins: wireInt(j['prize_pool_coins'] ?? j['prizePoolCoins']) ?? 0,
       waitlistEnabled: (j['waitlist_enabled'] as bool?) ?? (j['waitlistEnabled'] as bool?) ?? false,
       replayEnabled: (j['replay_enabled'] as bool?) ?? (j['replayEnabled'] as bool?) ?? false,
       commentatorMessage: j['commentator_message'] as String? ?? j['commentatorMessage'] as String?,
@@ -119,17 +104,17 @@ class LiveEventParticipantDto {
 
   factory LiveEventParticipantDto.fromJson(Map<String, dynamic> j) {
     return LiveEventParticipantDto(
-      id: _asInt(j['id']) ?? 0,
-      eventId: _asInt(j['event_id'] ?? j['eventId'] ?? j['quiz_live_event_id']) ?? 0,
-      userId: _asInt(j['user_id'] ?? j['userId']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
+      eventId: wireInt(j['event_id'] ?? j['eventId'] ?? j['quiz_live_event_id']) ?? 0,
+      userId: wireInt(j['user_id'] ?? j['userId']) ?? 0,
       status: (j['status'] as String?) ?? 'registered',
-      score: _asInt(j['score']) ?? 0,
-      correctCount: _asInt(j['correct_count'] ?? j['correctCount']) ?? 0,
-      answeredCount: _asInt(j['answered_count'] ?? j['answeredCount']) ?? 0,
-      lastAnsweredQuestionIndex: _asInt(j['last_answered_question_index'] ?? j['lastAnsweredQuestionIndex']),
-      registeredAt: _asDate(j['registered_at'] ?? j['registeredAt']) ?? DateTime.now(),
-      checkedInAt: _asDate(j['checked_in_at'] ?? j['checkedInAt']),
-      finishedAt: _asDate(j['finished_at'] ?? j['finishedAt']),
+      score: wireInt(j['score']) ?? 0,
+      correctCount: wireInt(j['correct_count'] ?? j['correctCount']) ?? 0,
+      answeredCount: wireInt(j['answered_count'] ?? j['answeredCount']) ?? 0,
+      lastAnsweredQuestionIndex: wireInt(j['last_answered_question_index'] ?? j['lastAnsweredQuestionIndex']),
+      registeredAt: wireDate(j['registered_at'] ?? j['registeredAt']) ?? DateTime.now(),
+      checkedInAt: wireDate(j['checked_in_at'] ?? j['checkedInAt']),
+      finishedAt: wireDate(j['finished_at'] ?? j['finishedAt']),
     );
   }
 

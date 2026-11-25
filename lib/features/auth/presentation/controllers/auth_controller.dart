@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/providers.dart' show dioProvider, pushServiceProvider;
@@ -6,8 +7,10 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/security/tenant_providers.dart';
 import '../../../../core/security/token_manager.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
-import '../../data/datasources/social_sign_in_gateway.dart';
+import '../../data/datasources/social_sign_in_gateway.dart'
+    show PlatformSocialSignInGateway, SocialIdToken, SocialSignInGateway;
 import '../../data/repositories/auth_repository_impl.dart';
+import '../../domain/entities/social_provider.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -70,7 +73,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       // session and surfaces the failure as an error state instead of dumping
       // the user on the login screen over a dropped connection.
       AppLogger.w('auth cold start failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       return null;
     }
   }
@@ -236,7 +239,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       return true;
     } catch (e, st) {
       AppLogger.w('auth loginWithSocial ${provider.name} failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = AsyncValue.error(e, st);
       rethrow;
     }

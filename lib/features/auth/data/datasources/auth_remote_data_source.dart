@@ -6,7 +6,7 @@ import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/auth_response_dto.dart';
 import '../models/user_dto.dart';
-import 'social_sign_in_gateway.dart';
+import '../../domain/entities/social_provider.dart';
 
 class AuthRemoteDataSource {
   const AuthRemoteDataSource(this._dio);

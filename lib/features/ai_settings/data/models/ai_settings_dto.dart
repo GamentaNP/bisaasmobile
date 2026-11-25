@@ -1,27 +1,5 @@
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/ai_settings.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is num) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 /// One stored BYOK credential, as the server publishes it.
 class AiKeyDto {
@@ -48,7 +26,7 @@ class AiKeyDto {
       );
     }
     return AiKeyDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       provider: provider,
       providerLabel: j['provider_label'] as String?,
       label: j['label'] as String?,
@@ -57,10 +35,10 @@ class AiKeyDto {
       isActive: j['is_active'] as bool? ?? true,
       healthStatus: j['health_status'] as String?,
       healthDetail: j['health_detail'] as String?,
-      dailyTokenLimit: _asInt(j['daily_token_limit']) ?? 0,
-      tokensConsumedToday: _asInt(j['tokens_consumed_today']) ?? 0,
-      lastUsedAt: _asDate(j['last_used_at']),
-      createdAt: _asDate(j['created_at']),
+      dailyTokenLimit: wireInt(j['daily_token_limit']) ?? 0,
+      tokensConsumedToday: wireInt(j['tokens_consumed_today']) ?? 0,
+      lastUsedAt: wireDate(j['last_used_at']),
+      createdAt: wireDate(j['created_at']),
     );
   }
 
@@ -126,10 +104,10 @@ class AiUsageSummaryDto {
 
     return AiUsageSummaryDto(
       features: features,
-      requests: _asInt(totalsMap['requests']) ?? 0,
-      promptTokens: _asInt(totalsMap['prompt_tokens']) ?? 0,
-      completionTokens: _asInt(totalsMap['completion_tokens']) ?? 0,
-      tutorConversations: _asInt(totalsMap['tutor_conversations']) ?? 0,
+      requests: wireInt(totalsMap['requests']) ?? 0,
+      promptTokens: wireInt(totalsMap['prompt_tokens']) ?? 0,
+      completionTokens: wireInt(totalsMap['completion_tokens']) ?? 0,
+      tutorConversations: wireInt(totalsMap['tutor_conversations']) ?? 0,
       periodFrom: periodMap['from'] as String?,
       periodTo: periodMap['to'] as String?,
     );
@@ -164,7 +142,7 @@ class AiUsageFeatureDto {
   factory AiUsageFeatureDto.fromJson(Map<String, dynamic> j) => AiUsageFeatureDto(
         key: (j['key'] ?? '').toString(),
         label: (j['label'] ?? j['key'] ?? '').toString(),
-        requests: _asInt(j['requests']) ?? 0,
+        requests: wireInt(j['requests']) ?? 0,
       );
 
   final String key;
@@ -187,12 +165,12 @@ class TutorSessionDto {
   });
 
   factory TutorSessionDto.fromJson(Map<String, dynamic> j) => TutorSessionDto(
-        id: _asInt(j['id']) ?? 0,
-        questionId: _asInt(j['question_id']),
-        turnCount: _asInt(j['turn_count']) ?? 0,
-        rating: _asInt(j['rating']),
+        id: wireInt(j['id']) ?? 0,
+        questionId: wireInt(j['question_id']),
+        turnCount: wireInt(j['turn_count']) ?? 0,
+        rating: wireInt(j['rating']),
         status: j['status'] as String?,
-        createdAt: _asDate(j['created_at']),
+        createdAt: wireDate(j['created_at']),
       );
 
   final int id;
@@ -227,15 +205,15 @@ class ReportCardWeekDto {
   });
 
   factory ReportCardWeekDto.fromJson(Map<String, dynamic> j) => ReportCardWeekDto(
-        id: _asInt(j['id']) ?? 0,
+        id: wireInt(j['id']) ?? 0,
         weekStartDate: (j['week_start_date'] ?? '').toString(),
-        accuracyPct: _asDouble(j['accuracy_pct']) ?? 0,
-        xpEarned: _asInt(j['xp_earned']) ?? 0,
-        coinsEarned: _asInt(j['coins_earned']) ?? 0,
-        bestStreak: _asInt(j['best_streak']) ?? 0,
-        levelsCompleted: _asInt(j['levels_completed']) ?? 0,
-        totalStarsEarned: _asInt(j['total_stars_earned']) ?? 0,
-        timeSpentSeconds: _asInt(j['time_spent_seconds']) ?? 0,
+        accuracyPct: wireDouble(j['accuracy_pct']) ?? 0,
+        xpEarned: wireInt(j['xp_earned']) ?? 0,
+        coinsEarned: wireInt(j['coins_earned']) ?? 0,
+        bestStreak: wireInt(j['best_streak']) ?? 0,
+        levelsCompleted: wireInt(j['levels_completed']) ?? 0,
+        totalStarsEarned: wireInt(j['total_stars_earned']) ?? 0,
+        timeSpentSeconds: wireInt(j['time_spent_seconds']) ?? 0,
       );
 
   final int id;
@@ -260,4 +238,3 @@ class ReportCardWeekDto {
         timeSpentSeconds: timeSpentSeconds,
       );
 }
-

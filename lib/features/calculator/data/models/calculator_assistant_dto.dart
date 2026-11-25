@@ -1,12 +1,5 @@
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/calculator_assistant.dart';
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is num) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  return null;
-}
 
 /// One value the assistant proposed for a calculator field.
 ///
@@ -26,7 +19,7 @@ class AssistantFieldMappingDto {
       field: (j['field'] ?? '').toString(),
       value: j['value'],
       unit: j['unit'] as String?,
-      confidence: _asDouble(j['confidence']) ?? 0,
+      confidence: wireDouble(j['confidence']) ?? 0,
       sourceText: j['source_text'] as String?,
     );
   }
@@ -112,7 +105,7 @@ class CalculatorAssistantDto {
       unitPreferences: preferences,
       relatedCalculators: related,
       followUpQuestions: followUps,
-      confidence: _asDouble(j['confidence']) ?? 0,
+      confidence: wireDouble(j['confidence']) ?? 0,
       provider: metadata['provider'] as String?,
       model: metadata['model'] as String?,
     );
@@ -144,4 +137,3 @@ class CalculatorAssistantDto {
         model: model,
       );
 }
-

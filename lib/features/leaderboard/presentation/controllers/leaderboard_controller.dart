@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/leaderboard_remote_data_source.dart';
 import '../../data/repositories/leaderboard_repository_impl.dart';
@@ -94,8 +95,6 @@ class LeaderboardController extends Notifier<LeaderboardState> {
 
   LeaderboardRepository get _repo => ref.read(leaderboardRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchLeaderboard(int id, {int limit = 20}) async {
     state = state.copyWith(isLoading: true, error: null, selectedLeaderboardId: id);
     try {
@@ -103,8 +102,8 @@ class LeaderboardController extends Notifier<LeaderboardState> {
       state = state.copyWith(entries: show.entries, leaderboard: show.leaderboard, myRank: show.myRank, isLoading: false);
     } catch (e, st) {
       AppLogger.w('leaderboard fetch $id failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 
@@ -125,8 +124,8 @@ class LeaderboardController extends Notifier<LeaderboardState> {
       }
     } catch (e, st) {
       AppLogger.w('myRank failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isMyRankLoading: false, myRanksError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isMyRankLoading: false, myRanksError: errorMessage(e));
     }
   }
 
@@ -137,8 +136,8 @@ class LeaderboardController extends Notifier<LeaderboardState> {
       state = state.copyWith(donorEntries: entries, isDonorLoading: false);
     } catch (e, st) {
       AppLogger.w('donor leaderboard failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isDonorLoading: false, donorError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isDonorLoading: false, donorError: errorMessage(e));
     }
   }
 
@@ -168,8 +167,8 @@ class LeaderboardController extends Notifier<LeaderboardState> {
       return res;
     } catch (e, st) {
       AppLogger.w('submitScore failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(error: errorMessage(e));
       return null;
     }
   }

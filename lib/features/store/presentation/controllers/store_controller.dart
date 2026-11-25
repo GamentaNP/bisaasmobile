@@ -1,3 +1,5 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -140,8 +142,6 @@ class StoreController extends Notifier<StoreState> {
   StoreRepository get _repo => ref.read(storeRepositoryProvider);
   static const _uuid = Uuid();
 
-  String _msg(Object e) => e.toString();
-
   /// Loads a page of the catalogue.
   ///
   /// `GET /store/assets` is cursor-paginated, so the first page is not the
@@ -163,8 +163,8 @@ class StoreController extends Notifier<StoreState> {
       );
     } catch (e, st) {
       AppLogger.w('store fetchCatalog failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCatalogLoading: false, catalogError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCatalogLoading: false, catalogError: errorMessage(e));
     }
   }
 
@@ -176,8 +176,8 @@ class StoreController extends Notifier<StoreState> {
       if (a == null) state = state.copyWith(assetError: 'Asset not found');
     } catch (e, st) {
       AppLogger.w('store fetchAsset $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isAssetLoading: false, assetError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isAssetLoading: false, assetError: errorMessage(e));
     }
   }
 
@@ -193,8 +193,8 @@ class StoreController extends Notifier<StoreState> {
       return res;
     } catch (e, st) {
       AppLogger.w('store purchase $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isPurchasing: false, purchaseError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isPurchasing: false, purchaseError: errorMessage(e));
       return null;
     }
   }
@@ -206,8 +206,8 @@ class StoreController extends Notifier<StoreState> {
       state = state.copyWith(wardrobe: w, isWardrobeLoading: false);
     } catch (e, st) {
       AppLogger.w('store fetchWardrobe failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isWardrobeLoading: false, wardrobeError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isWardrobeLoading: false, wardrobeError: errorMessage(e));
     }
   }
 
@@ -220,8 +220,8 @@ class StoreController extends Notifier<StoreState> {
       return ok;
     } catch (e, st) {
       AppLogger.w('store equip $slot/$assetId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isEquipping: false, equipError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isEquipping: false, equipError: errorMessage(e));
       return false;
     }
   }
@@ -236,8 +236,8 @@ class StoreController extends Notifier<StoreState> {
       return ok;
     } catch (e, st) {
       AppLogger.w('store unequip $slot failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isEquipping: false, equipError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isEquipping: false, equipError: errorMessage(e));
       return false;
     }
   }

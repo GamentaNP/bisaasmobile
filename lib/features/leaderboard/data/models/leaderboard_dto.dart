@@ -1,32 +1,8 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/leaderboard.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is num) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 class LeaderboardDto {
   const LeaderboardDto({
@@ -41,13 +17,13 @@ class LeaderboardDto {
 
   factory LeaderboardDto.fromJson(Map<String, dynamic> j) {
     return LeaderboardDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       name: (j['name'] as String?) ?? 'Leaderboard',
       period: (j['period'] as String?) ?? 'all_time',
       scope: (j['scope'] as String?) ?? 'global',
-      scopeId: _asInt(j['scope_id'] ?? j['scopeId']),
+      scopeId: wireInt(j['scope_id'] ?? j['scopeId']),
       isActive: (j['is_active'] as bool?) ?? (j['isActive'] as bool?) ?? true,
-      refreshedAt: _asDate(j['refreshed_at'] ?? j['refreshedAt']),
+      refreshedAt: wireDate(j['refreshed_at'] ?? j['refreshedAt']),
     );
   }
 
@@ -86,23 +62,23 @@ class LeaderboardEntryDto {
     final userRaw = j['user'];
     String? name;
     String? avatar;
-    int? uid = _asInt(j['user_id'] ?? j['userId'] ?? j['id']);
+    int? uid = wireInt(j['user_id'] ?? j['userId'] ?? j['id']);
     if (userRaw is Map<String, dynamic>) {
       name = (userRaw['name'] as String?) ?? (userRaw['display_name'] as String?);
       avatar = (userRaw['avatar'] as String?) ?? (userRaw['avatar_url'] as String?);
-      uid = _asInt(userRaw['id']) ?? uid;
+      uid = wireInt(userRaw['id']) ?? uid;
     } else {
       name = (j['display_name'] as String?) ?? (j['name'] as String?);
       avatar = (j['avatar'] as String?) ?? (j['avatar_url'] as String?);
     }
     return LeaderboardEntryDto(
-      rank: _asInt(j['rank']) ?? 0,
-      score: _asDouble(j['score']) ?? 0,
+      rank: wireInt(j['rank']) ?? 0,
+      score: wireDouble(j['score']) ?? 0,
       userId: uid ?? 0,
       displayName: name,
       avatar: avatar,
-      attemptsCount: _asInt(j['attempts_count'] ?? j['attemptsCount']) ?? 0,
-      leaderboardId: _asInt(j['quiz_leaderboard_id'] ?? j['leaderboard_id']),
+      attemptsCount: wireInt(j['attempts_count'] ?? j['attemptsCount']) ?? 0,
+      leaderboardId: wireInt(j['quiz_leaderboard_id'] ?? j['leaderboard_id']),
     );
   }
 
@@ -143,12 +119,12 @@ class MyRankDto {
     if (entries is List && entries.isNotEmpty) {
       final first = entries.first;
       if (first is Map<String, dynamic>) {
-        rank = _asInt(first['rank']);
-        score = _asDouble(first['score']);
+        rank = wireInt(first['rank']);
+        score = wireDouble(first['score']);
       }
     }
-    rank ??= _asInt(j['rank']);
-    score ??= _asDouble(j['score']);
+    rank ??= wireInt(j['rank']);
+    score ??= wireDouble(j['score']);
     // Fallback to j's rank/score directly
     return MyRankDto(leaderboard: leaderboard, rank: rank, score: score);
   }
@@ -167,8 +143,8 @@ class MyRankDto {
           if (entries is List && entries.isNotEmpty) {
             final e = entries.first;
             if (e is Map<String, dynamic>) {
-              rank = _asInt(e['rank']);
-              score = _asDouble(e['score']);
+              rank = wireInt(e['rank']);
+              score = wireDouble(e['score']);
             }
           }
           return MyRank(leaderboard: lbDto.toDomain(), rank: rank, score: score);
@@ -199,7 +175,7 @@ class DonorLeaderboardEntryDto {
         badgeLabel: (j['badgeLabel'] as String?) ?? (j['badge_label'] as String?) ?? appL10n().leaderboardTierBronze,
         badgeColor: (j['badgeColor'] as String?) ?? (j['badge_color'] as String?) ?? '#CD7F32',
         totalDonatedFormatted: (j['totalDonatedFormatted'] as String?) ?? (j['total_donated_formatted'] as String?) ?? r'$0.00',
-        streakMonths: _asInt(j['streakMonths'] ?? j['streak_months']) ?? 0,
+        streakMonths: wireInt(j['streakMonths'] ?? j['streak_months']) ?? 0,
       );
 
   final String donorName;

@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/tutor_remote_data_source.dart';
 import '../../data/repositories/tutor_repository_impl.dart';
@@ -87,11 +88,6 @@ class TutorChatController extends Notifier<TutorChatState> {
 
   TutorRepository get _repo => ref.read(tutorRepositoryProvider);
 
-  String _msg(Object e) {
-    if (e is ApiException) return e.message;
-    return e.toString();
-  }
-
   /// Sends a message to the tutor.
   ///
   /// The chat posts to `POST /learning/tutor`, the route the server records
@@ -131,9 +127,9 @@ class TutorChatController extends Notifier<TutorChatState> {
       } catch (_) {}
     } catch (e, st) {
       AppLogger.w('tutor chat failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       // If primary chat fails, do not crash — surface error banner keep history
-      state = state.copyWith(isSending: false, error: _msg(e));
+      state = state.copyWith(isSending: false, error: errorMessage(e));
     }
   }
 
@@ -198,8 +194,6 @@ class TutorPlanController extends Notifier<TutorPlanState> {
 
   TutorRepository get _repo => ref.read(tutorRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchPlan() async {
     state = state.copyWith(isPlanLoading: true, planError: null);
     try {
@@ -207,8 +201,8 @@ class TutorPlanController extends Notifier<TutorPlanState> {
       state = state.copyWith(plan: plan, isPlanLoading: false);
     } catch (e, st) {
       AppLogger.w('tutor fetchPlan failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isPlanLoading: false, planError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isPlanLoading: false, planError: errorMessage(e));
     }
   }
 
@@ -219,8 +213,8 @@ class TutorPlanController extends Notifier<TutorPlanState> {
       state = state.copyWith(today: today, isTodayLoading: false);
     } catch (e, st) {
       AppLogger.w('tutor fetchToday failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isTodayLoading: false, todayError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isTodayLoading: false, todayError: errorMessage(e));
     }
   }
 
@@ -241,8 +235,8 @@ class TutorPlanController extends Notifier<TutorPlanState> {
       return true;
     } catch (e, st) {
       AppLogger.w('tutor completeDay failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCompletingDay: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCompletingDay: false, error: errorMessage(e));
       return false;
     }
   }
@@ -256,8 +250,8 @@ class TutorPlanController extends Notifier<TutorPlanState> {
       return true;
     } catch (e, st) {
       AppLogger.w('tutor adjustPlan failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isAdjusting: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isAdjusting: false, error: errorMessage(e));
       return false;
     }
   }
@@ -312,8 +306,6 @@ class TutorOnboardingController extends Notifier<TutorOnboardingState> {
 
   TutorRepository get _repo => ref.read(tutorRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> start({Map<String, dynamic>? payload}) async {
     state = state.copyWith(isStarting: true, startError: null);
     try {
@@ -324,8 +316,8 @@ class TutorOnboardingController extends Notifier<TutorOnboardingState> {
       } catch (_) {}
     } catch (e, st) {
       AppLogger.w('tutor onboarding start failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isStarting: false, startError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isStarting: false, startError: errorMessage(e));
     }
   }
 
@@ -345,8 +337,8 @@ class TutorOnboardingController extends Notifier<TutorOnboardingState> {
       return true;
     } catch (e, st) {
       AppLogger.w('tutor onboarding complete failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCompleting: false, completeError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCompleting: false, completeError: errorMessage(e));
       return false;
     }
   }

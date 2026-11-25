@@ -1,13 +1,6 @@
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/quiz_funnel.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
 
 /// One sampled question from the funnel bundle.
 ///
@@ -51,12 +44,12 @@ class FunnelItemDto {
         course is Map<String, dynamic> ? course : const <String, dynamic>{};
 
     return FunnelItemDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       questionText: (j['question_text'] ?? j['questionText'] ?? '').toString(),
       type: j['type'] as String?,
       typeLabel: j['type_label'] as String?,
       difficulty: j['difficulty'] as String?,
-      points: _asInt(j['points']) ?? 0,
+      points: wireInt(j['points']) ?? 0,
       options: options,
       courseName: courseMap['name'] as String?,
       courseSlug: courseMap['slug'] as String?,
@@ -123,12 +116,12 @@ class FunnelCountsDto {
   });
 
   factory FunnelCountsDto.fromJson(Map<String, dynamic> j) => FunnelCountsDto(
-        questions: _asInt(j['questions']) ?? 0,
-        courses: _asInt(j['courses']) ?? 0,
-        categories: _asInt(j['categories']) ?? 0,
-        subCategories: _asInt(j['sub_categories']) ?? 0,
-        topics: _asInt(j['topics']) ?? 0,
-        publicTypes: _asInt(j['public_types']) ?? 0,
+        questions: wireInt(j['questions']) ?? 0,
+        courses: wireInt(j['courses']) ?? 0,
+        categories: wireInt(j['categories']) ?? 0,
+        subCategories: wireInt(j['sub_categories']) ?? 0,
+        topics: wireInt(j['topics']) ?? 0,
+        publicTypes: wireInt(j['public_types']) ?? 0,
       );
 
   final int questions;
@@ -225,4 +218,3 @@ class QuizFunnelDto {
         promo: promo.toDomain(),
       );
 }
-

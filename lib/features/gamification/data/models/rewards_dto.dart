@@ -1,5 +1,6 @@
 
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import 'dart:ui' show Color;
 
 import '../../domain/entities/rewards.dart';
@@ -30,9 +31,9 @@ class CheckInStatusDto {
 
   factory CheckInStatusDto.fromJson(Map<String, dynamic> j) => CheckInStatusDto(
         claimedToday: (j['claimedToday'] as bool?) ?? (j['claimed_today'] as bool?) ?? false,
-        streakDay: _asInt(j['streakDay'] ?? j['streak_day']) ?? 0,
-        todayReward: _asInt(j['todayReward'] ?? j['today_reward']) ?? 0,
-        nextReward: _asInt(j['nextReward'] ?? j['next_reward']) ?? 0,
+        streakDay: wireInt(j['streakDay'] ?? j['streak_day']) ?? 0,
+        todayReward: wireInt(j['todayReward'] ?? j['today_reward']) ?? 0,
+        nextReward: wireInt(j['nextReward'] ?? j['next_reward']) ?? 0,
       );
 
   final bool claimedToday;
@@ -67,9 +68,9 @@ class CheckInResultDto {
 
   factory CheckInResultDto.fromJson(Map<String, dynamic> j) => CheckInResultDto(
         credited: (j['credited'] as bool?) ?? false,
-        amount: _asInt(j['amount']) ?? 0,
-        newBalance: _asInt(j['newBalance'] ?? j['new_balance']) ?? 0,
-        streakDay: _asInt(j['streakDay'] ?? j['streak_day']) ?? 0,
+        amount: wireInt(j['amount']) ?? 0,
+        newBalance: wireInt(j['newBalance'] ?? j['new_balance']) ?? 0,
+        streakDay: wireInt(j['streakDay'] ?? j['streak_day']) ?? 0,
         reason: j['reason'] as String?,
       );
 
@@ -103,10 +104,10 @@ class SpinPrizeDto {
 
   factory SpinPrizeDto.fromJson(Map<String, dynamic> j) => SpinPrizeDto(
         type: (j['type'] ?? 'coins').toString(),
-        coins: _asInt(j['coins']) ?? 0,
-        xp: _asInt(j['xp']) ?? 0,
+        coins: wireInt(j['coins']) ?? 0,
+        xp: wireInt(j['xp']) ?? 0,
         lifelineSlug: j['lifelineSlug'] as String? ?? j['lifeline_slug'] as String?,
-        lifelineQuantity: _asInt(j['lifelineQuantity'] ?? j['lifeline_quantity']) ?? 0,
+        lifelineQuantity: wireInt(j['lifelineQuantity'] ?? j['lifeline_quantity']) ?? 0,
         label: (j['label'] ?? '').toString(),
         colorHex: (j['colorHex'] ?? j['color_hex'] ?? '#94A3B8').toString(),
         rarity: (j['rarity'] ?? 'common').toString(),
@@ -185,13 +186,13 @@ class SpinResultDto {
   factory SpinResultDto.fromJson(Map<String, dynamic> j) => SpinResultDto(
         spun: (j['spun'] as bool?) ?? false,
         type: (j['type'] ?? '').toString(),
-        coins: _asInt(j['coins']) ?? 0,
-        xp: _asInt(j['xp']) ?? 0,
+        coins: wireInt(j['coins']) ?? 0,
+        xp: wireInt(j['xp']) ?? 0,
         lifelineSlug: j['lifelineSlug'] as String? ?? j['lifeline_slug'] as String?,
-        lifelineQuantity: _asInt(j['lifelineQuantity'] ?? j['lifeline_quantity']) ?? 0,
+        lifelineQuantity: wireInt(j['lifelineQuantity'] ?? j['lifeline_quantity']) ?? 0,
         label: (j['label'] ?? '').toString(),
-        prizeIndex: _asInt(j['prizeIndex'] ?? j['prize_index']),
-        newBalance: _asInt(j['newBalance'] ?? j['new_balance']),
+        prizeIndex: wireInt(j['prizeIndex'] ?? j['prize_index']),
+        newBalance: wireInt(j['newBalance'] ?? j['new_balance']),
         reason: j['reason'] as String?,
       );
 
@@ -218,12 +219,4 @@ class SpinResultDto {
         newBalance: newBalance,
         reason: reason,
       );
-}
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
 }

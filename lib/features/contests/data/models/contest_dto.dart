@@ -1,32 +1,8 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/contest.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is num) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 class ContestDto {
   const ContestDto({
@@ -49,20 +25,20 @@ class ContestDto {
 
   factory ContestDto.fromJson(Map<String, dynamic> j) {
     return ContestDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       title: (j['title'] as String?) ?? appL10n().contestFallbackTitle,
       description: j['description'] as String?,
       status: (j['status'] as String?) ?? (j['state'] as String?) ?? 'upcoming',
-      quizBlueprintId: _asInt(j['quiz_blueprint_id'] ?? j['blueprint_id']),
-      maxParticipants: _asInt(j['max_participants']),
-      entryFeeCoins: _asInt(j['entry_fee_coins'] ?? j['entry_fee']) ?? 0,
-      prizePoolCoins: _asInt(j['prize_pool_coins'] ?? j['prize_pool']) ?? 0,
+      quizBlueprintId: wireInt(j['quiz_blueprint_id'] ?? j['blueprint_id']),
+      maxParticipants: wireInt(j['max_participants']),
+      entryFeeCoins: wireInt(j['entry_fee_coins'] ?? j['entry_fee']) ?? 0,
+      prizePoolCoins: wireInt(j['prize_pool_coins'] ?? j['prize_pool']) ?? 0,
       prizeDistribution: j['prize_distribution'] is Map<String, dynamic> ? j['prize_distribution'] as Map<String, dynamic> : null,
       lifelinePolicy: j['lifeline_policy'] is Map<String, dynamic> ? j['lifeline_policy'] as Map<String, dynamic> : null,
       scoringRules: j['scoring_rules'] is Map<String, dynamic> ? j['scoring_rules'] as Map<String, dynamic> : null,
       tieBreakPolicy: j['tie_break_policy'] is Map<String, dynamic> ? j['tie_break_policy'] as Map<String, dynamic> : null,
-      startsAt: _asDate(j['starts_at']),
-      endsAt: _asDate(j['ends_at']),
+      startsAt: wireDate(j['starts_at']),
+      endsAt: wireDate(j['ends_at']),
       isRegistered: (j['is_registered'] as bool?) ?? (j['isRegistered'] as bool?) ?? false,
     );
   }
@@ -123,12 +99,12 @@ class ContestEntryDto {
       name = (j['display_name'] as String?) ?? (j['name'] as String?);
     }
     return ContestEntryDto(
-      id: _asInt(j['id']) ?? 0,
-      contestId: _asInt(j['quiz_contest_id'] ?? j['contest_id']) ?? 0,
-      userId: _asInt(j['user_id']) ?? 0,
-      score: _asDouble(j['score']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
+      contestId: wireInt(j['quiz_contest_id'] ?? j['contest_id']) ?? 0,
+      userId: wireInt(j['user_id']) ?? 0,
+      score: wireDouble(j['score']) ?? 0,
       completed: (j['completed'] as bool?) ?? false,
-      rank: _asInt(j['rank']),
+      rank: wireInt(j['rank']),
       displayName: name,
     );
   }
@@ -176,8 +152,8 @@ class ContestDetailDto {
       meta = ContestLeaderboardMeta(
         cached: (metaRaw['cached'] as bool?) ?? false,
         refreshed: (metaRaw['refreshed'] as bool?) ?? false,
-        generatedAt: _asDate(metaRaw['generated_at']),
-        refreshBudgetRemaining: _asInt(metaRaw['refresh_budget_remaining']) ?? 0,
+        generatedAt: wireDate(metaRaw['generated_at']),
+        refreshBudgetRemaining: wireInt(metaRaw['refresh_budget_remaining']) ?? 0,
       );
     }
 
@@ -249,9 +225,9 @@ class ContestAttemptDto {
   const ContestAttemptDto({required this.attemptId, this.expiresAt, this.serverNow});
 
   factory ContestAttemptDto.fromJson(Map<String, dynamic> j) => ContestAttemptDto(
-        attemptId: _asInt(j['attempt_id'] ?? j['attemptId'] ?? j['id']) ?? 0,
-        expiresAt: _asDate(j['expires_at']),
-        serverNow: _asDate(j['server_now']),
+        attemptId: wireInt(j['attempt_id'] ?? j['attemptId'] ?? j['id']) ?? 0,
+        expiresAt: wireDate(j['expires_at']),
+        serverNow: wireDate(j['server_now']),
       );
 
   final int attemptId;

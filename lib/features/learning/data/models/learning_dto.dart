@@ -1,32 +1,8 @@
 // ignore_for_file: omit_local_variable_types, noop_primitive_operations
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/learning.dart';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  if (v is num) return v.toDouble();
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
-
 // ── LearningTrack ─────────────────────────────────────────────────────────────
 
 class LearningTrackDto {
@@ -44,7 +20,7 @@ class LearningTrackDto {
   factory LearningTrackDto.fromJson(Map<String, dynamic> j) {
     // tolerant: server sends {id, title, description, track_type, status, syllabus_nodes_count, goals_count}
     // or {id, slug, name, trackType}. Ignore unknown keys.
-    final id = _asInt(j['id']) ?? 0;
+    final id = wireInt(j['id']) ?? 0;
     final title = (j['title'] ?? j['name'] ?? j['slug'] ?? '').toString();
     return LearningTrackDto(
       id: id,
@@ -52,8 +28,8 @@ class LearningTrackDto {
       description: j['description'] as String?,
       trackType: (j['track_type'] as String?) ?? (j['trackType'] as String?),
       status: j['status'] as String?,
-      syllabusNodesCount: _asInt(j['syllabus_nodes_count']),
-      goalsCount: _asInt(j['goals_count']),
+      syllabusNodesCount: wireInt(j['syllabus_nodes_count']),
+      goalsCount: wireInt(j['goals_count']),
       slug: (j['slug'] as String?) ?? (j['track_type'] as String?),
     );
   }
@@ -84,7 +60,7 @@ class LearningTrackDto {
 class LearningTrackRefDto {
   const LearningTrackRefDto({required this.id, required this.title, this.trackType});
   factory LearningTrackRefDto.fromJson(Map<String, dynamic> j) => LearningTrackRefDto(
-        id: _asInt(j['id']) ?? 0,
+        id: wireInt(j['id']) ?? 0,
         title: (j['title'] ?? j['name'] ?? '').toString(),
         trackType: (j['track_type'] as String?) ?? (j['trackType'] as String?),
       );
@@ -118,11 +94,11 @@ class LearningGoalDto {
     if (pm is Map) placement = pm.cast<String, dynamic>();
 
     return LearningGoalDto(
-      id: _asInt(j['id']) ?? 0,
-      trackId: _asInt(j['track_id'] ?? j['trackId']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
+      trackId: wireInt(j['track_id'] ?? j['trackId']) ?? 0,
       track: track,
-      targetDate: _asDate(j['target_date'] ?? j['targetDate']),
-      dailyMinutes: _asInt(j['daily_minutes'] ?? j['dailyMinutes']),
+      targetDate: wireDate(j['target_date'] ?? j['targetDate']),
+      dailyMinutes: wireInt(j['daily_minutes'] ?? j['dailyMinutes']),
       intensity: (j['intensity'] as String?)?.toString(),
       placementMeta: placement,
       status: (j['status'] as String?)?.toString(),
@@ -153,9 +129,9 @@ class LearningGoalDto {
 class LearningGoalReadinessDto {
   const LearningGoalReadinessDto({required this.goalId, required this.readiness, required this.topicCount});
   factory LearningGoalReadinessDto.fromJson(Map<String, dynamic> j) => LearningGoalReadinessDto(
-        goalId: _asInt(j['goal_id'] ?? j['goalId']) ?? 0,
-        readiness: _asInt(j['readiness']) ?? 0,
-        topicCount: _asInt(j['topic_count'] ?? j['topicCount']) ?? 0,
+        goalId: wireInt(j['goal_id'] ?? j['goalId']) ?? 0,
+        readiness: wireInt(j['readiness']) ?? 0,
+        topicCount: wireInt(j['topic_count'] ?? j['topicCount']) ?? 0,
       );
   final int goalId;
   final int readiness;
@@ -178,9 +154,9 @@ class DailyPlanItemDto {
   factory DailyPlanItemDto.fromJson(Map<String, dynamic> j) {
     return DailyPlanItemDto(
       type: (j['type'] as String?) ?? 'unknown',
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       label: (j['label'] as String?) ?? (j['title'] as String?) ?? '',
-      estimatedMinutes: _asInt(j['estimated_minutes'] ?? j['estimatedMinutes']) ?? 0,
+      estimatedMinutes: wireInt(j['estimated_minutes'] ?? j['estimatedMinutes']) ?? 0,
       completed: (j['completed'] as bool?) ?? false,
       raw: j,
     );
@@ -237,18 +213,18 @@ class DailyPlanDto {
     }
 
     // id may be string or int; goal_id similar. Provide defaults.
-    final id = _asInt(src['id'] ?? src['plan_id'] ?? 0) ?? 0;
-    final goalId = _asInt(src['goal_id'] ?? src['goalId'] ?? 0) ?? 0;
-    final planDate = _asDate(src['plan_date'] ?? src['planDate'] ?? src['date']) ?? DateTime.now();
+    final id = wireInt(src['id'] ?? src['plan_id'] ?? 0) ?? 0;
+    final goalId = wireInt(src['goal_id'] ?? src['goalId'] ?? 0) ?? 0;
+    final planDate = wireDate(src['plan_date'] ?? src['planDate'] ?? src['date']) ?? DateTime.now();
 
     return DailyPlanDto(
       id: id,
       goalId: goalId,
       planDate: planDate,
       items: items,
-      minutesBudget: _asInt(src['minutes_budget']),
+      minutesBudget: wireInt(src['minutes_budget']),
       status: src['status'] as String?,
-      completedItems: _asInt(src['completed_items']) ?? items.where((e) => e.completed).length,
+      completedItems: wireInt(src['completed_items']) ?? items.where((e) => e.completed).length,
     );
   }
 
@@ -302,7 +278,7 @@ class TodayPlanDtoLegacy {
 class KnowledgeAtomRefDto {
   const KnowledgeAtomRefDto({this.id, this.title, this.content});
   factory KnowledgeAtomRefDto.fromJson(Map<String, dynamic> j) => KnowledgeAtomRefDto(
-        id: _asInt(j['id']),
+        id: wireInt(j['id']),
         title: _extractTitle(j['title']),
         content: j['content'] as String?,
       );
@@ -346,13 +322,13 @@ class ReviewItemDto {
       atom = KnowledgeAtomRefDto.fromJson(atomRaw.cast<String, dynamic>());
     }
     return ReviewItemDto(
-      id: _asInt(j['id']) ?? 0,
-      knowledgeAtomId: _asInt(j['knowledge_atom_id'] ?? j['knowledgeAtomId']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
+      knowledgeAtomId: wireInt(j['knowledge_atom_id'] ?? j['knowledgeAtomId']) ?? 0,
       knowledgeAtom: atom,
-      dueAt: _asDate(j['due_at'] ?? j['dueAt'] ?? j['due_date']) ?? DateTime.now(),
-      intervalIndex: _asInt(j['interval_index']),
+      dueAt: wireDate(j['due_at'] ?? j['dueAt'] ?? j['due_date']) ?? DateTime.now(),
+      intervalIndex: wireInt(j['interval_index']),
       state: j['state'] as String?,
-      lapses: _asInt(j['lapses']),
+      lapses: wireInt(j['lapses']),
     );
   }
 
@@ -423,7 +399,7 @@ class LearningTutorReplyDto {
     return LearningTutorReplyDto(
       hint: hint,
       workedExample: weStr,
-      confidence: _asDouble(src['confidence']) ?? 0,
+      confidence: wireDouble(src['confidence']) ?? 0,
       nextStep: (src['next_step'] ?? src['nextStep'] ?? src['recommended_action'] ?? 'try_again').toString(),
     );
   }

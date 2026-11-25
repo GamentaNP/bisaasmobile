@@ -1,3 +1,5 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -172,8 +174,6 @@ class EconomyController extends Notifier<EconomyState> {
   EconomyRepository get _repo => ref.read(economyRepositoryProvider);
   static const _uuid = Uuid();
 
-  String _msg(Object e) => e.toString();
-
   // ── Donations (live) ──────────────────────────────────────────────────────
 
   Future<void> fetchLeaderboard() async {
@@ -183,10 +183,10 @@ class EconomyController extends Notifier<EconomyState> {
       state = state.copyWith(leaderboard: l, isLeaderboardLoading: false);
     } catch (e, st) {
       AppLogger.w('economy fetchLeaderboard failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(
         isLeaderboardLoading: false,
-        leaderboardError: _msg(e),
+        leaderboardError: errorMessage(e),
       );
     }
   }
@@ -198,8 +198,8 @@ class EconomyController extends Notifier<EconomyState> {
       state = state.copyWith(feed: f, isFeedLoading: false);
     } catch (e, st) {
       AppLogger.w('economy fetchFeed failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isFeedLoading: false, feedError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isFeedLoading: false, feedError: errorMessage(e));
     }
   }
 
@@ -219,8 +219,8 @@ class EconomyController extends Notifier<EconomyState> {
       return res;
     } catch (e, st) {
       AppLogger.w('economy freezeStreak failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isFreezingStreak: false, freezeMessage: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isFreezingStreak: false, freezeMessage: errorMessage(e));
       return null;
     }
   }
@@ -234,8 +234,8 @@ class EconomyController extends Notifier<EconomyState> {
       state = state.copyWith(wallet: w, isWalletLoading: false);
     } catch (e, st) {
       AppLogger.w('economy fetchWallet failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isWalletLoading: false, walletError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isWalletLoading: false, walletError: errorMessage(e));
     }
   }
 
@@ -259,8 +259,8 @@ class EconomyController extends Notifier<EconomyState> {
       );
     } catch (e, st) {
       AppLogger.w('economy fetchLedger failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLedgerLoading: false, ledgerError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLedgerLoading: false, ledgerError: errorMessage(e));
     }
   }
 
@@ -275,10 +275,10 @@ class EconomyController extends Notifier<EconomyState> {
       );
     } catch (e, st) {
       AppLogger.w('economy fetchWalletCategories failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(
         isCategoriesLoading: false,
-        categoriesError: _msg(e),
+        categoriesError: errorMessage(e),
       );
     }
   }

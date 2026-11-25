@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/providers.dart';
@@ -72,7 +73,7 @@ class CoachingController extends Notifier<CoachingState> {
       state = state.copyWith(dashboard: data, isLoading: false);
     } catch (e, st) {
       AppLogger.w('coaching load failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
@@ -84,7 +85,7 @@ class CoachingController extends Notifier<CoachingState> {
       state = state.copyWith(dashboard: data, isRefreshing: false);
     } catch (e, st) {
       AppLogger.w('coaching refresh failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(isRefreshing: false, error: e.toString());
     }
   }

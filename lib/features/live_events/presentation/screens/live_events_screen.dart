@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/utils/display_date.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../domain/entities/live_event.dart';
@@ -138,7 +139,7 @@ class _LiveEventCard extends StatelessWidget {
                 _Chip(icon: Icons.group_rounded, label: l10n.liveEventsJoined(event.activeParticipantCount, event.maxParticipants != null ? '/${event.maxParticipants}' : '')),
                 if (event.waitlistedParticipantCount > 0) _Chip(icon: Icons.hourglass_empty_rounded, label: l10n.liveEventWaitlisted(event.waitlistedParticipantCount), color: AppColors.streakOrange),
                 if (event.entryFeeCoins > 0) _Chip(icon: Icons.monetization_on_rounded, label: l10n.coinsBalance(event.entryFeeCoins), color: AppColors.coinYellow),
-                if (event.startsAt.isAfter(DateTime.now())) _Chip(icon: Icons.schedule_rounded, label: _fmt(event.startsAt)),
+                if (event.startsAt.isAfter(DateTime.now())) _Chip(icon: Icons.schedule_rounded, label: formatShortDateTime(event.startsAt)),
               ],
             ),
           ],
@@ -147,10 +148,6 @@ class _LiveEventCard extends StatelessWidget {
     );
   }
 
-  String _fmt(DateTime d) {
-    final l = d.toLocal();
-    return '${l.day}/${l.month} ${l.hour}:${l.minute.toString().padLeft(2, '0')}';
-  }
 }
 
 class _Chip extends StatelessWidget {

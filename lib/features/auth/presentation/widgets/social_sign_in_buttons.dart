@@ -6,7 +6,9 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/errors/error_handler.dart';
-import '../../data/datasources/social_sign_in_gateway.dart';
+import '../../data/datasources/social_sign_in_gateway.dart'
+    show SocialSignInException;
+import '../../domain/entities/social_provider.dart';
 import '../controllers/auth_controller.dart';
 
 /// Google / Apple sign-in buttons.

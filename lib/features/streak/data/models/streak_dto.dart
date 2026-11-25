@@ -1,32 +1,8 @@
 
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/streak.dart';
 import '../../domain/entities/streak_self_service.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is num) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 /// Tolerant DTO — additive parsing, never throws on missing/extra fields.
 /// Maps `GET /quiz/streak` → `{current_streak, longest_streak, last_activity_date, streak_multiplier}`
@@ -46,13 +22,13 @@ class StreakDto {
     // Handle both flat and nested under `streak` key for tolerance.
     final src = j['streak'] is Map<String, dynamic> ? j['streak'] as Map<String, dynamic> : j;
     return StreakDto(
-      currentStreak: _asInt(src['current_streak'] ?? src['currentStreak']) ?? 0,
-      longestStreak: _asInt(src['longest_streak'] ?? src['longestStreak']) ?? 0,
-      lastActivityDate: _asDate(src['last_activity_date'] ?? src['lastActivityDate'] ?? src['last_active'] ?? src['last_activity']),
-      streakMultiplier: _asDouble(src['streak_multiplier'] ?? src['streakMultiplier'] ?? src['multiplier']) ?? 1.0,
-      freezeCount: _asInt(src['streak_freeze_count'] ?? src['freeze_count'] ?? src['freezes']) ?? 0,
-      freezeUsedAt: _asDate(src['streak_freeze_used_at'] ?? src['freeze_used_at']),
-      frozenUntil: _asDate(src['streak_frozen_until'] ?? src['frozen_until'] ?? src['freeze_until']),
+      currentStreak: wireInt(src['current_streak'] ?? src['currentStreak']) ?? 0,
+      longestStreak: wireInt(src['longest_streak'] ?? src['longestStreak']) ?? 0,
+      lastActivityDate: wireDate(src['last_activity_date'] ?? src['lastActivityDate'] ?? src['last_active'] ?? src['last_activity']),
+      streakMultiplier: wireDouble(src['streak_multiplier'] ?? src['streakMultiplier'] ?? src['multiplier']) ?? 1.0,
+      freezeCount: wireInt(src['streak_freeze_count'] ?? src['freeze_count'] ?? src['freezes']) ?? 0,
+      freezeUsedAt: wireDate(src['streak_freeze_used_at'] ?? src['freeze_used_at']),
+      frozenUntil: wireDate(src['streak_frozen_until'] ?? src['frozen_until'] ?? src['freeze_until']),
     );
   }
 
@@ -94,7 +70,7 @@ class FreezeStreakDto {
     return FreezeStreakDto(
       frozen: (src['frozen'] as bool?) ?? (src['success'] as bool?) ?? false,
       message: src['message'] as String? ?? j['message'] as String?,
-      frozenUntil: _asDate(src['frozen_until'] ?? src['streak_frozen_until'] ?? src['frozenUntil']),
+      frozenUntil: wireDate(src['frozen_until'] ?? src['streak_frozen_until'] ?? src['frozenUntil']),
     );
   }
 
@@ -119,9 +95,9 @@ class StreakRepairEligibilityDto {
       StreakRepairEligibilityDto(
         eligible: (j['eligible'] as bool?) ?? false,
         reason: j['reason'] as String?,
-        missedDate: _asDate(j['missedDate'] ?? j['missed_date']),
-        expiresAt: _asDate(j['expiresAt'] ?? j['expires_at']),
-        repairsUsedThisMonth: _asInt(j['repairsUsedThisMonth'] ?? j['repairs_used_this_month']) ?? 0,
+        missedDate: wireDate(j['missedDate'] ?? j['missed_date']),
+        expiresAt: wireDate(j['expiresAt'] ?? j['expires_at']),
+        repairsUsedThisMonth: wireInt(j['repairsUsedThisMonth'] ?? j['repairs_used_this_month']) ?? 0,
       );
 
   final bool eligible;
@@ -149,9 +125,9 @@ class StreakInsuranceStatusDto {
 
   factory StreakInsuranceStatusDto.fromJson(Map<String, dynamic> j) =>
       StreakInsuranceStatusDto(
-        activeCount: _asInt(j['activeCount'] ?? j['active_count']) ?? 0,
-        maxActive: _asInt(j['maxActive'] ?? j['max_active']) ?? 0,
-        costCoins: _asInt(j['costCoins'] ?? j['cost_coins']) ?? 0,
+        activeCount: wireInt(j['activeCount'] ?? j['active_count']) ?? 0,
+        maxActive: wireInt(j['maxActive'] ?? j['max_active']) ?? 0,
+        costCoins: wireInt(j['costCoins'] ?? j['cost_coins']) ?? 0,
         canPurchase: (j['canPurchase'] as bool?) ?? false,
       );
 
@@ -181,7 +157,7 @@ class StreakInsuranceUsedDto {
     return StreakInsuranceUsedDto(
       used: streakMap is Map<String, dynamic>,
       streak: streakMap is Map<String, dynamic> ? StreakDto.fromJson(streakMap) : null,
-      activeInsuranceCount: _asInt(j['active_insurance_count'] ?? j['activeInsuranceCount']) ?? 0,
+      activeInsuranceCount: wireInt(j['active_insurance_count'] ?? j['activeInsuranceCount']) ?? 0,
     );
   }
 
@@ -218,9 +194,9 @@ class StreakRepairResultDto {
       repaired: explicit ?? hasStreak,
       message: j['message'] as String?,
       currentStreak: hasStreak
-          ? _asInt(streakMap['current_streak'] ?? streakMap['currentStreak'])
-          : _asInt(j['current_streak']),
-      coinBalance: _asInt(j['coin_balance'] ?? j['coinBalance']),
+          ? wireInt(streakMap['current_streak'] ?? streakMap['currentStreak'])
+          : wireInt(j['current_streak']),
+      coinBalance: wireInt(j['coin_balance'] ?? j['coinBalance']),
       reason: details is Map<String, dynamic> ? details['reason'] as String? : null,
     );
   }
@@ -253,8 +229,8 @@ class StreakInsuranceResultDto {
       StreakInsuranceResultDto(
         purchased: (j['purchased'] as bool?) ?? (j['success'] as bool?) ?? false,
         message: j['message'] as String?,
-        activeInsuranceCount: _asInt(j['active_insurance_count']),
-        coinBalance: _asInt(j['coin_balance']),
+        activeInsuranceCount: wireInt(j['active_insurance_count']),
+        coinBalance: wireInt(j['coin_balance']),
       );
 
   final bool purchased;
@@ -282,14 +258,14 @@ class StreakWagerDto {
 
   factory StreakWagerDto.fromJson(Map<String, dynamic> j) => StreakWagerDto(
         status: (j['status'] as String?) ?? 'active',
-        coins: _asInt(j['coins']) ?? 0,
-        days: _asInt(j['days']) ?? 0,
-        target: _asInt(j['target']) ?? 0,
-        current: _asInt(j['current']) ?? 0,
-        progressPercent: _asInt(j['progressPercent'] ?? j['progress_percent']) ?? 0,
-        reward: _asInt(j['reward']) ?? 0,
-        won: _asDate(j['won']),
-        lost: _asDate(j['lost']),
+        coins: wireInt(j['coins']) ?? 0,
+        days: wireInt(j['days']) ?? 0,
+        target: wireInt(j['target']) ?? 0,
+        current: wireInt(j['current']) ?? 0,
+        progressPercent: wireInt(j['progressPercent'] ?? j['progress_percent']) ?? 0,
+        reward: wireInt(j['reward']) ?? 0,
+        won: wireDate(j['won']),
+        lost: wireDate(j['lost']),
       );
 
   final String status;
@@ -319,7 +295,7 @@ class StreakWagerStatusDto {
         wager: j['wager'] is Map<String, dynamic>
             ? StreakWagerDto.fromJson(j['wager'] as Map<String, dynamic>)
             : null,
-        currentStreak: _asInt(j['currentStreak'] ?? j['current_streak']) ?? 0,
+        currentStreak: wireInt(j['currentStreak'] ?? j['current_streak']) ?? 0,
       );
 
   final StreakWagerDto? wager;
@@ -348,7 +324,7 @@ class StreakWagerOpenedDto {
       opened: explicit ?? hasWager,
       message: j['message'] as String?,
       wager: hasWager ? StreakWagerDto.fromJson(wagerRaw) : null,
-      coinBalance: _asInt(j['coin_balance'] ?? j['coinBalance']),
+      coinBalance: wireInt(j['coin_balance'] ?? j['coinBalance']),
       reason: details is Map<String, dynamic> ? details['reason'] as String? : null,
     );
   }

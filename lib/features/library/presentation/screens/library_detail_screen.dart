@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/security/sensitive_screen_guard.dart';
+import '../../../../shared/utils/display_date.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../controllers/library_controller.dart';
 import '../../domain/entities/library.dart';
@@ -325,7 +326,7 @@ class _FileHeaderCard extends StatelessWidget {
                 Text(l10n.libraryByUploader(file.uploader!.name), style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
                 const Spacer(),
                 if (file.createdAt != null)
-                  Text(_formatDate(file.createdAt!), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
+                  Text(formatIsoDate(file.createdAt!), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ],
@@ -334,7 +335,7 @@ class _FileHeaderCard extends StatelessWidget {
     );
   }
 
-  static String _formatDate(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
 }
 
 class _ActionRow extends StatelessWidget {
@@ -572,14 +573,14 @@ class _ReviewTile extends StatelessWidget {
           ],
           if (review.createdAt != null) ...[
             const SizedBox(height: 6),
-            Text(_formatDate(review.createdAt!), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(formatIsoDate(review.createdAt!), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ],
       ),
     );
   }
 
-  static String _formatDate(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
 }
 
 class _InlineError extends StatelessWidget {

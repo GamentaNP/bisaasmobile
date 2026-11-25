@@ -8,6 +8,8 @@
 /// **The dashboard returns a bare JSON array in `data`**, not `{items: [...]}`
 /// — 49 missions for the QA account, split daily / weekly / campaign. Keys are
 /// camelCase.
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
+
 class MissionDto {
   const MissionDto({
     required this.id,
@@ -33,19 +35,19 @@ class MissionDto {
   });
 
   factory MissionDto.fromJson(Map<String, dynamic> j) => MissionDto(
-        id: _asInt(j['id']) ?? 0,
+        id: wireInt(j['id']) ?? 0,
         key: (j['key'] ?? '').toString(),
         title: (j['title'] ?? '').toString(),
         description: j['description'] as String?,
         cadence: (j['cadence'] ?? '').toString(),
         targetAction: (j['targetAction'] ?? j['target_action'] ?? '').toString(),
-        targetCount: _asInt(j['targetCount'] ?? j['target_count']) ?? 0,
-        currentCount: _asInt(j['currentCount'] ?? j['current_count']) ?? 0,
-        progressPercent: _asInt(j['progressPercent'] ?? j['progress_percent']) ?? 0,
+        targetCount: wireInt(j['targetCount'] ?? j['target_count']) ?? 0,
+        currentCount: wireInt(j['currentCount'] ?? j['current_count']) ?? 0,
+        progressPercent: wireInt(j['progressPercent'] ?? j['progress_percent']) ?? 0,
         completed: (j['completed'] as bool?) ?? false,
         claimed: (j['claimed'] as bool?) ?? false,
-        rewardCoins: _asInt(j['rewardCoins'] ?? j['reward_coins']) ?? 0,
-        rewardXp: _asInt(j['rewardXp'] ?? j['reward_xp']) ?? 0,
+        rewardCoins: wireInt(j['rewardCoins'] ?? j['reward_coins']) ?? 0,
+        rewardXp: wireInt(j['rewardXp'] ?? j['reward_xp']) ?? 0,
         tier: j['tier'] as String?,
         autoClaim: (j['autoClaim'] as bool?) ?? (j['auto_claim'] as bool?) ?? false,
         scope: j['scope'] as String?,
@@ -106,12 +108,12 @@ class MissionClaimDto {
       // Success is signalled by the presence of a reason-free payload with
       // `claimed: true`; a refusal carries `reason` instead.
       claimed: (j['claimed'] as bool?) ?? ((j['reason'] as String?) == null),
-      coins: _asInt(j['coins']) ?? 0,
+      coins: wireInt(j['coins']) ?? 0,
       tier: j['tier'] as String?,
       reason: j['reason'] as String?,
-      lifelines: extras is Map<String, dynamic> ? _asInt(extras['lifelines']) : null,
-      cityResource: extras is Map<String, dynamic> ? _asInt(extras['cityResource']) : null,
-      exclusiveBadge: extras is Map<String, dynamic> ? _asInt(extras['exclusiveBadges']) : null,
+      lifelines: extras is Map<String, dynamic> ? wireInt(extras['lifelines']) : null,
+      cityResource: extras is Map<String, dynamic> ? wireInt(extras['cityResource']) : null,
+      exclusiveBadge: extras is Map<String, dynamic> ? wireInt(extras['exclusiveBadges']) : null,
     );
   }
 
@@ -134,9 +136,9 @@ class MissionBulkClaimDto {
   });
 
   factory MissionBulkClaimDto.fromJson(Map<String, dynamic> j) => MissionBulkClaimDto(
-        claimedCount: _asInt(j['claimedCount'] ?? j['claimed_count']) ?? 0,
-        coins: _asInt(j['coins']) ?? 0,
-        failedCount: _asInt(j['failedCount'] ?? j['failed_count']) ?? 0,
+        claimedCount: wireInt(j['claimedCount'] ?? j['claimed_count']) ?? 0,
+        coins: wireInt(j['coins']) ?? 0,
+        failedCount: wireInt(j['failedCount'] ?? j['failed_count']) ?? 0,
         failures: (j['failures'] as List? ?? const [])
             .whereType<Map<String, dynamic>>()
             .map((f) => (f['reason'] ?? 'Unknown').toString())
@@ -147,12 +149,4 @@ class MissionBulkClaimDto {
   final int coins;
   final int failedCount;
   final List<String> failures;
-}
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
 }

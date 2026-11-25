@@ -1,32 +1,8 @@
 
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/coaching.dart';
 import '../../../tutor/domain/entities/tutor.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  if (v is num) return v.toDouble();
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is String) return DateTime.tryParse(v);
-  if (v is DateTime) return v;
-  return null;
-}
 
 List<String> _asStringList(Object? v) {
   if (v == null) return [];
@@ -54,12 +30,12 @@ class ReadinessDto {
             : j;
     return ReadinessDto(
       goalId: goalId,
-      score: _asDouble(src['score'] ?? src['readiness_score'] ?? src['readiness'] ?? src['percentage']),
+      score: wireDouble(src['score'] ?? src['readiness_score'] ?? src['readiness'] ?? src['percentage']),
       level: src['level'] as String? ?? src['readiness_level'] as String?,
       breakdown: (src['breakdown'] as Map<String, dynamic>?) ?? (src['details'] as Map<String, dynamic>?) ?? {},
       missingTopics: _asStringList(src['missing_topics'] ?? src['weak_topics'] ?? src['gaps']),
       nextSteps: _asStringList(src['next_steps'] ?? src['recommendations'] ?? src['actions']),
-      updatedAt: _asDate(src['updated_at'] ?? src['created_at']),
+      updatedAt: wireDate(src['updated_at'] ?? src['created_at']),
     );
   }
 
@@ -119,11 +95,11 @@ class CoachingTodayDto {
     final src = j['today'] is Map<String, dynamic> ? j['today'] as Map<String, dynamic> : j;
     final tasks = _asStringList(src['tasks'] ?? src['items'] ?? src['plan'] ?? src['activities']);
     return CoachingTodayDto(
-      date: _asDate(src['date'] ?? src['due_at']) ?? DateTime.now(),
+      date: wireDate(src['date'] ?? src['due_at']) ?? DateTime.now(),
       title: (src['title'] ?? src['name']) as String?,
       tasks: tasks,
-      completedCount: _asInt(src['completed_count'] ?? src['completed']) ?? 0,
-      totalCount: _asInt(src['total_count'] ?? src['total'] ?? tasks.length) ?? tasks.length,
+      completedCount: wireInt(src['completed_count'] ?? src['completed']) ?? 0,
+      totalCount: wireInt(src['total_count'] ?? src['total'] ?? tasks.length) ?? tasks.length,
       summary: src['summary'] as String?,
     );
   }

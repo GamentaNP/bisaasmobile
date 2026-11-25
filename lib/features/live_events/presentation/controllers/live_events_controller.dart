@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/live_events_remote_data_source.dart';
 import '../../data/repositories/live_events_repository_impl.dart';
@@ -40,8 +41,6 @@ class LiveEventsController extends Notifier<LiveEventsState> {
 
   LiveEventsRepository get _repo => ref.read(liveEventsRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchLiveEvents({int limit = 25}) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -49,8 +48,8 @@ class LiveEventsController extends Notifier<LiveEventsState> {
       state = state.copyWith(items: items, isLoading: false);
     } catch (e, st) {
       AppLogger.w('live-events fetch failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 }
@@ -130,8 +129,6 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
 
   LiveEventsRepository get _repo => ref.read(liveEventsRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchDetail(int id) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -139,8 +136,8 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
       state = state.copyWith(detail: detail, isLoading: false);
     } catch (e, st) {
       AppLogger.w('live-event $id detail failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 
@@ -153,8 +150,8 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
       return true;
     } catch (e, st) {
       AppLogger.w('live-event $id register failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isRegistering: false, registerError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isRegistering: false, registerError: errorMessage(e));
       return false;
     }
   }
@@ -168,8 +165,8 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
       return true;
     } catch (e, st) {
       AppLogger.w('live-event $id unregister failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isRegistering: false, registerError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isRegistering: false, registerError: errorMessage(e));
       return false;
     }
   }
@@ -183,8 +180,8 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
       return true;
     } catch (e, st) {
       AppLogger.w('live-event $id checkIn failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCheckingIn: false, checkInError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCheckingIn: false, checkInError: errorMessage(e));
       return false;
     }
   }
@@ -196,8 +193,8 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
       state = state.copyWith(snapshot: snap, isSnapshotLoading: false);
     } catch (e, st) {
       AppLogger.w('live-event $id snapshot failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isSnapshotLoading: false, snapshotError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isSnapshotLoading: false, snapshotError: errorMessage(e));
     }
   }
 
@@ -211,8 +208,8 @@ class LiveEventDetailController extends Notifier<LiveEventDetailState> {
       return p;
     } catch (e, st) {
       AppLogger.w('live-event $id answer failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isAnswering: false, answerError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isAnswering: false, answerError: errorMessage(e));
       return null;
     }
   }

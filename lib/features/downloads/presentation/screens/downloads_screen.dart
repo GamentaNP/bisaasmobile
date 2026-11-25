@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/utils/display_date.dart';
 import '../../data/providers/downloads_providers.dart';
 import '../../domain/entities/offline_stats.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -125,7 +126,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 label: l10n.downloadsLastCached,
                 value: stats?.lastCached == null
                     ? 'Never'
-                    : _fmt(stats!.lastCached!),
+                    : formatIsoDateTime(stats!.lastCached!.toLocal()),
               ),
               _InfoRow(
                 icon: Icons.nights_stay_rounded,
@@ -164,11 +165,6 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     );
   }
 
-  String _fmt(DateTime d) {
-    final local = d.toLocal();
-    String two(int n) => n.toString().padLeft(2, '0');
-    return '${local.year}-${two(local.month)}-${two(local.day)} ${two(local.hour)}:${two(local.minute)}';
-  }
 }
 
 class _StatCard extends StatelessWidget {

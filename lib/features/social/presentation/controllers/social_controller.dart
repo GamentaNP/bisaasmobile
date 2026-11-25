@@ -1,3 +1,5 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
@@ -73,9 +75,6 @@ class SocialController extends Notifier<SocialState> {
 
   SocialRepository get _repo => ref.read(socialRepositoryProvider);
 
-  String _msg(Object e) =>
-      e is ApiException ? e.message : appL10n().socialReferralUnavailable;
-
   Future<void> load({bool force = false}) async {
     if (state.isLoading) return;
     if (state.hasLoaded && !force) return;
@@ -93,8 +92,8 @@ class SocialController extends Notifier<SocialState> {
       state = state.copyWith(isLoading: false, dashboard: dashboard, moment: moment);
     } catch (e, st) {
       AppLogger.w('social dashboard failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 

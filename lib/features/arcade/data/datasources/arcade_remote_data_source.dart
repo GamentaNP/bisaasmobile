@@ -26,6 +26,7 @@
 ///    attempt's status — the server is the one that ends it.
 library;
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_failure.dart';
@@ -207,7 +208,7 @@ class ArcadeRemoteDataSource {
       final courses = <ArcadeCourse>[];
       for (final row in raw) {
         if (row is! Map<String, dynamic>) continue;
-        final id = _asInt(row['id']);
+        final id = wireInt(row['id']);
         final name = '${row['name'] ?? row['title'] ?? ''}'.trim();
         if (id == null || name.isEmpty) continue;
         courses.add(ArcadeCourse(id: id, name: name));
@@ -227,7 +228,7 @@ class ArcadeRemoteDataSource {
       final rows = requireDataList(res.data, endpoint: path);
       final categories = <ArcadeCategory>[];
       for (final row in rows) {
-        final id = _asInt(row['id']);
+        final id = wireInt(row['id']);
         final name = '${row['name'] ?? ''}'.trim();
         if (id == null || name.isEmpty) continue;
         categories.add(
@@ -247,7 +248,7 @@ class ArcadeRemoteDataSource {
 
   /// Maps one `QuizQuestionResource` to the run's question.
   static ArcadeQuestion? _question(Map<String, dynamic> json) {
-    final id = _asInt(json['id']);
+    final id = wireInt(json['id']);
     if (id == null) return null;
     final body = '${json['question_text'] ?? json['body'] ?? ''}'.trim();
     if (body.isEmpty) return null;
@@ -275,7 +276,7 @@ class ArcadeRemoteDataSource {
           ArcadeOption(
             id: key,
             text: text.isEmpty ? key : text,
-            position: _asInt(option['position']) ?? i,
+            position: wireInt(option['position']) ?? i,
           ),
         );
       }
@@ -296,19 +297,14 @@ class ArcadeRemoteDataSource {
   }
 
   static ArcadeResult _result(Map<String, dynamic> data) => ArcadeResult(
-        attemptId: _asInt(data['attempt_id']) ?? 0,
+        attemptId: wireInt(data['attempt_id']) ?? 0,
         mode: '${data['mode'] ?? ''}',
         status: '${data['status'] ?? 'completed'}',
-        score: _asInt(data['score']) ?? 0,
-        correctCount: _asInt(data['correct_count']) ?? 0,
-        wrongCount: _asInt(data['wrong_count']) ?? 0,
-        skippedCount: _asInt(data['skipped_count']) ?? 0,
+        score: wireInt(data['score']) ?? 0,
+        correctCount: wireInt(data['correct_count']) ?? 0,
+        wrongCount: wireInt(data['wrong_count']) ?? 0,
+        skippedCount: wireInt(data['skipped_count']) ?? 0,
         completedAt: DateTime.tryParse('${data['completed_at'] ?? ''}'),
       );
 
-  static int? _asInt(Object? value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse('$value');
-  }
 }

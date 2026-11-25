@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 
+import '../errors/error_reporter.dart';
 import '../logging/app_logger.dart';
 import '../security/token_manager.dart';
 
@@ -89,6 +92,17 @@ class RefreshInterceptor extends Interceptor {
     } catch (e, st) {
       // Only a failed refresh/rotation reaches here.
       AppLogger.e('Refresh failed — clearing session', e, st);
+      unawaited(
+        ErrorReporter.report(
+          e,
+          st,
+          reason: 'token_refresh_failed',
+          context: {
+            'stage': 'refresh',
+            'status': status ?? 0,
+          },
+        ),
+      );
       await _tokens.clear();
       handler.next(err);
       for (final q in _queue) {

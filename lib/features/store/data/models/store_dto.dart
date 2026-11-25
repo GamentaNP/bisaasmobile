@@ -1,16 +1,6 @@
 // ignore_for_file: omit_local_variable_types
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/store.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-DateTime? _asDate(Object? v) => v is String ? DateTime.tryParse(v) : null;
 
 // ── Premium asset (WO-3 — mock tolerant) ─────────────────────────────────────
 
@@ -40,7 +30,7 @@ class StoreAssetDto {
       slug: (j['slug'] as String?) ?? (j['key'] as String?) ?? '',
       name: (j['name'] as String?) ?? (j['title'] as String?) ?? '',
       description: j['description'] as String?,
-      priceCoins: _asInt(j['price_coins'] ?? j['priceCoins'] ?? j['price'] ?? j['coin_price']) ?? 0,
+      priceCoins: wireInt(j['price_coins'] ?? j['priceCoins'] ?? j['price'] ?? j['coin_price']) ?? 0,
       rarity: (j['rarity'] as String?) ?? 'common',
       imageUrl: (j['image_url'] as String?) ?? (j['imageUrl'] as String?) ?? j['icon'] as String?,
       category: j['category'] as String?,
@@ -143,8 +133,8 @@ class MarketListingDto {
     return MarketListingDto(
       asset: assetDto,
       sellerName: (j['seller_name'] as String?) ?? (j['sellerName'] as String?) ?? 'Anonymous',
-      priceCoins: _asInt(j['price_coins'] ?? j['price']) ?? assetDto.priceCoins,
-      listedAt: _asDate(j['listed_at'] ?? j['created_at']),
+      priceCoins: wireInt(j['price_coins'] ?? j['price']) ?? assetDto.priceCoins,
+      listedAt: wireDate(j['listed_at'] ?? j['created_at']),
     );
   }
 
@@ -162,8 +152,8 @@ class StorePurchaseResultDto {
   factory StorePurchaseResultDto.fromJson(Map<String, dynamic> j) => StorePurchaseResultDto(
         success: (j['success'] as bool?) ?? (j['purchased'] as bool?) ?? false,
         assetId: j['asset_id']?.toString() ?? (j['assetId'] as String?) ?? j['id']?.toString(),
-        coinsSpent: _asInt(j['coins_spent'] ?? j['coinsSpent'] ?? j['price_coins']) ?? 0,
-        newBalance: _asInt(j['new_balance'] ?? j['balance'] ?? j['coins']),
+        coinsSpent: wireInt(j['coins_spent'] ?? j['coinsSpent'] ?? j['price_coins']) ?? 0,
+        newBalance: wireInt(j['new_balance'] ?? j['balance'] ?? j['coins']),
         message: j['message'] as String?,
       );
 

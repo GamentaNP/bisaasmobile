@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/contests_remote_data_source.dart';
 import '../../data/repositories/contests_repository_impl.dart';
@@ -65,8 +66,6 @@ class ContestsController extends Notifier<ContestsState> {
 
   ContestsRepository get _repo => ref.read(contestsRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchContests({
     String? cursor,
     int perPage = 20,
@@ -85,8 +84,8 @@ class ContestsController extends Notifier<ContestsState> {
       );
     } catch (e, st) {
       AppLogger.w('contests fetch failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 
@@ -172,8 +171,6 @@ class ContestDetailController extends Notifier<ContestDetailState> {
 
   ContestsRepository get _repo => ref.read(contestsRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchDetail(int id) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -181,8 +178,8 @@ class ContestDetailController extends Notifier<ContestDetailState> {
       state = state.copyWith(detail: detail, isLoading: false);
     } catch (e, st) {
       AppLogger.w('contest $id detail failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 
@@ -195,8 +192,8 @@ class ContestDetailController extends Notifier<ContestDetailState> {
       return true;
     } catch (e, st) {
       AppLogger.w('contest $id join failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isJoining: false, joinError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isJoining: false, joinError: errorMessage(e));
       return false;
     }
   }
@@ -209,8 +206,8 @@ class ContestDetailController extends Notifier<ContestDetailState> {
       return attempt;
     } catch (e, st) {
       AppLogger.w('contest $id enter failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isEntering: false, enterError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isEntering: false, enterError: errorMessage(e));
       return null;
     }
   }
@@ -222,8 +219,8 @@ class ContestDetailController extends Notifier<ContestDetailState> {
       state = state.copyWith(leaderboard: entries, isLeaderboardLoading: false);
     } catch (e, st) {
       AppLogger.w('contest $id leaderboard failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLeaderboardLoading: false, leaderboardError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLeaderboardLoading: false, leaderboardError: errorMessage(e));
     }
   }
 
@@ -234,8 +231,8 @@ class ContestDetailController extends Notifier<ContestDetailState> {
       state = state.copyWith(recap: recap, isRecapLoading: false);
     } catch (e, st) {
       AppLogger.w('contest $id recap failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isRecapLoading: false, recapError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isRecapLoading: false, recapError: errorMessage(e));
     }
   }
 
@@ -246,8 +243,8 @@ class ContestDetailController extends Notifier<ContestDetailState> {
       return true;
     } catch (e, st) {
       AppLogger.w('contest $id leave failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(joinError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(joinError: errorMessage(e));
       return false;
     }
   }

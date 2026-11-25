@@ -1,4 +1,4 @@
-import '../../data/datasources/social_sign_in_gateway.dart';
+import '../entities/social_provider.dart';
 import '../entities/user.dart';
 
 abstract class AuthRepository {

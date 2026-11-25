@@ -26,6 +26,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 
+import '../errors/error_reporter.dart';
 import '../logging/app_logger.dart';
 import 'daily_pack_cache.dart';
 
@@ -114,6 +115,14 @@ class DailyQuizPrefetcher {
       final data = _packData(res.data);
       if (data == null) {
         AppLogger.w('DailyQuizPrefetch: unparseable pack payload');
+        unawaited(
+          ErrorReporter.report(
+            StateError('unparseable daily pack body'),
+            StackTrace.current,
+            reason: 'daily_pack_shape',
+            context: const {'stage': 'prefetch'},
+          ),
+        );
         return false;
       }
       final quizId = data['quiz_id'];
@@ -133,8 +142,16 @@ class DailyQuizPrefetcher {
       // Offline / unreachable — expected while device has no network. Stay quiet.
       AppLogger.i('DailyQuizPrefetch skipped (network): ${e.type}');
       return false;
-    } catch (e) {
+    } catch (e, st) {
       AppLogger.w('DailyQuizPrefetch failed: $e');
+      unawaited(
+        ErrorReporter.report(
+          e,
+          st,
+          reason: 'daily_pack_unexpected',
+          context: const {'stage': 'prefetch'},
+        ),
+      );
       return false;
     }
   }

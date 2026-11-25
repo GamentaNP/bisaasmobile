@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +71,7 @@ class BookCatalogController extends Notifier<BookCatalogState> {
       state = state.copyWith(isLoading: false, books: books);
     } catch (e, st) {
       AppLogger.w('book catalog failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(
         isLoading: false,
         error: e is ApiException ? e.message : 'Could not load books',
@@ -161,7 +162,7 @@ class BookDetailController extends Notifier<BookDetailState> {
       state = state.copyWith(isLoading: false, book: book, progress: progress);
     } catch (e, st) {
       AppLogger.w('book detail failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(
         isLoading: false,
         error: e is ApiException ? e.message : 'Could not load this book',

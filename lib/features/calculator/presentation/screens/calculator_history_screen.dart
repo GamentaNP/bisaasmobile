@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/utils/display_date.dart';
 import '../controllers/calculator_controller.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -98,7 +99,7 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
                         ),
-                        trailing: Text(_fmt(entry.createdAt), style: const TextStyle(fontSize: 11, color: AppColors.textTertiaryDark)),
+                        trailing: Text(formatIsoDateTime(entry.createdAt), style: const TextStyle(fontSize: 11, color: AppColors.textTertiaryDark)),
                       ),
                     );
                   },
@@ -106,8 +107,4 @@ class _CalculatorHistoryScreenState extends ConsumerState<CalculatorHistoryScree
     );
   }
 
-  static String _fmt(DateTime t) {
-    String two(int v) => v.toString().padLeft(2, '0');
-    return '${t.year}-${two(t.month)}-${two(t.day)} ${two(t.hour)}:${two(t.minute)}';
-  }
 }

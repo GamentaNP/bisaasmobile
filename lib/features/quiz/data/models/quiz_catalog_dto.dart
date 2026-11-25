@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/quiz_catalog.dart';
 
 class QuizCourseDto {
@@ -103,7 +104,7 @@ class AttemptReviewEntryDto {
           j['selected_option_text']?.toString(),
       correctOptionText: j['correct_option_text']?.toString(),
       explanation: j['explanation']?.toString(),
-      difficulty: _asInt(j['difficulty']),
+      difficulty: wireInt(j['difficulty']),
       isCorrect: _asBool(j['is_correct']),
       isSkipped: _asBool(j['is_skipped']),
     );
@@ -120,12 +121,6 @@ class AttemptReviewEntryDto {
         isCorrect: isCorrect,
         isSkipped: isSkipped,
       );
-}
-
-int? _asInt(Object? v) {
-  if (v is int) return v;
-  if (v is num) return v.toInt();
-  return int.tryParse(v?.toString() ?? '');
 }
 
 bool? _asBool(Object? v) {

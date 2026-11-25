@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../analytics/crash_reporting.dart';
 import '../logging/app_logger.dart';
 
 /// Structured network logging with `X-Request-Id` and `X-RateLimit-*`.
@@ -43,6 +46,13 @@ class AppLoggingInterceptor extends Interceptor {
       // query values (search terms, ids) and exception text can carry PII.
       final path = err.requestOptions.uri.replace(query: '').toString();
       AppLogger.w('<-- ERR ${err.response?.statusCode} $path id=$id');
+      // One bounded, structured breadcrumb per failed request: enough to see
+      // 429/backoff impact without logging paths with user query values.
+      unawaited(
+        CrashReporting.log(
+          'api_error:${err.response?.statusCode ?? 0}:${err.requestOptions.method}',
+        ),
+      );
     }
     handler.next(err);
   }

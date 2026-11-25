@@ -18,12 +18,7 @@
 /// `second_chance`, `audience_poll`, `reveal_correct` — note **`fifty_fifty`,
 /// not `50_50`**, which the previous client placeholder assumed.
 
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is num) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  return null;
-}
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 
 /// One lifeline as the server offers it for this attempt.
 class LifelineDto {
@@ -51,15 +46,15 @@ class LifelineDto {
         slug: (j['slug'] ?? '').toString(),
         name: (j['name'] ?? '').toString(),
         iconUrl: j['iconUrl'] as String? ?? j['icon_url'] as String?,
-        costCoins: _asInt(j['costCoins'] ?? j['cost_coins']) ?? 0,
-        baseCostCoins: _asInt(j['baseCostCoins'] ?? j['base_cost_coins']),
-        discountPct: _asInt(j['discountPct'] ?? j['discount_pct']),
+        costCoins: wireInt(j['costCoins'] ?? j['cost_coins']) ?? 0,
+        baseCostCoins: wireInt(j['baseCostCoins'] ?? j['base_cost_coins']),
+        discountPct: wireInt(j['discountPct'] ?? j['discount_pct']),
         effectType: (j['effectType'] ?? j['effect_type'] ?? '').toString(),
-        maxUsesPerAttempt: _asInt(j['maxUsesPerAttempt'] ?? j['max_uses_per_attempt']) ?? 0,
-        purchasedUses: _asInt(j['purchasedUses'] ?? j['purchased_uses']) ?? 0,
-        usedUses: _asInt(j['usedUses'] ?? j['used_uses']) ?? 0,
-        remainingUses: _asInt(j['remainingUses'] ?? j['remaining_uses']) ?? 0,
-        inventoryUses: _asInt(j['inventoryUses'] ?? j['inventory_uses']) ?? 0,
+        maxUsesPerAttempt: wireInt(j['maxUsesPerAttempt'] ?? j['max_uses_per_attempt']) ?? 0,
+        purchasedUses: wireInt(j['purchasedUses'] ?? j['purchased_uses']) ?? 0,
+        usedUses: wireInt(j['usedUses'] ?? j['used_uses']) ?? 0,
+        remainingUses: wireInt(j['remainingUses'] ?? j['remaining_uses']) ?? 0,
+        inventoryUses: wireInt(j['inventoryUses'] ?? j['inventory_uses']) ?? 0,
         canPurchase: (j['canPurchase'] as bool?) ?? (j['can_purchase'] as bool?) ?? false,
         canUse: (j['canUse'] as bool?) ?? (j['can_use'] as bool?) ?? false,
         lockedByMode: (j['lockedByMode'] as bool?) ?? (j['locked_by_mode'] as bool?) ?? false,
@@ -119,7 +114,7 @@ class LifelineCatalogueDto {
 
   factory LifelineCatalogueDto.fromJson(Map<String, dynamic> j) => LifelineCatalogueDto(
         enabled: (j['enabled'] as bool?) ?? false,
-        walletBalance: _asInt(j['walletBalance'] ?? j['wallet_balance']) ?? 0,
+        walletBalance: wireInt(j['walletBalance'] ?? j['wallet_balance']) ?? 0,
         lifelines: (j['lifelines'] as List? ?? const [])
             .cast<Map<String, dynamic>>()
             .map(LifelineDto.fromJson)
@@ -170,7 +165,7 @@ class LifelineEffectDto {
 
   factory LifelineEffectDto.fromJson(Map<String, dynamic> j) => LifelineEffectDto(
         effectType: (j['effect_type'] ?? j['effectType'] ?? '').toString(),
-        questionId: _asInt(j['question_id'] ?? j['questionId']),
+        questionId: wireInt(j['question_id'] ?? j['questionId']),
         hiddenOptionKeys: (j['hidden_option_keys'] as List? ?? const [])
             .map((e) => e.toString())
             .toList(),
@@ -178,11 +173,11 @@ class LifelineEffectDto {
         hint: j['hint'] as String?,
         explanation: j['explanation'] as String?,
         poll: j['poll'],
-        freezeSeconds: _asInt(j['freeze_seconds'] ?? j['freezeSeconds']),
+        freezeSeconds: wireInt(j['freeze_seconds'] ?? j['freezeSeconds']),
         frozenUntil: DateTime.tryParse((j['frozen_until'] ?? j['frozenUntil'])?.toString() ?? ''),
-        extraSeconds: _asInt(j['extra_seconds'] ?? j['extraSeconds']),
+        extraSeconds: wireInt(j['extra_seconds'] ?? j['extraSeconds']),
         shieldActive: j['shield_active'] as bool? ?? j['shieldActive'] as bool?,
-        retryQuestionId: _asInt(j['retry_question_id'] ?? j['retryQuestionId']),
+        retryQuestionId: wireInt(j['retry_question_id'] ?? j['retryQuestionId']),
         doubleXpActive: j['double_xp_active'] as bool? ?? j['doubleXpActive'] as bool?,
       );
 
@@ -227,7 +222,7 @@ class LifelineUseResultDto {
 
   factory LifelineUseResultDto.fromJson(Map<String, dynamic> j) => LifelineUseResultDto(
         slug: (j['slug'] ?? '').toString(),
-        remainingUses: _asInt(j['remaining_uses'] ?? j['remainingUses']) ?? 0,
+        remainingUses: wireInt(j['remaining_uses'] ?? j['remainingUses']) ?? 0,
         effect: LifelineEffectDto.fromJson(
           j['effect'] is Map<String, dynamic> ? j['effect'] as Map<String, dynamic> : const {},
         ),

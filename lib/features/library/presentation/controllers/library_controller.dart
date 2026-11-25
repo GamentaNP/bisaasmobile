@@ -1,6 +1,7 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../data/datasources/library_remote_data_source.dart';
@@ -234,11 +235,6 @@ class LibraryController extends Notifier<LibraryState> {
 
   LibraryRepository get _repo => ref.read(libraryRepositoryProvider);
 
-  String _msg(Object e) {
-    if (e is ApiException) return e.message;
-    return e.toString();
-  }
-
   // ── Categories ──────────────────────────────────────────────────────────
 
   Future<void> fetchCategories() async {
@@ -248,8 +244,8 @@ class LibraryController extends Notifier<LibraryState> {
       state = state.copyWith(categories: cats, isCategoriesLoading: false);
     } catch (e, st) {
       AppLogger.w('library fetchCategories failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCategoriesLoading: false, categoriesError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCategoriesLoading: false, categoriesError: errorMessage(e));
     }
   }
 
@@ -298,8 +294,8 @@ class LibraryController extends Notifier<LibraryState> {
       );
     } catch (e, st) {
       AppLogger.w('library fetchFiles failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isFilesLoading: false, filesError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isFilesLoading: false, filesError: errorMessage(e));
     }
   }
 
@@ -315,8 +311,8 @@ class LibraryController extends Notifier<LibraryState> {
       state = state.copyWith(selectedFile: file, isFileLoading: false);
     } catch (e, st) {
       AppLogger.w('library fetchFile $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isFileLoading: false, fileError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isFileLoading: false, fileError: errorMessage(e));
     }
   }
 
@@ -334,8 +330,8 @@ class LibraryController extends Notifier<LibraryState> {
       return result;
     } catch (e, st) {
       AppLogger.w('library unlock $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isUnlocking: false, unlockError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isUnlocking: false, unlockError: errorMessage(e));
       return null;
     }
   }
@@ -350,8 +346,8 @@ class LibraryController extends Notifier<LibraryState> {
       return url;
     } catch (e, st) {
       AppLogger.w('library download $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isDownloading: false, downloadError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isDownloading: false, downloadError: errorMessage(e));
       return null;
     }
   }
@@ -378,8 +374,8 @@ class LibraryController extends Notifier<LibraryState> {
       );
     } catch (e, st) {
       AppLogger.w('library fetchReviews $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isReviewsLoading: false, reviewsError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isReviewsLoading: false, reviewsError: errorMessage(e));
     }
   }
 
@@ -397,8 +393,8 @@ class LibraryController extends Notifier<LibraryState> {
       return review;
     } catch (e, st) {
       AppLogger.w('library submitReview $slug failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isSubmittingReview: false, submitReviewError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isSubmittingReview: false, submitReviewError: errorMessage(e));
       return null;
     }
   }
@@ -412,8 +408,8 @@ class LibraryController extends Notifier<LibraryState> {
       state = state.copyWith(trending: items, isTrendingLoading: false);
     } catch (e, st) {
       AppLogger.w('library trending failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isTrendingLoading: false, trendingError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isTrendingLoading: false, trendingError: errorMessage(e));
     }
   }
 
@@ -429,8 +425,8 @@ class LibraryController extends Notifier<LibraryState> {
       state = state.copyWith(recommendations: items, isRecommendationsLoading: false);
     } catch (e, st) {
       AppLogger.w('library recommendations failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isRecommendationsLoading: false, recommendationsError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isRecommendationsLoading: false, recommendationsError: errorMessage(e));
     }
   }
 
@@ -446,8 +442,8 @@ class LibraryController extends Notifier<LibraryState> {
       state = state.copyWith(myUnlocks: newItems, isMyUnlocksLoading: false);
     } catch (e, st) {
       AppLogger.w('library fetchMyUnlocks failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isMyUnlocksLoading: false, myUnlocksError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isMyUnlocksLoading: false, myUnlocksError: errorMessage(e));
     }
   }
 

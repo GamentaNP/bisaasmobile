@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/achievements.dart';
 
@@ -58,10 +59,10 @@ class AchievementProgressDto {
 
   factory AchievementProgressDto.fromJson(Map<String, dynamic> j) {
     return AchievementProgressDto(
-      achievementId: _asInt(j['achievement_id']),
+      achievementId: wireIntOrZero(j['achievement_id']),
       isCompleted: _asBool(j['is_completed']),
-      progressCurrent: _asInt(j['progress_current']),
-      progressTarget: _asInt(j['progress_target']),
+      progressCurrent: wireIntOrZero(j['progress_current']),
+      progressTarget: wireIntOrZero(j['progress_target']),
       key: j['key']?.toString(),
       name: j['name']?.toString(),
       completedAt: j['completed_at']?.toString(),
@@ -92,7 +93,7 @@ class AchievementsBundleDto {
     for (final bucket in const ['unlocked', 'in_progress', 'locked']) {
       final rows = catalog.buckets[bucket] ?? const <Map<String, dynamic>>[];
       for (final item in rows) {
-        final id = _asInt(item['id'] ?? item['achievement_id']);
+        final id = wireIntOrZero(item['id'] ?? item['achievement_id']);
         final p = progressMap[id];
         achievements.add(
           AchievementEntry(
@@ -114,12 +115,6 @@ class AchievementsBundleDto {
       recentCount: recentCount,
     );
   }
-}
-
-int _asInt(Object? value) {
-  if (value is int) return value;
-  if (value is num) return value.toInt();
-  return int.tryParse(value?.toString() ?? '') ?? 0;
 }
 
 bool _asBool(Object? value) {

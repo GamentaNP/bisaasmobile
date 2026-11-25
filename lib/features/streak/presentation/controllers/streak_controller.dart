@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/streak_remote_data_source.dart';
 import '../../data/repositories/streak_repository_impl.dart';
@@ -102,8 +103,6 @@ class StreakController extends Notifier<StreakState> {
 
   StreakRepository get _repo => ref.read(streakRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchStreak() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -111,8 +110,8 @@ class StreakController extends Notifier<StreakState> {
       state = state.copyWith(streak: streak, isLoading: false);
     } catch (e, st) {
       AppLogger.w('streak fetch failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     }
   }
 
@@ -167,8 +166,8 @@ class StreakController extends Notifier<StreakState> {
       return reason;
     } catch (e, st) {
       AppLogger.w('streak repair failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      final msg = _msg(e);
+      debugStack(st);
+      final msg = errorMessage(e);
       state = state.copyWith(isSelfServiceBusy: false, selfServiceError: msg);
       return msg;
     }
@@ -189,8 +188,8 @@ class StreakController extends Notifier<StreakState> {
       return reason;
     } catch (e, st) {
       AppLogger.w('streak insurance purchase failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      final msg = _msg(e);
+      debugStack(st);
+      final msg = errorMessage(e);
       state = state.copyWith(isSelfServiceBusy: false, selfServiceError: msg);
       return msg;
     }
@@ -211,8 +210,8 @@ class StreakController extends Notifier<StreakState> {
       return reason;
     } catch (e, st) {
       AppLogger.w('streak insurance use failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      final msg = _msg(e);
+      debugStack(st);
+      final msg = errorMessage(e);
       state = state.copyWith(isSelfServiceBusy: false, selfServiceError: msg);
       return msg;
     }
@@ -233,8 +232,8 @@ class StreakController extends Notifier<StreakState> {
       return reason;
     } catch (e, st) {
       AppLogger.w('streak wager failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      final msg = _msg(e);
+      debugStack(st);
+      final msg = errorMessage(e);
       state = state.copyWith(isSelfServiceBusy: false, selfServiceError: msg);
       return msg;
     }
@@ -277,8 +276,8 @@ class StreakController extends Notifier<StreakState> {
       }
     } catch (e, st) {
       AppLogger.w('streak freeze failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isFreezing: false, freezeError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isFreezing: false, freezeError: errorMessage(e));
       return false;
     }
   }

@@ -1,8 +1,9 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/localization/l10n.dart';
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/syllabus_remote_data_source.dart';
 import '../../data/repositories/syllabus_repository_impl.dart';
@@ -107,9 +108,6 @@ class SyllabusVersionsController extends Notifier<SyllabusVersionsState> {
 
   SyllabusRepository get _repo => ref.read(syllabusRepositoryProvider);
 
-  String _msg(Object e) =>
-      e is ApiException ? e.message : appL10n().syllabusVersionsLoadFailed;
-
   /// True while a request is genuinely in flight.
   ///
   /// This cannot be read from `state.isLoading`, because `build()` starts in the
@@ -127,8 +125,8 @@ class SyllabusVersionsController extends Notifier<SyllabusVersionsState> {
       state = state.copyWith(isLoading: false, versions: versions);
     } catch (e, st) {
       AppLogger.w('syllabus versions failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isLoading: false, error: errorMessage(e));
     } finally {
       // Released in `finally` so a thrown error cannot wedge the controller into
       // a permanently-loading state with no way to retry.
@@ -189,7 +187,7 @@ class SyllabusTreeController extends Notifier<SyllabusTreeState> {
       }
     } catch (e, st) {
       AppLogger.w('syllabus tree failed for $publicId: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       state = state.copyWith(
         isLoading: false,
         error: appL10n().syllabusTreeLoadFailed,

@@ -1,8 +1,9 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../app/providers.dart';
 import '../../../../shared/domain/paginated.dart';
@@ -114,8 +115,6 @@ class PracticeController extends Notifier<PracticeState> {
   PracticeRepository get _repo => ref.read(practiceRepositoryProvider);
   static const _uuid = Uuid();
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   Future<void> fetchBookmarks({String? cursor, bool append = false}) async {
     state = state.copyWith(isBookmarksLoading: true, bookmarksError: null);
     try {
@@ -124,8 +123,8 @@ class PracticeController extends Notifier<PracticeState> {
       state = state.copyWith(bookmarks: newList, bookmarksPagination: paginated.pagination, isBookmarksLoading: false);
     } catch (e, st) {
       AppLogger.w('practice fetchBookmarks failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isBookmarksLoading: false, bookmarksError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isBookmarksLoading: false, bookmarksError: errorMessage(e));
     }
   }
 
@@ -137,8 +136,8 @@ class PracticeController extends Notifier<PracticeState> {
       state = state.copyWith(history: newList, historyPagination: paginated.pagination, isHistoryLoading: false);
     } catch (e, st) {
       AppLogger.w('practice fetchHistory failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isHistoryLoading: false, historyError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isHistoryLoading: false, historyError: errorMessage(e));
     }
   }
 
@@ -160,8 +159,8 @@ class PracticeController extends Notifier<PracticeState> {
       return true;
     } catch (e, st) {
       AppLogger.w('practice setBookmark $questionId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isTogglingBookmark: false, toggleError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isTogglingBookmark: false, toggleError: errorMessage(e));
       return false;
     }
   }
@@ -197,8 +196,8 @@ class PracticeController extends Notifier<PracticeState> {
       return drill;
     } catch (e, st) {
       AppLogger.w('practice startDrill failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isStartingSession: false, startError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isStartingSession: false, startError: errorMessage(e));
       return null;
     }
   }
@@ -223,8 +222,8 @@ class PracticeController extends Notifier<PracticeState> {
       return drill;
     } catch (e, st) {
       AppLogger.w('practice startBookmarkDrill failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isStartingSession: false, startError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isStartingSession: false, startError: errorMessage(e));
       return null;
     }
   }
@@ -252,7 +251,7 @@ class PracticeController extends Notifier<PracticeState> {
       return true;
     } catch (e, st) {
       AppLogger.w('practice submitAnswer $attemptId/$questionId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
+      debugStack(st);
       return false;
     }
   }
@@ -271,8 +270,8 @@ class PracticeController extends Notifier<PracticeState> {
       return result;
     } catch (e, st) {
       AppLogger.w('practice completeAttempt $attemptId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCompletingSession: false, startError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCompletingSession: false, startError: errorMessage(e));
       return null;
     }
   }

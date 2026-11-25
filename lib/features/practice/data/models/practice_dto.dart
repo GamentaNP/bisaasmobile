@@ -1,21 +1,6 @@
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/practice.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 /// `difficulty` is a string on the wire ("easy" | "medium" | "hard" |
 /// "expert"). A numeric difficulty is tolerated because the field is loosely
@@ -82,16 +67,16 @@ class PracticeQuestionDto {
     }
 
     return PracticeQuestionDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       questionText: (j['question_text'] ?? j['questionText'] ?? j['body'] ?? j['title'] ?? '').toString(),
       type: j['type'] as String?,
       // `difficulty` is a *string* on the wire ("easy" | "medium" | "hard" |
       // "expert"). The previous parser read it as an int, so every question
       // reported a null difficulty and the UI showed a bare "-".
       difficulty: _asDifficulty(j['difficulty']),
-      points: _asInt(j['points']),
-      categoryId: _asInt(j['quiz_category_id'] ?? j['category_id']),
-      courseId: _asInt(j['quiz_course_id'] ?? j['course_id']),
+      points: wireInt(j['points']),
+      categoryId: wireInt(j['quiz_category_id'] ?? j['category_id']),
+      courseId: wireInt(j['quiz_course_id'] ?? j['course_id']),
       options: options,
     );
   }
@@ -127,10 +112,10 @@ class BookmarkedQuestionDto {
     DateTime? bookmarkedAt;
     if (j['question'] is Map<String, dynamic>) {
       qJson = j['question'] as Map<String, dynamic>;
-      bookmarkedAt = _asDate(j['created_at'] ?? j['bookmarked_at']);
+      bookmarkedAt = wireDate(j['created_at'] ?? j['bookmarked_at']);
     } else {
       qJson = j;
-      bookmarkedAt = _asDate(j['created_at'] ?? j['bookmarked_at']);
+      bookmarkedAt = wireDate(j['created_at'] ?? j['bookmarked_at']);
     }
     return BookmarkedQuestionDto(question: PracticeQuestionDto.fromJson(qJson), bookmarkedAt: bookmarkedAt);
   }
@@ -161,16 +146,16 @@ class PracticeAttemptHistoryDto {
     // Shape from paginated history: QuizAttempt model fields
     // Use tolerant parsing — extra fields ignored
     return PracticeAttemptHistoryDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       mode: (j['mode'] as String?) ?? 'standard',
       status: (j['status'] as String?) ?? 'unknown',
-      score: _asInt(j['score']),
-      correctCount: _asInt(j['correct_count']),
-      wrongCount: _asInt(j['wrong_count']),
-      skippedCount: _asInt(j['skipped_count']),
-      questionCount: _asInt(j['question_count'] ?? j['total_questions']),
-      completedAt: _asDate(j['completed_at'] ?? j['finished_at']),
-      createdAt: _asDate(j['created_at'] ?? j['started_at']),
+      score: wireInt(j['score']),
+      correctCount: wireInt(j['correct_count']),
+      wrongCount: wireInt(j['wrong_count']),
+      skippedCount: wireInt(j['skipped_count']),
+      questionCount: wireInt(j['question_count'] ?? j['total_questions']),
+      completedAt: wireDate(j['completed_at'] ?? j['finished_at']),
+      createdAt: wireDate(j['created_at'] ?? j['started_at']),
     );
   }
 
@@ -204,10 +189,10 @@ class PracticeAttemptHistoryDto {
 class PracticeStartDto {
   const PracticeStartDto({required this.attemptId, required this.mode, required this.status, this.questionCount = 0});
   factory PracticeStartDto.fromJson(Map<String, dynamic> j) => PracticeStartDto(
-        attemptId: (_asInt(j['attempt_id'] ?? j['id']) ?? 0).toString(),
+        attemptId: (wireInt(j['attempt_id'] ?? j['id']) ?? 0).toString(),
         mode: (j['mode'] as String?) ?? 'practice',
         status: (j['status'] as String?) ?? 'in_progress',
-        questionCount: _asInt(j['question_count']) ?? 0,
+        questionCount: wireInt(j['question_count']) ?? 0,
       );
   final String attemptId;
   final String mode;
@@ -234,12 +219,12 @@ class PracticeResultDto {
   });
 
   factory PracticeResultDto.fromJson(Map<String, dynamic> j) => PracticeResultDto(
-        attemptId: (_asInt(j['attempt_id'] ?? j['id']) ?? 0).toString(),
-        score: _asInt(j['score']),
-        correctCount: _asInt(j['correct_count']) ?? 0,
-        wrongCount: _asInt(j['wrong_count']) ?? 0,
-        skippedCount: _asInt(j['skipped_count']) ?? 0,
-        completedAt: _asDate(j['completed_at']),
+        attemptId: (wireInt(j['attempt_id'] ?? j['id']) ?? 0).toString(),
+        score: wireInt(j['score']),
+        correctCount: wireInt(j['correct_count']) ?? 0,
+        wrongCount: wireInt(j['wrong_count']) ?? 0,
+        skippedCount: wireInt(j['skipped_count']) ?? 0,
+        completedAt: wireDate(j['completed_at']),
       );
 
   final String attemptId;

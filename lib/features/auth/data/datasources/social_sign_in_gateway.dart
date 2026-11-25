@@ -16,22 +16,10 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-/// The social providers the server accepts.
-enum SocialProvider {
-  google,
-  apple;
+import '../../domain/entities/social_provider.dart';
 
-  String get label => switch (this) {
-        SocialProvider.google => 'Google',
-        SocialProvider.apple => 'Apple',
-      };
-
-  /// The route the id_token is posted to.
-  String get endpoint => switch (this) {
-        SocialProvider.google => '/auth/social/google',
-        SocialProvider.apple => '/auth/social/apple',
-      };
-}
+/// Kept for callers that already import this gateway for the SDK types.
+export '../../domain/entities/social_provider.dart';
 
 /// What the platform SDK handed back.
 class SocialIdToken {

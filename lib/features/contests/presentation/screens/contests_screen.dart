@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../shared/utils/display_date.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../controllers/contests_controller.dart';
@@ -158,7 +159,7 @@ class _ContestCard extends StatelessWidget {
                 if (contest.startsAt != null) ...[
                   Icon(Icons.calendar_today_rounded, size: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                   const SizedBox(width: 4),
-                  Text(_fmt(contest.startsAt!), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
+                  Text(formatShortDateTime(contest.startsAt!), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                   const SizedBox(width: 10),
                 ],
                 if (!contest.isFree) ...[
@@ -188,8 +189,4 @@ class _ContestCard extends StatelessWidget {
     );
   }
 
-  String _fmt(DateTime d) {
-    final local = d.toLocal();
-    return '${local.day}/${local.month} ${local.hour}:${local.minute.toString().padLeft(2, '0')}';
-  }
 }

@@ -1,10 +1,11 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/learning_remote_data_source.dart';
 import '../../data/repositories/learning_repository_impl.dart';
@@ -117,8 +118,6 @@ class LearningController extends Notifier<LearningState> {
   LearningRepository get _repo => ref.read(learningRepositoryProvider);
   static const _uuid = Uuid();
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   // ── Goals ──────────────────────────────────────────────────────────────────
 
   Future<LearningGoal?> createGoal({
@@ -144,8 +143,8 @@ class LearningController extends Notifier<LearningState> {
       return goal;
     } catch (e, st) {
       AppLogger.w('learning createGoal failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCreatingGoal: false, createGoalError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCreatingGoal: false, createGoalError: errorMessage(e));
       return null;
     }
   }
@@ -160,8 +159,8 @@ class LearningController extends Notifier<LearningState> {
       return true;
     } catch (e, st) {
       AppLogger.w('learning deleteGoal $goalId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isDeletingGoal: false, deleteGoalError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isDeletingGoal: false, deleteGoalError: errorMessage(e));
       return false;
     }
   }
@@ -178,8 +177,8 @@ class LearningController extends Notifier<LearningState> {
       return updated;
     } catch (e, st) {
       AppLogger.w('learning completeItem $planId/$itemIndex failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isCompletingItem: false, completeItemError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isCompletingItem: false, completeItemError: errorMessage(e));
       return null;
     }
   }
@@ -196,8 +195,8 @@ class LearningController extends Notifier<LearningState> {
       return res;
     } catch (e, st) {
       AppLogger.w('learning gradeReview $reviewId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isGrading: false, gradeError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isGrading: false, gradeError: errorMessage(e));
       return null;
     }
   }
@@ -223,8 +222,8 @@ class LearningController extends Notifier<LearningState> {
       return reply;
     } catch (e, st) {
       AppLogger.w('learning askTutor failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isAskingTutor: false, tutorError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isAskingTutor: false, tutorError: errorMessage(e));
       return null;
     }
   }

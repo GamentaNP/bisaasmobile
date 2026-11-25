@@ -1,7 +1,8 @@
+import 'package:bisaasmobile/shared/utils/debug_stack.dart';
+import 'package:bisaasmobile/shared/utils/error_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/api_exception.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/ai_settings_remote_data_source.dart';
 
@@ -165,8 +166,6 @@ class AiSettingsController extends Notifier<AiSettingsState> {
 
   AiSettingsRepository get _repo => ref.read(aiSettingsRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : e.toString();
-
   // ── BYOK ───────────────────────────────────────────────────────────────────
 
   /// Loads the caller's keys.
@@ -185,8 +184,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       );
     } catch (e, st) {
       AppLogger.w('ai settings fetchKeys failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isKeysLoading: false, keysError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isKeysLoading: false, keysError: errorMessage(e));
     }
   }
 
@@ -221,8 +220,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       return true;
     } catch (e, st) {
       AppLogger.w('ai settings storeKey failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isSavingKey: false, saveKeyError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isSavingKey: false, saveKeyError: errorMessage(e));
       return false;
     }
   }
@@ -240,8 +239,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       return true;
     } catch (e, st) {
       AppLogger.w('ai settings revokeKey $keyId failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isSavingKey: false, saveKeyError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isSavingKey: false, saveKeyError: errorMessage(e));
       return false;
     }
   }
@@ -265,8 +264,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       state = state.copyWith(isUsageLoading: false, usage: usage);
     } catch (e, st) {
       AppLogger.w('ai settings fetchUsage failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isUsageLoading: false, usageError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isUsageLoading: false, usageError: errorMessage(e));
     }
   }
 
@@ -283,8 +282,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       );
     } catch (e, st) {
       AppLogger.w('ai settings fetchTutorSessions failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isSessionsLoading: false, sessionsError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isSessionsLoading: false, sessionsError: errorMessage(e));
     }
   }
 
@@ -301,8 +300,8 @@ class AiSettingsController extends Notifier<AiSettingsState> {
       );
     } catch (e, st) {
       AppLogger.w('ai settings fetchReportCardHistory failed: $e');
-      if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isReportCardLoading: false, reportCardError: _msg(e));
+      debugStack(st);
+      state = state.copyWith(isReportCardLoading: false, reportCardError: errorMessage(e));
     }
   }
 }
@@ -312,4 +311,3 @@ final aiSettingsControllerProvider =
     NotifierProvider<AiSettingsController, AiSettingsState>(
   AiSettingsController.new,
 );
-

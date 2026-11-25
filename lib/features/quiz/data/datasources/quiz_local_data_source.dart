@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/sync/daily_pack_cache.dart';
 import '../../../../core/storage/database/app_database.dart';
+import '../../../../shared/utils/debug_stack.dart';
 import '../models/quiz_dto.dart';
 import '../../../../app/localization/l10n.dart';
 
@@ -45,7 +46,7 @@ class QuizLocalDataSource implements DailyPackCache {
       AppLogger.i('QuizLocal: cached ${dto.questions.length} Qs for ${dto.id}');
     } catch (e, st) {
       AppLogger.w('QuizLocal cacheSession failed: $e');
-      AppLogger.d(st);
+      debugStack(st);
     }
   }
 
@@ -91,7 +92,7 @@ class QuizLocalDataSource implements DailyPackCache {
       AppLogger.i('QuizLocal: cached daily pack ${questions.length} Qs for $quizId');
     } catch (e, st) {
       AppLogger.w('QuizLocal cacheDailyPack failed: $e');
-      AppLogger.d(st);
+      debugStack(st);
     }
   }
 
@@ -125,7 +126,7 @@ class QuizLocalDataSource implements DailyPackCache {
       );
     } catch (e, st) {
       AppLogger.w('QuizLocal getCachedSession $quizId failed: $e');
-      AppLogger.d(st);
+      debugStack(st);
       return null;
     }
   }

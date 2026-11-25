@@ -1,4 +1,5 @@
 // ignore_for_file: omit_local_variable_types, prefer_constructors_over_static_methods
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../../../core/network/api_response.dart';
 import '../../domain/entities/economy.dart';
 
@@ -8,20 +9,6 @@ import '../../domain/entities/economy.dart';
 /// POST /donations/freeze-streak.
 
 // ── helpers ───────────────────────────────────────────────────────────────────
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 // ── Wallet / Ledger (WO-1 mocks, tolerant) ───────────────────────────────────
 
@@ -34,8 +21,8 @@ class WalletDto {
 
   factory WalletDto.fromJson(Map<String, dynamic> j) {
     return WalletDto(
-      coins: _asInt(j['coins'] ?? j['balance'] ?? j['coins_balance']) ?? 0,
-      updatedAt: _asDate(j['updated_at'] ?? j['updatedAt']),
+      coins: wireInt(j['coins'] ?? j['balance'] ?? j['coins_balance']) ?? 0,
+      updatedAt: wireDate(j['updated_at'] ?? j['updatedAt']),
       isDegraded: (j['is_degraded'] as bool?) ?? false,
     );
   }
@@ -117,7 +104,7 @@ class LedgerEntryDto {
         (projLabel ?? '');
     final srcLabel = projLabel ?? (j['source_label'] as String?) ?? desc;
     final created =
-        _asDate(j['created_at'] ?? j['occurred_at'] ?? j['timestamp']) ??
+        wireDate(j['created_at'] ?? j['occurred_at'] ?? j['timestamp']) ??
         DateTime.now();
 
     // Legacy `metadata` key fallback for non-WO-1 shapes.
@@ -224,9 +211,9 @@ class WalletCategoriesDto {
 
     return WalletCategoriesDto(
       categories: categories,
-      earned: _asInt(totalsMap['earned']) ?? 0,
-      spent: _asInt(totalsMap['spent']) ?? 0,
-      periodDays: _asInt(periodMap['days']) ?? 30,
+      earned: wireInt(totalsMap['earned']) ?? 0,
+      spent: wireInt(totalsMap['spent']) ?? 0,
+      periodDays: wireInt(periodMap['days']) ?? 30,
     );
   }
 
@@ -255,8 +242,8 @@ class WalletCategoryDto {
     return WalletCategoryDto(
       key: key,
       label: (j['label'] as String?) ?? key,
-      coins: _asInt(j['coins'] ?? j['amount']) ?? 0,
-      entries: _asInt(j['entries'] ?? j['count']) ?? 0,
+      coins: wireInt(j['coins'] ?? j['amount']) ?? 0,
+      entries: wireInt(j['entries'] ?? j['count']) ?? 0,
     );
   }
 
@@ -298,7 +285,7 @@ class DonorLeaderboardEntryDto {
           (j['totalDonatedFormatted'] as String?) ??
           (j['total_donated_formatted'] as String?) ??
           '\$0.00',
-      streakMonths: _asInt(j['streakMonths'] ?? j['streak_months']) ?? 0,
+      streakMonths: wireInt(j['streakMonths'] ?? j['streak_months']) ?? 0,
     );
   }
 
@@ -331,7 +318,7 @@ class DonationFeedEntryDto {
 
   factory DonationFeedEntryDto.fromJson(Map<String, dynamic> j) {
     return DonationFeedEntryDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       displayName:
           (j['displayName'] as String?) ??
           (j['display_name'] as String?) ??

@@ -1,31 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/tutor.dart';
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  if (v is num) return v.toDouble();
-  return null;
-}
-
-DateTime? _asDate(Object? v) {
-  if (v == null) return null;
-  if (v is DateTime) return v;
-  if (v is String) return DateTime.tryParse(v);
-  return null;
-}
 
 List<String> _asStringList(Object? v) {
   if (v == null) return [];
@@ -125,13 +101,13 @@ class TutorPlanDayDto {
 
   factory TutorPlanDayDto.fromJson(Map<String, dynamic> j) {
     return TutorPlanDayDto(
-      dayIndex: _asInt(j['day_index'] ?? j['day'] ?? j['index']) ?? 0,
+      dayIndex: wireInt(j['day_index'] ?? j['day'] ?? j['index']) ?? 0,
       title: (j['title'] ?? j['name'] ?? 'Day ${j['day_index'] ?? ''}').toString(),
       description: j['description'] as String?,
       tasks: _asStringList(j['tasks'] ?? j['items'] ?? j['activities']),
       completed: (j['completed'] as bool?) ?? (j['is_completed'] as bool?) ?? false,
       isCurrent: (j['is_current'] as bool?) ?? (j['current'] as bool?) ?? false,
-      dueAt: _asDate(j['due_at'] ?? j['date']),
+      dueAt: wireDate(j['due_at'] ?? j['date']),
     );
   }
 
@@ -178,11 +154,11 @@ class TutorPlanDto {
       id: (src['id'] ?? src['plan_id'] ?? 'plan').toString(),
       title: (src['title'] ?? src['name'] ?? 'Study Plan').toString(),
       description: src['description'] as String?,
-      totalDays: _asInt(src['total_days'] ?? src['totalDays'] ?? days.length) ?? days.length,
+      totalDays: wireInt(src['total_days'] ?? src['totalDays'] ?? days.length) ?? days.length,
       days: days,
-      currentDayIndex: _asInt(src['current_day'] ?? src['current_day_index']),
-      createdAt: _asDate(src['created_at']),
-      updatedAt: _asDate(src['updated_at']),
+      currentDayIndex: wireInt(src['current_day'] ?? src['current_day_index']),
+      createdAt: wireDate(src['created_at']),
+      updatedAt: wireDate(src['updated_at']),
     );
   }
 
@@ -224,11 +200,11 @@ class TutorTodayDto {
     final src = j['today'] is Map<String, dynamic> ? j['today'] as Map<String, dynamic> : j;
     final tasks = _asStringList(src['tasks'] ?? src['items'] ?? src['plan'] ?? src['activities']);
     return TutorTodayDto(
-      date: _asDate(src['date'] ?? src['due_at']) ?? DateTime.now(),
+      date: wireDate(src['date'] ?? src['due_at']) ?? DateTime.now(),
       title: (src['title'] ?? src['name']) as String?,
       tasks: tasks,
-      completedCount: _asInt(src['completed_count'] ?? src['completed']) ?? 0,
-      totalCount: _asInt(src['total_count'] ?? src['total'] ?? tasks.length) ?? tasks.length,
+      completedCount: wireInt(src['completed_count'] ?? src['completed']) ?? 0,
+      totalCount: wireInt(src['total_count'] ?? src['total'] ?? tasks.length) ?? tasks.length,
       summary: src['summary'] as String?,
       isCompleted: (src['is_completed'] as bool?) ?? (src['completed'] as bool?) ?? false,
     );
@@ -270,8 +246,8 @@ class WeakAreaDto {
         topic: (j['topic'] ?? j['name'] ?? j['title'] ?? '').toString(),
         topicId: (j['topic_id'] ?? j['id'])?.toString(),
         slug: (j['slug'] as String?) ?? (j['topic_slug'] as String?),
-        accuracy: _asDouble(j['accuracy'] ?? j['score'] ?? j['correct_rate']),
-        attempts: _asInt(j['attempts'] ?? j['count']) ?? 0,
+        accuracy: wireDouble(j['accuracy'] ?? j['score'] ?? j['correct_rate']),
+        attempts: wireInt(j['attempts'] ?? j['count']) ?? 0,
         recommendation: j['recommendation'] as String? ?? j['suggestion'] as String?,
         reason: j['reason'] as String? ?? j['weak_reason'] as String?,
       );
@@ -315,12 +291,12 @@ class ProjectedScoreDto {
             ? j['score'] as Map<String, dynamic>
             : j;
     return ProjectedScoreDto(
-      score: _asDouble(src['score'] ?? src['projected'] ?? src['value']) ?? 0,
-      maxScore: _asDouble(src['max_score'] ?? src['maxScore'] ?? src['total']) ?? 100,
-      confidence: _asDouble(src['confidence']),
+      score: wireDouble(src['score'] ?? src['projected'] ?? src['value']) ?? 0,
+      maxScore: wireDouble(src['max_score'] ?? src['maxScore'] ?? src['total']) ?? 100,
+      confidence: wireDouble(src['confidence']),
       breakdown: (src['breakdown'] as Map<String, dynamic>?) ?? (src['details'] as Map<String, dynamic>?) ?? {},
       trend: src['trend'] as String?,
-      updatedAt: _asDate(src['updated_at'] ?? src['created_at']),
+      updatedAt: wireDate(src['updated_at'] ?? src['created_at']),
     );
   }
 
@@ -362,14 +338,14 @@ class WeeklyReportDto {
             ? j['report'] as Map<String, dynamic>
             : j;
     return WeeklyReportDto(
-      weekStart: _asDate(src['week_start'] ?? src['start_date']),
-      weekEnd: _asDate(src['week_end'] ?? src['end_date']),
-      tasksCompleted: _asInt(src['tasks_completed'] ?? src['completed']) ?? 0,
-      tasksPlanned: _asInt(src['tasks_planned'] ?? src['planned'] ?? src['total']) ?? 0,
-      averageScore: _asDouble(src['average_score'] ?? src['avg_score']),
+      weekStart: wireDate(src['week_start'] ?? src['start_date']),
+      weekEnd: wireDate(src['week_end'] ?? src['end_date']),
+      tasksCompleted: wireInt(src['tasks_completed'] ?? src['completed']) ?? 0,
+      tasksPlanned: wireInt(src['tasks_planned'] ?? src['planned'] ?? src['total']) ?? 0,
+      averageScore: wireDouble(src['average_score'] ?? src['avg_score']),
       summary: src['summary'] as String? ?? src['content'] as String?,
       insights: _asStringList(src['insights'] ?? src['highlights']),
-      hoursStudied: _asDouble(src['hours_studied'] ?? src['hours']),
+      hoursStudied: wireDouble(src['hours_studied'] ?? src['hours']),
     );
   }
 
@@ -409,7 +385,7 @@ class RevisionItemDto {
   factory RevisionItemDto.fromJson(Map<String, dynamic> j) => RevisionItemDto(
         id: (j['id'] ?? j['revision_id'] ?? '').toString(),
         questionId: (j['question_id'] ?? j['questionId'] ?? j['id'] ?? '').toString(),
-        dueAt: _asDate(j['due_at'] ?? j['dueAt'] ?? j['due_date']) ?? DateTime.now(),
+        dueAt: wireDate(j['due_at'] ?? j['dueAt'] ?? j['due_date']) ?? DateTime.now(),
         topic: j['topic'] as String? ?? j['subject'] as String?,
         title: j['title'] as String? ?? j['question_title'] as String?,
         priority: j['priority'] as String?,

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
+import '../../../../shared/utils/debug_stack.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/dashboard_dto.dart';
@@ -156,9 +157,7 @@ class HomeRemoteDataSource {
       return DashboardDto.fromJson(merged);
     } catch (e, st) {
       AppLogger.w('Dashboard merge parse failed → surfacing the error: $e');
-      if (const bool.fromEnvironment('dart.vm.product') == false) {
-        AppLogger.d(st);
-      }
+      debugStack(st);
       // A merge the client cannot read is a contract drift, not an empty
       // dashboard. Returning the zeroed fallback here would have shown a
       // plausible-looking home screen for a response nobody understood.

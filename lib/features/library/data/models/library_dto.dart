@@ -1,4 +1,5 @@
 // ignore_for_file: omit_local_variable_types
+import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/library.dart';
 
 /// Tolerant DTOs — additive parsing, never throws on missing/extra fields.
@@ -30,12 +31,12 @@ class LibraryCategoryDto {
           .toList();
     }
     return LibraryCategoryDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       name: (j['name'] as String?) ?? '',
       slug: (j['slug'] as String?) ?? '',
       description: j['description'] as String?,
       icon: j['icon'] as String?,
-      fileCount: _asInt(j['file_count'] ?? j['files_count']),
+      fileCount: wireInt(j['file_count'] ?? j['files_count']),
       children: children,
     );
   }
@@ -63,7 +64,7 @@ class LibraryCategoryDto {
 class LibraryCategoryRefDto {
   const LibraryCategoryRefDto({required this.id, required this.name, required this.slug});
   factory LibraryCategoryRefDto.fromJson(Map<String, dynamic> j) => LibraryCategoryRefDto(
-        id: _asInt(j['id']) ?? 0,
+        id: wireInt(j['id']) ?? 0,
         name: (j['name'] as String?) ?? '',
         slug: (j['slug'] as String?) ?? '',
       );
@@ -77,7 +78,7 @@ class LibraryCategoryRefDto {
 class LibraryUploaderDto {
   const LibraryUploaderDto({required this.id, required this.name});
   factory LibraryUploaderDto.fromJson(Map<String, dynamic> j) => LibraryUploaderDto(
-        id: _asInt(j['id']) ?? 0,
+        id: wireInt(j['id']) ?? 0,
         name: (j['name'] as String?) ?? '',
       );
   final int id;
@@ -138,16 +139,16 @@ class LibraryFileDto {
     }
 
     return LibraryFileDto(
-      id: _asInt(j['id']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
       title: (j['title'] as String?) ?? '',
       slug: (j['slug'] as String?) ?? '',
       description: j['description'] as String?,
       fileType: (j['file_type'] as String?) ?? (j['fileType'] as String?) ?? 'unknown',
       visibility: (j['visibility'] as String?) ?? 'public',
-      coinPrice: _asInt(j['coin_price']) ?? 0,
-      averageRating: _asDouble(j['average_rating']) ?? 0.0,
-      reviewCount: _asInt(j['review_count']) ?? 0,
-      downloadCount: _asInt(j['download_count']) ?? 0,
+      coinPrice: wireInt(j['coin_price']) ?? 0,
+      averageRating: wireDouble(j['average_rating']) ?? 0.0,
+      reviewCount: wireInt(j['review_count']) ?? 0,
+      downloadCount: wireInt(j['download_count']) ?? 0,
       isFeatured: (j['is_featured'] as bool?) ?? false,
       tags: tags,
       createdAt: created,
@@ -197,7 +198,7 @@ class LibraryFileDto {
 class LibraryReviewUserDto {
   const LibraryReviewUserDto({required this.id, required this.name});
   factory LibraryReviewUserDto.fromJson(Map<String, dynamic> j) => LibraryReviewUserDto(
-        id: _asInt(j['id']) ?? 0,
+        id: wireInt(j['id']) ?? 0,
         name: (j['name'] as String?) ?? '',
       );
   final int id;
@@ -226,8 +227,8 @@ class LibraryReviewDto {
     if (cRaw is String) created = DateTime.tryParse(cRaw);
 
     return LibraryReviewDto(
-      id: _asInt(j['id']) ?? 0,
-      rating: _asInt(j['rating']) ?? 0,
+      id: wireInt(j['id']) ?? 0,
+      rating: wireInt(j['rating']) ?? 0,
       comment: j['comment'] as String?,
       isVerifiedDownload: (j['is_verified_download'] as bool?) ?? false,
       user: user,
@@ -257,7 +258,7 @@ class LibraryUnlockDto {
   const LibraryUnlockDto({required this.unlocked, required this.coinsSpent, this.unlockedAt});
   factory LibraryUnlockDto.fromJson(Map<String, dynamic> j) => LibraryUnlockDto(
         unlocked: (j['unlocked'] as bool?) ?? true,
-        coinsSpent: _asInt(j['coins_spent']) ?? 0,
+        coinsSpent: wireInt(j['coins_spent']) ?? 0,
         unlockedAt: j['unlocked_at'] is String ? DateTime.tryParse(j['unlocked_at'] as String) : null,
       );
   final bool unlocked;
@@ -282,7 +283,7 @@ class LibraryUnlockItemDto {
     final fileDto = LibraryFileDto.fromJson(fileJson);
     return LibraryUnlockItemDto(
       file: fileDto,
-      coinsSpent: _asInt(j['coins_spent']) ?? 0,
+      coinsSpent: wireInt(j['coins_spent']) ?? 0,
       unlockedAt: j['unlocked_at'] is String ? DateTime.tryParse(j['unlocked_at'] as String) : null,
     );
   }
@@ -294,21 +295,3 @@ class LibraryUnlockItemDto {
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────
-
-int? _asInt(Object? v) {
-  if (v == null) return null;
-  if (v is int) return v;
-  if (v is double) return v.toInt();
-  if (v is String) return int.tryParse(v);
-  if (v is num) return v.toInt();
-  return null;
-}
-
-double? _asDouble(Object? v) {
-  if (v == null) return null;
-  if (v is double) return v;
-  if (v is int) return v.toDouble();
-  if (v is String) return double.tryParse(v);
-  if (v is num) return v.toDouble();
-  return null;
-}

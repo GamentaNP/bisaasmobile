@@ -2,10 +2,11 @@ import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/security/tenant_store.dart';
 import '../../../../core/security/token_manager.dart';
+import '../../domain/entities/social_provider.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
-import '../datasources/social_sign_in_gateway.dart';
+import '../datasources/social_sign_in_gateway.dart' show SocialSignInGateway;
 
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl({
