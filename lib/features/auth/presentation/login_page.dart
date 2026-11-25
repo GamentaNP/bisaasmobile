@@ -156,7 +156,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ? null
                             : () {
                                 _email.text = 'user@bisaas.test';
-                                _pass.text = 'BisaasLocal!2026';
+                                // Matches the local dev seeder (LocalTestUserSeeder).
+                                _pass.text = 'password';
                                 _login();
                               },
                         icon: const Icon(Icons.bolt, size: 18),
