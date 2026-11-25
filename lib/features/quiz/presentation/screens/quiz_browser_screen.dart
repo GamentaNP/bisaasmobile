@@ -96,6 +96,7 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
             ? null
             : IconButton(
                 icon: const Icon(Icons.arrow_back_rounded),
+                tooltip: l10n.commonGoBack,
                 onPressed: _backToCourses,
               ),
       ),
@@ -115,6 +116,7 @@ class _QuizBrowserScreenState extends ConsumerState<QuizBrowserScreen> {
                     ? null
                     : IconButton(
                         icon: const Icon(Icons.close_rounded),
+                        tooltip: l10n.libraryClearSearch,
                         onPressed: () {
                           _searchCtrl.clear();
                           _onSearchChanged('');

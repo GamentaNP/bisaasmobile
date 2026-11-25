@@ -89,6 +89,7 @@ class _LibraryBrowserScreenState extends ConsumerState<LibraryBrowserScreen> {
                     ? null
                     : IconButton(
                         icon: const Icon(Icons.clear_rounded),
+                        tooltip: l10n.libraryClearSearch,
                         onPressed: () {
                           _searchCtrl.clear();
                           _onSearchChanged('');

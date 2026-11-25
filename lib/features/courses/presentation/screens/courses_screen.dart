@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 
 import '../../data/corpus_availability.dart';
 import '../../data/providers/courses_providers.dart';
@@ -152,8 +156,15 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
                       return _CourseCard(
                         course: course,
                         color: color,
-                        onTap: () =>
-                            context.go('/quiz/browse?course=${course.id}'),
+                        onTap: () {
+                          // Viewing a course means opening its topic catalogue,
+                          // not merely rendering the card in the grid.
+                          unawaited(ref.read(analyticsProvider).log(
+                            AnalyticsEvents.courseView,
+                            params: {'course_id': course.id},
+                          ));
+                          context.go('/quiz/browse?course=${course.id}');
+                        },
                       );
                     },
                     childCount: visible.length,

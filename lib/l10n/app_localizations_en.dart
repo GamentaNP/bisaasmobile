@@ -4636,4 +4636,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get streakFreezeFailed =>
       'Freeze failed — check coins or donor badge.';
+
+  @override
+  String get a11yShowPassword => 'Show password';
+
+  @override
+  String get a11yHidePassword => 'Hide password';
+
+  @override
+  String get a11yRemoveField => 'Remove field';
+
+  @override
+  String get a11yRemoveBookmark => 'Remove bookmark';
+
+  @override
+  String a11yRateStar(Object count) {
+    return 'Rate $count stars';
+  }
+
+  @override
+  String get a11yMarkComplete => 'Mark as complete';
+
+  @override
+  String get a11ySend => 'Send';
 }

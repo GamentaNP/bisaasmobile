@@ -3396,5 +3396,19 @@
   "commonFailed": "विफल",
   "storeEquipAction": "लगाएं",
   "storePreviewAction": "झलक देखें",
-  "streakFreezeFailed": "फ्रीज़ विफल — कॉइन या दाता बैज जांचें।"
+  "streakFreezeFailed": "फ्रीज़ विफल — कॉइन या दाता बैज जांचें।",
+  "a11yShowPassword": "पासवर्ड दिखाएं",
+  "a11yHidePassword": "पासवर्ड छिपाएं",
+  "a11yRemoveField": "फ़ील्ड हटाएं",
+  "a11yRemoveBookmark": "बुकमार्क हटाएं",
+  "a11yRateStar": "{count} सितारे दें",
+  "@a11yRateStar": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "a11yMarkComplete": "पूरे के रूप में चिह्नित करें",
+  "a11ySend": "भेजें"
 }

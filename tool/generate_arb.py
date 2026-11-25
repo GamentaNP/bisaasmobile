@@ -2646,6 +2646,17 @@ add("storeEquipAction", "Equip", "लगाउनुहोस्", "लगाए
 add("storePreviewAction", "Preview", "झलक हेर्नुहोस्", "झलक देखें")
 add("streakFreezeFailed", "Freeze failed — check coins or donor badge.", "फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।", "फ्रीज़ विफल — कॉइन या दाता बैज जांचें।")
 
+# ── accessibility: icon-only control labels ──────────────────────────────────
+# Every icon-only IconButton in features/**/presentation gets a localized
+# tooltip. Where no existing key described the action, it is added here.
+add("a11yShowPassword", "Show password", "पासवर्ड देखाउनुहोस्", "पासवर्ड दिखाएं")
+add("a11yHidePassword", "Hide password", "पासवर्ड लुकाउनुहोस्", "पासवर्ड छिपाएं")
+add("a11yRemoveField", "Remove field", "फाँट हटाउनुहोस्", "फ़ील्ड हटाएं")
+add("a11yRemoveBookmark", "Remove bookmark", "बुकमार्क हटाउनुहोस्", "बुकमार्क हटाएं")
+add("a11yRateStar", "Rate {count} stars", "{count} तारे दिनुहोस्", "{count} सितारे दें", ["count"])
+add("a11yMarkComplete", "Mark as complete", "पूरा भएको जनाउनुहोस्", "पूरे के रूप में चिह्नित करें")
+add("a11ySend", "Send", "पठाउनुहोस्", "भेजें")
+
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.
 #

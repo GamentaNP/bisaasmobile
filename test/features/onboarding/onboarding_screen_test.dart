@@ -15,6 +15,7 @@ import 'package:bisaasmobile/core/storage/preferences.dart';
 import 'package:bisaasmobile/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:bisaasmobile/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,11 +27,13 @@ AppLocalizations get _l10n => lookupAppLocalizations(const Locale('en'));
 
 Future<void> _pump(WidgetTester tester, GoRouter router) async {
   await tester.pumpWidget(
-    MaterialApp.router(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLanguages.supportedLocales,
-      locale: const Locale('en'),
-      routerConfig: router,
+    ProviderScope(
+      child: MaterialApp.router(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLanguages.supportedLocales,
+        locale: const Locale('en'),
+        routerConfig: router,
+      ),
     ),
   );
   await tester.pumpAndSettle();

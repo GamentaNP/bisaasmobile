@@ -69,7 +69,7 @@ class _TutorOnboardingScreenState extends ConsumerState<TutorOnboardingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.tutorOnboardingTitle),
-        leading: IconButton(icon: const Icon(Icons.close_rounded), onPressed: () => context.pop()),
+        leading: IconButton(icon: const Icon(Icons.close_rounded), tooltip: l10n.commonClose, onPressed: () => context.pop()),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

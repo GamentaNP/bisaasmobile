@@ -7862,6 +7862,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Freeze failed — check coins or donor badge.'**
   String get streakFreezeFailed;
+
+  /// No description provided for @a11yShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get a11yShowPassword;
+
+  /// No description provided for @a11yHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get a11yHidePassword;
+
+  /// No description provided for @a11yRemoveField.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove field'**
+  String get a11yRemoveField;
+
+  /// No description provided for @a11yRemoveBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove bookmark'**
+  String get a11yRemoveBookmark;
+
+  /// No description provided for @a11yRateStar.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate {count} stars'**
+  String a11yRateStar(Object count);
+
+  /// No description provided for @a11yMarkComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as complete'**
+  String get a11yMarkComplete;
+
+  /// No description provided for @a11ySend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get a11ySend;
 }
 
 class _AppLocalizationsDelegate

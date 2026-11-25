@@ -3396,5 +3396,19 @@
   "commonFailed": "असफल",
   "storeEquipAction": "लगाउनुहोस्",
   "storePreviewAction": "झलक हेर्नुहोस्",
-  "streakFreezeFailed": "फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।"
+  "streakFreezeFailed": "फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।",
+  "a11yShowPassword": "पासवर्ड देखाउनुहोस्",
+  "a11yHidePassword": "पासवर्ड लुकाउनुहोस्",
+  "a11yRemoveField": "फाँट हटाउनुहोस्",
+  "a11yRemoveBookmark": "बुकमार्क हटाउनुहोस्",
+  "a11yRateStar": "{count} तारे दिनुहोस्",
+  "@a11yRateStar": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "a11yMarkComplete": "पूरा भएको जनाउनुहोस्",
+  "a11ySend": "पठाउनुहोस्"
 }

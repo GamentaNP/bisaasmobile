@@ -264,6 +264,7 @@ class _BookmarksTab extends ConsumerWidget {
                     subtitle: Text(l10n.practiceQuestionMeta(b.question.type ?? 'mcq', b.question.difficulty ?? '-', b.question.points ?? 0), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     trailing: IconButton(
                       icon: state.isTogglingBookmark ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bookmark_remove_rounded),
+                      tooltip: l10n.a11yRemoveBookmark,
                       // Removes the bookmark. The server's `POST` alias converges
                       // to `bookmarked: true` and cannot remove, so this calls
                       // `DELETE /quiz/bookmarks/{question}`.

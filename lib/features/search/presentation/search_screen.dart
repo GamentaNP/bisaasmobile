@@ -35,7 +35,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             padding: const EdgeInsets.all(12),
             child: TextField(
               controller: _ctrl,
-              decoration: InputDecoration(hintText: l10n.searchHint, prefixIcon: const Icon(Icons.search_rounded), suffixIcon: IconButton(icon: const Icon(Icons.clear_rounded), onPressed: () => setState(() { _q = ''; _ctrl.clear(); })), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+              decoration: InputDecoration(hintText: l10n.searchHint, prefixIcon: const Icon(Icons.search_rounded), suffixIcon: IconButton(icon: const Icon(Icons.clear_rounded), tooltip: l10n.libraryClearSearch, onPressed: () => setState(() { _q = ''; _ctrl.clear(); })), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
               onSubmitted: (v) => setState(() => _q = v.trim()),
             ),
           ),

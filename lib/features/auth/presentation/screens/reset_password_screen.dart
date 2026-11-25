@@ -168,6 +168,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         prefixIcon: const Icon(Icons.lock_outline_rounded),
                         suffixIcon: IconButton(
                           icon: Icon(_obscure ? Icons.visibility_rounded : Icons.visibility_off_rounded),
+                          tooltip: _obscure ? l10n.a11yShowPassword : l10n.a11yHidePassword,
                           onPressed: () => setState(() => _obscure = !_obscure),
                         ),
                       ),

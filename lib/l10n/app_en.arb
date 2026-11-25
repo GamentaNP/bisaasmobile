@@ -3396,5 +3396,19 @@
   "commonFailed": "Failed",
   "storeEquipAction": "Equip",
   "storePreviewAction": "Preview",
-  "streakFreezeFailed": "Freeze failed — check coins or donor badge."
+  "streakFreezeFailed": "Freeze failed — check coins or donor badge.",
+  "a11yShowPassword": "Show password",
+  "a11yHidePassword": "Hide password",
+  "a11yRemoveField": "Remove field",
+  "a11yRemoveBookmark": "Remove bookmark",
+  "a11yRateStar": "Rate {count} stars",
+  "@a11yRateStar": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "a11yMarkComplete": "Mark as complete",
+  "a11ySend": "Send"
 }

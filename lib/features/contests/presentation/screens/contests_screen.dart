@@ -38,7 +38,7 @@ class _ContestsScreenState extends ConsumerState<ContestsScreen> {
       appBar: AppBar(
         title: Text(l10n.profileContests),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: state.isLoading ? null : _onRefresh),
+          IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: l10n.streakRefresh, onPressed: state.isLoading ? null : _onRefresh),
         ],
       ),
       body: RefreshIndicator(

@@ -50,6 +50,7 @@ class _CalculatorBrowserScreenState extends ConsumerState<CalculatorBrowserScree
                     ? null
                     : IconButton(
                         icon: const Icon(Icons.clear_rounded),
+                        tooltip: l10n.libraryClearSearch,
                         onPressed: () => setState(() {
                           _query = '';
                           _searchCtrl.clear();

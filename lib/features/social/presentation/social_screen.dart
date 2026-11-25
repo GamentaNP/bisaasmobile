@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/analytics/analytics_service.dart';
+import '../../../core/consent/consent_gate.dart';
 import '../../../core/logging/app_logger.dart';
 import '../domain/entities/social.dart';
 import 'controllers/social_controller.dart';
@@ -243,6 +245,13 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
     // with no way to reach the sign-up page.
     final text =
         l10n.socialShareInvite(dash.code, dash.shareUrl);
+    // The invite button is the canonical "user opened a share sheet" moment.
+    // A received share link (SocialShareScreen) is the other side of the flow,
+    // not a share initiated here.
+    unawaited(ref.read(analyticsProvider).log(
+      AnalyticsEvents.shareOpen,
+      params: {'surface': 'referral'},
+    ));
     try {
       await SharePlus.instance.share(
         ShareParams(text: text, subject: 'CivilCal'),

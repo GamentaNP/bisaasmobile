@@ -133,6 +133,7 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
         title: Text(l10n.battleFindMatch),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
+          tooltip: l10n.commonClose,
           onPressed: () {
             ref.read(battleControllerProvider.notifier).reset();
             Navigator.of(context).pop();

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../domain/entities/calculator.dart';
 import '../controllers/calculator_controller.dart';
 import '../widgets/calculator_assistant_panel.dart';
@@ -64,6 +67,12 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
     super.initState();
     _textCtrls = {};
     _boolValues = {};
+    // A calculator is "open" when the user lands on its detail screen, not
+    // when the browser catalog loads.
+    unawaited(ref.read(analyticsProvider).log(
+      AnalyticsEvents.calculatorOpen,
+      params: {'domain': widget.domain, 'slug': widget.slug},
+    ));
   }
 
   @override
@@ -169,6 +178,10 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
           subject: config.label,
         ),
       );
+      unawaited(ref.read(analyticsProvider).log(
+        AnalyticsEvents.calculatorShare,
+        params: {'domain': widget.domain, 'slug': widget.slug},
+      ));
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -433,6 +446,7 @@ class _CalculatorDetailScreenState extends ConsumerState<CalculatorDetailScreen>
                 ),
                 IconButton(
                   icon: const Icon(Icons.remove_circle_outline_rounded),
+                  tooltip: l10n.a11yRemoveField,
                   onPressed: () => setState(() {
                     f.keyCtrl.dispose();
                     f.valCtrl.dispose();

@@ -44,14 +44,33 @@ abstract final class AnalyticsEvents {
   static const battleMatchSearch = 'battle_match_search';
   static const battleMatchFound = 'battle_match_found';
   static const battleAnswerSubmit = 'battle_answer_submit';
+  /// Emitted once when RTDB reports `status == 'finished'` in
+  /// `BattleController._subscribeRtdb` — the server's terminal transition.
   static const battleFinished = 'battle_finished';
+
+  /// Legacy alias of [battleFinished] kept for the frozen event vocabulary.
+  /// Not emitted: two names for one transition would split the funnel.
   static const battleComplete = 'battle_complete';
   static const streakView = 'streak_view';
   static const shareOpen = 'share_open';
+
+  /// Not emitted. Qualification is decided by the server when a referred
+  /// account completes its first graded quiz; the client never sees that
+  /// transition, so logging it here would be a guess.
   static const referralQualified = 'referral_qualified';
   static const notificationOpen = 'notification_open';
   static const pushTokenRegister = 'push_token_register';
   static const courseView = 'course_view';
+
+  /// Not emitted. The daily quiz card on Home navigates to the ordinary
+  /// `/quiz` catalog and `QuizController.startSession` receives the same
+  /// `quizId` as any other quiz, so there is no client-observable transition
+  /// that identifies a "daily" attempt. Emitting it from the card tap would
+  /// count a catalog open as a quiz start. Wire it when a daily-specific
+  /// attempt route exists.
   static const dailyQuizStart = 'daily_quiz_start';
+
+  /// Not emitted. The write outbox is built but deliberately unwired (quiz
+  /// grading is server-authoritative), so there is no sync to report.
   static const offlineQueueSync = 'offline_queue_sync';
 }

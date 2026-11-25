@@ -29,7 +29,9 @@ class QuizReviewScreen extends ConsumerWidget {
       appBar: CivilAppBar(
         title: l10n.quizReviewTitle,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
+            icon: const Icon(Icons.arrow_back),
+            tooltip: l10n.commonGoBack,
+            onPressed: () => context.pop()),
       ),
       body: reviewAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

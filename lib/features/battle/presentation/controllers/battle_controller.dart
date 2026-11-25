@@ -149,8 +149,8 @@ class BattleController extends Notifier<BattleState> {
   void _subscribeRtdb(String matchId) {
     _rtdbSub?.cancel();
     _ticker?.cancel();
-    final ref = _rtdb.ref('battles/$matchId');
-    _rtdbSub = ref.onValue.listen((event) {
+    final battleRef = _rtdb.ref('battles/$matchId');
+    _rtdbSub = battleRef.onValue.listen((event) {
       final value = event.snapshot.value;
       if (value is! Map) return;
       final data = (value).cast<Object?, Object?>().map((k, v) => MapEntry(k.toString(), v));
@@ -160,6 +160,12 @@ class BattleController extends Notifier<BattleState> {
           phase: BattlePhase.finished,
           winnerUid: data['winner']?.toString(),
         );
+        // The server's terminal transition; the stream is cancelled below so
+        // a repeated RTDB snapshot cannot count as a second battle.
+        unawaited(ref.read(analyticsProvider).log(
+          AnalyticsEvents.battleFinished,
+          params: {'match_id': matchId},
+        ));
         _rtdbSub?.cancel();
         _ticker?.cancel();
         return;

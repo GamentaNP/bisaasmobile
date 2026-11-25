@@ -38,7 +38,7 @@ class _LiveEventsScreenState extends ConsumerState<LiveEventsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.liveEventsTitle),
-        actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: state.isLoading ? null : _onRefresh)],
+        actions: [IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: l10n.streakRefresh, onPressed: state.isLoading ? null : _onRefresh)],
       ),
       body: RefreshIndicator(
         onRefresh: _onRefresh,

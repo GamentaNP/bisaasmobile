@@ -4649,4 +4649,27 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get streakFreezeFailed => 'फ्रीज़ विफल — कॉइन या दाता बैज जांचें।';
+
+  @override
+  String get a11yShowPassword => 'पासवर्ड दिखाएं';
+
+  @override
+  String get a11yHidePassword => 'पासवर्ड छिपाएं';
+
+  @override
+  String get a11yRemoveField => 'फ़ील्ड हटाएं';
+
+  @override
+  String get a11yRemoveBookmark => 'बुकमार्क हटाएं';
+
+  @override
+  String a11yRateStar(Object count) {
+    return '$count सितारे दें';
+  }
+
+  @override
+  String get a11yMarkComplete => 'पूरे के रूप में चिह्नित करें';
+
+  @override
+  String get a11ySend => 'भेजें';
 }

@@ -47,7 +47,7 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
       appBar: AppBar(
         title: Text(l10n.learningReviewsDueTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => ref.invalidate(reviewsDueProvider)),
+          IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: l10n.streakRefresh, onPressed: () => ref.invalidate(reviewsDueProvider)),
         ],
       ),
       body: RefreshIndicator(

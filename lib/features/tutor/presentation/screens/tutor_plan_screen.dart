@@ -50,7 +50,7 @@ class _TutorPlanScreenState extends ConsumerState<TutorPlanScreen> with SingleTi
         title: Text(l10n.tutorStudyPlan),
         actions: [
           IconButton(icon: const Icon(Icons.chat_bubble_outline_rounded), tooltip: l10n.tutorChat, onPressed: () => context.go('/tutor/chat')),
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => ref.read(tutorPlanControllerProvider.notifier).fetchAll()),
+          IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: l10n.streakRefresh, onPressed: () => ref.read(tutorPlanControllerProvider.notifier).fetchAll()),
         ],
         bottom: TabBar(
           controller: _tabs,

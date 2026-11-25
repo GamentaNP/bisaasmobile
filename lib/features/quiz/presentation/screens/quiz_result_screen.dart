@@ -9,6 +9,8 @@ import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../shared/widgets/answer_feedback_lottie.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
@@ -246,6 +248,13 @@ class QuizResultScreen extends StatelessWidget {
               onPressed: () {
                 final id = quizState.attemptId;
                 if (id != null && !id.startsWith('offline-')) {
+                  // The plain StatelessWidget reads the container from context,
+                  // as the share path below already does.
+                  unawaited(
+                    ProviderScope.containerOf(context, listen: false)
+                        .read(analyticsProvider)
+                        .log(AnalyticsEvents.quizReviewOpen),
+                  );
                   context.go('/quiz/attempt/$id/result/review');
                 } else {
                   context.go('/quiz');

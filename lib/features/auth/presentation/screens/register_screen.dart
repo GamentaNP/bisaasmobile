@@ -182,6 +182,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
                           ),
+                          tooltip: _obscurePassword
+                              ? l10n.a11yShowPassword
+                              : l10n.a11yHidePassword,
                           onPressed: () =>
                               setState(() => _obscurePassword = !_obscurePassword),
                         ),

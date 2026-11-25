@@ -4646,4 +4646,27 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get streakFreezeFailed =>
       'फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।';
+
+  @override
+  String get a11yShowPassword => 'पासवर्ड देखाउनुहोस्';
+
+  @override
+  String get a11yHidePassword => 'पासवर्ड लुकाउनुहोस्';
+
+  @override
+  String get a11yRemoveField => 'फाँट हटाउनुहोस्';
+
+  @override
+  String get a11yRemoveBookmark => 'बुकमार्क हटाउनुहोस्';
+
+  @override
+  String a11yRateStar(Object count) {
+    return '$count तारे दिनुहोस्';
+  }
+
+  @override
+  String get a11yMarkComplete => 'पूरा भएको जनाउनुहोस्';
+
+  @override
+  String get a11ySend => 'पठाउनुहोस्';
 }

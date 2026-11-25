@@ -126,7 +126,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           IconButton(icon: const Icon(Icons.share_rounded), onPressed: _shareCard, tooltip: l10n.profileShareCard),
           // go, not push — shell routes require go() on web
-          IconButton(icon: const Icon(Icons.settings_rounded), onPressed: () => context.go('/settings')),
+          IconButton(icon: const Icon(Icons.settings_rounded), tooltip: l10n.settings, onPressed: () => context.go('/settings')),
         ],
       ),
       body: ListView(

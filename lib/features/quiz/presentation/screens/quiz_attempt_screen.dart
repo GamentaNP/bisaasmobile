@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/security/sensitive_screen_guard.dart';
 import '../../../../shared/widgets/ambient_glow_background.dart';
 import '../../../../shared/widgets/chunky/chunky_button.dart';
@@ -215,6 +219,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.close_rounded),
+                tooltip: l10n.commonExit,
                 onPressed: () => _showExitDialog(context),
               ),
               Expanded(
@@ -620,6 +625,12 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
       ),
     );
     if (confirmed == true && mounted) {
+      // Only an explicit confirmation is an abandon — closing the dialog with
+      // "Stay" must not count, and a timeout is not a user action.
+      unawaited(ref.read(analyticsProvider).log(
+        AnalyticsEvents.quizAbandon,
+        params: {'quiz_id': widget.quizId},
+      ));
       context.pop();
     }
   }

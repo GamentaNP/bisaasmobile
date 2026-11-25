@@ -134,17 +134,9 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                 ],
               ),
             ),
-          // Pending indicator, independent of the removed legacy-endpoint toggle.
-          if (state.isSending)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-              child: Text(
-                l10n.tutorWriting,
-                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
-              ),
-            ),
+          // One pending indicator only — the spinner row below the transcript.
+          // A second banner here used to show `tutorWriting` at the same time,
+          // so a send rendered two competing "still working" signals.
           Expanded(
             child: state.messages.isEmpty
                 ? Center(
@@ -219,10 +211,14 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: state.isSending ? null : _send,
-                    style: FilledButton.styleFrom(shape: const CircleBorder(), padding: const EdgeInsets.all(12)),
-                    child: const Icon(Icons.send_rounded, size: 18),
+                  Semantics(
+                    label: l10n.a11ySend,
+                    button: true,
+                    child: FilledButton(
+                      onPressed: state.isSending ? null : _send,
+                      style: FilledButton.styleFrom(shape: const CircleBorder(), padding: const EdgeInsets.all(12)),
+                      child: const Icon(Icons.send_rounded, size: 18),
+                    ),
                   ),
                 ],
               ),

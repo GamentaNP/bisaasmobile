@@ -51,6 +51,7 @@ class _CoachingDashboardScreenState extends ConsumerState<CoachingDashboardScree
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
+            tooltip: l10n.streakRefresh,
             onPressed: state.isRefreshing ? null : () => ref.read(coachingControllerProvider.notifier).refresh(),
           ),
           PopupMenuButton<String>(

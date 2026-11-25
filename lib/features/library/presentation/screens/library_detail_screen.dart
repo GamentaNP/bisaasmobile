@@ -493,6 +493,7 @@ class _SubmitReviewCard extends StatelessWidget {
               final filled = idx <= rating;
               return IconButton(
                 icon: Icon(filled ? Icons.star_rounded : Icons.star_border_rounded, color: filled ? AppColors.xpGold : Theme.of(context).colorScheme.onSurfaceVariant, size: 28),
+                tooltip: l10n.a11yRateStar(idx),
                 onPressed: () => onRatingChanged(idx),
               );
             }),

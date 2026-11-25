@@ -30,7 +30,7 @@ class _LearningTodayScreenState extends ConsumerState<LearningTodayScreen> {
       appBar: AppBar(
         title: Text(l10n.learningTodaysPlan),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () => ref.invalidate(todayPlanProvider)),
+          IconButton(icon: const Icon(Icons.refresh_rounded), tooltip: l10n.streakRefresh, onPressed: () => ref.invalidate(todayPlanProvider)),
         ],
       ),
       body: RefreshIndicator(
@@ -172,6 +172,7 @@ class _TodayPlanView extends ConsumerWidget {
                         ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                         : IconButton(
                             icon: const Icon(Icons.check_circle_outline_rounded),
+                            tooltip: l10n.a11yMarkComplete,
                             onPressed: () async {
                               final notifier = ref.read(learningControllerProvider.notifier);
                               final updated = await notifier.completeItem(plan.id, idx);

@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/consent/consent_gate.dart';
 import '../../../../app/theme/app_radii.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../core/storage/preferences.dart';
@@ -8,14 +13,14 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../l10n/app_localizations.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _pageController = PageController();
   int _currentPage = 0;
 
@@ -113,6 +118,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await prefs.setDailyGoalMinutes(_dailyMinutes);
     await prefs.setExperienceLevel(_storedLevelValue(_experienceLevel));
     await prefs.setOnboardingDone(true);
+
+    // The completion transition, not the first-frame app_open. Through the
+    // consent gate so a user who declined analytics is not counted.
+    unawaited(ref.read(analyticsProvider).log(AnalyticsEvents.onboardingComplete));
 
     if (!mounted) return;
     context.go('/home');
