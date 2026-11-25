@@ -53,6 +53,13 @@ class RetryInterceptor extends Interceptor {
 
     await Future<void>.delayed(delay);
 
+    // A disposed screen / cancelled flow must not fire a retry after the
+    // backoff has elapsed.
+    if (opts.cancelToken?.isCancelled ?? false) {
+      handler.next(err);
+      return;
+    }
+
     final newOpts = opts.copyWith(
       extra: {...opts.extra, 'retry_attempt': attempt + 1},
     );
@@ -67,6 +74,14 @@ class RetryInterceptor extends Interceptor {
 
   bool _shouldRetry(DioException err, int? status) {
     final opts = err.requestOptions;
+    // A slow LLM answer that hit its generous timeout is not a transport
+    // failure to replay: every retry starts another billed generation.
+    if (err.type == DioExceptionType.receiveTimeout &&
+        (opts.path.contains('/learning/tutor') ||
+            opts.path.contains('/learning/ai-tutor') ||
+            opts.path.contains('/ai/calculator-assist'))) {
+      return false;
+    }
     final method = opts.method.toUpperCase();
     final replaySafe =
         method == 'GET' ||

@@ -1,55 +1,22 @@
-
-
-import '../../../../l10n/app_localizations.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../../../../core/network/dio_client.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../home/presentation/controllers/home_controller.dart';
+import '../../data/providers/achievements_providers.dart';
+import '../../domain/entities/achievements.dart';
 import '../widgets/xp_progress_bar.dart';
 
-/// Fetches achievement catalog from `GET /api/v1/economy/achievements`.
-/// Each item contains unlocked/in_progress/locked status from the server.
-final achievementsDataProvider = FutureProvider<AchievementsData>((ref) async {
-  final dio = DioClient.instance.dio;
-  // Load catalog + per-user progress in parallel
-  final results = await Future.wait([
-    dio.get<Map<String, dynamic>>('/economy/achievements'),
-    dio.get<Map<String, dynamic>>('/me/achievements/progress'),
-    dio.get<Map<String, dynamic>>('/me/achievements/recent'),
-  ]);
+// Keep the public names available at their old location for existing callers.
+export '../../data/providers/achievements_providers.dart'
+    show achievementsDataProvider;
+export '../../domain/entities/achievements.dart'
+    show AchievementEntry, AchievementsData;
 
-  final catalogBody = results[0].data?['data'];
-  final progressBody = results[1].data?['data'];
-  final recentBody = results[2].data?['data'];
-
-  return AchievementsData.fromRaw(catalogBody, progressBody, recentBody);
-});
-
-class AchievementEntry {
-  const AchievementEntry({
-    required this.id,
-    required this.key,
-    required this.name,
-    required this.rarity,
-    required this.isCompleted,
-    required this.progressCurrent,
-    required this.progressTarget,
-    this.completedAt,
-  });
-
-  final int id;
-  final String key;
-  final String name;
-  final String rarity;
-  final bool isCompleted;
-  final int progressCurrent;
-  final int progressTarget;
-  final String? completedAt;
-
+/// Rarity colours are presentation, not server data.
+extension AchievementRarityColor on AchievementEntry {
   Color get rarityColor {
     switch (rarity) {
       case 'legendary':
@@ -63,71 +30,6 @@ class AchievementEntry {
       default:
         return const Color(0xFF94A3B8);
     }
-  }
-}
-
-class AchievementsData {
-  const AchievementsData({required this.achievements, required this.recentCount});
-  final List<AchievementEntry> achievements;
-  final int recentCount;
-
-  factory AchievementsData.fromRaw(
-    dynamic catalogBody,
-    dynamic progressBody,
-    dynamic recentBody,
-  ) {
-    // Build a map of progress by achievement_id
-    final progressMap = <int, Map<String, dynamic>>{};
-    if (progressBody is List) {
-      for (final p in progressBody.cast<Map<String, dynamic>>()) {
-        final id = p['achievement_id'] as int?;
-        if (id != null) progressMap[id] = p;
-      }
-    }
-
-    // Merge catalog with user progress
-    final achievements = <AchievementEntry>[];
-
-    // catalog shape: {unlocked: [], in_progress: [], locked: []}
-    if (catalogBody is Map<String, dynamic>) {
-      for (final bucket in ['unlocked', 'in_progress', 'locked']) {
-        final list = catalogBody[bucket];
-        if (list is List) {
-          for (final item in list.cast<Map<String, dynamic>>()) {
-            final id = (item['id'] ?? item['achievement_id'] ?? 0) as int;
-            final progress = progressMap[id];
-            achievements.add(AchievementEntry(
-              id: id,
-              key: (item['key'] ?? '').toString(),
-              name: (item['name'] ?? 'Achievement').toString(),
-              rarity: (item['rarity'] ?? 'common').toString(),
-              isCompleted: bucket == 'unlocked' || (progress?['is_completed'] as bool? ?? false),
-              progressCurrent: (progress?['progress_current'] as int?) ?? 0,
-              progressTarget: (progress?['progress_target'] as int?) ?? 1,
-              completedAt: (item['completed_at'] ?? progress?['completed_at']) as String?,
-            ));
-          }
-        }
-      }
-    } else if (progressBody is List) {
-      // Fallback: just show progress list
-      for (final p in progressBody.cast<Map<String, dynamic>>()) {
-        final id = (p['achievement_id'] ?? 0) as int;
-        achievements.add(AchievementEntry(
-          id: id,
-          key: (p['key'] ?? '').toString(),
-          name: (p['name'] ?? 'Achievement').toString(),
-          rarity: 'common',
-          isCompleted: p['is_completed'] as bool? ?? false,
-          progressCurrent: (p['progress_current'] as int?) ?? 0,
-          progressTarget: (p['progress_target'] as int?) ?? 1,
-          completedAt: p['completed_at'] as String?,
-        ));
-      }
-    }
-
-    final recentCount = (recentBody is List) ? recentBody.length : 0;
-    return AchievementsData(achievements: achievements, recentCount: recentCount);
   }
 }
 

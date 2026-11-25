@@ -14,8 +14,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../core/analytics/analytics_service.dart';
+import '../core/analytics/crash_reporting.dart';
 import '../core/connectivity/api_reachability.dart';
 import '../core/connectivity/connectivity_service.dart';
+import '../core/logging/app_logger.dart';
 import '../core/network/dio_client.dart';
 import '../core/notifications/local_notification_service.dart';
 import 'config/app_config.dart';
@@ -28,6 +30,8 @@ import '../core/storage/database/daos/sync_queue_dao.dart';
 import '../core/storage/preferences.dart';
 import '../core/consent/consent_gate.dart';
 import '../core/sync/sync_manager.dart';
+import '../features/tutor/presentation/controllers/tutor_controller.dart';
+import '../shared/domain/learning_read_models.dart';
 import '../core/sync/sync_queue.dart';
 import '../core/sync/sync_worker.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
@@ -67,12 +71,21 @@ final appConfigProvider = FutureProvider<AppConfig?>((ref) async {
     // frame: `ForceUpdateGate` listens to that gate and swaps the screen in.
     applyAppConfig(config);
     return config;
-  } on Object {
+  } on Object catch (e, st) {
     // A config outage must not brick the app. `null` means "unknown", and every
-    // consumer treats unknown as "not enforced" rather than guessing.
+    // consumer treats unknown as "not enforced" rather than guessing — but it
+    // must be observable, or a broken kill switch looks like an off switch.
+    AppLogger.w('app config unavailable: $e', e, st);
+    unawaited(CrashReporting.log('app_config_unavailable'));
     return null;
   }
 });
+
+/// Cross-feature seam for learning analytics read models. Coaching consumes
+/// these projections without importing the tutor feature.
+final learningAnalyticsProvider = Provider<LearningAnalyticsSource>(
+  (ref) => ref.watch(tutorRepositoryProvider),
+);
 
 /// Synchronous view of the config, for widgets that would otherwise need a
 /// nested AsyncValue. `null` until loaded or if unavailable.

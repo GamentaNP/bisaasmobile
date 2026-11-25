@@ -15,6 +15,34 @@ abstract final class CrashReporting {
         .recordError(error, st, reason: reason, fatal: false);
   }
 
+  /// A crash that actually killed the app must be reported as fatal — the
+  /// global handlers at bootstrap previously used the non-fatal `record`,
+  /// which misclassified crashes and overwrote the debug fatal handlers.
+  static Future<void> recordFatal(
+    Object error,
+    StackTrace st, {
+    String? reason,
+  }) {
+    if (!_available) return Future<void>.value();
+    return FirebaseCrashlytics.instance
+        .recordError(error, st, reason: reason, fatal: true);
+  }
+
+  /// Debug/QA sessions must not pollute production crash metrics. Call once
+  /// after Firebase init with `enabled: !kDebugMode`.
+  static Future<void> configure({required bool enabled}) async {
+    if (!_available) return;
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(enabled);
+  }
+
+  static Future<void> setContext(Map<String, Object> values) async {
+    if (!_available) return;
+    for (final entry in values.entries) {
+      await FirebaseCrashlytics.instance
+          .setCustomKey(entry.key, '${entry.value}');
+    }
+  }
+
   static Future<void> log(String msg) {
     if (!_available) return Future<void>.value();
     return FirebaseCrashlytics.instance.log(msg);

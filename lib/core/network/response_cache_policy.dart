@@ -51,7 +51,9 @@ abstract final class ResponseCachePolicy {
   /// v2 adds the credential fingerprint to the key. Every v1 entry was written
   /// under a key that could not distinguish one signed-in user from another, so
   /// none of them may survive.
-  static const schemaVersion = '2';
+  // Bumped when the cache key began including the X-Tenant assertion, so
+  // entries written with the old (tenant-blind) key are never served.
+  static const schemaVersion = '3';
 
   /// Total bytes the cache may occupy. Generous for the catalog set this app
   /// actually caches, and small enough that a runaway server cannot fill a

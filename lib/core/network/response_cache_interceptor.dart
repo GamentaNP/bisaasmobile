@@ -7,6 +7,7 @@ import '../logging/app_logger.dart';
 import 'request_coalescer.dart';
 import 'response_cache_policy.dart';
 import 'response_cache_store.dart';
+import 'tenant_interceptor.dart';
 
 /// Serves a cached body immediately and refreshes it behind the user.
 ///
@@ -208,6 +209,12 @@ class ResponseCacheInterceptor extends Interceptor {
                 'Authorization': authorization,
               if (original.headers['Accept-Language'] case final String lang)
                 'Accept-Language': lang,
+              // The cached body was written for this organization assertion;
+              // revalidating under another tenant (or none) would persist the
+              // wrong visibility-filtered response under the same key.
+              if (original.headers[TenantInterceptor.header]
+                  case final String tenant)
+                TenantInterceptor.header: tenant,
             },
             responseType: ResponseType.json,
           ),

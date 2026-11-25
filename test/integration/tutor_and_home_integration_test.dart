@@ -11,6 +11,7 @@
 ///    treatment is reachable.
 library;
 
+import 'package:bisaasmobile/core/network/api_exception.dart';
 import 'package:bisaasmobile/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:bisaasmobile/features/tutor/data/datasources/tutor_remote_data_source.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -93,7 +94,7 @@ void main() {
     test('a total outage is an error, not a zeroed dashboard', () async {
       failEverything();
 
-      await expectLater(remote.getDashboard(), throwsA(isA<Object>()));
+      await expectLater(remote.getDashboard(), throwsA(isA<ApiException>()));
     });
 
     test('one absent section does not blank the whole dashboard', () async {

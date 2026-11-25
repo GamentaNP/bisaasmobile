@@ -1,4 +1,4 @@
-// ignore_for_file: use_null_aware_elements, unnecessary_cast
+// ignore_for_file: use_null_aware_elements
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
@@ -37,19 +37,13 @@ class LibraryRemoteDataSource {
     if (data is List) {
       return data.cast<Map<String, dynamic>>().map(LibraryCategoryDto.fromJson).toList();
     }
-    // Fallback via ApiResponse
-    try {
-      final envelope = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        if (json is Map<String, dynamic> && json['items'] is List) {
-          return (json['items'] as List).cast<Map<String, dynamic>>();
-        }
-        return <Map<String, dynamic>>[];
-      });
-      return (envelope.data ?? []).map(LibraryCategoryDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    // A 2xx body we cannot read is contract drift, not an empty catalogue.
+    // Returning [] here would render "nothing available" instead of an error
+    // with retry — the failure contract forbids that.
+    throw const ContractViolation(
+      'Categories payload not understood',
+      endpoint: '/library/categories',
+    );
   }
 
   // ── Files (cursor paginated) ───────────────────────────────────────────
@@ -216,22 +210,10 @@ class LibraryRemoteDataSource {
     } else if (data is List) {
       raw = data.cast<Map<String, dynamic>>();
     } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) {
-          if (json is Map<String, dynamic> && json['items'] is List) {
-            return (json['items'] as List).cast<Map<String, dynamic>>();
-          }
-          if (json is List) return (json as List).cast<Map<String, dynamic>>();
-          return <Map<String, dynamic>>[];
-        });
-        raw = env.data ?? [];
-        pagination = env.pagination ?? pagination;
-      } on Object catch (e) {
-        throw ContractViolation(
-          'Reviews payload not understood: $e',
-          endpoint: '/library/files/{slug}/reviews',
-        );
-      }
+      throw const ContractViolation(
+        'Reviews payload not understood',
+        endpoint: '/library/files/{slug}/reviews',
+      );
     }
     if (raw.isEmpty && !body.containsKey('data')) {
       throw const ContractViolation(
@@ -302,22 +284,10 @@ class LibraryRemoteDataSource {
     } else if (data is List) {
       raw = data.cast<Map<String, dynamic>>();
     } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) {
-          if (json is Map<String, dynamic> && json['items'] is List) {
-            return (json['items'] as List).cast<Map<String, dynamic>>();
-          }
-          if (json is List) return (json as List).cast<Map<String, dynamic>>();
-          return <Map<String, dynamic>>[];
-        });
-        raw = env.data ?? [];
-        pagination = env.pagination ?? pagination;
-      } on Object catch (e) {
-        throw ContractViolation(
-          'Unlocks payload not understood: $e',
-          endpoint: '/library/me/unlocks',
-        );
-      }
+      throw const ContractViolation(
+        'Unlocks payload not understood',
+        endpoint: '/library/me/unlocks',
+      );
     }
     if (raw.isEmpty && !body.containsKey('data')) {
       throw const ContractViolation(
@@ -344,18 +314,10 @@ class LibraryRemoteDataSource {
     if (data is Map<String, dynamic> && data['items'] is List) {
       return (data['items'] as List).cast<Map<String, dynamic>>().map(LibraryFileDto.fromJson).toList();
     }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        if (json is Map<String, dynamic> && json['items'] is List) {
-          return (json['items'] as List).cast<Map<String, dynamic>>();
-        }
-        return <Map<String, dynamic>>[];
-      });
-      return (env.data ?? []).map(LibraryFileDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    throw const ContractViolation(
+      'Trending payload not understood',
+      endpoint: '/library/trending',
+    );
   }
 
   // ── Recommendations ─────────────────────────────────────────────────────
@@ -373,17 +335,9 @@ class LibraryRemoteDataSource {
     if (data is Map<String, dynamic> && data['items'] is List) {
       return (data['items'] as List).cast<Map<String, dynamic>>().map(LibraryFileDto.fromJson).toList();
     }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        if (json is Map<String, dynamic> && json['items'] is List) {
-          return (json['items'] as List).cast<Map<String, dynamic>>();
-        }
-        return <Map<String, dynamic>>[];
-      });
-      return (env.data ?? []).map(LibraryFileDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    throw const ContractViolation(
+      'Recommendations payload not understood',
+      endpoint: '/library/recommendations',
+    );
   }
 }

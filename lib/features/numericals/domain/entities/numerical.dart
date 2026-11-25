@@ -87,9 +87,11 @@ class NumericalCheck {
 
   /// A message that never states a value the server withheld.
   String get outcomeLabel => correct
-      ? (finalAnswer == null
-          ? 'Correct'
-          : 'Correct · ${formatNumber(finalAnswer!)}$unitSuffix')
+      ? appL10n().numericalsCorrect(
+          finalAnswer == null
+              ? ''
+              : ' · ${formatNumber(finalAnswer!)}$unitSuffix',
+        )
       : appL10n().numericalNotCorrect;
 
   String get unitSuffix => unit == null ? '' : ' $unit';

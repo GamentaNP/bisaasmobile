@@ -1,5 +1,9 @@
 import 'package:meta/meta.dart';
 
+// Shared learning read models live in shared/domain so tutor and coaching
+// do not import each other. Re-exported for existing tutor consumers.
+export '../../../../shared/domain/learning_read_models.dart';
+
 @immutable
 class TutorMessage {
   const TutorMessage({
@@ -86,95 +90,6 @@ class TutorToday {
   final bool isCompleted;
 
   double get progress => totalCount == 0 ? 0 : completedCount / totalCount;
-}
-
-@immutable
-class WeakArea {
-  const WeakArea({
-    required this.topic,
-    this.topicId,
-    this.slug,
-    this.accuracy,
-    this.attempts = 0,
-    this.recommendation,
-    this.reason,
-  });
-
-  final String topic;
-  final String? topicId;
-  final String? slug;
-  final double? accuracy;
-  final int attempts;
-  final String? recommendation;
-  final String? reason;
-}
-
-@immutable
-class ProjectedScore {
-  const ProjectedScore({
-    required this.score,
-    this.maxScore = 100,
-    this.confidence,
-    this.breakdown = const {},
-    this.trend,
-    this.updatedAt,
-  });
-
-  final double score;
-  final double maxScore;
-  final double? confidence;
-  final Map<String, dynamic> breakdown;
-  final String? trend;
-  final DateTime? updatedAt;
-
-  double get percentage => maxScore == 0 ? 0 : (score / maxScore) * 100;
-}
-
-@immutable
-class WeeklyReport {
-  const WeeklyReport({
-    this.weekStart,
-    this.weekEnd,
-    this.tasksCompleted = 0,
-    this.tasksPlanned = 0,
-    this.averageScore,
-    this.summary,
-    this.insights = const [],
-    this.hoursStudied,
-  });
-
-  final DateTime? weekStart;
-  final DateTime? weekEnd;
-  final int tasksCompleted;
-  final int tasksPlanned;
-  final double? averageScore;
-  final String? summary;
-  final List<String> insights;
-  final double? hoursStudied;
-
-  double get completionRate =>
-      tasksPlanned == 0 ? 0 : tasksCompleted / tasksPlanned;
-}
-
-@immutable
-class RevisionItem {
-  const RevisionItem({
-    required this.id,
-    required this.questionId,
-    required this.dueAt,
-    this.topic,
-    this.title,
-    this.priority,
-  });
-
-  final String id;
-  final String questionId;
-  final DateTime dueAt;
-  final String? topic;
-  final String? title;
-  final String? priority;
-
-  bool get isOverdue => DateTime.now().isAfter(dueAt);
 }
 
 @immutable

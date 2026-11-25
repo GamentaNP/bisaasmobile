@@ -96,7 +96,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         Text(l10n.coinsBalance(balance), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: AppColors.coinYellow)),
                         const SizedBox(height: 2),
                         Text(
-                          state.isWalletLoading ? l10n.economySyncing : (state.wallet?.updatedAt != null ? 'Updated ${DateFormat.yMMMd().add_jm().format(state.wallet!.updatedAt!.toLocal())}' : '${user?.xp ?? 0} XP total'),
+                          state.isWalletLoading
+                              ? l10n.economySyncing
+                              : (state.wallet?.updatedAt != null
+                                  ? l10n.walletUpdatedAt(
+                                      DateFormat.yMMMd().add_jm().format(
+                                          state.wallet!.updatedAt!.toLocal()))
+                                  : l10n.economyXpTotal(user?.xp ?? 0)),
                           style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                         ),
                       ],

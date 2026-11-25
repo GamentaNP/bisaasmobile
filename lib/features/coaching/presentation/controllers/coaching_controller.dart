@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/providers.dart';
 import '../../../../core/logging/app_logger.dart';
-import '../../../../core/network/dio_client.dart';
-import '../../../tutor/presentation/controllers/tutor_controller.dart';
 import '../../data/datasources/coaching_remote_data_source.dart';
 import '../../data/repositories/coaching_repository_impl.dart';
 import '../../domain/entities/coaching.dart';
@@ -11,13 +10,13 @@ import '../../domain/repositories/coaching_repository.dart';
 // ── Providers ───────────────────────────────────────────────────────────────
 
 final coachingRemoteDataSourceProvider = Provider<CoachingRemoteDataSource>((ref) {
-  return CoachingRemoteDataSource(DioClient.instance.dio);
+  return CoachingRemoteDataSource(ref.watch(dioProvider));
 });
 
 final coachingRepositoryProvider = Provider<CoachingRepository>((ref) {
   return CoachingRepositoryImpl(
     ref.watch(coachingRemoteDataSourceProvider),
-    ref.watch(tutorRepositoryProvider),
+    ref.watch(learningAnalyticsProvider),
   );
 });
 

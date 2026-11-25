@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 
 import '../../app/localization/l10n.dart';
 import '../connectivity/api_reachability.dart';
+import '../logging/app_logger.dart';
 import '../security/token_manager.dart';
 import 'api_exception.dart';
 import 'app_update_gate.dart';
@@ -20,15 +21,28 @@ class AuthInterceptor extends Interceptor {
   final ApiReachability? _reachability;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = await _tokens.readToken();
-    if (token != null && token.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer $token';
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    try {
+      final token = await _tokens.readToken();
+      if (token != null && token.isNotEmpty) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
+      // Always honor Accept + optional device header for refresh rotation
+      options.headers.putIfAbsent('Accept', () => 'application/json');
+      final deviceName = await _tokens.readDeviceName();
+      if (deviceName != null) options.headers['X-Device-Name'] = deviceName;
+    } catch (e, st) {
+      // A `void async` interceptor that throws never settles its handler: Dio
+      // has no timeout for that and the request hangs forever. Reject instead.
+      AppLogger.w('auth interceptor failed: $e', e, st);
+      handler.reject(
+        DioException(requestOptions: options, error: e),
+      );
+      return;
     }
-    // Always honor Accept + optional device header for refresh rotation
-    options.headers.putIfAbsent('Accept', () => 'application/json');
-    final deviceName = await _tokens.readDeviceName();
-    if (deviceName != null) options.headers['X-Device-Name'] = deviceName;
     handler.next(options);
   }
 

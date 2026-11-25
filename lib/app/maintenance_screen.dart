@@ -82,7 +82,7 @@ class MaintenanceScreen extends ConsumerWidget {
 
   Future<void> _openSupport(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
-    const url = 'mailto:support@bisaas.com';
+    const url = 'mailto:support@lovemcq.com';
     var ok = false;
     try {
       ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -90,7 +90,7 @@ class MaintenanceScreen extends ConsumerWidget {
       ok = false;
     }
     if (!ok) {
-      messenger.showSnackBar(const SnackBar(content: Text('support@bisaas.com')));
+      messenger.showSnackBar(const SnackBar(content: Text('support@lovemcq.com')));
     }
   }
 }

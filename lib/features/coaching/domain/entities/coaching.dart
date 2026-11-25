@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import '../../../tutor/domain/entities/tutor.dart';
+import '../../../../shared/domain/learning_read_models.dart';
 
 @immutable
 class Readiness {

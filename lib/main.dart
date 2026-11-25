@@ -7,5 +7,16 @@ import 'app/bootstrap.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await bootstrap();
-  runApp(const ProviderScope(child: CivilCalApp()));
+  // Retry policy lives in RetryInterceptor only. Riverpod 3's default retry
+  // would rebuild every failed network provider ~11 times on top of Dio's
+  // retries, and hold the UI in AsyncLoading(retrying:true) so the error+retry
+  // affordance never appears.
+  runApp(
+    const ProviderScope(
+      retry: _noProviderRetry,
+      child: CivilCalApp(),
+    ),
+  );
 }
+
+Duration? _noProviderRetry(int retryCount, Object error) => null;

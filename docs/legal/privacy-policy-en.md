@@ -2,7 +2,7 @@
 
 **Effective date:** 2026-11-04 (supersedes the 2026-10-25 version)
 **Operator:** Bisaas (the "Service"), product name CivilCal
-**Contact:** support@bisaas.com · **Security:** security@bisaas.com
+**Contact:** support@lovemcq.com · **Security:** security@lovemcq.com
 
 This policy explains what data the CivilCal mobile app and its backend
 collect, why, and what control you have. It applies to the Android and iOS
@@ -122,7 +122,7 @@ your server account.
 
 You may access, correct, export or delete your personal data, object to
 processing, and withdraw consent at any time: in the app's settings, or by
-contacting support@bisaas.com. We respond within 30 days.
+contacting support@lovemcq.com. We respond within 30 days.
 
 ## 8. Children
 
@@ -136,7 +136,7 @@ Data travels over TLS with certificate pinning in the app. Passwords are
 hashed server-side; session tokens are stored only in device secure storage,
 and Android backups of that storage are disabled. Access to production data is
 restricted to the operator. A security issue can be reported to
-security@bisaas.com.
+security@lovemcq.com.
 
 ## 10. Changes
 
@@ -146,4 +146,4 @@ date at the top always identifies the current version.
 
 ## 11. Contact
 
-Bisaas — support@bisaas.com
+Bisaas — support@lovemcq.com

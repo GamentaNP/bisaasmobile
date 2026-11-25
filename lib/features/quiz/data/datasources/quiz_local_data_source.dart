@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../../../core/logging/app_logger.dart';
+import '../../../../core/sync/daily_pack_cache.dart';
 import '../../../../core/storage/database/app_database.dart';
 import '../../../../core/storage/database/daos/quiz_dao.dart';
 import '../models/quiz_dto.dart';
@@ -13,7 +14,7 @@ import '../../../../app/localization/l10n.dart';
 /// Policy (research 14-18): public content = cache+refresh, authoritative
 /// (XP/coins/rank) = never cache. Questions are public content — cache long,
 /// refresh on next successful remote fetch.
-class QuizLocalDataSource {
+class QuizLocalDataSource implements DailyPackCache {
   QuizLocalDataSource(this._db) : _dao = QuizDao(_db);
   final AppDatabase _db;
   final QuizDao _dao;
@@ -51,6 +52,7 @@ class QuizLocalDataSource {
   /// so `correctOptionId` is always written as null. Offline play can therefore
   /// never grade locally — it reconciles through the server, which is the whole
   /// point of the boundary rule.
+  @override
   Future<void> cacheDailyPack({
     required String quizId,
     required List<Map<String, dynamic>> questions,

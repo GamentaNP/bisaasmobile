@@ -37,12 +37,19 @@ class PushNotificationService {
   final LocalNotificationService? _local;
   final ConsentGatedAnalytics? _analytics;
 
+  /// Stream listeners live for the process. `init()` is called on every login
+  /// transition; without this guard a logout/login cycle registers the same
+  /// listeners again and every push is delivered (and counted) N times.
+  bool _initialized = false;
+
   /// Emits the navigation target whenever the user opens a push (background
   /// tap, terminated-state tap, or foreground local-notification tap).
   Stream<String?> get navigationRequests => _nav.stream;
   final _nav = StreamController<String?>.broadcast();
 
   Future<void> init() async {
+    if (_initialized) return;
+    _initialized = true;
     // Push is optional. This method is called from an unawaited login flow,
     // so a device/plugin failure must never escape into the root zone.
     try {

@@ -10,18 +10,20 @@ say so in their first paragraph.
 | `privacy-policy-ne.md`, `privacy-policy-hi.md` | The same policy for the two non-English interfaces. Publish alongside, linked from the English page. |
 | `terms-en.md`, `terms-ne.md`, `terms-hi.md` | Terms of service. |
 
-**Status on 2026-11-04:** the text is complete and matches the code — analytics
-behind the first-launch consent sheet, in-app account deletion at
+**Status re-audited 2026-11-25:** the text is complete and matches the code -
+analytics behind the first-launch consent sheet, in-app account deletion at
 `DELETE /api/v1/account`, write-only BYOK keys, backup/transfer blocked, cert
-pinning on, no billing library anywhere. Contacts are `@bisaas.com`. The
-remaining work is publishing, not writing.
+pinning on, no billing library anywhere. Contact addresses must be live and
+monitored on the production domain (`lovemcq.com`). The remaining work is
+publishing, not writing.
 
 ## Before publishing
 
-1. **The domain must be live.** `bisaas.com` currently redirects to a domain
-   broker; the `@bisaas.com` addresses in this pack do not work until it is
-   owned and configured. See `../LAUNCH_READINESS.md`. If the launch moves to
-   another domain, every address in these six files changes with it.
+1. **Confirm the contact addresses on the live domain.** Production is live at
+   `https://lovemcq.com`; verify that every address in these six files resolves
+   and is monitored on that domain before publishing. See
+   `../LAUNCH_READINESS.md`. If the launch ever moves to another domain, every
+   address in these six files changes with it.
 2. Publish `privacy-policy-en.md` at a stable URL (e.g. `/privacy`), with the
    Nepali and Hindi versions at linked URLs (`/privacy/ne`, `/privacy/hi`).
 3. Publish the terms at `/terms` (and `/terms/ne`, `/terms/hi`).

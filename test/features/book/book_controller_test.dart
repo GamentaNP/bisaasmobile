@@ -213,7 +213,18 @@ void main() {
       final c = containerWith(failSync: true);
       c.read(readerControllerProvider(target));
       await settle(c);
+      // syncProgress() returns early at zero seconds — without a real elapsed
+      // session this test passes vacuously and never exercises the error path.
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
       await c.read(readerControllerProvider(target).notifier).syncProgress();
+      verify(
+        () => remote.reportProgress(
+          bookId: any(named: 'bookId'),
+          topicId: any(named: 'topicId'),
+          pageNumber: any(named: 'pageNumber'),
+          timeSpentSeconds: any(named: 'timeSpentSeconds'),
+        ),
+      ).called(1);
       final s = c.read(readerControllerProvider(target));
       expect(s.lastCreditMessage, isNull,
           reason: 'a failed sync must not claim time was credited');

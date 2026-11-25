@@ -1,4 +1,4 @@
-// ignore_for_file: unused_element, unnecessary_parenthesis, cast_nullable_to_non_nullable
+// ignore_for_file: unnecessary_parenthesis, cast_nullable_to_non_nullable
 
 import 'dart:async';
 
@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/battle_remote_data_source.dart';
 import '../../data/repositories/battle_repository_impl.dart';
@@ -125,6 +126,16 @@ class BattleController extends Notifier<BattleState> {
     state = state.copyWith(phase: BattlePhase.searching, error: null);
     try {
       try { await ref.read(analyticsProvider).log(AnalyticsEvents.battleMatchSearch, params: {'category': categoryId?.toString() ?? 'any'}); } catch (_) {}
+      // Sign in to RTDB before subscribing, so the authenticated uid is known
+      // for opponent-progress. Best-effort: a device without Firebase still
+      // plays through the REST path.
+      if (state.token != null) {
+        try {
+          await _connectFirebase();
+        } catch (e, st) {
+          AppLogger.w('Firebase sign-in unavailable for battle: $e', e, st);
+        }
+      }
       final repo = ref.read(battleRepositoryProvider);
       final m = await repo.findMatch(categoryId: categoryId, totalQuestions: totalQuestions);
       state = state.copyWith(phase: BattlePhase.inProgress, match: m, currentQuestionIndex: 0);

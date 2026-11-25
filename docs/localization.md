@@ -28,8 +28,9 @@ half-happen.
 
 ## 2. What is translated today
 
-**Everything.** 1,235 messages, in English, Nepali and Hindi, covering
-every screen in the app:
+**Everything.** 1,289 messages per locale (re-measured 2026-11-25 from
+`tool/generate_arb.py` / `lib/l10n/app_en.arb`), in English, Nepali and Hindi,
+covering every screen in the app:
 
 | Area | Screens |
 |---|---|
@@ -40,7 +41,7 @@ every screen in the app:
 | Content | library browser and detail, books and the reader, syllabus tree and blueprints, courses, learning tracks, today plan, reviews due, goals, downloads |
 | Progress | home dashboard, profile, streak (freeze, repair, insurance, wager), rewards, achievements, leaderboard, gamification |
 | Competition | contests, live events, battle, coaching, EICE, game worlds, missions |
-| Money | wallet, ledger, coin shop, inventory, donations, premium store, wardrobe, referral |
+| Money | wallet, ledger, donations, premium store, wardrobe, referral |
 | Social | invite friends, referral codes, shared challenges, notifications, search |
 | The app itself | privacy choices, stored data, settings, force update, maintenance, offline banner, error and empty states |
 | **Failures** | the whole error catalogue — every status code and every transport failure — because an error message is the copy a user reads most often |
@@ -51,7 +52,7 @@ in three separate sets so the reason is visible at the definition:
 
 | Group | Count | Examples and why |
 |---|---|---|
-| Addresses and non-copy values | 6 | `support@bisaas.com`, `privacy@bisaas.com`, the synthetic `offline@bisaas.test`, `OK (cached)` (a synthetic HTTP status, never shown), the `kDebugMode`-only auto-login button, and `C` (the avatar fallback, i.e. the first letter of the display name). |
+| Addresses and non-copy values | 6 | `support@lovemcq.com`, `privacy@lovemcq.com`, the synthetic `offline@bisaas.test`, `OK (cached)` (a synthetic HTTP status, never shown), the `kDebugMode`-only auto-login button, and `C` (the avatar fallback, i.e. the first letter of the display name). |
 | Brand names | 10 | `CivilCal`, `OpenAI`, `Google Gemini`, `Anthropic`, `DeepSeek`, `Groq`, `Mistral`, `OpenRouter`, `Google`, `Apple`. Translating a proper noun makes it wrong, not Nepali. |
 | Developer diagnostics | 10 | Seven sync-queue rejection reasons, `correctness`, `duration` (**protocol values** the battle kernel and server agree on), and `shuffle:{…}`. These reach an `ArgumentError` or a log line, never a screen. |
 
@@ -118,7 +119,7 @@ dart run tool/localization_coverage.dart --verbose  # every string, with a line 
 
 ## 5. Known gaps
 
-- **`hi` has had less review than `ne`.** Both have the same 1,235
+- **`hi` has had less review than `ne`.** Both have the same 1,289
   messages, so the coverage is identical, but the launch market is Nepal
   and the Hindi copy has not been read by a Hindi speaker. The
   mechanical defects a machine translation produces — a term spelled two

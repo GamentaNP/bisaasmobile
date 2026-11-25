@@ -33,6 +33,9 @@ class ConsentGatedAnalytics {
   Future<void> log(String name, {Map<String, Object>? params}) async {
     if (!isEnabled) {
       droppedEvents++;
+      if (droppedEvents == 1 || droppedEvents % 10 == 0) {
+        AppLogger.w('consent gate has dropped $droppedEvents analytics events');
+      }
       return;
     }
     try {

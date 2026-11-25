@@ -546,7 +546,9 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                isPending ? l10n.quizAnswerSubmitted : (isCorrect ? 'Great job!' : 'Not quite'),
+                isPending
+                    ? l10n.quizAnswerSubmitted
+                    : (isCorrect ? l10n.quizFeedbackGreatJob : l10n.quizFeedbackNotQuite),
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: verdictColor,

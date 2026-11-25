@@ -1,6 +1,6 @@
 import '../entities/tutor.dart';
 
-abstract class TutorRepository {
+abstract class TutorRepository implements LearningAnalyticsSource {
   // Onboarding
   Future<TutorOnboardingSession> startOnboarding({Map<String, dynamic>? payload});
   Future<void> completeOnboarding(String sessionId, {Map<String, dynamic>? payload});
@@ -21,9 +21,13 @@ abstract class TutorRepository {
   Future<void> completeDay({String? dayId, int? dayIndex});
   Future<void> adjustPlan(Map<String, dynamic> adjustments);
 
-  // Insights
+  // Insights — also satisfy LearningAnalyticsSource for cross-feature use.
+  @override
   Future<List<WeakArea>> getWeakAreas();
+  @override
   Future<ProjectedScore> getProjectedScore();
+  @override
   Future<WeeklyReport> getWeeklyReport();
+  @override
   Future<List<RevisionItem>> getRevisionsDue();
 }

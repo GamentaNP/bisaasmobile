@@ -14,6 +14,8 @@
 ///    endpoint rendered as "you have no ranks" / "no study plan".
 library;
 
+import 'package:bisaasmobile/core/network/api_failure.dart';
+import 'package:dio/dio.dart';
 import 'package:bisaasmobile/features/coaching/data/datasources/coaching_remote_data_source.dart';
 import 'package:bisaasmobile/features/leaderboard/data/datasources/leaderboard_remote_data_source.dart';
 import 'package:bisaasmobile/features/streak/data/datasources/streak_remote_data_source.dart';
@@ -38,7 +40,10 @@ void main() {
         FakeRoute.error(500, 'INTERNAL_ERROR', 'boom'),
       );
 
-      await expectLater(remote.getStreak(), throwsA(isA<Object>()));
+      // The raw transport here has no AuthInterceptor to map the body; the
+      // mapping itself is covered by core/network tests. What matters here is
+      // that a 500 is an error and never a zero streak.
+      await expectLater(remote.getStreak(), throwsA(isA<DioException>()));
     });
 
     test('an unreadable body is an error, not a zero streak', () async {
@@ -48,7 +53,7 @@ void main() {
         FakeRoute.raw(<String, dynamic>{'unexpected': 'shape'}),
       );
 
-      await expectLater(remote.getStreak(), throwsA(isA<Object>()));
+      await expectLater(remote.getStreak(), throwsA(isA<ContractViolation>()));
     });
 
     test('a real streak is read', () async {
@@ -84,7 +89,7 @@ void main() {
         FakeRoute.error(503, 'SERVICE_UNAVAILABLE', 'down'),
       );
 
-      await expectLater(remote.getLeaderboard(1), throwsA(isA<Object>()));
+      await expectLater(remote.getLeaderboard(1), throwsA(isA<DioException>()));
     });
 
     test('my-ranks: an unreadable body is an error, not an empty list', () async {
@@ -94,7 +99,7 @@ void main() {
         FakeRoute.raw(<String, dynamic>{'unexpected': 'shape'}),
       );
 
-      await expectLater(remote.getMyRanks(), throwsA(isA<Object>()));
+      await expectLater(remote.getMyRanks(), throwsA(isA<ContractViolation>()));
     });
   });
 
@@ -114,7 +119,7 @@ void main() {
         FakeRoute.error(500, 'INTERNAL_ERROR', 'boom'),
       );
 
-      await expectLater(remote.getReadiness('7'), throwsA(isA<Object>()));
+      await expectLater(remote.getReadiness('7'), throwsA(isA<DioException>()));
     });
 
     test('an unreadable weak-areas body is an error, not null', () async {
@@ -124,7 +129,10 @@ void main() {
         FakeRoute.raw(<String, dynamic>{'unexpected': 'shape'}),
       );
 
-      await expectLater(remote.getWeakAreasRaw(), throwsA(isA<Object>()));
+      await expectLater(
+        remote.getWeakAreasRaw(),
+        throwsA(isA<ContractViolation>()),
+      );
     });
 
     test('a legitimately empty coaching payload is still empty', () async {

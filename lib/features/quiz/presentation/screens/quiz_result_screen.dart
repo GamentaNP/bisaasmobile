@@ -44,13 +44,13 @@ class QuizResultScreen extends StatelessWidget {
     String gradeLabel;
     if (accuracy >= 0.8) {
       gradeColor = AppColors.correctGreen;
-      gradeLabel = 'Excellent!';
+      gradeLabel = l10n.quizGradeExcellent;
     } else if (accuracy >= 0.5) {
       gradeColor = AppColors.brand;
-      gradeLabel = 'Good Job!';
+      gradeLabel = l10n.quizGradeGoodJob;
     } else {
       gradeColor = AppColors.wrongRed;
-      gradeLabel = 'Keep Practicing';
+      gradeLabel = l10n.quizGradeKeepPracticing;
     }
 
     return SafeAreaScaffold(
@@ -405,10 +405,13 @@ Future<void> _shareResult(
   final l10n = AppLocalizations.of(context)!;
   final pct = (accuracy * 100).round();
   final title = quizState.session?.title ?? l10n.quizShareTitleFallback;
-  final grade = pct >= 80 ? 'Excellent' : pct >= 50 ? 'Good Job' : 'Keep Practicing';
-  final clientCopy = 'I scored $correct/$totalQ ($pct%) on "$title" — $grade! '
-      'XP +$xpEarned · Coins +$coinsEarned '
-      'via CivilCal (BiSaaS). Try: https://bisaas.com';
+  final grade = pct >= 80
+      ? l10n.quizGradeExcellent
+      : pct >= 50
+          ? l10n.quizGradeGoodJob
+          : l10n.quizGradeKeepPracticing;
+  final clientCopy =
+      l10n.quizShareResult(correct, totalQ, pct, title, grade, xpEarned, coinsEarned);
 
   // Prefer the server's own copy. The share line makes a claim about what
   // the user achieved, and the server is the only party that has reviewed
@@ -437,7 +440,9 @@ Future<void> _shareResult(
 
   try {
     AppLogger.i('Share quiz result $pct% $title');
-    await SharePlus.instance.share(ShareParams(text: msg, subject: 'My CivilCal Result — $title'));
+    await SharePlus.instance.share(
+      ShareParams(text: msg, subject: l10n.quizShareSubject(title)),
+    );
   } catch (e) {
     AppLogger.w('Share failed: $e');
     if (context.mounted) {

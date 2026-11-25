@@ -50,7 +50,7 @@ but a value that is still a placeholder will not do.
 
 | Value | Where | Current state | What breaks without it |
 |---|---|---|---|
-| `CERT_PIN_1`, `CERT_PIN_2` | `dart_defines/production.json` | **real** | The Gradle build refuses a production release, and the runtime refuses to start. Already correct. |
+| `CERT_PIN_1`, `CERT_PIN_2` | `dart_defines/production.json` | **real** — both are `sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ=` for `https://lovemcq.com` | The Gradle build refuses a production release, and the runtime refuses to start. Re-check after a certificate renewal; add `CERT_PIN_3` for a rollover. |
 | `SIGNING_CERT_HASH` | `dart_defines/production.json` | **real** | Android runs without the freeRASP device-integrity runtime. |
 | `IOS_TEAM_ID` | `dart_defines/production.json` | `__REPLACE_WITH_APPLE_TEAM_ID__` | **iOS runs without the device-integrity runtime entirely.** See §5. |
 | `APP_STORE_ID` | `dart_defines/production.json` | **missing** | The iOS force-update link falls back to the support page instead of the App Store listing. Add `"APP_STORE_ID": "1234567890"` once Apple issues it. |
@@ -101,7 +101,7 @@ but a value that is still a placeholder will not do.
    ```bash
    cd android
    version=$(grep -E '^version:' ../pubspec.yaml | sed -E 's/^version:[[:space:]]*//' | cut -d+ -f2)
-   fastlane supply --package_name com.bisaas.bisaasmobile \
+   fastlane supply --package_name com.beardbishwo.lovemcq \
      --metadata_path fastlane/metadata/android \
      --skip_upload_apk --skip_upload_images \
      --release_notes "$(cat fastlane/metadata/android/en-US/changelogs/$version.txt)"
@@ -136,11 +136,12 @@ but a value that is still a placeholder will not do.
    repository's development environment. Without the lock, two machines
    can resolve different pod versions for the same commit.
 
-2. Verify the bundle id is `com.bisaas.bisaasmobile` everywhere:
+2. Verify the bundle id is `com.beardbishwo.lovemcq` everywhere:
    `ios/Runner.xcodeproj/project.pbxproj` (`PRODUCT_BUNDLE_IDENTIFIER`),
    `ios/fastlane/Appfile`, `ios/fastlane/Matchfile`, and the App Store
    Connect app record. A mismatch fails at signing with a misleading
-   "no profile found" error.
+   "no profile found" error. Android's `applicationId` is the same value;
+   Gradle's `namespace` (`com.bisaas.bisaasmobile`) is internal only.
 
 3. Confirm the privacy manifest is in the bundle root:
 
@@ -152,12 +153,12 @@ but a value that is still a placeholder will not do.
    Required Reason API without declaring the reason. The manifest is
    wired into the Xcode project's Resources build phase.
 
-4. Confirm the store links resolve: `https://bisaas.com/privacy` and
-   `https://bisaas.com/support` must be live pages. They are referenced
+4. Confirm the store links resolve: `https://lovemcq.com/privacy` and
+   `https://lovemcq.com/support` must be live pages. They are referenced
    by `ios/fastlane/metadata/*/privacy_url.txt` and `support_url.txt`,
-   and by the iOS force-update fallback. **This is currently blocked** —
-   `bisaas.com` redirects to a domain broker. See
-   `LAUNCH_READINESS.md` §"The one fact that decides everything".
+   and by the iOS force-update fallback. Production is live at
+   `https://lovemcq.com`; see `LAUNCH_READINESS.md` for the remaining
+   founder-owned items.
 
 5. The social sign-in buttons are **hidden** when their client ids are
    not configured. That is deliberate — a button that is guaranteed to
@@ -216,11 +217,13 @@ rest of the security plan assumes.
       device size (still missing).
 - [ ] The App Store "App privacy" labels are filled in from
       `docs/data_safety_inventory.md` §2.
-- [ ] The `App Links` verification file is published at
-      `https://bisaas.com/.well-known/assetlinks.json`, otherwise the
-      `https://bisaas.com` deep links open a browser instead of the app.
+- [ ] The `App Links` fingerprints are set in **Admin → Settings → Mobile App
+      Settings** so the Laravel route serves
+      `https://lovemcq.com/.well-known/assetlinks.json`, otherwise the
+      `https://lovemcq.com` deep links open a browser instead of the app.
+      Never restore a static identity file — see `APP_LINKS_DEPLOYMENT.md`.
 - [ ] `IOS_TEAM_ID` is filled in — see §5.
 - [ ] The Firebase project is switched to a data region that matches the
       launch market (currently `asia-southeast1`).
 - [ ] A support address that a human reads is in place. The app points
-      at `privacy@bisaas.com` and `security@bisaas.com`.
+      at `privacy@lovemcq.com` and `security@lovemcq.com`.

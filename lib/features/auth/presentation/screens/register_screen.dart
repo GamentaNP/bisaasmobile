@@ -154,7 +154,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             _serverFieldErrors['full_name'],
                       ),
                       validator: (v) =>
-                          v == null || v.trim().isEmpty ? 'Please enter your name' : null,
+                          v == null || v.trim().isEmpty ? l10n.authEnterName : null,
                     ),
                     const SizedBox(height: 14),
                     TextFormField(
@@ -166,7 +166,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) =>
-                          v == null || !v.contains('@') ? 'Enter a valid email' : null,
+                          v == null || !v.contains('@') ? l10n.authInvalidEmail : null,
                     ),
                     const SizedBox(height: 14),
                     TextFormField(
@@ -187,7 +187,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                       ),
                       validator: (v) =>
-                          v != null && v.length < 8 ? 'Minimum 8 characters' : null,
+                          v != null && v.length < 8 ? l10n.authPasswordTooShort(8) : null,
                     ),
                     const SizedBox(height: 14),
                     TextFormField(
@@ -199,7 +199,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         errorText: _serverFieldErrors['password_confirmation'],
                       ),
                       validator: (v) => v != _passwordController.text
-                          ? 'Passwords do not match'
+                          ? l10n.authPasswordMismatch
                           : null,
                     ),
                     const SizedBox(height: 24),

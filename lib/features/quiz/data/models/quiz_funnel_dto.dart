@@ -1,3 +1,4 @@
+import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/quiz_funnel.dart';
 
 int? _asInt(Object? v) {
@@ -187,8 +188,9 @@ class QuizFunnelDto {
     // "there is no content".
     const known = ['items', 'counts', 'promo'];
     if (!known.any(j.containsKey)) {
-      throw const FormatException(
+      throw const ContractViolation(
         'Funnel payload carries none of items/counts/promo',
+        endpoint: '/quiz/guest-funnel',
       );
     }
 

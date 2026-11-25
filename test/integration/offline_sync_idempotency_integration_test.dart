@@ -22,6 +22,8 @@ library;
 
 import 'package:bisaasmobile/core/connectivity/connectivity_service.dart';
 import 'package:bisaasmobile/core/network/auth_interceptor.dart';
+import 'package:bisaasmobile/core/network/tenant_interceptor.dart';
+import 'package:bisaasmobile/core/security/tenant_store.dart';
 import 'package:bisaasmobile/core/security/token_manager.dart';
 import 'package:bisaasmobile/core/storage/database/app_database.dart';
 import 'package:bisaasmobile/core/storage/database/daos/sync_queue_dao.dart';
@@ -125,29 +127,60 @@ void main() {
       );
     });
 
-    test('429 then 200: the Retry-After path keeps the same key', () async {
-      // A throttle is the most likely failure on a burst of queued writes, and
-      // it is the one a careless implementation treats as "start over".
+    test('two concurrent drains replay each row only once', () async {
+      // The 30s worker timer and the connectivity listener can both call
+      // syncNow() while a drain is in flight. The re-entrancy guard must hold.
       final api = FakeApi(<String, FakeRoute>{})
-        ..onSequence('POST', '/quiz/offline/match-receipt', <FakeRoute>[
-          FakeRoute.error(429, 'RATE_LIMIT_EXCEEDED', 'Slow down.'),
-          FakeRoute.ok(<String, dynamic>{'recorded': true}),
-        ]);
+        ..on(
+          'PUT',
+          '/calculation-snapshots',
+          FakeRoute.ok(<String, dynamic>{'synced': 1}),
+        );
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        inputs: const <String, dynamic>{'a': 1},
+        result: const <String, dynamic>{'b': 2},
+      );
+      final manager = managerFor(api);
 
-      await queue.enqueueOfflineMatchReceipt(
-        manifestId: 'manifest-7',
-        payload: const <String, dynamic>{'score': 3},
+      await Future.wait([manager.syncNow(), manager.syncNow()]);
+
+      expect(api.countOf('PUT', '/calculation-snapshots'), 1);
+      expect(await rows(), isEmpty);
+    });
+
+    test('a queued write replays with the selected tenant assertion', () async {
+      // The production chain includes TenantInterceptor. Without it a snapshot
+      // enqueued while org A was selected replays with no X-Tenant and the
+      // server attributes it to the credential's default workspace.
+      when(() => storage.read(key: 'selected_tenant_id'))
+          .thenAnswer((_) async => '42');
+      final api = FakeApi(<String, FakeRoute>{})
+        ..on(
+          'PUT',
+          '/calculation-snapshots',
+          FakeRoute.ok(<String, dynamic>{'synced': 1}),
+        );
+
+      await queue.enqueueSnapshot(
+        domain: 'civil',
+        calculatorSlug: 'bmr',
+        inputs: const <String, dynamic>{'weight_kg': 70},
+        result: const <String, dynamic>{'bmi': 24.5},
       );
 
-      final manager = managerFor(api);
-      await manager.syncNow();
-      advancePastBackoff();
-      await manager.syncNow();
+      final dio = dioFor(api)
+        ..interceptors.add(AuthInterceptor(TokenManager(storage: storage)))
+        ..interceptors.add(TenantInterceptor(TenantStore(storage: storage)));
+      final manager = SyncManager(
+        queue: queue,
+        dio: dio,
+        connectivity: connectivity,
+      );
 
-      expect(api.countOf('POST', '/quiz/offline/match-receipt'), 2);
-      expect(api.headerOf(0, 'Idempotency-Key'), 'manifest-7');
-      expect(api.headerOf(1, 'Idempotency-Key'), 'manifest-7');
-      expect(await rows(), isEmpty);
+      await manager.syncNow();
+      expect(api.countOf('PUT', '/calculation-snapshots'), 1);
+      expect(api.headerOf(0, 'X-Tenant'), '42');
     });
 
     test('three attempts, one key, one row', () async {

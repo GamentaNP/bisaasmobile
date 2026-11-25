@@ -131,7 +131,7 @@ Rules:
 - Before adding a calculation, confirm the backend is source of truth — do not duplicate calculator math on-device except for offline preview (and then reconcile with server on sync).
 - Every network call honors `X-Request-Id` logging, `X-RateLimit-*` backoff, and `Retry-After` on 429.
 - No `env()`-style secrets in committed code; flavor config lives in `lib/app/config/env.dart` + `--dart-define`.
-- **Do not add a hardcoded user-facing string.** The app is fully translated into English, Nepali and Hindi — **1,235 messages in each locale** — and a string that is not in `lib/l10n/app_*.arb` reaches a Nepali reader in English. Add the key to `tool/generate_arb.py` (English, Nepali and Hindi on one line each, with the placeholder names), run `python tool/generate_arb.py && flutter gen-l10n`, and read it through `AppLocalizations.of(context)!` — or `appL10n()` outside a widget. `test/app/localization_coverage_test.dart` asserts that the whole app has no hardcoded user-facing string. `docs/localization.md` is the single source for the pipeline and the current counts.
+- **Do not add a hardcoded user-facing string.** The app is fully translated into English, Nepali and Hindi — **1,289 messages in each locale** — and a string that is not in `lib/l10n/app_*.arb` reaches a Nepali reader in English. Add the key to `tool/generate_arb.py` (English, Nepali and Hindi on one line each, with the placeholder names), run `python tool/generate_arb.py && flutter gen-l10n`, and read it through `AppLocalizations.of(context)!` — or `appL10n()` outside a widget. `test/app/localization_coverage_test.dart` asserts that the whole app has no hardcoded user-facing string. `docs/localization.md` is the single source for the pipeline and the current counts.
 
 ## Runbook
 
@@ -172,9 +172,9 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   `API_HOST=http://…` will not work anywhere. Release builds additionally keep strict TLS plus
   optional pinning (`CertificatePinning.prodPins`).
 - **The dev certificate shim never covers a production host.** `DioClient._devCertificateHosts()`
-  removes `CertificatePinning.productionHosts` (`bisaas.com`, `www.bisaas.com`,
-  `staging.bisaas.com`) from the permissive set, so a *debug* build pointed at production with
-  `--dart-define=API_HOST=https://bisaas.com` still rejects a forged certificate for it.
+  removes `CertificatePinning.productionHosts` (`lovemcq.com`, `www.lovemcq.com`,
+  `staging.lovemcq.com`) from the permissive set, so a *debug* build pointed at production with
+  `--dart-define=API_HOST=https://lovemcq.com` still rejects a forged certificate for it.
 - **Reaching a local Laragon backend from a device — use HTTPS over an adb tunnel.** `bisaas.test`
   does not resolve on a phone. Laragon's vhost
   (`C:\laragon\etc\apache2\sites-enabled\auto.bisaas.test.conf`) already has `localhost` in
@@ -209,7 +209,7 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   on API 26–33** — the engine catches the `NoClassDefFoundError` and disables the bridge. The app
   itself runs fine. See `docs/PROJECT_STATE.md` §5 C5.
 - **Firebase is active.** `android/app/google-services.json` exists (project
-  `bisaas-realtime-123`), so the conditional google-services Gradle plugin applies and FCM /
+  `love-mcq`), so the conditional google-services Gradle plugin applies and FCM /
   Crashlytics / Analytics are live. **Remote Config is not used** — it was removed because it
   disagreed with the operator's config (`economy_enabled` true on Firebase, false on the
   server); operator control runs through the server instead: `GET /api/v1/app/config`
@@ -218,10 +218,12 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   `EnforceAppVersion` (426) / `EnforceMobileKillSwitches`. The FCM `getToken()`
   no-Play-Services crash is **fixed** — `registerToken()`/`unregisterToken()` swallow the
   throw (`push_notification_service.dart:177-220`), verified on the Redmi 6A.
-- **Deep links:** `civilcal://` + `https://bisaas.com` are registered on Android
+- **Deep links:** `civilcal://` + `https://lovemcq.com` are registered on Android
   (intent-filters) and iOS (`CFBundleURLTypes`); runtime routing via `app_links` →
-  `DeepLinkHandler.parse` in `app.dart`. App-Link verification on bisaas.com needs
-  `/.well-known/assetlinks.json` (still unpublished).
+  `DeepLinkHandler.parse` in `app.dart`. App-Link fingerprints are served by the
+  config-driven Laravel route (see `docs/APP_LINKS_DEPLOYMENT.md`) — never restore a
+  static `assetlinks.json`, which would shadow that route forever. Push deep links
+  are additionally allowlisted by `NotificationHandler.safeRoute`.
 - **Token refresh:** `RefreshInterceptor` is registered on the Dio chain (401 → single-use
   rotation → replay with `skipAuthRefresh` guard); `RetryInterceptor` never replays
   non-idempotent POSTs unless an `Idempotency-Key` header is present.

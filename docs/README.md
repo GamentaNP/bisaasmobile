@@ -5,17 +5,21 @@ what was retired. If two files disagree, the authoritative one wins; if none
 is authoritative for the question, that is a gap to close here, not a tie to
 break by preference.
 
-**Last full audit: 2026-11-04, at `0cee095`.** Every claim in the surviving
-documents was checked against the tree (and, for the API, against
-`C:\laragon\www\bisaas`) on that date. Numbers that could not be measured were
-removed rather than repeated.
+**Last full audit: 2026-11-04, at `0cee095`; re-audited 2026-11-25.** The
+re-audit corrected drift in the production host (now `https://lovemcq.com`),
+the published ids (`com.beardbishwo.lovemcq`), the Firebase project
+(`love-mcq`), certificate pins, tenancy UX, the server contract and the
+localization count, and re-measured the tree counts. Every claim in the
+surviving documents was checked against the tree (and, for the API, against
+`C:\laragon\www\bisaas`). Numbers that could not be measured were removed
+rather than repeated.
 
 ## Read in this order
 
 | # | Document | Answers |
 |---|---|---|
 | 1 | [PROJECT_STATE.md](PROJECT_STATE.md) | What the client is, what is shipped, what is measured, which invariants must not regress, and the six open client items. |
-| 2 | [LAUNCH_READINESS.md](LAUNCH_READINESS.md) | What stands between this build and the Play Store, in order, including the blocker nobody can code around (the domain). |
+| 2 | [LAUNCH_READINESS.md](LAUNCH_READINESS.md) | What stands between this build and the Play Store, in order, including the decisions only the founder can make. |
 | 3 | [release_checklist.md](release_checklist.md) | The mechanical pre-release gate: commands, founder-supplied values, and the platform steps. |
 | 4 | [SERVER_CONTRACT_STATUS.md](SERVER_CONTRACT_STATUS.md) | What `/api/v1` delivers, what is still owed, and which client adoptions are behind. |
 | 5 | [../AGENTS.md](../AGENTS.md) | The rules for changing this repo: boundary, API contract, l10n, release posture. |
@@ -51,8 +55,8 @@ removed rather than repeated.
 - **Numbers are measured or absent.** A count that cannot be verified from the
   tree is not written down. This is why so many stale counts were removed
   rather than updated.
-- **Every doc names its date and commit.** If you change behaviour the doc
-  describes, change the doc in the same commit.
+- **Every doc names its date**, and a commit where one was recorded. If you
+  change behaviour the doc describes, change the doc in the same change.
 
 ## Retired on 2026-11-04, and why
 

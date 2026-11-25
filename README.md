@@ -8,7 +8,7 @@
 | Path | What | Owner |
 |------|------|-------|
 | `C:\laragon\www\bisaas` | Laravel web + Filament admin + `GET /api/v1/*` | Server — all business logic (grading, coins, leaderboards, fraud, subscriptions) |
-| `C:\laragon\www\bisaasmobile` | Flutter app (this repo) | Client — pixels, animations, offline queue, push |
+| `C:\laragon\www\bisaasmobile` | Flutter app (this repo) | Client - pixels, animations, offline read-cache, push |
 | `C:\laragon\www\bisaas\docs\mobileapp` | Master plans (Flutter, PWA, Social Proof Engine) | Spec — SSOT for architecture |
 | `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md` | Auth flow, envelope, error codes, pagination, push | Contract — frozen per `2026.08` |
 
@@ -25,7 +25,7 @@ Flutter **3.47.2** (stable, `C:\src\flutter`) · Dart **3.13.2** · Riverpod + g
 - **Envelope:** `{success, data, message, pagination, timestamp, api_version}` → `lib/core/network/api_response.dart:12`.
 - **Errors:** `ApiErrorCode` mirrors `App\Http\Support\ApiErrorCode` — `lib/core/network/api_exception.dart:8`. Unknown codes → generic.
 - **Auth:** `POST /api/v1/auth/login` → bearer PAT stored in Keychain/Keystore via `TokenManager` (`lib/core/security/token_manager.dart:16`). Never `SharedPreferences`.
-- **Refresh:** When `expires_at < 7d`, `POST /api/v1/auth/refresh` with `X-Device-Name` (single-use rotation, persist atomically). Any 401 → logout.
+- **Refresh:** When `expires_at < 7d`, `POST /api/v1/auth/refresh` with `X-Device-Name` (single-use rotation, persist atomically). A 401 goes through `RefreshInterceptor` (single-flight rotate + replay); only a failed refresh ends the session.
 - **Idempotency:** `Idempotency-Key: <uuid>` on `POST /quiz/attempts` (start), answer submission, completion, purchases and lifeline use. A retry reuses the key; a new key on a retry is how a double-credit happens.
 
 Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` · live spec: `GET /api/v1/openapi.json`.
@@ -39,14 +39,16 @@ Full catalog: `C:\laragon\www\bisaas\docs\MOBILE_API_INTEGRATION_GUIDE.md:125` �
 | Chrome / Windows desktop (dev) | `https://bisaas.test` | `--dart-define=ENV=dev` (default) |
 | Android emulator (dev) | `https://10.0.2.2` | `--dart-define=API_HOST=https://10.0.2.2 --dart-define=ENV=dev` |
 | **Physical Android device (dev)** | `https://localhost:8443` | `--dart-define=API_HOST=https://localhost:8443 --dart-define=ENV=dev` **plus `adb reverse tcp:8443 tcp:443`** |
-| staging | `https://staging.bisaas.com` | `--dart-define=ENV=staging` |
-| prod | `https://bisaas.com` | `--dart-define=ENV=prod` |
+| staging | `https://staging.lovemcq.com` | `--dart-define=ENV=staging` |
+| prod | `https://lovemcq.com` | `--dart-define=ENV=prod` |
 
-> **The prod row is not live.** On 2026-11-04 `bisaas.com` resolves to a
-> parking page (`302 → hugedomains.com`), while `dart_defines/production.json`
-> points `API_HOST` at it. A release build installs and cannot log in. The
-> domain decision is the first item in
-> [`docs/LAUNCH_READINESS.md`](docs/LAUNCH_READINESS.md).
+> Production is **live** at `https://lovemcq.com` (web + `/api/v1` both 200);
+> `dart_defines/production.json` and `lib/app/config/env.dart` agree on it.
+> The published Android application id / iOS bundle id is
+> `com.beardbishwo.lovemcq` (Gradle's `namespace` may still read
+> `com.bisaas.bisaasmobile` internally - that is not the store id). App Links
+> identity is configured in Admin → Settings → Mobile App Settings, never by
+> restoring a static identity file - see `docs/APP_LINKS_DEPLOYMENT.md`.
 
 Override raw: `--dart-define=API_BASE_URL=https://x/api/v1`.
 

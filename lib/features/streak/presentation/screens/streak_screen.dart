@@ -127,7 +127,7 @@ class _StreakScreenState extends ConsumerState<StreakScreen> {
     final state = ref.read(streakControllerProvider);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(ok ? l10n.streakFrozen : (state.freezeError ?? 'Freeze failed — check coins or donor badge.')),
+        content: Text(ok ? l10n.streakFrozen : (state.freezeError ?? l10n.streakFreezeFailed)),
         backgroundColor: ok ? AppColors.correctGreen : AppColors.wrongRed,
       ),
     );

@@ -266,10 +266,10 @@ class _InstructionsCard extends StatelessWidget {
         children: [
           Text(l10n.quizIntroHowItWorks, style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brand)),
           SizedBox(height: 8),
-          _Bullet('Server grades your answer instantly.'),
-          _Bullet('Correct: +10 XP, streak combo bonus.'),
-          _Bullet('Wrong: -2 XP, streak resets.'),
-          _Bullet('Tap the back button to exit (progress lost).'),
+          _Bullet(l10n.quizIntroScoredAtEnd),
+          _Bullet(l10n.quizIntroCorrectRule),
+          _Bullet(l10n.quizIntroWrongRule),
+          _Bullet(l10n.quizIntroBackRule),
         ],
       ),
     );

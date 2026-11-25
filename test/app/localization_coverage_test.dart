@@ -10,8 +10,8 @@ import '../../tool/localization_coverage.dart';
 /// out of a release. The avatar fallback is the first letter of the display
 /// name. The offline-identity email is a synthetic address, not copy.
 const allowedLiterals = <String>{
-  'support@bisaas.com',
-  'privacy@bisaas.com',
+  'support@lovemcq.com',
+  'privacy@lovemcq.com',
   'offline@bisaas.test',
   'OK (cached)',
   '⚡ Debug Auto-Login (user@bisaas.test)',
@@ -102,8 +102,8 @@ void main() {
     final unexpected = hits
         .where((h) => allowedLiterals.contains(h.text))
         .where((h) => !const {
-              'support@bisaas.com',
-              'privacy@bisaas.com',
+              'support@lovemcq.com',
+              'privacy@lovemcq.com',
               'offline@bisaas.test',
               'OK (cached)',
               '⚡ Debug Auto-Login (user@bisaas.test)',

@@ -649,7 +649,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get consentFootnote =>
-      'कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@bisaas.com पर संपर्क करें।';
+      'कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@lovemcq.com पर संपर्क करें।';
 
   @override
   String get privacyTitle => 'आपका डेटा';
@@ -4119,10 +4119,12 @@ class AppLocalizationsHi extends AppLocalizations {
       'सर्वर आपके उत्तर को तुरंत अंकित करता है।';
 
   @override
-  String get quizIntroCorrectRule => 'सही: +10 XP, स्ट्रीक कॉम्बो बोनस।';
+  String get quizIntroCorrectRule =>
+      'आपके सही उत्तरों को सर्वर अंत में अंकित करता है।';
 
   @override
-  String get quizIntroWrongRule => 'गलत: -2 XP, स्ट्रीक रीसेट।';
+  String get quizIntroWrongRule =>
+      'क्विज़ के दौरान कुछ नहीं कटता — इनाम अंतिम स्कोर पर निर्भर करता है।';
 
   @override
   String get quizIntroBackRule =>
@@ -4595,4 +4597,56 @@ class AppLocalizationsHi extends AppLocalizations {
   String battleMatchStartingIn(Object seconds) {
     return 'प्रतियोगी मिल गया — $seconds सेकंड में शुरू';
   }
+
+  @override
+  String get authEnterPassword => 'कृपया अपना पासवर्ड दर्ज करें';
+
+  @override
+  String get authEnterName => 'कृपया अपना नाम दर्ज करें';
+
+  @override
+  String walletUpdatedAt(Object date) {
+    return '$date अपडेट किया गया';
+  }
+
+  @override
+  String quizShareSubject(Object title) {
+    return 'मेरा CivilCal परिणाम — $title';
+  }
+
+  @override
+  String get quizFunnelCategories => 'श्रेणियाँ';
+
+  @override
+  String get quizFunnelTopics => 'विषय';
+
+  @override
+  String get syllabusVersionsLoadFailed => 'पाठ्यक्रम संस्करण लोड नहीं हो सके।';
+
+  @override
+  String get syllabusTreeLoadFailed => 'पाठ्यक्रम लोड नहीं हो सका।';
+
+  @override
+  String get gameClaimMissionFailed => 'यह मिशन दावा नहीं हो सका';
+
+  @override
+  String get quizFeedbackGreatJob => 'बढ़िया काम!';
+
+  @override
+  String get quizFeedbackNotQuite => 'पूरी तरह सही नहीं';
+
+  @override
+  String get commonSuccess => 'सफल';
+
+  @override
+  String get commonFailed => 'विफल';
+
+  @override
+  String get storeEquipAction => 'लगाएं';
+
+  @override
+  String get storePreviewAction => 'झलक देखें';
+
+  @override
+  String get streakFreezeFailed => 'फ्रीज़ विफल — कॉइन या दाता बैज जांचें।';
 }

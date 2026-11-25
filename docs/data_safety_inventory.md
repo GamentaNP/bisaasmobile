@@ -138,6 +138,10 @@ account — at which point the account-level deletion applies instead.
 | Sentry | Optional crash reporting, only when configured with a DSN | `sentry_flutter` |
 | Talsec (freeRASP) | Runs **on the device**. It produces the coarse integrity band; the raw signals never leave the device. | `freerasp` |
 
+The app's Firebase project is `love-mcq`; the retired `bisaas-realtime-123`
+config was in untracked `.bak` files that have been deleted (`*.bak` is
+gitignored). Never restore them — they register the wrong app id.
+
 The Firebase services can be pinned to an EU or US data region. The
 current project is configured for `asia-southeast1`; change the region
 before the public launch if the primary market is elsewhere, and update
@@ -194,8 +198,8 @@ that only the founder can supply.
 | See what is stored (Art. 15) | Settings → Privacy → Data stored about this device |
 | Erase the anonymous profile (Art. 17) | The same screen, or `DELETE /api/v1/visitor-data` |
 | Withdraw consent | Settings → Privacy → the per-category switches |
-| Export the account | By email to `privacy@bisaas.com` |
-| Delete the account | By email to `privacy@bisaas.com` |
+| Export the account | By email to `privacy@lovemcq.com` |
+| Delete the account | By email to `privacy@lovemcq.com` |
 
-Contact: **privacy@bisaas.com** · Security reports:
-**security@bisaas.com**
+Contact: **privacy@lovemcq.com** · Security reports:
+**security@lovemcq.com**

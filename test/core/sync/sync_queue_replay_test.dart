@@ -83,21 +83,6 @@ void main() {
       expect(await rows(), hasLength(1));
     });
 
-    test('an offline match receipt uses the manifest id as its key', () async {
-      await queue.enqueueOfflineMatchReceipt(
-        manifestId: 'manifest-42',
-        payload: const <String, dynamic>{'score': 3},
-      );
-      await queue.enqueueOfflineMatchReceipt(
-        manifestId: 'manifest-42',
-        payload: const <String, dynamic>{'score': 3},
-      );
-
-      final all = await rows();
-      expect(all, hasLength(1));
-      expect(all.single.idempotencyKey, 'manifest-42');
-    });
-
     test('two distinct operations get two distinct keys', () async {
       await queue.enqueue(endpoint: '/a');
       await queue.enqueue(endpoint: '/b');

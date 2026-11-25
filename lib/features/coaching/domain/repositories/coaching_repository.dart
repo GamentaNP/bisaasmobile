@@ -1,5 +1,5 @@
+import '../../../../shared/domain/learning_read_models.dart';
 import '../entities/coaching.dart';
-import '../../../tutor/domain/entities/tutor.dart';
 
 abstract class CoachingRepository {
   Future<Readiness?> getReadiness(String goalId);

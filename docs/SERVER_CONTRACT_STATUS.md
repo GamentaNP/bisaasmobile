@@ -1,7 +1,8 @@
 # Server contract status — what the client relies on, and what is still owed
 
-**Verified 2026-11-04 against `C:\laragon\www\bisaas` at its current HEAD.**
-This is the client repo's record of the `/api/v1` contract. The server repo
+**Server facts verified 2026-11-04 against `C:\laragon\www\bisaas` at its
+current HEAD; client adoptions re-audited 2026-11-25.** This is the client
+repo's record of the `/api/v1` contract. The server repo
 remains the source of truth; if the two disagree, the server wins and this
 file is the thing to correct.
 
@@ -29,6 +30,8 @@ integration tests plus the on-device run against Laragon):
 | Tenancy | `GET /me/tenants` outside the tenant-scoped group, active tenants only, ordered by `name`,`id` — see [TENANT_SWITCHER_CONTRACT.md](TENANT_SWITCHER_CONTRACT.md) |
 | Calculator schemas | Enum fields are `select` with `options`; 18 fields that advertised free text were fixed server-side and the client renders them generically |
 | Arcade runs | `POST /quiz/survival/start`, `/quiz/lightning/start`, `/quiz/true-false/start` (optional `category_id`, idempotency required; a category short of the mode's minimum answers 422 and the client says so in the user's language); questions from `GET /quiz/attempts/{attempt}`; answers, `PUT …/completion`, `GET …/results`, `PUT …/abandonment` — the five other arcade values in the server enum have no mobile start route and are deliberately not offered |
+| Leaderboard submission | `POST /quiz/leaderboard` is server-authoritative: the client sends `mode` + `attempt_id` only, with an `Idempotency-Key`; score/correct/total/streak are recomputed from the completed attempt server-side (client commit `fafbbad`). The legacy score fields are accepted but never sent. |
+| Error registry | `ApiErrorCode` mirrors the server registry, now including `NO_ACTIVE_EXAM`, `NO_REPORT`, `NO_PREDICTION`, `GENERIC_CHECKOUT_DISABLED`, `EXAM_SECTION_LOCKED` and `WEBHOOK_MISCONFIGURED`; `TENANT_INACTIVE` additionally carries `error.details.tenant_id` (a display diagnostic, never re-asserted). Unknown codes still degrade to generic copy. |
 
 ## 2. Client-side adoption gaps (the server is ahead of us)
 

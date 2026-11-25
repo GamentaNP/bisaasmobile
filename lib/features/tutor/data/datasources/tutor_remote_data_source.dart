@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../app/config/api_config.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/tutor_dto.dart';
@@ -27,6 +28,11 @@ class TutorRemoteDataSource {
 
   Map<String, String> _idempotencyHeader([String? key]) =>
       {'Idempotency-Key': key ?? _uuid.v4()};
+
+  Options _aiOptions(String? key) => Options(
+        headers: _idempotencyHeader(key),
+        receiveTimeout: ApiConfig.aiReceiveTimeout,
+      );
 
   /// Reads the `data` object out of an envelope.
   ///
@@ -63,7 +69,7 @@ class TutorRemoteDataSource {
     final res = await _dio.post<Map<String, dynamic>>(
       '/learning/ai-tutor/onboarding/start',
       data: payload ?? const {},
-      options: Options(headers: _idempotencyHeader(idempotencyKey)),
+      options: _aiOptions(idempotencyKey),
     );
     final body = res.data;
     if (body == null) {
@@ -89,7 +95,7 @@ class TutorRemoteDataSource {
     final res = await _dio.post<Map<String, dynamic>>(
       '/learning/ai-tutor/onboarding/complete',
       data: {'session_id': sessionId, ...?payload},
-      options: Options(headers: _idempotencyHeader(idempotencyKey)),
+      options: _aiOptions(idempotencyKey),
     );
     final body = res.data;
     if (body == null) {
@@ -125,7 +131,7 @@ class TutorRemoteDataSource {
         'question': message,
         'learner_answer': ?learnerAnswer,
       },
-      options: Options(headers: _idempotencyHeader(idempotencyKey)),
+      options: _aiOptions(idempotencyKey),
     );
     final body = res.data;
     if (body == null) {
@@ -191,7 +197,7 @@ class TutorRemoteDataSource {
         'day_id': ?dayId,
         'day_index': ?dayIndex,
       },
-      options: Options(headers: _idempotencyHeader(idempotencyKey)),
+      options: _aiOptions(idempotencyKey),
     );
   }
 
@@ -199,7 +205,7 @@ class TutorRemoteDataSource {
     await _dio.post<Map<String, dynamic>>(
       '/learning/ai-tutor/adjust-plan',
       data: adjustments,
-      options: Options(headers: _idempotencyHeader(idempotencyKey)),
+      options: _aiOptions(idempotencyKey),
     );
   }
 

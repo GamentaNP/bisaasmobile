@@ -25,6 +25,7 @@ library;
 
 import 'package:dio/dio.dart';
 
+import '../logging/app_logger.dart';
 import '../security/tenant_store.dart';
 import 'api_exception.dart';
 
@@ -42,13 +43,19 @@ class TenantInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final tenantId = await _tenants.read();
-    if (tenantId != null) {
-      options.headers[header] = '$tenantId';
-    } else {
-      // Defensive: if a previous attempt put one on these options (a retry
-      // clones them), an unselected client must not keep asserting it.
-      options.headers.remove(header);
+    try {
+      final tenantId = await _tenants.read();
+      if (tenantId != null) {
+        options.headers[header] = '$tenantId';
+      } else {
+        // Defensive: if a previous attempt put one on these options (a retry
+        // clones them), an unselected client must not keep asserting it.
+        options.headers.remove(header);
+      }
+    } catch (e, st) {
+      AppLogger.w('tenant interceptor failed: $e', e, st);
+      handler.reject(DioException(requestOptions: options, error: e));
+      return;
     }
     handler.next(options);
   }

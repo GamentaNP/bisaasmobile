@@ -195,7 +195,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) =>
-                          v == null || !v.contains('@') ? 'Enter a valid email' : null,
+                          v == null || !v.contains('@') ? l10n.authInvalidEmail : null,
                     ),
                     const SizedBox(height: 14),
                     TextFormField(
@@ -215,7 +215,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                       obscureText: _obscurePassword,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Please enter your password' : null,
+                          v == null || v.isEmpty ? l10n.authEnterPassword : null,
                     ),
                     const SizedBox(height: 4),
                     Align(

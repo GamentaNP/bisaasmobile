@@ -168,11 +168,12 @@ class _Counts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final entries = <(String, int)>[
-      ('Questions', counts.questions),
-      ('Courses', counts.courses),
-      ('Categories', counts.categories),
-      ('Topics', counts.topics),
+      (l10n.quizIntroQuestions, counts.questions),
+      (l10n.courses, counts.courses),
+      (l10n.quizFunnelCategories, counts.categories),
+      (l10n.quizFunnelTopics, counts.topics),
     ];
     return Wrap(
       spacing: 8,

@@ -80,22 +80,27 @@ class DioClient {
 
     // Held so sign-out can drain and clear it; null when no cache is wired
     // (tests, and the web path where the database is not warmed at boot).
-    final cacheInterceptor = cache == null
-        ? null
-        : ResponseCacheInterceptor(
-            store: cache,
-            reachability: reachability,
-            // Deliberately a separate, interceptor-free client so a background
-            // refresh cannot re-enter this one and recurse.
-            revalidator: Dio(BaseOptions(
-              baseUrl: ApiConfig.baseUrl,
-              connectTimeout: ApiConfig.connectTimeout,
-              receiveTimeout: ApiConfig.receiveTimeout,
-              sendTimeout: ApiConfig.sendTimeout,
-              headers: ApiConfig.defaultHeaders,
-              validateStatus: (s) => s != null && s >= 200 && s < 300,
-            )),
-          );
+    ResponseCacheInterceptor? cacheInterceptor;
+    if (cache != null) {
+      // Deliberately a separate, interceptor-free client so a background
+      // refresh cannot re-enter this one and recurse — but it must carry the
+      // SAME TLS policy, or an unpinned revalidator could persist forged
+      // bodies to the on-disk cache and defeat pinning on every later hit.
+      final revalidator = Dio(BaseOptions(
+        baseUrl: ApiConfig.baseUrl,
+        connectTimeout: ApiConfig.connectTimeout,
+        receiveTimeout: ApiConfig.receiveTimeout,
+        sendTimeout: ApiConfig.sendTimeout,
+        headers: ApiConfig.defaultHeaders,
+        validateStatus: (s) => s != null && s >= 200 && s < 300,
+      ));
+      _applyTlsPolicy(revalidator);
+      cacheInterceptor = ResponseCacheInterceptor(
+        store: cache,
+        reachability: reachability,
+        revalidator: revalidator,
+      );
+    }
 
     dio.interceptors.addAll([
       RequestIdInterceptor(),
@@ -108,10 +113,10 @@ class DioClient {
       // The organization assertion, after the credential it asserts against.
       //
       // It must sit before the cache and the coalescer: both key on the
-      // credential fingerprint, and the assertion is the only thing that
-      // distinguishes two organizations reached with the same multi-membership
-      // token. (Today only public data is cached, so this is defence in depth,
-      // not a live leak.)
+      // credential fingerprint *and* the X-Tenant assertion, so two
+      // organizations reached with the same multi-membership token can never
+      // share an entry. (Today only public data is cached, so this is defence
+      // in depth, not a live leak.)
       TenantInterceptor(tenants ?? TenantStore.shared),
       // Serves a cached body first and revalidates behind the user.
       //
@@ -133,38 +138,44 @@ class DioClient {
       RefreshInterceptor(tokens, dio),
       AppLoggingInterceptor(),
       if (kDebugMode)
+        // Never print headers or bodies: they carry the bearer PAT, BYOK
+        // secrets, passwords and one-time id_tokens.
         PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
+          requestHeader: false,
+          requestBody: false,
           responseHeader: false,
-          responseBody: true,
+          responseBody: false,
           compact: true,
         ),
     ]);
 
-    // TLS policy — native only (web uses browser trust).
-    if (!kIsWeb) {
-      final adapter = dio.httpClientAdapter as IOHttpClientAdapter;
-      // Debug mode is required as well as the dev flavor: a release build that
-      // forgets `--dart-define=ENV=prod` must never relax certificate checks.
-      if (kDebugMode && currentEnv().isDev) {
-        // Laragon dev cert is self-signed → allow for the dev hosts only.
-        // Physical device needs LAN IP (192.168.x.x) via adb reverse / Wi-Fi.
-        final allowedHosts = _devCertificateHosts();
-        adapter.createHttpClient = () {
-          final c = HttpClient();
-          c.badCertificateCallback =
-              (cert, host, port) => _isDevHost(host, allowedHosts);
-          return c;
-        };
-      } else {
-        // Prod/staging: pin when pins are configured; no pins → standard validation.
-        CertificatePinning.apply(adapter, host: Uri.parse(ApiConfig.baseUrl).host);
-      }
-    }
+    _applyTlsPolicy(dio);
 
     _instance = DioClient._(dio, reachability, cacheInterceptor);
     return _instance!;
+  }
+
+  /// TLS policy — native only (web uses browser trust). Applied to every
+  /// client this class creates, including the cache revalidator.
+  static void _applyTlsPolicy(Dio client) {
+    if (kIsWeb) return;
+    final adapter = client.httpClientAdapter as IOHttpClientAdapter;
+    // Debug mode is required as well as the dev flavor: a release build that
+    // forgets `--dart-define=ENV=prod` must never relax certificate checks.
+    if (kDebugMode && currentEnv().isDev) {
+      // Laragon dev cert is self-signed → allow for the dev hosts only.
+      // Physical device needs LAN IP (192.168.x.x) via adb reverse / Wi-Fi.
+      final allowedHosts = _devCertificateHosts();
+      adapter.createHttpClient = () {
+        final c = HttpClient();
+        c.badCertificateCallback =
+            (cert, host, port) => _isDevHost(host, allowedHosts);
+        return c;
+      };
+    } else {
+      // Prod/staging: pin when pins are configured; no pins → standard validation.
+      CertificatePinning.apply(adapter, host: Uri.parse(ApiConfig.baseUrl).host);
+    }
   }
 
   /// Hosts whose self-signed certificates are tolerated in debug dev builds.

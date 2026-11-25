@@ -19,6 +19,11 @@ abstract final class ApiConfig {
   static const Duration receiveTimeout = Duration(seconds: 30);
   static const Duration sendTimeout = Duration(seconds: 30);
 
+  /// LLM endpoints legitimately take longer than a CRUD call. With the shared
+  /// 30s timeout an idempotent tutor POST was retried three more times,
+  /// billing four generations while the user waited ~2 minutes.
+  static const Duration aiReceiveTimeout = Duration(seconds: 120);
+
   /// Headers every request must carry.
   static Map<String, String> get defaultHeaders => const {
     'Accept': 'application/json',

@@ -36,10 +36,13 @@ class SyncManager {
 
   Future<void> syncNow() async {
     if (_syncing) return;
-    final online = await _conn.isOnline();
-    if (!online) return;
+    // Set the guard BEFORE the first await: both real triggers (the 30s timer
+    // and the connectivity listener) can call this in the same tick. Checking
+    // after `isOnline()` let two drains of the same row race.
     _syncing = true;
     try {
+      final online = await _conn.isOnline();
+      if (!online) return;
       final items = await _queue.pending();
       for (final item in items) {
         // Re-checked on the way out, not trusted from the row. `enqueue`

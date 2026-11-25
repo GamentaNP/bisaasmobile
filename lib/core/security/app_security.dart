@@ -21,6 +21,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:freerasp/freerasp.dart';
 
+import '../analytics/crash_reporting.dart';
 import '../logging/app_logger.dart';
 
 class AppSecurity {
@@ -52,7 +53,7 @@ class AppSecurity {
   );
   static const _watcherMail = String.fromEnvironment(
     'SECURITY_WATCHER_MAIL',
-    defaultValue: 'security@bisaas.com',
+    defaultValue: 'security@lovemcq.com',
   );
 
   // ---------------------------------------------------------------------------
@@ -167,6 +168,10 @@ class AppSecurity {
       Threat.deviceBinding,
     };
     if (highSeverity.contains(threat)) {
+      // Bounded signal: the threat enum name only, never a device identifier.
+      unawaited(
+        CrashReporting.log('security_threat:${threat.name}'),
+      );
       _compromised = true;
       _riskLevel = 2;
     } else if (_riskLevel < 1) {

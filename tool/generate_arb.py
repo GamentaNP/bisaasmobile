@@ -392,9 +392,9 @@ add("consentDataStored", "Data stored about this device", "यस यन्त�
 add("consentDataStoredSubtitle", "View, and erase, the anonymous profile", "अनाम प्रोफाइल हेर्नुहोस् र मेटाउनुहोस्", "अनाम प्रोफ़ाइल देखें और मिटाएं")
 add(
     "consentFootnote",
-    "Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@bisaas.com.",
-    "कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@bisaas.com मा सम्पर्क गर्नुहोस्।",
-    "कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@bisaas.com पर संपर्क करें।",
+    "Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@lovemcq.com.",
+    "कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@lovemcq.com मा सम्पर्क गर्नुहोस्।",
+    "कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@lovemcq.com पर संपर्क करें।",
 )
 
 # ── privacy ──────────────────────────────────────────────────────────────────
@@ -2403,8 +2403,21 @@ add("quizDefaultTitle", "CivilCal Quiz", "CivilCal क्विज़", "CivilCa
 add("syllabusTopicsLoaded", "topics loaded", "विषय लोड भए", "विषय लोड हुए")
 add("syllabusTopicsLabel", "topics", "विषय", "विषय")
 add("quizIntroGradesInstantly", "Server grades your answer instantly.", "सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।", "सर्वर आपके उत्तर को तुरंत अंकित करता है।")
-add("quizIntroCorrectRule", "Correct: +10 XP, streak combo bonus.", "सही: +१० XP, स्ट्रिक कम्बो बोनस।", "सही: +10 XP, स्ट्रीक कॉम्बो बोनस।")
-add("quizIntroWrongRule", "Wrong: -2 XP, streak resets.", "गलत: -२ XP, स्ट्रिक रिसेट।", "गलत: -2 XP, स्ट्रीक रीसेट।")
+# The attempt screen shows a pending verdict until the whole attempt is
+# finished, so neither rule may promise per-answer XP. The server owns the
+# score; these two bullets describe what it actually does.
+add(
+    "quizIntroCorrectRule",
+    "Your correct answers are scored by the server at the end.",
+    "तपाईंका सही उत्तर सर्भरले अन्त्यमा अंकित गर्छ।",
+    "आपके सही उत्तरों को सर्वर अंत में अंकित करता है।",
+)
+add(
+    "quizIntroWrongRule",
+    "Nothing is deducted during the quiz — rewards follow the final score.",
+    "क्विज़का बीचमा केही कटौती हुँदैन — पुरस्कार अन्तिम अंकमा निर्भर गर्छ।",
+    "क्विज़ के दौरान कुछ नहीं कटता — इनाम अंतिम स्कोर पर निर्भर करता है।",
+)
 add("quizIntroBackRule", "Tap the back button to exit (progress lost).", "बाहिर निस्कन पछाडि बटन थिच्नुहोस् (प्रगति हराउँछ)।", "बाहर निकलने के लिए बैक बटन दबाएं (प्रगति चली जाएगी)।")
 add("tutorExampleProctor", "Explain proctor compaction simply", "प्रोक्टर कम्प्याक्सन सरल भाषामा बुझाउनुहोस्", "प्रोक्टर कम्पैक्शन आसान भाषा में समझाएं")
 add("tutorExamplePlanWeek", "Help me plan this week", "यो हप्ताको योजना बनाउन मद्दत गर्नुहोस्", "इस सप्ताह की योजना बनाने में मदद करें")
@@ -2602,6 +2615,36 @@ add("tutorPromptExample1", "Explain soil compaction in simple terms", "माट
 add("tutorPromptExample2", "Help me plan this week's study", "यो हप्ताको अध्ययन योजना बनाउन मद्दत गर्नुहोस्", "इस सप्ताह की पढ़ाई की योजना बनाने में मदद करें")
 add("walletUpdated", "Updated", "अपडेट गरिएको", "अपडेट किया गया")
 add("battleMatchStartingIn", "Match found — starting in {seconds}s", "प्रतियोगी भेटियो — {seconds} सेकेन्डमा सुरु", "प्रतियोगी मिल गया — {seconds} सेकंड में शुरू", ["seconds"])
+
+# ── review P2: validator copy, share subject, wallet, funnel, syllabus ───────
+add("authEnterPassword", "Please enter your password", "कृपया आफ्नो पासवर्ड लेख्नुहोस्", "कृपया अपना पासवर्ड दर्ज करें")
+add("authEnterName", "Please enter your name", "कृपया आफ्नो नाम लेख्नुहोस्", "कृपया अपना नाम दर्ज करें")
+add("walletUpdatedAt", "Updated {date}", "{date} अपडेट गरिएको", "{date} अपडेट किया गया", ["date"])
+add("quizShareSubject", "My CivilCal Result — {title}", "मेरो CivilCal नतिजा — {title}", "मेरा CivilCal परिणाम — {title}", ["title"])
+add("quizFunnelCategories", "Categories", "श्रेणीहरू", "श्रेणियाँ")
+add("quizFunnelTopics", "Topics", "विषयहरू", "विषय")
+add(
+    "syllabusVersionsLoadFailed",
+    "Could not load syllabus versions.",
+    "पाठ्यक्रम संस्करणहरू लोड गर्न सकिएन।",
+    "पाठ्यक्रम संस्करण लोड नहीं हो सके।",
+)
+add(
+    "syllabusTreeLoadFailed",
+    "Could not load the syllabus.",
+    "पाठ्यक्रम लोड गर्न सकिएन।",
+    "पाठ्यक्रम लोड नहीं हो सका।",
+)
+
+# ── copy the coverage scanner found hardcoded in screens ─────────────────────
+add("gameClaimMissionFailed", "Could not claim this mission", "यो मिसन दावी गर्न सकिएन", "यह मिशन दावा नहीं हो सका")
+add("quizFeedbackGreatJob", "Great job!", "शानदार काम!", "बढ़िया काम!")
+add("quizFeedbackNotQuite", "Not quite", "पूरा सही होइन", "पूरी तरह सही नहीं")
+add("commonSuccess", "Success", "सफल", "सफल")
+add("commonFailed", "Failed", "असफल", "विफल")
+add("storeEquipAction", "Equip", "लगाउनुहोस्", "लगाएं")
+add("storePreviewAction", "Preview", "झलक हेर्नुहोस्", "झलक देखें")
+add("streakFreezeFailed", "Freeze failed — check coins or donor badge.", "फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।", "फ्रीज़ विफल — कॉइन या दाता बैज जांचें।")
 
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.

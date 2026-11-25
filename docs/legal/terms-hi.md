@@ -2,7 +2,7 @@
 
 **प्रभावी तिथि:** 2026-11-04 (2026-10-25 के संस्करण का स्थान लेती है)
 **संचालक:** Bisaas ("सेवा"), उत्पाद नाम CivilCal
-**संपर्क:** support@bisaas.com
+**संपर्क:** support@lovemcq.com
 
 CivilCal ऐप पर खाता बनाना या उसका उपयोग का मतलब है इन शर्तों को मानना।
 
@@ -81,4 +81,4 @@ USD 10) तक सीमित है। जो दायित्व कान�
 
 ## 11. संपर्क
 
-Bisaas — support@bisaas.com
+Bisaas — support@lovemcq.com

@@ -405,7 +405,7 @@
   "consentNecessaryAlwaysOn": "हमेशा चालू। आपका खाता, सहेजा काम, पुश टोकन, क्रैश रिपोर्ट और डिवाइस सुरक्षा जाँच।",
   "consentDataStored": "इस डिवाइस के बारे में सहेजा डेटा",
   "consentDataStoredSubtitle": "अनाम प्रोफ़ाइल देखें और मिटाएं",
-  "consentFootnote": "कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@bisaas.com पर संपर्क करें।",
+  "consentFootnote": "कोई श्रेणी बंद करने से उस संग्रह उस क्षण से रुक जाता है। पहले संग्रह किया गया डेटा नहीं मिटता — इसके लिए ऊपर दिए लिंक का उपयोग करें या privacy@lovemcq.com पर संपर्क करें।",
   "privacyTitle": "आपका डेटा",
   "privacyAnonymousProfile": "अनाम प्रोफ़ाइल",
   "privacyReference": "संदर्भ {reference}",
@@ -3098,8 +3098,8 @@
   "syllabusTopicsLoaded": "विषय लोड हुए",
   "syllabusTopicsLabel": "विषय",
   "quizIntroGradesInstantly": "सर्वर आपके उत्तर को तुरंत अंकित करता है।",
-  "quizIntroCorrectRule": "सही: +10 XP, स्ट्रीक कॉम्बो बोनस।",
-  "quizIntroWrongRule": "गलत: -2 XP, स्ट्रीक रीसेट।",
+  "quizIntroCorrectRule": "आपके सही उत्तरों को सर्वर अंत में अंकित करता है।",
+  "quizIntroWrongRule": "क्विज़ के दौरान कुछ नहीं कटता — इनाम अंतिम स्कोर पर निर्भर करता है।",
   "quizIntroBackRule": "बाहर निकलने के लिए बैक बटन दबाएं (प्रगति चली जाएगी)।",
   "tutorExampleProctor": "प्रोक्टर कम्पैक्शन आसान भाषा में समझाएं",
   "tutorExamplePlanWeek": "इस सप्ताह की योजना बनाने में मदद करें",
@@ -3366,5 +3366,35 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "authEnterPassword": "कृपया अपना पासवर्ड दर्ज करें",
+  "authEnterName": "कृपया अपना नाम दर्ज करें",
+  "walletUpdatedAt": "{date} अपडेट किया गया",
+  "@walletUpdatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizShareSubject": "मेरा CivilCal परिणाम — {title}",
+  "@quizShareSubject": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFunnelCategories": "श्रेणियाँ",
+  "quizFunnelTopics": "विषय",
+  "syllabusVersionsLoadFailed": "पाठ्यक्रम संस्करण लोड नहीं हो सके।",
+  "syllabusTreeLoadFailed": "पाठ्यक्रम लोड नहीं हो सका।",
+  "gameClaimMissionFailed": "यह मिशन दावा नहीं हो सका",
+  "quizFeedbackGreatJob": "बढ़िया काम!",
+  "quizFeedbackNotQuite": "पूरी तरह सही नहीं",
+  "commonSuccess": "सफल",
+  "commonFailed": "विफल",
+  "storeEquipAction": "लगाएं",
+  "storePreviewAction": "झलक देखें",
+  "streakFreezeFailed": "फ्रीज़ विफल — कॉइन या दाता बैज जांचें।"
 }

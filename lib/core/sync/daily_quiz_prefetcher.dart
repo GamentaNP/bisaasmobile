@@ -26,14 +26,14 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 
-import '../../features/quiz/data/datasources/quiz_local_data_source.dart';
 import '../logging/app_logger.dart';
+import 'daily_pack_cache.dart';
 
 /// Prefetches and caches the daily quiz pack into Drift.
 class DailyQuizPrefetcher {
   DailyQuizPrefetcher({
     required Dio dio,
-    required QuizLocalDataSource local,
+    required DailyPackCache local,
     int hourOfDay = 0,
     int minuteOfHour = 0,
     Timer Function(Duration, void Function())? timerFactory,
@@ -44,7 +44,7 @@ class DailyQuizPrefetcher {
         _timerFactory = timerFactory ?? Timer.new;
 
   final Dio _dio;
-  final QuizLocalDataSource _local;
+  final DailyPackCache _local;
   final int _hourOfDay;
   final int _minuteOfHour;
   final Timer Function(Duration, void Function()) _timerFactory;

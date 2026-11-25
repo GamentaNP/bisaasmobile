@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/dio_client.dart';
@@ -106,7 +107,8 @@ class SyllabusVersionsController extends Notifier<SyllabusVersionsState> {
 
   SyllabusRepository get _repo => ref.read(syllabusRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : 'Could not load syllabus versions';
+  String _msg(Object e) =>
+      e is ApiException ? e.message : appL10n().syllabusVersionsLoadFailed;
 
   /// True while a request is genuinely in flight.
   ///
@@ -188,7 +190,10 @@ class SyllabusTreeController extends Notifier<SyllabusTreeState> {
     } catch (e, st) {
       AppLogger.w('syllabus tree failed for $publicId: $e');
       if (!const bool.fromEnvironment('dart.vm.product')) AppLogger.d(st);
-      state = state.copyWith(isLoading: false, error: 'Could not load the syllabus');
+      state = state.copyWith(
+        isLoading: false,
+        error: appL10n().syllabusTreeLoadFailed,
+      );
     } finally {
       _inFlight = false;
     }

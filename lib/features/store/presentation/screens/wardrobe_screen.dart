@@ -165,6 +165,7 @@ class _EquipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       height: 32,
       child: FilledButton(
@@ -172,7 +173,7 @@ class _EquipButton extends StatelessWidget {
         style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 10)),
         child: isEquipping
             ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-            : Text(onPressed == null ? '—' : (isOwned ? 'Equip' : 'Preview'), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            : Text(onPressed == null ? '—' : (isOwned ? l10n.storeEquipAction : l10n.storePreviewAction), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
       ),
     );
   }

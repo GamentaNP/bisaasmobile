@@ -2,8 +2,7 @@
 import '../../domain/entities/coaching.dart';
 import '../../domain/repositories/coaching_repository.dart';
 import '../datasources/coaching_remote_data_source.dart';
-import '../../../tutor/domain/entities/tutor.dart';
-import '../../../tutor/domain/repositories/tutor_repository.dart';
+import '../../../../shared/domain/learning_read_models.dart';
 
 class CoachingRepositoryImpl implements CoachingRepository {
   const CoachingRepositoryImpl(
@@ -12,7 +11,7 @@ class CoachingRepositoryImpl implements CoachingRepository {
   );
 
   final CoachingRemoteDataSource _remote;
-  final TutorRepository _tutorRepo;
+  final LearningAnalyticsSource _tutorRepo;
 
   @override
   Future<Readiness?> getReadiness(String goalId) async {

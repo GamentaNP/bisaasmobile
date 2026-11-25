@@ -1,9 +1,13 @@
 library;
 
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show WidgetsBinding;
+import 'package:intl/intl.dart' show Intl;
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -39,6 +43,10 @@ Future<void> bootstrap() async {
     // Data-only pushes while terminated/backgrounded — top-level handler.
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     CrashReporting.enableInDev();
+    await CrashReporting.configure(enabled: !kDebugMode);
+    await CrashReporting.setContext({
+      'env': const String.fromEnvironment('ENV', defaultValue: 'dev'),
+    });
     AppLogger.i('Firebase initialized');
     // Feature flags come from GET /api/v1/app/config (see appConfigProvider), not
     // from Remote Config. Two sources for the same switches let them disagree, and
@@ -97,14 +105,26 @@ Future<void> bootstrap() async {
   // Honor the saved locale on the wire (Accept-Language) per AGENTS.md.
   final savedLocale = Preferences.instance.locale;
   if (savedLocale != null) DioClient.instance.setLocale(savedLocale);
+  // DateFormat otherwise follows the device locale, not the language the user
+  // picked in Settings.
+  Intl.defaultLocale =
+      savedLocale ?? WidgetsBinding.instance.platformDispatcher.locale.languageCode;
 
-  // Global flutter error handler → Crashlytics.
+  // Global error handlers → the central funnel, with correct fatality.
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    CrashReporting.record(details.exception, details.stack ?? StackTrace.current);
+    unawaited(
+      ErrorReporter.reportFatal(
+        details.exception,
+        details.stack ?? StackTrace.current,
+        reason: 'FlutterError',
+      ),
+    );
   };
   PlatformDispatcher.instance.onError = (e, st) {
-    CrashReporting.record(e, st, reason: 'PlatformDispatcher');
+    unawaited(
+      ErrorReporter.reportFatal(e, st, reason: 'PlatformDispatcher'),
+    );
     return true;
   };
 

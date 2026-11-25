@@ -1,6 +1,6 @@
 # Launch readiness — what stands between this build and the Play Store
 
-**As of 2026-11-04, HEAD `0cee095`.** This is the founder-facing document:
+**Re-audited 2026-11-25.** This is the founder-facing document:
 the ordered critical path, the decisions only the founder can make, and the
 honest status of each. Mechanical release steps live in
 [release_checklist.md](release_checklist.md); the store copy lives in
@@ -8,57 +8,48 @@ honest status of each. Mechanical release steps live in
 [legal/](legal/).
 
 It replaces `PLAY_STORE_READINESS.md` and `LAUNCH_ROADMAP.md`, which
-disagreed with each other about whether `bisaas.com` was ours.
+disagreed with each other about an old domain question that is now closed.
 
 ## The one fact that decides everything
 
-`bisaas.com` **does not serve this application today.** The DNS record
-resolves to AWS addresses and HTTP answers:
-
-```
-302  ->  https://www.hugedomains.com/domain_profile.cfm?d=bisaas.com
-```
-
-That is a parked/for-sale landing page. Meanwhile
-`dart_defines/production.json` ships:
+Production is **live** at `https://lovemcq.com` (web and `/api/v1` both
+answer 200). Staging is `https://staging.lovemcq.com`. The published ids are
+`com.beardbishwo.lovemcq` for both Android (applicationId) and iOS (bundle
+id). `dart_defines/production.json` ships:
 
 ```json
-"API_HOST": "https://bisaas.com",
-"API_BASE_URL": "https://bisaas.com/api/v1",
-"CERT_PIN_1": "sha256/sMXJpL2F…", "CERT_PIN_2": "sha256/brzvtCEL…",
-"SIGNING_CERT_HASH": "sha256/Idhu5QAB…"
+"API_HOST": "https://lovemcq.com",
+"API_BASE_URL": "https://lovemcq.com/api/v1",
+"CERT_PIN_1": "sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ=",
+"CERT_PIN_2": "sha256/E8fEUpIJzzIGi2ZYCA04yv4PwxZq96Rl1QKEjFWy9HQ=",
+"SIGNING_CERT_HASH": "sha256/Idhu5QABO16+E+ITyW/C23QfqrjrfZWMtxm0WCGK1B4="
 ```
 
-So the release artifact that CI builds is pointed at a host that redirects to
-a domain broker. It installs, launches and cannot log in. **No store
-submission is meaningful until this is resolved**, and it resolves one of two
-ways:
-
-| Option | What must change | Consequence |
-|---|---|---|
-| **A — acquire `bisaas.com`** | Buy/transfer the domain, move DNS to the app server, issue TLS, regenerate `CERT_PIN_1/2` from the real chain, deploy `assetlinks.json` | Every `@bisaas.com` address in the legal pack becomes correct as written. |
-| **B — ship on another domain** | Register it, then update `API_HOST`, `API_BASE_URL`, the pins, `docs/ASSETLINKS.json` (domain is not part of the file, but the server path is), every `@bisaas.com` contact in `docs/legal/*`, `docs/store_listing.md`, and the fastlane `privacy_url`/`support_url`/`marketing_url` | The legal pack currently names `@bisaas.com`; option B means editing six legal files plus the store metadata before publishing. |
-
-Either way the pins must be regenerated **after** TLS exists. A stale pin
-fails closed: the release refuses to make a request, by design.
+The old `bisaas.com` domain question is **resolved**: there is no domain
+blocker and no store step waits on a domain decision. Pins still fail closed
+by design, so re-check them against the live chain after any certificate
+renewal (add `CERT_PIN_3` for a rollover rather than pasting an untried value).
 
 ## Critical path, in order
 
-### 1. Domain + TLS + production backend (blocks everything)
+### 1. Backend + TLS + App Links identity (verify before tagging)
 
-1. Decide option A or B above.
-2. Deploy the Laravel API by
+1. Deploy the Laravel API by
    [BACKEND_DEPLOYMENT_RUNBOOK.md](BACKEND_DEPLOYMENT_RUNBOOK.md). It is
    currently correct for PHP 8.4 + Sanctum, PostgreSQL, Redis, queue and
    scheduler.
-3. Confirm the API answers: `GET https://<host>/api/v1/app/config` → 200.
-4. Regenerate the pins from the live chain and update
-   `dart_defines/production.json`.
-5. Publish `docs/ASSETLINKS.json` at
-   `public/.well-known/assetlinks.json` on that server — see
-   [APP_LINKS_DEPLOYMENT.md](APP_LINKS_DEPLOYMENT.md). Add the Play
-   **app-signing** key fingerprint too, or links fail on every
-   Play-installed build.
+2. Confirm the API answers:
+   `GET https://lovemcq.com/api/v1/app/config` → 200.
+3. Confirm `CERT_PIN_1`/`CERT_PIN_2` in `dart_defines/production.json` still
+   match the live chain (a stale pin fails closed by design).
+4. Set the Android SHA-256 fingerprints in **Admin → Settings → Mobile App
+   Settings → "Store identity & app links"**; the Laravel route serves
+   `https://lovemcq.com/.well-known/assetlinks.json`. Add the Play
+   **app-signing** key fingerprint too, or links fail on every Play-installed
+   build. There is no `docs/ASSETLINKS.json` and a static
+   `public/.well-known/assetlinks.json` must never be restored — a real file
+   would shadow the config-driven route forever. See
+   [APP_LINKS_DEPLOYMENT.md](APP_LINKS_DEPLOYMENT.md).
 
 ### 2. Legal + policy URLs (blocks the store form, not the build)
 
@@ -66,8 +57,9 @@ fails closed: the release refuses to make a request, by design.
    (with `-ne` and `-hi` as linked translations). The older
    `docs/privacy_policy.md` is retired and its unique disclosures have been
    folded into the legal pack.
-2. Replace the `support@civilcal.app` placeholder with a working address on
-   the chosen domain. Play rejects a privacy policy whose contact bounces.
+2. Replace the `support@civilcal.app` placeholder with a working, monitored
+   address on the production domain. Play rejects a privacy policy whose
+   contact bounces.
 3. Publish the three policies at stable URLs, e.g. `/privacy`, `/privacy/ne`,
    `/privacy/hi`, and the terms at `/terms`.
 4. Reconcile the Data Safety form against
@@ -88,10 +80,12 @@ fails closed: the release refuses to make a request, by design.
 
 ### 4. Play Console mechanics
 
-1. Play account, app record, package `com.bisaas.bisaasmobile`.
+1. Play account, app record, package `com.beardbishwo.lovemcq` (Gradle's
+   `namespace` may still say `com.bisaas.bisaasmobile`; that is not the
+   published id).
 2. Upload the AAB (CI builds it on `main`; `deploy_android.yml` does the
    same on a `v*` tag). Signing uses the upload keystore; Play App Signing
-   re-signs it — that is the fingerprint step 1.5 needs.
+   re-signs it — that is the app-signing fingerprint from step 1.4.
 3. Data safety + content rating + ads declaration ("no ads").
 4. Internal testing track → closed → production.
 5. Account-deletion URL is mandatory for apps with accounts: Play requires a
@@ -100,28 +94,28 @@ fails closed: the release refuses to make a request, by design.
 
 ## What is already done and verified
 
-- Host suite green in CI: 117 test files, 1,185 declarations; coverage floor
+- Host suite green in CI: 122 test files, 1,199 declarations; coverage floor
   55% enforced; `flutter analyze` clean.
 - Device tests: 8 smoke tests on an emulator (API 28 and 30) in CI; 9/9 on
   the founder's Redmi 6A against the live Laragon backend, including the
   tenant-selection secure-storage round trip.
-- Release artifact: AAB 76.1 MiB, signed with the upload key, certificate
-  hash matches `SIGNING_CERT_HASH`.
+- Release artifact: AAB built by CI on `main`, signed with the upload key;
+  certificate hash matches `SIGNING_CERT_HASH`.
 - Release hardening: obfuscation + split symbols, pins fail closed, cleartext
   blocked in every build, backup/transfer disabled, AD_ID removed, only the
   shipping ABIs bundled.
 - Security gate in CI: gitleaks, OSV dependency scan, and an artifact scan
   that unpacks the real APK and fails on forbidden content.
-- Trilingual UI: 1,235 messages × en/ne/hi, coverage + consistency audits in
+- Trilingual UI: 1,289 messages × en/ne/hi, coverage + consistency audits in
   CI.
-- App Links: `docs/ASSETLINKS.json` generated from the upload certificate and
-  checked against `SIGNING_CERT_HASH`.
+- App Links: fingerprints are stored in Admin → Settings → Mobile App Settings
+  and served by the Laravel route; no static identity file exists or may be
+  restored.
 
 ## Decisions only the founder can make
 
 | Decision | Why it is not a code question |
 |---|---|
-| Domain (option A vs B) | Money and ownership; every contact address and pin depends on it. |
 | Operating entity + governing law in the terms | Nepal entity vs otherwise; the terms currently assert Nepal law. |
 | Free-forever vs subscriptions | There is **no billing library in the app and no IAP in the store listing**. The terms were corrected to match: coins are earned, not bought. Reintroducing paid tiers is a product + compliance change, not a copy edit. |
 | Offline answering | Whether users may answer without the server. Until decided, the outbox stays unwired. See [PROJECT_STATE.md](PROJECT_STATE.md) §5 C1. |

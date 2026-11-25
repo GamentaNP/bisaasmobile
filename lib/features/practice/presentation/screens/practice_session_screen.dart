@@ -362,7 +362,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                     FilledButton.icon(
                       onPressed: _completing ? null : _next,
                       icon: Icon(_isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded, size: 16),
-                      label: Text(_completing ? l10n.practiceGrading : (_isLast ? 'Finish' : 'Next')),
+                      label: Text(_completing ? l10n.practiceGrading : (_isLast ? l10n.socialFinish : l10n.socialNext)),
                     ),
                   ],
                 ),

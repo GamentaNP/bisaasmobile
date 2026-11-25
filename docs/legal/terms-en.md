@@ -2,7 +2,7 @@
 
 **Effective date:** 2026-11-04 (supersedes the 2026-10-25 version)
 **Operator:** Bisaas (the "Service"), product name CivilCal
-**Contact:** support@bisaas.com
+**Contact:** support@lovemcq.com
 
 By creating an account or using the CivilCal app you agree to these terms.
 
@@ -87,4 +87,4 @@ protections in your country of residence.
 
 ## 11. Contact
 
-Bisaas — support@bisaas.com
+Bisaas — support@lovemcq.com

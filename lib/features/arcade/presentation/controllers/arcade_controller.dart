@@ -159,7 +159,6 @@ class ArcadeController extends Notifier<ArcadeState> {
         idempotencyKey: _startKey!,
         categoryId: category?.id,
       );
-      _startKey = null;
       final attempt = await repo.loadAttempt(attemptId);
 
       if (attempt.questions.isEmpty) {
@@ -181,6 +180,10 @@ class ArcadeController extends Notifier<ArcadeState> {
         clearError: true,
       );
       _beginQuestion();
+      // The key is spent only once the run is genuinely playable. If start
+      // succeeded but the attempt load failed, retry must reuse this key or
+      // the server seeds a second, orphaned attempt.
+      _startKey = null;
     } catch (error) {
       _fail(error);
     }

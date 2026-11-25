@@ -33,10 +33,17 @@ class AppLoggingInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final id = err.response?.headers.value('x-request-id') ??
         err.requestOptions.headers['X-Request-Id'];
-    AppLogger.w(
-      '<-- ERR ${err.response?.statusCode} ${err.requestOptions.uri} '
-      'id=$id msg=${err.message}',
-    );
+    if (kDebugMode) {
+      AppLogger.w(
+        '<-- ERR ${err.response?.statusCode} ${err.requestOptions.uri} '
+        'id=$id msg=${err.message}',
+      );
+    } else {
+      // In release only status + request id: URIs carry user-controlled
+      // query values (search terms, ids) and exception text can carry PII.
+      final path = err.requestOptions.uri.replace(query: '').toString();
+      AppLogger.w('<-- ERR ${err.response?.statusCode} $path id=$id');
+    }
     handler.next(err);
   }
 }

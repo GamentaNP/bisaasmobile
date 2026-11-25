@@ -139,7 +139,9 @@ class PracticeRepositoryImpl implements PracticeRepository {
         byCategory.putIfAbsent(category, () => <int>[]).add(id);
       }
 
-      for (final entry in byCategory.entries) {
+      // Categories are independent lookups; serialising them on a 3G link
+      // made a 30-bookmark drill take tens of seconds.
+      await Future.wait(byCategory.entries.map((entry) async {
         final ids = entry.value;
         final candidates = entry.key == null
             ? // A bookmark with no category cannot be looked up by category,
@@ -150,7 +152,7 @@ class PracticeRepositoryImpl implements PracticeRepository {
         for (final candidate in candidates) {
           if (ids.contains(candidate.id)) resolved[candidate.id] = candidate;
         }
-      }
+      }));
     }
 
     if (resolved.isEmpty) {
@@ -184,16 +186,24 @@ class PracticeRepositoryImpl implements PracticeRepository {
     Map<int, BookmarkedQuestion> wanted,
     List<int> ids,
   ) async {
-    final found = <PracticeQuestion>[];
+    final probes = <({int id, String probe})>[];
     for (final id in ids) {
       final text = wanted[id]!.question.questionText.trim();
       if (text.isEmpty) continue;
       // The search is a prefix match on the server; the first 60 characters
       // are enough to identify the question without over-constraining it.
-      final probe = text.length > 60 ? text.substring(0, 60) : text;
-      final matches = await getQuestions(search: probe, limit: 5);
-      for (final match in matches) {
-        if (match.id == id) {
+      probes.add((
+        id: id,
+        probe: text.length > 60 ? text.substring(0, 60) : text,
+      ));
+    }
+    final matchesPerProbe = await Future.wait(
+      probes.map((p) => getQuestions(search: p.probe, limit: 5)),
+    );
+    final found = <PracticeQuestion>[];
+    for (var i = 0; i < probes.length; i++) {
+      for (final match in matchesPerProbe[i]) {
+        if (match.id == probes[i].id) {
           found.add(match);
           break;
         }

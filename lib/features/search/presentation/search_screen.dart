@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../l10n/app_localizations.dart';
@@ -52,9 +53,66 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           if (results != null)
             Expanded(
               child: results.when(
-                data: (list) => list.isEmpty ? Center(child: Text(l10n.searchNoResults)) : ListView.separated(padding: const EdgeInsets.all(12), itemCount: list.length, separatorBuilder: (_, __) => SizedBox(height: 8), itemBuilder: (context, i) => Card(child: ListTile(title: Text((list[i]['body'] ?? list[i]['title'] ?? '').toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)), subtitle: Text((list[i]['subject_slug'] ?? '').toString(), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant))))),
+                data: (list) => list.isEmpty
+                    ? Center(child: Text(l10n.searchNoResults))
+                    : ListView.separated(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (context, i) {
+                          final row = list[i];
+                          final slug = (row['quiz_slug'] ?? row['course_slug'] ?? '')
+                              .toString();
+                          final canOpen = slug.isNotEmpty;
+                          return Card(
+                            child: ListTile(
+                              title: Text(
+                                (row['body'] ?? row['title'] ?? '').toString(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                              subtitle: Text(
+                                (row['subject_slug'] ?? '').toString(),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                              ),
+                              trailing: canOpen
+                                  ? const Icon(Icons.chevron_right_rounded)
+                                  : null,
+                              onTap: canOpen
+                                  ? () => context.push('/quiz/$slug')
+                                  : null,
+                            ),
+                          );
+                        }),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text(l10n.searchFailed(e), style: const TextStyle(color: Colors.red, fontSize: 12))),
+                error: (e, _) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l10n.searchFailed(e),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: () =>
+                              ref.invalidate(_searchProvider(_q)),
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: Text(l10n.retry),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
         ],

@@ -205,7 +205,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             ),
                             keyboardType: TextInputType.emailAddress,
                             validator: (v) => v == null || !v.contains('@')
-                                ? 'Enter a valid email'
+                                ? l10n.authInvalidEmail
                                 : null,
                           ),
                           const SizedBox(height: 24),

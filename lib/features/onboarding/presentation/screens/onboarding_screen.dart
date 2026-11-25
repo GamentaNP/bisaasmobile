@@ -19,80 +19,99 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageController = PageController();
   int _currentPage = 0;
 
-  String _selectedExam = 'Loksewa / Civil PSC';
+  // Selection state is a stable slug, never display copy. The canonical
+  // English storage key is attached only when saving (see _storedExamValue),
+  // so an existing stored choice keeps resolving in any display language.
+  String _selectedExam = 'loksewa';
   int _dailyMinutes = 30;
-  // Must be one of _levels' titles — a default that matches no option leaves
+  // Must be one of _levels' ids — a default that matches no option leaves
   // page 3 rendering nothing as selected and persists a value the profile
   // screens do not recognise.
-  String _experienceLevel = 'Engineering Student';
+  String _experienceLevel = 'student';
+
+  /// The storage contract: a canonical, language-neutral English key for each
+  /// option. The app used to persist its English display copy; keeping these
+  /// keys as the stored values means an existing selection still resolves and
+  /// changing the reader's language cannot change what was saved.
+  static const _legacyExamIds = <String, String>{
+    'Loksewa / Civil PSC': 'loksewa',
+    'GATE / Indian PSC': 'gate',
+    'SSC JE / Diploma': 'ssc',
+    'University Semester Exams': 'university',
+  };
+  static const _legacyLevelIds = <String, String>{
+    'Engineering Student': 'student',
+    'Graduate / Job Seeker': 'graduate',
+    'Practicing Engineer': 'engineer',
+  };
+
+  /// Accept both a legacy English key and a slug, so a stored choice from
+  /// an older build still resolves to the same option.
+  static String _readExamId(String? stored) =>
+      _legacyExamIds[stored] ?? stored ?? 'loksewa';
+  static String _readLevelId(String? stored) =>
+      _legacyLevelIds[stored] ?? stored ?? 'student';
+
+  static String _storedExamValue(String id) => _legacyExamIds.entries
+      .firstWhere((e) => e.value == id, orElse: () => MapEntry('loksewa', 'loksewa'))
+      .key;
+  static String _storedLevelValue(String id) => _legacyLevelIds.entries
+      .firstWhere((e) => e.value == id,
+          orElse: () => MapEntry('Engineering Student', 'student'))
+      .key;
 
   final _exams = const [
-    {
-      'title': 'Loksewa / Civil PSC',
-      'desc': 'Assistant Sub-Engineer, Sub-Engineer, & Engineer exams',
-      'icon': Icons.account_balance_rounded,
-    },
-    {
-      'title': 'GATE / Indian PSC',
-      'desc': 'Graduate Aptitude Test & State Engineering Services',
-      'icon': Icons.school_rounded,
-    },
-    {
-      'title': 'SSC JE / Diploma',
-      'desc': 'Junior Engineer Technical & General Practice',
-      'icon': Icons.engineering_rounded,
-    },
-    {
-      'title': 'University Semester Exams',
-      'desc': 'Structural, Geotechnical, Surveying, & Fluid Mechanics',
-      'icon': Icons.menu_book_rounded,
-    },
+    {'id': 'loksewa', 'icon': Icons.account_balance_rounded},
+    {'id': 'gate', 'icon': Icons.school_rounded},
+    {'id': 'ssc', 'icon': Icons.engineering_rounded},
+    {'id': 'university', 'icon': Icons.menu_book_rounded},
   ];
 
   final _goals = const [
-    {
-      'minutes': 15,
-      'label': 'Casual Review',
-      'desc': '10-15 daily questions to maintain streak',
-      'icon': Icons.timer_outlined,
-    },
-    {
-      'minutes': 30,
-      'label': 'Focused Mastery',
-      'desc': '25-30 questions + formula revisions',
-      'icon': Icons.timer_rounded,
-    },
-    {
-      'minutes': 60,
-      'label': 'Intensive Sprint',
-      'desc': 'Mock exam practice & comprehensive tests',
-      'icon': Icons.bolt_rounded,
-    },
+    {'minutes': 15, 'id': 'casual', 'icon': Icons.timer_outlined},
+    {'minutes': 30, 'id': 'focused', 'icon': Icons.timer_rounded},
+    {'minutes': 60, 'id': 'intensive', 'icon': Icons.bolt_rounded},
   ];
 
   final _levels = const [
-    {
-      'title': 'Engineering Student',
-      'desc': 'Currently enrolled in Civil Engineering diploma/degree',
-      'icon': Icons.person_outline,
-    },
-    {
-      'title': 'Graduate / Job Seeker',
-      'desc': 'Actively preparing for competitive technical exams',
-      'icon': Icons.workspace_premium_outlined,
-    },
-    {
-      'title': 'Practicing Engineer',
-      'desc': 'Refreshing core theory and design standards',
-      'icon': Icons.architecture_rounded,
-    },
+    {'id': 'student', 'icon': Icons.person_outline},
+    {'id': 'graduate', 'icon': Icons.workspace_premium_outlined},
+    {'id': 'engineer', 'icon': Icons.architecture_rounded},
   ];
+
+  /// The visible title and description of an exam option, in the reader's
+  /// language. The id is what gets persisted; the copy never is.
+  ({String title, String desc}) _examCopy(String id, AppLocalizations l10n) =>
+      switch (id) {
+        'gate' => (title: l10n.onbExamGate, desc: l10n.onbExamGateDesc),
+        'ssc' => (title: l10n.onbExamSsc, desc: l10n.onbExamSscDesc),
+        'university' =>
+          (title: l10n.onbExamUniversity, desc: l10n.onbExamUniversityDesc),
+        _ => (title: l10n.onbExamLoksewa, desc: l10n.onbExamLoksewaDesc),
+      };
+
+  ({String label, String desc}) _goalCopy(String id, AppLocalizations l10n) =>
+      switch (id) {
+        'focused' => (label: l10n.onbGoalFocused, desc: l10n.onbGoalFocusedDesc),
+        'intensive' =>
+          (label: l10n.onbGoalIntensive, desc: l10n.onbGoalIntensiveDesc),
+        _ => (label: l10n.onbGoalCasual, desc: l10n.onbGoalCasualDesc),
+      };
+
+  ({String title, String desc}) _levelCopy(String id, AppLocalizations l10n) =>
+      switch (id) {
+        'graduate' =>
+          (title: l10n.onbLevelGraduate, desc: l10n.onbLevelGraduateDesc),
+        'engineer' =>
+          (title: l10n.onbLevelEngineer, desc: l10n.onbLevelEngineerDesc),
+        _ => (title: l10n.onbLevelStudent, desc: l10n.onbLevelStudentDesc),
+      };
 
   Future<void> _completeOnboarding() async {
     final prefs = Preferences.instance;
-    await prefs.setSelectedExam(_selectedExam);
+    await prefs.setSelectedExam(_storedExamValue(_selectedExam));
     await prefs.setDailyGoalMinutes(_dailyMinutes);
-    await prefs.setExperienceLevel(_experienceLevel);
+    await prefs.setExperienceLevel(_storedLevelValue(_experienceLevel));
     await prefs.setOnboardingDone(true);
 
     if (!mounted) return;
@@ -217,12 +236,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 20),
         ..._exams.map((exam) {
-          final isSelected = _selectedExam == exam['title'];
+          final id = exam['id']! as String;
+          final copy = _examCopy(id, l10n);
+          final isSelected = _readExamId(_selectedExam) == id;
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: GlassmorphicCard(
               glow: isSelected,
-              onTap: () => setState(() => _selectedExam = exam['title']! as String),
+              onTap: () => setState(() => _selectedExam = id),
               child: Row(
                 children: [
                   Container(
@@ -249,14 +270,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          exam['title']! as String,
+                          copy.title,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          exam['desc']! as String,
+                          copy.desc,
                           style: AppTypography.bodySmall.copyWith(
                             color: theme.brightness == Brightness.dark
                                 ? AppColors.textSecondaryDark
@@ -297,6 +318,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 20),
         ..._goals.map((goal) {
+          final copy = _goalCopy(goal['id']! as String, l10n);
           final isSelected = _dailyMinutes == goal['minutes'];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -327,14 +349,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          l10n.onboardingMinutesPerDay(goal['minutes']! as int, goal['label']! as String),
+                          l10n.onboardingMinutesPerDay(goal['minutes']! as int, copy.label),
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          goal['desc']! as String,
+                          copy.desc,
                           style: AppTypography.bodySmall.copyWith(
                             color: theme.brightness == Brightness.dark
                                 ? AppColors.textSecondaryDark
@@ -380,12 +402,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 20),
         ..._levels.map((level) {
-          final isSelected = _experienceLevel == level['title'];
+          final id = level['id']! as String;
+          final copy = _levelCopy(id, l10n);
+          final isSelected = _readLevelId(_experienceLevel) == id;
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: GlassmorphicCard(
               glow: isSelected,
-              onTap: () => setState(() => _experienceLevel = level['title']! as String),
+              onTap: () => setState(() => _experienceLevel = id),
               child: Row(
                 children: [
                   Container(
@@ -410,14 +434,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          level['title']! as String,
+                          copy.title,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          level['desc']! as String,
+                          copy.desc,
                           style: AppTypography.bodySmall.copyWith(
                             color: theme.brightness == Brightness.dark
                                 ? AppColors.textSecondaryDark

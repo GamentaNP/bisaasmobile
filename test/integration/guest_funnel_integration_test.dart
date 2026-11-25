@@ -9,6 +9,7 @@ library;
 
 import 'package:bisaasmobile/app/router/deep_link_handler.dart';
 import 'package:bisaasmobile/app/router/route_guards.dart';
+import 'package:bisaasmobile/core/network/api_failure.dart';
 import 'package:bisaasmobile/features/quiz/data/datasources/quiz_remote_data_source.dart';
 import 'package:bisaasmobile/features/quiz/domain/entities/quiz_funnel.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -148,7 +149,7 @@ void main() {
 
       await expectLater(
         remote.getGuestFunnel(),
-        throwsA(isA<Object>()),
+        throwsA(isA<ContractViolation>()),
       );
     });
   });

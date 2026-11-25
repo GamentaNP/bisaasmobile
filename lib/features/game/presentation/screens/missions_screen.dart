@@ -39,7 +39,7 @@ class _MissionsScreenState extends ConsumerState<MissionsScreen> {
       if (!mounted) return;
       final message = result.claimed
           ? l10n.gameClaimedCoins(result.coins)
-          : (result.reason ?? 'Could not claim this mission');
+          : (result.reason ?? l10n.gameClaimMissionFailed);
       _toast(context, message, ok: result.claimed);
     } catch (e) {
       if (!mounted) return;

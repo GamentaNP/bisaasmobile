@@ -43,6 +43,41 @@ class ScriptedAdapter implements HttpClientAdapter {
 
 const _okProtected = '{"success":true,"data":{"attemptId":7}}';
 
+/// Order-independent adapter for concurrent-401 tests: it answers by path
+/// rather than by request index, because two GETs race to the transport.
+class BurstAdapter implements HttpClientAdapter {
+  final requests = <RequestOptions>[];
+  int refreshes = 0;
+
+  @override
+  void close({bool force = false}) {}
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    requests.add(options);
+    if (options.path == '/auth/refresh') {
+      refreshes++;
+      return _json(
+        {
+          'success': true,
+          'data': {'token': 'fresh-token', 'expires_at': '2027-01-01T00:00:00Z'},
+        },
+        200,
+      );
+    }
+    if (options.extra['skipAuthRefresh'] == true) {
+      return ResponseBody.fromString(_okProtected, 200, headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType],
+      });
+    }
+    return _json({'message': 'expired'}, 401);
+  }
+}
+
 void main() {
   late MockSecureStorage storage;
   late TokenManager tokens;
@@ -98,6 +133,67 @@ void main() {
     // trigger a second refresh (skipAuthRefresh extra).
     expect(adapter.requests[2].headers['Authorization'], 'Bearer fresh-token');
     expect(adapter.requests[2].extra['skipAuthRefresh'], isTrue);
+    verify(() => storage.write(key: 'auth_token', value: 'fresh-token')).called(1);
+    // The rotation's expiry must be persisted too, or `shouldRefresh()` stays
+    // true and every cold start rotates the single-use token again.
+    verify(
+      () => storage.write(
+        key: 'auth_expires_at',
+        value: '2027-01-01T00:00:00Z',
+      ),
+    ).called(1);
+  });
+
+  test('a replay failure surfaces that error but does NOT clear the session',
+      () async {
+    final adapter = ScriptedAdapter([
+      _json({'message': 'expired'}, 401),
+      _json(
+        {
+          'success': true,
+          'data': {'token': 'fresh-token', 'expires_at': '2027-01-01T00:00:00Z'},
+        },
+        200,
+      ),
+      _json({'message': 'boom'}, 500),
+    ]);
+    final dio = buildDio(adapter);
+
+    await expectLater(
+      dio.get<dynamic>('/quiz/attempts/7'),
+      throwsA(isA<DioException>()),
+    );
+    // Rotation succeeded: the freshly stored token must survive a transient
+    // failure on the replayed request.
+    verifyNever(() => storage.delete(key: 'auth_token'));
+    verify(() => storage.write(key: 'auth_token', value: 'fresh-token')).called(1);
+  });
+
+  test('concurrent 401s share one rotation and both replays carry the new token',
+      () async {
+    final adapter = BurstAdapter();
+    final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'))
+      ..httpClientAdapter = adapter;
+    dio.interceptors.add(RefreshInterceptor(tokens, dio));
+
+    final results = await Future.wait([
+      dio.get<dynamic>('/quiz/attempts/7'),
+      dio.get<dynamic>('/quiz/attempts/8'),
+    ]);
+
+    expect(results.map((r) => r.statusCode), [200, 200]);
+    expect(adapter.refreshes, 1);
+    final replays = adapter.requests
+        .where((r) => r.extra['skipAuthRefresh'] == true && r.path != '/auth/refresh');
+    expect(
+      replays.length,
+      greaterThanOrEqualTo(2),
+      reason: 'both callers must be replayed; the invariant is one rotation',
+    );
+    expect(
+      replays.map((r) => r.headers['Authorization']),
+      everyElement('Bearer fresh-token'),
+    );
     verify(() => storage.write(key: 'auth_token', value: 'fresh-token')).called(1);
   });
 

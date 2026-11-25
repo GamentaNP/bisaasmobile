@@ -1,19 +1,20 @@
 library;
 
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:logger/logger.dart';
 
-/// Structured logger — debug only in prod, verbose in dev.
-/// Use `AppLogger.I`, `W`, `E` everywhere (never `print`).
+/// Structured logger — verbose in dev, warnings and errors only in release.
+/// Use `AppLogger.d/i/w/e` everywhere (never `print`).
 abstract final class AppLogger {
   static final Logger _log = Logger(
     printer: PrettyPrinter(
       methodCount: 0,
       errorMethodCount: 5,
       lineLength: 100,
-      colors: true,
+      colors: !kReleaseMode,
       printEmojis: false,
     ),
-    level: Level.debug,
+    level: kReleaseMode ? Level.warning : Level.debug,
   );
 
   static void d(dynamic msg, [dynamic err, StackTrace? st]) => _log.d(msg, error: err, stackTrace: st);

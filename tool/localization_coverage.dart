@@ -76,6 +76,10 @@ final _namedTextParams = <String>{
   'supporting',
   // A validator's return value is shown to the user as the field's error.
   'validator',
+  // One-off copy passed from the router to a screen, and the text an answer
+  // review shows beneath a question. Both are read verbatim by the user.
+  'notice',
+  'explanation',
 };
 
 final _textParamPattern = RegExp(
@@ -185,6 +189,17 @@ class _Visitor extends RecursiveAstVisitor<void> {
     caseSensitive: false,
   );
 
+  /// Function names whose *result* is copy a user reads.
+  ///
+  /// Every controller has a `String _msg(Object e)` fallback helper. Adding
+  /// `msg` to [_messageName] would also sweep up local variables named `msg`
+  /// that hold a share sheet's text, so the wider name is used only where a
+  /// function's return value is being measured.
+  static final _functionMessageName = RegExp(
+    '${_messageName.pattern}|msg',
+    caseSensitive: false,
+  );
+
   /// The loggers, whose arguments never reach a user.
   static const _loggers = {
     'w', 'i', 'd', 'e', 'wtf', 'log', 'print', 'debugPrint', 'printOnError',
@@ -212,11 +227,18 @@ class _Visitor extends RecursiveAstVisitor<void> {
     );
   }
 
-  void _scanArguments(ArgumentList arguments) {
+  void _scanArguments(ArgumentList arguments, {String? ownerType}) {
     for (final argument in arguments.arguments) {
       if (argument is NamedArgument) {
         final label = argument.name.lexeme;
         if (!_isTextParam(label)) continue;
+        // `explanation` on a DTO is a data payload field, not a rendered
+        // label. The copy a user reads is emitted by the screens; counting the
+        // DTO's default here would double-report it.
+        if (label == 'explanation' &&
+            (ownerType?.endsWith('Dto') ?? false)) {
+          continue;
+        }
         if (argument.argumentExpression is StringLiteral) {
           _record(argument.argumentExpression, 'named:$label');
         } else {
@@ -233,10 +255,24 @@ class _Visitor extends RecursiveAstVisitor<void> {
   /// BattlePhase.searching => 'Searching…', … }`) is the same thing — its
   /// branches are the copy — so its case expressions are recorded too. A
   /// `?? ` fallback (`message: server ?? 'Login failed'`) puts the copy on
-  /// the right-hand side of a binary expression.
+  /// the right-hand side of a binary expression. Parentheses wrap any of
+  /// those, and a validator's closure puts the copy in its expression body.
   void _recordConditional(Object? argument, String kind) {
     if (argument is! Expression) return;
     final expression = argument;
+    if (expression is ParenthesizedExpression) {
+      _recordConditional(expression.expression, kind);
+      return;
+    }
+    if (expression is FunctionExpression) {
+      // `validator: (v) => v.isEmpty ? 'Required' : null` — the copy sits in
+      // the closure's expression body, not in the argument itself.
+      final body = expression.body;
+      if (body is ExpressionFunctionBody) {
+        _recordConditional(body.expression, kind);
+      }
+      return;
+    }
     if (expression is ConditionalExpression) {
       _recordConditional(expression.thenExpression, kind);
       _recordConditional(expression.elseExpression, kind);
@@ -289,7 +325,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
   /// `String get message => 'Could not load it';` — an expression body, not a
   /// return statement.
   void _recordExpressionBody(String name, FunctionBody body) {
-    if (_inLog || !_messageName.hasMatch(name)) return;
+    if (_inLog || !_functionMessageName.hasMatch(name)) return;
     if (body is! ExpressionFunctionBody) return;
     final expression = body.expression;
     if (expression is StringLiteral) {
@@ -354,11 +390,26 @@ class _Visitor extends RecursiveAstVisitor<void> {
   }
 
   @override
+  void visitListLiteral(ListLiteral node) {
+    // `const [ {'title': …}, … ]` — the `const` applies to every literal
+    // nested in the list, so it has to be tracked for them as well.
+    final constOffset = node.constKeyword?.offset;
+    if (constOffset != null) _constStack.add(constOffset);
+    super.visitListLiteral(node);
+    if (constOffset != null) _constStack.removeLast();
+  }
+
+  @override
   void visitSetOrMapLiteral(SetOrMapLiteral node) {
-    // `{'desc': '10-15 daily questions to maintain streak'}` — the key says
-    // the value is copy. (In analyzer 7+ a map literal is a
-    // `SetOrMapLiteral` with `isMap` set.)
-    if (!_inLog && node.isMap) {
+    // `const [{'desc': '10-15 daily questions to maintain streak'}]` — the key
+    // says the value is copy. `SetOrMapLiteral.isMap` is only set by the
+    // resolver, which `parseString` does not run, so map-ness is decided by
+    // the shape of the elements instead. Only const tables are measured:
+    // they are the option catalogues whose copy is written in this file,
+    // whereas a runtime map is usually a bag of DTO fields and colours.
+    final constOffset = node.constKeyword?.offset;
+    if (constOffset != null) _constStack.add(constOffset);
+    if (!_inLog && _constStack.isNotEmpty) {
       for (final element in node.elements) {
         if (element is MapLiteralEntry) {
           final key = element.key;
@@ -375,6 +426,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
       }
     }
     super.visitSetOrMapLiteral(node);
+    if (constOffset != null) _constStack.removeLast();
   }
 
   @override
@@ -382,7 +434,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
     // A function whose name says it returns copy — `errorMessage(...)`,
     // `_statusMessage(...)` — is returning something a user reads.
     final name = _functionName ?? '';
-    if (_messageName.hasMatch(name) && !_inLog) {
+    if (_functionMessageName.hasMatch(name) && !_inLog) {
       final expression = node.expression;
       if (expression != null) {
         if (expression is StringLiteral) {
@@ -412,7 +464,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
           }
         }
       }
-      _scanArguments(node.argumentList);
+      _scanArguments(node.argumentList, ownerType: name);
     }
 
     super.visitMethodInvocation(node);
@@ -442,7 +494,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
       _recordFirstArgument(node.argumentList, 'positional:$typeName');
     }
 
-    _scanArguments(node.argumentList);
+    _scanArguments(node.argumentList, ownerType: typeName);
     super.visitInstanceCreationExpression(node);
     if (constOffset != null) _constStack.removeLast();
   }

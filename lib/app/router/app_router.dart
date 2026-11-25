@@ -84,6 +84,7 @@ import 'package:flutter/foundation.dart';
 
 import 'route_names.dart';
 import 'shell_router.dart';
+import '../localization/l10n.dart';
 import '../../l10n/app_localizations.dart';
 
 class AppRouter {
@@ -117,7 +118,7 @@ class AppRouter {
           notice: switch (state.extra) {
             final String s => s,
             _ when state.uri.queryParameters['reset'] == '1' =>
-              'Password updated. Sign in with your new password.',
+              appL10n().authPasswordUpdatedNotice,
             _ => null,
           },
         ),

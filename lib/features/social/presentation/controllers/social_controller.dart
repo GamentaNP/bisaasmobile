@@ -73,7 +73,8 @@ class SocialController extends Notifier<SocialState> {
 
   SocialRepository get _repo => ref.read(socialRepositoryProvider);
 
-  String _msg(Object e) => e is ApiException ? e.message : 'Could not load referrals';
+  String _msg(Object e) =>
+      e is ApiException ? e.message : appL10n().socialReferralUnavailable;
 
   Future<void> load({bool force = false}) async {
     if (state.isLoading) return;

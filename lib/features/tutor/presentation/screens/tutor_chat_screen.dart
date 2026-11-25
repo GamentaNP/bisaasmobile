@@ -172,8 +172,8 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                             runSpacing: 8,
                             alignment: WrapAlignment.center,
                             children: [
-                              _SuggestionChip(label: l10n.tutorExample1, onTap: () => _fillAndSend('Explain proctor compaction simply')),
-                              _SuggestionChip(label: l10n.tutorExample2, onTap: () => _fillAndSend('Help me plan this week')),
+                              _SuggestionChip(label: l10n.tutorExample1, onTap: () => _fillAndSend(l10n.tutorExampleProctor)),
+                              _SuggestionChip(label: l10n.tutorExample2, onTap: () => _fillAndSend(l10n.tutorExamplePlanWeek)),
                               _SuggestionChip(label: l10n.tutorExample3, onTap: () => context.go('/tutor/plan')),
                             ],
                           ),

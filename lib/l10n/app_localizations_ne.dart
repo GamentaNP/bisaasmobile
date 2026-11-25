@@ -650,7 +650,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get consentFootnote =>
-      'कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@bisaas.com मा सम्पर्क गर्नुहोस्।';
+      'कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@lovemcq.com मा सम्पर्क गर्नुहोस्।';
 
   @override
   String get privacyTitle => 'तपाईंको डाटा';
@@ -4117,10 +4117,12 @@ class AppLocalizationsNe extends AppLocalizations {
       'सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।';
 
   @override
-  String get quizIntroCorrectRule => 'सही: +१० XP, स्ट्रिक कम्बो बोनस।';
+  String get quizIntroCorrectRule =>
+      'तपाईंका सही उत्तर सर्भरले अन्त्यमा अंकित गर्छ।';
 
   @override
-  String get quizIntroWrongRule => 'गलत: -२ XP, स्ट्रिक रिसेट।';
+  String get quizIntroWrongRule =>
+      'क्विजका बीचमा केही कटौती हुँदैन — पुरस्कार अन्तिम अंकमा निर्भर गर्छ।';
 
   @override
   String get quizIntroBackRule =>
@@ -4590,4 +4592,58 @@ class AppLocalizationsNe extends AppLocalizations {
   String battleMatchStartingIn(Object seconds) {
     return 'प्रतियोगी भेटियो — $seconds सेकेन्डमा सुरु';
   }
+
+  @override
+  String get authEnterPassword => 'कृपया आफ्नो पासवर्ड लेख्नुहोस्';
+
+  @override
+  String get authEnterName => 'कृपया आफ्नो नाम लेख्नुहोस्';
+
+  @override
+  String walletUpdatedAt(Object date) {
+    return '$date अपडेट गरिएको';
+  }
+
+  @override
+  String quizShareSubject(Object title) {
+    return 'मेरो CivilCal नतिजा — $title';
+  }
+
+  @override
+  String get quizFunnelCategories => 'श्रेणीहरू';
+
+  @override
+  String get quizFunnelTopics => 'विषयहरू';
+
+  @override
+  String get syllabusVersionsLoadFailed =>
+      'पाठ्यक्रम संस्करणहरू लोड गर्न सकिएन।';
+
+  @override
+  String get syllabusTreeLoadFailed => 'पाठ्यक्रम लोड गर्न सकिएन।';
+
+  @override
+  String get gameClaimMissionFailed => 'यो मिसन दावी गर्न सकिएन';
+
+  @override
+  String get quizFeedbackGreatJob => 'शानदार काम!';
+
+  @override
+  String get quizFeedbackNotQuite => 'पूरा सही होइन';
+
+  @override
+  String get commonSuccess => 'सफल';
+
+  @override
+  String get commonFailed => 'असफल';
+
+  @override
+  String get storeEquipAction => 'लगाउनुहोस्';
+
+  @override
+  String get storePreviewAction => 'झलक हेर्नुहोस्';
+
+  @override
+  String get streakFreezeFailed =>
+      'फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।';
 }

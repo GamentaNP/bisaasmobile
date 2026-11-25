@@ -4,51 +4,19 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 
-import '../../../../core/network/api_failure.dart';
-import '../../../../core/network/dio_client.dart';
 import '../../data/corpus_availability.dart';
+import '../../data/providers/courses_providers.dart';
+import '../../domain/entities/course_catalog.dart';
 import '../../../../shared/utils/display_name.dart';
 import '../../../../shared/widgets/empty_state.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/page_controls.dart';
-import '../../../quiz/presentation/screens/quiz_browser_screen.dart';
 import '../../../../l10n/app_localizations.dart';
 
 /// Cards per page. The server publishes the catalog as one unpaginated list,
 /// so paging happens here — a player must be able to see how much is left
 /// instead of scrolling 90+ tiles of bulk-imported academic courses.
 const _coursesPerPage = 24;
-
-/// Courses — `GET /api/v1/quiz/courses` (public catalog, no auth required).
-///
-/// Previously showed 10 hardcoded fake courses with invented progress %.
-/// Now fetches the real server catalog. Progress is not part of the public
-/// catalog endpoint (it requires auth + per-user data via attempt history);
-/// the card navigates to the Quiz Browser which shows real categories + counts.
-final _coursesProvider = FutureProvider<List<QuizCourseEntry>>((ref) async {
-  final dio = DioClient.instance.dio;
-  final res = await dio.get<Map<String, dynamic>>('/quiz/courses');
-  final body = res.data;
-  if (body == null) {
-    throw const ContractViolation(
-      'Empty response body',
-      endpoint: '/quiz/courses',
-    );
-  }
-  final data = body['data'];
-  if (data is List) {
-    return data
-        .cast<Map<String, dynamic>>()
-        .map(QuizCourseEntry.fromJson)
-        .toList();
-  }
-  // A body that is not a list is a catalogue we do not understand. Returning
-  // an empty list here made a drift look like "no courses published yet".
-  throw const ContractViolation(
-    'Course catalogue payload not understood',
-    endpoint: '/quiz/courses',
-  );
-});
 
 class CoursesScreen extends ConsumerStatefulWidget {
   const CoursesScreen({super.key});
@@ -72,7 +40,7 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final coursesAsync = ref.watch(_coursesProvider);
+    final coursesAsync = ref.watch(coursesProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.courses)),
@@ -80,7 +48,7 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
           message: l10n.coursesLoadFailed,
-          onRetry: () => ref.invalidate(_coursesProvider),
+          onRetry: () => ref.invalidate(coursesProvider),
         ),
         data: (courses) {
           if (courses.isEmpty) {
@@ -257,7 +225,7 @@ class _CourseCard extends StatelessWidget {
     required this.color,
     required this.onTap,
   });
-  final QuizCourseEntry course;
+  final CourseCatalogEntry course;
   final Color color;
   final VoidCallback onTap;
 

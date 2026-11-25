@@ -68,9 +68,40 @@ bearer is missing or invalid. No `X-Tenant` is required or expected.
 
 A failure fetching the list propagates (the screen offers Retry); it never
 renders as "you belong to no organizations". Zero rows is a legitimate answer
-and hides the switcher entry — it is not an error.
+and hides the switcher entry - it is not an error.
 
-## History — what was missing before 2026-11-04
+## Global refusal UX - mismatch vs inactive
+
+`TenantInterceptor.onError` maps `TENANT_MISMATCH` to `TenantFailure.mismatch`
+and `TENANT_INACTIVE` to `TenantFailure.inactive`. It reads the id the server
+named in `error.details.tenant_id` (`ApiException.tenantId`) and calls
+`TenantStore.reportFailure(...)`, which clears the stale assertion **before**
+any screen can react. The id is a display diagnostic only - it is never
+asserted again; the only assertable ids are the ones `GET /me/tenants`
+publishes. An inactive organization is withheld from that list, so its name
+comes from the selection the user remembered at choose-time.
+
+`TenantFailureGate` (`lib/app/tenant_failure_gate.dart`) sits above the router
+and takes over the whole app on either failure:
+
+| Failure | Surface | Remedy |
+|---|---|---|
+| `TenantFailure.mismatch` | full-screen "sign in again" state | end the session (token + tenant cleared); a fresh login is the only fix |
+| `TenantFailure.inactive` | full-screen "workspace closed" state, naming the workspace when known | **no retry**, automatic or manual - only sign out, so a user with another account can move on |
+
+The inactive screen deliberately has no Retry button: re-authenticating cannot
+reopen a closed workspace. Both screens reach the same sign-out helper and
+clear both halves of the identity. The gate follows `TenantStore` reactively
+(`ListenableBuilder`), so it makes no network call and cannot form a retry
+loop.
+
+Gate ordering in `lib/app/app.dart` (around lines 263-273) is
+`AppLockOverlay → ForceUpdateGate → MaintenanceGate → TenantFailureGate`.
+Operator-wide kill switches therefore win over a closed workspace: a forced
+update or a maintenance window cannot be repaired by changing tenant, while a
+tenant refusal is user-session scoped and nests inside them.
+
+## History - what was missing before 2026-11-04
 
 `GET /me` returned no tenant and the OpenAPI document listed no
 membership-enumerating path; `TenantTokenStamper` refuses to stamp anything for

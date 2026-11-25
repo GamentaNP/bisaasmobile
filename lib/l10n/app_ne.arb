@@ -405,7 +405,7 @@
   "consentNecessaryAlwaysOn": "सधैं सक्रिय। तपाईंको खाता, सुरक्षित काम, पुश टोकन, क्र्यास रिपोर्ट र यन्त्र सुरक्षा जाँच।",
   "consentDataStored": "यस यन्त्रबारे सुरक्षित डाटा",
   "consentDataStoredSubtitle": "अनाम प्रोफाइल हेर्नुहोस् र मेटाउनुहोस्",
-  "consentFootnote": "कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@bisaas.com मा सम्पर्क गर्नुहोस्।",
+  "consentFootnote": "कुनै श्रेणी बन्द गर्दा त्यस संग्रह त्यस क्षणबाट रोकिन्छ। पहिले संग्रह भएको डाटा भने महिल्न्छ — त्यसका लागि माथिको लिंक प्रयोग गर्नुहोस् वा privacy@lovemcq.com मा सम्पर्क गर्नुहोस्।",
   "privacyTitle": "तपाईंको डाटा",
   "privacyAnonymousProfile": "अनाम प्रोफाइल",
   "privacyReference": "सन्दर्भ {reference}",
@@ -3098,8 +3098,8 @@
   "syllabusTopicsLoaded": "विषय लोड भए",
   "syllabusTopicsLabel": "विषय",
   "quizIntroGradesInstantly": "सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।",
-  "quizIntroCorrectRule": "सही: +१० XP, स्ट्रिक कम्बो बोनस।",
-  "quizIntroWrongRule": "गलत: -२ XP, स्ट्रिक रिसेट।",
+  "quizIntroCorrectRule": "तपाईंका सही उत्तर सर्भरले अन्त्यमा अंकित गर्छ।",
+  "quizIntroWrongRule": "क्विजका बीचमा केही कटौती हुँदैन — पुरस्कार अन्तिम अंकमा निर्भर गर्छ।",
   "quizIntroBackRule": "बाहिर निस्कन पछाडि बटन थिच्नुहोस् (प्रगति हराउँछ)।",
   "tutorExampleProctor": "प्रोक्टर कम्प्याक्सन सरल भाषामा बुझाउनुहोस्",
   "tutorExamplePlanWeek": "यो हप्ताको योजना बनाउन मद्दत गर्नुहोस्",
@@ -3366,5 +3366,35 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "authEnterPassword": "कृपया आफ्नो पासवर्ड लेख्नुहोस्",
+  "authEnterName": "कृपया आफ्नो नाम लेख्नुहोस्",
+  "walletUpdatedAt": "{date} अपडेट गरिएको",
+  "@walletUpdatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizShareSubject": "मेरो CivilCal नतिजा — {title}",
+  "@quizShareSubject": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFunnelCategories": "श्रेणीहरू",
+  "quizFunnelTopics": "विषयहरू",
+  "syllabusVersionsLoadFailed": "पाठ्यक्रम संस्करणहरू लोड गर्न सकिएन।",
+  "syllabusTreeLoadFailed": "पाठ्यक्रम लोड गर्न सकिएन।",
+  "gameClaimMissionFailed": "यो मिसन दावी गर्न सकिएन",
+  "quizFeedbackGreatJob": "शानदार काम!",
+  "quizFeedbackNotQuite": "पूरा सही होइन",
+  "commonSuccess": "सफल",
+  "commonFailed": "असफल",
+  "storeEquipAction": "लगाउनुहोस्",
+  "storePreviewAction": "झलक हेर्नुहोस्",
+  "streakFreezeFailed": "फ्रिज असफल भयो — क्विन वा दाता ब्याज जाँच्नुहोस्।"
 }

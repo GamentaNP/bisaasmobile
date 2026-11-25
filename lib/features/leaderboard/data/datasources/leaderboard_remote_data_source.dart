@@ -24,7 +24,12 @@ class LeaderboardRemoteDataSource {
       queryParameters: {'limit': limit},
     );
     final body = res.data;
-    if (body == null) throw Exception('Leaderboard empty');
+    if (body == null) {
+      throw ContractViolation(
+        'Leaderboard payload not understood',
+        endpoint: '/quiz/leaderboards/$id',
+      );
+    }
     final data = body['data'];
     if (data is Map<String, dynamic>) {
       return _parseShow(data);

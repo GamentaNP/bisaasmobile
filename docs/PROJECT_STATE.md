@@ -1,8 +1,9 @@
 # Project state — the client, measured
 
-**Verified at `0cee095`, 2026-11-04.** Every number here was read from the
-tree or from CI, not carried forward from an earlier note. Anything that is
-a plan rather than a fact lives in [LAUNCH_READINESS.md](LAUNCH_READINESS.md);
+**Counts re-measured 2026-11-25.** Every number here was read from the tree
+or from CI, not carried forward from an earlier note; the server-contract
+facts were last verified 2026-11-04. Anything that is a plan rather than a
+fact lives in [LAUNCH_READINESS.md](LAUNCH_READINESS.md);
 anything the server owes lives in
 [SERVER_CONTRACT_STATUS.md](SERVER_CONTRACT_STATUS.md).
 
@@ -25,15 +26,16 @@ those is a server answer the client renders.
 
 | Measure | Value | How to re-measure |
 |---|---|---|
-| Dart files under `lib/` | 371 | `find lib -name '*.dart' \| wc -l` |
-| Feature modules | 34 | `ls lib/features \| wc -l` |
-| Host test files | 120 | `find test -name '*_test.dart' \| wc -l` |
-| Host test declarations | 1,200 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
+| Dart files under `lib/` | 370 | `Get-ChildItem -Recurse -File lib -Filter *.dart \| Measure-Object` |
+| Dart files under `test/` | 124 | `Get-ChildItem -Recurse -File test -Filter *.dart \| Measure-Object` |
+| Feature modules | 35 | `Get-ChildItem -Directory lib/features \| Measure-Object` |
+| Host test files | 122 | `Get-ChildItem -Recurse -File test -Filter *_test.dart \| Measure-Object` |
+| Host test declarations | 1,199 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
 | Device smoke tests | 8 + 1 live-only | `device_tests/integration_test/device_smoke_test.dart` |
-| Translations | 1,235 messages × en/ne/hi | `python -I -c "import json;print(len([k for k in json.load(open('lib/l10n/app_en.arb'))if not k.startswith('@')]))"` |
+| Translations | 1,289 messages × en/ne/hi | `python tool/generate_arb.py` (writes all three ARBs from one table; count non-`@` keys) |
 | App version | `1.0.2+2` | `pubspec.yaml` |
 | SDK floor / target | minSdk 26 (Android 8.0) / targetSdk 36 / compileSdk 37 | `android/app/build.gradle.kts:134-172` |
-| Release AAB | 79,848,351 bytes (76.1 MiB), upload-key signed | `flutter build appbundle --release …` |
+| Release AAB | built by CI on `main`, upload-key signed (size not pinned here) | `flutter build appbundle --release …` |
 | Coverage floor | 55% (CI-enforced), roadmap target 70% | `scripts/coverage_check.dart` |
 
 Twelve keys per locale are byte-identical to English on purpose — unit
@@ -72,8 +74,11 @@ referrals, share, profile/settings, trilingual UI.
 4. **Bearer PAT only in `flutter_secure_storage`.** Backup and device
    transfer are disabled in the manifest and in both XML rule sets.
 5. **The tenant is a property of the credential.** `X-Tenant` is sent only
-   when the user has selected one; `403 TENANT_MISMATCH` forces re-auth
-   instead of retrying.
+   when the user has selected one. `TENANT_MISMATCH` forces a fresh login;
+   `TENANT_INACTIVE` (with `error.details.tenant_id`) has **no retry** at all —
+   a full-screen workspace-closed state takes over the app. The global gate
+   nests inside ForceUpdate/Maintenance, so operator kill switches win. See
+   [TENANT_SWITCHER_CONTRACT.md](TENANT_SWITCHER_CONTRACT.md).
 6. **Release fails closed.** No keystore or no usable `CERT_PIN_1` refuses a
    production release at Gradle *and* at runtime.
 7. **Cleartext HTTP is blocked in every build**, including debug; the debug

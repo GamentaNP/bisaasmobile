@@ -10,14 +10,42 @@ abstract final class ErrorReporter {
   /// captureException without init is a silent no-op.
   static bool sentryEnabled = false;
 
+  /// Reports a fatal crash through the same funnel as every other error, so
+  /// context is attached and Sentry actually receives it.
+  static Future<void> reportFatal(
+    Object error,
+    StackTrace stack, {
+    String? reason,
+    Map<String, Object?>? context,
+  }) async {
+    await _send(error, stack, reason, context, fatal: true);
+  }
+
   static Future<void> report(
     Object error,
     StackTrace stack, {
     String? reason,
     Map<String, Object?>? context,
   }) async {
+    await _send(error, stack, reason, context, fatal: false);
+  }
+
+  static Future<void> _send(
+    Object error,
+    StackTrace stack,
+    String? reason,
+    Map<String, Object?>? context, {
+    required bool fatal,
+  }) async {
     AppLogger.e(reason ?? 'Unhandled error', error, stack);
-    await CrashReporting.record(error, stack, reason: reason);
+    if (context != null && context.isNotEmpty) {
+      await CrashReporting.setContext(
+        context.map((key, value) => MapEntry(key, value ?? 'null')),
+      );
+    }
+    await (fatal
+        ? CrashReporting.recordFatal(error, stack, reason: reason)
+        : CrashReporting.record(error, stack, reason: reason));
     if (!sentryEnabled) return;
     try {
       await Sentry.captureException(error, stackTrace: stack, withScope: (s) {

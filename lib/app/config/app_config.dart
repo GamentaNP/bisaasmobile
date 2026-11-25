@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../core/logging/app_logger.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/network/app_update_gate.dart';
 import '../../core/network/install_identity_interceptor.dart';
@@ -104,6 +105,7 @@ class AppConfigDataSource {
     if (body == null) return null;
     final data = body['data'];
     if (data is Map<String, dynamic>) return AppConfig.fromJson(data);
+    AppLogger.w('app config payload not understood (data is ${data.runtimeType})');
     return null;
   }
 }

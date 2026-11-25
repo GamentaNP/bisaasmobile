@@ -78,7 +78,12 @@ class ContestsRemoteDataSource {
   Future<ContestDetailDto> getContest(int id) async {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/contests/$id');
     final body = res.data;
-    if (body == null) throw Exception('Contest $id not found');
+    if (body == null) {
+      throw ContractViolation(
+        'Contest payload not understood',
+        endpoint: '/quiz/contests/$id',
+      );
+    }
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -90,7 +95,12 @@ class ContestsRemoteDataSource {
         data = body;
       }
     }
-    if (data == null) throw Exception('Contest data missing');
+    if (data == null) {
+      throw ContractViolation(
+        'Contest data missing',
+        endpoint: '/quiz/contests/$id',
+      );
+    }
     return ContestDetailDto.fromJson(data);
   }
 
@@ -153,7 +163,12 @@ class ContestsRemoteDataSource {
       options: Options(headers: {'Idempotency-Key': key}),
     );
     final body = res.data;
-    if (body == null) throw Exception('Enter contest empty');
+    if (body == null) {
+      throw ContractViolation(
+        'Enter contest payload not understood',
+        endpoint: '/quiz/contests/$id/enter',
+      );
+    }
     Map<String, dynamic>? data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
@@ -165,7 +180,12 @@ class ContestsRemoteDataSource {
         data = body;
       }
     }
-    if (data == null) throw Exception('Enter contest data missing');
+    if (data == null) {
+      throw ContractViolation(
+        'Enter contest data missing',
+        endpoint: '/quiz/contests/$id/enter',
+      );
+    }
     return ContestAttemptDto.fromJson(data);
   }
 

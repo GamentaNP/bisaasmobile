@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../app/localization/l10n.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_view.dart';
@@ -108,13 +109,14 @@ class _Tile extends StatelessWidget {
 
   static String _day(DateTime? d) {
     if (d == null) return '';
+    final l10n = appL10n();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final that = DateTime(d.year, d.month, d.day);
     final diff = today.difference(that).inDays;
-    if (diff == 0) return 'Today';
-    if (diff == 1) return 'Yesterday';
-    if (diff > 1 && diff < 7) return '$diff days ago';
+    if (diff == 0) return l10n.notifToday;
+    if (diff == 1) return l10n.notifYesterday;
+    if (diff > 1 && diff < 7) return l10n.notifDaysAgo(diff);
     return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
   }
 

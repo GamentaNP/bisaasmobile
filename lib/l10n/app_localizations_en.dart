@@ -650,7 +650,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentFootnote =>
-      'Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@bisaas.com.';
+      'Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@lovemcq.com.';
 
   @override
   String get privacyTitle => 'Your data';
@@ -4108,10 +4108,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizIntroGradesInstantly => 'Server grades your answer instantly.';
 
   @override
-  String get quizIntroCorrectRule => 'Correct: +10 XP, streak combo bonus.';
+  String get quizIntroCorrectRule =>
+      'Your correct answers are scored by the server at the end.';
 
   @override
-  String get quizIntroWrongRule => 'Wrong: -2 XP, streak resets.';
+  String get quizIntroWrongRule =>
+      'Nothing is deducted during the quiz — rewards follow the final score.';
 
   @override
   String get quizIntroBackRule =>
@@ -4581,4 +4583,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String battleMatchStartingIn(Object seconds) {
     return 'Match found — starting in ${seconds}s';
   }
+
+  @override
+  String get authEnterPassword => 'Please enter your password';
+
+  @override
+  String get authEnterName => 'Please enter your name';
+
+  @override
+  String walletUpdatedAt(Object date) {
+    return 'Updated $date';
+  }
+
+  @override
+  String quizShareSubject(Object title) {
+    return 'My CivilCal Result — $title';
+  }
+
+  @override
+  String get quizFunnelCategories => 'Categories';
+
+  @override
+  String get quizFunnelTopics => 'Topics';
+
+  @override
+  String get syllabusVersionsLoadFailed => 'Could not load syllabus versions.';
+
+  @override
+  String get syllabusTreeLoadFailed => 'Could not load the syllabus.';
+
+  @override
+  String get gameClaimMissionFailed => 'Could not claim this mission';
+
+  @override
+  String get quizFeedbackGreatJob => 'Great job!';
+
+  @override
+  String get quizFeedbackNotQuite => 'Not quite';
+
+  @override
+  String get commonSuccess => 'Success';
+
+  @override
+  String get commonFailed => 'Failed';
+
+  @override
+  String get storeEquipAction => 'Equip';
+
+  @override
+  String get storePreviewAction => 'Preview';
+
+  @override
+  String get streakFreezeFailed =>
+      'Freeze failed — check coins or donor badge.';
 }

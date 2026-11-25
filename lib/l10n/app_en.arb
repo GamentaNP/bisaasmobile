@@ -405,7 +405,7 @@
   "consentNecessaryAlwaysOn": "Always on. Your account, saved work, push token, crash reports and device security check.",
   "consentDataStored": "Data stored about this device",
   "consentDataStoredSubtitle": "View, and erase, the anonymous profile",
-  "consentFootnote": "Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@bisaas.com.",
+  "consentFootnote": "Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@lovemcq.com.",
   "privacyTitle": "Your data",
   "privacyAnonymousProfile": "Anonymous profile",
   "privacyReference": "Reference {reference}",
@@ -3098,8 +3098,8 @@
   "syllabusTopicsLoaded": "topics loaded",
   "syllabusTopicsLabel": "topics",
   "quizIntroGradesInstantly": "Server grades your answer instantly.",
-  "quizIntroCorrectRule": "Correct: +10 XP, streak combo bonus.",
-  "quizIntroWrongRule": "Wrong: -2 XP, streak resets.",
+  "quizIntroCorrectRule": "Your correct answers are scored by the server at the end.",
+  "quizIntroWrongRule": "Nothing is deducted during the quiz — rewards follow the final score.",
   "quizIntroBackRule": "Tap the back button to exit (progress lost).",
   "tutorExampleProctor": "Explain proctor compaction simply",
   "tutorExamplePlanWeek": "Help me plan this week",
@@ -3366,5 +3366,35 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "authEnterPassword": "Please enter your password",
+  "authEnterName": "Please enter your name",
+  "walletUpdatedAt": "Updated {date}",
+  "@walletUpdatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizShareSubject": "My CivilCal Result — {title}",
+  "@quizShareSubject": {
+    "placeholders": {
+      "title": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizFunnelCategories": "Categories",
+  "quizFunnelTopics": "Topics",
+  "syllabusVersionsLoadFailed": "Could not load syllabus versions.",
+  "syllabusTreeLoadFailed": "Could not load the syllabus.",
+  "gameClaimMissionFailed": "Could not claim this mission",
+  "quizFeedbackGreatJob": "Great job!",
+  "quizFeedbackNotQuite": "Not quite",
+  "commonSuccess": "Success",
+  "commonFailed": "Failed",
+  "storeEquipAction": "Equip",
+  "storePreviewAction": "Preview",
+  "streakFreezeFailed": "Freeze failed — check coins or donor badge."
 }

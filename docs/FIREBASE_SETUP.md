@@ -1,19 +1,24 @@
 # Firebase — what is actually provisioned
 
-**Verified 2026-11-04.** One Firebase project, one Android config file, no
+**Re-audited 2026-11-25.** One Firebase project, one Android config file, no
 flavours and no Remote Config. This file replaces the two-project / three-
 flavour setup it used to describe, which never matched the tree.
 
 | Fact | Value |
 |---|---|
-| Project | **`bisaas-realtime-123`** (single project for all environments) |
-| Android package | `com.bisaas.bisaasmobile` |
-| Android config | `android/app/google-services.json` — **gitignored**, present only on the founder's machine |
-| iOS bundle | `com.bisaas.bisaasmobile` |
-| iOS config | `ios/Runner/GoogleService-Info.plist` — gitignored |
+| Project | **`love-mcq`** (single project for all environments; verified from `android/app/google-services.json`) |
+| Android package | `com.beardbishwo.lovemcq` |
+| Android config | `android/app/google-services.json` - **gitignored**, present on the founder's machine |
+| iOS bundle | `com.beardbishwo.lovemcq` |
+| iOS config | `ios/Runner/GoogleService-Info.plist` - gitignored |
 | Gradle plugin | applied **conditionally** when the config file exists (`android/app/build.gradle.kts:16`) |
 | Services in use | Analytics, Crashlytics, Cloud Messaging, Realtime Database |
-| **Not** in use | **Remote Config** — removed on purpose. It disagreed with the operator's flags; feature flags, maintenance and the min-version floor come from `GET /api/v1/app/config`. |
+| **Not** in use | **Remote Config** - removed on purpose. It disagreed with the operator's flags; feature flags, maintenance and the min-version floor come from `GET /api/v1/app/config`. |
+
+> **Never restore the old config.** The retired `bisaas-realtime-123` project
+> config lived in untracked `.bak` files. Those files have been **deleted** and
+> `*.bak` is gitignored. Do not bring them back: a `google-services.json` from
+> that project would register the wrong app id and break push.
 
 ## Consequences of the config being gitignored
 
@@ -32,8 +37,8 @@ deliberate and handled:
 
 ## Android registration (when the file must be regenerated)
 
-1. Firebase Console → project `bisaas-realtime-123` → Add app → Android →
-   package `com.bisaas.bisaasmobile`.
+1. Firebase Console → project `love-mcq` → Add app → Android →
+   package `com.beardbishwo.lovemcq`.
 2. Add the **release** SHA-1/SHA-256 from the upload keystore (Play App
    Signing re-signs the artifact, so also add the app-signing SHA-1 from Play
    Console once enrolled — Google Sign-In and Dynamic Links fail without it).
@@ -41,7 +46,7 @@ deliberate and handled:
 
 ## iOS registration
 
-1. Add app → iOS → bundle `com.bisaas.bisaasmobile`.
+1. Add app → iOS → bundle `com.beardbishwo.lovemcq`.
 2. Download `GoogleService-Info.plist` into `ios/Runner/` and add it to the
    Runner target in Xcode (drag into the project, "Copy items if needed").
 3. Upload an APNs auth key (Cloud Messaging → iOS configuration). Without it,

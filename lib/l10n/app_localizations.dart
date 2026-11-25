@@ -1207,7 +1207,7 @@ abstract class AppLocalizations {
   /// No description provided for @consentFootnote.
   ///
   /// In en, this message translates to:
-  /// **'Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@bisaas.com.'**
+  /// **'Turning off a category stops that collection from that moment. It does not delete data already collected — for that, use the link above or contact privacy@lovemcq.com.'**
   String get consentFootnote;
 
   /// No description provided for @privacyTitle.
@@ -6948,13 +6948,13 @@ abstract class AppLocalizations {
   /// No description provided for @quizIntroCorrectRule.
   ///
   /// In en, this message translates to:
-  /// **'Correct: +10 XP, streak combo bonus.'**
+  /// **'Your correct answers are scored by the server at the end.'**
   String get quizIntroCorrectRule;
 
   /// No description provided for @quizIntroWrongRule.
   ///
   /// In en, this message translates to:
-  /// **'Wrong: -2 XP, streak resets.'**
+  /// **'Nothing is deducted during the quiz — rewards follow the final score.'**
   String get quizIntroWrongRule;
 
   /// No description provided for @quizIntroBackRule.
@@ -7766,6 +7766,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Match found — starting in {seconds}s'**
   String battleMatchStartingIn(Object seconds);
+
+  /// No description provided for @authEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get authEnterPassword;
+
+  /// No description provided for @authEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get authEnterName;
+
+  /// No description provided for @walletUpdatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {date}'**
+  String walletUpdatedAt(Object date);
+
+  /// No description provided for @quizShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'My CivilCal Result — {title}'**
+  String quizShareSubject(Object title);
+
+  /// No description provided for @quizFunnelCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get quizFunnelCategories;
+
+  /// No description provided for @quizFunnelTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Topics'**
+  String get quizFunnelTopics;
+
+  /// No description provided for @syllabusVersionsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load syllabus versions.'**
+  String get syllabusVersionsLoadFailed;
+
+  /// No description provided for @syllabusTreeLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the syllabus.'**
+  String get syllabusTreeLoadFailed;
+
+  /// No description provided for @gameClaimMissionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not claim this mission'**
+  String get gameClaimMissionFailed;
+
+  /// No description provided for @quizFeedbackGreatJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Great job!'**
+  String get quizFeedbackGreatJob;
+
+  /// No description provided for @quizFeedbackNotQuite.
+  ///
+  /// In en, this message translates to:
+  /// **'Not quite'**
+  String get quizFeedbackNotQuite;
+
+  /// No description provided for @commonSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get commonSuccess;
+
+  /// No description provided for @commonFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get commonFailed;
+
+  /// No description provided for @storeEquipAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Equip'**
+  String get storeEquipAction;
+
+  /// No description provided for @storePreviewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get storePreviewAction;
+
+  /// No description provided for @streakFreezeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Freeze failed — check coins or donor badge.'**
+  String get streakFreezeFailed;
 }
 
 class _AppLocalizationsDelegate

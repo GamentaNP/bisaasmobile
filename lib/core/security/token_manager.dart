@@ -17,6 +17,12 @@ class TokenManager extends ChangeNotifier {
 
   final FlutterSecureStorage _s;
 
+  /// In-memory mirror of the bearer token. Every request reads it; a platform
+  /// channel round trip per request adds latency and main-isolate jank on
+  /// low-end devices. Kept in lockstep by [persist] and [clear] (including
+  /// refresh rotation, which calls [persist]).
+  String? _cachedToken;
+
   /// The app-wide instance — lazily created on first access, reused by the
   /// auth feature, router and interceptor chain so there is exactly one
   /// TokenManager per process (single storage, single device name).
@@ -44,7 +50,12 @@ class TokenManager extends ChangeNotifier {
     return name;
   }
 
-  Future<String?> readToken() => _s.read(key: _kToken);
+  Future<String?> readToken() async {
+    if (_cachedToken != null) return _cachedToken;
+    final stored = await _s.read(key: _kToken);
+    if (stored != null && stored.isNotEmpty) _cachedToken = stored;
+    return stored;
+  }
   Future<String?> readExpiresAt() => _s.read(key: _kExpiresAt);
   Future<String?> readDeviceName() => _s.read(key: _kDeviceName);
 
@@ -55,6 +66,7 @@ class TokenManager extends ChangeNotifier {
     String? deviceName,
   }) async {
     await _s.write(key: _kToken, value: token);
+    _cachedToken = token;
     if (expiresAt != null) await _s.write(key: _kExpiresAt, value: expiresAt);
     if (deviceName != null) await _s.write(key: _kDeviceName, value: deviceName);
     notifyListeners();
@@ -63,6 +75,7 @@ class TokenManager extends ChangeNotifier {
   Future<void> setDeviceName(String name) => _s.write(key: _kDeviceName, value: name);
 
   Future<void> clear() async {
+    _cachedToken = null;
     await _s.delete(key: _kToken);
     await _s.delete(key: _kExpiresAt);
     // keep deviceName — stable per install

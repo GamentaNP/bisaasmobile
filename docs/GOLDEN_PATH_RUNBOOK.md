@@ -15,8 +15,9 @@
   fresh clone does not have it. Firebase features degrade gracefully without
   it; push and Crashlytics will not work.
 - Backend reachable through the adb tunnel (see `README.md` §"Physical
-  device — the adb-reverse tunnel"). `https://bisaas.com` is **not live** as
-  of 2026-11-04 — see `LAUNCH_READINESS.md`.
+  device - the adb-reverse tunnel"). Production is live at
+  `https://lovemcq.com`; this manual pass still uses the local Laragon
+  backend - see `LAUNCH_READINESS.md`.
 - Device: the QA phone is a **Redmi 6A, Android 9 (API 28)**. CI also runs
   API 30. An API-34 emulator is fine for a quick pass but is not the floor.
 - Build for the phone:
@@ -114,6 +115,9 @@ git push origin v1.0.2
 # Then: fastlane android beta (from android/, requires the Play service account)
 ```
 
-**Do not tag before the domain/TLS step in `LAUNCH_READINESS.md` is done.**
-The pins in `production.json` are only valid for the certificate the domain
-actually serves; a stale pin makes the release refuse every request.
+**Do not tag before the pins and App Links identity are confirmed** against
+the live `https://lovemcq.com` chain (see `LAUNCH_READINESS.md` §1 and
+`APP_LINKS_DEPLOYMENT.md`). The pins in `production.json` are only valid for
+the certificate that host actually serves; a stale pin makes the release
+refuse every request. Fingerprints belong in Admin → Settings → Mobile App
+Settings, never in a static identity file.

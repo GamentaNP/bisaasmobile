@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 
 import '../logging/app_logger.dart';
+import 'tenant_interceptor.dart';
 
 /// Collapses identical in-flight GETs into a single network round trip.
 ///
@@ -83,9 +84,16 @@ class RequestCoalescer extends Interceptor {
         .toList()
       ..sort();
     final language = options.headers['Accept-Language'] ?? '';
+    // The organization assertion is part of the response identity even when
+    // two users share a bearer token (multi-membership accounts). Hash it the
+    // same way as the credential: the key lands in an unencrypted DB.
+    final tenant = options.headers[TenantInterceptor.header];
+    final tenantFingerprint = tenant is String && tenant.isNotEmpty
+        ? sha256.convert(utf8.encode(tenant)).toString().substring(0, 16)
+        : 'anon';
     return '${options.method.toUpperCase()} ${options.path}'
         '${parts.isEmpty ? '' : '?${parts.join('&')}'}'
-        '|$language|${credentialFingerprint(options)}';
+        '|$language|${credentialFingerprint(options)}|$tenantFingerprint';
   }
 
   /// A non-reversible stand-in for the caller's credential.

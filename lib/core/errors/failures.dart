@@ -14,10 +14,6 @@ class NetworkFailure extends Failure {
       NetworkFailure(e.message, code: e.code);
 }
 
-class CacheFailure extends Failure {
-  const CacheFailure(super.message);
-}
-
 class ValidationFailure extends Failure {
   const ValidationFailure(super.message, {this.fieldErrors});
   final Map<String, dynamic>? fieldErrors;

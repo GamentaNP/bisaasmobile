@@ -130,7 +130,7 @@ class _PremiumStoreScreenState extends ConsumerState<PremiumStoreScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(color: (state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed).withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
-                child: Row(children: [Icon(state.lastPurchaseResult!.success ? Icons.check_circle_rounded : Icons.error_outline_rounded, size: 16, color: state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.lastPurchaseResult!.message ?? (state.lastPurchaseResult!.success ? 'Success' : 'Failed'), style: TextStyle(fontSize: 12, color: state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed)))]),
+                child: Row(children: [Icon(state.lastPurchaseResult!.success ? Icons.check_circle_rounded : Icons.error_outline_rounded, size: 16, color: state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed), const SizedBox(width: 8), Expanded(child: Text(state.lastPurchaseResult!.message ?? (state.lastPurchaseResult!.success ? l10n.commonSuccess : l10n.commonFailed), style: TextStyle(fontSize: 12, color: state.lastPurchaseResult!.success ? AppColors.correctGreen : AppColors.wrongRed)))]),
               ),
             ],
           ],
