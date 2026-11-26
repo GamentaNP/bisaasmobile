@@ -56,8 +56,10 @@ class BattleMatch {
     // Placeholder for a mapped server field that no screen renders yet. Empty,
     // not 'Searching…' — an unrendered field has no business carrying copy.
     this.opponentLabel = '',
-    this.player1 = const BattlePlayer(uid: 'p1', displayName: 'You', avatarUrl: ''),
-    this.player2 = const BattlePlayer(uid: 'p2', displayName: 'Opponent', avatarUrl: ''),
+    // No display copy in the domain layer: an empty name means "the server
+    // published none", and the screen fills in the locale's "You"/"Opponent".
+    this.player1 = const BattlePlayer(uid: 'p1', displayName: '', avatarUrl: ''),
+    this.player2 = const BattlePlayer(uid: 'p2', displayName: '', avatarUrl: ''),
     this.questions = const [],
     this.perQuestionSeconds = 15,
     this.category = 'general',

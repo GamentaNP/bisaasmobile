@@ -2498,6 +2498,11 @@
   "battleVs": "VS",
   "battleRematch": "Rematch",
   "battleYou": "You",
+  "battleOpponent": "Opponent",
+  "battleResultWin": "YOU WIN!",
+  "battleResultLoss": "Good Fight!",
+  "battleResultDraw": "DRAW",
+  "battleResultPending": "Result pending",
   "liveEventsTitle": "Live Events",
   "liveEventsNone": "No live events",
   "liveEventsNoneBody": "Scheduled and live events will appear here.",
@@ -2994,16 +2999,13 @@
       }
     }
   },
-  "streakInsuranceBanked": "{count} of {max} insurance token{plural} banked. One auto-repairs a missed day.",
-  "@streakInsuranceBanked": {
+  "streakInsuranceBankedCount": "Banked {count} of {max} insurance tokens",
+  "@streakInsuranceBankedCount": {
     "placeholders": {
       "count": {
         "type": "Object"
       },
       "max": {
-        "type": "Object"
-      },
-      "plural": {
         "type": "Object"
       }
     }
@@ -3017,6 +3019,10 @@
     }
   },
   "streakInsuranceUnavailable": "Insurance is not available on your account yet.",
+  "streakRepairedSuccess": "Streak repaired!",
+  "streakInsuranceBought": "Insurance bought!",
+  "streakInsuranceUsed": "Insurance used — streak restored!",
+  "streakWagerStarted": "Wager started — good luck!",
   "streakNoInsuranceToUse": "No insurance available to use.",
   "privacyUnreachable": "We could not reach the server to show what is stored about this device.",
   "privacyUnreadable": "We could not read what is stored about this device. Your local choices are unaffected.",

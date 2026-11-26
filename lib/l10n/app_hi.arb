@@ -2498,6 +2498,11 @@
   "battleVs": "बनाम",
   "battleRematch": "रीमैच",
   "battleYou": "आप",
+  "battleOpponent": "प्रतिदंद्वी",
+  "battleResultWin": "आप जीत गए!",
+  "battleResultLoss": "शानदार खेल!",
+  "battleResultDraw": "बराबरी",
+  "battleResultPending": "परिणाम लंबित",
   "liveEventsTitle": "लाइव कार्यक्रम",
   "liveEventsNone": "कोई लाइव कार्यक्रम नहीं",
   "liveEventsNoneBody": "निर्धारित और लाइव कार्यक्रम यहाँ दिखेंगे।",
@@ -2994,16 +2999,13 @@
       }
     }
   },
-  "streakInsuranceBanked": "{max} में से {count} बीमा टोकन{plural} जमा। एक अपने आप छूटे दिन की मरम्मत कर देता है।",
-  "@streakInsuranceBanked": {
+  "streakInsuranceBankedCount": "{max} में से {count} बीमा टोकन जमा किए गए",
+  "@streakInsuranceBankedCount": {
     "placeholders": {
       "count": {
         "type": "Object"
       },
       "max": {
-        "type": "Object"
-      },
-      "plural": {
         "type": "Object"
       }
     }
@@ -3017,6 +3019,10 @@
     }
   },
   "streakInsuranceUnavailable": "आपके खाते में अभी बीमा उपलब्ध नहीं है।",
+  "streakRepairedSuccess": "स्ट्रीक ठीक हो गया!",
+  "streakInsuranceBought": "बीमा खरीदा गया!",
+  "streakInsuranceUsed": "बीमा इस्तेमाल हुआ — स्ट्रीक बहाल!",
+  "streakWagerStarted": "शर्त शुरू — शुभकामनाएँ!",
   "streakNoInsuranceToUse": "उपयोग करने योग्य कोई बीमा बाकी नहीं है।",
   "privacyUnreachable": "इस डिवाइस पर क्या सहेजा है दिखाने के लिए हम सर्वर तक नहीं पहुँच सके।",
   "privacyUnreadable": "हम इस डिवाइस पर सहेजा क्या है पढ़ नहीं सके। आपके स्थानीय विकल्प अप्रभावित नहीं हैं।",

@@ -3447,6 +3447,21 @@ class AppLocalizationsNe extends AppLocalizations {
   String get battleYou => 'तपाईं';
 
   @override
+  String get battleOpponent => 'प्रतिद्वन्द्वी';
+
+  @override
+  String get battleResultWin => 'तपाईं जित्नुभयो!';
+
+  @override
+  String get battleResultLoss => 'राम्रो खेल!';
+
+  @override
+  String get battleResultDraw => 'बराबरी';
+
+  @override
+  String get battleResultPending => 'नतिजा पर्खाइमा';
+
+  @override
   String get liveEventsTitle => 'प्रत्यक्ष कार्यक्रम';
 
   @override
@@ -4081,8 +4096,8 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String streakInsuranceBanked(Object count, Object max, Object plural) {
-    return '$max मध्ये $count बीमा टोकन$plural बचत। एउटाले छुटेको दिन आफैँ मर्मत गर्छ।';
+  String streakInsuranceBankedCount(Object count, Object max) {
+    return '$max मध्ये $count बीमा टोकन जम्मा गरियो';
   }
 
   @override
@@ -4093,6 +4108,18 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get streakInsuranceUnavailable =>
       'तपाईंको खातामा अहिले बीमा उपलब्ध छैन।';
+
+  @override
+  String get streakRepairedSuccess => 'स्ट्रिक मर्मत भयो!';
+
+  @override
+  String get streakInsuranceBought => 'बीमा किनियो!';
+
+  @override
+  String get streakInsuranceUsed => 'बीमा प्रयोग भयो — स्ट्रिक पुनर्स्थापित!';
+
+  @override
+  String get streakWagerStarted => 'दाउ सुरु भयो — शुभकामना!';
 
   @override
   String get streakNoInsuranceToUse => 'प्रयोग गर्नुपर्ने कुनै बीमा बाँकी छैन।';

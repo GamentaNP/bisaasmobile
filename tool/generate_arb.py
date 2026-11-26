@@ -2033,6 +2033,14 @@ add("battleNoMatchToDisplay", "No match to display", "देखाउनुप�
 add("battleVs", "VS", "विरुद्ध", "बनाम")
 add("battleRematch", "Rematch", "पुनः भिडन्त", "रीमैच")
 add("battleYou", "You", "तपाईं", "आप")
+# The pure-domain BattleMatch defaults are deliberately empty: the label a
+# reader sees for the local/remote player is chosen at render time from these
+# two keys, so it follows the selected locale rather than the domain layer.
+add("battleOpponent", "Opponent", "प्रतिद्वन्द्वी", "प्रतिदंद्वी")
+add("battleResultWin", "YOU WIN!", "तपाईं जित्नुभयो!", "आप जीत गए!")
+add("battleResultLoss", "Good Fight!", "राम्रो खेल!", "शानदार खेल!")
+add("battleResultDraw", "DRAW", "बराबरी", "बराबरी")
+add("battleResultPending", "Result pending", "नतिजा पर्खाइमा", "परिणाम लंबित")
 
 # ── misc ────────────────────────────────────────────────────────────────────
 add("liveEventsTitle", "Live Events", "प्रत्यक्ष कार्यक्रम", "लाइव कार्यक्रम")
@@ -2343,12 +2351,14 @@ add(
     "आपने {when} छोड़ा। स्ट्रीक बचाने के लिए अभी मरम्मत करें।",
     ["when"],
 )
+# No `{plural}` placeholder: an English suffix cannot be injected into Nepali
+# or Hindi. The whole message is translated instead, in all three locales.
 add(
-    "streakInsuranceBanked",
-    "{count} of {max} insurance token{plural} banked. One auto-repairs a missed day.",
-    "{max} मध्ये {count} बीमा टोकन{plural} बचत। एउटाले छुटेको दिन आफैँ मर्मत गर्छ।",
-    "{max} में से {count} बीमा टोकन{plural} जमा। एक अपने आप छूटे दिन की मरम्मत कर देता है।",
-    ["count", "max", "plural"],
+    "streakInsuranceBankedCount",
+    "Banked {count} of {max} insurance tokens",
+    "{max} मध्ये {count} बीमा टोकन जम्मा गरियो",
+    "{max} में से {count} बीमा टोकन जमा किए गए",
+    ["count", "max"],
 )
 add(
     "streakInsuranceExplain",
@@ -2358,6 +2368,12 @@ add(
     ["max"],
 )
 add("streakInsuranceUnavailable", "Insurance is not available on your account yet.", "तपाईंको खातामा अहिले बीमा उपलब्ध छैन।", "आपके खाते में अभी बीमा उपलब्ध नहीं है।")
+# Success copy for the streak self-service actions. These were positional
+# fallbacks to `_toast(...)`, which the coverage scanner cannot see.
+add("streakRepairedSuccess", "Streak repaired!", "स्ट्रिक मर्मत भयो!", "स्ट्रीक ठीक हो गया!")
+add("streakInsuranceBought", "Insurance bought!", "बीमा किनियो!", "बीमा खरीदा गया!")
+add("streakInsuranceUsed", "Insurance used — streak restored!", "बीमा प्रयोग भयो — स्ट्रिक पुनर्स्थापित!", "बीमा इस्तेमाल हुआ — स्ट्रीक बहाल!")
+add("streakWagerStarted", "Wager started — good luck!", "दाउ सुरु भयो — शुभकामना!", "शर्त शुरू — शुभकामनाएँ!")
 
 add("streakNoInsuranceToUse", "No insurance available to use.", "प्रयोग गर्नुपर्ने कुनै बीमा बाँकी छैन।", "उपयोग करने योग्य कोई बीमा बाकी नहीं है।")
 # ── the privacy screen ──────────────────────────────────────────────────────

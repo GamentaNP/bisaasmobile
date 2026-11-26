@@ -426,7 +426,7 @@ class _RepairCard extends ConsumerWidget {
                   : () async {
                       final reason = await ref.read(streakControllerProvider.notifier).repairStreak();
                       if (!context.mounted) return;
-                      _toast(context, reason ?? 'Streak repaired!', ok: reason == null);
+                      _toast(context, reason ?? l10n.streakRepairedSuccess, ok: reason == null);
                     },
               icon: busy
                   ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
@@ -500,7 +500,7 @@ class _InsuranceCard extends ConsumerWidget {
             ins == null
                 ? l10n.streakInsuranceChecking
                 : active > 0
-                    ? l10n.streakInsuranceBanked(active, max, max == 1 ? '' : 's')
+                    ? l10n.streakInsuranceBankedCount(active, max)
                     : max > 0
                         ? l10n.streakInsuranceExplain(max)
                         : l10n.streakInsuranceUnavailable,
@@ -516,7 +516,7 @@ class _InsuranceCard extends ConsumerWidget {
                       : () async {
                           final reason = await ref.read(streakControllerProvider.notifier).buyInsurance();
                           if (!context.mounted) return;
-                          _toast(context, reason ?? 'Insurance bought!', ok: reason == null);
+                          _toast(context, reason ?? l10n.streakInsuranceBought, ok: reason == null);
                         },
                   icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
                   label: Text(l10n.streakBuy),
@@ -530,7 +530,7 @@ class _InsuranceCard extends ConsumerWidget {
                       : () async {
                           final reason = await ref.read(streakControllerProvider.notifier).useInsurance();
                           if (!context.mounted) return;
-                          _toast(context, reason ?? 'Insurance used — streak restored!', ok: reason == null);
+                          _toast(context, reason ?? l10n.streakInsuranceUsed, ok: reason == null);
                         },
                   icon: busy
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
@@ -628,6 +628,7 @@ class _WagerCard extends ConsumerWidget {
   }
 
   Future<void> _openWagerSheet(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final picked = await showModalBottomSheet<(int, int)>(
       context: context,
       isScrollControlled: true,
@@ -637,7 +638,7 @@ class _WagerCard extends ConsumerWidget {
     if (picked == null || !context.mounted) return;
     final reason = await ref.read(streakControllerProvider.notifier).openWager(coins: picked.$1, days: picked.$2);
     if (!context.mounted) return;
-    _toast(context, reason ?? 'Wager started — good luck!', ok: reason == null);
+    _toast(context, reason ?? l10n.streakWagerStarted, ok: reason == null);
   }
 }
 

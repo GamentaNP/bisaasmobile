@@ -2498,6 +2498,11 @@
   "battleVs": "विरुद्ध",
   "battleRematch": "पुनः भिडन्त",
   "battleYou": "तपाईं",
+  "battleOpponent": "प्रतिद्वन्द्वी",
+  "battleResultWin": "तपाईं जित्नुभयो!",
+  "battleResultLoss": "राम्रो खेल!",
+  "battleResultDraw": "बराबरी",
+  "battleResultPending": "नतिजा पर्खाइमा",
   "liveEventsTitle": "प्रत्यक्ष कार्यक्रम",
   "liveEventsNone": "कुनै प्रत्यक्ष कार्यक्रम छैन",
   "liveEventsNoneBody": "तोकिएका र प्रत्यक्ष कार्यक्रमहरू यहाँ देखिन्छन्।",
@@ -2994,16 +2999,13 @@
       }
     }
   },
-  "streakInsuranceBanked": "{max} मध्ये {count} बीमा टोकन{plural} बचत। एउटाले छुटेको दिन आफैँ मर्मत गर्छ।",
-  "@streakInsuranceBanked": {
+  "streakInsuranceBankedCount": "{max} मध्ये {count} बीमा टोकन जम्मा गरियो",
+  "@streakInsuranceBankedCount": {
     "placeholders": {
       "count": {
         "type": "Object"
       },
       "max": {
-        "type": "Object"
-      },
-      "plural": {
         "type": "Object"
       }
     }
@@ -3017,6 +3019,10 @@
     }
   },
   "streakInsuranceUnavailable": "तपाईंको खातामा अहिले बीमा उपलब्ध छैन।",
+  "streakRepairedSuccess": "स्ट्रिक मर्मत भयो!",
+  "streakInsuranceBought": "बीमा किनियो!",
+  "streakInsuranceUsed": "बीमा प्रयोग भयो — स्ट्रिक पुनर्स्थापित!",
+  "streakWagerStarted": "दाउ सुरु भयो — शुभकामना!",
   "streakNoInsuranceToUse": "प्रयोग गर्नुपर्ने कुनै बीमा बाँकी छैन।",
   "privacyUnreachable": "यो यन्त्रमा के सुरक्षित छ देखाउन सर्भरसम्म पुग्न सकिएन।",
   "privacyUnreadable": "यो यन्त्रमा के सुरक्षित छ पढ्न सकिएन। तपाईंका स्थानीय विकल्पमा असर पर्दैन।",

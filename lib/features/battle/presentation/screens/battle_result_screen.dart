@@ -54,21 +54,25 @@ class BattleResultScreen extends ConsumerWidget {
     // treat "unknown" as unknown — never as a win.
     final rtdbSaysWin = state.winnerUid != null && state.winnerUid == m.player1.uid;
     final bool isWin;
+    final bool isPending;
     final String headline;
     if (outcome != null) {
       isWin = outcome.isWin;
       headline = switch (outcome.result) {
-        'win' => 'YOU WIN!',
-        'loss' => 'Good Fight!',
-        'draw' => 'DRAW',
-        _ => 'Result pending',
+        'win' => l10n.battleResultWin,
+        'loss' => l10n.battleResultLoss,
+        'draw' => l10n.battleResultDraw,
+        _ => l10n.battleResultPending,
       };
+      isPending = headline == l10n.battleResultPending;
     } else if (outcomeAsync.hasError) {
       isWin = rtdbSaysWin;
-      headline = rtdbSaysWin ? 'YOU WIN!' : 'Good Fight!';
+      isPending = false;
+      headline = rtdbSaysWin ? l10n.battleResultWin : l10n.battleResultLoss;
     } else {
       isWin = false;
-      headline = 'Result pending';
+      isPending = true;
+      headline = l10n.battleResultPending;
     }
 
     // Best-effort me/opp split (no uid wired yet — default to player1 as me)
@@ -82,7 +86,7 @@ class BattleResultScreen extends ConsumerWidget {
           child: Column(
             children: [
               const SizedBox(height: 16),
-              if (!isWin && headline == 'Result pending')
+              if (isPending)
                 const SizedBox(
                   height: 120,
                   child: Center(child: CircularProgressIndicator()),
@@ -137,8 +141,9 @@ class BattleResultScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     // The invitation copy itself is translated; the figures are the server's
     // result and the display name is whatever the server published.
+    final oppName = opp.displayName.isNotEmpty ? opp.displayName : l10n.battleOpponent;
     final msg = '${l10n.socialShareMomentFallback} '
-        '${me.score}-${opp.score} ${l10n.battleVs} ${opp.displayName}';
+        '${me.score}-${opp.score} ${l10n.battleVs} $oppName';
     try {
       await SharePlus.instance.share(
         ShareParams(text: msg, subject: l10n.battleResultTitle),
@@ -157,6 +162,11 @@ class _ResultColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // The domain entity carries no display copy — its player defaults are
+    // empty. Pick the reader-facing label here, where the locale is known.
+    final displayName = player.displayName.isNotEmpty
+        ? player.displayName
+        : (isMe ? l10n.battleYou : l10n.battleOpponent);
     return Column(
       children: [
         Stack(
@@ -165,7 +175,7 @@ class _ResultColumn extends StatelessWidget {
             CircleAvatar(
               radius: 36,
               backgroundColor: (isWinner ? AppColors.xpGold : AppColors.dividerDark).withValues(alpha: 0.3),
-              child: Text(player.displayName.isNotEmpty ? player.displayName[0].toUpperCase() : '?', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              child: Text(displayName[0].toUpperCase(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             if (isWinner)
               Positioned(
@@ -180,7 +190,7 @@ class _ResultColumn extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        Text(isMe ? l10n.battleYou : player.displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(isMe ? l10n.battleYou : displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
         Text(l10n.commonPoints(player.score), style: TextStyle(color: isWinner ? AppColors.xpGold : null, fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     );

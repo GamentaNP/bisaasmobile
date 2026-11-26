@@ -5893,6 +5893,36 @@ abstract class AppLocalizations {
   /// **'You'**
   String get battleYou;
 
+  /// No description provided for @battleOpponent.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent'**
+  String get battleOpponent;
+
+  /// No description provided for @battleResultWin.
+  ///
+  /// In en, this message translates to:
+  /// **'YOU WIN!'**
+  String get battleResultWin;
+
+  /// No description provided for @battleResultLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Fight!'**
+  String get battleResultLoss;
+
+  /// No description provided for @battleResultDraw.
+  ///
+  /// In en, this message translates to:
+  /// **'DRAW'**
+  String get battleResultDraw;
+
+  /// No description provided for @battleResultPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Result pending'**
+  String get battleResultPending;
+
   /// No description provided for @liveEventsTitle.
   ///
   /// In en, this message translates to:
@@ -6937,11 +6967,11 @@ abstract class AppLocalizations {
   /// **'You missed {when}. Repair it now to keep the streak.'**
   String streakMissedDayWhen(Object when);
 
-  /// No description provided for @streakInsuranceBanked.
+  /// No description provided for @streakInsuranceBankedCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} of {max} insurance token{plural} banked. One auto-repairs a missed day.'**
-  String streakInsuranceBanked(Object count, Object max, Object plural);
+  /// **'Banked {count} of {max} insurance tokens'**
+  String streakInsuranceBankedCount(Object count, Object max);
 
   /// No description provided for @streakInsuranceExplain.
   ///
@@ -6954,6 +6984,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Insurance is not available on your account yet.'**
   String get streakInsuranceUnavailable;
+
+  /// No description provided for @streakRepairedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak repaired!'**
+  String get streakRepairedSuccess;
+
+  /// No description provided for @streakInsuranceBought.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance bought!'**
+  String get streakInsuranceBought;
+
+  /// No description provided for @streakInsuranceUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance used — streak restored!'**
+  String get streakInsuranceUsed;
+
+  /// No description provided for @streakWagerStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Wager started — good luck!'**
+  String get streakWagerStarted;
 
   /// No description provided for @streakNoInsuranceToUse.
   ///

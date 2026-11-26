@@ -3436,6 +3436,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get battleYou => 'You';
 
   @override
+  String get battleOpponent => 'Opponent';
+
+  @override
+  String get battleResultWin => 'YOU WIN!';
+
+  @override
+  String get battleResultLoss => 'Good Fight!';
+
+  @override
+  String get battleResultDraw => 'DRAW';
+
+  @override
+  String get battleResultPending => 'Result pending';
+
+  @override
   String get liveEventsTitle => 'Live Events';
 
   @override
@@ -4072,8 +4087,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String streakInsuranceBanked(Object count, Object max, Object plural) {
-    return '$count of $max insurance token$plural banked. One auto-repairs a missed day.';
+  String streakInsuranceBankedCount(Object count, Object max) {
+    return 'Banked $count of $max insurance tokens';
   }
 
   @override
@@ -4084,6 +4099,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get streakInsuranceUnavailable =>
       'Insurance is not available on your account yet.';
+
+  @override
+  String get streakRepairedSuccess => 'Streak repaired!';
+
+  @override
+  String get streakInsuranceBought => 'Insurance bought!';
+
+  @override
+  String get streakInsuranceUsed => 'Insurance used — streak restored!';
+
+  @override
+  String get streakWagerStarted => 'Wager started — good luck!';
 
   @override
   String get streakNoInsuranceToUse => 'No insurance available to use.';
