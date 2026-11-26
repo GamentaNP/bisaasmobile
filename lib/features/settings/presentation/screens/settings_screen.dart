@@ -246,7 +246,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final organization = ref.watch(organizationSwitcherStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
+      // Inset the tiles so they read as cards instead of edge-to-edge rows.
+      // The old full-width `Divider(height: 1)` sat flush against the tile
+      // border, which looked like an attached line rather than separation.
       body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           _SectionHeader(l10n.settingsAppearanceSection),
           ListTile(
@@ -256,7 +260,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             trailing: const Icon(Icons.arrow_drop_down_rounded),
             onTap: () => unawaited(_pickAppearance(appearance)),
           ),
-          const Divider(height: 1),
+          const SizedBox(height: 12),
           _SectionHeader(l10n.settingsLanguageSection),
           ListTile(
             leading: const Icon(Icons.language_rounded),
@@ -265,7 +269,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             trailing: const Icon(Icons.arrow_drop_down_rounded),
             onTap: () => unawaited(_pickLocale(locale)),
           ),
-          const Divider(height: 1),
+          const SizedBox(height: 12),
           _SectionHeader(l10n.settingsSecuritySection),
           SwitchListTile(
             secondary: const Icon(Icons.fingerprint_rounded),
@@ -274,7 +278,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: lock.enabled,
             onChanged: (v) => unawaited(_toggleAppLock(v)),
           ),
-          const Divider(height: 1),
+          const SizedBox(height: 12),
           _SectionHeader(l10n.privacyMenu),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
@@ -283,7 +287,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/privacy'),
           ),
-          const Divider(height: 1),
+          const SizedBox(height: 12),
           _SectionHeader(l10n.settingsAiSection),
           ListTile(
             leading: const Icon(Icons.insights_rounded),
@@ -292,6 +296,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () => context.push('/ai/usage'),
           ),
+          const SizedBox(height: 8),
           ListTile(
             leading: const Icon(Icons.key_rounded),
             title: Text(l10n.aiKeysTitle),
@@ -300,7 +305,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => context.push('/ai/keys'),
           ),
           if (organization.available) ...[
-            const Divider(height: 1),
+            const SizedBox(height: 12),
             _SectionHeader(l10n.organization),
             ListTile(
               leading: const Icon(Icons.business_outlined),
@@ -312,13 +317,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onTap: () => context.push('/settings/organization'),
             ),
           ],
-          const Divider(height: 1),
+          const SizedBox(height: 12),
           _SectionHeader(l10n.settingsAccountSection),
           ListTile(
             leading: const Icon(Icons.logout_rounded),
             title: Text(l10n.settingsLogOut),
             onTap: () => unawaited(_logout()),
           ),
+          const SizedBox(height: 8),
           ListTile(
             leading: _deleting
                 ? const SizedBox(
@@ -410,7 +416,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
       child: Text(
         title,
         style: Theme.of(context)
