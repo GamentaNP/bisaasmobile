@@ -7,7 +7,9 @@ import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/envelope.dart';
 import '../../../../core/network/pagination.dart';
+import '../../domain/entities/quiz_catalog.dart';
 import '../models/attempt_dto.dart';
+import '../models/quiz_catalog_dto.dart';
 import '../models/quiz_dto.dart';
 import '../models/quiz_funnel_dto.dart';
 import '../../../../app/localization/l10n.dart';
@@ -91,6 +93,12 @@ class QuizRemoteDataSource {
       'difficulty': diff,
       'marks_positive': (json['points'] as int?) ?? 4,
       'marks_negative': 0,
+      // Forward the renderer selector and render-only media. The DTO/entity
+      // refuse unknown types instead of falling back to a fabricated MCQ.
+      'type': (json['type'] ?? json['question_type'] ?? '').toString(),
+      'metadata': json['metadata'] is Map
+          ? Map<String, dynamic>.from(json['metadata'] as Map)
+          : <String, dynamic>{},
       // Answer keys and explanations are never read from a pre-answer
       // response. The server does not send them (QuizQuestionResource
       // exposure policy) and the client must not be built to accept them.
@@ -558,6 +566,31 @@ class QuizRemoteDataSource {
     } catch (_) {
       return null;
     }
+  }
+
+  /// Parsed answer rows from `GET /quiz/attempts/{id}/results`.
+  ///
+  /// The results detail is the only surface that may carry an explanation:
+  /// question listings strip it (`QuizQuestionResource` exposure policy), and
+  /// the answer write withholds grading. A missing `explanation` stays null in
+  /// [AttemptReviewEntry] — callers render nothing rather than inventing one.
+  Future<List<AttemptReviewEntry>> getAttemptReviewEntries(String attemptId) async {
+    final endpoint = '/quiz/attempts/$attemptId/results';
+    final data = await getAttemptResults(attemptId);
+    if (data == null) {
+      throw ContractViolation('Empty review payload', endpoint: endpoint);
+    }
+    final rows = data['answers'];
+    if (rows is! List) {
+      throw ContractViolation(
+        'Expected an answers list in the results payload',
+        endpoint: endpoint,
+      );
+    }
+    return rows
+        .whereType<Map<String, dynamic>>()
+        .map((row) => AttemptReviewEntryDto.fromJson(row).toDomain())
+        .toList(growable: false);
   }
 
   // ── Resume & abandon ────────────────────────────────────────────────────────

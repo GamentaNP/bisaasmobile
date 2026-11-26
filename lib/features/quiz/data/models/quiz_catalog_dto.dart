@@ -78,6 +78,7 @@ class AttemptReviewEntryDto {
     this.userOptionText,
     this.correctOptionText,
     this.explanation,
+    this.explanationSource,
     this.difficulty,
     this.isCorrect,
     this.isSkipped,
@@ -89,6 +90,10 @@ class AttemptReviewEntryDto {
   final String? userOptionText;
   final String? correctOptionText;
   final String? explanation;
+
+  /// Translation provenance of [explanation] ("base" / "translation"), when
+  /// the server publishes it. Null stays null — no invented provenance.
+  final String? explanationSource;
   final int? difficulty;
   final bool? isCorrect;
   final bool? isSkipped;
@@ -104,6 +109,7 @@ class AttemptReviewEntryDto {
           j['selected_option_text']?.toString(),
       correctOptionText: j['correct_option_text']?.toString(),
       explanation: j['explanation']?.toString(),
+      explanationSource: j['explanation_source']?.toString(),
       difficulty: wireInt(j['difficulty']),
       isCorrect: _asBool(j['is_correct']),
       isSkipped: _asBool(j['is_skipped']),
@@ -117,6 +123,7 @@ class AttemptReviewEntryDto {
         userOptionText: userOptionText,
         correctOptionText: correctOptionText,
         explanation: explanation,
+        explanationSource: explanationSource,
         difficulty: difficulty,
         isCorrect: isCorrect,
         isSkipped: isSkipped,

@@ -3,11 +3,30 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bisaasmobile/app/providers.dart';
+import 'package:bisaasmobile/features/quiz/data/datasources/quiz_remote_data_source.dart';
+
 import '../../../../app/theme/app_colors.dart';
 import '../../domain/entities/practice.dart';
 import '../controllers/practice_controller.dart';
 import '../practice_session_args.dart';
 import '../../../../l10n/app_localizations.dart';
+
+/// Explanations for a graded drill, read through the quiz data layer because
+/// this is the same results payload the review screen uses. A missing
+/// explanation is filtered out — never replaced with placeholder prose.
+final _practiceExplanationsProvider = FutureProvider.family<
+    List<({String question, String explanation})>, String>((ref, attemptId) async {
+  final rows = await QuizRemoteDataSource(ref.read(dioProvider))
+      .getAttemptReviewEntries(attemptId);
+  return rows
+      .where((row) => row.explanation != null && row.explanation!.trim().isNotEmpty)
+      .map((row) => (
+            question: row.body,
+            explanation: row.explanation!.trim(),
+          ))
+      .toList(growable: false);
+});
 
 /// Untimed practice drill, backed by a live server attempt.
 ///
@@ -26,7 +45,8 @@ import '../../../../l10n/app_localizations.dart';
 /// (`PUT /quiz/attempts/{attempt}/completion`). The server withholds answer
 /// keys until an attempt is graded (`QuizQuestionResource` exposure policy),
 /// so during the drill the only honest thing to show is "submitted" — never
-/// right/wrong.
+/// right/wrong. After grading, explanations come from the same results payload
+/// the review screen reads, and only when the server actually sent them.
 class PracticeSessionScreen extends ConsumerStatefulWidget {
   const PracticeSessionScreen({super.key, required this.args});
   final PracticeSessionArgs args;
@@ -142,6 +162,18 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
       if (mounted) setState(() => _completing = false);
     }
 
+    // The results payload is the ONLY source of explanations. A read failure
+    // is not a grading failure: keep the server's score and simply omit the
+    // explanation section rather than fabricating one.
+    var explanations = <({String question, String explanation})>[];
+    if (result != null && attemptId.isNotEmpty) {
+      try {
+        explanations = await ref.read(_practiceExplanationsProvider(attemptId).future);
+      } catch (_) {
+        explanations = <({String question, String explanation})>[];
+      }
+    }
+
     if (!mounted) return;
 
     final completionError = result == null && attemptId.isNotEmpty
@@ -205,6 +237,59 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
               Text(
                 l10n.practiceReviewPassNote,
                 style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ),
+            ],
+            // Only the server's answers list can put prose here. When the
+            // policy hides keys (or the server sent no explanation), the list
+            // is empty and this whole section disappears — no placeholder.
+            if (explanations.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(l10n.quizExplanation,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              const SizedBox(height: 6),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 180),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final item in explanations)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.brand.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.lightbulb_outline_rounded,
+                                    color: AppColors.brand, size: 16),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if (item.question.isNotEmpty)
+                                        Text(item.question,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600)),
+                                      const SizedBox(height: 2),
+                                      Text(item.explanation,
+                                          style: const TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ],

@@ -58,6 +58,7 @@ class AttemptReviewEntry {
     this.userOptionText,
     this.correctOptionText,
     this.explanation,
+    this.explanationSource,
     this.difficulty,
     this.isCorrect,
     this.isSkipped,
@@ -69,6 +70,10 @@ class AttemptReviewEntry {
   final String? userOptionText;
   final String? correctOptionText;
   final String? explanation;
+
+  /// "base" or "translation" when the server publishes provenance; null when
+  /// it does not. Never fabricated on-device.
+  final String? explanationSource;
   final int? difficulty;
   final bool? isCorrect;
   final bool? isSkipped;

@@ -185,6 +185,27 @@
   },
   "quizAttemptHint": "संकेत",
   "quizHintLoadFailed": "संकेत लोड नहीं हो सका। कृपया फिर से प्रयास करें।",
+  "quizQuestionTrue": "सत्य",
+  "quizQuestionFalse": "असत्य",
+  "quizQuestionYourAnswer": "आपका उत्तर",
+  "quizQuestionTypeAnswer": "अपना उत्तर टाइप करें",
+  "quizQuestionBlankNumber": "रिक्त स्थान {number}",
+  "@quizQuestionBlankNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizQuestionSubmitAnswer": "उत्तर जमा करें",
+  "quizQuestionUnsupportedType": "इस प्रश्न प्रकार ({type}) को इस ऐप संस्करण में दिखाया नहीं जा सकता।",
+  "@quizQuestionUnsupportedType": {
+    "placeholders": {
+      "type": {
+        "type": "Object"
+      }
+    }
+  },
   "quizAttemptExitTitle": "क्विज़ से बाहर निकलें?",
   "quizAttemptExitBody": "आपकी अभी की प्रगति चली जाएगी। क्या आप वाकई बाहर निकलना चाहते हैं?",
   "quizResultTitle": "क्विज़ पूरा हुआ!",
@@ -235,6 +256,7 @@
       }
     }
   },
+  "quizExplanation": "व्याख्या",
   "quizFunnelTryItOut": "आजमाकर देखें",
   "quizFunnelSampleTitle": "नमूना प्रश्न",
   "quizFunnelShown": "{count} दिखाए गए",

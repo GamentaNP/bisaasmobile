@@ -235,6 +235,19 @@ add(
 add("quizAttemptCombo", "×{count} Combo!", "×{count} कम्बो!", "×{count} कॉम्बो!", ["count"])
 add("quizAttemptHint", "Hint", "संकेत", "संकेत")
 add("quizHintLoadFailed", "Could not load a hint. Please try again.", "संकেত लोड गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।", "संकेत लोड नहीं हो सका। कृपया फिर से प्रयास करें।")
+add("quizQuestionTrue", "True", "सत्य", "सत्य")
+add("quizQuestionFalse", "False", "असत्य", "असत्य")
+add("quizQuestionYourAnswer", "Your answer", "तपाईंको उत्तर", "आपका उत्तर")
+add("quizQuestionTypeAnswer", "Type your answer", "आफ्नो उत्तर टाइप गर्नुहोस्", "अपना उत्तर टाइप करें")
+add("quizQuestionBlankNumber", "Blank {number}", "खाली ठाउँ {number}", "रिक्त स्थान {number}", ["number"])
+add("quizQuestionSubmitAnswer", "Submit answer", "उत्तर पेश गर्नुहोस्", "उत्तर जमा करें")
+add(
+    "quizQuestionUnsupportedType",
+    "This question type ({type}) cannot be displayed in this app version.",
+    "यो प्रश्न प्रकार ({type}) यो एप संस्करणमा देखाउन सकिँदैन।",
+    "इस प्रश्न प्रकार ({type}) को इस ऐप संस्करण में दिखाया नहीं जा सकता।",
+    ["type"],
+)
 add("quizAttemptExitTitle", "Exit Quiz?", "क्विज़बाट निस्कने?", "क्विज़ से बाहर निकलें?")
 add(
     "quizAttemptExitBody",
@@ -259,6 +272,7 @@ add("quizReviewEmpty", "No answers to review", "हेर्नुपर्न�
 add("quizReviewYourAnswer", "Your answer", "तपाईंको उत्तर", "आपका उत्तर")
 add("quizReviewNotAnswered", "Not answered", "उत्तर दिइएको छैन", "उत्तर नहीं दिया गया")
 add("quizReviewQuestionNumber", "Q{number}", "प्रश्न {number}", "प्रश्न {number}", ["number"])
+add("quizExplanation", "Explanation", "व्याख्या", "व्याख्या")
 add("quizFunnelTryItOut", "Try it out", "आजमाएर हेर्नुहोस्", "आजमाकर देखें")
 add("quizFunnelSampleTitle", "Sample questions", "नमुना प्रश्नहरू", "नमूना प्रश्न")
 add("quizFunnelShown", "{count} shown", "{count} देखाइएको", "{count} दिखाए गए", ["count"])

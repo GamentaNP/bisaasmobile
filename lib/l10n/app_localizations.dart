@@ -670,6 +670,48 @@ abstract class AppLocalizations {
   /// **'Could not load a hint. Please try again.'**
   String get quizHintLoadFailed;
 
+  /// No description provided for @quizQuestionTrue.
+  ///
+  /// In en, this message translates to:
+  /// **'True'**
+  String get quizQuestionTrue;
+
+  /// No description provided for @quizQuestionFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'False'**
+  String get quizQuestionFalse;
+
+  /// No description provided for @quizQuestionYourAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer'**
+  String get quizQuestionYourAnswer;
+
+  /// No description provided for @quizQuestionTypeAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your answer'**
+  String get quizQuestionTypeAnswer;
+
+  /// No description provided for @quizQuestionBlankNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Blank {number}'**
+  String quizQuestionBlankNumber(Object number);
+
+  /// No description provided for @quizQuestionSubmitAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit answer'**
+  String get quizQuestionSubmitAnswer;
+
+  /// No description provided for @quizQuestionUnsupportedType.
+  ///
+  /// In en, this message translates to:
+  /// **'This question type ({type}) cannot be displayed in this app version.'**
+  String quizQuestionUnsupportedType(Object type);
+
   /// No description provided for @quizAttemptExitTitle.
   ///
   /// In en, this message translates to:
@@ -783,6 +825,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Q{number}'**
   String quizReviewQuestionNumber(Object number);
+
+  /// No description provided for @quizExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get quizExplanation;
 
   /// No description provided for @quizFunnelTryItOut.
   ///

@@ -331,6 +331,31 @@ class AppLocalizationsHi extends AppLocalizations {
       'संकेत लोड नहीं हो सका। कृपया फिर से प्रयास करें।';
 
   @override
+  String get quizQuestionTrue => 'सत्य';
+
+  @override
+  String get quizQuestionFalse => 'असत्य';
+
+  @override
+  String get quizQuestionYourAnswer => 'आपका उत्तर';
+
+  @override
+  String get quizQuestionTypeAnswer => 'अपना उत्तर टाइप करें';
+
+  @override
+  String quizQuestionBlankNumber(Object number) {
+    return 'रिक्त स्थान $number';
+  }
+
+  @override
+  String get quizQuestionSubmitAnswer => 'उत्तर जमा करें';
+
+  @override
+  String quizQuestionUnsupportedType(Object type) {
+    return 'इस प्रश्न प्रकार ($type) को इस ऐप संस्करण में दिखाया नहीं जा सकता।';
+  }
+
+  @override
   String get quizAttemptExitTitle => 'क्विज़ से बाहर निकलें?';
 
   @override
@@ -395,6 +420,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String quizReviewQuestionNumber(Object number) {
     return 'प्रश्न $number';
   }
+
+  @override
+  String get quizExplanation => 'व्याख्या';
 
   @override
   String get quizFunnelTryItOut => 'आजमाकर देखें';

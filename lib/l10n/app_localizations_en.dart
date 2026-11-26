@@ -331,6 +331,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizHintLoadFailed => 'Could not load a hint. Please try again.';
 
   @override
+  String get quizQuestionTrue => 'True';
+
+  @override
+  String get quizQuestionFalse => 'False';
+
+  @override
+  String get quizQuestionYourAnswer => 'Your answer';
+
+  @override
+  String get quizQuestionTypeAnswer => 'Type your answer';
+
+  @override
+  String quizQuestionBlankNumber(Object number) {
+    return 'Blank $number';
+  }
+
+  @override
+  String get quizQuestionSubmitAnswer => 'Submit answer';
+
+  @override
+  String quizQuestionUnsupportedType(Object type) {
+    return 'This question type ($type) cannot be displayed in this app version.';
+  }
+
+  @override
   String get quizAttemptExitTitle => 'Exit Quiz?';
 
   @override
@@ -395,6 +420,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String quizReviewQuestionNumber(Object number) {
     return 'Q$number';
   }
+
+  @override
+  String get quizExplanation => 'Explanation';
 
   @override
   String get quizFunnelTryItOut => 'Try it out';

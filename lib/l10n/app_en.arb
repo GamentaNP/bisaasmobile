@@ -185,6 +185,27 @@
   },
   "quizAttemptHint": "Hint",
   "quizHintLoadFailed": "Could not load a hint. Please try again.",
+  "quizQuestionTrue": "True",
+  "quizQuestionFalse": "False",
+  "quizQuestionYourAnswer": "Your answer",
+  "quizQuestionTypeAnswer": "Type your answer",
+  "quizQuestionBlankNumber": "Blank {number}",
+  "@quizQuestionBlankNumber": {
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizQuestionSubmitAnswer": "Submit answer",
+  "quizQuestionUnsupportedType": "This question type ({type}) cannot be displayed in this app version.",
+  "@quizQuestionUnsupportedType": {
+    "placeholders": {
+      "type": {
+        "type": "Object"
+      }
+    }
+  },
   "quizAttemptExitTitle": "Exit Quiz?",
   "quizAttemptExitBody": "Your current progress will be lost. Are you sure you want to exit?",
   "quizResultTitle": "Quiz Complete!",
@@ -235,6 +256,7 @@
       }
     }
   },
+  "quizExplanation": "Explanation",
   "quizFunnelTryItOut": "Try it out",
   "quizFunnelSampleTitle": "Sample questions",
   "quizFunnelShown": "{count} shown",

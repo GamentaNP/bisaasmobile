@@ -15,8 +15,9 @@ import '../widgets/difficulty_badge.dart';
 
 /// Post-quiz review. Reads `GET /api/v1/quiz/attempts/{id}/results` through the
 /// quiz data layer (the bare `GET /quiz/attempts/{id}` route does not exist)
-/// and renders every server-graded answer row. The server withholds answer
-/// keys/explanations even here, so cards show the user's pick + verdict only.
+/// and renders every server-graded answer row. Explanations are shown only
+/// when the server actually sends them — a locked high-stakes attempt withholds
+/// the answer key, so no explanation is invented here.
 class QuizReviewScreen extends ConsumerWidget {
   const QuizReviewScreen({required this.attemptId, super.key});
   final String attemptId;
@@ -145,12 +146,25 @@ class _ReviewCard extends StatelessWidget {
                 color: AppColors.brand.withValues(alpha: 0.08),
                 borderRadius: AppRadii.smAll,
               ),
-              child: Row(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.lightbulb_outline_rounded, color: AppColors.brand, size: 16),
-                  const SizedBox(width: 6),
-                  Expanded(child: Text(entry.explanation!, style: AppTypography.bodySmall.copyWith(height: 1.4))),
+                  Text(
+                    l10n.quizExplanation,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.brand,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.lightbulb_outline_rounded, color: AppColors.brand, size: 16),
+                      const SizedBox(width: 6),
+                      Expanded(child: Text(entry.explanation!, style: AppTypography.bodySmall.copyWith(height: 1.4))),
+                    ],
+                  ),
                 ],
               ),
             ),
