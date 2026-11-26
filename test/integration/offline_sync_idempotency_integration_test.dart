@@ -286,4 +286,31 @@ void main() {
       expect((await rows()).single.idempotencyKey, key);
     });
   });
+
+  test('a row minted under another tenant is dropped, never replayed', () async {
+    final api = FakeApi(<String, FakeRoute>{})
+      ..on(
+        'PUT',
+        '/calculation-snapshots',
+        FakeRoute.ok(<String, dynamic>{'ok': true}),
+      );
+
+    await queue.enqueueSnapshot(
+      domain: 'civil',
+      inputs: const <String, dynamic>{'a': 1},
+      result: const <String, dynamic>{'b': 2},
+      tenantId: 7,
+    );
+    final manager = SyncManager(
+      queue: queue,
+      dio: dioWithAuth(api),
+      connectivity: connectivity,
+      currentTenant: () async => 3,
+    );
+
+    await manager.syncNow();
+
+    expect(api.requests, isEmpty, reason: 'a cross-tenant replay is forbidden');
+    expect(await rows(), isEmpty);
+  });
 }

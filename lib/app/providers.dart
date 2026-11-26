@@ -24,6 +24,7 @@ import 'config/app_config.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../core/security/app_lock.dart';
 import '../core/security/biometric_auth.dart';
+import '../core/security/tenant_providers.dart';
 import '../core/security/token_manager.dart';
 import '../core/storage/database/app_database.dart';
 import '../core/storage/database/daos/sync_queue_dao.dart';
@@ -148,6 +149,7 @@ final syncManagerProvider = Provider<SyncManager>(
       queue: ref.watch(syncQueueServiceProvider),
       dio: ref.watch(dioProvider),
       connectivity: ref.watch(connectivityProvider),
+      currentTenant: () => ref.read(tenantStoreProvider).read(),
     );
     // Tear down the connectivity subscription when the provider is disposed
     // (tests, hot restart, app shutdown) — no leaked listeners.

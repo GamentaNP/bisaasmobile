@@ -13,13 +13,20 @@ class SyncManager {
     required SyncQueueService queue,
     required Dio dio,
     required ConnectivityService connectivity,
+    Future<int?> Function()? currentTenant,
   })  : _queue = queue,
         _dio = dio,
-        _conn = connectivity;
+        _conn = connectivity,
+        _currentTenant = currentTenant ?? (() async => null);
 
   final SyncQueueService _queue;
   final Dio _dio;
   final ConnectivityService _conn;
+
+  /// The tenant assertion the replayed credential will carry. Defaults to
+  /// "unknown" for hermetic tests; the app provider injects the real
+  /// [TenantStore.read] so production never replays a row under another org.
+  final Future<int?> Function() _currentTenant;
   StreamSubscription<bool>? _sub;
   bool _syncing = false;
 
@@ -44,7 +51,21 @@ class SyncManager {
       final online = await _conn.isOnline();
       if (!online) return;
       final items = await _queue.pending();
+      final currentTenant = await _currentTenant();
       for (final item in items) {
+        // A row minted under another workspace must never be replayed with the
+        // current credential: the tenant assertion comes from the credential,
+        // so the write would land in the wrong organization. Drop it — it is a
+        // durable, not transient, mismatch and retrying cannot fix it.
+        if (item.tenantId != null && item.tenantId != currentTenant) {
+          AppLogger.w(
+            'Dropping sync_queue id=${item.id}: enqueued under tenant '
+            '${item.tenantId}, current tenant is $currentTenant',
+          );
+          await _queue.remove(item.id);
+          continue;
+        }
+
         // Re-checked on the way out, not trusted from the row. `enqueue`
         // validates too, but a row written before that rule existed is still on
         // disk, and this path carries the user's bearer token.

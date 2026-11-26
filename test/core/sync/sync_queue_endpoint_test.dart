@@ -65,6 +65,17 @@ void main() {
     expect(row.idempotencyKey.value, isNotEmpty);
   });
 
+  test('records the tenant the operation was minted under', () async {
+    final row = await SyncQueueService(dao).enqueue(
+      endpoint: '/calculation-snapshots',
+      tenantId: 42,
+    );
+    expect(row, 1);
+    final companion = verify(() => dao.enqueue(captureAny())).captured.single
+        as SyncQueueCompanion;
+    expect(companion.tenantId.value, 42);
+  });
+
   test('the payload carries what the server validates', () async {
     final row = await enqueueSnapshot();
     final body =

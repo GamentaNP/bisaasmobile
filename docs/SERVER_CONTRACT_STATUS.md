@@ -6,6 +6,16 @@ repo's record of the `/api/v1` contract. The server repo
 remains the source of truth; if the two disagree, the server wins and this
 file is the thing to correct.
 
+**Release posture (reconciled 2026-11-26).** The founder's 2026-09-11 PERMANENT
+directive
+(`C:\laragon\www\bisaas\docs\mobileapp\MOBILE_RELEASE_DECISION_2026-09-11.md`)
+makes this client an internal development/test artifact, never a store
+submission. The adoption gaps, "what to do" rows and server debts below are
+contract hygiene for that test instrument — **not store-launch blockers**.
+`GENERIC_CHECKOUT_DISABLED` in the error registry is a server fact, not a
+billing plan: there is no billing library and no IAP, coins are earned, and
+subscription state is display-only.
+
 It replaces `MOBILE_BACKEND_PHASE_PLAN_2026-10-20.md`,
 `MOBILE_BACKEND_BLOCKERS_2026-10-20.md`, and the two dated diagnosis notes
 (`CALCULATOR_ENUM_FIELD_GAP_2026-10-01.md`,

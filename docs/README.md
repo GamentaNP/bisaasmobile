@@ -14,13 +14,34 @@ surviving documents was checked against the tree (and, for the API, against
 `C:\laragon\www\bisaas`). Numbers that could not be measured were removed
 rather than repeated.
 
+## Standing decisions — not open work
+
+Reconciled 2026-11-26 against the founder/lead decisions below. These are
+recorded here so no index entry reads them as pending tasks:
+
+- **No store publication, ever** (unless reversed in writing by the founder).
+  The 2026-09-11 PERMANENT directive
+  (`C:\laragon\www\bisaas\docs\mobileapp\MOBILE_RELEASE_DECISION_2026-09-11.md`)
+  makes the Flutter client an internal development/test artifact. All
+  store-submission, ASO, Play Console, store-screenshot, iOS-Team-ID-for-
+  submission and "ready for Play upload" language in surviving docs is
+  **historical**, not current work.
+- **Offline = read-cache only.** The write outbox stays deliberately unwired
+  because grading is server-authoritative. Settled, not an open task.
+- **No billing library and no IAP.** Coins are earned, not bought; server
+  subscription state is display-only. Settled.
+- **Sentry sends nothing.** `sentry_flutter` is bundled but no `SENTRY_DSN` is
+  configured, so no crash data is transmitted — see
+  [data_safety_inventory.md](data_safety_inventory.md) for the data-safety
+  implication.
+
 ## Read in this order
 
 | # | Document | Answers |
 |---|---|---|
-| 1 | [PROJECT_STATE.md](PROJECT_STATE.md) | What the client is, what is shipped, what is measured, which invariants must not regress, and the six open client items. |
-| 2 | [LAUNCH_READINESS.md](LAUNCH_READINESS.md) | What stands between this build and the Play Store, in order, including the decisions only the founder can make. |
-| 3 | [release_checklist.md](release_checklist.md) | The mechanical pre-release gate: commands, founder-supplied values, and the platform steps. |
+| 1 | [PROJECT_STATE.md](PROJECT_STATE.md) | What the client is, what is shipped, what is measured, which invariants must not regress, and the six tracked client items (C1–C6) with their current status. |
+| 2 | [LAUNCH_READINESS.md](LAUNCH_READINESS.md) | The historical store plan (voided by the 2026-09-11 directive) and the internal-test posture that still applies. |
+| 3 | [release_checklist.md](release_checklist.md) | Build/test commands and founder-supplied values; its store/platform steps are historical (voided by the 2026-09-11 directive). |
 | 4 | [SERVER_CONTRACT_STATUS.md](SERVER_CONTRACT_STATUS.md) | What `/api/v1` delivers, what is still owed, and which client adoptions are behind. |
 | 5 | [../AGENTS.md](../AGENTS.md) | The rules for changing this repo: boundary, API contract, l10n, release posture. |
 | 6 | Cross-repo gap audit (2026-11-26) | `C:\laragon\www\bisaas\docs\CROSS_REPO_QUIZ_API_GAP_AUDIT_2026-11-26.md` — 20-agent review of both repos; authoritative for what is not built and in what order to fix it. |
@@ -30,16 +51,17 @@ rather than repeated.
 | Question | Authoritative file |
 |---|---|
 | Is feature X shipped? What is the test count? | `PROJECT_STATE.md` |
-| Can we publish? What is blocking? | `LAUNCH_READINESS.md` |
-| What exactly must be true before a release? | `release_checklist.md` |
+| Is the client published to a store? | `C:\laragon\www\bisaas\docs\mobileapp\MOBILE_RELEASE_DECISION_2026-09-11.md` — PERMANENT directive: never, unless reversed in writing. |
+| What was the historical store plan, and what still applies to the test artifact? | `LAUNCH_READINESS.md` (store sections marked historical). |
+| What exactly must be true before a build/test release? | `release_checklist.md` (store/platform steps voided). |
 | What does the server do, and what does it owe? | `SERVER_CONTRACT_STATUS.md` |
 | What are the tenancy rules and the switcher wire shape? | `TENANT_SWITCHER_CONTRACT.md` |
 | How does the translation pipeline work, and how many keys? | `localization.md` |
 | What is the multilingual *model* (scripts, content translation)? | `LANGUAGE_AND_CONTENT_TRANSLATION_SPEC.md` |
-| What store copy is uploaded? | `android/fastlane/metadata/**`, `ios/fastlane/metadata/**` |
-| Why is the store copy true? | `store_listing.md` — the per-claim provenance |
+| What store copy exists (historical — never uploaded)? | `android/fastlane/metadata/**`, `ios/fastlane/metadata/**` |
+| Why is the historical store copy true? | `store_listing.md` — the per-claim provenance |
 | What must the privacy policy say? | `legal/privacy-policy-{en,ne,hi}.md` |
-| What do I answer on the Data Safety form? | `data_safety_inventory.md` |
+| What would go on a Data Safety form (historical — no store form), and what does the app actually send? | `data_safety_inventory.md` — including that Sentry has no DSN and sends nothing |
 | Which third-party asset is under which licence? | `../assets/LICENSES.md` |
 | How do I deploy the API? | `BACKEND_DEPLOYMENT_RUNBOOK.md` |
 | How do I serve the App Links file? | `APP_LINKS_DEPLOYMENT.md` |
@@ -73,8 +95,8 @@ deleted without its still-true content moving somewhere above.
 | `MOBILE_BACKEND_BLOCKERS_2026-10-20.md` | 10 of 13 items fixed with no record; three survive | `SERVER_CONTRACT_STATUS.md` §3 |
 | `CALCULATOR_ENUM_FIELD_GAP_2026-10-01.md` | Diagnosis fixed server-side (schemas now emit `select`/`options`); client never needed the prohibited workaround | `SERVER_CONTRACT_STATUS.md` §4 |
 | `SYLLABUS_QUESTION_MAPPING_GAP_2026-09-30.md` | Root cause fixed by the syllabus↔topic bridge; residual is editorial, tracked in the server repo | `SERVER_CONTRACT_STATUS.md` §4 |
-| `PLAY_STORE_READINESS.md` + `LAUNCH_ROADMAP.md` | Two launch plans, disagreeing about whether `bisaas.com` was ours | `LAUNCH_READINESS.md` |
-| `PLAY_STORE_LISTING.md` | A second listing draft whose fields contradicted the fastlane metadata that actually uploads | `store_listing.md` |
+| `PLAY_STORE_READINESS.md` + `LAUNCH_ROADMAP.md` | Two historical store-launch plans, disagreeing about whether `bisaas.com` was ours | `LAUNCH_READINESS.md` (historical section) |
+| `PLAY_STORE_LISTING.md` | A second listing draft whose fields contradicted the fastlane metadata that would have uploaded | `store_listing.md` |
 | `privacy_policy.md` | Older, longer duplicate of the legal policy, with a false claim that the client keeps the password in the keystore and that deletion is by email | `legal/privacy-policy-en.md` |
 | `implementation_plan.md`, `walkthrough.md`, `superpowers/plans/…` | August build plans and a Phase-1 completion report; every item shipped or contradicted | — (git history) |
 | `MOBILE_MASTER_PLAN_DUILONGO_V2_2026-09-06.md` | Strategy doc superseded by its own successor and by the shipped UI | `PROJECT_STATE.md` |

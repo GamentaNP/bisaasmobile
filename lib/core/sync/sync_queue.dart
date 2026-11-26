@@ -44,6 +44,7 @@ class SyncQueueService {
     String method = 'POST',
     String? payload,
     String? idempotencyKey,
+    int? tenantId,
   }) {
     final violation = validateEndpoint(endpoint);
     if (violation != null) {
@@ -61,6 +62,7 @@ class SyncQueueService {
         method: Value(method.toUpperCase()),
         payload: Value(payload),
         idempotencyKey: Value(idempotencyKey ?? _uuid.v4()),
+        tenantId: Value(tenantId),
       ),
     );
   }
@@ -116,6 +118,7 @@ Future<int> enqueueSnapshot({
     required Map<String, dynamic> result,
     String? calculatorSlug,
     String? clientUuid,
+    int? tenantId,
   }) {
     // Built imperatively rather than with collection-if: three of these fields
     // are conditionally *omitted*, and the server rejects the whole batch over
@@ -148,6 +151,7 @@ Future<int> enqueueSnapshot({
       payload: jsonEncode({
         'snapshots': [snapshot],
       }),
+      tenantId: tenantId,
     );
   }
 

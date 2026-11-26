@@ -43,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   factory AppDatabase.instance() => _instance ??= AppDatabase();
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -94,6 +94,18 @@ class AppDatabase extends _$AppDatabase {
             // allowlist in ResponseCachePolicy, and is bounded by a byte budget.
             // PII responses are never written.
             await m.createTable(cachedResponses);
+          }
+
+          if (from < 5) {
+            // v5: sync_queue gains a tenant binding. Rows written before this
+            // migration carry no tenant; they are dropped at drain time rather
+            // than replayed under a credential that may now point at another
+            // organization. No data loss of user-visible content: the outbox is
+            // deliberately unwired, so a real row here can only be a
+            // calculation snapshot that the user can recreate.
+            await customStatement(
+              'ALTER TABLE sync_queue ADD COLUMN tenant_id INTEGER NULL',
+            );
           }
         },
       );

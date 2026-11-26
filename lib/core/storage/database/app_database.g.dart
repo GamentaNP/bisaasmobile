@@ -2021,6 +2021,17 @@ class $SyncQueueTable extends SyncQueue
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<int> tenantId = GeneratedColumn<int>(
+    'tenant_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _attemptsMeta = const VerificationMeta(
     'attempts',
   );
@@ -2064,6 +2075,7 @@ class $SyncQueueTable extends SyncQueue
     method,
     payload,
     idempotencyKey,
+    tenantId,
     attempts,
     createdAt,
     nextAttemptAt,
@@ -2110,6 +2122,12 @@ class $SyncQueueTable extends SyncQueue
           data['idempotency_key']!,
           _idempotencyKeyMeta,
         ),
+      );
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
       );
     }
     if (data.containsKey('attempts')) {
@@ -2162,6 +2180,10 @@ class $SyncQueueTable extends SyncQueue
         DriftSqlType.string,
         data['${effectivePrefix}idempotency_key'],
       ),
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tenant_id'],
+      ),
       attempts: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}attempts'],
@@ -2189,6 +2211,11 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   final String method;
   final String? payload;
   final String? idempotencyKey;
+
+  /// Tenant the operation was minted under. A queued write must never be
+  /// replayed after the user switches organizations — the credential's tenant
+  /// assertion would silently land the write in the wrong workspace.
+  final int? tenantId;
   final int attempts;
   final DateTime createdAt;
   final DateTime? nextAttemptAt;
@@ -2198,6 +2225,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     required this.method,
     this.payload,
     this.idempotencyKey,
+    this.tenantId,
     required this.attempts,
     required this.createdAt,
     this.nextAttemptAt,
@@ -2213,6 +2241,9 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     }
     if (!nullToAbsent || idempotencyKey != null) {
       map['idempotency_key'] = Variable<String>(idempotencyKey);
+    }
+    if (!nullToAbsent || tenantId != null) {
+      map['tenant_id'] = Variable<int>(tenantId);
     }
     map['attempts'] = Variable<int>(attempts);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -2233,6 +2264,9 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       idempotencyKey: idempotencyKey == null && nullToAbsent
           ? const Value.absent()
           : Value(idempotencyKey),
+      tenantId: tenantId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tenantId),
       attempts: Value(attempts),
       createdAt: Value(createdAt),
       nextAttemptAt: nextAttemptAt == null && nullToAbsent
@@ -2252,6 +2286,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       method: serializer.fromJson<String>(json['method']),
       payload: serializer.fromJson<String?>(json['payload']),
       idempotencyKey: serializer.fromJson<String?>(json['idempotencyKey']),
+      tenantId: serializer.fromJson<int?>(json['tenantId']),
       attempts: serializer.fromJson<int>(json['attempts']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       nextAttemptAt: serializer.fromJson<DateTime?>(json['nextAttemptAt']),
@@ -2266,6 +2301,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       'method': serializer.toJson<String>(method),
       'payload': serializer.toJson<String?>(payload),
       'idempotencyKey': serializer.toJson<String?>(idempotencyKey),
+      'tenantId': serializer.toJson<int?>(tenantId),
       'attempts': serializer.toJson<int>(attempts),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'nextAttemptAt': serializer.toJson<DateTime?>(nextAttemptAt),
@@ -2278,6 +2314,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     String? method,
     Value<String?> payload = const Value.absent(),
     Value<String?> idempotencyKey = const Value.absent(),
+    Value<int?> tenantId = const Value.absent(),
     int? attempts,
     DateTime? createdAt,
     Value<DateTime?> nextAttemptAt = const Value.absent(),
@@ -2289,6 +2326,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     idempotencyKey: idempotencyKey.present
         ? idempotencyKey.value
         : this.idempotencyKey,
+    tenantId: tenantId.present ? tenantId.value : this.tenantId,
     attempts: attempts ?? this.attempts,
     createdAt: createdAt ?? this.createdAt,
     nextAttemptAt: nextAttemptAt.present
@@ -2304,6 +2342,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       idempotencyKey: data.idempotencyKey.present
           ? data.idempotencyKey.value
           : this.idempotencyKey,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
       attempts: data.attempts.present ? data.attempts.value : this.attempts,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       nextAttemptAt: data.nextAttemptAt.present
@@ -2320,6 +2359,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
           ..write('method: $method, ')
           ..write('payload: $payload, ')
           ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('tenantId: $tenantId, ')
           ..write('attempts: $attempts, ')
           ..write('createdAt: $createdAt, ')
           ..write('nextAttemptAt: $nextAttemptAt')
@@ -2334,6 +2374,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     method,
     payload,
     idempotencyKey,
+    tenantId,
     attempts,
     createdAt,
     nextAttemptAt,
@@ -2347,6 +2388,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
           other.method == this.method &&
           other.payload == this.payload &&
           other.idempotencyKey == this.idempotencyKey &&
+          other.tenantId == this.tenantId &&
           other.attempts == this.attempts &&
           other.createdAt == this.createdAt &&
           other.nextAttemptAt == this.nextAttemptAt);
@@ -2358,6 +2400,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   final Value<String> method;
   final Value<String?> payload;
   final Value<String?> idempotencyKey;
+  final Value<int?> tenantId;
   final Value<int> attempts;
   final Value<DateTime> createdAt;
   final Value<DateTime?> nextAttemptAt;
@@ -2367,6 +2410,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     this.method = const Value.absent(),
     this.payload = const Value.absent(),
     this.idempotencyKey = const Value.absent(),
+    this.tenantId = const Value.absent(),
     this.attempts = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.nextAttemptAt = const Value.absent(),
@@ -2377,6 +2421,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     this.method = const Value.absent(),
     this.payload = const Value.absent(),
     this.idempotencyKey = const Value.absent(),
+    this.tenantId = const Value.absent(),
     this.attempts = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.nextAttemptAt = const Value.absent(),
@@ -2387,6 +2432,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     Expression<String>? method,
     Expression<String>? payload,
     Expression<String>? idempotencyKey,
+    Expression<int>? tenantId,
     Expression<int>? attempts,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? nextAttemptAt,
@@ -2397,6 +2443,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
       if (method != null) 'method': method,
       if (payload != null) 'payload': payload,
       if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (tenantId != null) 'tenant_id': tenantId,
       if (attempts != null) 'attempts': attempts,
       if (createdAt != null) 'created_at': createdAt,
       if (nextAttemptAt != null) 'next_attempt_at': nextAttemptAt,
@@ -2409,6 +2456,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     Value<String>? method,
     Value<String?>? payload,
     Value<String?>? idempotencyKey,
+    Value<int?>? tenantId,
     Value<int>? attempts,
     Value<DateTime>? createdAt,
     Value<DateTime?>? nextAttemptAt,
@@ -2419,6 +2467,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
       method: method ?? this.method,
       payload: payload ?? this.payload,
       idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      tenantId: tenantId ?? this.tenantId,
       attempts: attempts ?? this.attempts,
       createdAt: createdAt ?? this.createdAt,
       nextAttemptAt: nextAttemptAt ?? this.nextAttemptAt,
@@ -2443,6 +2492,9 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     if (idempotencyKey.present) {
       map['idempotency_key'] = Variable<String>(idempotencyKey.value);
     }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<int>(tenantId.value);
+    }
     if (attempts.present) {
       map['attempts'] = Variable<int>(attempts.value);
     }
@@ -2463,6 +2515,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
           ..write('method: $method, ')
           ..write('payload: $payload, ')
           ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('tenantId: $tenantId, ')
           ..write('attempts: $attempts, ')
           ..write('createdAt: $createdAt, ')
           ..write('nextAttemptAt: $nextAttemptAt')
@@ -5579,6 +5632,7 @@ typedef $$SyncQueueTableCreateCompanionBuilder = SyncQueueCompanion Function({
   Value<String> method,
   Value<String?> payload,
   Value<String?> idempotencyKey,
+  Value<int?> tenantId,
   Value<int> attempts,
   Value<DateTime> createdAt,
   Value<DateTime?> nextAttemptAt,
@@ -5589,6 +5643,7 @@ typedef $$SyncQueueTableUpdateCompanionBuilder = SyncQueueCompanion Function({
   Value<String> method,
   Value<String?> payload,
   Value<String?> idempotencyKey,
+  Value<int?> tenantId,
   Value<int> attempts,
   Value<DateTime> createdAt,
   Value<DateTime?> nextAttemptAt,
@@ -5625,6 +5680,11 @@ class $$SyncQueueTableFilterComposer
 
   ColumnFilters<String> get idempotencyKey => $composableBuilder(
     column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get tenantId => $composableBuilder(
+    column: $table.tenantId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5678,6 +5738,11 @@ class $$SyncQueueTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get attempts => $composableBuilder(
     column: $table.attempts,
     builder: (column) => ColumnOrderings(column),
@@ -5719,6 +5784,9 @@ class $$SyncQueueTableAnnotationComposer
     column: $table.idempotencyKey,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
 
   GeneratedColumn<int> get attempts =>
       $composableBuilder(column: $table.attempts, builder: (column) => column);
@@ -5768,6 +5836,7 @@ class $$SyncQueueTableTableManager
                 Value<String> method = const Value.absent(),
                 Value<String?> payload = const Value.absent(),
                 Value<String?> idempotencyKey = const Value.absent(),
+                Value<int?> tenantId = const Value.absent(),
                 Value<int> attempts = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> nextAttemptAt = const Value.absent(),
@@ -5777,6 +5846,7 @@ class $$SyncQueueTableTableManager
                 method: method,
                 payload: payload,
                 idempotencyKey: idempotencyKey,
+                tenantId: tenantId,
                 attempts: attempts,
                 createdAt: createdAt,
                 nextAttemptAt: nextAttemptAt,
@@ -5788,6 +5858,7 @@ class $$SyncQueueTableTableManager
                 Value<String> method = const Value.absent(),
                 Value<String?> payload = const Value.absent(),
                 Value<String?> idempotencyKey = const Value.absent(),
+                Value<int?> tenantId = const Value.absent(),
                 Value<int> attempts = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> nextAttemptAt = const Value.absent(),
@@ -5797,6 +5868,7 @@ class $$SyncQueueTableTableManager
                 method: method,
                 payload: payload,
                 idempotencyKey: idempotencyKey,
+                tenantId: tenantId,
                 attempts: attempts,
                 createdAt: createdAt,
                 nextAttemptAt: nextAttemptAt,
