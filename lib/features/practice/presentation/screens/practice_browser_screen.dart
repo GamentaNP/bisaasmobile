@@ -98,7 +98,7 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
     );
     if (!mounted) return;
     if (drill == null) {
-      final err = ref.read(practiceControllerProvider).startError ?? 'Could not start the drill';
+      final err = ref.read(practiceControllerProvider).startError ?? l10n.error;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
       return;
     }
@@ -132,7 +132,7 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
     );
     if (!mounted) return;
     if (drill == null) {
-      final err = ref.read(practiceControllerProvider).startError ?? 'Could not start the drill';
+      final err = ref.read(practiceControllerProvider).startError ?? l10n.error;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
       return;
     }
@@ -149,7 +149,7 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
     );
     if (!mounted) return;
     if (drill == null) {
-      final err = ref.read(practiceControllerProvider).startError ?? 'Failed to start self-challenge';
+      final err = ref.read(practiceControllerProvider).startError ?? l10n.error;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
       return;
     }
@@ -261,7 +261,7 @@ class _BookmarksTab extends ConsumerWidget {
                       child: const Icon(Icons.bookmark_rounded, size: 16, color: AppColors.xpGold),
                     ),
                     title: Text(b.question.questionText.isEmpty ? l10n.practiceQuestionNumber(b.question.id) : b.question.questionText, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    subtitle: Text(l10n.practiceQuestionMeta(b.question.type ?? 'mcq', b.question.difficulty ?? '-', b.question.points ?? 0), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    subtitle: Text(l10n.practiceQuestionMeta(b.question.type ?? l10n.quiz, b.question.difficulty ?? '-', b.question.points ?? 0), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     trailing: IconButton(
                       icon: state.isTogglingBookmark ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.bookmark_remove_rounded),
                       tooltip: l10n.a11yRemoveBookmark,
@@ -397,10 +397,10 @@ class _WeakTopicTab extends ConsumerWidget {
                     title: Text(w.topic, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     // Only render the accuracy the server actually sent.
                     subtitle: Text(
-                      [
-                        if (w.accuracy != null) '${w.accuracy!.toStringAsFixed(0)}% accuracy',
-                        if (w.attempts > 0) '${w.attempts} attempt${w.attempts == 1 ? '' : 's'}',
-                      ].join(' • '),
+                      l10n.tutorAccuracy(
+                        w.accuracy?.toStringAsFixed(0) ?? '0',
+                        w.attempts,
+                      ),
                       style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                     ),
                     trailing: FilledButton.tonal(
@@ -456,7 +456,12 @@ class _SelfChallengeTabState extends State<_SelfChallengeTab> {
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
-          children: ['any', 'easy', 'medium', 'hard'].map((d) => ChoiceChip(label: Text(d), selected: _difficulty == d, onSelected: (_) => setState(() => _difficulty = d))).toList(),
+          children: [
+            ('any', l10n.arcadeAnyCategory),
+            ('easy', l10n.difficultyEasy),
+            ('medium', l10n.difficultyMedium),
+            ('hard', l10n.difficultyHard),
+          ].map((d) => ChoiceChip(label: Text(d.$2), selected: _difficulty == d.$1, onSelected: (_) => setState(() => _difficulty = d.$1))).toList(),
         ),
         const SizedBox(height: 16),
         Consumer(builder: (context, ref, _) {

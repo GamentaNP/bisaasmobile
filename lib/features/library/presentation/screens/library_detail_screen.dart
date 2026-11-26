@@ -77,7 +77,8 @@ class _LibraryDetailScreenState extends ConsumerState<LibraryDetailScreen> {
       }
     } else {
       final err = ref.read(libraryControllerProvider).downloadError;
-      final msg = err ?? 'Download failed — file may need unlocking first.';
+      // The server may withhold the reason; never invent an English one.
+      final msg = err ?? '${l10n.libraryDownload} ${l10n.commonFailed}';
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppColors.wrongRed));
     }
   }

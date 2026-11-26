@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
 
@@ -176,7 +177,7 @@ class BattleRemoteDataSource {
       throw DioException(
         requestOptions: RequestOptions(path: '/quiz/courses'),
         type: DioExceptionType.connectionError,
-        error: 'No courses available for battle category',
+        error: appL10n().coursesNone,
       );
     }
     final courseId = courses.first['id'];
@@ -186,7 +187,7 @@ class BattleRemoteDataSource {
       throw DioException(
         requestOptions: RequestOptions(path: '/quiz/courses/$courseId/categories'),
         type: DioExceptionType.connectionError,
-        error: 'No categories available for battle matchmaking',
+        error: appL10n().arcadeCategoryError,
       );
     }
     return int.parse(cats.first['id'].toString());

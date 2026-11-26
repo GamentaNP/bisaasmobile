@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -74,7 +75,7 @@ class BookCatalogController extends Notifier<BookCatalogState> {
       debugStack(st);
       state = state.copyWith(
         isLoading: false,
-        error: e is ApiException ? e.message : 'Could not load books',
+        error: e is ApiException ? e.message : appL10n().error,
       );
     }
   }
@@ -148,7 +149,7 @@ class BookDetailController extends Notifier<BookDetailState> {
     try {
       final book = await _repo.getBook(slug);
       if (book == null) {
-        state = state.copyWith(isLoading: false, error: 'That book is not available.');
+        state = state.copyWith(isLoading: false, error: appL10n().errNotFound);
         return;
       }
       // Progress is authenticated, so a signed-out reader gets the book without
@@ -165,7 +166,7 @@ class BookDetailController extends Notifier<BookDetailState> {
       debugStack(st);
       state = state.copyWith(
         isLoading: false,
-        error: e is ApiException ? e.message : 'Could not load this book',
+        error: e is ApiException ? e.message : appL10n().error,
       );
     }
   }
@@ -176,7 +177,7 @@ class BookDetailController extends Notifier<BookDetailState> {
     try {
       final ok = await _repo.unlockChapter(chapterId);
       if (!ok) {
-        state = state.copyWith(clearUnlocking: true, error: 'Could not unlock that chapter.');
+        state = state.copyWith(clearUnlocking: true, error: appL10n().error);
         return;
       }
       // Re-read so the chapter list reflects the new access state.
@@ -186,7 +187,7 @@ class BookDetailController extends Notifier<BookDetailState> {
       AppLogger.w('unlock chapter $chapterId failed: $e');
       state = state.copyWith(
         clearUnlocking: true,
-        error: e is ApiException ? e.message : 'Could not unlock that chapter',
+        error: e is ApiException ? e.message : appL10n().error,
       );
     }
   }
@@ -280,14 +281,14 @@ class ReaderController extends Notifier<ReaderState> {
       if (page == null) {
         state = state.copyWith(
           isLoading: false,
-          error: 'Page ${state.pageNumber} could not be loaded.',
+          error: '${appL10n().bookPageLabel(state.pageNumber)}: ${appL10n().error}',
         );
         return;
       }
       state = state.copyWith(isLoading: false, page: page);
     } catch (e) {
       AppLogger.w('reader page ${state.pageNumber} failed: $e');
-      state = state.copyWith(isLoading: false, error: 'Could not load this page');
+      state = state.copyWith(isLoading: false, error: appL10n().error);
     }
   }
 

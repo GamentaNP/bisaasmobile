@@ -98,7 +98,7 @@ class _ReviewsDueScreenState extends ConsumerState<ReviewsDueScreen> {
                             Expanded(
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 Text(r.knowledgeAtom?.title ?? l10n.knowledgeAtomNumbered(r.knowledgeAtomId), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                                Text(l10n.learningReviewMeta(r.id, r.knowledgeAtomId, r.state ?? 'learning'), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
+                                Text(l10n.learningReviewMeta(r.id, r.knowledgeAtomId, r.state ?? l10n.learningTitle), style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)),
                               ]),
                             ),
                             if (r.intervalIndex != null)

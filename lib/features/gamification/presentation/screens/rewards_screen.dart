@@ -51,16 +51,19 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
       final result = await ref.read(rewardsRepositoryProvider).claimCheckIn();
       ref.invalidate(checkInStatusProvider);
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       _toast(
         context,
         result.credited
-            ? '+${result.amount} coins · day ${result.streakDay} streak'
-            : (result.reason == null ? 'Already claimed today' : 'Already claimed: ${result.reason}'),
+            ? '${l10n.gameClaimedCoins(result.amount)} · ${l10n.rewardsDayStreak(result.streakDay)} ${l10n.profileStreak.toLowerCase()}'
+            : (result.reason == null
+                ? l10n.rewardsClaimedToday
+                : '${l10n.rewardsClaimedToday}: ${result.reason}'),
         ok: result.credited,
       );
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
-      _toast(context, 'Check-in failed: $e', ok: false);
+      _toast(context, AppLocalizations.of(context)!.liveEventCheckInFailed, ok: false);
     } finally {
       if (mounted) setState(() => _claiming = false);
     }
@@ -72,14 +75,15 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
       final result = await ref.read(rewardsRepositoryProvider).spin();
       ref.invalidate(spinStatusProvider);
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       _toast(
         context,
-        result.spun ? result.label : (result.reason ?? 'No spin available right now'),
+        result.spun ? result.label : (result.reason ?? l10n.rewardsSpinUnavailable),
         ok: result.spun,
       );
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
-      _toast(context, 'Spin failed: $e', ok: false);
+      _toast(context, AppLocalizations.of(context)!.commonFailed, ok: false);
     } finally {
       if (mounted) setState(() => _spinning = false);
     }

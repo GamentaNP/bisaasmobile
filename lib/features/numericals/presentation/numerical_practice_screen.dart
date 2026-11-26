@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/localization/l10n.dart';
 import '../../../app/theme/script_fonts.dart';
 import '../../../core/logging/app_logger.dart';
 import '../data/providers/numerical_providers.dart';
@@ -87,7 +88,7 @@ class NumericalController extends Notifier<NumericalState> {
     try {
       final problem = await _repo.randomize(numericalId);
       if (problem == null) {
-        state = state.copyWith(isLoading: false, error: 'This problem could not be loaded.');
+        state = state.copyWith(isLoading: false, error: appL10n().error);
         return;
       }
       // A new randomisation clears the previous verdict and solution, so a stale
@@ -100,7 +101,7 @@ class NumericalController extends Notifier<NumericalState> {
       );
     } catch (e) {
       AppLogger.w('numerical randomize $numericalId failed: $e');
-      state = state.copyWith(isLoading: false, error: 'Could not load this problem');
+      state = state.copyWith(isLoading: false, error: appL10n().error);
     }
   }
 
@@ -108,20 +109,20 @@ class NumericalController extends Notifier<NumericalState> {
     if (state.submitting) return;
     final answer = double.tryParse(raw.trim());
     if (answer == null) {
-      state = state.copyWith(error: 'Enter a number');
+      state = state.copyWith(error: appL10n().liveEventEnterAnswer);
       return;
     }
     state = state.copyWith(submitting: true, clearError: true);
     try {
       final check = await _repo.checkAnswer(numericalId, answer);
       if (check == null) {
-        state = state.copyWith(submitting: false, error: 'Could not grade that answer');
+        state = state.copyWith(submitting: false, error: appL10n().error);
         return;
       }
       state = state.copyWith(submitting: false, check: check, hasAttempted: true);
     } catch (e) {
       AppLogger.w('numerical check failed: $e');
-      state = state.copyWith(submitting: false, error: 'Could not grade that answer');
+      state = state.copyWith(submitting: false, error: appL10n().error);
     }
   }
 
@@ -134,13 +135,13 @@ class NumericalController extends Notifier<NumericalState> {
         parameters: state.problem?.parameters,
       );
       if (solution == null) {
-        state = state.copyWith(submitting: false, error: 'No solution available yet');
+        state = state.copyWith(submitting: false, error: appL10n().error);
         return;
       }
       state = state.copyWith(submitting: false, solution: solution);
     } catch (e) {
       AppLogger.w('numerical solve failed: $e');
-      state = state.copyWith(submitting: false, error: 'Could not load the solution');
+      state = state.copyWith(submitting: false, error: appL10n().error);
     }
   }
 

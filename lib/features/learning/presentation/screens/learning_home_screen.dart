@@ -113,16 +113,16 @@ class _TodayCard extends StatelessWidget {
       // Legacy TodayPlan: has tasks + title
       if (plan.tasks is List) {
         tasks = (plan.tasks as List).cast<String>();
-        title = (plan.title as String?) ?? 'Today';
+        title = (plan.title as String?) ?? l10n.todayTitle;
       } else if (plan.items is List) {
         // DailyPlan: items are DailyPlanItem with label
         final items = plan.items as List;
         tasks = items.map((e) => (e.label ?? e.toString()).toString()).cast<String>().toList();
-        title = 'Plan #${plan.id}';
+        title = l10n.learningPlanLabel('${plan.id}');
       }
     } catch (_) {
       try {
-        title = (plan.title as String?) ?? 'Today';
+        title = (plan.title as String?) ?? l10n.todayTitle;
       } catch (_) {}
     }
     return Container(

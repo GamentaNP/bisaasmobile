@@ -34,7 +34,7 @@ class _LearningTracksScreenState extends ConsumerState<LearningTracksScreen> {
       // Navigate to goal detail
       context.go('/learning/goals/${goal.id}');
     } else {
-      final err = ref.read(learningControllerProvider).createGoalError ?? 'Failed to create goal';
+      final err = ref.read(learningControllerProvider).createGoalError ?? l10n.error;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err), backgroundColor: AppColors.wrongRed));
     }
   }

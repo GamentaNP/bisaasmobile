@@ -1,4 +1,5 @@
 // ignore_for_file: omit_local_variable_types, noop_primitive_operations
+import 'package:bisaasmobile/app/localization/l10n.dart';
 import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
 import '../../domain/entities/learning.dart';
 
@@ -262,7 +263,7 @@ class TodayPlanDtoLegacy {
         : <String>[];
     return TodayPlanDtoLegacy(
       id: (j['id'] ?? j['plan_id'] ?? 'today').toString(),
-      title: (j['title'] ?? j['name'] ?? 'Today').toString(),
+      title: (j['title'] ?? j['name'] ?? appL10n().todayTitle).toString(),
       tasks: tasks.cast<String>(),
     );
   }

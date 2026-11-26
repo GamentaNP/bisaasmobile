@@ -523,7 +523,8 @@ class _EntryTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${entry.displayName ?? 'User #${entry.userId}'}${isMe ? '  (You)' : ''}',
+                  '${entry.displayName ?? l10n.contestUserNumbered(entry.userId)}'
+                  '${isMe ? '  (${l10n.battleYou})' : ''}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

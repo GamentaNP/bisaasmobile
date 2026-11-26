@@ -113,7 +113,7 @@ class BattleResultScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () => _share(context, isWin, me, opp),
+                onPressed: () => _share(context, me, opp),
                 icon: const Icon(Icons.share_rounded),
                 label: Text(l10n.commonShareResult),
                 style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
@@ -133,11 +133,16 @@ class BattleResultScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _share(BuildContext context, bool isWin, BattlePlayer me, BattlePlayer opp) async {
+  Future<void> _share(BuildContext context, BattlePlayer me, BattlePlayer opp) async {
     final l10n = AppLocalizations.of(context)!;
-    final msg = 'I just ${isWin ? "won" : "fought"} a battle on CivilCal: ${me.score}-${opp.score} vs ${opp.displayName}! Try me: https://lovemcq.com';
+    // The invitation copy itself is translated; the figures are the server's
+    // result and the display name is whatever the server published.
+    final msg = '${l10n.socialShareMomentFallback} '
+        '${me.score}-${opp.score} ${l10n.battleVs} ${opp.displayName}';
     try {
-      await SharePlus.instance.share(ShareParams(text: msg, subject: 'CivilCal Battle Result'));
+      await SharePlus.instance.share(
+        ShareParams(text: msg, subject: l10n.battleResultTitle),
+      );
     } catch (_) {
       if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.battleShareUnavailable)));
     }

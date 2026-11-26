@@ -74,6 +74,11 @@ final _namedTextParams = <String>{
   'secondaryLabel',
   'actionText',
   'supporting',
+  // Controller state carries the error shown by a snackbar or an ErrorView,
+  // and helper tiles carry their copy in `value:` (`_Row(value: 'Daily at
+  // midnight (while app open)')`). Both reach the reader verbatim.
+  'error',
+  'value',
   // A validator's return value is shown to the user as the field's error.
   'validator',
   // One-off copy passed from the router to a screen, and the text an answer
@@ -164,12 +169,38 @@ String? visibleText(Expression expression) {
   return null;
 }
 
+/// Whether an expression contains a `??` fallback anywhere inside it. Used
+/// before descending into a method invocation's arguments so that protocol
+/// arguments (`_string(j, 'description', endpoint)`) are not mistaken for copy.
+bool _hasNullCoalescing(AstNode node) {
+  var found = false;
+  node.accept(_NullCoalescingFinder(() => found = true));
+  return found;
+}
+
+class _NullCoalescingFinder extends RecursiveAstVisitor<void> {
+  _NullCoalescingFinder(this.onFound);
+
+  final void Function() onFound;
+
+  @override
+  void visitBinaryExpression(BinaryExpression node) {
+    if (node.operator.type == TokenType.QUESTION_QUESTION) onFound();
+    super.visitBinaryExpression(node);
+  }
+}
+
 class _Visitor extends RecursiveAstVisitor<void> {
   _Visitor(this.file, this.lineOf);
 
   final String file;
   final int Function(int offset) lineOf;
   final List<Hit> hits = [];
+
+  /// One literal can be reached through several paths — a `label:` whose
+  /// value is `Text('…')` is both a named argument and a positional Text
+  /// argument. A hit is about the literal, so it is recorded once.
+  final Set<int> _recordedOffsets = <int>{};
 
   /// The `const` keyword offsets of the const constructions currently being
   /// visited, innermost last. A literal inside them cannot stay const.
@@ -213,6 +244,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
     final value = visibleText(expression);
     if (value == null || value.trim().isEmpty) return;
     if (!_hasLetter.hasMatch(value)) return;
+    if (!_recordedOffsets.add(expression.offset)) return;
     hits.add(
       Hit(
         file,
@@ -237,6 +269,12 @@ class _Visitor extends RecursiveAstVisitor<void> {
         // DTO's default here would double-report it.
         if (label == 'explanation' &&
             (ownerType?.endsWith('Dto') ?? false)) {
+          continue;
+        }
+        // Public widgets use `value:` for a selection key (`PopupMenuItem`,
+        // `AiProviderDescriptor`), not for copy. The screens' private helper
+        // tiles (`_InfoRow(value: …)`, `_Row(value: …)`) do put copy there.
+        if (label == 'value' && !(ownerType?.startsWith('_') ?? false)) {
           continue;
         }
         if (argument.argumentExpression is StringLiteral) {
@@ -287,6 +325,29 @@ class _Visitor extends RecursiveAstVisitor<void> {
     if (expression is BinaryExpression && expression.operator.type == TokenType.QUESTION_QUESTION) {
       _recordConditional(expression.leftOperand, kind);
       _recordConditional(expression.rightOperand, kind);
+      return;
+    }
+    if (expression is MethodInvocation) {
+      // `title: (j['name'] ?? 'Course').toString()` — the copy is inside the
+      // invocation's target, not in the invocation itself. Arguments are only
+      // followed when they carry a `??` fallback: a field-name argument such
+      // as `_optionalString(j, 'description', endpoint)` is wire protocol,
+      // not a string the user reads.
+      final target = expression.target;
+      if (target != null) _recordConditional(target, kind);
+      for (final argument in expression.argumentList.arguments) {
+        if (argument is Expression && _hasNullCoalescing(argument)) {
+          _recordConditional(argument, kind);
+        }
+      }
+      return;
+    }
+    if (expression is InstanceCreationExpression) {
+      // `message: SomeError('Could not load it')` — same shape as a method
+      // call: the copy sits in the constructor's arguments.
+      for (final argument in expression.argumentList.arguments) {
+        if (argument is Expression) _recordConditional(argument, kind);
+      }
       return;
     }
     if (expression is StringLiteral) {
@@ -392,10 +453,37 @@ class _Visitor extends RecursiveAstVisitor<void> {
   @override
   void visitListLiteral(ListLiteral node) {
     // `const [ {'title': …}, … ]` — the `const` applies to every literal
-    // nested in the list, so it has to be tracked for them as well.
+    // nested in the list, so it has to be tracked for them as well. A list
+    // inside `static const _tiles = …` has no `const` keyword of its own; the
+    // record/map visitors use `isConst` so that implicit constant context is
+    // still measured.
     final constOffset = node.constKeyword?.offset;
     if (constOffset != null) _constStack.add(constOffset);
     super.visitListLiteral(node);
+    if (constOffset != null) _constStack.removeLast();
+  }
+
+  @override
+  void visitRecordLiteral(RecordLiteral node) {
+    // `const [ (title: 'A', icon: …), … ]` — an option catalogue written as
+    // records. Its named fields are the copy; a positional string field in a
+    // const record is likewise written here rather than fetched from the ARB.
+    final constOffset = node.constKeyword?.offset;
+    if (constOffset != null) _constStack.add(constOffset);
+    if (!_inLog && (constOffset != null || node.isConst)) {
+      for (final field in node.fields) {
+        final named = field is RecordLiteralNamedField ? field.name.lexeme : null;
+        final value = field.fieldExpression;
+        if (named == null || _isTextParam(named) || _messageName.hasMatch(named)) {
+          if (value is StringLiteral) {
+            _record(value, named == null ? 'record:positional' : 'record:$named');
+          } else {
+            _recordConditional(value, named == null ? 'record:positional' : 'record:$named');
+          }
+        }
+      }
+    }
+    super.visitRecordLiteral(node);
     if (constOffset != null) _constStack.removeLast();
   }
 
@@ -409,7 +497,7 @@ class _Visitor extends RecursiveAstVisitor<void> {
     // whereas a runtime map is usually a bag of DTO fields and colours.
     final constOffset = node.constKeyword?.offset;
     if (constOffset != null) _constStack.add(constOffset);
-    if (!_inLog && _constStack.isNotEmpty) {
+    if (!_inLog && (constOffset != null || node.isConst)) {
       for (final element in node.elements) {
         if (element is MapLiteralEntry) {
           final key = element.key;
@@ -530,8 +618,10 @@ Future<List<Hit>> collectHits() async {
       .whereType<File>()
       .where((f) => f.path.endsWith('.dart'))
       // The generated localisations are the translations themselves; counting
-      // them would be counting the answer.
+      // them would be counting the answer. Other `*.g.dart` files are codegen
+      // output too (Drift's column names are protocol, not screen copy).
       .where((f) => !f.path.contains('${separator}l10n$separator'))
+      .where((f) => !f.path.endsWith('.g.dart'))
       .toList()
     ..sort((a, b) => a.path.compareTo(b.path));
 

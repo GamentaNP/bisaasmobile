@@ -2,6 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
 import '../models/learning_dto.dart';
@@ -291,7 +292,7 @@ class LearningRemoteDataSource {
     // Try to parse via DTO which handles both.
     // First try to detect 503 control plane unavailable
     if (body['ok'] == false || (body['ok'] == null && body['success'] == false && body['reason'] == 'control_plane_unavailable')) {
-      throw Exception((body['message'] as String?) ?? 'The AI tutor is temporarily unavailable. Please try again.');
+      throw Exception((body['message'] as String?) ?? appL10n().errFeatureDisabled);
     }
     // DTO will unwrap reply or data
     return LearningTutorReplyDto.fromJson(body);

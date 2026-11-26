@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/logging/app_logger.dart';
@@ -114,10 +115,13 @@ class BattleController extends Notifier<BattleState> {
     try {
       final cred = await _auth.signInWithCustomToken(state.token!.token);
       _myUid = cred.user?.uid;
-    } catch (e) {
+    } catch (_) {
       // Firebase may not be initialised (no google-services.json). The arena
       // still works for rejoin via REST; the matchmaking flow needs Firebase.
-      state = state.copyWith(phase: BattlePhase.error, error: 'Firebase sign-in failed: $e');
+      state = state.copyWith(
+        phase: BattlePhase.error,
+        error: appL10n().errAuthSocialSignInFailed,
+      );
       rethrow;
     }
   }
@@ -222,7 +226,10 @@ class BattleController extends Notifier<BattleState> {
     final questionId = int.tryParse(q?.id ?? '');
     final selectedOption = int.tryParse(optionId);
     if (questionId == null || selectedOption == null) {
-      state = state.copyWith(phase: BattlePhase.error, error: 'Cannot submit: battle question ${q?.id ?? '?'} / option $optionId not server-addressable');
+      state = state.copyWith(
+        phase: BattlePhase.error,
+        error: appL10n().errRequestFailed,
+      );
       return;
     }
     final timeTakenMs = ((m.perQuestionSeconds - state.secondsLeftInQuestion).clamp(0, m.perQuestionSeconds)) * 1000;
@@ -237,8 +244,8 @@ class BattleController extends Notifier<BattleState> {
         'time_taken_ms': timeTakenMs,
       }, options: Options(headers: {'Idempotency-Key': '${m.id}:${state.currentQuestionIndex}'}));
       try { await ref.read(analyticsProvider).log(AnalyticsEvents.battleAnswerSubmit, params: {'match_id': m.id, 'q': state.currentQuestionIndex}); } catch (_) {}
-    } catch (e) {
-      state = state.copyWith(phase: BattlePhase.error, error: 'Answer failed: $e');
+    } catch (_) {
+      state = state.copyWith(phase: BattlePhase.error, error: appL10n().error);
     }
   }
 

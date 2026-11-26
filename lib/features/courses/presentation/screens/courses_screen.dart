@@ -374,37 +374,36 @@ class _CorpusTile extends StatelessWidget {
 class _CorpusTiles extends ConsumerWidget {
   const _CorpusTiles();
 
-  static const _tiles =
-      <({String code, IconData icon, String label, String route})>[
-        (
-          code: 'library',
-          icon: Icons.folder_open_rounded,
-          label: 'Library',
-          route: '/library',
-        ),
-        (
-          code: 'books',
-          icon: Icons.menu_book_rounded,
-          label: 'Books',
-          route: '/books',
-        ),
-        (
-          code: 'syllabus',
-          icon: Icons.account_tree_rounded,
-          label: 'Syllabus',
-          route: '/syllabus',
-        ),
-      ];
+  // Only the routing key is wired here. The visible label is resolved from
+  // the ARB in `build` — a const record cannot hold `l10n.commonLibrary`, and
+  // an English label in this table would reach a Nepali reader verbatim.
+  static const _tiles = <({String code, IconData icon, String route})>[
+    (code: 'library', icon: Icons.folder_open_rounded, route: '/library'),
+    (code: 'books', icon: Icons.menu_book_rounded, route: '/books'),
+    (code: 'syllabus', icon: Icons.account_tree_rounded, route: '/syllabus'),
+  ];
+
+  static String _label(String code, AppLocalizations l10n) => switch (code) {
+        'library' => l10n.commonLibrary,
+        'books' => l10n.booksTitle,
+        'syllabus' => l10n.syllabusTitle,
+        _ => l10n.commonLibrary,
+      };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final offered = <({IconData icon, String label, String route})>[];
     for (final tile in _tiles) {
       // `value` is null while loading; treat that as "still assume offered" so
       // the tile does not appear and vanish on a slow connection.
       final status = ref.watch(corpusStatusProvider(tile.code)).value;
       if (status?.availability == CorpusAvailability.empty) continue;
-      offered.add((icon: tile.icon, label: tile.label, route: tile.route));
+      offered.add((
+        icon: tile.icon,
+        label: _label(tile.code, l10n),
+        route: tile.route,
+      ));
     }
 
     if (offered.isEmpty) {

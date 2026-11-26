@@ -1,3 +1,4 @@
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/course_catalog.dart';
 
 /// Wire row of `GET /quiz/courses`.
@@ -18,7 +19,7 @@ class CourseCatalogDto {
 
   factory CourseCatalogDto.fromJson(Map<String, dynamic> j) => CourseCatalogDto(
         id: (j['id'] ?? '').toString(),
-        title: (j['name'] ?? j['title'] ?? 'Course').toString(),
+        title: (j['name'] ?? j['title'] ?? appL10n().courses).toString(),
         description: (j['description'] ?? '').toString(),
       );
 
