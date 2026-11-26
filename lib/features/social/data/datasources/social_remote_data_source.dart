@@ -58,15 +58,24 @@ class SocialRemoteDataSource {
       data: {'code': code},
       options: Options(headers: {'Idempotency-Key': _uuid.v4()}),
     );
+    const endpoint = '/social/referral-code/claim';
     final data = _data(res.data);
     if (data == null) {
-      // The server returned 2xx without a parsable body. Do not claim success:
-      // telling a user their referral was accepted when the payload said nothing
-      // is exactly the kind of local optimism this project has been removing.
-      return const ReferralClaim(claimed: false, status: 'unknown');
+      // A successful claim must publish its outcome. A 2xx with no payload is
+      // contract drift, not "the claim did not succeed".
+      throw const ContractViolation(
+        'Referral claim data missing',
+        endpoint: endpoint,
+      );
     }
-    return ReferralClaimDto.fromJson(data)?.domain ??
-        const ReferralClaim(claimed: false, status: 'unknown');
+    final claim = ReferralClaimDto.fromJson(data)?.domain;
+    if (claim == null) {
+      throw const ContractViolation(
+        'Referral claim payload not understood',
+        endpoint: endpoint,
+      );
+    }
+    return claim;
   }
 
   // ── Share moments and proof ────────────────────────────────────────────────
@@ -342,10 +351,17 @@ class SocialRemoteDataSource {
 
   // ── helpers ────────────────────────────────────────────────────────────────
 
+  /// A published `data: null` is a real "nothing here" answer for the
+  /// singular read endpoints. Any other unreadable shape is contract drift.
   Map<String, dynamic>? _data(Map<String, dynamic>? body) {
-    if (body == null) return null;
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
     final data = body['data'];
+    if (data == null && body.containsKey('data')) return null;
     if (data is Map<String, dynamic>) return data;
-    return null;
+    throw ContractViolation(
+      'Expected `data` to be an object, got ${data.runtimeType}',
+    );
   }
 }

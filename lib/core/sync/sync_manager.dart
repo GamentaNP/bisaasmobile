@@ -25,7 +25,7 @@ class SyncManager {
 
   /// The tenant assertion the replayed credential will carry. Defaults to
   /// "unknown" for hermetic tests; the app provider injects the real
-  /// [TenantStore.read] so production never replays a row under another org.
+  /// `TenantStore.read()` so production never replays a row under another org.
   final Future<int?> Function() _currentTenant;
   StreamSubscription<bool>? _sub;
   bool _syncing = false;

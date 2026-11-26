@@ -343,7 +343,7 @@ void main() {
     final db = AppDatabase(NativeDatabase.opened(raw));
     await db.customSelect('SELECT 1').getSingle();
 
-    expect(db.schemaVersion, 4);
+    expect(db.schemaVersion, 5);
 
     final rows = await db.select(db.cachedResponses).get();
     expect(rows, isEmpty, reason: 'a migration must not invent cached content');
@@ -375,7 +375,37 @@ void main() {
     expect(table, hasLength(1));
     expect(await db.select(db.cachedResponses).get(), isEmpty);
 
-    expect(db.schemaVersion, 4);
+    expect(db.schemaVersion, 5);
     await db.close();
+  });
+
+  test('v4 → v5: queued writes gain a nullable tenant binding', () async {
+    final raw = sqlite3.openInMemory();
+    raw.execute('''
+      CREATE TABLE sync_queue (
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        endpoint TEXT NOT NULL,
+        method TEXT NOT NULL DEFAULT 'POST',
+        payload TEXT NULL,
+        idempotency_key TEXT NULL UNIQUE,
+        attempts INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        next_attempt_at INTEGER NULL
+      )''');
+    raw.execute('PRAGMA user_version = 4');
+
+    final database = AppDatabase(NativeDatabase.opened(raw));
+    await database.customSelect('SELECT 1').getSingle();
+
+    final columns = await database
+        .customSelect("PRAGMA table_info('sync_queue')")
+        .get();
+    expect(
+      columns.map((r) => r.read<String>('name')),
+      contains('tenant_id'),
+      reason: 'a queued write must be bound to the tenant it was minted under',
+    );
+
+    await database.close();
   });
 }

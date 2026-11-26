@@ -5,8 +5,10 @@ class AnswerOptionDto {
   const AnswerOptionDto({required this.id, required this.text, required this.position});
 
   factory AnswerOptionDto.fromJson(Map<String, dynamic> j) => AnswerOptionDto(
-        id: j['id'] as String,
-        text: (j['text'] ?? j['body'] ?? '') as String,
+        // The grader matches the option `key`. Numeric `id` is a legacy alias
+        // only — preferring it here silently sends an id the server rejects.
+        id: (j['key'] ?? j['id'] ?? j['value'] ?? '').toString(),
+        text: (j['text'] ?? j['label'] ?? j['body'] ?? '').toString(),
         position: (j['position'] as int?) ?? 0,
       );
 
@@ -26,6 +28,8 @@ class QuestionDto {
     required this.difficulty,
     required this.marksPositive,
     required this.marksNegative,
+    required this.type,
+    this.metadata = const <String, dynamic>{},
     this.quizId,
     this.explanation,
     this.correctOptionId,
@@ -33,6 +37,14 @@ class QuestionDto {
 
   factory QuestionDto.fromJson(Map<String, dynamic> j) {
     final rawOptions = j['options'] ?? j['answers'] ?? [];
+    final metadata = <String, dynamic>{};
+    final rawMetadata = j['metadata'];
+    if (rawMetadata is Map) metadata.addAll(Map<String, dynamic>.from(rawMetadata));
+    // The offline daily pack stores the figure at the top level. Keep the
+    // domain entity's image accessor single-sourced by folding it in here.
+    if (!metadata.containsKey('image_url') && j['image_url'] is String) {
+      metadata['image_url'] = j['image_url'];
+    }
     final List<AnswerOptionDto> options;
 
     if (rawOptions is List) {
@@ -52,13 +64,18 @@ class QuestionDto {
     }
 
     return QuestionDto(
-      id: (j['id'] ?? j['uuid'] ?? '') as String,
+      id: (j['id'] ?? j['uuid'] ?? '').toString(),
       body: (j['body'] ?? j['question'] ?? '') as String,
       options: options,
       subjectSlug: (j['subject_slug'] ?? j['category_slug'] ?? '') as String,
       difficulty: (j['difficulty'] as int?) ?? 1,
       marksPositive: (j['marks_positive'] as int?) ?? (j['marks'] as int?) ?? 4,
       marksNegative: (j['marks_negative'] as int?) ?? 0,
+      // An absent/empty type is the legacy cache shape (Drift rows and the
+      // daily pack predate the type column) and is always an MCQ. A *present*
+      // but unknown value is preserved verbatim so the UI can fail loudly.
+      type: (j['type'] ?? j['question_type'] ?? '').toString(),
+      metadata: metadata,
       quizId: j['quiz_id'] as String?,
       explanation: j['explanation'] as String?,
       correctOptionId: j['correct_option_id'] as String?,
@@ -72,6 +89,8 @@ class QuestionDto {
   final int difficulty;
   final int marksPositive;
   final int marksNegative;
+  final String type;
+  final Map<String, dynamic> metadata;
   final String? quizId;
   final String? explanation;
   final String? correctOptionId;
@@ -84,6 +103,8 @@ class QuestionDto {
         difficulty: difficulty,
         marksPositive: marksPositive,
         marksNegative: marksNegative,
+        type: type,
+        metadata: metadata,
         quizId: quizId,
         explanation: explanation,
         correctOptionId: correctOptionId,

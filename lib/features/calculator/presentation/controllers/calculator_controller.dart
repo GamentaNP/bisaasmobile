@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/localization/l10n.dart';
 import '../../../../app/providers.dart';
 import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/consent/consent_gate.dart';
@@ -156,13 +157,13 @@ class CalculatorController extends Notifier<CalcState> {
         if (data is Map<String, dynamic> && data['errors'] is Map) {
           state = state.copyWith(
             loading: false,
-            error: (data['message'] as String?) ?? 'Validation failed',
+            error: (data['message'] as String?) ?? appL10n().calcValidationFailed,
             fieldErrors: (data['errors'] as Map).cast<String, dynamic>(),
           );
         } else {
           state = state.copyWith(
             loading: false,
-            error: e.message ?? 'Calculation failed',
+            error: e.message ?? appL10n().calcCalculationFailed,
           );
         }
       }

@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/tutor.dart';
 
 List<String> _asStringList(Object? v) {
@@ -102,7 +103,7 @@ class TutorPlanDayDto {
   factory TutorPlanDayDto.fromJson(Map<String, dynamic> j) {
     return TutorPlanDayDto(
       dayIndex: wireInt(j['day_index'] ?? j['day'] ?? j['index']) ?? 0,
-      title: (j['title'] ?? j['name'] ?? 'Day ${j['day_index'] ?? ''}').toString(),
+      title: (j['title'] ?? j['name'] ?? appL10n().tutorPlanDay((j['day_index'] ?? '').toString())).toString(),
       description: j['description'] as String?,
       tasks: _asStringList(j['tasks'] ?? j['items'] ?? j['activities']),
       completed: (j['completed'] as bool?) ?? (j['is_completed'] as bool?) ?? false,
@@ -152,7 +153,7 @@ class TutorPlanDto {
     }
     return TutorPlanDto(
       id: (src['id'] ?? src['plan_id'] ?? 'plan').toString(),
-      title: (src['title'] ?? src['name'] ?? 'Study Plan').toString(),
+      title: (src['title'] ?? src['name'] ?? appL10n().tutorStudyPlan).toString(),
       description: src['description'] as String?,
       totalDays: wireInt(src['total_days'] ?? src['totalDays'] ?? days.length) ?? days.length,
       days: days,

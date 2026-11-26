@@ -344,6 +344,8 @@
   "calcViewHistory": "View history",
   "calcNoSchema": "Server did not return a field schema. Falling back to generic key/value editor.",
   "calcAddField": "Add field",
+  "calcValidationFailed": "Validation failed",
+  "calcCalculationFailed": "Calculation failed",
   "calcInputsCount": "inputs: {count}",
   "@calcInputsCount": {
     "placeholders": {
@@ -423,6 +425,9 @@
   "consentAnalyticsBody": "Usage events that tell us which features are useful. They are tied to a device identifier rather than to your account. No question content is ever included.",
   "consentMarketing": "Marketing",
   "consentMarketingBody": "Offers and promotions. Off unless you ask for it.",
+  "consentRememberedSettings": "Remembered settings",
+  "consentAnalyticsShort": "Usage events, tied to a device identifier",
+  "consentOffersPromotions": "Offers and promotions",
   "consentSaveChoices": "Save choices",
   "consentNecessaryOnly": "Continue with necessary only",
   "consentLoadError": "Could not load your choices",
@@ -450,6 +455,7 @@
   "privacyMenu": "Privacy",
   "notificationDailyTitle": "Daily Sprint ready ⚡",
   "notificationDailyBody": "Your daily MCQs are waiting — keep the streak alive!",
+  "notificationsFallbackTitle": "Notification",
   "forceUpdateTitle": "Update required",
   "forceUpdateYourVersion": "Your version: {version}",
   "@forceUpdateYourVersion": {
@@ -528,6 +534,7 @@
   "quizTryDifferentSearch": "Try a different search",
   "quizNoTopicsYet": "No topics yet",
   "quizCourseNoActiveTopics": "This course has no active topics yet.",
+  "quizCourse": "Course",
   "quizFunnelSampleBody": "Sample questions from our catalogue. Open the Quiz tab to play a full graded session.",
   "quizFunnelPublicBody": "Public questions from our catalogue. Answers unlock when you create a free account.",
   "quizFreshQuestions": "Fresh questions were added recently.",
@@ -592,6 +599,14 @@
   "profileChangeAvatar": "Change avatar",
   "profileEditAvatar": "Edit avatar",
   "profileStreak": "Streak",
+  "profileStreakDays": "{days}d",
+  "@profileStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
   "profileSkillRadar": "Skill Radar",
   "profileSkillsFailed": "Skills failed: {reason}",
   "@profileSkillsFailed": {
@@ -770,6 +785,16 @@
     }
   },
   "tutorStudyPlan": "Study Plan",
+  "tutorPlanDay": "Day {day}",
+  "@tutorPlanDay": {
+    "placeholders": {
+      "day": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorTrendStable": "stable",
+  "tutorRevision": "Revision",
   "tutorChat": "Chat",
   "tutorPlanTab": "Plan",
   "tutorInsights": "Insights",
@@ -1481,6 +1506,7 @@
   "liveEventSnapshot": "Snapshot",
   "liveEventNoSnapshot": "No snapshot yet — register and check in to load current question.",
   "liveEventAnswer": "Answer",
+  "liveEventQuestion": "Question",
   "liveEventQIndex": "Q index",
   "liveEventSubmitAnswer": "Submit Answer",
   "liveEventNoLeaderboard": "No leaderboard yet.",
@@ -2213,6 +2239,8 @@
     }
   },
   "downloadsLastCached": "Last cached",
+  "downloadsNever": "Never",
+  "downloadsDailyMidnight": "Daily at midnight (while app open)",
   "downloadsAutoDownload": "Auto-download",
   "downloadsPrefetchNow": "Prefetch daily pack now",
   "downloadsClearAction": "Clear offline content",
@@ -2270,6 +2298,14 @@
   "gameBestScore": "Best score",
   "gameBestAccuracy": "Best accuracy",
   "gameBestTime": "Best time",
+  "gameBestTimeSeconds": "{seconds}s",
+  "@gameBestTimeSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
   "gameStartLevel": "Start level",
   "gameNotPlayable": "Not playable yet",
   "gameWorldNoCourse": "This world has no quiz course linked to it yet, so there is nothing to play. Ask an admin to set the world's course.",

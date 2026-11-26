@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
 import '../../domain/entities/syllabus.dart';
 import '../models/syllabus_dto.dart';
 
@@ -39,30 +39,40 @@ class SyllabusRemoteDataSource {
 
   /// Unwraps `{success, data, ...}` and returns the `data` node.
   ///
-  /// Returns null rather than throwing on an unexpected shape, so a single
-  /// malformed response degrades one screen instead of the whole session.
-  Map<String, dynamic>? _dataObject(Map<String, dynamic>? body) {
+  /// A published `data: null` is a legitimate "no record" answer for a
+  /// singular endpoint. Any other shape is contract drift and throws instead
+  /// of degrading into a blank screen that reads as "you have no data".
+  Map<String, dynamic>? _dataObject(
+    Map<String, dynamic>? body, {
+    String? endpoint,
+  }) {
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    final envelope = ApiResponse.fromJson(body, (json) => json);
-    final data = envelope.data;
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
+    final data = body['data'];
+    if (data == null && body.containsKey('data')) return null;
     if (data is Map<String, dynamic>) return data;
-    if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
-    return null;
+    throw ContractViolation(
+      'Expected `data` to be an object, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
-  List<dynamic> _dataList(Map<String, dynamic>? body) {
+  /// A collection payload. Only a published list (possibly empty) is valid.
+  List<dynamic> _dataList(Map<String, dynamic>? body, {String? endpoint}) {
     if (body == null) {
-      throw const ContractViolation('Empty response body');
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
     final data = body['data'];
     if (data is List) return data;
-    if (data is Map && data['items'] is List) return data['items'] as List;
-    if (data is Map && data['data'] is List) return data['data'] as List;
-    return const [];
+    if (data is Map<String, dynamic>) {
+      final nested = data['items'] ?? data['data'];
+      if (nested is List) return nested;
+    }
+    throw ContractViolation(
+      'Expected a list under `data`, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
   // ── Catalog ────────────────────────────────────────────────────────────────
@@ -83,7 +93,7 @@ class SyllabusRemoteDataSource {
       },
     );
     final out = <SyllabusVersionDto>[];
-    for (final item in _dataList(res.data)) {
+    for (final item in _dataList(res.data, endpoint: '/syllabi')) {
       if (item is! Map) continue;
       final dto = SyllabusVersionDto.fromJson(item.cast<String, dynamic>());
       if (dto != null) out.add(dto);
@@ -105,7 +115,10 @@ class SyllabusRemoteDataSource {
       queryParameters: {'depth': depth},
     );
     final out = <SyllabusNodeDto>[];
-    for (final item in _dataList(res.data)) {
+    for (final item in _dataList(
+      res.data,
+      endpoint: '/syllabi/$publicId/nodes',
+    )) {
       if (item is! Map) continue;
       final dto = SyllabusNodeDto.fromJson(item.cast<String, dynamic>());
       if (dto != null) out.add(dto);
@@ -116,19 +129,32 @@ class SyllabusRemoteDataSource {
   /// Nested graph. Omit [depth] to get every level — the server caches the
   /// unbounded payload for 24h keyed on `structure_hash`.
   Future<SyllabusTreeDto> getTree(String publicId, {int? depth}) async {
+    final endpoint = '/syllabi/$publicId/tree';
     final res = await _dio.get<Map<String, dynamic>>(
-      '/syllabi/$publicId/tree',
+      endpoint,
       queryParameters: {'depth': ?depth},
     );
-    final obj = _dataObject(res.data) ?? const {};
+    // The tree always publishes an object. A missing or malformed payload is
+    // drift — it must never render as an empty syllabus tree.
+    final obj = requireDataMap(res.data, endpoint: endpoint);
     return SyllabusTreeDto.fromJson(obj, depthLimited: depth != null);
   }
 
   Future<SyllabusNodeDetailDto?> getNodeDetail(String publicId, int nodeId) async {
-    final res = await _dio.get<Map<String, dynamic>>('/syllabi/$publicId/nodes/$nodeId');
-    final obj = _dataObject(res.data);
-    final dto = SyllabusNodeDetailDto.fromJson(obj ?? const {});
-    return dto.isEmpty ? null : dto;
+    final endpoint = '/syllabi/$publicId/nodes/$nodeId';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    final obj = _dataObject(res.data, endpoint: endpoint);
+    if (obj == null) {
+      throw ContractViolation('Node detail data missing', endpoint: endpoint);
+    }
+    final dto = SyllabusNodeDetailDto.fromJson(obj);
+    if (dto.isEmpty) {
+      throw ContractViolation(
+        'Node detail payload not understood',
+        endpoint: endpoint,
+      );
+    }
+    return dto;
   }
 
   /// The server returns a **list** of blueprints for a version, not a single one.
@@ -142,7 +168,7 @@ class SyllabusRemoteDataSource {
   Future<List<UserSyllabusPlanDto>> getMyPlans() async {
     final res = await _dio.get<Map<String, dynamic>>('/me/syllabi');
     final out = <UserSyllabusPlanDto>[];
-    for (final item in _dataList(res.data)) {
+    for (final item in _dataList(res.data, endpoint: '/me/syllabi')) {
       if (item is! Map) continue;
       final dto = UserSyllabusPlanDto.fromJson(item.cast<String, dynamic>());
       if (dto != null) out.add(dto);

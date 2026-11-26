@@ -12,10 +12,12 @@ import '../../../../shared/widgets/chunky/chunky_button.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/answer_feedback_lottie.dart';
 import '../../../../shared/widgets/glassmorphic_card.dart';
+import '../../domain/entities/question.dart';
 import '../controllers/quiz_controller.dart';
 import '../state/quiz_state.dart';
 import '../widgets/difficulty_badge.dart';
 import '../widgets/lifeline_bar.dart';
+import '../widgets/question_answer_input.dart';
 import '../widgets/question_image.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -204,7 +206,6 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     final l10n = AppLocalizations.of(context)!;
     final hintView = ref.watch(quizHintViewProvider);
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final session = state.session!;
     final question = state.currentQuestion!;
     final remaining = state.remainingSeconds;
@@ -213,6 +214,21 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     final progress = (state.currentIndex + 1) / session.totalQuestions;
     final retryOption =
         state.errorMessage != null ? state.selectedOptionId : null;
+    // Feedback colours come from the server verdict only. A pending verdict
+    // (empty correctOptionId, because grading happens on complete) paints no
+    // right/wrong on any renderer.
+    final lastResult = state.lastResult;
+    final correctKeys = lastResult == null || lastResult.correctOptionId.isEmpty
+        ? const <String>{}
+        : lastResult.correctOptionId
+            .split(',')
+            .map((key) => key.trim())
+            .where((key) => key.isNotEmpty)
+            .toSet();
+    final isWrongAnswer = state.phase == QuizPhase.feedback &&
+        lastResult != null &&
+        lastResult.correctOptionId.isNotEmpty &&
+        !lastResult.isCorrect;
 
     return Column(
       children: [
@@ -366,7 +382,14 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                   ],
                 ),
                 const SizedBox(height: 14),
-                QuestionImage(imageUrl: null, heroTag: 'q-${question.id}'),
+                // Image-based questions render their own allow-listed figure
+                // beside their answer control. Other families may still carry
+                // a past-paper crop in metadata, so show it here for them.
+                if (question.inputKind != QuizQuestionType.imageBased)
+                  QuestionImage(
+                    imageUrl: question.imageUrl,
+                    heroTag: 'q-${question.id}',
+                  ),
                 Text(
                   question.body,
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -439,137 +462,38 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                 ],
                 const SizedBox(height: 8),
 
-                // ── Answer options ────────────────────────────────────────
-                ...question.options.map((option) {
-                  final isSelected = state.selectedOptionId == option.id;
-                  final result = state.lastResult;
-                  final inFeedback = state.phase == QuizPhase.feedback;
-                  final isGrading = state.phase == QuizPhase.grading;
-                  // Pending verdict — the API grades on complete, so until
-                  // correctOptionId arrives there is no right/wrong to paint.
-                  final isPending = result != null && result.correctOptionId.isEmpty;
-
-                  Color? sideColor;
-                  Color? faceColor;
-                  IconData? trailingIcon;
-
-                  if (inFeedback && result != null && !isPending) {
-                    final isCorrectOption = option.id == result.correctOptionId;
-                    if (isCorrectOption) {
-                      sideColor = AppColors.brand;
-                      faceColor = AppColors.correctGreenBg;
-                      trailingIcon = Icons.check_circle_rounded;
-                    } else if (isSelected && !result.isCorrect) {
-                      sideColor = AppColors.wrongRed;
-                      faceColor = AppColors.wrongRedBg;
-                      trailingIcon = Icons.cancel_rounded;
-                    }
-                  } else if (isGrading && isSelected) {
-                    sideColor = AppColors.brand;
-                    faceColor = AppColors.selectedGreenBg;
-                  } else if (isSelected) {
-                    sideColor = AppColors.brandAccent;
-                    faceColor = AppColors.selectedBlueBg;
-                  }
-
-                  final optionIndex = question.options.indexOf(option);
-                  // The server told us which option keys to suppress (50/50,
-                  // eliminate-one, question swap). Honour it verbatim — never
-                  // compute our own idea of which options are wrong.
-                  final suppressed = state.isOptionHidden(option.id) &&
-                      state.phase == QuizPhase.answering;
-                  if (suppressed) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: state.phase == QuizPhase.answering
-                          ? () => ref
-                              .read(quizControllerProvider.notifier)
-                              .selectAnswer(option.id)
-                          : null,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: faceColor ?? theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border(
-                            bottom: BorderSide(
-                              color: sideColor ??
-                                  (isDark
-                                      ? AppColors.dividerDark
-                                      : AppColors.dividerLight),
-                              width: 3,
-                            ),
-                            top: BorderSide(
-                              color: sideColor ??
-                                  (isDark
-                                      ? AppColors.dividerDark
-                                      : AppColors.dividerLight),
-                              width: 1.5,
-                            ),
-                            left: BorderSide(
-                              color: sideColor ??
-                                  (isDark
-                                      ? AppColors.dividerDark
-                                      : AppColors.dividerLight),
-                              width: 1.5,
-                            ),
-                            right: BorderSide(
-                              color: sideColor ??
-                                  (isDark
-                                      ? AppColors.dividerDark
-                                      : AppColors.dividerLight),
-                              width: 1.5,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: sideColor ??
-                                      (isDark
-                                          ? AppColors.dividerDark
-                                          : AppColors.dividerLight),
-                                  width: 2,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  String.fromCharCode(65 + optionIndex),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    color: sideColor ??
-                                        (isDark
-                                            ? AppColors.textSecondaryDark
-                                            : AppColors.textSecondaryLight),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                option.text,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            if (trailingIcon != null)
-                              Icon(trailingIcon, color: sideColor, size: 22),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }),
+                // ── Answer control (type-driven) ──────────────────────────
+                // The server owns the question family; the client picks only
+                // a renderer. Unknown families fail loudly with a localised
+                // error and retry — never a fabricated MCQ.
+                QuestionAnswerInput(
+                  key: ValueKey('answer-${question.id}'),
+                  question: question,
+                  value: state.selectedOptionId ?? '',
+                  enabled: state.phase == QuizPhase.answering,
+                  // Lifeline-suppressed options return once the verdict lands,
+                  // exactly as the pre-type-aware screen did.
+                  hiddenKeys: state.phase == QuizPhase.answering
+                      ? state.hiddenOptionKeys
+                      : const <String>{},
+                  correctKeys: correctKeys,
+                  isWrong: isWrongAnswer,
+                  onSubmit: (value) => ref
+                      .read(quizControllerProvider.notifier)
+                      .selectAnswer(value),
+                  onRetry: () {
+                    final attemptId = widget.attemptId;
+                    ref.read(quizControllerProvider.notifier).startSession(
+                          widget.quizId,
+                          // An offline practice id cannot be resumed from the
+                          // server; re-read the cached session instead.
+                          attemptId: (attemptId == null ||
+                                  attemptId.startsWith('offline-'))
+                              ? null
+                              : attemptId,
+                        );
+                  },
+                ),
 
                 // ── Feedback panel ────────────────────────────────────────
                 if (state.phase == QuizPhase.feedback && state.lastResult != null) ...[

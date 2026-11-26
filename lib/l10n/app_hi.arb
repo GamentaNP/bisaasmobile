@@ -344,6 +344,8 @@
   "calcViewHistory": "इतिहास देखें",
   "calcNoSchema": "सर्वर ने फ़ील्ड स्कीमा नहीं दी। सामान्य कुंजी/मान संपादक पर वापस जा रहे हैं।",
   "calcAddField": "फ़ील्ड जोड़ें",
+  "calcValidationFailed": "मान्यता जांच विफल",
+  "calcCalculationFailed": "गणना विफल",
   "calcInputsCount": "इनपुट: {count}",
   "@calcInputsCount": {
     "placeholders": {
@@ -423,6 +425,9 @@
   "consentAnalyticsBody": "उपयोग घटनाएं जो बताती हैं कि कौन-सी सुविधाएं उपयोगी हैं। वे आपके खाते से नहीं, डिवाइस पहचान से जुड़ी होती हैं। प्रश्न का सामग्री कभी शामिल नहीं होता।",
   "consentMarketing": "प्रचार",
   "consentMarketingBody": "ऑफ़र और प्रचार। जब तक आप न कहें, बंद रहता है।",
+  "consentRememberedSettings": "याद किए गए सेटिंग",
+  "consentAnalyticsShort": "उपयोग घटनाएं, डिवाइस पहचान से जुड़ी",
+  "consentOffersPromotions": "ऑफ़र और प्रचार",
   "consentSaveChoices": "विकल्प सहेजें",
   "consentNecessaryOnly": "केवल आवश्यक के साथ जारी रखें",
   "consentLoadError": "आपके विकल्प लोड नहीं हो सके",
@@ -450,6 +455,7 @@
   "privacyMenu": "गोपनीयता",
   "notificationDailyTitle": "दैनिक स्प्रिंट तैयार है ⚡",
   "notificationDailyBody": "आपके दैनिक बहुविकल्पीय प्रश्न तैयार हैं — स्ट्रीक जारी रखें!",
+  "notificationsFallbackTitle": "सूचना",
   "forceUpdateTitle": "अपडेट आवश्यक",
   "forceUpdateYourVersion": "आपका संस्करण: {version}",
   "@forceUpdateYourVersion": {
@@ -528,6 +534,7 @@
   "quizTryDifferentSearch": "कोई दूसरी खोज आज़माएं",
   "quizNoTopicsYet": "अभी तक कोई विषय नहीं",
   "quizCourseNoActiveTopics": "इस कोर्स में अभी तक कोई सक्रिय विषय नहीं है।",
+  "quizCourse": "कोर्स",
   "quizFunnelSampleBody": "हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए क्विज़ टैब खोलें।",
   "quizFunnelPublicBody": "हमारे कैटलॉग से सार्वजनिक प्रश्न। मुफ़्त खाता बनाने पर उत्तर खुलते हैं।",
   "quizFreshQuestions": "हाल ही में नए प्रश्न जोड़े गए हैं।",
@@ -592,6 +599,14 @@
   "profileChangeAvatar": "अवतार बदलें",
   "profileEditAvatar": "अवतार संपादित करें",
   "profileStreak": "स्ट्रीक",
+  "profileStreakDays": "{days} दिन",
+  "@profileStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
   "profileSkillRadar": "स्किल रडार",
   "profileSkillsFailed": "स्किल लोड विफल: {reason}",
   "@profileSkillsFailed": {
@@ -770,6 +785,16 @@
     }
   },
   "tutorStudyPlan": "अध्ययन योजना",
+  "tutorPlanDay": "दिन {day}",
+  "@tutorPlanDay": {
+    "placeholders": {
+      "day": {
+        "type": "Object"
+      }
+    }
+  },
+  "tutorTrendStable": "स्थिर",
+  "tutorRevision": "दोहराव",
   "tutorChat": "चैट",
   "tutorPlanTab": "योजना",
   "tutorInsights": "विश्लेषण",
@@ -1481,6 +1506,7 @@
   "liveEventSnapshot": "स्नैपशॉट",
   "liveEventNoSnapshot": "अभी तक स्नैपशॉट नहीं — रजिस्टर करके चेक-इन करें, मौजूदा प्रश्न आएगा।",
   "liveEventAnswer": "उत्तर",
+  "liveEventQuestion": "प्रश्न",
   "liveEventQIndex": "प्रश्न क्रमांक",
   "liveEventSubmitAnswer": "उत्तर जमा करें",
   "liveEventNoLeaderboard": "अभी तक कोई लीडरबोर्ड नहीं।",
@@ -2213,6 +2239,8 @@
     }
   },
   "downloadsLastCached": "अंतिम कैश",
+  "downloadsNever": "कभी नहीं",
+  "downloadsDailyMidnight": "दैनिक आधी रात को (ऐप खुला रहने पर)",
   "downloadsAutoDownload": "स्वतः डाउनलोड",
   "downloadsPrefetchNow": "दैनिक पैक अभी प्रीफ़ेच करें",
   "downloadsClearAction": "ऑफ़लाइन सामग्री मिटाएं",
@@ -2270,6 +2298,14 @@
   "gameBestScore": "सर्वश्रेष्ठ अंक",
   "gameBestAccuracy": "सर्वश्रेष्ठ शुद्धता",
   "gameBestTime": "सर्वश्रेष्ठ समय",
+  "gameBestTimeSeconds": "{seconds} सेकंड",
+  "@gameBestTimeSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
   "gameStartLevel": "स्तर शुरू करें",
   "gameNotPlayable": "अभी खेलने योग्य नहीं",
   "gameWorldNoCourse": "इस वर्ल्ड से अभी तक कोई क्विज़ कोर्स नहीं जुड़ा है, इसलिए खेलने को कुछ नहीं है। एडमिन से वर्ल्ड का कोर्स सेट करवाएं।",

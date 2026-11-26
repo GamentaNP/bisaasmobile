@@ -1,10 +1,9 @@
-// ignore_for_file: omit_local_variable_types, unnecessary_cast
-
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/api_response.dart';
+import '../../../../core/network/envelope.dart';
 import '../../../../core/network/pagination.dart';
 import '../models/contest_dto.dart';
 
@@ -18,6 +17,15 @@ class ContestsRemoteDataSource {
   final Dio _dio;
   static const _uuid = Uuid();
 
+  /// A required object payload. Previously several methods fell back to the
+  /// raw envelope body when `data` was unreadable, which fabricated a success
+  /// out of a response the client never understood.
+  Map<String, dynamic> _requireData(
+    Map<String, dynamic>? body,
+    String endpoint,
+  ) =>
+      requireDataMap(body, endpoint: endpoint);
+
   /// `/quiz/contests` is cursor-only. Sending `page` is silently ignored by
   /// the server and yields the first page forever.
   Future<({List<ContestDto> items, Pagination? pagination})> getContests({
@@ -28,165 +36,88 @@ class ContestsRemoteDataSource {
       '/quiz/contests',
       queryParameters: cursorQuery(cursor: cursor, perPage: perPage),
     );
+    const endpoint = '/quiz/contests';
     final body = res.data;
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    Pagination? pagination;
-    if (body['pagination'] is Map<String, dynamic>) {
-      pagination = Pagination.fromJson(body['pagination'] as Map<String, dynamic>);
+      throw const ContractViolation('Empty response body', endpoint: endpoint);
     }
-    List<Map<String, dynamic>> raw = [];
+    Pagination? pagination;
+    final rawPagination = body['pagination'];
+    if (rawPagination is Map<String, dynamic>) {
+      pagination = Pagination.fromJson(rawPagination);
+    }
     final data = body['data'];
+    late final List<Map<String, dynamic>> raw;
     if (data is List) {
-      raw = data.cast<Map<String, dynamic>>();
-    } else if (data is Map<String, dynamic> && data['items'] is List) {
-      raw = (data['items'] as List).cast<Map<String, dynamic>>();
-      if (data['pagination'] is Map<String, dynamic> && pagination == null) {
-        pagination = Pagination.fromJson(data['pagination'] as Map<String, dynamic>);
-      }
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) {
-          if (json is List) return (json as List).cast<Map<String, dynamic>>();
-          if (json is Map<String, dynamic> && json['items'] is List) {
-            return (json['items'] as List).cast<Map<String, dynamic>>();
-          }
-          return <Map<String, dynamic>>[];
-        });
-        raw = env.data ?? [];
-        pagination = env.pagination ?? pagination;
-      } on Object catch (e) {
+      raw = data.whereType<Map<String, dynamic>>().toList();
+    } else if (data is Map<String, dynamic>) {
+      final items = data['items'];
+      if (items is! List) {
         throw ContractViolation(
-          'Contest list payload not understood: $e',
-          endpoint: '/quiz/contests',
+          'Contest list payload not understood: no `items` list',
+          endpoint: endpoint,
         );
       }
-    }
-    if (raw.isEmpty && !body.containsKey('data')) {
-      // No `data` key at all: this is not a contest list.
-      throw const ContractViolation(
-        'Contest list payload not understood',
-        endpoint: '/quiz/contests',
+      raw = items.whereType<Map<String, dynamic>>().toList();
+      final nestedPagination = data['pagination'];
+      if (nestedPagination is Map<String, dynamic> && pagination == null) {
+        pagination = Pagination.fromJson(nestedPagination);
+      }
+    } else {
+      throw ContractViolation(
+        'Contest list payload not understood, got ${data.runtimeType}',
+        endpoint: endpoint,
       );
     }
     return (items: raw.map(ContestDto.fromJson).toList(), pagination: pagination);
   }
 
   Future<ContestDetailDto> getContest(int id) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/contests/$id');
-    final body = res.data;
-    if (body == null) {
-      throw ContractViolation(
-        'Contest payload not understood',
-        endpoint: '/quiz/contests/$id',
-      );
-    }
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) {
-      throw ContractViolation(
-        'Contest data missing',
-        endpoint: '/quiz/contests/$id',
-      );
-    }
-    return ContestDetailDto.fromJson(data);
+    final endpoint = '/quiz/contests/$id';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return ContestDetailDto.fromJson(_requireData(res.data, endpoint));
   }
 
   Future<Map<String, dynamic>> getJoinIntent(int id) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/contests/$id/join-intent');
-    final body = res.data;
-    if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
-    try {
-      final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return env.data!;
-    } catch (_) {}
-    return body;
+    final endpoint = '/quiz/contests/$id/join-intent';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return _requireData(res.data, endpoint);
   }
 
   Future<int> joinContest(int id, {String? joinIntent, String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
     // Canonical transition is PUT /contests/{id}/participation; POST .../join
     // is the alias (routes/api/v1/quiz.php:362-365).
+    final endpoint = '/quiz/contests/$id/participation';
     final res = await _dio.put<Map<String, dynamic>>(
-      '/quiz/contests/$id/participation',
+      endpoint,
       data: {
         if (joinIntent != null && joinIntent.isNotEmpty) 'join_intent': joinIntent,
       },
       options: Options(headers: {'Idempotency-Key': key}),
     );
-    final body = res.data;
-    if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) return 0;
+    final data = _requireData(res.data, endpoint);
     final entryId = data['entry_id'];
     if (entryId is int) return entryId;
-    if (entryId is String) return int.tryParse(entryId) ?? 0;
-    return 0;
+    if (entryId is String) {
+      final parsed = int.tryParse(entryId);
+      if (parsed != null) return parsed;
+    }
+    throw ContractViolation(
+      'Join response missing a usable `entry_id`',
+      endpoint: endpoint,
+    );
   }
 
   Future<ContestAttemptDto> enterContest(int id, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
+    final endpoint = '/quiz/contests/$id/entry';
     final res = await _dio.put<Map<String, dynamic>>(
-      '/quiz/contests/$id/entry',
+      endpoint,
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );
-    final body = res.data;
-    if (body == null) {
-      throw ContractViolation(
-        'Enter contest payload not understood',
-        endpoint: '/quiz/contests/$id/entry',
-      );
-    }
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) {
-      throw ContractViolation(
-        'Enter contest data missing',
-        endpoint: '/quiz/contests/$id/entry',
-      );
-    }
-    return ContestAttemptDto.fromJson(data);
+    return ContestAttemptDto.fromJson(_requireData(res.data, endpoint));
   }
 
   Future<List<ContestEntryDto>> getLeaderboard(int id, {int limit = 20}) async {
@@ -194,56 +125,33 @@ class ContestsRemoteDataSource {
       '/quiz/contests/$id/leaderboard',
       queryParameters: {'limit': limit},
     );
+    final endpoint = '/quiz/contests/$id/leaderboard';
     final body = res.data;
     if (body == null) {
-      throw const ContractViolation('Empty response body');
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
     final data = body['data'];
+    final List<dynamic> rows;
     if (data is List) {
-      return data.cast<Map<String, dynamic>>().map(ContestEntryDto.fromJson).toList();
+      rows = data;
+    } else if (data is Map<String, dynamic> && data['items'] is List) {
+      rows = data['items'] as List;
+    } else {
+      throw ContractViolation(
+        'Contest leaderboard payload not understood, got ${data.runtimeType}',
+        endpoint: endpoint,
+      );
     }
-    // Some responses nest under meta.leaderboard — but data is entries list
-    if (body.containsKey('meta') || body.containsKey('leaderboard')) {
-      // Try envelope fallback
-      try {
-        final env = ApiResponse.fromJson(body, (json) {
-          if (json is List) return (json as List).cast<Map<String, dynamic>>();
-          return <Map<String, dynamic>>[];
-        });
-        if (env.data != null) return env.data!.map(ContestEntryDto.fromJson).toList();
-      } catch (_) {}
-    }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        return <Map<String, dynamic>>[];
-      });
-      return (env.data ?? []).map(ContestEntryDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    return rows
+        .whereType<Map<String, dynamic>>()
+        .map(ContestEntryDto.fromJson)
+        .toList();
   }
 
   Future<ContestRecapDto> getRecap(int id) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/contests/$id/recap');
-    final body = res.data;
-    if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {
-        data = body;
-      }
-    }
-    return ContestRecapDto.fromJson(data ?? {});
+    final endpoint = '/quiz/contests/$id/recap';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return ContestRecapDto.fromJson(_requireData(res.data, endpoint));
   }
 
   Future<void> leaveContest(int id) async {

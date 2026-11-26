@@ -7,8 +7,8 @@ QuizSession fakeSession() => const QuizSession(
       id: 's1',
       title: 'Test',
       questions: [
-        Question(id: 'q1', body: 'Q1?', options: [AnswerOption(id: 'o1', text: 'A', position: 0), AnswerOption(id: 'o2', text: 'B', position: 1)], subjectSlug: 'soil', difficulty: 1, marksPositive: 4, marksNegative: 1),
-        Question(id: 'q2', body: 'Q2?', options: [AnswerOption(id: 'o3', text: 'C', position: 0)], subjectSlug: 'soil', difficulty: 1, marksPositive: 4, marksNegative: 1),
+        Question(id: 'q1', body: 'Q1?', options: [AnswerOption(id: 'o1', text: 'A', position: 0), AnswerOption(id: 'o2', text: 'B', position: 1)], subjectSlug: 'soil', difficulty: 1, marksPositive: 4, marksNegative: 1, type: 'mcq'),
+        Question(id: 'q2', body: 'Q2?', options: [AnswerOption(id: 'o3', text: 'C', position: 0)], subjectSlug: 'soil', difficulty: 1, marksPositive: 4, marksNegative: 1, type: 'mcq'),
       ],
       durationSeconds: 120,
     );

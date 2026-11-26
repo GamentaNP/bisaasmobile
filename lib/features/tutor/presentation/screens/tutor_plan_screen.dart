@@ -290,7 +290,7 @@ class _InsightsTab extends StatelessWidget {
               Text(l10n.tutorProjectedScore, style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text('${s.score.toStringAsFixed(1)} / ${s.maxScore.toStringAsFixed(0)}', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: AppColors.brandDark)),
-              if (s.confidence != null) Text(l10n.tutorConfidence((s.confidence! * 100).toStringAsFixed(0), s.trend ?? 'stable'), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              if (s.confidence != null) Text(l10n.tutorConfidence((s.confidence! * 100).toStringAsFixed(0), s.trend ?? l10n.tutorTrendStable), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               if (s.breakdown.isNotEmpty) ...[
                 const SizedBox(height: 10),
                 ...s.breakdown.entries.take(4).map((e) => Padding(
@@ -352,7 +352,7 @@ class _RevisionsTab extends StatelessWidget {
                   child: ListTile(
                     leading: Icon(r.isOverdue ? Icons.alarm_rounded : Icons.schedule_rounded, color: r.isOverdue ? AppColors.wrongRed : AppColors.xpGold),
                     title: Text(r.title ?? r.questionId, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    subtitle: Text(l10n.tutorTopicDue(r.topic ?? 'Revision', r.dueAt.toLocal().toString().substring(0, 16)), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    subtitle: Text(l10n.tutorTopicDue(r.topic ?? l10n.tutorRevision, r.dueAt.toLocal().toString().substring(0, 16)), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(color: r.isOverdue ? AppColors.wrongRedBg : AppColors.xpGold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),

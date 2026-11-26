@@ -129,9 +129,14 @@ class LeaderboardRemoteDataSource {
     if (data is Map<String, dynamic>) return data;
     try {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-      if (env.data != null) return env.data!;
+      if (env.data is Map<String, dynamic>) return env.data!;
     } catch (_) {}
-    return body;
+    // Returning the whole envelope here used to fabricate a successful submit
+    // out of a body the client never understood.
+    throw const ContractViolation(
+      'Score submit payload not understood',
+      endpoint: '/quiz/leaderboard',
+    );
   }
 
   Future<List<DonorLeaderboardEntry>> getDonationLeaderboard() async {

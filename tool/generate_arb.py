@@ -320,6 +320,8 @@ add(
     "सर्वर ने फ़ील्ड स्कीमा नहीं दी। सामान्य कुंजी/मान संपादक पर वापस जा रहे हैं।",
 )
 add("calcAddField", "Add field", "फाँट थप्नुहोस्", "फ़ील्ड जोड़ें")
+add("calcValidationFailed", "Validation failed", "मान्यता जाँच असफल", "मान्यता जांच विफल")
+add("calcCalculationFailed", "Calculation failed", "गणना असफल", "गणना विफल")
 add("calcInputsCount", "inputs: {count}", "इनपुट: {count}", "इनपुट: {count}", ["count"])
 add("calcAsk", "Ask", "सोध्नुहोस्", "पूछें")
 add("calcApply", "Apply", "प्रयोग गर्नुहोस्", "लागू करें")
@@ -395,6 +397,9 @@ add(
     "अफर र प्रचार। तपाईं नभाएसम्म बन्द।",
     "ऑफ़र और प्रचार। जब तक आप न कहें, बंद रहता है।",
 )
+add("consentRememberedSettings", "Remembered settings", "याद गरिएका सेटिङ", "याद किए गए सेटिंग")
+add("consentAnalyticsShort", "Usage events, tied to a device identifier", "प्रयोग सम्बन्धी घटना, यन्त्र पहिचानसँग जोडिएको", "उपयोग घटनाएं, डिवाइस पहचान से जुड़ी")
+add("consentOffersPromotions", "Offers and promotions", "अफर र प्रचार", "ऑफ़र और प्रचार")
 add("consentSaveChoices", "Save choices", "विकल्प सुरक्षित गर्नुहोस्", "विकल्प सहेजें")
 add("consentNecessaryOnly", "Continue with necessary only", "आवश्यक मात्र राखेर जारी राख्नुहोस्", "केवल आवश्यक के साथ जारी रखें")
 add("consentLoadError", "Could not load your choices", "तपाईंका विकल्प लोड गर्न सकिएन", "आपके विकल्प लोड नहीं हो सके")
@@ -439,6 +444,7 @@ add(
     "तपाईंका दैनिक बहुविकल्पीय प्रश्न तयार छन् — स्ट्रिक जोगाउनुहोस्!",
     "आपके दैनिक बहुविकल्पीय प्रश्न तैयार हैं — स्ट्रीक जारी रखें!",
 )
+add("notificationsFallbackTitle", "Notification", "सूचना", "सूचना")
 
 # ── app-level ────────────────────────────────────────────────────────────────
 add("forceUpdateTitle", "Update required", "अद्यावधिक आवश्यक", "अपडेट आवश्यक")
@@ -504,6 +510,7 @@ add(
 add("quizTryDifferentSearch", "Try a different search", "अर्को खोजी प्रयास गर्नुहोस्", "कोई दूसरी खोज आज़माएं")
 add("quizNoTopicsYet", "No topics yet", "अहिलेसम्म कुनै विषय छैन", "अभी तक कोई विषय नहीं")
 add("quizCourseNoActiveTopics", "This course has no active topics yet.", "यो कोर्समा अहिलेसम्म कुनै सक्रिय विषय छैन।", "इस कोर्स में अभी तक कोई सक्रिय विषय नहीं है।")
+add("quizCourse", "Course", "कोर्स", "कोर्स")
 add(
     "quizFunnelSampleBody",
     "Sample questions from our catalogue. Open the Quiz tab to play a full graded session.",
@@ -544,6 +551,7 @@ add("profileLevel", "Lv {level}", "तह {level}", "स्तर {level}", ["le
 add("profileChangeAvatar", "Change avatar", "अवतार परिवर्तन गर्नुहोस्", "अवतार बदलें")
 add("profileEditAvatar", "Edit avatar", "अवतार सम्पादन गर्नुहोस्", "अवतार संपादित करें")
 add("profileStreak", "Streak", "स्ट्रिक", "स्ट्रीक")
+add("profileStreakDays", "{days}d", "{days} दिन", "{days} दिन", ["days"])
 add("profileSkillRadar", "Skill Radar", "सीप रेडार", "स्किल रडार")
 add("profileSkillsFailed", "Skills failed: {reason}", "सीप लोड असफल: {reason}", "स्किल लोड विफल: {reason}", ["reason"])
 add("profileAchievements", "Achievements", "उपलब्धि", "उपलब्धियां")
@@ -779,6 +787,9 @@ add(
 
 # ── tutor ───────────────────────────────────────────────────────────────────
 add("tutorStudyPlan", "Study Plan", "अध्ययन योजना", "अध्ययन योजना")
+add("tutorPlanDay", "Day {day}", "दिन {day}", "दिन {day}", ["day"])
+add("tutorTrendStable", "stable", "स्थिर", "स्थिर")
+add("tutorRevision", "Revision", "दोहोराइ", "दोहराव")
 add("tutorChat", "Chat", "कुराकानी", "चैट")
 add("tutorPlanTab", "Plan", "योजना", "योजना")
 add("tutorInsights", "Insights", "विश्लेषण", "विश्लेषण")
@@ -1340,6 +1351,7 @@ add(
     "अभी तक स्नैपशॉट नहीं — रजिस्टर करके चेक-इन करें, मौजूदा प्रश्न आएगा।",
 )
 add("liveEventAnswer", "Answer", "उत्तर", "उत्तर")
+add("liveEventQuestion", "Question", "प्रश्न", "प्रश्न")
 add("liveEventQIndex", "Q index", "प्रश्न क्रमाङ्क", "प्रश्न क्रमांक")
 add("liveEventSubmitAnswer", "Submit Answer", "उत्तर पेश गर्नुहोस्", "उत्तर जमा करें")
 add("liveEventNoLeaderboard", "No leaderboard yet.", "अहिलेसम्म लिडरबोर्ड छैन।", "अभी तक कोई लीडरबोर्ड नहीं।")
@@ -1834,6 +1846,8 @@ add(
     ["subjects", "size"],
 )
 add("downloadsLastCached", "Last cached", "अन्तिम क्यास", "अंतिम कैश")
+add("downloadsNever", "Never", "कहिल्यै होइन", "कभी नहीं")
+add("downloadsDailyMidnight", "Daily at midnight (while app open)", "दैनिक मध्यरातमा (एप खुला हुँदा)", "दैनिक आधी रात को (ऐप खुला रहने पर)")
 add("downloadsAutoDownload", "Auto-download", "स्वतः डाउनलोड", "स्वतः डाउनलोड")
 add("downloadsPrefetchNow", "Prefetch daily pack now", "दैनिक प्याक अहिले नै ल्याउनुहोस्", "दैनिक पैक अभी प्रीफ़ेच करें")
 add("downloadsClearAction", "Clear offline content", "अफलाइन सामग्री मेटाउनुहोस्", "ऑफ़लाइन सामग्री मिटाएं")
@@ -1860,6 +1874,7 @@ add("gameSecondsPerQuestion", "{seconds}s per question", "प्रति प्
 add("gameBestScore", "Best score", "उत्कृष्ट अंक", "सर्वश्रेष्ठ अंक")
 add("gameBestAccuracy", "Best accuracy", "उत्कृष्ट शुद्धता", "सर्वश्रेष्ठ शुद्धता")
 add("gameBestTime", "Best time", "उत्कृष्ट समय", "सर्वश्रेष्ठ समय")
+add("gameBestTimeSeconds", "{seconds}s", "{seconds} सेकेन्ड", "{seconds} सेकंड", ["seconds"])
 add("gameStartLevel", "Start level", "तह सुरु गर्नुहोस्", "स्तर शुरू करें")
 add("gameNotPlayable", "Not playable yet", "अहिले खेल्न मिल्दैन", "अभी खेलने योग्य नहीं")
 add(

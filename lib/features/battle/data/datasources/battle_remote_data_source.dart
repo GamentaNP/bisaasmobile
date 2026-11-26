@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../app/localization/l10n.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
 
 /// Verified server routes (`routes/api/v1/quiz.php:546-558` — Firebase
 /// Multiplayer Battles):
@@ -38,17 +39,8 @@ class BattleRemoteDataSource {
   Map<String, dynamic> _requireData(
     Map<String, dynamic>? body,
     String endpoint,
-  ) {
-    if (body == null) {
-      throw ContractViolation('Empty response body', endpoint: endpoint);
-    }
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return data;
-    throw ContractViolation(
-      'Expected an object under `data`',
-      endpoint: endpoint,
-    );
-  }
+  ) =>
+      requireDataMap(body, endpoint: endpoint);
 
   /// `POST /quiz/battle-rooms` — a private lobby owned by the caller.
   ///
@@ -193,9 +185,9 @@ class BattleRemoteDataSource {
     return int.parse(cats.first['id'].toString());
   }
 
-  List<Map<String, dynamic>> _dataList(Map<String, dynamic>? body) {
+  List<Map<String, dynamic>> _dataList(Map<String, dynamic>? body, {String? endpoint}) {
     if (body == null) {
-      throw const ContractViolation('Empty response body');
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
     final data = body['data'];
     if (data is List) return data.whereType<Map<String, dynamic>>().toList();
@@ -203,15 +195,29 @@ class BattleRemoteDataSource {
       final items = data['items'] ?? data['data'];
       if (items is List) return items.whereType<Map<String, dynamic>>().toList();
     }
-    return const [];
+    throw ContractViolation(
+      'Expected a list under `data`, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
   Future<List<Map<String, dynamic>>> getLeaderboard(String id) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/leaderboards/$id');
-    final body = res.data!;
-    if (body['data'] is List) return (body['data'] as List).cast<Map<String, dynamic>>();
-    final envelope = ApiResponse.fromJson(body, (json) => (json as List?)?.cast<Map<String, dynamic>>() ?? []);
-    return envelope.data ?? [];
+    final endpoint = '/quiz/leaderboards/$id';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    final body = res.data;
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
+    final data = body['data'];
+    if (data is List) return data.whereType<Map<String, dynamic>>().toList();
+    if (data is Map<String, dynamic>) {
+      final nested = data['items'] ?? data['leaderboard'] ?? data['entries'];
+      if (nested is List) return nested.whereType<Map<String, dynamic>>().toList();
+    }
+    throw ContractViolation(
+      'Leaderboard payload not understood, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
   /// Joins an open battle. No request body.

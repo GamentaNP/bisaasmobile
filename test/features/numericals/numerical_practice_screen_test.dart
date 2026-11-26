@@ -64,13 +64,13 @@ void main() {
     testWidgets('an unreadable problem is reported, not shown as blank', (tester) async {
       when(() => remote.randomize(5)).thenAnswer((_) async => null);
       await pump(tester);
-      expect(find.textContaining('could not be loaded'), findsOneWidget);
+      expect(find.textContaining('Something went wrong'), findsOneWidget);
     });
 
     testWidgets('a failed load is reported', (tester) async {
       when(() => remote.randomize(5)).thenThrow(StateError('boom'));
       await pump(tester);
-      expect(find.textContaining('Could not load'), findsOneWidget);
+      expect(find.textContaining('Something went wrong'), findsOneWidget);
     });
   });
 
@@ -125,7 +125,7 @@ void main() {
       await tester.tap(find.text('Check answer'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Enter a number'), findsOneWidget);
+      expect(find.text('Enter an answer'), findsOneWidget);
       verifyNever(() => remote.checkAnswer(any(), any()));
     });
 
@@ -137,7 +137,7 @@ void main() {
       await tester.tap(find.text('Check answer'));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Could not grade'), findsOneWidget);
+      expect(find.textContaining('Something went wrong'), findsOneWidget);
       expect(find.textContaining('Not correct'), findsNothing,
           reason: 'a network failure is not the learner being wrong');
     });

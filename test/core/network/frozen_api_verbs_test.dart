@@ -30,7 +30,13 @@ class _Recorder implements HttpClientAdapter {
     return ResponseBody.fromString(
       jsonEncode({
         'success': true,
-        'data': <String, dynamic>{'id': 1, 'questions': <dynamic>[]},
+        // Contest join publishes `data.entry_id`; a response without it is
+        // contract drift, so the shared verb fixture has to carry one.
+        'data': <String, dynamic>{
+          'id': 1,
+          'entry_id': 1,
+          'questions': <dynamic>[],
+        },
       }),
       200,
       headers: {Headers.contentTypeHeader: [Headers.jsonContentType]},

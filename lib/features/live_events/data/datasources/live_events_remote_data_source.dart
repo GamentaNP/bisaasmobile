@@ -1,10 +1,8 @@
-// ignore_for_file: omit_local_variable_types, unnecessary_cast
-
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
 import '../models/live_event_dto.dart';
 
 /// Verified routes:
@@ -16,104 +14,88 @@ class LiveEventsRemoteDataSource {
   final Dio _dio;
   static const _uuid = Uuid();
 
+  /// Reads the envelope's `data` object. Writes nest their payload one level
+  /// deeper (`participant`, `snapshot`) and the DTOs handle that nesting; a
+  /// body the client cannot read now throws rather than being parsed as the
+  /// raw envelope and rendered as a half-empty DTO.
+  Map<String, dynamic> _requireData(
+    Map<String, dynamic>? body,
+    String endpoint,
+  ) =>
+      requireDataMap(body, endpoint: endpoint);
+
   Future<List<LiveEventDto>> getLiveEvents({int limit = 25}) async {
+    const endpoint = '/quiz/live-events';
     final res = await _dio.get<Map<String, dynamic>>(
-      '/quiz/live-events',
+      endpoint,
       queryParameters: {'limit': limit},
     );
     final body = res.data;
     if (body == null) {
-      throw const ContractViolation('Empty response body');
+      throw const ContractViolation('Empty response body', endpoint: endpoint);
     }
-    List<Map<String, dynamic>> raw = [];
     final data = body['data'];
-    if (data is Map<String, dynamic> && data['events'] is List) {
-      raw = (data['events'] as List).cast<Map<String, dynamic>>();
-    } else if (data is List) {
-      raw = data.cast<Map<String, dynamic>>();
-    } else if (body['events'] is List) {
-      raw = (body['events'] as List).cast<Map<String, dynamic>>();
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) {
-          if (json is Map<String, dynamic> && json['events'] is List) {
-            return (json['events'] as List).cast<Map<String, dynamic>>();
-          }
-          if (json is List) return (json as List).cast<Map<String, dynamic>>();
-          return <Map<String, dynamic>>[];
-        });
-        raw = env.data ?? [];
-      } on Object catch (e) {
+    late final List<dynamic> raw;
+    if (data is List) {
+      raw = data;
+    } else if (data is Map<String, dynamic>) {
+      final events = data['events'] ?? data['items'];
+      if (events is List) {
+        raw = events;
+      } else if (data.isEmpty) {
+        // A published empty object is the server saying "no events".
+        raw = const <dynamic>[];
+      } else {
         throw ContractViolation(
-          'Live-events payload not understood: $e',
-          endpoint: '/quiz/live-events',
+          'Live-events payload not understood: no `events` list under `data`',
+          endpoint: endpoint,
         );
       }
-    }
-    if (raw.isEmpty && !body.containsKey('data') && !body.containsKey('events')) {
-      // Neither `data` nor `events`: this is not a live-events list.
-      throw const ContractViolation(
-        'Live-events payload not understood',
-        endpoint: '/quiz/live-events',
+    } else if (body['events'] is List) {
+      raw = body['events'] as List;
+    } else {
+      throw ContractViolation(
+        'Live-events payload not understood, got ${data.runtimeType}',
+        endpoint: endpoint,
       );
     }
-    return raw.map(LiveEventDto.fromJson).toList();
+    // A malformed row must throw instead of silently reducing the count.
+    final rows = <Map<String, dynamic>>[];
+    for (final row in raw) {
+      if (row is! Map<String, dynamic>) {
+        throw ContractViolation(
+          'Expected each live event to be an object, got ${row.runtimeType}',
+          endpoint: endpoint,
+        );
+      }
+      rows.add(row);
+    }
+    return rows.map(LiveEventDto.fromJson).toList();
   }
 
   Future<LiveEventDetailDto> getLiveEvent(int id) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/live-events/$id');
-    final body = res.data;
-    if (body == null) throw Exception('Live event $id not found');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) throw Exception('Live event data missing');
-    return LiveEventDetailDto.fromJson(data);
+    final endpoint = '/quiz/live-events/$id';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return LiveEventDetailDto.fromJson(_requireData(res.data, endpoint));
   }
 
   Future<LiveEventParticipantDto> register(int eventId, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
     // Canonical is PUT /live-events/{id}/registration; POST .../register is
     // the §4.3 alias (routes/api/v1/quiz.php:379-383).
+    final endpoint = '/quiz/live-events/$eventId/registration';
     final res = await _dio.put<Map<String, dynamic>>(
-      '/quiz/live-events/$eventId/registration',
+      endpoint,
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );
-    final body = res.data;
-    if (body == null) throw Exception('Register empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      final d = body['data'] as Map<String, dynamic>;
-      // Could be {participant: {...}} or participant directly
-      if (d['participant'] is Map<String, dynamic>) {
-        data = d['participant'] as Map<String, dynamic>;
-      } else {
-        data = d;
-      }
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        final d = env.data;
-        if (d != null && d['participant'] is Map<String, dynamic>) {
-          data = d['participant'] as Map<String, dynamic>;
-        } else {
-          data = d;
-        }
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) throw Exception('Participant missing');
-    return LiveEventParticipantDto.fromJson(data);
+    // The server publishes `data.participant`; a participant directly under
+    // `data` is also accepted so the existing wire shape stays intact.
+    final data = _requireData(res.data, endpoint);
+    final participant = data['participant'];
+    return LiveEventParticipantDto.fromJson(
+      participant is Map<String, dynamic> ? participant : data,
+    );
   }
 
   Future<void> unregister(int eventId) async {
@@ -122,98 +104,39 @@ class LiveEventsRemoteDataSource {
 
   Future<LiveEventParticipantDto> checkIn(int eventId, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
+    final endpoint = '/quiz/live-events/$eventId/attendance';
     final res = await _dio.put<Map<String, dynamic>>(
-      '/quiz/live-events/$eventId/attendance',
+      endpoint,
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );
-    final body = res.data;
-    if (body == null) throw Exception('Check-in empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      final d = body['data'] as Map<String, dynamic>;
-      if (d['participant'] is Map<String, dynamic>) {
-        data = d['participant'] as Map<String, dynamic>;
-      } else {
-        data = d;
-      }
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        final d = env.data;
-        if (d != null && d['participant'] is Map<String, dynamic>) {
-          data = d['participant'] as Map<String, dynamic>;
-        } else {
-          data = d;
-        }
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) throw Exception('Participant missing');
-    return LiveEventParticipantDto.fromJson(data);
+    final data = _requireData(res.data, endpoint);
+    final participant = data['participant'];
+    return LiveEventParticipantDto.fromJson(
+      participant is Map<String, dynamic> ? participant : data,
+    );
   }
 
   Future<LiveEventSnapshotDto> getSnapshot(int eventId) async {
-    final res = await _dio.get<Map<String, dynamic>>('/quiz/live-events/$eventId/snapshot');
-    final body = res.data;
-    if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      final d = body['data'] as Map<String, dynamic>;
-      // Could be {snapshot: {...}} or snapshot directly
-      if (d['snapshot'] is Map<String, dynamic>) {
-        // Keep the whole data map but snapshot dto handles nesting
-        data = d;
-      } else {
-        data = d;
-      }
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {
-        data = body;
-      }
-    }
-    return LiveEventSnapshotDto.fromJson(data ?? {});
+    final endpoint = '/quiz/live-events/$eventId/snapshot';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    // The DTO handles the `{snapshot: {...}}` nesting itself; pass the whole
+    // published `data` object, never an invented empty one.
+    return LiveEventSnapshotDto.fromJson(_requireData(res.data, endpoint));
   }
 
   Future<LiveEventParticipantDto> submitAnswer(int eventId, {required int questionIndex, required String answer, String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
+    final endpoint = '/quiz/live-events/$eventId/answers';
     final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/live-events/$eventId/answers',
+      endpoint,
       data: {'question_index': questionIndex, 'answer': answer},
       options: Options(headers: {'Idempotency-Key': key}),
     );
-    final body = res.data;
-    if (body == null) throw Exception('Answer empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      final d = body['data'] as Map<String, dynamic>;
-      if (d['participant'] is Map<String, dynamic>) {
-        data = d['participant'] as Map<String, dynamic>;
-      } else {
-        data = d;
-      }
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
-        final d = env.data;
-        if (d != null && d['participant'] is Map<String, dynamic>) {
-          data = d['participant'] as Map<String, dynamic>;
-        } else {
-          data = d;
-        }
-      } catch (_) {
-        data = body;
-      }
-    }
-    if (data == null) throw Exception('Participant missing');
-    return LiveEventParticipantDto.fromJson(data);
+    final data = _requireData(res.data, endpoint);
+    final participant = data['participant'];
+    return LiveEventParticipantDto.fromJson(
+      participant is Map<String, dynamic> ? participant : data,
+    );
   }
 }

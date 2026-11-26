@@ -1,4 +1,5 @@
 import 'package:bisaasmobile/shared/utils/wire_coercion.dart';
+import '../../../../app/localization/l10n.dart';
 import '../../domain/entities/quiz_catalog.dart';
 
 class QuizCourseDto {
@@ -14,7 +15,7 @@ class QuizCourseDto {
 
   factory QuizCourseDto.fromJson(Map<String, dynamic> j) => QuizCourseDto(
         id: (j['id'] ?? '').toString(),
-        title: (j['name'] ?? j['title'] ?? 'Course').toString(),
+        title: (j['name'] ?? j['title'] ?? appL10n().quizCourse).toString(),
         description: (j['description'] ?? '').toString(),
       );
 

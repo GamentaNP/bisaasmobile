@@ -49,15 +49,12 @@ class EconomyRemoteDataSource {
           .map(DonorLeaderboardEntryDto.fromJson)
           .toList();
     }
-    // Sometimes the envelope data is directly a list.
-    final direct = body['data'];
-    if (direct is List) {
-      return direct
-          .whereType<Map<String, dynamic>>()
-          .map(DonorLeaderboardEntryDto.fromJson)
-          .toList();
-    }
-    return const [];
+    // An object payload with none of the published row keys is a body we do
+    // not understand — not an empty donor wall.
+    throw const ContractViolation(
+      'Donation leaderboard payload not understood',
+      endpoint: '/donations/leaderboard',
+    );
   }
 
   Future<List<DonationFeedEntryDto>> getDonationFeed() async {
@@ -77,14 +74,12 @@ class EconomyRemoteDataSource {
           .map(DonationFeedEntryDto.fromJson)
           .toList();
     }
-    final direct = body['data'];
-    if (direct is List) {
-      return direct
-          .whereType<Map<String, dynamic>>()
-          .map(DonationFeedEntryDto.fromJson)
-          .toList();
-    }
-    return const [];
+    // An object payload with none of the published row keys is a body we do
+    // not understand — not an empty donation feed.
+    throw const ContractViolation(
+      'Donation feed payload not understood',
+      endpoint: '/donations/feed',
+    );
   }
 
   /// Freezes the streak with coins.

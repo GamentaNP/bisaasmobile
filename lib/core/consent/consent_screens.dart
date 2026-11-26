@@ -238,11 +238,22 @@ class PrivacySettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.lock_outline),
               enabled: false,
             ),
-            for (final entry in const [
-              (ConsentCategory.functional, 'Functional', 'Remembered settings'),
-              (ConsentCategory.analytics, 'Analytics', 'Usage events, tied to '
-                  'a device identifier'),
-              (ConsentCategory.marketing, 'Marketing', 'Offers and promotions'),
+            for (final entry in [
+              (
+                ConsentCategory.functional,
+                l10n.consentFunctional,
+                l10n.consentRememberedSettings,
+              ),
+              (
+                ConsentCategory.analytics,
+                l10n.consentAnalytics,
+                l10n.consentAnalyticsShort,
+              ),
+              (
+                ConsentCategory.marketing,
+                l10n.consentMarketing,
+                l10n.consentOffersPromotions,
+              ),
             ])
               SwitchListTile(
                 title: Text(entry.$2),

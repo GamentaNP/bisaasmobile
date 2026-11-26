@@ -203,7 +203,7 @@ class GameLevelIntroSheet extends StatelessWidget {
                       if (level.bestTimeSeconds != null)
                         _BestStat(
                           label: l10n.gameBestTime,
-                          value: '${level.bestTimeSeconds}s',
+                          value: l10n.gameBestTimeSeconds(level.bestTimeSeconds!),
                         ),
                     ],
                   ),

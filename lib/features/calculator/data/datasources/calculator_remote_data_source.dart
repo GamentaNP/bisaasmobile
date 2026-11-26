@@ -71,17 +71,24 @@ class CalculatorRemoteDataSource {
     String domain,
     String slug,
   ) async {
-    final res = await _dio.get<Map<String, dynamic>>('/$domain/$slug/history');
-    final envelope = ApiResponse.fromJson(
-      res.data!,
-      (json) => (json as List?)?.cast<Map<String, dynamic>>() ?? [],
-    );
-    // paginated envelope may nest items under data
-    if (envelope.data != null) return envelope.data!;
-    if (res.data!['data'] is List) {
-      return (res.data!['data'] as List).cast<Map<String, dynamic>>();
+    final endpoint = '/$domain/$slug/history';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    final body = res.data;
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
-    return [];
+    final data = body['data'];
+    if (data is List) return data.whereType<Map<String, dynamic>>().toList();
+    if (data is Map<String, dynamic>) {
+      final nested = data['items'] ?? data['entries'] ?? data['history'];
+      if (nested is List) {
+        return nested.whereType<Map<String, dynamic>>().toList();
+      }
+    }
+    throw ContractViolation(
+      'History payload not understood, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
   // ── Share ───────────────────────────────────────────────────────────────────

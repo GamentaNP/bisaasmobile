@@ -1,10 +1,10 @@
-// ignore_for_file: use_null_aware_elements, unnecessary_cast
+// ignore_for_file: use_null_aware_elements
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../app/localization/l10n.dart';
-import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
 import '../models/learning_dto.dart';
 
 /// Server-verified routes (php artisan route:list --path=api/v1/learning in C:\laragon\www\bisaas):
@@ -22,66 +22,51 @@ class LearningRemoteDataSource {
 
   Map<String, String> _idempotencyHeader([String? key]) => {'Idempotency-Key': key ?? _uuid.v4()};
 
+  /// Reads a collection endpoint's rows. The server publishes either a bare
+  /// `data` list or a named list inside `data`; anything else is contract
+  /// drift and throws, so an unreadable body can never render as "0 rows".
+  List<Map<String, dynamic>> _rows(
+    Map<String, dynamic>? body,
+    String endpoint,
+    List<String> keys,
+  ) {
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
+    final data = body['data'];
+    if (data is List) return data.whereType<Map<String, dynamic>>().toList();
+    if (data is Map<String, dynamic>) {
+      for (final key in keys) {
+        final nested = data[key];
+        if (nested is List) {
+          return nested.whereType<Map<String, dynamic>>().toList();
+        }
+      }
+    }
+    throw ContractViolation(
+      'Expected a list under `data`, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
+  }
+
   // ── Tracks ──────────────────────────────────────────────────────────────────
 
   Future<List<LearningTrackDto>> getTracks() async {
-    final res = await _dio.get<Map<String, dynamic>>('/learning/tracks');
-    final body = res.data;
-    if (body == null) {
-      throw const ContractViolation('Empty response body');
-    }
-    final data = body['data'];
-    if (data is List) {
-      return data.whereType<Map<String, dynamic>>().map(LearningTrackDto.fromJson).toList();
-    }
-    if (data is Map<String, dynamic>) {
-      // envelope fallback: data.tracks
-      final nested = data['tracks'] ?? data['data'];
-      if (nested is List) {
-        return nested.whereType<Map<String, dynamic>>().map(LearningTrackDto.fromJson).toList();
-      }
-      // A map with no list inside is a body we do not understand, not an
-      // empty catalogue.
-      throw const ContractViolation(
-        'Learning tracks payload not understood',
-        endpoint: '/learning/tracks',
-      );
-    }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        if (json is Map<String, dynamic> && json['tracks'] is List) {
-          return (json['tracks'] as List).cast<Map<String, dynamic>>();
-        }
-        return <Map<String, dynamic>>[];
-      });
-      return (env.data ?? []).map(LearningTrackDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    const endpoint = '/learning/tracks';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return _rows(res.data, endpoint, const ['tracks', 'data', 'items'])
+        .map(LearningTrackDto.fromJson)
+        .toList();
   }
 
   // ── Goals ───────────────────────────────────────────────────────────────────
 
   Future<List<LearningGoalDto>> getGoals() async {
-    final res = await _dio.get<Map<String, dynamic>>('/learning/goals');
-    final body = res.data;
-    if (body == null) {
-      throw const ContractViolation('Empty response body');
-    }
-    final data = body['data'];
-    if (data is List) {
-      return data.whereType<Map<String, dynamic>>().map(LearningGoalDto.fromJson).toList();
-    }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        return <Map<String, dynamic>>[];
-      });
-      return (env.data ?? []).map(LearningGoalDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    const endpoint = '/learning/goals';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return _rows(res.data, endpoint, const ['goals', 'items', 'data'])
+        .map(LearningGoalDto.fromJson)
+        .toList();
   }
 
   Future<LearningGoalDto> createGoal({
@@ -104,50 +89,37 @@ class LearningRemoteDataSource {
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
     final body = res.data;
-    if (body == null) throw Exception('Create goal response empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {}
+    if (body == null) {
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/learning/goals',
+      );
     }
-    if (data == null) throw Exception('Create goal data missing');
-    return LearningGoalDto.fromJson(data);
+    return LearningGoalDto.fromJson(
+      requireDataMap(body, endpoint: '/learning/goals'),
+    );
   }
 
   Future<LearningGoalDto> getGoal(int goalId) async {
-    final res = await _dio.get<Map<String, dynamic>>('/learning/goals/$goalId');
+    final endpoint = '/learning/goals/$goalId';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
     final body = res.data;
-    if (body == null) throw Exception('Goal not found: $goalId');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-      data = env.data;
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
-    if (data == null) throw Exception('Goal data missing for $goalId');
-    return LearningGoalDto.fromJson(data);
+    return LearningGoalDto.fromJson(requireDataMap(body, endpoint: endpoint));
   }
 
   Future<LearningGoalReadinessDto> getGoalReadiness(int goalId) async {
     final res = await _dio.get<Map<String, dynamic>>('/learning/goals/$goalId/readiness');
+    final endpoint = '/learning/goals/$goalId/readiness';
     final body = res.data;
-    if (body == null) throw Exception('Readiness response empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-        data = env.data;
-      } catch (_) {}
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
-    if (data == null) throw Exception('Readiness data missing');
-    return LearningGoalReadinessDto.fromJson(data);
+    return LearningGoalReadinessDto.fromJson(
+      requireDataMap(body, endpoint: endpoint),
+    );
   }
 
   Future<void> deleteGoal(int goalId) async {
@@ -168,21 +140,7 @@ class LearningRemoteDataSource {
     // The controller returns success(data:null) when there is no active goal —
     // that is a real answer, not a failure.
     if (body['data'] == null) return null;
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      try {
-        final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-        data = env.data;
-      } on Object catch (e) {
-        throw ContractViolation(
-          'Learning today payload not understood: $e',
-          endpoint: '/learning/today',
-        );
-      }
-    }
-    if (data == null) return null;
+    final data = requireDataMap(body, endpoint: '/learning/today');
     // If data is empty map, treat as no plan
     if (data.isEmpty) return null;
     return DailyPlanDto.fromJson(data);
@@ -194,46 +152,22 @@ class LearningRemoteDataSource {
       data: {'item_index': itemIndex},
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
+    final endpoint = '/learning/today/$planId/complete-item';
     final body = res.data;
-    if (body == null) throw Exception('Complete item response empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-      data = env.data;
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
-    if (data == null) throw Exception('Complete item data missing');
-    return DailyPlanDto.fromJson(data);
+    return DailyPlanDto.fromJson(requireDataMap(body, endpoint: endpoint));
   }
 
   // ── Reviews (Spaced Repetition) ────────────────────────────────────────────
 
   Future<List<ReviewItemDto>> getReviewsDue() async {
-    final res = await _dio.get<Map<String, dynamic>>('/learning/reviews/due');
-    final body = res.data;
-    if (body == null) {
-      throw const ContractViolation('Empty response body');
-    }
-    final data = body['data'];
-    if (data is List) {
-      return data.whereType<Map<String, dynamic>>().map(ReviewItemDto.fromJson).toList();
-    }
-    if (data is Map<String, dynamic> && data['reviews'] is List) {
-      return (data['reviews'] as List).whereType<Map<String, dynamic>>().map(ReviewItemDto.fromJson).toList();
-    }
-    try {
-      final env = ApiResponse.fromJson(body, (json) {
-        if (json is List) return (json as List).cast<Map<String, dynamic>>();
-        if (json is Map<String, dynamic> && json['reviews'] is List) {
-          return (json['reviews'] as List).cast<Map<String, dynamic>>();
-        }
-        return <Map<String, dynamic>>[];
-      });
-      return (env.data ?? []).map(ReviewItemDto.fromJson).toList();
-    } catch (e) {
-      throw toApiException(e);
-    }
+    const endpoint = '/learning/reviews/due';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return _rows(res.data, endpoint, const ['reviews', 'items', 'data'])
+        .map(ReviewItemDto.fromJson)
+        .toList();
   }
 
   /// Grade a review — outcome one of again|hard|good|easy (FSRS). Uses Idempotency-Key.
@@ -245,18 +179,15 @@ class LearningRemoteDataSource {
       data: {'outcome': outcome},
       options: Options(headers: _idempotencyHeader(idempotencyKey)),
     );
+    final endpoint = '/learning/reviews/$reviewId/grade';
     final body = res.data;
-    if (body == null) throw Exception('Grade response empty');
-    Map<String, dynamic>? data;
-    if (body['data'] is Map<String, dynamic>) {
-      data = body['data'] as Map<String, dynamic>;
-    } else {
-      final env = ApiResponse.fromJson(body, (j) => j as Map<String, dynamic>?);
-      data = env.data;
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
-    if (data == null) throw Exception('Grade data missing');
+    final payload = requireDataMap(body, endpoint: endpoint);
     // Grade response shape is sparse {id, due_at, interval_index, state, lapses}
     // Need to preserve knowledge_atom_id if not returned — fallback to input id
+    var data = payload;
     if (data['knowledge_atom_id'] == null) {
       data = {...data, 'knowledge_atom_id': 0};
     }

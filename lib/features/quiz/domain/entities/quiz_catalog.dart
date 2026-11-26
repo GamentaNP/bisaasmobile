@@ -4,6 +4,10 @@
 /// factories on the catalog rows are kept as a compatibility shim for the
 /// intro screen, which builds a fallback row from local data; every network
 /// path goes through the DTO + repository instead.
+library;
+
+import '../../../../app/localization/l10n.dart';
+
 class QuizCourseEntry {
   const QuizCourseEntry({
     required this.id,
@@ -17,7 +21,7 @@ class QuizCourseEntry {
 
   factory QuizCourseEntry.fromJson(Map<String, dynamic> j) => QuizCourseEntry(
         id: (j['id'] ?? '').toString(),
-        title: (j['name'] ?? j['title'] ?? 'Course').toString(),
+        title: (j['name'] ?? j['title'] ?? appL10n().quizCourse).toString(),
         description: (j['description'] ?? '').toString(),
       );
 }

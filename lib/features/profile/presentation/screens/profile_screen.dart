@@ -207,7 +207,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Stats grid — Streak (not quiz count), XP, Coins
           Row(
             children: [
-              _StatChip(label: l10n.profileStreak, value: '${user?.streakDays ?? 0}d', icon: Icons.local_fire_department_rounded, color: AppColors.streakOrange),
+              _StatChip(label: l10n.profileStreak, value: l10n.profileStreakDays(user?.streakDays ?? 0), icon: Icons.local_fire_department_rounded, color: AppColors.streakOrange),
               const SizedBox(width: 8),
               _StatChip(label: l10n.quizXp, value: '${user?.xp ?? 0}', icon: Icons.bolt_rounded, color: AppColors.xpGold),
               const SizedBox(width: 8),

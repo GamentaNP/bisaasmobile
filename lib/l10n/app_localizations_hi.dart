@@ -549,6 +549,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get calcAddField => 'फ़ील्ड जोड़ें';
 
   @override
+  String get calcValidationFailed => 'मान्यता जांच विफल';
+
+  @override
+  String get calcCalculationFailed => 'गणना विफल';
+
+  @override
   String calcInputsCount(Object count) {
     return 'इनपुट: $count';
   }
@@ -663,6 +669,15 @@ class AppLocalizationsHi extends AppLocalizations {
       'ऑफ़र और प्रचार। जब तक आप न कहें, बंद रहता है।';
 
   @override
+  String get consentRememberedSettings => 'याद किए गए सेटिंग';
+
+  @override
+  String get consentAnalyticsShort => 'उपयोग घटनाएं, डिवाइस पहचान से जुड़ी';
+
+  @override
+  String get consentOffersPromotions => 'ऑफ़र और प्रचार';
+
+  @override
   String get consentSaveChoices => 'विकल्प सहेजें';
 
   @override
@@ -727,6 +742,9 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get notificationDailyBody =>
       'आपके दैनिक बहुविकल्पीय प्रश्न तैयार हैं — स्ट्रीक जारी रखें!';
+
+  @override
+  String get notificationsFallbackTitle => 'सूचना';
 
   @override
   String get forceUpdateTitle => 'अपडेट आवश्यक';
@@ -855,6 +873,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'इस कोर्स में अभी तक कोई सक्रिय विषय नहीं है।';
 
   @override
+  String get quizCourse => 'कोर्स';
+
+  @override
   String get quizFunnelSampleBody =>
       'हमारे कैटलॉग से नमूना प्रश्न। पूर्ण अंक वाला सत्र खेलने के लिए क्विज़ टैब खोलें।';
 
@@ -933,6 +954,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get profileStreak => 'स्ट्रीक';
+
+  @override
+  String profileStreakDays(Object days) {
+    return '$days दिन';
+  }
 
   @override
   String get profileSkillRadar => 'स्किल रडार';
@@ -1258,6 +1284,17 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get tutorStudyPlan => 'अध्ययन योजना';
+
+  @override
+  String tutorPlanDay(Object day) {
+    return 'दिन $day';
+  }
+
+  @override
+  String get tutorTrendStable => 'स्थिर';
+
+  @override
+  String get tutorRevision => 'दोहराव';
 
   @override
   String get tutorChat => 'चैट';
@@ -2197,6 +2234,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get liveEventAnswer => 'उत्तर';
 
   @override
+  String get liveEventQuestion => 'प्रश्न';
+
+  @override
   String get liveEventQIndex => 'प्रश्न क्रमांक';
 
   @override
@@ -3017,6 +3057,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get downloadsLastCached => 'अंतिम कैश';
 
   @override
+  String get downloadsNever => 'कभी नहीं';
+
+  @override
+  String get downloadsDailyMidnight => 'दैनिक आधी रात को (ऐप खुला रहने पर)';
+
+  @override
   String get downloadsAutoDownload => 'स्वतः डाउनलोड';
 
   @override
@@ -3091,6 +3137,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get gameBestTime => 'सर्वश्रेष्ठ समय';
+
+  @override
+  String gameBestTimeSeconds(Object seconds) {
+    return '$seconds सेकंड';
+  }
 
   @override
   String get gameStartLevel => 'स्तर शुरू करें';

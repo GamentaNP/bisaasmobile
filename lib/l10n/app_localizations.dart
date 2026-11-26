@@ -1042,6 +1042,18 @@ abstract class AppLocalizations {
   /// **'Add field'**
   String get calcAddField;
 
+  /// No description provided for @calcValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation failed'**
+  String get calcValidationFailed;
+
+  /// No description provided for @calcCalculationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculation failed'**
+  String get calcCalculationFailed;
+
   /// No description provided for @calcInputsCount.
   ///
   /// In en, this message translates to:
@@ -1228,6 +1240,24 @@ abstract class AppLocalizations {
   /// **'Offers and promotions. Off unless you ask for it.'**
   String get consentMarketingBody;
 
+  /// No description provided for @consentRememberedSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembered settings'**
+  String get consentRememberedSettings;
+
+  /// No description provided for @consentAnalyticsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage events, tied to a device identifier'**
+  String get consentAnalyticsShort;
+
+  /// No description provided for @consentOffersPromotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers and promotions'**
+  String get consentOffersPromotions;
+
   /// No description provided for @consentSaveChoices.
   ///
   /// In en, this message translates to:
@@ -1347,6 +1377,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your daily MCQs are waiting — keep the streak alive!'**
   String get notificationDailyBody;
+
+  /// No description provided for @notificationsFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notificationsFallbackTitle;
 
   /// No description provided for @forceUpdateTitle.
   ///
@@ -1564,6 +1600,12 @@ abstract class AppLocalizations {
   /// **'This course has no active topics yet.'**
   String get quizCourseNoActiveTopics;
 
+  /// No description provided for @quizCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get quizCourse;
+
   /// No description provided for @quizFunnelSampleBody.
   ///
   /// In en, this message translates to:
@@ -1695,6 +1737,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Streak'**
   String get profileStreak;
+
+  /// No description provided for @profileStreakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d'**
+  String profileStreakDays(Object days);
 
   /// No description provided for @profileSkillRadar.
   ///
@@ -2271,6 +2319,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Study Plan'**
   String get tutorStudyPlan;
+
+  /// No description provided for @tutorPlanDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String tutorPlanDay(Object day);
+
+  /// No description provided for @tutorTrendStable.
+  ///
+  /// In en, this message translates to:
+  /// **'stable'**
+  String get tutorTrendStable;
+
+  /// No description provided for @tutorRevision.
+  ///
+  /// In en, this message translates to:
+  /// **'Revision'**
+  String get tutorRevision;
 
   /// No description provided for @tutorChat.
   ///
@@ -3830,6 +3896,12 @@ abstract class AppLocalizations {
   /// **'Answer'**
   String get liveEventAnswer;
 
+  /// No description provided for @liveEventQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get liveEventQuestion;
+
   /// No description provided for @liveEventQIndex.
   ///
   /// In en, this message translates to:
@@ -5155,6 +5227,18 @@ abstract class AppLocalizations {
   /// **'Last cached'**
   String get downloadsLastCached;
 
+  /// No description provided for @downloadsNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get downloadsNever;
+
+  /// No description provided for @downloadsDailyMidnight.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily at midnight (while app open)'**
+  String get downloadsDailyMidnight;
+
   /// No description provided for @downloadsAutoDownload.
   ///
   /// In en, this message translates to:
@@ -5286,6 +5370,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Best time'**
   String get gameBestTime;
+
+  /// No description provided for @gameBestTimeSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s'**
+  String gameBestTimeSeconds(Object seconds);
 
   /// No description provided for @gameStartLevel.
   ///

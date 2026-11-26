@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
 import '../../domain/entities/book.dart';
 import '../models/book_dto.dart';
 
@@ -40,27 +40,36 @@ class BookRemoteDataSource {
 
   static const _uuid = Uuid();
 
-  Map<String, dynamic>? _data(Map<String, dynamic>? body) {
+  /// A singular payload. A published `data: null` is a real "no record"
+  /// answer; any other shape is contract drift and throws.
+  Map<String, dynamic>? _data(Map<String, dynamic>? body, {String? endpoint}) {
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
-    final envelope = ApiResponse.fromJson(body, (json) => json);
-    final data = envelope.data;
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
+    final data = body['data'];
+    if (data == null && body.containsKey('data')) return null;
     if (data is Map<String, dynamic>) return data;
-    if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
-    return null;
+    throw ContractViolation(
+      'Expected `data` to be an object, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
-  List<dynamic> _list(Map<String, dynamic>? body) {
+  /// A collection payload. Only a published empty list means zero rows.
+  List<dynamic> _list(Map<String, dynamic>? body, {String? endpoint}) {
     if (body == null) {
-      throw const ContractViolation('Empty response body');
+      throw ContractViolation('Empty response body', endpoint: endpoint);
     }
     final data = body['data'];
     if (data is List) return data;
-    if (data is Map && data['items'] is List) return data['items'] as List;
-    return const [];
+    if (data is Map<String, dynamic>) {
+      final nested = data['items'] ?? data['data'];
+      if (nested is List) return nested;
+    }
+    throw ContractViolation(
+      'Expected a list under `data`, got ${data.runtimeType}',
+      endpoint: endpoint,
+    );
   }
 
   // ── Catalog (public) ───────────────────────────────────────────────────────
@@ -80,19 +89,36 @@ class BookRemoteDataSource {
         'per_page': perPage,
       },
     );
-    return _parseBooks(_list(res.data));
+    return _parseBooks(_list(res.data, endpoint: '/books'));
   }
 
   Future<Book?> getBook(String slug) async {
-    final res = await _dio.get<Map<String, dynamic>>('/books/$slug');
-    final parsed = _parseBooks(_list(res.data), single: _data(res.data));
-    return parsed.isEmpty ? null : parsed.first;
+    final endpoint = '/books/$slug';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    final body = res.data;
+    if (body == null) {
+      throw ContractViolation('Empty response body', endpoint: endpoint);
+    }
+    final data = body['data'];
+    if (data == null && body.containsKey('data')) return null;
+    // The detail route may also hand back a one-row list.
+    if (data is List) {
+      final parsed = _parseBooks(data);
+      if (parsed.isNotEmpty) return parsed.first;
+      return null;
+    }
+    final dto = BookDto.fromJson(requireDataMap(body, endpoint: endpoint));
+    if (dto == null) {
+      throw ContractViolation('Book payload not understood', endpoint: endpoint);
+    }
+    return dto.book;
   }
 
   Future<List<BookChapter>> getChapters(String slug) async {
-    final res = await _dio.get<Map<String, dynamic>>('/books/$slug/chapters');
+    final endpoint = '/books/$slug/chapters';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
     final out = <BookChapter>[];
-    for (final item in _list(res.data)) {
+    for (final item in _list(res.data, endpoint: endpoint)) {
       if (item is! Map) continue;
       final dto = BookChapterDto.fromJson(item.cast<String, dynamic>());
       if (dto != null) out.add(dto.chapter);
@@ -170,7 +196,7 @@ class BookRemoteDataSource {
   Future<List<BookHighlight>> getMyHighlights() async {
     final res = await _dio.get<Map<String, dynamic>>('/book/highlights');
     final out = <BookHighlight>[];
-    for (final item in _list(res.data)) {
+    for (final item in _list(res.data, endpoint: '/book/highlights')) {
       if (item is! Map) continue;
       final dto = BookHighlightDto.fromJson(item.cast<String, dynamic>());
       if (dto != null) out.add(dto.highlight);

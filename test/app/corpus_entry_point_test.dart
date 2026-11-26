@@ -59,10 +59,10 @@ void main() {
     // inline widgets, so assert on that table. A literal `push('/books')` in the
     // screen body would mean the tile is no longer gated on having content,
     // which is the bug this file was rewritten for.
-    for (final (code, label, route) in const [
-      ('library', 'Library', '/library'),
-      ('books', 'Books', '/books'),
-      ('syllabus', 'Syllabus', '/syllabus'),
+    for (final (code, label, route, getter) in const [
+      ('library', 'Library', '/library', 'commonLibrary'),
+      ('books', 'Books', '/books', 'booksTitle'),
+      ('syllabus', 'Syllabus', '/syllabus', 'syllabusTitle'),
     ]) {
       test('it offers $label as a distinct, correctly named entry', () {
         expect(
@@ -70,11 +70,14 @@ void main() {
           contains("code: '$code'"),
           reason: 'the $label corpus must be declared as its own tile',
         );
+        // Labels come from the ARB, never a literal: a hardcoded English
+        // label would reach Nepali/Hindi readers verbatim. The switch arm is
+        // the contract that the tile names the right resource.
         expect(
           courses,
-          contains("label: '$label'"),
+          contains("'$code' => l10n.$getter"),
           reason:
-              'on Bisaas "$label" must name the $label resource, not something else',
+              'on Bisaas "$label" must name the $label resource in every locale',
         );
         expect(
           courses,

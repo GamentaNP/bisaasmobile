@@ -337,7 +337,7 @@ class _SnapshotCard extends StatelessWidget {
           (cq['points'] ?? '') as String,
         ), style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
-            Text((cq['question_text'] ?? cq['questionText'] ?? cq['text'] ?? 'Question').toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text((cq['question_text'] ?? cq['questionText'] ?? cq['text'] ?? l10n.liveEventQuestion).toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
             if (cq['options'] is List) ...[
               const SizedBox(height: 8),
               ...((cq['options'] as List).map((o) {

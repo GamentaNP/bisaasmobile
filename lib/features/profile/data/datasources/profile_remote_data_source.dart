@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/network/api_response.dart';
+import '../../../../core/network/api_failure.dart';
+import '../../../../core/network/envelope.dart';
 import '../models/skill_axes_dto.dart';
 
 class ProfileRemoteDataSource {
@@ -10,11 +11,28 @@ class ProfileRemoteDataSource {
 
   /// `GET /profile/skills` — per-category graded accuracy axes.
   Future<List<SkillAxis>> getSkills() async {
-    final res = await _dio.get<Map<String, dynamic>>('/profile/skills');
-    final envelope = ApiResponse.fromJson(res.data!, (json) => json);
-    final data = envelope.data;
-    final axes = (data is Map<String, dynamic> ? data['axes'] : null) as List? ?? const [];
-    return axes.cast<Map<String, dynamic>>().map(SkillAxis.fromJson).toList();
+    const endpoint = '/profile/skills';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    final data = requireDataMap(res.data, endpoint: endpoint);
+    final axes = data['axes'];
+    if (axes is! List) {
+      // A missing `axes` list is drift, not "the user has no skill axes".
+      throw const ContractViolation(
+        'Expected `axes` to be an array',
+        endpoint: endpoint,
+      );
+    }
+    final out = <SkillAxis>[];
+    for (final axis in axes) {
+      if (axis is! Map<String, dynamic>) {
+        throw const ContractViolation(
+          'Expected each skill axis to be an object',
+          endpoint: endpoint,
+        );
+      }
+      out.add(SkillAxis.fromJson(axis));
+    }
+    return out;
   }
 
   /// `POST /me/avatar` — multipart upload; returns the resolved avatar URL.
@@ -22,10 +40,17 @@ class ProfileRemoteDataSource {
     final form = FormData.fromMap(<String, dynamic>{
       'avatar': await MultipartFile.fromFile(file.path, filename: file.name),
     });
-    final res = await _dio.post<Map<String, dynamic>>('/me/avatar', data: form);
-    final envelope = ApiResponse.fromJson(res.data!, (json) => json);
-    final data = envelope.data;
-    return data is Map<String, dynamic> ? ((data['avatar_url'] as String?) ?? '') : '';
+    const endpoint = '/me/avatar';
+    final res = await _dio.post<Map<String, dynamic>>(endpoint, data: form);
+    final data = requireDataMap(res.data, endpoint: endpoint);
+    final url = data['avatar_url'];
+    if (url is! String || url.isEmpty) {
+      throw const ContractViolation(
+        'Avatar upload response missing `avatar_url`',
+        endpoint: endpoint,
+      );
+    }
+    return url;
   }
 
   /// `PATCH /me` — update editable profile fields (currently name). Server

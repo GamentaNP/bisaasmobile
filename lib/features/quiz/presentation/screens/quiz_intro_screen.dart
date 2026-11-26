@@ -34,10 +34,15 @@ class QuizIntroScreen extends ConsumerStatefulWidget {
 
 class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
   late Future<QuizListEntry> _future;
+  bool _loadStarted = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // `_load` reads AppLocalizations from the context, which is only legal
+    // after initState has completed. Start it once here instead.
+    if (_loadStarted) return;
+    _loadStarted = true;
     _future = _load();
   }
 
@@ -77,15 +82,39 @@ class _QuizIntroScreenState extends ConsumerState<QuizIntroScreen> {
     final qp = <String, dynamic>{'per_page': 100};
     final catId = int.tryParse(widget.categoryId ?? '');
     if (catId != null) qp['category_id'] = catId;
+    final questionsEndpoint = '/quiz/courses/${widget.quizId}/questions';
     final qRes = await dio.get<Map<String, dynamic>>(
-      '/quiz/courses/${widget.quizId}/questions',
+      questionsEndpoint,
       queryParameters: qp,
     );
-    final body = qRes.data ?? const <String, dynamic>{};
+    final body = qRes.data;
+    if (body == null) {
+      throw ContractViolation(
+        'Empty question page response',
+        endpoint: questionsEndpoint,
+      );
+    }
     final data = body['data'];
-    final items = data is Map<String, dynamic>
-        ? (data['items'] as List? ?? const [])
-        : (data is List ? data : const <dynamic>[]);
+    // A page with zero published rows is a real answer; a body in any other
+    // shape is contract drift and must not render as "0 questions".
+    final List<dynamic> items;
+    if (data is List) {
+      items = data;
+    } else if (data is Map<String, dynamic>) {
+      final rows = data['items'] ?? data['questions'];
+      if (rows is! List) {
+        throw ContractViolation(
+          'Question page payload not understood: no `items` list',
+          endpoint: questionsEndpoint,
+        );
+      }
+      items = rows;
+    } else {
+      throw ContractViolation(
+        'Question page payload not understood, got ${data.runtimeType}',
+        endpoint: questionsEndpoint,
+      );
+    }
     final pagination = body['pagination'] is Map<String, dynamic>
         ? body['pagination'] as Map<String, dynamic>
         : (data is Map<String, dynamic> && data['pagination'] is Map<String, dynamic>

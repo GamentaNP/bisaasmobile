@@ -27,7 +27,7 @@ authoritative for what, and which retired documents were replaced by which.
 Start there before trusting any dated file.
 
 - Current measured state: `docs/PROJECT_STATE.md`
-- What blocks launch: `docs/LAUNCH_READINESS.md`
+- Release posture (permanent no-store directive; former launch plan is historical): `docs/LAUNCH_READINESS.md`
 - What the server delivers vs owes: `docs/SERVER_CONTRACT_STATUS.md`
 
 ## API Contract — versioned, never drift
@@ -71,8 +71,10 @@ Drift) and the envelope response cache. The **write** path (`core/sync/`:
 `SyncQueueService`, `SyncManager`, `SyncWorker`, `sync_queue_table`) is fully
 built and **deliberately has nothing enqueued into it** (`unwired_tables_test.dart`
 pins that). Quiz grading is server-authoritative, so a replayed answer would be
-a lie the server never scored. Wire `.enqueue()` in only together with a
-product decision about offline answering — do not turn it on by accident.
+a lie the server never scored. The founder decision is settled: offline
+answering stays read-cache only. Do NOT wire `.enqueue()` without reversing
+that decision in writing. Queued rows are tenant-bound (`sync_queue.tenant_id`)
+and a mismatched row is dropped at drain, never replayed cross-tenant.
 
 ## Local backend reference
 

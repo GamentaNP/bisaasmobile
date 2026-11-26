@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../app/localization/l10n.dart';
+
 /// One row of `GET /api/v1/notifications`.
 ///
 /// Server shape (`NotificationController::$mapNotification`):
@@ -40,7 +42,7 @@ class NotificationItem {
       type: (json['type'] ?? '').toString(),
       // Title/body live inside `data` on this endpoint. The top-level fallbacks
       // keep an older/alternate shape readable rather than rendering blanks.
-      title: (payload['title'] ?? json['title'] ?? 'Notification').toString(),
+      title: (payload['title'] ?? json['title'] ?? appL10n().notificationsFallbackTitle).toString(),
       body: (payload['body'] ?? json['body'] ?? '').toString(),
       createdAt: parse(json['created_at']),
       readAt: parse(json['read_at']),

@@ -125,13 +125,13 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 icon: Icons.schedule_rounded,
                 label: l10n.downloadsLastCached,
                 value: stats?.lastCached == null
-                    ? 'Never'
+                    ? l10n.downloadsNever
                     : formatIsoDateTime(stats!.lastCached!.toLocal()),
               ),
               _InfoRow(
                 icon: Icons.nights_stay_rounded,
                 label: l10n.downloadsAutoDownload,
-                value: 'Daily at midnight (while app open)',
+                value: l10n.downloadsDailyMidnight,
               ),
               if (_message != null) ...[
                 const SizedBox(height: 12),

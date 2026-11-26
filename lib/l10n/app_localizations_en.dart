@@ -548,6 +548,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calcAddField => 'Add field';
 
   @override
+  String get calcValidationFailed => 'Validation failed';
+
+  @override
+  String get calcCalculationFailed => 'Calculation failed';
+
+  @override
   String calcInputsCount(Object count) {
     return 'inputs: $count';
   }
@@ -662,6 +668,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Offers and promotions. Off unless you ask for it.';
 
   @override
+  String get consentRememberedSettings => 'Remembered settings';
+
+  @override
+  String get consentAnalyticsShort =>
+      'Usage events, tied to a device identifier';
+
+  @override
+  String get consentOffersPromotions => 'Offers and promotions';
+
+  @override
   String get consentSaveChoices => 'Save choices';
 
   @override
@@ -727,6 +743,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationDailyBody =>
       'Your daily MCQs are waiting — keep the streak alive!';
+
+  @override
+  String get notificationsFallbackTitle => 'Notification';
 
   @override
   String get forceUpdateTitle => 'Update required';
@@ -855,6 +874,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'This course has no active topics yet.';
 
   @override
+  String get quizCourse => 'Course';
+
+  @override
   String get quizFunnelSampleBody =>
       'Sample questions from our catalogue. Open the Quiz tab to play a full graded session.';
 
@@ -933,6 +955,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileStreak => 'Streak';
+
+  @override
+  String profileStreakDays(Object days) {
+    return '${days}d';
+  }
 
   @override
   String get profileSkillRadar => 'Skill Radar';
@@ -1256,6 +1283,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorStudyPlan => 'Study Plan';
+
+  @override
+  String tutorPlanDay(Object day) {
+    return 'Day $day';
+  }
+
+  @override
+  String get tutorTrendStable => 'stable';
+
+  @override
+  String get tutorRevision => 'Revision';
 
   @override
   String get tutorChat => 'Chat';
@@ -2195,6 +2233,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveEventAnswer => 'Answer';
 
   @override
+  String get liveEventQuestion => 'Question';
+
+  @override
   String get liveEventQIndex => 'Q index';
 
   @override
@@ -3011,6 +3052,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadsLastCached => 'Last cached';
 
   @override
+  String get downloadsNever => 'Never';
+
+  @override
+  String get downloadsDailyMidnight => 'Daily at midnight (while app open)';
+
+  @override
   String get downloadsAutoDownload => 'Auto-download';
 
   @override
@@ -3085,6 +3132,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameBestTime => 'Best time';
+
+  @override
+  String gameBestTimeSeconds(Object seconds) {
+    return '${seconds}s';
+  }
 
   @override
   String get gameStartLevel => 'Start level';
