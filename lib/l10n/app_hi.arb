@@ -1002,6 +1002,10 @@
   "aiKeysApiKey": "API कुंजी",
   "aiKeysSentOnce": "एक बार भेजा जाता है और कभी दोबारा नहीं दिखता।",
   "aiKeysLabelOptional": "लेबल (वैकल्पिक)",
+  "aiKeysBaseUrl": "बेस URL",
+  "aiKeysBaseUrlHint": "https://api.example.com/v1",
+  "aiKeysBaseUrlRequired": "इस प्रोवाइडर का बेस URL दर्ज करें",
+  "aiKeysBaseUrlInvalid": "मान्य https URL दर्ज करें",
   "aiKeysSaveKey": "कुंजी सहेजें",
   "aiKeysSaved": "{name} सहेजी गई। यह हमारे सर्वर पर एन्क्रिप्ट है और कभी दोबारा नहीं दिखेगी।",
   "@aiKeysSaved": {

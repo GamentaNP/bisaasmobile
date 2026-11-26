@@ -1002,6 +1002,10 @@
   "aiKeysApiKey": "API कुञ्जी",
   "aiKeysSentOnce": "एक पटक पठाइन्छ अनि कहिल्यै देखाइँदैन।",
   "aiKeysLabelOptional": "लेबल (वैकल्पिक)",
+  "aiKeysBaseUrl": "आधार URL",
+  "aiKeysBaseUrlHint": "https://api.example.com/v1",
+  "aiKeysBaseUrlRequired": "यस प्रोभाइडरको आधार URL लेख्नुहोस्",
+  "aiKeysBaseUrlInvalid": "मान्य https URL लेख्नुहोस्",
   "aiKeysSaveKey": "कुञ्जी सुरक्षित गर्नुहोस्",
   "aiKeysSaved": "{name} सुरक्षित भयो। यो हाम्रो सर्भरमा इन्क्रिप्टेड हुन्छ अनि कहिल्यै देखाइँदैन।",
   "@aiKeysSaved": {

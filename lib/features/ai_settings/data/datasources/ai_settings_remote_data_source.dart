@@ -54,15 +54,24 @@ class AiSettingsRemoteDataSource {
   /// key updates the row rather than duplicating it. The secret is accepted
   /// once and never returned.
   Future<AiKeyDto> storeKey({
-    required AiProvider provider,
+    required AiProviderDescriptor provider,
     required String secret,
     String? label,
     int? dailyTokenLimit,
+    String? baseUrl,
   }) async {
     final payload = <String, dynamic>{
-      'provider': provider.wireValue,
+      'provider': provider.value,
       'secret': secret,
     };
+    // An endpoint is only meaningful to a provider the server marks as
+    // accepting one. Sending it to any other provider is a guaranteed 422.
+    final endpoint = baseUrl?.trim();
+    if (provider.allowCustomEndpoint &&
+        endpoint != null &&
+        endpoint.isNotEmpty) {
+      payload['base_url'] = endpoint;
+    }
     if (label != null && label.trim().isNotEmpty) {
       payload['label'] = label.trim();
     }

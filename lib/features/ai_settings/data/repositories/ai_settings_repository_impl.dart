@@ -20,16 +20,18 @@ class AiSettingsRepositoryImpl implements AiSettingsRepository {
 
   @override
   Future<AiKey> storeKey({
-    required AiProvider provider,
+    required AiProviderDescriptor provider,
     required String secret,
     String? label,
     int? dailyTokenLimit,
+    String? baseUrl,
   }) async {
     final dto = await _remote.storeKey(
       provider: provider,
       secret: secret,
       label: label,
       dailyTokenLimit: dailyTokenLimit,
+      baseUrl: baseUrl,
     );
     return dto.toDomain();
   }

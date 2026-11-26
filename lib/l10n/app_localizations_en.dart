@@ -1579,6 +1579,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiKeysLabelOptional => 'Label (optional)';
 
   @override
+  String get aiKeysBaseUrl => 'Base URL';
+
+  @override
+  String get aiKeysBaseUrlHint => 'https://api.example.com/v1';
+
+  @override
+  String get aiKeysBaseUrlRequired => 'Enter the base URL for this provider';
+
+  @override
+  String get aiKeysBaseUrlInvalid => 'Enter a valid https URL';
+
+  @override
   String get aiKeysSaveKey => 'Save key';
 
   @override

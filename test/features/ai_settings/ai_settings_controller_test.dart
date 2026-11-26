@@ -16,15 +16,22 @@ class MockAiSettingsRepository extends Mock implements AiSettingsRepository {}
 void main() {
   late MockAiSettingsRepository repo;
 
+  const descriptor = AiProviderDescriptor(value: 'openrouter', label: 'OpenRouter');
+  const compatible = AiProviderDescriptor(
+    value: 'openai-compatible',
+    label: 'OpenAI-compatible',
+    allowCustomEndpoint: true,
+  );
+
   const key = AiKey(
     id: 11,
-    provider: AiProvider.openrouter,
+    provider: 'openrouter',
     maskedPreview: '••••9f2a',
   );
 
   setUp(() {
     repo = MockAiSettingsRepository();
-    registerFallbackValue(AiProvider.openrouter);
+    registerFallbackValue(descriptor);
     when(() => repo.getKeys(cursor: any(named: 'cursor'), perPage: any(named: 'perPage')))
         .thenAnswer((_) async => const Page<AiKey>(items: [key]));
   });
@@ -37,20 +44,25 @@ void main() {
     return c;
   }
 
+  void stubStore() {
+    when(() => repo.storeKey(
+          provider: any(named: 'provider'),
+          secret: any(named: 'secret'),
+          label: any(named: 'label'),
+          dailyTokenLimit: any(named: 'dailyTokenLimit'),
+          baseUrl: any(named: 'baseUrl'),
+        )).thenAnswer((_) async => key);
+  }
+
   group('AiSettingsController — BYOK', () {
     test('storeKey saves, refreshes the list and reports the masked key', () async {
-      when(() => repo.storeKey(
-            provider: any(named: 'provider'),
-            secret: any(named: 'secret'),
-            label: any(named: 'label'),
-            dailyTokenLimit: any(named: 'dailyTokenLimit'),
-          )).thenAnswer((_) async => key);
+      stubStore();
 
       final c = await container();
       final notifier = c.read(aiSettingsControllerProvider.notifier);
 
       final ok = await notifier.storeKey(
-        provider: AiProvider.openrouter,
+        provider: descriptor,
         secret: 'sk-secret-never-stored-on-device',
       );
 
@@ -61,12 +73,42 @@ void main() {
           .called(greaterThanOrEqualTo(1));
     });
 
+    test('a custom endpoint is forwarded only for a descriptor that allows it', () async {
+      stubStore();
+
+      final c = await container();
+      final notifier = c.read(aiSettingsControllerProvider.notifier);
+
+      await notifier.storeKey(
+        provider: compatible,
+        secret: 'sk-compatible',
+        baseUrl: 'https://api.example.com/v1',
+      );
+      await notifier.storeKey(
+        provider: descriptor,
+        secret: 'sk-native',
+        baseUrl: 'https://should-not-be-sent.example.com/v1',
+      );
+
+      final result = verify(() => repo.storeKey(
+            provider: any(named: 'provider'),
+            secret: any(named: 'secret'),
+            label: any(named: 'label'),
+            dailyTokenLimit: any(named: 'dailyTokenLimit'),
+            baseUrl: captureAny(named: 'baseUrl'),
+          ));
+      expect(result.callCount, 2);
+      expect(result.captured[0], 'https://api.example.com/v1');
+      expect(result.captured[1], isNull);
+    });
+
     test('a refused key surfaces the server message and saves nothing', () async {
       when(() => repo.storeKey(
             provider: any(named: 'provider'),
             secret: any(named: 'secret'),
             label: any(named: 'label'),
             dailyTokenLimit: any(named: 'dailyTokenLimit'),
+            baseUrl: any(named: 'baseUrl'),
           )).thenThrow(const ApiException(
         statusCode: 422,
         code: ApiErrorCode.validationError,
@@ -77,7 +119,7 @@ void main() {
       final notifier = c.read(aiSettingsControllerProvider.notifier);
 
       final ok = await notifier.storeKey(
-        provider: AiProvider.openrouter,
+        provider: compatible,
         secret: 'sk-bad',
       );
 

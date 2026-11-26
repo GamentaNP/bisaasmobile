@@ -189,7 +189,7 @@ class _KeyCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  key.provider.label,
+                  key.providerDisplayName,
                   style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(width: 8),
@@ -218,6 +218,13 @@ class _KeyCard extends StatelessWidget {
               Text(
                 l10n.aiKeysTokensUsed(key.tokensConsumedToday, key.dailyTokenLimit),
                 style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant),
+              ),
+            ],
+            if (key.baseUrlPreview != null && key.baseUrlPreview!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                '${l10n.aiKeysBaseUrl}: ${key.baseUrlPreview}',
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
             if (key.healthDetail != null) ...[
@@ -254,17 +261,38 @@ class _AddKeyForm extends ConsumerStatefulWidget {
 class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
   final _secret = TextEditingController();
   final _label = TextEditingController();
-  AiProvider _provider = AiProvider.openai;
+  final _baseUrl = TextEditingController();
+
+  /// `null` means "use the server's first listed provider". Once a catalogue
+  /// is published the form must not silently default to OpenAI.
+  AiProviderDescriptor? _selected;
 
   @override
   void dispose() {
     _secret.dispose();
     _label.dispose();
+    _baseUrl.dispose();
     super.dispose();
   }
 
-  Future<void> _save() async {
-    final l10n = AppLocalizations.of(context)!;
+  /// Local validation only: the server remains the authority on whether an
+  /// endpoint is acceptable, but it must never receive a non-https URL.
+  String? _baseUrlError(AppLocalizations l10n) {
+    final text = _baseUrl.text.trim();
+    if (text.isEmpty) return l10n.aiKeysBaseUrlRequired;
+    final uri = Uri.tryParse(text);
+    if (uri == null ||
+        uri.scheme.toLowerCase() != 'https' ||
+        uri.host.isEmpty) {
+      return l10n.aiKeysBaseUrlInvalid;
+    }
+    return null;
+  }
+
+  Future<void> _save({
+    required AiProviderDescriptor provider,
+    required AppLocalizations l10n,
+  }) async {
     final secret = _secret.text.trim();
     if (secret.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -272,15 +300,27 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
       );
       return;
     }
+    if (provider.allowCustomEndpoint) {
+      final error = _baseUrlError(l10n);
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+        return;
+      }
+    }
     final ok = await ref.read(aiSettingsControllerProvider.notifier).storeKey(
-          provider: _provider,
+          provider: provider,
           secret: secret,
           label: _label.text.trim().isEmpty ? null : _label.text.trim(),
+          // Only a custom-endpoint provider ever receives a base_url.
+          baseUrl: provider.allowCustomEndpoint ? _baseUrl.text.trim() : null,
         );
     if (!ok || !mounted) return;
     // The secret is never read back — drop it from memory immediately.
     _secret.clear();
     _label.clear();
+    _baseUrl.clear();
     FocusScope.of(context).unfocus();
   }
 
@@ -288,6 +328,13 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(aiSettingsControllerProvider);
+    final descriptors = ref.watch(aiProviderCatalogueProvider);
+    // A server can change its catalogue between builds. Never keep a selection
+    // it no longer publishes.
+    final selected = _selected != null &&
+            descriptors.any((d) => d.value == _selected!.value)
+        ? _selected!
+        : descriptors.first;
 
     return Card(
       child: Padding(
@@ -303,23 +350,44 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            DropdownButtonFormField<AiProvider>(
-              initialValue: _provider,
+            DropdownButtonFormField<AiProviderDescriptor>(
+              key: ValueKey(descriptors.map((d) => d.value).join(',')),
+              initialValue: selected,
               decoration: InputDecoration(
                 labelText: l10n.aiKeysProvider,
                 isDense: true,
               ),
               items: [
-                for (final p in AiProvider.values)
-                  DropdownMenuItem<AiProvider>(
-                    value: p,
-                    child: Text(p.label),
+                for (final d in descriptors)
+                  DropdownMenuItem<AiProviderDescriptor>(
+                    value: d,
+                    child: Text(d.label),
                   ),
               ],
-              onChanged: (v) => setState(() => _provider = v ?? _provider),
+              onChanged: (v) => setState(() {
+                _selected = v;
+                if (v == null || !v.allowCustomEndpoint) _baseUrl.clear();
+              }),
             ),
+            if (selected.allowCustomEndpoint) ...[
+              const SizedBox(height: 12),
+              TextFormField(
+                key: const Key('ai-keys-base-url'),
+                controller: _baseUrl,
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.url,
+                validator: (_) => _baseUrlError(l10n),
+                decoration: InputDecoration(
+                  labelText: l10n.aiKeysBaseUrl,
+                  hintText: l10n.aiKeysBaseUrlHint,
+                  isDense: true,
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             TextField(
+              key: const Key('ai-keys-secret'),
               controller: _secret,
               obscureText: true,
               autocorrect: false,
@@ -332,6 +400,7 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
             ),
             const SizedBox(height: 12),
             TextField(
+              key: const Key('ai-keys-label'),
               controller: _label,
               decoration: InputDecoration(
                 labelText: l10n.aiKeysLabelOptional,
@@ -340,7 +409,9 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
             ),
             const SizedBox(height: 12),
             FilledButton(
-              onPressed: state.isSavingKey ? null : _save,
+              onPressed: state.isSavingKey
+                  ? null
+                  : () => _save(provider: selected, l10n: l10n),
               child: state.isSavingKey
                   ? const SizedBox(
                       width: 16,

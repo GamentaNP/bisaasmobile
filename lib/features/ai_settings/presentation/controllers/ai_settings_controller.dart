@@ -20,6 +20,20 @@ final aiSettingsRepositoryProvider = Provider<AiSettingsRepository>((ref) {
   return AiSettingsRepositoryImpl(ref.watch(aiSettingsRemoteDataSourceProvider));
 });
 
+/// The providers the current server says it accepts.
+///
+/// A published catalogue is authoritative: it can contain a value this build
+/// has never seen, and the picker must offer it. Only a server that publishes
+/// **no** catalogue at all falls back to the seven providers this client knows
+/// — crucially, that fallback never invents `openai-compatible`.
+final aiProviderCatalogueProvider = Provider<List<AiProviderDescriptor>>((ref) {
+  final published = ref.watch(appConfigValueProvider)?.aiProviders;
+  if (published == null || published.isEmpty) {
+    return AiProvider.fallbackDescriptors;
+  }
+  return published;
+});
+
 /// The periods the server accepts.
 enum AiUsagePeriod {
   sevenDays('7d', '7 days'),
@@ -194,10 +208,11 @@ class AiSettingsController extends Notifier<AiSettingsState> {
   /// The secret is sent once and never read back — the server returns only a
   /// masked preview.
   Future<bool> storeKey({
-    required AiProvider provider,
+    required AiProviderDescriptor provider,
     required String secret,
     String? label,
     int? dailyTokenLimit,
+    String? baseUrl,
   }) async {
     state = state.copyWith(
       isSavingKey: true,
@@ -210,6 +225,10 @@ class AiSettingsController extends Notifier<AiSettingsState> {
         secret: secret,
         label: label,
         dailyTokenLimit: dailyTokenLimit,
+        // Defence in depth: a caller that forgot to check the descriptor must
+        // not leak an endpoint to a provider the server does not accept one
+        // for. The data source repeats the guard at the wire boundary.
+        baseUrl: provider.allowCustomEndpoint ? baseUrl : null,
       );
       state = state.copyWith(
         isSavingKey: false,

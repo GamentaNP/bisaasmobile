@@ -1583,6 +1583,18 @@ class AppLocalizationsNe extends AppLocalizations {
   String get aiKeysLabelOptional => 'लेबल (वैकल्पिक)';
 
   @override
+  String get aiKeysBaseUrl => 'आधार URL';
+
+  @override
+  String get aiKeysBaseUrlHint => 'https://api.example.com/v1';
+
+  @override
+  String get aiKeysBaseUrlRequired => 'यस प्रोभाइडरको आधार URL लेख्नुहोस्';
+
+  @override
+  String get aiKeysBaseUrlInvalid => 'मान्य https URL लेख्नुहोस्';
+
+  @override
   String get aiKeysSaveKey => 'कुञ्जी सुरक्षित गर्नुहोस्';
 
   @override

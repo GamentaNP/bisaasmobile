@@ -23,6 +23,7 @@ rather than repeated.
 | 3 | [release_checklist.md](release_checklist.md) | The mechanical pre-release gate: commands, founder-supplied values, and the platform steps. |
 | 4 | [SERVER_CONTRACT_STATUS.md](SERVER_CONTRACT_STATUS.md) | What `/api/v1` delivers, what is still owed, and which client adoptions are behind. |
 | 5 | [../AGENTS.md](../AGENTS.md) | The rules for changing this repo: boundary, API contract, l10n, release posture. |
+| 6 | Cross-repo gap audit (2026-11-26) | `C:\laragon\www\bisaas\docs\CROSS_REPO_QUIZ_API_GAP_AUDIT_2026-11-26.md` — 20-agent review of both repos; authoritative for what is not built and in what order to fix it. |
 
 ## Authority — one source per question
 

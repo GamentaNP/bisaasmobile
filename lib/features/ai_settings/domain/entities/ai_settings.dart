@@ -1,9 +1,45 @@
 import 'package:meta/meta.dart';
 
-/// The AI providers the server accepts for a bring-your-own-key (BYOK).
+/// One provider the server says it accepts for a bring-your-own-key (BYOK).
 ///
-/// `AiProviderEnum` on the server; the client mirrors the list so the picker
-/// cannot offer something the server would reject with a 422.
+/// The catalogue comes from `GET /api/v1/app/config` (`data.ai_keys.providers`).
+/// It is data, not an enum: a server can publish a new provider (for example
+/// `openai-compatible`) before the client ships a build that knows its name.
+@immutable
+class AiProviderDescriptor {
+  const AiProviderDescriptor({
+    required this.value,
+    required this.label,
+    this.allowCustomEndpoint = false,
+  });
+
+  /// The wire value the server validates in `POST /ai-keys`.
+  final String value;
+
+  /// The server's display label. Never translated locally — a provider's own
+  /// name is the same proper noun in every locale.
+  final String label;
+
+  /// Whether this provider accepts a caller-supplied `base_url`.
+  final bool allowCustomEndpoint;
+
+  AiProviderDescriptor copyWith({
+    String? value,
+    String? label,
+    bool? allowCustomEndpoint,
+  }) =>
+      AiProviderDescriptor(
+        value: value ?? this.value,
+        label: label ?? this.label,
+        allowCustomEndpoint: allowCustomEndpoint ?? this.allowCustomEndpoint,
+      );
+}
+
+/// The providers an older server can be trusted to accept when it publishes
+/// no catalogue at all.
+///
+/// This is deliberately a *closed* fallback: `openai-compatible` is not here,
+/// because a server that has not said it exists must never be offered one.
 enum AiProvider {
   openai,
   gemini,
@@ -26,6 +62,9 @@ enum AiProvider {
         AiProvider.openrouter => 'OpenRouter',
       };
 
+  AiProviderDescriptor get descriptor =>
+      AiProviderDescriptor(value: wireValue, label: label);
+
   static AiProvider? fromWire(String? raw) {
     if (raw == null) return null;
     for (final p in AiProvider.values) {
@@ -33,6 +72,17 @@ enum AiProvider {
     }
     return null;
   }
+
+  /// The last-resort picker list for a server predating `ai_keys`.
+  static const List<AiProviderDescriptor> fallbackDescriptors = [
+    AiProviderDescriptor(value: 'openai', label: 'OpenAI'),
+    AiProviderDescriptor(value: 'gemini', label: 'Google Gemini'),
+    AiProviderDescriptor(value: 'anthropic', label: 'Anthropic'),
+    AiProviderDescriptor(value: 'deepseek', label: 'DeepSeek'),
+    AiProviderDescriptor(value: 'groq', label: 'Groq'),
+    AiProviderDescriptor(value: 'mistral', label: 'Mistral'),
+    AiProviderDescriptor(value: 'openrouter', label: 'OpenRouter'),
+  ];
 }
 
 /// One stored BYOK credential.
@@ -48,6 +98,7 @@ class AiKey {
     this.providerLabel,
     this.label,
     this.maskedPreview,
+    this.baseUrlPreview,
     this.isActive = true,
     this.healthStatus,
     this.healthDetail,
@@ -58,7 +109,12 @@ class AiKey {
   });
 
   final int id;
-  final AiProvider provider;
+
+  /// The provider's raw wire value, preserved verbatim.
+  ///
+  /// A new server provider must not turn the whole key list into a
+  /// `FormatException`; the server's own [providerLabel] is what gets shown.
+  final String provider;
   final String? providerLabel;
 
   /// The user's own label for this key.
@@ -66,6 +122,10 @@ class AiKey {
 
   /// `••••last4` — the only part of the secret the server will ever show.
   final String? maskedPreview;
+
+  /// A non-secret endpoint preview (`base_url` / `base_url_preview`), when the
+  /// server publishes one for a custom provider. Never a credential.
+  final String? baseUrlPreview;
 
   final bool isActive;
 
@@ -91,11 +151,19 @@ class AiKey {
   bool get isQuotaExhausted =>
       dailyTokenLimit > 0 && tokensConsumedToday >= dailyTokenLimit;
 
+  /// The provider name to show: the server's label wins, and an unknown wire
+  /// value is shown verbatim rather than crashing the list.
+  String get providerDisplayName {
+    final published = providerLabel?.trim();
+    if (published != null && published.isNotEmpty) return published;
+    return AiProvider.fromWire(provider)?.label ?? provider;
+  }
+
   /// What to show as the key's name.
   String get displayName {
     final l = label?.trim();
     if (l != null && l.isNotEmpty) return l;
-    return providerLabel ?? provider.label;
+    return providerDisplayName;
   }
 }
 

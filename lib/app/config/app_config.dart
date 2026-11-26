@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../core/logging/app_logger.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/network/api_failure.dart';
 import '../../core/network/app_update_gate.dart';
+import '../../core/network/envelope.dart';
 import '../../core/network/install_identity_interceptor.dart';
+import '../../features/ai_settings/domain/entities/ai_settings.dart';
 import '../localization/l10n.dart';
 
 /// Operator configuration served by `GET /api/v1/app/config`.
@@ -32,6 +34,8 @@ class AppConfig {
     this.forceUpdate = false,
     this.maintenance = false,
     this.features = const {},
+    this.aiKeysEnabled = true,
+    this.aiProviders,
   });
 
   final String minAndroidVersion;
@@ -43,6 +47,18 @@ class AppConfig {
   final bool maintenance;
 
   final Map<String, bool> features;
+
+  /// The operator's BYOK switch. Absent on older servers, so it defaults on.
+  final bool aiKeysEnabled;
+
+  /// The provider catalogue published by `data.ai_keys.providers`.
+  ///
+  /// `null` means the server did not publish a catalogue at all — which is
+  /// different from publishing an empty one. Consumers fall back to the closed
+  /// set of known providers only in the `null` case; a published list is
+  /// authoritative, including when it introduces a provider this build has
+  /// never seen.
+  final List<AiProviderDescriptor>? aiProviders;
 
   /// Absent keys are treated as ENABLED.
   ///
@@ -78,12 +94,65 @@ class AppConfig {
         }
       }
     }
+
+    var aiKeysEnabled = true;
+    List<AiProviderDescriptor>? aiProviders;
+    final aiKeysRaw = json['ai_keys'];
+    if (aiKeysRaw != null && aiKeysRaw is! Map) {
+      throw ContractViolation(
+        'Expected `ai_keys` to be an object, got ${aiKeysRaw.runtimeType}',
+        endpoint: '/app/config',
+      );
+    }
+    if (aiKeysRaw is Map) {
+      final aiKeys = aiKeysRaw.cast<String, dynamic>();
+      if (aiKeys['enabled'] is bool) aiKeysEnabled = aiKeys['enabled'] as bool;
+      final providersRaw = aiKeys['providers'];
+      if (providersRaw != null && providersRaw is! List) {
+        throw ContractViolation(
+          'Expected `ai_keys.providers` to be an array, '
+          'got ${providersRaw.runtimeType}',
+          endpoint: '/app/config',
+        );
+      }
+      if (providersRaw is List) {
+        final parsed = <AiProviderDescriptor>[];
+        for (final entry in providersRaw) {
+          if (entry is! Map) {
+            throw const ContractViolation(
+              'Expected each ai_keys provider to be an object',
+              endpoint: '/app/config',
+            );
+          }
+          final wire = entry.cast<String, dynamic>();
+          final value = wire['value'];
+          final label = wire['label'];
+          if (value is! String || value.isEmpty || label is! String || label.isEmpty) {
+            throw const ContractViolation(
+              'ai_keys provider needs non-empty string `value` and `label`',
+              endpoint: '/app/config',
+            );
+          }
+          parsed.add(
+            AiProviderDescriptor(
+              value: value,
+              label: label,
+              allowCustomEndpoint: wire['allow_custom_endpoint'] == true,
+            ),
+          );
+        }
+        aiProviders = List<AiProviderDescriptor>.unmodifiable(parsed);
+      }
+    }
+
     return AppConfig(
       minAndroidVersion: (minMap['android'] ?? '1.0.0').toString(),
       minIosVersion: (minMap['ios'] ?? '1.0.0').toString(),
       forceUpdate: json['force_update'] == true,
       maintenance: json['maintenance'] == true,
       features: features,
+      aiKeysEnabled: aiKeysEnabled,
+      aiProviders: aiProviders,
     );
   }
 }
@@ -99,14 +168,17 @@ class AppConfigDataSource {
   const AppConfigDataSource(this._dio);
   final Dio _dio;
 
-  Future<AppConfig?> fetch() async {
+  /// Reads the operator config.
+  ///
+  /// A 2xx body that is not the canonical envelope is contract drift, so it
+  /// throws [ContractViolation] instead of masquerading as "no config". The
+  /// provider above catches that and treats it as unknown — but the failure is
+  /// logged rather than silently turning every kill-switch off.
+  Future<AppConfig> fetch() async {
     final res = await _dio.get<Map<String, dynamic>>('/app/config');
-    final body = res.data;
-    if (body == null) return null;
-    final data = body['data'];
-    if (data is Map<String, dynamic>) return AppConfig.fromJson(data);
-    AppLogger.w('app config payload not understood (data is ${data.runtimeType})');
-    return null;
+    return AppConfig.fromJson(
+      requireDataMap(res.data, endpoint: '/app/config'),
+    );
   }
 }
 

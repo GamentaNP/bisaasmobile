@@ -9,6 +9,7 @@ class AiKeyDto {
     this.providerLabel,
     this.label,
     this.maskedPreview,
+    this.baseUrlPreview,
     this.isActive = true,
     this.healthStatus,
     this.healthDetail,
@@ -19,12 +20,11 @@ class AiKeyDto {
   });
 
   factory AiKeyDto.fromJson(Map<String, dynamic> j) {
-    final provider = AiProvider.fromWire(j['provider'] as String?);
-    if (provider == null) {
-      throw FormatException(
-        'Unknown AI provider "${j['provider']}" in the ai-keys response',
-      );
-    }
+    // The wire value is data, not an enum: a server can publish a provider this
+    // build has never heard of. Keep it verbatim and let the server's own
+    // `provider_label` do the talking instead of throwing away the whole list.
+    final provider = (j['provider'] ?? '').toString();
+    final preview = j['base_url'] ?? j['base_url_preview'];
     return AiKeyDto(
       id: wireInt(j['id']) ?? 0,
       provider: provider,
@@ -32,6 +32,9 @@ class AiKeyDto {
       label: j['label'] as String?,
       // The server never returns the secret — only this masked preview.
       maskedPreview: j['masked_preview'] as String?,
+      baseUrlPreview: preview is String && preview.trim().isNotEmpty
+          ? preview.trim()
+          : null,
       isActive: j['is_active'] as bool? ?? true,
       healthStatus: j['health_status'] as String?,
       healthDetail: j['health_detail'] as String?,
@@ -43,10 +46,11 @@ class AiKeyDto {
   }
 
   final int id;
-  final AiProvider provider;
+  final String provider;
   final String? providerLabel;
   final String? label;
   final String? maskedPreview;
+  final String? baseUrlPreview;
   final bool isActive;
   final String? healthStatus;
   final String? healthDetail;
@@ -61,6 +65,7 @@ class AiKeyDto {
         providerLabel: providerLabel,
         label: label,
         maskedPreview: maskedPreview,
+        baseUrlPreview: baseUrlPreview,
         isActive: isActive,
         healthStatus: healthStatus,
         healthDetail: healthDetail,

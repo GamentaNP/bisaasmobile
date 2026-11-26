@@ -8,11 +8,16 @@ abstract class AiSettingsRepository {
   Future<Page<AiKey>> getKeys({String? cursor, int perPage});
 
   /// Stores or refreshes a key. The secret is write-only.
+  ///
+  /// [baseUrl] is only sent to the server when [provider] allows a custom
+  /// endpoint — a client must never leak an endpoint to a provider that would
+  /// reject it with a 422.
   Future<AiKey> storeKey({
-    required AiProvider provider,
+    required AiProviderDescriptor provider,
     required String secret,
     String? label,
     int? dailyTokenLimit,
+    String? baseUrl,
   });
 
   /// Revokes a key. Idempotent.

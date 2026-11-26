@@ -1581,6 +1581,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get aiKeysLabelOptional => 'लेबल (वैकल्पिक)';
 
   @override
+  String get aiKeysBaseUrl => 'बेस URL';
+
+  @override
+  String get aiKeysBaseUrlHint => 'https://api.example.com/v1';
+
+  @override
+  String get aiKeysBaseUrlRequired => 'इस प्रोवाइडर का बेस URL दर्ज करें';
+
+  @override
+  String get aiKeysBaseUrlInvalid => 'मान्य https URL दर्ज करें';
+
+  @override
   String get aiKeysSaveKey => 'कुंजी सहेजें';
 
   @override

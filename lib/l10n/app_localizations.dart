@@ -2817,6 +2817,30 @@ abstract class AppLocalizations {
   /// **'Label (optional)'**
   String get aiKeysLabelOptional;
 
+  /// No description provided for @aiKeysBaseUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Base URL'**
+  String get aiKeysBaseUrl;
+
+  /// No description provided for @aiKeysBaseUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://api.example.com/v1'**
+  String get aiKeysBaseUrlHint;
+
+  /// No description provided for @aiKeysBaseUrlRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the base URL for this provider'**
+  String get aiKeysBaseUrlRequired;
+
+  /// No description provided for @aiKeysBaseUrlInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid https URL'**
+  String get aiKeysBaseUrlInvalid;
+
   /// No description provided for @aiKeysSaveKey.
   ///
   /// In en, this message translates to:
