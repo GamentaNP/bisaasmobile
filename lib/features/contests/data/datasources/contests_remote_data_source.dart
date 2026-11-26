@@ -157,8 +157,8 @@ class ContestsRemoteDataSource {
 
   Future<ContestAttemptDto> enterContest(int id, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/contests/$id/enter',
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/contests/$id/entry',
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );
@@ -166,7 +166,7 @@ class ContestsRemoteDataSource {
     if (body == null) {
       throw ContractViolation(
         'Enter contest payload not understood',
-        endpoint: '/quiz/contests/$id/enter',
+        endpoint: '/quiz/contests/$id/entry',
       );
     }
     Map<String, dynamic>? data;
@@ -183,7 +183,7 @@ class ContestsRemoteDataSource {
     if (data == null) {
       throw ContractViolation(
         'Enter contest data missing',
-        endpoint: '/quiz/contests/$id/enter',
+        endpoint: '/quiz/contests/$id/entry',
       );
     }
     return ContestAttemptDto.fromJson(data);

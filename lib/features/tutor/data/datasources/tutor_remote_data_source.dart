@@ -67,7 +67,7 @@ class TutorRemoteDataSource {
     String? idempotencyKey,
   }) async {
     final res = await _dio.post<Map<String, dynamic>>(
-      '/learning/ai-tutor/onboarding/start',
+      '/learning/ai-tutor/onboarding',
       data: payload ?? const {},
       options: _aiOptions(idempotencyKey),
     );
@@ -75,14 +75,14 @@ class TutorRemoteDataSource {
     if (body == null) {
       throw const ContractViolation(
         'Empty response body',
-        endpoint: '/learning/ai-tutor/onboarding/start',
+        endpoint: '/learning/ai-tutor/onboarding',
       );
     }
     Map<String, dynamic> data;
     if (body['data'] is Map<String, dynamic>) {
       data = body['data'] as Map<String, dynamic>;
     } else {
-      data = _data(body, '/learning/ai-tutor/onboarding/start') ?? const {};
+      data = _data(body, '/learning/ai-tutor/onboarding') ?? const {};
     }
     return TutorOnboardingStartDto.fromJson(data);
   }
@@ -92,8 +92,8 @@ class TutorRemoteDataSource {
     Map<String, dynamic>? payload,
     String? idempotencyKey,
   }) async {
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/learning/ai-tutor/onboarding/complete',
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/learning/ai-tutor/onboarding/completion',
       data: {'session_id': sessionId, ...?payload},
       options: _aiOptions(idempotencyKey),
     );
@@ -101,10 +101,10 @@ class TutorRemoteDataSource {
     if (body == null) {
       throw const ContractViolation(
         'Empty response body',
-        endpoint: '/learning/ai-tutor/onboarding/complete',
+        endpoint: '/learning/ai-tutor/onboarding/completion',
       );
     }
-    final data = _data(body, '/learning/ai-tutor/onboarding/complete') ?? const {};
+    final data = _data(body, '/learning/ai-tutor/onboarding/completion') ?? const {};
     return TutorOnboardingCompleteDto.fromJson(data);
   }
 

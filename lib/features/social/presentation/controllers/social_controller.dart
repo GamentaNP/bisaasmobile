@@ -176,16 +176,21 @@ class SocialController extends Notifier<SocialState> {
     required int attemptId,
     required int questionId,
     required String answer,
+    required String guestSessionId,
   }) =>
       _repo.answerSandbox(
         attemptId: attemptId,
         questionId: questionId,
         answer: answer,
+        guestSessionId: guestSessionId,
       );
 
   /// Completes the sandbox attempt.
-  Future<SandboxResult> completeSandbox(int attemptId) =>
-      _repo.completeSandbox(attemptId);
+  Future<SandboxResult> completeSandbox(
+    int attemptId, {
+    required String guestSessionId,
+  }) =>
+      _repo.completeSandbox(attemptId, guestSessionId: guestSessionId);
 }
 
 final socialControllerProvider = NotifierProvider<SocialController, SocialState>(

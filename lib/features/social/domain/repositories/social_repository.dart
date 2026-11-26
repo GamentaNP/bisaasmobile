@@ -47,13 +47,18 @@ abstract class SocialRepository {
     required String guestSessionId,
   });
 
-  /// Answers one sandbox question.
+  /// Answers one sandbox question. The session id from [startSandbox] must be
+  /// replayed: the server rejects a mutation that cannot prove the same guest.
   Future<SandboxAnswer> answerSandbox({
     required int attemptId,
     required int questionId,
     required String answer,
+    required String guestSessionId,
   });
 
   /// Completes the sandbox attempt and returns the server's result.
-  Future<SandboxResult> completeSandbox(int attemptId);
+  Future<SandboxResult> completeSandbox(
+    int attemptId, {
+    required String guestSessionId,
+  });
 }

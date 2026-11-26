@@ -378,7 +378,10 @@ void main() {
         }),
       );
 
-      final result = await repository.completeSandbox(321);
+      final result = await repository.completeSandbox(
+        321,
+        guestSessionId: 'guest-session-1',
+      );
 
       expect(result, isNotNull);
       expect(result.score, 60.0);

@@ -82,18 +82,26 @@ class SocialRepositoryImpl implements SocialRepository {
     required int attemptId,
     required int questionId,
     required String answer,
+    required String guestSessionId,
   }) async {
     final dto = await _remote.answerSandbox(
       attemptId: attemptId,
       questionId: questionId,
       answer: answer,
+      guestSessionId: guestSessionId,
     );
     return SandboxAnswer(questionId: dto.questionId, isCorrect: dto.isCorrect);
   }
 
   @override
-  Future<SandboxResult> completeSandbox(int attemptId) async {
-    final dto = await _remote.completeSandbox(attemptId);
+  Future<SandboxResult> completeSandbox(
+    int attemptId, {
+    required String guestSessionId,
+  }) async {
+    final dto = await _remote.completeSandbox(
+      attemptId,
+      guestSessionId: guestSessionId,
+    );
     return SandboxResult(
       score: dto.score,
       correct: dto.correct,

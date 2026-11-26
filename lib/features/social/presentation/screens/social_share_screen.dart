@@ -133,6 +133,7 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
             attemptId: attempt.attemptId,
             questionId: question.id,
             answer: selected,
+            guestSessionId: _guestSessionId,
           );
       if (!mounted) return;
       setState(() {
@@ -166,7 +167,10 @@ class _SocialShareScreenState extends ConsumerState<SocialShareScreen> {
     try {
       final result = await ref
           .read(socialControllerProvider.notifier)
-          .completeSandbox(attempt.attemptId);
+          .completeSandbox(
+            attempt.attemptId,
+            guestSessionId: _guestSessionId,
+          );
       if (!mounted) return;
       setState(() {
         _busy = false;

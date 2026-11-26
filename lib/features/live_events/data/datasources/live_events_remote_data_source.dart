@@ -122,8 +122,8 @@ class LiveEventsRemoteDataSource {
 
   Future<LiveEventParticipantDto> checkIn(int eventId, {String? idempotencyKey}) async {
     final key = idempotencyKey ?? _uuid.v4();
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/quiz/live-events/$eventId/check-in',
+    final res = await _dio.put<Map<String, dynamic>>(
+      '/quiz/live-events/$eventId/attendance',
       data: {},
       options: Options(headers: {'Idempotency-Key': key}),
     );

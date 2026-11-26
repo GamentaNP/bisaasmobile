@@ -7,7 +7,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../controllers/tutor_controller.dart';
 
-/// Onboarding for AI Tutor — POST /learning/ai-tutor/onboarding/start & /complete.
+/// Onboarding for AI Tutor — POST /learning/ai-tutor/onboarding and
+/// PUT /learning/ai-tutor/onboarding/completion (canonical v1 routes).
 /// Idempotent via Idempotency-Key header; tolerant to missing backend.
 class TutorOnboardingScreen extends ConsumerStatefulWidget {
   const TutorOnboardingScreen({super.key});

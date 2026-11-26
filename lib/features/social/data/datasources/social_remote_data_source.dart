@@ -264,15 +264,22 @@ class SocialRemoteDataSource {
   /// Answers one sandbox question.
   ///
   /// `PUT /public/social/sandbox/{attempt}/answer` — the canonical state-set
-  /// shape; the POST spelling is the transition alias.
+  /// shape; the POST spelling is the transition alias. The server binds every
+  /// sandbox mutation to the session id minted at start, so it must be sent on
+  /// every answer and on completion too.
   Future<SandboxAnswerDto> answerSandbox({
     required int attemptId,
     required int questionId,
     required String answer,
+    required String guestSessionId,
   }) async {
     final res = await _dio.put<Map<String, dynamic>>(
       '/public/social/sandbox/$attemptId/answer',
-      data: {'question_id': questionId, 'answer': answer},
+      data: {
+        'guest_session_id': guestSessionId,
+        'question_id': questionId,
+        'answer': answer,
+      },
     );
     final body = res.data;
     if (body == null) {
@@ -301,9 +308,13 @@ class SocialRemoteDataSource {
   /// Completes the sandbox attempt and returns the server's result.
   ///
   /// `PUT /public/social/sandbox/{attempt}/completion`.
-  Future<SandboxResultDto> completeSandbox(int attemptId) async {
+  Future<SandboxResultDto> completeSandbox(
+    int attemptId, {
+    required String guestSessionId,
+  }) async {
     final res = await _dio.put<Map<String, dynamic>>(
       '/public/social/sandbox/$attemptId/completion',
+      data: {'guest_session_id': guestSessionId},
     );
     final body = res.data;
     if (body == null) {

@@ -99,6 +99,7 @@ void main() {
         attemptId: 321,
         questionId: 11,
         answer: 'A',
+        guestSessionId: 'guest-session-1',
       );
 
       expect(verdict.questionId, 11);
@@ -107,6 +108,7 @@ void main() {
       final body = api.jsonBodyOf(0);
       expect(body['question_id'], 11);
       expect(body['answer'], 'A');
+      expect(body['guest_session_id'], 'guest-session-1');
     });
 
     test('a skipped answer is null, not false', () async {
@@ -124,6 +126,7 @@ void main() {
         attemptId: 321,
         questionId: 11,
         answer: 'A',
+        guestSessionId: 'guest-session-1',
       );
 
       expect(verdict.isCorrect, isNull);
@@ -144,9 +147,13 @@ void main() {
         }),
       );
 
-      final result = await repository.completeSandbox(321);
+      final result = await repository.completeSandbox(
+        321,
+        guestSessionId: 'guest-session-1',
+      );
 
       expect(result.score, 60.0);
+      expect(api.jsonBodyOf(0)['guest_session_id'], 'guest-session-1');
       expect(result.correct, 3);
       expect(result.wrong, 2);
       expect(result.total, 5);
