@@ -353,6 +353,9 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
             DropdownButtonFormField<AiProviderDescriptor>(
               key: ValueKey(descriptors.map((d) => d.value).join(',')),
               initialValue: selected,
+              // Server labels vary in length ("OpenAI-Compatible (Custom
+              // Endpoint)" is long); without isExpanded the row overflows.
+              isExpanded: true,
               decoration: InputDecoration(
                 labelText: l10n.aiKeysProvider,
                 isDense: true,
@@ -361,7 +364,10 @@ class _AddKeyFormState extends ConsumerState<_AddKeyForm> {
                 for (final d in descriptors)
                   DropdownMenuItem<AiProviderDescriptor>(
                     value: d,
-                    child: Text(d.label),
+                    child: Text(
+                      d.label,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
               ],
               onChanged: (v) => setState(() {
