@@ -233,6 +233,8 @@ add(
     ["effect"],
 )
 add("quizAttemptCombo", "×{count} Combo!", "×{count} कम्बो!", "×{count} कॉम्बो!", ["count"])
+add("quizAttemptHint", "Hint", "संकेत", "संकेत")
+add("quizHintLoadFailed", "Could not load a hint. Please try again.", "संकেত लोड गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।", "संकेत लोड नहीं हो सका। कृपया फिर से प्रयास करें।")
 add("quizAttemptExitTitle", "Exit Quiz?", "क्विज़बाट निस्कने?", "क्विज़ से बाहर निकलें?")
 add(
     "quizAttemptExitBody",

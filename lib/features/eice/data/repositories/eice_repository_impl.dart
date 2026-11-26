@@ -20,8 +20,20 @@ class EiceRepositoryImpl implements EiceRepository {
   Future<EicePayload?> getCoach() async => _payload(await _remote.getCoach());
 
   @override
+  Future<EicePayload?> getStudyPlan(int examId) async =>
+      _payload(await _remote.getStudyPlan(examId));
+
+  @override
   Future<EicePayload?> getTriage(int examId) async =>
       _payload(await _remote.getTriage(examId));
+
+  @override
+  Future<EicePayload?> getTopicPattern(int topicId) async =>
+      _payload(await _remote.getTopicPattern(topicId));
+
+  @override
+  Future<EicePayload?> getCoursePatterns(int courseId) async =>
+      _payload(await _remote.getCoursePatterns(courseId));
 
   @override
   Future<List<EicePayload>> getSprint() async {
@@ -31,6 +43,12 @@ class EiceRepositoryImpl implements EiceRepository {
 
   @override
   Future<EicePayload?> getWeekly() async => _payload(await _remote.getWeekly());
+
+  @override
+  Future<List<EicePayload>> getWeeklyHistory() async {
+    final rows = await _remote.getWeeklyHistory();
+    return rows.map(EicePayload.new).toList(growable: false);
+  }
 
   @override
   Future<bool> gradeSprint(String questionId, int grade) =>

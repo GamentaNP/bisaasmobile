@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/logging/app_logger.dart';
+import '../../../../core/network/api_exception.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../app/providers.dart';
+import '../../../../app/localization/l10n.dart';
 import '../../../../shared/domain/paginated.dart';
 import '../../data/datasources/practice_remote_data_source.dart';
 import '../../data/repositories/practice_repository_impl.dart';
@@ -113,7 +116,21 @@ class PracticeController extends Notifier<PracticeState> {
   PracticeState build() => const PracticeState();
 
   PracticeRepository get _repo => ref.read(practiceRepositoryProvider);
+  PracticeRemoteDataSource get _remote => ref.read(practiceRemoteDataSourceProvider);
   static const _uuid = Uuid();
+
+  /// One key per logical drill start. The screen retries by calling
+  /// `startDrill` again with the same intent, so the key must not be re-minted
+  /// on that second call.
+  final Map<String, String> _drillKeys = <String, String>{};
+
+  /// Answer writes are keyed per (attempt, question) so a retry cannot consume
+  /// a second question on the server.
+  final Map<String, String> _answerKeys = <String, String>{};
+
+  /// Completion credits the server's score; the key is stable per attempt and
+  /// the cached verdict is replayed when the write reports a conflict.
+  final Map<String, PracticeResult> _completionResults = <String, PracticeResult>{};
 
   Future<void> fetchBookmarks({String? cursor, bool append = false}) async {
     state = state.copyWith(isBookmarksLoading: true, bookmarksError: null);
@@ -177,21 +194,53 @@ class PracticeController extends Notifier<PracticeState> {
     required String title,
     int? courseId,
     int? categoryId,
+    int? topicId,
     String? difficulty,
     String? search,
     int count = 10,
   }) async {
     state = state.copyWith(isStartingSession: true, startError: null);
+    final intent = '$title|$courseId|$categoryId|$topicId|$difficulty|$search|$count';
+    final key = _drillKeys.putIfAbsent(intent, () => 'practice-start-${_uuid.v4()}');
     try {
-      final drill = await _repo.startDrill(
-        title: title,
-        courseId: courseId,
-        categoryId: categoryId,
-        difficulty: difficulty,
-        search: search,
-        count: count,
-        idempotencyKey: _uuid.v4(),
-      );
+      late final PracticeDrill drill;
+      if (topicId != null) {
+        // `topic_id` is a server filter on GET /quiz/questions now. The
+        // repository does not expose it yet, so the scoped read and the seed
+        // go through this feature's own data source until that interface can
+        // be widened.
+        final questions = await _remote.getQuestions(
+          courseId: courseId,
+          categoryId: categoryId,
+          topicId: topicId,
+          difficulty: difficulty,
+          search: search,
+          limit: count,
+        );
+        if (questions.isEmpty) {
+          throw PracticeDrillException(appL10n().quizEmptySession);
+        }
+        final start = await _remote.startPracticeAttempt(
+          questionIds: questions.map((q) => q.id).toList(),
+          idempotencyKey: key,
+        );
+        drill = PracticeDrill(
+          attemptId: start.attemptId,
+          title: title,
+          questions: questions.map((q) => q.toDomain()).toList(),
+        );
+      } else {
+        drill = await _repo.startDrill(
+          title: title,
+          courseId: courseId,
+          categoryId: categoryId,
+          difficulty: difficulty,
+          search: search,
+          count: count,
+          idempotencyKey: key,
+        );
+      }
+      _drillKeys.remove(intent);
       state = state.copyWith(isStartingSession: false);
       return drill;
     } catch (e, st) {
@@ -230,51 +279,95 @@ class PracticeController extends Notifier<PracticeState> {
 
   /// Submits one answer to the live drill attempt.
   ///
-  /// A failure here is surfaced but never blocks the drill: the user has
-  /// already answered, and the server-side attempt is closed when the drill
-  /// completes. The answer count is what the server reports, so a dropped
-  /// answer shows up as a lower score rather than as a lie.
-  Future<bool> submitAnswer({
+  /// A failure is **thrown**, never swallowed: the screen must keep the
+  /// selection in an unsent state and offer a retry. A dropped answer is not
+  /// something to narrate as "answer sent".
+  Future<void> submitAnswer({
     required String attemptId,
     required int questionId,
     required String answer,
     int? timeTakenSeconds,
   }) async {
+    final logicalKey = '$attemptId:$questionId';
+    final idempotencyKey = _answerKeys.putIfAbsent(
+      logicalKey,
+      () => 'practice-answer-$attemptId-$questionId-${_uuid.v4()}',
+    );
     try {
       await _repo.submitAnswer(
         attemptId: attemptId,
         questionId: questionId,
         answer: answer,
         timeTakenSeconds: timeTakenSeconds,
-        idempotencyKey: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
       );
-      return true;
     } catch (e, st) {
+      // A keyed replay/409 means the server already stored this answer, so it
+      // is not a failure and must not be shown as one.
+      if (_isIdempotentReplay(e)) return;
       AppLogger.w('practice submitAnswer $attemptId/$questionId failed: $e');
       debugStack(st);
-      return false;
+      state = state.copyWith(error: errorMessage(e));
+      rethrow;
     }
   }
 
   /// Completes the drill and returns the server's verdict.
+  ///
+  /// The key is derived from the attempt, so the retry a failed completion
+  /// offers is a replay of the same write, never a second completion.
   Future<PracticeResult?> completeAttempt(String attemptId) async {
     state = state.copyWith(isCompletingSession: true, startError: null);
     try {
       final result = await _repo.completeAttempt(
         attemptId: attemptId,
-        idempotencyKey: _uuid.v4(),
+        idempotencyKey: 'practice-complete-$attemptId',
       );
+      _completionResults[attemptId] = result;
       state = state.copyWith(isCompletingSession: false);
       // The history list now has a new row.
       await fetchHistory();
       return result;
     } catch (e, st) {
+      if (_completionResults[attemptId] != null && _isIdempotentReplay(e)) {
+        state = state.copyWith(isCompletingSession: false);
+        return _completionResults[attemptId];
+      }
       AppLogger.w('practice completeAttempt $attemptId failed: $e');
       debugStack(st);
       state = state.copyWith(isCompletingSession: false, startError: errorMessage(e));
       return null;
     }
   }
+
+  /// Rebuilds an interrupted drill from the server's attempt snapshot.
+  /// Questions already answered are left on the server; the client resumes at
+  /// the first question with no answer and never guesses a score.
+  Future<PracticeDrill?> resumeDrill(String attemptId) async {
+    state = state.copyWith(isStartingSession: true, startError: null);
+    try {
+      final payload = await _remote.fetchAttempt(attemptId);
+      if (payload.questions.isEmpty) {
+        throw PracticeDrillException(appL10n().quizEmptySession);
+      }
+      final drill = PracticeDrill(
+        attemptId: attemptId,
+        title: appL10n().practiceDrill,
+        questions: payload.questions.map((q) => q.toDomain()).toList(),
+        undrillableCount: payload.rows.length - payload.questions.length,
+      );
+      state = state.copyWith(isStartingSession: false);
+      return drill;
+    } catch (e, st) {
+      AppLogger.w('practice resumeDrill $attemptId failed: $e');
+      debugStack(st);
+      state = state.copyWith(isStartingSession: false, startError: errorMessage(e));
+      return null;
+    }
+  }
+
+  bool _isIdempotentReplay(Object error) =>
+      toApiException(error).code == ApiErrorCode.idempotencyConflict;
 
   void clearErrors() {
     state = state.copyWith(error: null, bookmarksError: null, historyError: null, toggleError: null, startError: null);

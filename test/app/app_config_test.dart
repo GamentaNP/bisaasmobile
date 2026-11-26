@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bisaasmobile/app/config/app_config.dart';
+import 'package:bisaasmobile/core/network/api_failure.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,7 +26,12 @@ void main() {
       'emergency_content_protection': false,
     },
     'api': {'version': 'v1'},
-    'push': {'vapid_public_key': ''},
+    'country_policy': {
+      'enabled': true,
+      'default_currency': 'NPR',
+      'fx_enabled': true,
+    },
+    'push': {'vapid_public_key': 'BPf public key'},
   };
 
   group('parsing the live payload', () {
@@ -58,13 +64,61 @@ void main() {
       expect(config.offlinePremiumEnabled, isTrue);
       expect(config.competitiveEnabled, isTrue);
     });
+
+    test('models the kill switches instead of discarding them', () {
+      expect(config.externalApiEnabled, isTrue);
+      expect(config.rewardRequiresIntegrity, isFalse);
+      expect(config.emergencyContentProtection, isFalse);
+    });
+
+    test('exposes country_policy as typed values', () {
+      expect(config.countryPolicyEnabled, isTrue);
+      expect(config.defaultCurrency, 'NPR');
+      expect(config.fxEnabled, isTrue);
+    });
+
+    test('exposes the public VAPID key', () {
+      expect(config.vapidPublicKey, 'BPf public key');
+    });
   });
 
   group('tolerant parsing', () {
-    test('missing features map leaves every flag at its default', () {
+    test('missing features map keeps KNOWN flags at their legacy default', () {
       final c = AppConfig.fromJson(const {});
       expect(c.maintenance, isFalse);
-      expect(c.economyEnabled, isTrue, reason: 'unknown flag must not disable a feature');
+      expect(c.economyEnabled, isTrue, reason: 'known flag on an older server');
+      expect(c.externalApiEnabled, isTrue);
+    });
+
+    test('an UNKNOWN key now defaults to false, so a new kill switch is honoured', () {
+      final c = AppConfig.fromJson(const {});
+      // The old rule defaulted every absent key to true, so a future operator
+      // switch that was published as `false` could not be distinguished from a
+      // key the client did not know about yet.
+      expect(c.flag('brand_new_kill_switch'), isFalse);
+      expect(
+        AppConfig.knownEnabledByDefaultFlags,
+        isNot(contains('brand_new_kill_switch')),
+      );
+    });
+
+    test('a published unknown flag is still read verbatim', () {
+      final c = AppConfig.fromJson(const {
+        'features': {'brand_new_kill_switch': true},
+      });
+      expect(c.flag('brand_new_kill_switch'), isTrue);
+    });
+
+    test('an explicit defaultValue at a call site still wins when absent', () {
+      final c = AppConfig.fromJson(const {});
+      expect(c.flag('library_enabled', defaultValue: true), isTrue);
+      expect(c.flag('book_engine', defaultValue: false), isFalse);
+    });
+
+    test('kill switches that are off on an older server stay off', () {
+      final c = AppConfig.fromJson(const {});
+      expect(c.rewardRequiresIntegrity, isFalse);
+      expect(c.emergencyContentProtection, isFalse);
     });
 
     test('a string "false" is not read as the boolean false', () {
@@ -76,11 +130,42 @@ void main() {
       expect(c.economyEnabled, isTrue);
     });
 
-    test('"true" string is likewise ignored', () {
+    test('"true" string is likewise ignored, falling back to false', () {
       final c = AppConfig.fromJson(const {
         'features': {'maintenance_ish': 'true'},
       });
-      expect(c.flag('maintenance_ish'), isTrue);
+      expect(c.flag('maintenance_ish'), isFalse);
+    });
+
+    test('a malformed country_policy or push block throws instead of defaulting', () {
+      expect(
+        () => AppConfig.fromJson(const {'country_policy': 'NPR'}),
+        throwsA(isA<ContractViolation>()),
+      );
+      expect(
+        () => AppConfig.fromJson(const {
+          'country_policy': {'default_currency': 12},
+        }),
+        throwsA(isA<ContractViolation>()),
+      );
+      expect(
+        () => AppConfig.fromJson(const {'push': 'not-an-object'}),
+        throwsA(isA<ContractViolation>()),
+      );
+      expect(
+        () => AppConfig.fromJson(const {
+          'push': {'vapid_public_key': 7},
+        }),
+        throwsA(isA<ContractViolation>()),
+      );
+    });
+
+    test('an older server without country_policy or push keeps safe defaults', () {
+      final c = AppConfig.fromJson(const {});
+      expect(c.countryPolicyEnabled, isFalse);
+      expect(c.defaultCurrency, 'USD');
+      expect(c.fxEnabled, isFalse);
+      expect(c.vapidPublicKey, isEmpty);
     });
 
     test('an unparseable version floor falls back rather than locking users out', () {

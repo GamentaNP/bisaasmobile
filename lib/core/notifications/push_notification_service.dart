@@ -22,6 +22,32 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('FCM background message ${message.messageId}');
 }
 
+/// The server publishes push actions as `action_url` (`SystemNotification.data`,
+/// `SendPushNotificationJob`, streak/material notifications). Older payloads
+/// used `deep_link` / `route`. Read the server key first and keep the others as
+/// fallbacks so existing notifications still route correctly.
+///
+/// Every candidate is untrusted input: it goes through
+/// [NotificationHandler.safeRoute] before it can become a router location. The
+/// first non-empty key wins — including when it is rejected — so a payload
+/// cannot smuggle a second, "safer"-looking URL past the allowlist.
+String? safePushRoute(Map<String, dynamic> data) {
+  for (final key in const <String>['action_url', 'deep_link', 'route']) {
+    final value = data[key];
+    if (value is String && value.isNotEmpty) {
+      return NotificationHandler.safeRoute(value);
+    }
+  }
+  return null;
+}
+
+/// A validated deep link first, then the notification-type fallback.
+///
+/// Payloads from the server often carry only `type` (quiz reminder, battle
+/// invite, …); those still have to land somewhere sensible, normally `/home`.
+String? pushNavigationTarget(Map<String, dynamic> data) =>
+    safePushRoute(data) ?? NotificationHandler.routeFor(data);
+
 class PushNotificationService {
   PushNotificationService(
     this._messaging,
@@ -162,10 +188,7 @@ class PushNotificationService {
         id: message.hashCode & 0x7fffffff,
         title: notification.title ?? 'CivilCal',
         body: notification.body ?? '',
-        payload: NotificationHandler.safeRoute(
-          message.data['deep_link'] as String? ??
-              message.data['route'] as String?,
-        ),
+        payload: pushNavigationTarget(message.data),
       );
     } catch (e, st) {
       AppLogger.w('Local push notification failed: $e', e, st);
@@ -261,13 +284,8 @@ class PushNotificationService {
         source: 'opened',
       ),
     );
-    // Notification taps route via NotificationHandler.routeFor, falling back
-    // to an explicit deep_link/route data payload when the server sends one.
-    _nav.add(
-      NotificationHandler.safeRoute(
-            m.data['deep_link'] as String? ?? m.data['route'] as String?,
-          ) ??
-          NotificationHandler.routeFor(m.data),
-    );
+    // The server's `action_url` wins over the type-based fallback; both are
+    // validated by NotificationHandler.safeRoute before they reach the router.
+    _nav.add(pushNavigationTarget(m.data));
   }
 }

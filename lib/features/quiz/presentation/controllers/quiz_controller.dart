@@ -8,13 +8,18 @@ import 'package:uuid/uuid.dart';
 import '../../../../app/providers.dart';
 import '../../../../core/consent/consent_gate.dart';
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../../core/network/api_exception.dart';
+import '../../../../core/network/api_failure.dart';
 import '../../../../core/logging/app_logger.dart';
+import '../../../../shared/utils/error_message.dart';
 import '../../data/datasources/lifeline_remote_data_source.dart';
+import '../../data/datasources/quiz_hint_remote_data_source.dart';
 import '../../data/datasources/quiz_local_data_source.dart';
 import '../../data/datasources/quiz_remote_data_source.dart';
 import '../../data/models/lifeline_dto.dart';
 import '../../data/repositories/quiz_repository_impl.dart';
 import '../../domain/entities/attempt_result.dart';
+import '../../domain/entities/question.dart';
 import '../../domain/repositories/quiz_repository.dart';
 import '../state/quiz_state.dart';
 import '../../../../app/localization/l10n.dart';
@@ -43,6 +48,36 @@ final lifelineRemoteDataSourceProvider = Provider<LifelineRemoteDataSource>((ref
 final quizControllerProvider =
     NotifierProvider<QuizController, QuizState>(QuizController.new);
 
+/// What the attempt screen renders for the server's answer-safe hint.
+/// Kept in its own provider so a hint arrival does not need to fake a change
+/// to [QuizState] (which has no hint fields).
+typedef QuizHintViewState = ({
+  String? hint,
+  String? error,
+  bool busy,
+  int? questionId,
+});
+
+class QuizHintViewController extends Notifier<QuizHintViewState> {
+  @override
+  QuizHintViewState build() => (
+        hint: null,
+        error: null,
+        busy: false,
+        questionId: null,
+      );
+
+  QuizHintViewState get view => state;
+  set view(QuizHintViewState next) => state = next;
+
+  void clear() => view = (hint: null, error: null, busy: false, questionId: null);
+}
+
+final quizHintViewProvider =
+    NotifierProvider<QuizHintViewController, QuizHintViewState>(
+  QuizHintViewController.new,
+);
+
 // ── Controller ─────────────────────────────────────────────────────────────
 
 /// Manages the entire quiz session lifecycle — fetching, timing, submission,
@@ -57,8 +92,32 @@ class QuizController extends Notifier<QuizState> {
   /// `time_taken_seconds` with the answer. Reset on every advance.
   DateTime? _questionShownAt;
 
+  /// Start is a single logical write: the key is minted once per intent and
+  /// reused when the error screen retries, so a lost response cannot seed a
+  /// second attempt. Cleared only once the attempt is genuinely playable.
+  String? _startKey;
+  ({String quizId, int? categoryId, List<int> questionIds})? _startIntent;
+
+  /// Answer writes are keyed by the logical answer, not by the tap. The cached
+  /// result lets a replayed write return the original verdict rather than a
+  /// generic failure.
+  final Map<String, String> _answerKeys = <String, String>{};
+  final Map<String, AttemptResult> _answerResults = <String, AttemptResult>{};
+
+  /// A failed completion must be retried against the SAME attempt. Remembering
+  /// it also lets the screen offer "retry completion" instead of "start over".
+  String? _failedCompletionAttemptId;
+  QuizResult? _completedResult;
+
+  /// True when the error screen should retry a completion, not start a new
+  /// quiz (C3). Read by the screen through the notifier.
+  bool get hasFailedCompletion => _failedCompletionAttemptId != null;
+
   QuizRepository get _repo => ref.read(quizRepositoryProvider);
+  QuizRemoteDataSource get _remote => ref.read(quizRemoteDataSourceProvider);
   LifelineRemoteDataSource get _lifelines => ref.read(lifelineRemoteDataSourceProvider);
+
+  void _clearHint() => ref.read(quizHintViewProvider.notifier).clear();
 
   @override
   QuizState build() {
@@ -68,7 +127,27 @@ class QuizController extends Notifier<QuizState> {
 
   // ── Public API ────────────────────────────────────────────────────────────
 
-  Future<void> startSession(String quizId, {int? categoryId}) async {
+  /// Starts a fresh quiz, or resumes an interrupted attempt when [attemptId]
+  /// is supplied (the server's `GET /quiz/attempts/{attempt}` contract).
+  Future<void> startSession(
+    String quizId, {
+    int? categoryId,
+    String? attemptId,
+  }) async {
+    if (attemptId != null && attemptId.isNotEmpty) {
+      await resumeSession(attemptId);
+      return;
+    }
+    _timer?.cancel();
+    final isRetry = _startKey != null && _startIntent?.quizId == quizId;
+    if (!isRetry) {
+      _startKey = 'quiz-start-$quizId-${_uuid.v4()}';
+      _answerKeys.clear();
+      _answerResults.clear();
+    }
+    _failedCompletionAttemptId = null;
+    _completedResult = null;
+    _clearHint();
     state = QuizState.initial();
 
     try {
@@ -90,32 +169,48 @@ class QuizController extends Notifier<QuizState> {
       String attemptId;
       bool isOffline = isOfflineCache;
       try {
-        final idempotencyKey = _uuid.v4();
         // Server seeds its grading rows from the ids we send — the questions
         // fetched for this session MUST be the ones the attempt is graded on.
-        // The pool is already category-scoped (getQuizSession applies the
-        // filter), so question_ids are always exact; delegating seeding to
-        // category_id would grade a DIFFERENT set than the one on screen and
-        // 404 every answer.
-        final questionIds = session.questions
+        // On a retry we reuse the first attempt's ids so the keyed request is
+        // byte-for-byte the same one the server already stored.
+        final fetchedIds = session.questions
             .map((q) => int.tryParse(q.id))
             .whereType<int>()
             .toList();
+        final questionIds = (isRetry && _startIntent!.questionIds.isNotEmpty)
+            ? _startIntent!.questionIds
+            : fetchedIds;
+        _startIntent = (
+          quizId: quizId,
+          categoryId: categoryId,
+          questionIds: questionIds,
+        );
         attemptId = await _repo.startAttempt(
           quizId: quizId,
-          idempotencyKey: idempotencyKey,
+          idempotencyKey: _startKey!,
           questionIds: questionIds.isNotEmpty ? questionIds : null,
         );
       } on DioException catch (e) {
-        final offline = e.type == DioExceptionType.connectionError ||
-            e.type == DioExceptionType.connectionTimeout ||
-            e.type == DioExceptionType.receiveTimeout ||
-            e.response == null;
-        if (offline) {
-          attemptId = 'offline-${_uuid.v4()}';
-          isOffline = true;
+        // A replay/conflict means the keyed start already happened. Return the
+        // attempt the server reports instead of declaring a fresh offline run.
+        if (_isIdempotentReplay(e)) {
+          final replayedId = _attemptIdFromError(e);
+          if (replayedId != null) {
+            attemptId = replayedId;
+          } else {
+            rethrow;
+          }
         } else {
-          rethrow;
+          final offline = e.type == DioExceptionType.connectionError ||
+              e.type == DioExceptionType.connectionTimeout ||
+              e.type == DioExceptionType.receiveTimeout ||
+              e.response == null;
+          if (offline) {
+            attemptId = 'offline-${_uuid.v4()}';
+            isOffline = true;
+          } else {
+            rethrow;
+          }
         }
       }
 
@@ -127,6 +222,10 @@ class QuizController extends Notifier<QuizState> {
         hiddenOptionKeys: const {},
         lifelineNotice: null,
       );
+      // The key is spent: "play again" must mint a new one rather than replay
+      // this attempt.
+      _startKey = null;
+      _startIntent = null;
       _questionShownAt = DateTime.now();
 
       // Lifelines are a separate, server-owned cluster. Load them in the
@@ -194,8 +293,12 @@ class QuizController extends Notifier<QuizState> {
       return;
     }
 
+    final answerKey = '$attemptId:${question.id}';
+    final idempotencyKey = _answerKeys.putIfAbsent(
+      answerKey,
+      () => 'quiz-answer-$attemptId-${question.id}-${_uuid.v4()}',
+    );
     try {
-      final idempotencyKey = _uuid.v4();
       final result = await _repo.submitAnswer(
         attemptId: attemptId,
         questionId: question.id,
@@ -203,6 +306,7 @@ class QuizController extends Notifier<QuizState> {
         idempotencyKey: idempotencyKey,
         timeTakenSeconds: _secondsOnThisQuestion(),
       );
+      _answerResults[answerKey] = result;
 
       final updatedAnswers = Map<String, AttemptResult>.from(state.answers)
         ..[question.id] = result;
@@ -224,6 +328,31 @@ class QuizController extends Notifier<QuizState> {
         await ref.read(analyticsProvider).log(AnalyticsEvents.quizAnswer, params: {'is_correct': result.isCorrect ? 1 : 0});
       } catch (_) {}
     } catch (e) {
+      // A replayed write already succeeded server-side. Return the original
+      // result (or the honest "verdict pending" marker when the first response
+      // was lost) instead of telling the user their answer never arrived.
+      if (_isIdempotentReplay(e)) {
+        final result = _answerResults[answerKey] ??
+            AttemptResult(
+              questionId: question.id,
+              selectedOptionId: optionId,
+              isCorrect: false,
+              xpEarned: 0,
+              coinsEarned: 0,
+              correctOptionId: '',
+              explanation: appL10n().quizAnswerSubmitted,
+            );
+        _answerResults[answerKey] = result;
+        final replayedAnswers = Map<String, AttemptResult>.from(state.answers)
+          ..[question.id] = result;
+        state = state.copyWith(
+          phase: QuizPhase.feedback,
+          lastResult: result,
+          answers: replayedAnswers,
+          errorMessage: null,
+        );
+        return;
+      }
       // The write outbox is deliberately unwired: nothing is queued and
       // nothing reconciles. Keep the question in `answering` with the
       // selection intact so the user can retry instead of being told a lie.
@@ -255,7 +384,56 @@ class QuizController extends Notifier<QuizState> {
       hiddenOptionKeys: const {},
       lifelineNotice: null,
     );
+    _clearHint();
     _questionShownAt = DateTime.now();
+  }
+
+  // ── Server-built hint (answer-safe) ──────────────────────────────────────
+
+  /// Requests the hint for the current question from
+  /// `GET /quiz/questions/{question}/hint`.
+  ///
+  /// The server sanitises the text and guarantees it carries no answer key;
+  /// the client only renders what it returns. A failure is kept in the hint
+  /// view with a retry — it is never an empty hint or a locally invented one.
+  Future<void> loadHint() async {
+    final question = state.currentQuestion;
+    final attemptId = state.attemptId;
+    if (question == null || attemptId == null || attemptId.startsWith('offline-')) return;
+    final questionId = int.tryParse(question.id);
+    if (questionId == null) return;
+    if (ref.read(quizHintViewProvider).busy) return;
+
+    final view = ref.read(quizHintViewProvider.notifier);
+    view.view = (hint: null, error: null, busy: true, questionId: questionId);
+    try {
+      final hint = await ref
+          .read(quizHintRemoteDataSourceProvider)
+          .getHint(questionId);
+      if (!ref.mounted) return;
+      // The user may have advanced while the request was in flight. Never
+      // paint a hint for question A against question B's body.
+      if (state.currentQuestion?.id != question.id) {
+        if (ref.read(quizHintViewProvider).questionId == questionId) {
+          _clearHint();
+        }
+        return;
+      }
+      view.view = (hint: hint.hint, error: null, busy: false, questionId: questionId);
+    } catch (e) {
+      AppLogger.w('quiz hint failed for question $questionId: $e');
+      if (!ref.mounted) return;
+      if (state.currentQuestion?.id != question.id) {
+        _clearHint();
+        return;
+      }
+      view.view = (
+        hint: null,
+        error: appL10n().quizHintLoadFailed,
+        busy: false,
+        questionId: questionId,
+      );
+    }
   }
 
   // ── Lifelines (server-authoritative) ─────────────────────────────────────
@@ -270,6 +448,10 @@ class QuizController extends Notifier<QuizState> {
     if (attemptId == null || attemptId.startsWith('offline-')) return;
     try {
       final catalogue = await _lifelines.getCatalogue(attemptId);
+      // A background read can outlive the screen (and its provider). Writing
+      // state after disposal throws in Riverpod 3 and shows up as a spurious
+      // test failure — and as a crash in the app after a fast navigation.
+      if (!ref.mounted) return;
       state = state.copyWith(
         lifelinesEnabled: catalogue.enabled,
         lifelines: catalogue.lifelines,
@@ -277,7 +459,9 @@ class QuizController extends Notifier<QuizState> {
       );
     } catch (e) {
       AppLogger.w('lifeline catalogue failed: $e');
-      state = state.copyWith(lifelinesEnabled: false, lifelines: const []);
+      if (ref.mounted) {
+        state = state.copyWith(lifelinesEnabled: false, lifelines: const []);
+      }
     }
   }
 
@@ -317,6 +501,7 @@ class QuizController extends Notifier<QuizState> {
         hiddenOptionKeys: result.effect.hiddenOptionKeys.toSet(),
         lifelineNotice: _describeEffect(result.effect),
       );
+      _applyTimeEffect(result.effect);
       // Remaining uses and the wallet moved server-side; re-read them rather
       // than decrementing a local copy.
       await loadLifelines();
@@ -376,9 +561,12 @@ class QuizController extends Notifier<QuizState> {
 
   void _startTimer(int totalSeconds) {
     _timer?.cancel();
+    // Read the deadline from state on every tick: a server-granted lifeline can
+    // extend it mid-run, and a captured local would silently drop that effect.
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final deadline = state.session?.durationSeconds ?? totalSeconds;
       final newElapsed = state.elapsedSeconds + 1;
-      if (newElapsed >= totalSeconds) {
+      if (newElapsed >= deadline) {
         _timer?.cancel();
         unawaited(_finishSession());
       } else {
@@ -387,9 +575,38 @@ class QuizController extends Notifier<QuizState> {
     });
   }
 
+  /// Applies the *server-built* time effects to the attempt deadline. The
+  /// client never extends time on its own and never grades anything here; it
+  /// only honours `extra_seconds` / `freeze_seconds` (or `frozen_until`) from
+  /// the lifeline payload.
+  void _applyTimeEffect(LifelineEffectDto effect) {
+    final session = state.session;
+    if (session == null) return;
+    final extra = effect.extraSeconds ?? 0;
+    var freeze = effect.freezeSeconds ?? 0;
+    final until = effect.frozenUntil;
+    if (until != null) {
+      final remaining = until.difference(DateTime.now()).inSeconds;
+      if (remaining > freeze) freeze = remaining;
+    }
+    if (extra <= 0 && freeze <= 0) return;
+    final extended = session.durationSeconds + extra + freeze;
+    state = state.copyWith(
+      session: QuizSession(
+        id: session.id,
+        title: session.title,
+        questions: session.questions,
+        durationSeconds: extended,
+        xpReward: session.xpReward,
+        coinsReward: session.coinsReward,
+        subjectSlug: session.subjectSlug,
+      ),
+    );
+  }
+
   Future<void> _finishSession() async {
     _timer?.cancel();
-    final attemptId = state.attemptId;
+    final attemptId = _failedCompletionAttemptId ?? state.attemptId;
     if (attemptId == null) return;
 
     late final QuizResult result;
@@ -402,14 +619,22 @@ class QuizController extends Notifier<QuizState> {
         idempotencyKey: 'quiz-complete-$attemptId',
       );
     } catch (e) {
-      state = state.copyWith(
-        phase: QuizPhase.error,
-        errorMessage: appL10n().quizFinishFailed,
-      );
-      AppLogger.w('quiz completion failed for $attemptId: $e');
-      return;
+      if (_isIdempotentReplay(e) && _completedResult != null) {
+        result = _completedResult!;
+      } else {
+        // Stay on THIS attempt: the error screen must retry the completion,
+        // never call startSession() and orphan the attempt.
+        _failedCompletionAttemptId = attemptId;
+        state = state.copyWith(
+          phase: QuizPhase.error,
+          errorMessage: appL10n().quizFinishFailed,
+        );
+        AppLogger.w('quiz completion failed for $attemptId: $e');
+        return;
+      }
     }
-
+    _failedCompletionAttemptId = null;
+    _completedResult = result;
     state = state.copyWith(phase: QuizPhase.finished, quizResult: result);
     try {
       await ref.read(analyticsProvider).log(AnalyticsEvents.quizComplete, params: {
@@ -418,5 +643,125 @@ class QuizController extends Notifier<QuizState> {
         'xp': result.totalXpEarned,
       });
     } catch (_) {}
+  }
+
+  /// Ends the current attempt and asks the server for the verdict.
+  /// Public so an UI action (and tests) can finish without waiting for the
+  /// wall clock; the timer uses the same path.
+  Future<void> finishSession() => _finishSession();
+
+  /// Retries the completion of the attempt that failed, using the same key.
+  /// A brand-new quiz is only started when the user explicitly chooses to.
+  Future<void> retryCompletion() async {
+    if (_failedCompletionAttemptId == null) return;
+    await _finishSession();
+  }
+
+  /// Explicit exit from a live standard attempt. Abandonment is server-owned
+  /// and keyed so a retried exit cannot abandon twice.
+  Future<void> abandonSession() async {
+    final attemptId = state.attemptId;
+    if (attemptId == null || attemptId.startsWith('offline-')) return;
+    try {
+      await _remote.abandonAttempt(
+        attemptId,
+        idempotencyKey: 'quiz-abandon-$attemptId',
+      );
+    } catch (e) {
+      // The user has already left; a failed best-effort write must not trap
+      // them on the screen.
+      AppLogger.w('quiz abandonment failed for $attemptId: $e');
+    }
+  }
+
+  /// Resumes an interrupted server attempt from `GET /quiz/attempts/{id}`.
+  /// Answered questions are marked as submitted (verdict pending) and the
+  /// cursor lands on the first unanswered one; nothing is graded locally.
+  Future<void> resumeSession(String attemptId) async {
+    _timer?.cancel();
+    state = QuizState.initial();
+    _failedCompletionAttemptId = null;
+    _completedResult = null;
+    _startKey = null;
+    _startIntent = null;
+    _clearHint();
+    try {
+      final payload = await _remote.fetchAttempt(attemptId);
+      if (payload.session.questions.isEmpty) {
+        state = state.copyWith(
+          phase: QuizPhase.error,
+          errorMessage: appL10n().quizEmptySession,
+        );
+        return;
+      }
+      final answers = <String, AttemptResult>{};
+      var elapsed = 0;
+      var resumeIndex = 0;
+      var foundPending = false;
+      for (var i = 0; i < payload.rows.length; i++) {
+        final row = payload.rows[i];
+        elapsed += int.tryParse('${row['time_taken_seconds'] ?? 0}') ?? 0;
+        final given = row['given_answer'];
+        final answered = row['answered'] == true ||
+            (given != null && given.toString().isNotEmpty);
+        final skipped = row['skipped'] == true;
+        final questionId = (row['question_id'] ??
+                (row['question'] is Map ? (row['question'] as Map)['id'] : null) ?? '')
+            .toString();
+        if ((answered || skipped) && questionId.isNotEmpty) {
+          answers[questionId] = AttemptResult(
+            questionId: questionId,
+            selectedOptionId: given?.toString() ?? '',
+            isCorrect: false,
+            xpEarned: 0,
+            coinsEarned: 0,
+            correctOptionId: '',
+            explanation: appL10n().quizAnswerSubmitted,
+          );
+        } else if (!foundPending) {
+          resumeIndex = i;
+          foundPending = true;
+        }
+      }
+      state = state.copyWith(
+        phase: QuizPhase.answering,
+        session: payload.session.toDomain(),
+        attemptId: attemptId,
+        currentIndex: resumeIndex,
+        answers: answers,
+        elapsedSeconds: elapsed,
+        hiddenOptionKeys: const {},
+        lifelineNotice: null,
+        errorMessage: null,
+      );
+      _questionShownAt = DateTime.now();
+      if (payload.status == 'in_progress') unawaited(loadLifelines());
+      _startTimer(payload.session.durationSeconds);
+    } catch (e) {
+      state = state.copyWith(
+        phase: QuizPhase.error,
+        errorMessage: errorMessage(e),
+      );
+    }
+  }
+
+  bool _isIdempotentReplay(Object error) {
+    final api = toApiException(error);
+    if (api.code == ApiErrorCode.idempotencyConflict) return true;
+    if (error is DioException) {
+      final header = error.response?.headers.value('X-Idempotent-Replay');
+      if (header?.toLowerCase() == 'true') return true;
+    }
+    return false;
+  }
+
+  String? _attemptIdFromError(Object error) {
+    final api = toApiException(error);
+    final details = api.details;
+    if (details is Map) {
+      final raw = details['attempt_id'] ?? details['id'];
+      if (raw != null) return raw.toString();
+    }
+    return null;
   }
 }

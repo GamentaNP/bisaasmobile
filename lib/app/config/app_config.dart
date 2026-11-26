@@ -11,6 +11,24 @@ import '../../core/network/install_identity_interceptor.dart';
 import '../../features/ai_settings/domain/entities/ai_settings.dart';
 import '../localization/l10n.dart';
 
+/// The server's public regional-policy block (`data.country_policy`).
+///
+/// Published by `GET /api/v1/app/config`; the per-user version lives on
+/// `/me`. Absent keys take the server's own defaults rather than throwing, because
+/// this block is additive. A *present* key of the wrong type is contract drift.
+@immutable
+class CountryPolicyConfig {
+  const CountryPolicyConfig({
+    this.enabled = false,
+    this.defaultCurrency = 'USD',
+    this.fxEnabled = false,
+  });
+
+  final bool enabled;
+  final String defaultCurrency;
+  final bool fxEnabled;
+}
+
 /// Operator configuration served by `GET /api/v1/app/config`.
 ///
 /// This is the only public (pre-auth) endpoint that carries the maintenance
@@ -24,7 +42,9 @@ import '../localization/l10n.dart';
 /// {"min_app_version":{"android":"1.0.0","ios":"1.0.0"},
 ///  "force_update":false,"maintenance":false,
 ///  "features":{"economy_enabled":false,"ads_enabled":false,
-///              "guest_calculator_enabled":false,...}}
+///              "guest_calculator_enabled":false,...},
+///  "country_policy":{"enabled":false,"default_currency":"USD","fx_enabled":false},
+///  "push":{"vapid_public_key":"..."}}
 /// ```
 @immutable
 class AppConfig {
@@ -36,6 +56,8 @@ class AppConfig {
     this.features = const {},
     this.aiKeysEnabled = true,
     this.aiProviders,
+    this.countryPolicy = const CountryPolicyConfig(),
+    this.vapidPublicKey = '',
   });
 
   final String minAndroidVersion;
@@ -60,21 +82,65 @@ class AppConfig {
   /// never seen.
   final List<AiProviderDescriptor>? aiProviders;
 
-  /// Absent keys are treated as ENABLED.
-  ///
-  /// Deliberate: this endpoint is additive, so a key the client does not know
-  /// about yet must not silently disable a feature an operator has not turned
-  /// off. The risk of defaulting to disabled is that every unrecognised flag
-  /// would break the app until the client is updated; the risk of defaulting to
-  /// enabled is only that a brand-new flag is not honoured until shipped.
-  bool flag(String key, {bool defaultValue = true}) => features[key] ?? defaultValue;
+  /// The server's `data.country_policy`, with the server's own defaults when
+  /// the block is absent on an older deployment.
+  final CountryPolicyConfig countryPolicy;
 
+  /// Public Web Push VAPID key, used only by browser subscribe flows. Public
+  /// material: the private half never leaves the server.
+  final String vapidPublicKey;
+
+  /// Flags this build already knows and that the server has published since
+  /// the first app-config release. Only these may fall back to `true` when an
+  /// older server omits them.
+  ///
+  /// Everything else — including a brand-new operator kill switch — falls back
+  /// to `false`. This is deliberately the opposite of the old rule: with
+  /// "unknown means enabled", a new published `false` was honoured but a new
+  /// published `true` (or a key the client forgot to model) was treated as
+  /// enabled, so a freshly introduced kill switch could not disable a feature
+  /// on an un-updated client. The explicit allowlist keeps the known additive
+  /// flags working on old servers without re-opening that hole.
+  static const knownEnabledByDefaultFlags = <String>{
+    'external_api_enabled',
+    'economy_enabled',
+    'ads_enabled',
+    'guest_calculator_enabled',
+    'premium_download_enabled',
+    'offline_premium_enabled',
+    'competitive_enabled',
+  };
+
+  /// Reads a published flag.
+  ///
+  /// A published value always wins. An explicit [defaultValue] at a call site
+  /// is still honoured (used by feature surfaces with their own legacy
+  /// defaults). Otherwise the key is in [knownEnabledByDefaultFlags] → true,
+  /// and unknown → false.
+  bool flag(String key, {bool? defaultValue}) {
+    final published = features[key];
+    if (published != null) return published;
+    if (defaultValue != null) return defaultValue;
+    return knownEnabledByDefaultFlags.contains(key);
+  }
+
+  bool get externalApiEnabled => flag('external_api_enabled');
   bool get economyEnabled => flag('economy_enabled');
   bool get adsEnabled => flag('ads_enabled');
   bool get guestCalculatorEnabled => flag('guest_calculator_enabled');
   bool get competitiveEnabled => flag('competitive_enabled');
   bool get premiumDownloadEnabled => flag('premium_download_enabled');
   bool get offlinePremiumEnabled => flag('offline_premium_enabled');
+
+  /// W3.6 mobile kill switches. Deliberately NOT in the allowlist: an older
+  /// server did not publish them and its own config default is off.
+  bool get rewardRequiresIntegrity => flag('reward_requires_integrity');
+  bool get emergencyContentProtection => flag('emergency_content_protection');
+
+  /// Typed views of `data.country_policy`.
+  bool get countryPolicyEnabled => countryPolicy.enabled;
+  String get defaultCurrency => countryPolicy.defaultCurrency;
+  bool get fxEnabled => countryPolicy.fxEnabled;
 
   String minVersionFor({TargetPlatform? platform}) {
     final isIos = platform == TargetPlatform.iOS;
@@ -145,6 +211,64 @@ class AppConfig {
       }
     }
 
+    var countryPolicy = const CountryPolicyConfig();
+    final countryRaw = json['country_policy'];
+    if (countryRaw != null && countryRaw is! Map) {
+      throw ContractViolation(
+        'Expected `country_policy` to be an object, '
+        'got ${countryRaw.runtimeType}',
+        endpoint: '/app/config',
+      );
+    }
+    if (countryRaw is Map) {
+      final country = countryRaw.cast<String, dynamic>();
+      final enabled = country['enabled'];
+      final fxEnabled = country['fx_enabled'];
+      final currency = country['default_currency'];
+      if (enabled != null && enabled is! bool) {
+        throw const ContractViolation(
+          'country_policy.enabled must be a boolean',
+          endpoint: '/app/config',
+        );
+      }
+      if (fxEnabled != null && fxEnabled is! bool) {
+        throw const ContractViolation(
+          'country_policy.fx_enabled must be a boolean',
+          endpoint: '/app/config',
+        );
+      }
+      if (currency != null && currency is! String) {
+        throw const ContractViolation(
+          'country_policy.default_currency must be a string',
+          endpoint: '/app/config',
+        );
+      }
+      countryPolicy = CountryPolicyConfig(
+        enabled: enabled == true,
+        defaultCurrency: currency is String ? currency : 'USD',
+        fxEnabled: fxEnabled == true,
+      );
+    }
+
+    var vapidPublicKey = '';
+    final pushRaw = json['push'];
+    if (pushRaw != null && pushRaw is! Map) {
+      throw ContractViolation(
+        'Expected `push` to be an object, got ${pushRaw.runtimeType}',
+        endpoint: '/app/config',
+      );
+    }
+    if (pushRaw is Map) {
+      final key = pushRaw.cast<String, dynamic>()['vapid_public_key'];
+      if (key != null && key is! String) {
+        throw const ContractViolation(
+          'push.vapid_public_key must be a string',
+          endpoint: '/app/config',
+        );
+      }
+      vapidPublicKey = key is String ? key : '';
+    }
+
     return AppConfig(
       minAndroidVersion: (minMap['android'] ?? '1.0.0').toString(),
       minIosVersion: (minMap['ios'] ?? '1.0.0').toString(),
@@ -153,6 +277,8 @@ class AppConfig {
       features: features,
       aiKeysEnabled: aiKeysEnabled,
       aiProviders: aiProviders,
+      countryPolicy: countryPolicy,
+      vapidPublicKey: vapidPublicKey,
     );
   }
 }

@@ -45,6 +45,61 @@ class QuizRemoteDataSource {
   /// `per_page` at 100 for the question collections.
   static const _perPage = 50;
 
+  /// Maps one `QuizQuestionResource` option to the shape `QuestionDto` reads.
+  ///
+  /// The grader matches the option **key** (`A`, `B`, …), so `key` is the answer
+  /// value sent back on submit. Numeric `id` is only a fallback for older
+  /// payloads that carried no key — preferring it silently 422s on the answer
+  /// endpoint.
+  static Map<String, dynamic> _optionToDtoMap(Object? option, int index) {
+    if (option is String) {
+      return {'id': option, 'text': option, 'position': index};
+    }
+    if (option is! Map<String, dynamic>) {
+      return {'id': 'opt_$index', 'text': '', 'position': index};
+    }
+    final key = option['key'] ?? option['id'] ?? option['value'];
+    return {
+      'id': (key ?? 'opt_$index').toString(),
+      'text': (option['text'] ?? option['label'] ?? option['value'] ?? '').toString(),
+      'position': option['position'] is int ? option['position'] : index,
+    };
+  }
+
+  /// Maps one `QuizQuestionResource` to the shape `QuestionDto` reads.
+  static Map<String, dynamic> questionToDtoMap(Map<String, dynamic> json, String quizId) {
+    final options = json['options'];
+    final optList = <Map<String, dynamic>>[];
+    if (options is List) {
+      for (var i = 0; i < options.length; i++) {
+        optList.add(_optionToDtoMap(options[i], i));
+      }
+    }
+    int diff = 1;
+    final d = json['difficulty'];
+    if (d is int) diff = d;
+    if (d is String) {
+      if (d == 'medium') diff = 2;
+      if (d == 'hard') diff = 3;
+      if (d == 'expert') diff = 4;
+    }
+    return {
+      'id': (json['id'] ?? '').toString(),
+      'body': (json['question_text'] ?? json['body'] ?? '') as String,
+      'options': optList,
+      'subject_slug': (json['course'] is Map ? (json['course'] as Map)['slug'] : null) ?? '',
+      'difficulty': diff,
+      'marks_positive': (json['points'] as int?) ?? 4,
+      'marks_negative': 0,
+      // Answer keys and explanations are never read from a pre-answer
+      // response. The server does not send them (QuizQuestionResource
+      // exposure policy) and the client must not be built to accept them.
+      'explanation': null,
+      'correct_option_id': null,
+      'quiz_id': quizId,
+    };
+  }
+
 
   // ── Courses as quiz list (server has no /quiz/quizzes) ────────────────────
 
@@ -98,56 +153,9 @@ class QuizRemoteDataSource {
         );
       }
 
-      final questions = raw.map((j) {
-        // Map QuizQuestionResource shape → QuestionDto shape
-        // Resource: {id:int, question_text:string, options:list, difficulty:string, points:int}
-        // Dto expects: {id:string, body:string, options:[{id,text,position}], difficulty:int, marks_positive:int}
-        final id = (j['id'] ?? '').toString();
-        final body = (j['question_text'] ?? j['body'] ?? '') as String;
-        final opts = j['options'];
-        final optList = <Map<String, dynamic>>[];
-        if (opts is List) {
-          for (var i = 0; i < opts.length; i++) {
-            final o = opts[i];
-            if (o is Map<String, dynamic>) {
-              optList.add({
-                'id': (o['id'] ?? o['key'] ?? o['value'] ?? 'opt_$i').toString(),
-                'text': (o['text'] ?? o['label'] ?? o['value'] ?? '').toString(),
-                'position': o['position'] is int ? o['position'] : i,
-              });
-            } else if (o is String) {
-              optList.add({'id': 'opt_$i', 'text': o, 'position': i});
-            }
-          }
-        }
-        // difficulty: string easy|medium|hard → int 1|2|3
-        int diff = 1;
-        final d = j['difficulty'];
-        if (d is int) diff = d;
-        if (d is String) {
-          if (d == 'medium') diff = 2;
-          if (d == 'hard') diff = 3;
-          if (d == 'expert') diff = 4;
-        }
-        return {
-          'id': id,
-          'body': body,
-          'options': optList,
-          'subject_slug': (j['course'] is Map ? (j['course'] as Map)['slug'] : null) ?? '',
-          'difficulty': diff,
-          'marks_positive': (j['points'] as int?) ?? 4,
-          'marks_negative': 0,
-          // Answer keys and explanations are never read from a pre-answer
-          // response. The server does not send them (QuizQuestionResource
-          // exposure policy) and the client must not be built to accept them:
-          // an ingestion point here is what turns one careless API change into
-          // a published answer bank. They arrive only from the results stage,
-          // or from an encrypted offline pack (security plan W4.8).
-          'explanation': null,
-          'correct_option_id': null,
-          'quiz_id': quizId,
-        };
-      }).toList();
+      // An answer key is never ingested here: the server withholds it until
+      // grading and the client must not become an answer-bank surface.
+      final questions = raw.map((j) => questionToDtoMap(j, quizId)).toList();
 
       // Fetch course name for title
       var title = appL10n().quiz;
@@ -178,12 +186,7 @@ class QuizRemoteDataSource {
     return QuizSessionDto(
       id: quizId,
       title: appL10n().quiz,
-      questions: raw.map((j) => QuestionDto.fromJson({
-            'id': (j['id'] ?? '').toString(),
-            'body': (j['question_text'] ?? '') as String,
-            'options': j['options'],
-            'difficulty': 1,
-          })).toList(),
+      questions: raw.map((j) => QuestionDto.fromJson(questionToDtoMap(j, quizId))).toList(),
       durationSeconds: 20 * 60,
     );
   }
@@ -543,10 +546,11 @@ class QuizRemoteDataSource {
     final res = await _dio.get<Map<String, dynamic>>('/quiz/attempts/$attemptId/results');
     final body = res.data;
     if (body == null) {
-  throw const ContractViolation(
-    'Empty response body',
-  );
-}
+      throw const ContractViolation(
+        'Empty response body',
+        endpoint: '/quiz/attempts/{attempt}/results',
+      );
+    }
     if (body['data'] is Map<String, dynamic>) return body['data'] as Map<String, dynamic>;
     try {
       final env = ApiResponse.fromJson(body, (json) => json as Map<String, dynamic>?);
@@ -555,4 +559,69 @@ class QuizRemoteDataSource {
       return null;
     }
   }
+
+  // ── Resume & abandon ────────────────────────────────────────────────────────
+
+  /// `GET /quiz/attempts/{attempt}` — the server's own attempt snapshot.
+  ///
+  /// A start only returns an id, so this read is what lets an interrupted
+  /// study attempt resume with the same questions in the same order. It never
+  /// publishes answer keys (`QuizAttemptApiController@show`), so the client
+  /// reconstructs only which questions were already answered — never whether
+  /// they were right.
+  Future<AttemptResumePayload> fetchAttempt(String attemptId) async {
+    const path = '/quiz/attempts';
+    final res = await _dio.get<Map<String, dynamic>>('$path/$attemptId');
+    final data = requireDataMap(res.data, endpoint: '$path/{attempt}');
+    final rawRows = data['questions'];
+    if (rawRows is! List) {
+      throw ContractViolation(
+        'Attempt response carried no questions list',
+        endpoint: '$path/{attempt}',
+      );
+    }
+
+    final rows = <Map<String, dynamic>>[];
+    final questionMaps = <Map<String, dynamic>>[];
+    for (final row in rawRows) {
+      if (row is! Map<String, dynamic>) continue;
+      rows.add(row);
+      final question = row['question'];
+      if (question is Map<String, dynamic>) {
+        questionMaps.add(questionToDtoMap(question, attemptId));
+      }
+    }
+    return (
+      status: '${data['status'] ?? 'in_progress'}',
+      rows: rows,
+      session: QuizSessionDto(
+        id: attemptId,
+        title: appL10n().quiz,
+        questions: questionMaps.map(QuestionDto.fromJson).toList(),
+        durationSeconds: questionMaps.length * 90,
+      ),
+    );
+  }
+
+  /// `PUT /quiz/attempts/{attempt}/abandonment` — an explicit exit from a live
+  /// attempt. Best effort from the UI's point of view, but the write itself is
+  /// keyed so a retried exit cannot double-abandon.
+  Future<void> abandonAttempt(
+    String attemptId, {
+    String? idempotencyKey,
+  }) async {
+    await _dio.put<Map<String, dynamic>>(
+      '/quiz/attempts/$attemptId/abandonment',
+      options: Options(headers: {
+        'Idempotency-Key': idempotencyKey ?? _uuid.v4(),
+      }),
+    );
+  }
 }
+
+/// The attempt snapshot used to resume a study session.
+typedef AttemptResumePayload = ({
+  QuizSessionDto session,
+  List<Map<String, dynamic>> rows,
+  String status,
+});

@@ -117,17 +117,17 @@ class _PracticeBrowserScreenState extends ConsumerState<PracticeBrowserScreen> w
 
   /// Weak-topic drill.
   ///
-  /// The server's weak-area analysis publishes a topic *name* (not an id), and
-  /// `GET /quiz/questions` has no `topic_id` filter — so the topic is matched
-  /// with the server's own text search, which it does honour. The questions
-  /// that come back are seeded into a practice attempt, so the drill is graded
-  /// by the server like any other.
+  /// When the weak-area analysis supplies a topic id, the server's `topic_id`
+  /// filter is authoritative; the name is kept as a fallback for older
+  /// payloads that only carry a topic title. The questions that come back are
+  /// seeded into a practice attempt, so the drill is graded by the server.
   Future<void> _startWeakTopic({String? topic, int? topicId}) async {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(practiceControllerProvider.notifier);
     final drill = await notifier.startDrill(
       title: topic == null ? l10n.practiceDrill : l10n.practiceDrillCount(topic),
-      search: topic,
+      topicId: topicId,
+      search: topicId == null ? topic : null,
       count: 10,
     );
     if (!mounted) return;

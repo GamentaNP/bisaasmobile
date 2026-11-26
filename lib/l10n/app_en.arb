@@ -183,6 +183,8 @@
       }
     }
   },
+  "quizAttemptHint": "Hint",
+  "quizHintLoadFailed": "Could not load a hint. Please try again.",
   "quizAttemptExitTitle": "Exit Quiz?",
   "quizAttemptExitBody": "Your current progress will be lost. Are you sure you want to exit?",
   "quizResultTitle": "Quiz Complete!",

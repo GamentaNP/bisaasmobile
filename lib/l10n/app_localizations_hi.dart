@@ -324,6 +324,13 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get quizAttemptHint => 'संकेत';
+
+  @override
+  String get quizHintLoadFailed =>
+      'संकेत लोड नहीं हो सका। कृपया फिर से प्रयास करें।';
+
+  @override
   String get quizAttemptExitTitle => 'क्विज़ से बाहर निकलें?';
 
   @override

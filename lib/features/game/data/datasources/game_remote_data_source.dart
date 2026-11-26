@@ -164,6 +164,50 @@ class GameRemoteDataSource {
     );
   }
 
+  // ── Weekly summary ─────────────────────────────────────────────────────────
+
+  /// `GET /api/v1/quiz/game/weekly-summary`
+  ///
+  /// `data` is a camelCase object. A missing report is a typed 404
+  /// (`NO_REPORT`) that callers render as "no report yet"; a 2xx body with an
+  /// unreadable shape is contract drift and throws instead of becoming zeroed.
+  Future<Map<String, dynamic>> getWeeklySummary({String? week}) async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/quiz/game/weekly-summary',
+      queryParameters: week == null ? null : {'week': week},
+    );
+    final body = res.data;
+    if (body == null) {
+      throw const ContractViolation('Empty response body');
+    }
+    final data = body['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const ContractViolation(
+        'Weekly summary payload not understood',
+        endpoint: '/quiz/game/weekly-summary',
+      );
+    }
+    const required = <String>{
+      'weekStartDate',
+      'levelsCompleted',
+      'totalStarsEarned',
+      'coinsEarned',
+      'xpEarned',
+      'accuracyPct',
+      'bestStreak',
+      'timeSpentSeconds',
+    };
+    for (final key in required) {
+      if (!data.containsKey(key)) {
+        throw ContractViolation(
+          'Weekly summary is missing `$key`',
+          endpoint: '/quiz/game/weekly-summary',
+        );
+      }
+    }
+    return Map<String, dynamic>.unmodifiable(data);
+  }
+
   // ── Missions ────────────────────────────────────────────────────────────────
 
   /// `GET /api/v1/quiz/game/missions/dashboard`

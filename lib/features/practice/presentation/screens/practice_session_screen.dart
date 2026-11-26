@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -48,6 +50,10 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
   bool _submitting = false;
   bool _completing = false;
 
+  /// Set only when the server refused the answer write. While it is set the
+  /// screen says "not sent" and offers a retry — never "answer sent".
+  bool _answerFailed = false;
+
   PracticeQuestion get _current => widget.args.questions[_index];
   bool get _isLast => _index >= widget.args.questions.length - 1;
   String? get _selected => _answers[_index];
@@ -85,16 +91,27 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     final answer = _answers[_index];
     if (attemptId.isEmpty || answer == null || answer == '__skip__') return;
 
-    setState(() => _submitting = true);
+    setState(() {
+      _submitting = true;
+      _answerFailed = false;
+    });
     final startedAt = _shownAt[_index] ?? DateTime.now();
     final elapsed = DateTime.now().difference(startedAt).inSeconds;
-    await ref.read(practiceControllerProvider.notifier).submitAnswer(
-          attemptId: attemptId,
-          questionId: _current.id,
-          answer: answer,
-          timeTakenSeconds: elapsed.clamp(0, 86400),
-        );
-    if (mounted) setState(() => _submitting = false);
+    try {
+      await ref.read(practiceControllerProvider.notifier).submitAnswer(
+            attemptId: attemptId,
+            questionId: _current.id,
+            answer: answer,
+            timeTakenSeconds: elapsed.clamp(0, 86400),
+          );
+    } catch (_) {
+      // The controller has already surfaced the typed error in its state.
+      // Keep the selection and the question in place so the retry reuses the
+      // same Idempotency-Key.
+      if (mounted) setState(() => _answerFailed = true);
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   void _next() {
@@ -105,6 +122,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     setState(() {
       _index++;
       _shownAt[_index] = DateTime.now();
+      _answerFailed = false;
     });
   }
 
@@ -193,7 +211,18 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.of(c).pop(), child: Text(l10n.onboardingContinue)),
-          FilledButton(onPressed: () { Navigator.of(c).pop(); Navigator.of(context).pop(); }, child: Text(l10n.tutorDone)),
+          if (completionError != null)
+            FilledButton(
+              onPressed: () {
+                Navigator.of(c).pop();
+                // Retry the SAME completion — the key is derived from the
+                // attempt, so this is a replay, not a second completion.
+                unawaited(_showResult());
+              },
+              child: Text(l10n.retry),
+            )
+          else
+            FilledButton(onPressed: () { Navigator.of(c).pop(); Navigator.of(context).pop(); }, child: Text(l10n.tutorDone)),
         ],
       ),
     );
@@ -341,14 +370,39 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: AppColors.lifelineCyan.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.lifelineCyan.withValues(alpha: 0.25))),
+                    decoration: BoxDecoration(
+                      color: _answerFailed
+                          ? AppColors.wrongRed.withValues(alpha: 0.08)
+                          : AppColors.lifelineCyan.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _answerFailed
+                            ? AppColors.wrongRed.withValues(alpha: 0.25)
+                            : AppColors.lifelineCyan.withValues(alpha: 0.25),
+                      ),
+                    ),
                     child: Row(children: [
                       if (_submitting)
                         const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
                       else
-                        const Icon(Icons.schedule_rounded, size: 16, color: AppColors.lifelineCyan),
+                        Icon(_answerFailed ? Icons.error_outline_rounded : Icons.schedule_rounded,
+                            size: 16,
+                            color: _answerFailed ? AppColors.wrongRed : AppColors.lifelineCyan),
                       const SizedBox(width: 8),
-                      Expanded(child: Text(l10n.practiceAnswerSentNotice, style: TextStyle(fontSize: 11, color: AppColors.lifelineCyan))),
+                      Expanded(
+                        child: Text(
+                          _answerFailed ? l10n.quizAnswerNotSent : l10n.practiceAnswerSentNotice,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: _answerFailed ? AppColors.wrongRed : AppColors.lifelineCyan,
+                          ),
+                        ),
+                      ),
+                      if (_answerFailed && !_submitting)
+                        TextButton(
+                          onPressed: _submitCurrent,
+                          child: Text(l10n.retry),
+                        ),
                     ]),
                   ),
                 ],

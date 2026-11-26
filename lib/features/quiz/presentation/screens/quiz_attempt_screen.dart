@@ -22,9 +22,18 @@ import '../../../../l10n/app_localizations.dart';
 /// Live quiz attempt screen — full session UI with timer, question body,
 /// answer options, and server-graded feedback overlay.
 class QuizAttemptScreen extends ConsumerStatefulWidget {
-  const QuizAttemptScreen({required this.quizId, this.categoryId, super.key});
+  const QuizAttemptScreen({
+    required this.quizId,
+    this.categoryId,
+    this.attemptId,
+    super.key,
+  });
   final String quizId;
   final int? categoryId;
+
+  /// When supplied, an interrupted server attempt is resumed via
+  /// `GET /quiz/attempts/{attempt}` instead of starting a brand-new one.
+  final String? attemptId;
 
   @override
   ConsumerState<QuizAttemptScreen> createState() => _QuizAttemptScreenState();
@@ -38,9 +47,11 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     super.initState();
     // Start session after frame — avoids setState during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(quizControllerProvider.notifier)
-          .startSession(widget.quizId, categoryId: widget.categoryId);
+      ref.read(quizControllerProvider.notifier).startSession(
+            widget.quizId,
+            categoryId: widget.categoryId,
+            attemptId: widget.attemptId,
+          );
     });
   }
 
@@ -161,10 +172,22 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
               ),
             ),
             const SizedBox(height: 24),
+            // A completion failure is a retry of the SAME attempt. Starting a
+            // new session here would orphan the attempt the user just worked
+            // through (and any coins/XP already earned on it).
             FilledButton(
-              onPressed: () =>
-                  ref.read(quizControllerProvider.notifier)
-                      .startSession(widget.quizId, categoryId: widget.categoryId),
+              onPressed: () {
+                final notifier = ref.read(quizControllerProvider.notifier);
+                if (notifier.hasFailedCompletion) {
+                  unawaited(notifier.retryCompletion());
+                } else {
+                  unawaited(notifier.startSession(
+                    widget.quizId,
+                    categoryId: widget.categoryId,
+                    attemptId: widget.attemptId,
+                  ));
+                }
+              },
               child: Text(l10n.retry),
             ),
             TextButton(
@@ -179,6 +202,7 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
 
   Widget _buildQuizBody(BuildContext context, QuizState state) {
     final l10n = AppLocalizations.of(context)!;
+    final hintView = ref.watch(quizHintViewProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final session = state.session!;
@@ -363,6 +387,55 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
                 if (state.lifelineNotice != null) ...[
                   const SizedBox(height: 10),
                   _LifelineNotice(text: state.lifelineNotice!),
+                ],
+                if (state.phase == QuizPhase.answering) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: hintView.busy
+                            ? null
+                            : () => ref
+                                .read(quizControllerProvider.notifier)
+                                .loadHint(),
+                        icon: const Icon(Icons.lightbulb_outline_rounded, size: 16),
+                        label: Text(l10n.quizAttemptHint),
+                      ),
+                      if (hintView.busy) ...[
+                        const SizedBox(width: 10),
+                        const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (hintView.error != null) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            hintView.error!,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.wrongRed,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => ref
+                              .read(quizControllerProvider.notifier)
+                              .loadHint(),
+                          child: Text(l10n.retry),
+                        ),
+                      ],
+                    ),
+                  ] else if (hintView.hint != null) ...[
+                    const SizedBox(height: 8),
+                    _LifelineNotice(text: hintView.hint!),
+                  ],
                 ],
                 const SizedBox(height: 8),
 
@@ -627,6 +700,12 @@ class _QuizAttemptScreenState extends ConsumerState<QuizAttemptScreen> {
     if (confirmed == true && mounted) {
       // Only an explicit confirmation is an abandon — closing the dialog with
       // "Stay" must not count, and a timeout is not a user action.
+      final notifier = ref.read(quizControllerProvider.notifier);
+      // Standard attempts are abandoned server-side just like arcade runs, so
+      // an interrupted attempt does not linger in progress forever. The write
+      // is best effort: the user has already confirmed the exit.
+      await notifier.abandonSession();
+      if (!mounted) return;
       unawaited(ref.read(analyticsProvider).log(
         AnalyticsEvents.quizAbandon,
         params: {'quiz_id': widget.quizId},

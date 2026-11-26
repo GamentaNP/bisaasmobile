@@ -183,6 +183,8 @@
       }
     }
   },
+  "quizAttemptHint": "संकेत",
+  "quizHintLoadFailed": "संकेत लोड नहीं हो सका। कृपया फिर से प्रयास करें।",
   "quizAttemptExitTitle": "क्विज़ से बाहर निकलें?",
   "quizAttemptExitBody": "आपकी अभी की प्रगति चली जाएगी। क्या आप वाकई बाहर निकलना चाहते हैं?",
   "quizResultTitle": "क्विज़ पूरा हुआ!",

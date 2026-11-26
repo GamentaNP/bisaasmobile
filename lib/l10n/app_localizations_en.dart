@@ -325,6 +325,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get quizAttemptHint => 'Hint';
+
+  @override
+  String get quizHintLoadFailed => 'Could not load a hint. Please try again.';
+
+  @override
   String get quizAttemptExitTitle => 'Exit Quiz?';
 
   @override

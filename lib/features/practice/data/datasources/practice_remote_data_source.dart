@@ -141,17 +141,17 @@ class PracticeRemoteDataSource {
 
   /// Loads real server questions for a drill.
   ///
-  /// Only the filters the server actually honours are sent
-  /// (`QuizQuestionApiController::$allowedFilters`): `course_id`,
-  /// `category_id`, `difficulty` and `search`. A `topic_id` filter is *not*
-  /// supported by this endpoint — it was silently ignored — so a topic drill is
-  /// expressed as a text `search` over the topic name, which the server does
-  /// honour.
+  /// `topic_id` is an allowed filter on `GET /quiz/questions`
+  /// (`QuizQuestionApiController::$allowedFilters`, verified 2026-11-26), so a
+  /// topic drill can be scoped server-side instead of matching the topic name
+  /// as free text. `search` stays available for the weak-area analyses that
+  /// only publish a topic name, not an id.
   ///
   /// The endpoint is cursor-paginated; the walk stops at [limit] questions.
   Future<List<PracticeQuestionDto>> getQuestions({
     int? courseId,
     int? categoryId,
+    int? topicId,
     String? difficulty,
     String? search,
     int limit = 20,
@@ -169,6 +169,7 @@ class PracticeRemoteDataSource {
           extra: {
             if (courseId != null) 'course_id': courseId,
             if (categoryId != null) 'category_id': categoryId,
+            if (topicId != null) 'topic_id': topicId,
             if (difficulty != null && difficulty.isNotEmpty) 'difficulty': difficulty,
             if (search != null && search.isNotEmpty) 'search': search,
           },
@@ -293,4 +294,44 @@ class PracticeRemoteDataSource {
     );
     return PracticeResultDto.fromJson(data);
   }
+
+  /// `GET /quiz/attempts/{attempt}` for an interrupted practice drill.
+  ///
+  /// The server publishes each seeded question plus whether it was answered —
+  /// never the verdict — so a resumed drill can skip questions already sent
+  /// without pretending to know a score.
+  Future<PracticeAttemptResumePayload> fetchAttempt(String attemptId) async {
+    const path = '/quiz/attempts';
+    final res = await _dio.get<Map<String, dynamic>>('$path/$attemptId');
+    final data = requireDataMap(res.data, endpoint: '$path/{attempt}');
+    final rawRows = data['questions'];
+    if (rawRows is! List) {
+      throw ContractViolation(
+        'Attempt response carried no questions list',
+        endpoint: '$path/{attempt}',
+      );
+    }
+    final questions = <PracticeQuestionDto>[];
+    final rows = <Map<String, dynamic>>[];
+    for (final row in rawRows) {
+      if (row is! Map<String, dynamic>) continue;
+      rows.add(row);
+      final question = row['question'];
+      if (question is Map<String, dynamic>) {
+        questions.add(PracticeQuestionDto.fromJson(question));
+      }
+    }
+    return (
+      status: '${data['status'] ?? 'in_progress'}',
+      rows: rows,
+      questions: questions,
+    );
+  }
 }
+
+/// The attempt snapshot used to resume an interrupted drill.
+typedef PracticeAttemptResumePayload = ({
+  String status,
+  List<Map<String, dynamic>> rows,
+  List<PracticeQuestionDto> questions,
+});

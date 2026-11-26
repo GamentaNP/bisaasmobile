@@ -658,6 +658,18 @@ abstract class AppLocalizations {
   /// **'×{count} Combo!'**
   String quizAttemptCombo(Object count);
 
+  /// No description provided for @quizAttemptHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint'**
+  String get quizAttemptHint;
+
+  /// No description provided for @quizHintLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load a hint. Please try again.'**
+  String get quizHintLoadFailed;
+
   /// No description provided for @quizAttemptExitTitle.
   ///
   /// In en, this message translates to:

@@ -1,3 +1,4 @@
+import 'package:bisaasmobile/core/network/api_failure.dart';
 import 'package:bisaasmobile/features/eice/data/eice_remote_data_source.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,6 +82,102 @@ void main() {
           ]),
     );
     expect(await src.getSprint(), hasLength(1));
+  });
+
+  group('the four previously unused EICE routes', () {
+    test('getStudyPlan uses the numeric exam segment', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => body({'mode': 'triage', 'readiness': {'score': 70}}),
+      );
+
+      final plan = await src.getStudyPlan(7);
+
+      verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/7')).called(1);
+      expect(plan?['mode'], 'triage');
+    });
+
+    test('getTopicPattern uses the numeric topic segment', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => body({'topic_id': 12, 'has_data': true}),
+      );
+
+      final pattern = await src.getTopicPattern(12);
+
+      verify(() => dio.get<Map<String, dynamic>>('/quiz/topics/12/pattern')).called(1);
+      expect(pattern?['topic_id'], 12);
+    });
+
+    test('getCoursePatterns uses the numeric course segment', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => body({
+              'course_id': 3,
+              'total_topics': 1,
+              'topics': [
+                {'topic_id': 12},
+              ],
+            }),
+      );
+
+      final patterns = await src.getCoursePatterns(3);
+
+      verify(() => dio.get<Map<String, dynamic>>('/quiz/courses/3/patterns')).called(1);
+      expect(patterns?['total_topics'], 1);
+    });
+
+    test('getWeeklyHistory reads the bare list payload', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => body([
+              {'report_id': 1, 'report_week': '2026-11-16'},
+              {'report_id': 2, 'report_week': '2026-11-09'},
+            ]),
+      );
+
+      final history = await src.getWeeklyHistory();
+
+      verify(
+        () => dio.get<Map<String, dynamic>>('/quiz/reports/weekly/history'),
+      ).called(1);
+      expect(history.map((r) => r['report_id']), [1, 2]);
+    });
+
+    test('a genuinely empty history is an empty list', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer((_) async => body([]));
+
+      expect(await src.getWeeklyHistory(), isEmpty);
+    });
+
+    test('a broken history payload throws instead of rendering as no reports', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => body({'items': []}),
+      );
+
+      await expectLater(
+        src.getWeeklyHistory(),
+        throwsA(isA<ContractViolation>()),
+      );
+    });
+
+    test('a malformed row throws instead of being silently dropped', () async {
+      when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => body([
+              {'report_id': 1},
+              'not-a-report',
+            ]),
+      );
+
+      await expectLater(
+        src.getWeeklyHistory(),
+        throwsA(isA<ContractViolation>()),
+      );
+    });
+  });
+
+  test('a broken sprint payload throws instead of rendering as no cards', () async {
+    when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+      (_) async => body('not-a-sprint'),
+    );
+
+    await expectLater(src.getSprint(), throwsA(isA<ContractViolation>()));
   });
 
   test('a failure propagates rather than looking like an empty account', () async {

@@ -35,3 +35,10 @@ final gameMissionsProvider =
   final remote = ref.watch(gameRemoteDataSourceProvider);
   return remote.getMissions();
 });
+
+/// Server-computed weekly game summary. `null` means no report for that week.
+final gameWeeklySummaryProvider =
+    FutureProvider.autoDispose.family<Map<String, dynamic>, String?>((ref, week) async {
+  final remote = ref.watch(gameRemoteDataSourceProvider);
+  return remote.getWeeklySummary(week: week);
+});
