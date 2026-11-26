@@ -60,3 +60,11 @@ final deleteAccountActionProvider = Provider<Future<void> Function()>((ref) {
 final syncLocaleActionProvider = Provider<Future<void> Function(String)>((ref) {
   return (code) => ref.read(profileRemoteDataSourceProvider).updateLocale(code);
 });
+
+/// Best-effort `PATCH /me` with `{appearance: value}` so the theme follows the
+/// account across devices, as it does on the web. The caller swallows errors:
+/// a network failure never rolls back the locally applied theme.
+final syncAppearanceActionProvider = Provider<Future<void> Function(String)>((ref) {
+  return (value) =>
+      ref.read(profileRemoteDataSourceProvider).updateAppearance(value);
+});

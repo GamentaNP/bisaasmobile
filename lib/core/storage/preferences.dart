@@ -30,6 +30,11 @@ class Preferences {
   String? get locale => _p.getString('locale');
   Future<void> setLocale(String v) => _p.setString('locale', v);
 
+  /// Appearance choice as a wire value: `light` / `dark` / `system`.
+  /// Null means "no explicit choice" — the controller reads it as system.
+  String? get appearance => _p.getString('appearance');
+  Future<void> setAppearance(String v) => _p.setString('appearance', v);
+
   bool get appLockEnabled => _p.getBool('app_lock_enabled') ?? false;
   Future<void> setAppLockEnabled(bool v) => _p.setBool('app_lock_enabled', v);
 

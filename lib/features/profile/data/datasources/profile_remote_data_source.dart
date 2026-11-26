@@ -50,4 +50,15 @@ class ProfileRemoteDataSource {
       data: <String, dynamic>{'locale': locale},
     );
   }
+
+  /// `PATCH /me` — persist the appearance choice server-side so it follows the
+  /// account across reinstalls (the web app writes the same field). Callers
+  /// treat failure as best-effort: a network error must never undo the local
+  /// choice the user just made.
+  Future<void> updateAppearance(String appearance) async {
+    await _dio.patch<Map<String, dynamic>>(
+      '/me',
+      data: <String, dynamic>{'appearance': appearance},
+    );
+  }
 }

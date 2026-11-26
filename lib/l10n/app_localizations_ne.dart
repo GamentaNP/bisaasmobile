@@ -1018,6 +1018,22 @@ class AppLocalizationsNe extends AppLocalizations {
       'भाषा यस यन्त्रमा मात्र सुरक्षित भयो — सर्भरसम्म पुग्न सकिएन।';
 
   @override
+  String get settingsAppearanceLocalOnly =>
+      'रूप यस यन्त्रमा मात्र सुरक्षित भयो — सर्भरसम्म पुग्न सकिएन।';
+
+  @override
+  String get settingsAppearanceSection => 'रूप';
+
+  @override
+  String get settingsAppearance => 'रूप';
+
+  @override
+  String get settingsLight => 'हल्का';
+
+  @override
+  String get settingsDark => 'गाढा';
+
+  @override
   String get settingsSystemDefault => 'प्रणालीको सान्दर्भ';
 
   @override

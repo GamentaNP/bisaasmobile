@@ -1852,6 +1852,36 @@ abstract class AppLocalizations {
   /// **'Language saved on this device only — could not reach the server.'**
   String get settingsLanguageLocalOnly;
 
+  /// No description provided for @settingsAppearanceLocalOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance saved on this device only — could not reach the server.'**
+  String get settingsAppearanceLocalOnly;
+
+  /// No description provided for @settingsAppearanceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearanceSection;
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsLight;
+
+  /// No description provided for @settingsDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsDark;
+
   /// No description provided for @settingsSystemDefault.
   ///
   /// In en, this message translates to:

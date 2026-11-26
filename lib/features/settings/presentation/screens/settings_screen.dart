@@ -12,6 +12,7 @@ import '../../../../app/feature_bridges.dart';
 import '../../../../app/localization/app_languages.dart';
 import '../../../../app/localization/locale_controller.dart';
 import '../../../../app/providers.dart';
+import '../../../../app/theme/appearance_controller.dart';
 import '../../../../app/theme/script_fonts.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
@@ -146,6 +147,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     }
 
+  Future<void> _pickAppearance(ThemeMode current) async {
+    final l10n = AppLocalizations.of(context)!;
+    final selected = await showModalBottomSheet<ThemeMode>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final mode in const [
+              ThemeMode.light,
+              ThemeMode.dark,
+              ThemeMode.system,
+            ])
+              ListTile(
+                title: Text(_appearanceLabel(mode)),
+                trailing: current == mode
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () => Navigator.of(context).pop<ThemeMode>(mode),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (selected == null) return;
+    await ref.read(appearanceProvider.notifier).set(selected);
+    // Persist server-side too, so the web and this device agree. Best-effort:
+    // a failed sync must not undo the theme the user just picked.
+    try {
+      await ref.read(syncAppearanceActionProvider)(
+        AppearanceController.encode(selected),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.settingsAppearanceLocalOnly)),
+      );
+    }
+  }
+
+  String _appearanceLabel(ThemeMode mode) {
+    final l10n = appL10n();
+    return switch (mode) {
+      ThemeMode.light => l10n.settingsLight,
+      ThemeMode.dark => l10n.settingsDark,
+      ThemeMode.system => l10n.settingsSystemDefault,
+    };
+  }
+
   /// Language names come from the registry in their own script, so a user who
   /// cannot read English can still find their language. The previous list was
   /// four hardcoded strings (and two of those labels were mojibake in source).
@@ -188,6 +239,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider);
+    final appearance = ref.watch(appearanceProvider);
     final lock = ref.watch(appLockProvider);
     // Hidden, not disabled, when this build has no truthful list: a control
     // that is guaranteed to have nothing to switch is worse than no control.
@@ -196,6 +248,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
+          _SectionHeader(l10n.settingsAppearanceSection),
+          ListTile(
+            leading: const Icon(Icons.brightness_6_rounded),
+            title: Text(l10n.settingsAppearance),
+            subtitle: Text(_appearanceLabel(appearance)),
+            trailing: const Icon(Icons.arrow_drop_down_rounded),
+            onTap: () => unawaited(_pickAppearance(appearance)),
+          ),
+          const Divider(height: 1),
           _SectionHeader(l10n.settingsLanguageSection),
           ListTile(
             leading: const Icon(Icons.language_rounded),

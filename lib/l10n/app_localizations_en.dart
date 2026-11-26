@@ -1017,6 +1017,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Language saved on this device only — could not reach the server.';
 
   @override
+  String get settingsAppearanceLocalOnly =>
+      'Appearance saved on this device only — could not reach the server.';
+
+  @override
+  String get settingsAppearanceSection => 'Appearance';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsLight => 'Light';
+
+  @override
+  String get settingsDark => 'Dark';
+
+  @override
   String get settingsSystemDefault => 'System default';
 
   @override

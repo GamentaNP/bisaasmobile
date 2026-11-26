@@ -601,6 +601,16 @@ add(
     "भाषा यस यन्त्रमा मात्र सुरक्षित भयो — सर्भरसम्म पुग्न सकिएन।",
     "भाषा केवल इस डिवाइस पर सहेजी गई — सर्वर तक नहीं पहुँच सके।",
 )
+add(
+    "settingsAppearanceLocalOnly",
+    "Appearance saved on this device only — could not reach the server.",
+    "रूप यस यन्त्रमा मात्र सुरक्षित भयो — सर्भरसम्म पुग्न सकिएन।",
+    "रूप केवल इस डिवाइस पर सहेजा गया — सर्वर तक नहीं पहुँच सके।",
+)
+add("settingsAppearanceSection", "Appearance", "रूप", "रूप")
+add("settingsAppearance", "Appearance", "रूप", "रूप")
+add("settingsLight", "Light", "हल्का", "हल्का")
+add("settingsDark", "Dark", "गाढा", "अंधेरा")
 add("settingsSystemDefault", "System default", "प्रणालीको सान्दर्भ", "सिस्टम डिफ़ॉल्ट")
 add("settingsAppLanguage", "App language", "एपको भाषा", "ऐप की भाषा")
 add("settingsBiometricLock", "Biometric app lock", "बायोमेट्रिक एप लक", "बायोमेट्रिक ऐप लॉक")

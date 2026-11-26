@@ -1016,6 +1016,22 @@ class AppLocalizationsHi extends AppLocalizations {
       'भाषा केवल इस डिवाइस पर सहेजी गई — सर्वर तक नहीं पहुँच सके।';
 
   @override
+  String get settingsAppearanceLocalOnly =>
+      'रूप केवल इस डिवाइस पर सहेजा गया — सर्वर तक नहीं पहुँच सके।';
+
+  @override
+  String get settingsAppearanceSection => 'रूप';
+
+  @override
+  String get settingsAppearance => 'रूप';
+
+  @override
+  String get settingsLight => 'हल्का';
+
+  @override
+  String get settingsDark => 'अंधेरा';
+
+  @override
   String get settingsSystemDefault => 'सिस्टम डिफ़ॉल्ट';
 
   @override

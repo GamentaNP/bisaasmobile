@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/analytics/analytics_service.dart';
 import '../core/logging/app_logger.dart';
+import '../core/network/envelope.dart';
 import '../core/notifications/notification_handler.dart';
 import '../core/security/token_manager.dart';
 import '../core/sync/daily_quiz_prefetcher.dart';
@@ -17,6 +18,7 @@ import '../shared/widgets/app_lock_overlay.dart';
 import 'localization/app_languages.dart';
 import 'localization/locale_controller.dart';
 import 'providers.dart';
+import 'theme/appearance_controller.dart';
 import 'package:bisaasmobile/core/consent/consent_controller.dart';
 import 'package:bisaasmobile/core/consent/consent_gate.dart';
 import 'package:bisaasmobile/core/consent/consent_screens.dart';
@@ -199,12 +201,30 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
         if (push != null) {
           unawaited(push.init().then((_) => push.registerToken()));
         }
+        unawaited(_adoptAppearanceFromServer());
       } else {
         unawaited(analytics.identifyUser(null));
         unawaited(analytics.log(AnalyticsEvents.logout));
         if (push != null) unawaited(push.unregisterToken());
       }
     });
+  }
+
+  /// Sign-in is the one moment the server's `appearance` is worth reading:
+  /// the web app writes the same field, so a user who picked a theme there
+  /// expects it here. Strictly best-effort — an offline sign-in must still
+  /// paint with the locally stored choice. [AppearanceController.adoptFromServer]
+  /// ignores a null/unknown field rather than clearing that choice.
+  Future<void> _adoptAppearanceFromServer() async {
+    try {
+      final res = await ref.read(dioProvider).get<Map<String, dynamic>>('/me');
+      final data = requireDataMap(res.data, endpoint: '/me');
+      await ref
+          .read(appearanceProvider.notifier)
+          .adoptFromServer(data['appearance'] as String?);
+    } on Object catch (e, st) {
+      AppLogger.w('appearance adoption failed: $e', e, st);
+    }
   }
 
   @override
@@ -250,6 +270,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     // only changing translated strings — otherwise Nepali/Chinese/Arabic text
     // renders as tofu because the styles still ask for InstrumentSans.
     final locale = ref.watch(localeProvider);
+    final themeMode = ref.watch(appearanceProvider);
     final light = AppTheme.forLocale(Brightness.light, languageCode: locale?.languageCode);
     final dark = AppTheme.forLocale(Brightness.dark, languageCode: locale?.languageCode);
 
@@ -257,7 +278,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
       title: title,
       theme: light,
       darkTheme: dark,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: _appRouter.router,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

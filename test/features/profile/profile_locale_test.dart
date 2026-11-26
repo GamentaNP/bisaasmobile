@@ -58,6 +58,15 @@ void main() {
     expect(body['locale'], 'ne');
   });
 
+  test('appearance is a PATCH to /me with the documented body shape', () async {
+    await src.updateAppearance('dark');
+
+    expect(recorder.requests.single.method, 'PATCH');
+    expect(recorder.requests.single.path, '/me');
+    final body = recorder.lastBody! as Map<String, dynamic>;
+    expect(body, <String, dynamic>{'appearance': 'dark'});
+  });
+
   test('the codes the settings screen offers are all server-supported', () async {
     // The picker offers en / ne / hi; all three are in supported_locales, so no
     // tap can produce a 422.
@@ -75,6 +84,12 @@ void main() {
 
     await expectLater(
       failing.updateLocale('xx'),
+      throwsA(isA<DioException>()),
+    );
+    // The settings screen swallows this so a network error cannot undo the
+    // theme/locale the user just chose — the data source must still throw.
+    await expectLater(
+      failing.updateAppearance('light'),
       throwsA(isA<DioException>()),
     );
   });
