@@ -370,9 +370,8 @@ class QuizRemoteDataSource {
     };
 
     final res = await _dio.post<Map<String, dynamic>>(
-      // Canonical resource form. `/quiz/attempts/start` is registered as
-      // `attempts.start.transition-alias` and is additive-only until the
-      // grammar freeze (routes/api/v1/quiz.php:174-179).
+      // Canonical resource form. The verb-shaped aliases documented in older
+      // drafts were never registered; this is the only start route on /api/v1.
       '/quiz/attempts',
       data: data,
       options: Options(headers: {'Idempotency-Key': key}),
