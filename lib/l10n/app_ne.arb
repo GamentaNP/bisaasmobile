@@ -152,6 +152,76 @@
   "quizPlayWorldsSubtitle": "अध्याय, तह र बड — अघि बढ्दै स्टार कमाउनुहोस्",
   "quizPracticeDrill": "अभ्यास ड्रिल",
   "quizPracticeDrillSubtitle": "आफ्ना बुकमार्क र कमजोर विषय दोहोराउनुहोस् — समयसीमा छैन, अंकमा असर छैन",
+  "quizSrsReviewsDueTitle": "दोहोराइ बाँकी",
+  "quizSrsHomeSubtitle": "तपाईंले बिर्सिन लागेका प्रश्न र शब्दहरू दोहोराउनुहोस्",
+  "quizSrsRefresh": "दोहोराइ ताजा गर्नुहोस्",
+  "quizSrsNoReviewsDue": "कुनै दोहोराइ बाँकी छैन",
+  "quizSrsAllCaughtUp": "तपाईं सबै सकिसक्नुभयो — अभ्यास गरेपछि नयाँ दोहोराइ कार्ड देखिनेछन्।",
+  "quizSrsCardKindQuestion": "प्रश्न कार्ड",
+  "quizSrsCardKindWord": "शब्द कार्ड",
+  "quizSrsUntitledCard": "दोहोराइ कार्ड #{id}",
+  "@quizSrsUntitledCard": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsDueMeta": "{days} दिन ढिलो · {reps} दोहोराइ · {interval} दिनको अन्तराल",
+  "@quizSrsDueMeta": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "reps": {
+        "type": "Object"
+      },
+      "interval": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsDueDate": "{date} सम्म",
+  "@quizSrsDueDate": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsDefinition": "परिभाषा: {text}",
+  "@quizSrsDefinition": {
+    "placeholders": {
+      "text": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsExample": "उदाहरण: {text}",
+  "@quizSrsExample": {
+    "placeholders": {
+      "text": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsGradeAgain": "फेरि",
+  "quizSrsGradeHard": "गाह्रो",
+  "quizSrsGradeGood": "राम्रो",
+  "quizSrsGradeEasy": "सजिलो",
+  "quizSrsGradingNote": "तपाईंको अंक सुरक्षित रूपमा दर्ता हुन्छ; अर्को मिति सर्भरले निकाल्छ।",
+  "quizSrsGradedNextDue": "अंक {quality} · अर्को {date}",
+  "@quizSrsGradedNextDue": {
+    "placeholders": {
+      "quality": {
+        "type": "Object"
+      },
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsUnknownDate": "अहिले तोकिएको छैन",
   "quizIntroDetailsTitle": "क्विजको विवरण",
   "quizIntroLoadFailed": "क्विज लोड गर्न सकिएन: {reason}",
   "@quizIntroLoadFailed": {

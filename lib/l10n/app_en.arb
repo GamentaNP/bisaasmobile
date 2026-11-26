@@ -152,6 +152,76 @@
   "quizPlayWorldsSubtitle": "Chapters, levels and bosses — earn stars as you go",
   "quizPracticeDrill": "Practice drill",
   "quizPracticeDrillSubtitle": "Drill your bookmarks and weak topics — untimed, no rank effect",
+  "quizSrsReviewsDueTitle": "Reviews Due",
+  "quizSrsHomeSubtitle": "Repeat the questions and words you are about to forget",
+  "quizSrsRefresh": "Refresh reviews",
+  "quizSrsNoReviewsDue": "No reviews due",
+  "quizSrsAllCaughtUp": "You are all caught up — new review cards appear after you practise.",
+  "quizSrsCardKindQuestion": "Question card",
+  "quizSrsCardKindWord": "Word card",
+  "quizSrsUntitledCard": "Review card #{id}",
+  "@quizSrsUntitledCard": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsDueMeta": "{days} days overdue · {reps} reviews · {interval}-day interval",
+  "@quizSrsDueMeta": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "reps": {
+        "type": "Object"
+      },
+      "interval": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsDueDate": "Due {date}",
+  "@quizSrsDueDate": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsDefinition": "Definition: {text}",
+  "@quizSrsDefinition": {
+    "placeholders": {
+      "text": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsExample": "Example: {text}",
+  "@quizSrsExample": {
+    "placeholders": {
+      "text": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsGradeAgain": "Again",
+  "quizSrsGradeHard": "Hard",
+  "quizSrsGradeGood": "Good",
+  "quizSrsGradeEasy": "Easy",
+  "quizSrsGradingNote": "Your grade is stored safely; the next due date is calculated on the server.",
+  "quizSrsGradedNextDue": "Graded {quality} · next due {date}",
+  "@quizSrsGradedNextDue": {
+    "placeholders": {
+      "quality": {
+        "type": "Object"
+      },
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizSrsUnknownDate": "not scheduled yet",
   "quizIntroDetailsTitle": "Quiz Details",
   "quizIntroLoadFailed": "Failed to load quiz: {reason}",
   "@quizIntroLoadFailed": {

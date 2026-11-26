@@ -215,6 +215,12 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: _PracticeBanner(onTap: () => context.go('/practice')),
             ),
+            // The unified quiz SRS queue: due MCQ and word cards, graded by
+            // the server. Kept separate from the Learning atom reviews.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: _ReviewsBanner(onTap: () => context.go('/quiz/reviews')),
+            ),
             // The arcade is the timed, scored counterpart to the untimed
             // practice drill. It gets a visible row rather than a mention in
             // the help sheet: the sheet used to advertise it with no
@@ -454,6 +460,60 @@ class _PracticeBanner extends StatelessWidget {
                 ),
               ),
               Icon(Icons.chevron_right_rounded, color: AppColors.brand, size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point to the unified quiz spaced-repetition queue.
+class _ReviewsBanner extends StatelessWidget {
+  const _ReviewsBanner({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Material(
+      color: AppColors.xpGold.withValues(alpha: 0.10),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(Icons.autorenew_rounded, color: AppColors.xpGold, size: 24),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.quizSrsReviewsDueTitle,
+                      style: TextStyle(
+                        color: AppColors.textPrimaryDark,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      l10n.quizSrsHomeSubtitle,
+                      style: TextStyle(
+                        color: AppColors.textTertiaryDark,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded,
+                  color: AppColors.xpGold, size: 24),
             ],
           ),
         ),

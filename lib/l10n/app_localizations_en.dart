@@ -288,6 +288,78 @@ class AppLocalizationsEn extends AppLocalizations {
       'Drill your bookmarks and weak topics — untimed, no rank effect';
 
   @override
+  String get quizSrsReviewsDueTitle => 'Reviews Due';
+
+  @override
+  String get quizSrsHomeSubtitle =>
+      'Repeat the questions and words you are about to forget';
+
+  @override
+  String get quizSrsRefresh => 'Refresh reviews';
+
+  @override
+  String get quizSrsNoReviewsDue => 'No reviews due';
+
+  @override
+  String get quizSrsAllCaughtUp =>
+      'You are all caught up — new review cards appear after you practise.';
+
+  @override
+  String get quizSrsCardKindQuestion => 'Question card';
+
+  @override
+  String get quizSrsCardKindWord => 'Word card';
+
+  @override
+  String quizSrsUntitledCard(Object id) {
+    return 'Review card #$id';
+  }
+
+  @override
+  String quizSrsDueMeta(Object days, Object reps, Object interval) {
+    return '$days days overdue · $reps reviews · $interval-day interval';
+  }
+
+  @override
+  String quizSrsDueDate(Object date) {
+    return 'Due $date';
+  }
+
+  @override
+  String quizSrsDefinition(Object text) {
+    return 'Definition: $text';
+  }
+
+  @override
+  String quizSrsExample(Object text) {
+    return 'Example: $text';
+  }
+
+  @override
+  String get quizSrsGradeAgain => 'Again';
+
+  @override
+  String get quizSrsGradeHard => 'Hard';
+
+  @override
+  String get quizSrsGradeGood => 'Good';
+
+  @override
+  String get quizSrsGradeEasy => 'Easy';
+
+  @override
+  String get quizSrsGradingNote =>
+      'Your grade is stored safely; the next due date is calculated on the server.';
+
+  @override
+  String quizSrsGradedNextDue(Object quality, Object date) {
+    return 'Graded $quality · next due $date';
+  }
+
+  @override
+  String get quizSrsUnknownDate => 'not scheduled yet';
+
+  @override
   String get quizIntroDetailsTitle => 'Quiz Details';
 
   @override

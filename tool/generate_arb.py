@@ -212,6 +212,49 @@ add(
     "आफ्ना बुकमार्क र कमजोर विषय दोहोराउनुहोस् — समयसीमा छैन, अंकमा असर छैन",
     "अपने बुकमार्क और कमजोर विषय दोहराएं — समय-सीमित नहीं, रैंक पर असर नहीं",
 )
+# ── quiz spaced-repetition review queue ──────────────────────────────────────
+# The quiz queue (/quiz/reviews/*) is a different surface from the learning
+# atom queue; its copy stays separate even where the words coincide.
+add("quizSrsReviewsDueTitle", "Reviews Due", "दोहोराइ बाँकी", "दोहराव बाकी")
+add(
+    "quizSrsHomeSubtitle",
+    "Repeat the questions and words you are about to forget",
+    "तपाईंले बिर्सिन लागेका प्रश्न र शब्दहरू दोहोराउनुहोस्",
+    "जिन प्रश्नों और शब्दों को आप भूलने वाले हैं उन्हें दोहराएं",
+)
+add("quizSrsRefresh", "Refresh reviews", "दोहोराइ ताजा गर्नुहोस्", "दोहराव ताज़ा करें")
+add("quizSrsNoReviewsDue", "No reviews due", "कुनै दोहोराइ बाँकी छैन", "कोई दोहराव बाकी नहीं")
+add(
+    "quizSrsAllCaughtUp",
+    "You are all caught up — new review cards appear after you practise.",
+    "तपाईं सबै सकिसक्नुभयो — अभ्यास गरेपछि नयाँ दोहोराइ कार्ड देखिनेछन्।",
+    "आप सब पूरा कर चुके हैं — अभ्यास के बाद नए दोहराव कार्ड दिखेंगे।",
+)
+add("quizSrsCardKindQuestion", "Question card", "प्रश्न कार्ड", "प्रश्न कार्ड")
+add("quizSrsCardKindWord", "Word card", "शब्द कार्ड", "शब्द कार्ड")
+add("quizSrsUntitledCard", "Review card #{id}", "दोहोराइ कार्ड #{id}", "दोहराव कार्ड #{id}", ["id"])
+add(
+    "quizSrsDueMeta",
+    "{days} days overdue · {reps} reviews · {interval}-day interval",
+    "{days} दिन ढिलो · {reps} दोहोराइ · {interval} दिनको अन्तराल",
+    "{days} दिन देरी · {reps} दोहराव · {interval} दिन का अंतराल",
+    ["days", "reps", "interval"],
+)
+add("quizSrsDueDate", "Due {date}", "{date} सम्म", "{date} तक", ["date"])
+add("quizSrsDefinition", "Definition: {text}", "परिभाषा: {text}", "परिभाषा: {text}", ["text"])
+add("quizSrsExample", "Example: {text}", "उदाहरण: {text}", "उदाहरण: {text}", ["text"])
+add("quizSrsGradeAgain", "Again", "फेरि", "फिर")
+add("quizSrsGradeHard", "Hard", "गाह्रो", "कठिन")
+add("quizSrsGradeGood", "Good", "राम्रो", "अच्छा")
+add("quizSrsGradeEasy", "Easy", "सजिलो", "आसान")
+add(
+    "quizSrsGradingNote",
+    "Your grade is stored safely; the next due date is calculated on the server.",
+    "तपाईंको अंक सुरक्षित रूपमा दर्ता हुन्छ; अर्को मिति सर्भरले निकाल्छ।",
+    "आपका अंक सुरक्षित रूप से दर्ज होते हैं; अगली तिथि सर्वर तय करता है।",
+)
+add("quizSrsGradedNextDue", "Graded {quality} · next due {date}", "अंक {quality} · अर्को {date}", "अंक {quality} · अगली {date}", ["quality", "date"])
+add("quizSrsUnknownDate", "not scheduled yet", "अहिले तोकिएको छैन", "अभी निर्धारित नहीं")
 add("quizIntroDetailsTitle", "Quiz Details", "क्विज़को विवरण", "क्विज़ का विवरण")
 add("quizIntroLoadFailed", "Failed to load quiz: {reason}", "क्विज़ लोड गर्न सकिएन: {reason}", "क्विज़ लोड नहीं हो सका: {reason}", ["reason"])
 add("quizIntroQuestions", "Questions", "प्रश्नहरू", "प्रश्न")

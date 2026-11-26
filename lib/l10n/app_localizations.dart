@@ -598,6 +598,120 @@ abstract class AppLocalizations {
   /// **'Drill your bookmarks and weak topics — untimed, no rank effect'**
   String get quizPracticeDrillSubtitle;
 
+  /// No description provided for @quizSrsReviewsDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews Due'**
+  String get quizSrsReviewsDueTitle;
+
+  /// No description provided for @quizSrsHomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat the questions and words you are about to forget'**
+  String get quizSrsHomeSubtitle;
+
+  /// No description provided for @quizSrsRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh reviews'**
+  String get quizSrsRefresh;
+
+  /// No description provided for @quizSrsNoReviewsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews due'**
+  String get quizSrsNoReviewsDue;
+
+  /// No description provided for @quizSrsAllCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'You are all caught up — new review cards appear after you practise.'**
+  String get quizSrsAllCaughtUp;
+
+  /// No description provided for @quizSrsCardKindQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Question card'**
+  String get quizSrsCardKindQuestion;
+
+  /// No description provided for @quizSrsCardKindWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Word card'**
+  String get quizSrsCardKindWord;
+
+  /// No description provided for @quizSrsUntitledCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Review card #{id}'**
+  String quizSrsUntitledCard(Object id);
+
+  /// No description provided for @quizSrsDueMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days overdue · {reps} reviews · {interval}-day interval'**
+  String quizSrsDueMeta(Object days, Object reps, Object interval);
+
+  /// No description provided for @quizSrsDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String quizSrsDueDate(Object date);
+
+  /// No description provided for @quizSrsDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition: {text}'**
+  String quizSrsDefinition(Object text);
+
+  /// No description provided for @quizSrsExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: {text}'**
+  String quizSrsExample(Object text);
+
+  /// No description provided for @quizSrsGradeAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Again'**
+  String get quizSrsGradeAgain;
+
+  /// No description provided for @quizSrsGradeHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get quizSrsGradeHard;
+
+  /// No description provided for @quizSrsGradeGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get quizSrsGradeGood;
+
+  /// No description provided for @quizSrsGradeEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get quizSrsGradeEasy;
+
+  /// No description provided for @quizSrsGradingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your grade is stored safely; the next due date is calculated on the server.'**
+  String get quizSrsGradingNote;
+
+  /// No description provided for @quizSrsGradedNextDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Graded {quality} · next due {date}'**
+  String quizSrsGradedNextDue(Object quality, Object date);
+
+  /// No description provided for @quizSrsUnknownDate.
+  ///
+  /// In en, this message translates to:
+  /// **'not scheduled yet'**
+  String get quizSrsUnknownDate;
+
   /// No description provided for @quizIntroDetailsTitle.
   ///
   /// In en, this message translates to:

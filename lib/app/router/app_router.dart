@@ -68,6 +68,7 @@ import '../../features/quiz/presentation/screens/quiz_attempt_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_browser_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_funnel_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_intro_screen.dart';
+import '../../features/quiz/presentation/screens/quiz_reviews_due_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_result_route.dart';
 import '../../features/quiz/presentation/screens/quiz_review_screen.dart';
 import '../../features/organization/presentation/screens/organization_switcher_screen.dart';
@@ -185,6 +186,13 @@ class AppRouter {
                     path: 'browse',
                     name: 'quiz-browse',
                     builder: (context, state) => const QuizBrowserScreen(),
+                  ),
+                  // Unified quiz SRS queue (not the Learning atom queue).
+                  // A static segment so it wins over `:slug` below.
+                  GoRoute(
+                    path: 'reviews',
+                    name: 'quiz-reviews',
+                    builder: (context, state) => const QuizReviewsDueScreen(),
                   ),
                   GoRoute(
                     path: 'intro/:id',

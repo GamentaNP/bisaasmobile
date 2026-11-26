@@ -289,6 +289,78 @@ class AppLocalizationsNe extends AppLocalizations {
       'आफ्ना बुकमार्क र कमजोर विषय दोहोराउनुहोस् — समयसीमा छैन, अंकमा असर छैन';
 
   @override
+  String get quizSrsReviewsDueTitle => 'दोहोराइ बाँकी';
+
+  @override
+  String get quizSrsHomeSubtitle =>
+      'तपाईंले बिर्सिन लागेका प्रश्न र शब्दहरू दोहोराउनुहोस्';
+
+  @override
+  String get quizSrsRefresh => 'दोहोराइ ताजा गर्नुहोस्';
+
+  @override
+  String get quizSrsNoReviewsDue => 'कुनै दोहोराइ बाँकी छैन';
+
+  @override
+  String get quizSrsAllCaughtUp =>
+      'तपाईं सबै सकिसक्नुभयो — अभ्यास गरेपछि नयाँ दोहोराइ कार्ड देखिनेछन्।';
+
+  @override
+  String get quizSrsCardKindQuestion => 'प्रश्न कार्ड';
+
+  @override
+  String get quizSrsCardKindWord => 'शब्द कार्ड';
+
+  @override
+  String quizSrsUntitledCard(Object id) {
+    return 'दोहोराइ कार्ड #$id';
+  }
+
+  @override
+  String quizSrsDueMeta(Object days, Object reps, Object interval) {
+    return '$days दिन ढिलो · $reps दोहोराइ · $interval दिनको अन्तराल';
+  }
+
+  @override
+  String quizSrsDueDate(Object date) {
+    return '$date सम्म';
+  }
+
+  @override
+  String quizSrsDefinition(Object text) {
+    return 'परिभाषा: $text';
+  }
+
+  @override
+  String quizSrsExample(Object text) {
+    return 'उदाहरण: $text';
+  }
+
+  @override
+  String get quizSrsGradeAgain => 'फेरि';
+
+  @override
+  String get quizSrsGradeHard => 'गाह्रो';
+
+  @override
+  String get quizSrsGradeGood => 'राम्रो';
+
+  @override
+  String get quizSrsGradeEasy => 'सजिलो';
+
+  @override
+  String get quizSrsGradingNote =>
+      'तपाईंको अंक सुरक्षित रूपमा दर्ता हुन्छ; अर्को मिति सर्भरले निकाल्छ।';
+
+  @override
+  String quizSrsGradedNextDue(Object quality, Object date) {
+    return 'अंक $quality · अर्को $date';
+  }
+
+  @override
+  String get quizSrsUnknownDate => 'अहिले तोकिएको छैन';
+
+  @override
   String get quizIntroDetailsTitle => 'क्विजको विवरण';
 
   @override
