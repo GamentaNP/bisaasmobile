@@ -30,17 +30,23 @@ void main() {
         child: localizedApp(child: const EiceScreen()),
       );
 
-  // The screen is a ListView of four cards; the default 800x600 test surface
+  // The screen is a ListView of five cards; the default 800x600 test surface
   // leaves the last one unbuilt, which would read as "section missing".
+  //
+  // Do NOT use pumpAndSettle here: the study-plan countdown owns a one-second
+  // Timer, so a settling pump loop would keep chasing its ticks forever.
   Future<void> pumpTall(WidgetTester tester, Widget child) async {
     tester.view.physicalSize = const Size(1200, 3000);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(child);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
   }
 
-  testWidgets('renders all four sections for a healthy account', (tester) async {
+  testWidgets('renders all five sections for a healthy account', (tester) async {
     when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
       (_) async => ok({'exam_id': 5, 'mode': 'cover', 'items': <dynamic>[]}),
     );
@@ -48,6 +54,7 @@ void main() {
     await pumpTall(tester, host());
 
     expect(find.text('Coach — your plan'), findsOneWidget);
+    expect(find.text('Study plan — day by day'), findsOneWidget);
     expect(find.text('Triage — cover or skip'), findsOneWidget);
     expect(find.text('Sprint — 7-day recall queue'), findsOneWidget);
     expect(find.text('Weekly report'), findsOneWidget);
@@ -63,6 +70,46 @@ void main() {
     await pumpTall(tester, host());
 
     verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/12/triage')).called(1);
+  });
+
+  testWidgets('study plan uses the coach exam id and renders a day tile', (
+    tester,
+  ) async {
+    when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer((call) async {
+      final path = call.positionalArguments.first as String;
+      if (path == '/quiz/study-planner/12') {
+        return ok({
+          'exam': {
+            'id': 12,
+            'exam_name': 'Civil',
+            'target_date': '2026-12-20',
+          },
+          'days_remaining': 23,
+          'daily_plan': [
+            {
+              'date': '2026-11-27',
+              'is_rest_day': false,
+              'question_count': 12,
+              'allocations': [
+                {
+                  'title': 'Algebra',
+                  'progress_percent': 40,
+                  'category_name': 'Math',
+                },
+              ],
+            },
+          ],
+        });
+      }
+      return ok({'exam_id': 12, 'mode': 'sprint'});
+    });
+
+    await pumpTall(tester, host());
+
+    verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/12')).called(1);
+    expect(find.text('Algebra'), findsOneWidget);
+    expect(find.text('Math'), findsOneWidget);
+    expect(find.text('Civil'), findsOneWidget);
   });
 
   testWidgets("shows the server's own message, not a raw exception", (

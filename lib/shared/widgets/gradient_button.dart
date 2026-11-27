@@ -114,7 +114,13 @@ class _GradientButtonState extends State<GradientButton> {
           color: faceColor,
           borderRadius: AppRadii.mdAll,
           border: Border(
-            bottom: BorderSide(color: sideColor, width: sideWidth),
+            // Flutter refuses to paint a hairline solid border together with
+            // a non-zero borderRadius (it asserts during paint on web).
+            bottom: BorderSide(
+              color: sideColor,
+              width: sideWidth,
+              style: sideWidth == 0 ? BorderStyle.none : BorderStyle.solid,
+            ),
           ),
         ),
         child: AnimatedScale(

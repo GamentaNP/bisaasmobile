@@ -8,7 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/providers/eice_providers.dart';
 import '../domain/entities/eice_data.dart';
+import 'widgets/flip_countdown.dart';
 import 'widgets/payload_view.dart';
+import 'widgets/study_plan_calendar.dart';
 
 // Kept at its old location: widget tests override the data source through
 // this name, and the repository provider watches the same instance.
@@ -48,6 +50,10 @@ class EiceScreen extends ConsumerWidget {
           _Card(
             title: l10n.eiceCoach,
             fetcher: repo.getCoach,
+          ),
+          StudyPlanCard(
+            coach: repo.getCoach,
+            studyPlan: repo.getStudyPlan,
           ),
           // Triage has no exam-less route - it needs the numeric exam id that
           // only the coach response carries, so it waits on that.
@@ -346,6 +352,140 @@ class _TriageCardState extends State<_TriageCard> {
               ),
             if (!loading && err == null && data != null)
               PayloadView(data: data?.raw),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: loading ? null : _load,
+                child: Text(l10n.streakRefresh),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The full study plan is keyed by a numeric exam id, which only the coach
+/// response carries. This card resolves that id first — the same discipline
+/// `_TriageCard` uses — and then reads `GET /quiz/study-planner/{examId}`.
+/// Unlike the other cards it never renders the raw payload: the plan has its
+/// own day-by-day presentation and its own countdown.
+class StudyPlanCard extends StatefulWidget {
+  const StudyPlanCard({
+    super.key,
+    required this.coach,
+    required this.studyPlan,
+  });
+
+  final Future<EicePayload?> Function() coach;
+  final Future<EicePayload?> Function(int examId) studyPlan;
+
+  @override
+  State<StudyPlanCard> createState() => _StudyPlanCardState();
+}
+
+class _StudyPlanCardState extends State<StudyPlanCard> {
+  EicePayload? data;
+  bool loading = false;
+  String? err;
+
+  Future<void> _load() async {
+    // `appL10n()` is safe after an await; `BuildContext` is not.
+    final l10n = appL10n();
+    setState(() {
+      loading = true;
+      err = null;
+    });
+    try {
+      final coach = await widget.coach();
+      final examId = coach?.examId;
+      if (examId == null) {
+        if (!mounted) return;
+        setState(() {
+          data = null;
+          loading = false;
+          err = '${l10n.eiceNoData} ${l10n.onboardingTargetExamBody}';
+        });
+        return;
+      }
+      final res = await widget.studyPlan(examId);
+      if (!mounted) return;
+      setState(() {
+        data = res;
+        loading = false;
+        // The data source throws on a transport or contract failure, so a null
+        // here means the server really published no plan.
+        if (res == null) err = l10n.eiceNoData;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        data = null;
+        loading = false;
+        err = friendlyError(e);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.eiceStudyPlan,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            if (loading) const LinearProgressIndicator(),
+            if (err != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    err!,
+                    style: TextStyle(fontSize: 12, color: colorScheme.error),
+                  ),
+                  const SizedBox(height: 6),
+                  OutlinedButton.icon(
+                    onPressed: _load,
+                    icon: const Icon(Icons.refresh_rounded, size: 16),
+                    label: Text(l10n.retry),
+                  ),
+                ],
+              ),
+            if (!loading && err == null && data != null) ...[
+              if (data!.examName != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    data!.examName!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              FlipCountdown(
+                targetDate: data!.targetDate,
+                daysRemaining: data!.daysRemaining,
+              ),
+              const SizedBox(height: 12),
+              StudyPlanCalendar(payload: data!),
+            ],
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(

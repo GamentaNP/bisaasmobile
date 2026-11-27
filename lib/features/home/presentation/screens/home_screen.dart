@@ -194,8 +194,8 @@ class HomeScreen extends ConsumerWidget {
     final calcTitle = total > 0 ? l10n.homeCalculatorsCount(total) : l10n.calculators;
     final actions = [
       {
-        'title': 'Practice MCQs',
-        'subtitle': 'Loksewa & Topic Sets',
+        'title': l10n.homeExplorePracticeTitle,
+        'subtitle': l10n.homeExplorePracticeSub,
         'icon': Icons.quiz_rounded,
         'color': AppColors.brand,
         'shadow': AppColors.brandShadow,
@@ -203,39 +203,39 @@ class HomeScreen extends ConsumerWidget {
       },
       {
         'title': calcTitle,
-        'subtitle': 'Civil Formula Engines',
+        'subtitle': l10n.homeExploreCalcSub,
         'icon': Icons.calculate_rounded,
         'color': AppColors.brandAccent,
         'shadow': AppColors.blueShadow,
         'route': '/calculators',
       },
       {
-        'title': 'Battle Arena',
-        'subtitle': 'Realtime 1v1 PvP',
+        'title': l10n.homeBattle,
+        'subtitle': l10n.homeExploreBattleSub,
         'icon': Icons.flash_on_rounded,
         'color': AppColors.warnAmber,
         'shadow': AppColors.warningShadow,
         'route': '/battle',
       },
       {
-        'title': 'Play Worlds',
-        'subtitle': 'Chapters, Stars & Bosses',
+        'title': l10n.quizPlayWorlds,
+        'subtitle': l10n.homeExploreWorldsSub,
         'icon': Icons.public_rounded,
         'color': AppColors.correctGreen,
         'shadow': AppColors.brandShadow,
         'route': '/game/worlds',
       },
       {
-        'title': 'Streak',
-        'subtitle': 'Repair, Insurance & Wager',
+        'title': l10n.homeExploreStreakTitle,
+        'subtitle': l10n.homeExploreStreakSub,
         'icon': Icons.local_fire_department_rounded,
         'color': AppColors.streakOrange,
         'shadow': AppColors.warningShadow,
         'route': '/streak',
       },
       {
-        'title': 'Courses',
-        'subtitle': 'Full Syllabus Tracks',
+        'title': l10n.courses,
+        'subtitle': l10n.homeExploreCoursesSub,
         'icon': Icons.school_rounded,
         'color': AppColors.violet,
         'shadow': AppColors.purpleShadow,
@@ -248,12 +248,11 @@ class HomeScreen extends ConsumerWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        // Room for a two-line title plus a one-line subtitle. At 1.35 the
-        // subtitle wrapped and every tile threw a "BOTTOM OVERFLOWED BY
-        // 10.0 PIXELS" banner on device.
-        childAspectRatio: 1.2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        // Compact tile: icon + two short lines. 1.2 left a large empty band
+        // between the icon and the copy because the column used spaceBetween.
+        childAspectRatio: 1,
       ),
       itemCount: actions.length,
       itemBuilder: (context, index) {
@@ -261,11 +260,12 @@ class HomeScreen extends ConsumerWidget {
         final color = item['color']! as Color;
         final shadow = item['shadow']! as Color;
         return GlassmorphicCard(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(12),
           onTap: () => context.go(item['route']! as String),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
@@ -278,6 +278,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 child: Icon(item['icon']! as IconData, color: color, size: 22),
               ),
+              const SizedBox(height: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

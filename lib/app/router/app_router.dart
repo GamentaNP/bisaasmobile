@@ -13,6 +13,13 @@ import '../../features/feed/presentation/screens/feed_screen.dart';
 import '../../features/hall_of_fame/presentation/screens/hall_of_fame_screen.dart';
 import '../../features/review/presentation/screens/attempt_review_screen.dart';
 import '../../features/review/presentation/screens/review_due_screen.dart';
+// Final learner-read gap closure (MOBILE_API_INTEGRATION_GUIDE §9.5).
+import '../../features/battle/presentation/screens/battle_room_detail_screen.dart';
+import '../../features/learning/presentation/screens/knowledge_atom_detail_screen.dart';
+import '../../features/onboarding/presentation/screens/profile_onboarding_status_screen.dart';
+import '../../features/profile/presentation/screens/creator_application_status_screen.dart';
+import '../../features/social/presentation/screens/sandbox_attempt_results_screen.dart';
+import '../../features/store/presentation/screens/marketplace_product_detail_screen.dart';
 // Batch 2 learner reads (MOBILE_API_INTEGRATION_GUIDE §9.5).
 import '../../features/gamification/presentation/screens/reward_center_screen.dart';
 import '../../features/library/presentation/screens/resource_hub_screen.dart';
@@ -660,6 +667,48 @@ class AppRouter {
         path: '/reward-center',
         name: 'reward-center',
         builder: (context, state) => const RewardCenterScreen(),
+      ),
+      // Final six §9.5 reads — appended only; no existing route altered.
+      // Detail routes take their id from the path; the sandbox result reads its
+      // required session binding from ?guest_session_id= and is never anonymous.
+      GoRoute(
+        path: '/quiz/knowledge-atoms/:atom',
+        name: 'knowledge-atom-detail',
+        builder: (context, state) => KnowledgeAtomDetailScreen(
+          atomId: state.pathParameters['atom'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/quiz/profile-onboarding/status',
+        name: 'profile-onboarding-status',
+        builder: (context, state) => const ProfileOnboardingStatusScreen(),
+      ),
+      GoRoute(
+        path: '/quiz/marketplace/products/:product',
+        name: 'marketplace-product-detail',
+        builder: (context, state) => MarketplaceProductDetailScreen(
+          productId: state.pathParameters['product'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/quiz/creator/applications/current',
+        name: 'creator-application-status',
+        builder: (context, state) => const CreatorApplicationStatusScreen(),
+      ),
+      GoRoute(
+        path: '/quiz/battle-rooms/:lobby',
+        name: 'battle-room-detail',
+        builder: (context, state) => BattleRoomDetailScreen(
+          lobbyId: state.pathParameters['lobby'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/social/sandbox/attempts/:attempt',
+        name: 'sandbox-attempt-results',
+        builder: (context, state) => SandboxAttemptResultsScreen(
+          attemptId: state.pathParameters['attempt'] ?? '',
+          guestSessionId: state.uri.queryParameters['guest_session_id'] ?? '',
+        ),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
