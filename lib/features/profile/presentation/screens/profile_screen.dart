@@ -346,6 +346,10 @@ class _Tile extends StatelessWidget {
         dense: true,
         minVerticalPadding: 6,
         contentPadding: EdgeInsets.zero,
+        // The outer GlassmorphicCard is the single container/border here.
+        // Without this override the global ListTileTheme draws a second
+        // inset outline inside it, which reads as two stacked rows.
+        shape: const RoundedRectangleBorder(),
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(color: AppColors.brand.withValues(alpha: 0.08), borderRadius: AppRadii.smAll),
