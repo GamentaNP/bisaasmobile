@@ -54,6 +54,13 @@ build time.
 | `ADMOB_APP_ID_IOS` | iOS app ID (`~`) | `AdConfig.fromEnvironment()` and the `GADApplicationIdentifier` build-setting variable in `ios/Runner/Info.plist` |
 | `ADMOB_REWARDED_UNIT_ID_IOS` | iOS rewarded ad unit ID (`/`) | `AdConfig.fromEnvironment()` → `RewardedAd.load` |
 
+Production Android values are already in `dart_defines/production.json` (app
+ID `ca-app-pub-3662424462984969~9265865820`, rewarded unit
+`ca-app-pub-3662424462984969/8054090036`) from the Love Mcq AdMob account;
+the manifest placeholder injects the app ID at build time. iOS has no AdMob
+app or ad unit yet, so iOS ads stay disabled until those two defines are added
+alongside a real `GADApplicationIdentifier`.
+
 Example (local verification with Google's published **test** IDs — safe to
 use in development, never in a release):
 
