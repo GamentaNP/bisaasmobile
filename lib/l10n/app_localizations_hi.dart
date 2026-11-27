@@ -5119,4 +5119,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get homeExploreCoursesSub => 'पूर्ण पाठ्यक्रम ट्रैक';
+
+  @override
+  String get eiceReadinessTitle => 'Readiness check';
+
+  @override
+  String get eiceReadinessReady => 'Ready';
+
+  @override
+  String get eiceReadinessNotReady => 'Not ready';
+
+  @override
+  String get eiceReadinessInsufficient => 'Need more evidence';
+
+  @override
+  String get eiceReadinessQuestions => 'Questions';
+
+  @override
+  String get eiceReadinessRemaining => 'Still needed';
 }

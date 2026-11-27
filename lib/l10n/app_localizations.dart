@@ -8719,6 +8719,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Full Syllabus Tracks'**
   String get homeExploreCoursesSub;
+
+  /// No description provided for @eiceReadinessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Readiness check'**
+  String get eiceReadinessTitle;
+
+  /// No description provided for @eiceReadinessReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get eiceReadinessReady;
+
+  /// No description provided for @eiceReadinessNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ready'**
+  String get eiceReadinessNotReady;
+
+  /// No description provided for @eiceReadinessInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Need more evidence'**
+  String get eiceReadinessInsufficient;
+
+  /// No description provided for @eiceReadinessQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get eiceReadinessQuestions;
+
+  /// No description provided for @eiceReadinessRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Still needed'**
+  String get eiceReadinessRemaining;
 }
 
 class _AppLocalizationsDelegate

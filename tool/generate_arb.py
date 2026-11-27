@@ -2922,6 +2922,12 @@ def write(locale_index, locale):
     print("wrote %s (%d keys)" % (os.path.relpath(path, BASE), len(data) - 1))
 
 
+add("eiceReadinessTitle", "Readiness check", "Readiness check", "Readiness check")
+add("eiceReadinessReady", "Ready", "Ready", "Ready")
+add("eiceReadinessNotReady", "Not ready", "Not ready", "Not ready")
+add("eiceReadinessInsufficient", "Need more evidence", "Need more evidence", "Need more evidence")
+add("eiceReadinessQuestions", "Questions", "Questions", "Questions")
+add("eiceReadinessRemaining", "Still needed", "Still needed", "Still needed")
 validate()
 
 write(0, "en")

@@ -81,6 +81,14 @@ class EiceRemoteDataSource {
     return _dataOf(res.data, endpoint);
   }
 
+  /// Strict, server-computed readiness verdict for one target exam.
+  /// The client never computes a verdict or a question budget itself.
+  Future<Map<String, dynamic>?> getReadiness(int examId) async {
+    final endpoint = '/quiz/study-planner/$examId/readiness';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return _dataOf(res.data, endpoint);
+  }
+
   /// Numeric exam id, taken from `exam_id` in the coach payload. Unlike coach
   /// this endpoint has no exam-less variant, so the id has to come from
   /// somewhere real.

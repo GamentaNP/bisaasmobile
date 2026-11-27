@@ -46,7 +46,7 @@ void main() {
     await tester.pump();
   }
 
-  testWidgets('renders all five sections for a healthy account', (tester) async {
+  testWidgets('renders all six sections for a healthy account', (tester) async {
     when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
       (_) async => ok({'exam_id': 5, 'mode': 'cover', 'items': <dynamic>[]}),
     );
@@ -58,6 +58,7 @@ void main() {
     expect(find.text('Triage — cover or skip'), findsOneWidget);
     expect(find.text('Sprint — 7-day recall queue'), findsOneWidget);
     expect(find.text('Weekly report'), findsOneWidget);
+    expect(find.text('Readiness check'), findsOneWidget);
   });
 
   testWidgets('triage is called with the exam id the coach returned', (
@@ -167,6 +168,48 @@ void main() {
     expect(find.text('Statics'), findsOneWidget);
     expect(find.text('Anatomy'), findsOneWidget);
     expect(find.text('30'), findsWidgets);
+  });
+
+  testWidgets('renders the server readiness verdict without computing one', (
+    tester,
+  ) async {
+    when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer((call) async {
+      final path = call.positionalArguments.first as String;
+      if (path == '/quiz/study-planner/combined') return ok(null);
+      if (path == '/quiz/study-planner/12/readiness') {
+        return ok({
+          'verdict': 'insufficient_evidence',
+          'algorithm_version': 'strict-1.0',
+          'readiness_percent': 44,
+          'evidence_count': 8,
+          'required_questions': 32,
+          'remaining_questions': 24,
+          'explanation': 'Insufficient evidence: the verification budget has not been met yet.',
+          'failed_topics': ['Statics'],
+          'topics': [
+            {
+              'topic_name': 'Statics',
+              'accuracy_percent': 40,
+              'bkt_posterior': 0.55,
+              'confidence_interval_margin': 0.62,
+              'remaining_questions': 24,
+              'passed': false,
+              'reasons': ['wide_confidence_interval'],
+            },
+          ],
+        });
+      }
+      return ok({'exam_id': 12, 'mode': 'cover'});
+    });
+
+    await pumpTall(tester, host());
+
+    verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/12/readiness'))
+        .called(1);
+    expect(find.text('Need more evidence'), findsOneWidget);
+    expect(find.text('8/32'), findsOneWidget);
+    expect(find.text('Statics'), findsWidgets);
+    expect(find.textContaining('wide_confidence_interval'), findsOneWidget);
   });
 
   testWidgets("shows the server's own message, not a raw exception", (

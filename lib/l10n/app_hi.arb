@@ -3665,5 +3665,11 @@
   "homeExploreWorldsSub": "अध्याय, सितारे और बॉस",
   "homeExploreStreakTitle": "स्ट्रीक",
   "homeExploreStreakSub": "मरम्मत, बीमा और वेजर",
-  "homeExploreCoursesSub": "पूर्ण पाठ्यक्रम ट्रैक"
+  "homeExploreCoursesSub": "पूर्ण पाठ्यक्रम ट्रैक",
+  "eiceReadinessTitle": "Readiness check",
+  "eiceReadinessReady": "Ready",
+  "eiceReadinessNotReady": "Not ready",
+  "eiceReadinessInsufficient": "Need more evidence",
+  "eiceReadinessQuestions": "Questions",
+  "eiceReadinessRemaining": "Still needed"
 }

@@ -47,6 +47,18 @@ void main() {
     expect(res?['combined_daily_plan'], isA<List<Map<String, dynamic>>>());
   });
 
+  test('getReadiness uses the numeric exam segment', () async {
+    when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
+      (_) async => body({'verdict': 'insufficient_evidence'}),
+    );
+
+    final res = await src.getReadiness(12);
+
+    verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/12/readiness'))
+        .called(1);
+    expect(res?['verdict'], 'insufficient_evidence');
+  });
+
   test('getCoach takes NO exam segment', () async {
     when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer((_) async => body({'exam_id': 7}));
 

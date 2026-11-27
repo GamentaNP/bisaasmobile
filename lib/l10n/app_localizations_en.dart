@@ -5107,4 +5107,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeExploreCoursesSub => 'Full Syllabus Tracks';
+
+  @override
+  String get eiceReadinessTitle => 'Readiness check';
+
+  @override
+  String get eiceReadinessReady => 'Ready';
+
+  @override
+  String get eiceReadinessNotReady => 'Not ready';
+
+  @override
+  String get eiceReadinessInsufficient => 'Need more evidence';
+
+  @override
+  String get eiceReadinessQuestions => 'Questions';
+
+  @override
+  String get eiceReadinessRemaining => 'Still needed';
 }

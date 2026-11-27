@@ -14,6 +14,9 @@ abstract class EiceRepository {
   /// `GET /quiz/study-planner/{examId}` - full mode-aware plan.
   Future<EicePayload?> getStudyPlan(int examId);
 
+  /// `GET /quiz/study-planner/{examId}/readiness` - strict verdict.
+  Future<EicePayload?> getReadiness(int examId);
+
   /// `GET /quiz/study-planner/{examId}/triage`
   Future<EicePayload?> getTriage(int examId);
 

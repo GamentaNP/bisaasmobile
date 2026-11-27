@@ -3665,5 +3665,11 @@
   "homeExploreWorldsSub": "Chapters, Stars & Bosses",
   "homeExploreStreakTitle": "Streak",
   "homeExploreStreakSub": "Repair, Insurance & Wager",
-  "homeExploreCoursesSub": "Full Syllabus Tracks"
+  "homeExploreCoursesSub": "Full Syllabus Tracks",
+  "eiceReadinessTitle": "Readiness check",
+  "eiceReadinessReady": "Ready",
+  "eiceReadinessNotReady": "Not ready",
+  "eiceReadinessInsufficient": "Need more evidence",
+  "eiceReadinessQuestions": "Questions",
+  "eiceReadinessRemaining": "Still needed"
 }

@@ -10,6 +10,7 @@ import '../data/providers/eice_providers.dart';
 import '../domain/entities/eice_data.dart';
 import 'widgets/flip_countdown.dart';
 import 'widgets/payload_view.dart';
+import 'widgets/readiness_card.dart';
 import 'widgets/study_plan_calendar.dart';
 
 // Kept at its old location: widget tests override the data source through
@@ -55,6 +56,10 @@ class EiceScreen extends ConsumerWidget {
             combinedPlan: repo.getCombinedStudyPlan,
             coach: repo.getCoach,
             studyPlan: repo.getStudyPlan,
+          ),
+          ReadinessCard(
+            coach: repo.getCoach,
+            readiness: repo.getReadiness,
           ),
           // Triage has no exam-less route - it needs the numeric exam id that
           // only the coach response carries, so it waits on that.

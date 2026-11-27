@@ -56,6 +56,65 @@ class EicePayload {
 
   int? get daysRemaining =>
       _intOf(raw['days_remaining'] ?? raw['days_to_exam']);
+
+  /// Readiness verdict, published only by the server.
+  String? get readinessVerdict => _stringOf(raw['verdict']);
+  int get readinessPercent => _intOf(raw['readiness_percent']) ?? 0;
+  int get evidenceCount => _intOf(raw['evidence_count']) ?? 0;
+  int get requiredQuestions => _intOf(raw['required_questions']) ?? 0;
+  int get remainingQuestions => _intOf(raw['remaining_questions']) ?? 0;
+  String get readinessExplanation => _stringOf(raw['explanation']) ?? '';
+
+  List<String> get failedTopics {
+    final rows = raw['failed_topics'];
+    if (rows is! List) return const <String>[];
+    return rows.whereType<String>().toList(growable: false);
+  }
+
+  List<ReadinessTopic> get readinessTopics {
+    final rows = raw['topics'];
+    if (rows is! List) return const <ReadinessTopic>[];
+    return rows
+        .whereType<Map<String, dynamic>>()
+        .map(ReadinessTopic.fromJson)
+        .toList(growable: false);
+  }
+}
+
+/// One server-published topic row of the strict readiness verdict.
+class ReadinessTopic {
+  const ReadinessTopic({
+    required this.name,
+    required this.accuracyPercent,
+    required this.bktPosterior,
+    required this.ciMargin,
+    required this.remainingQuestions,
+    required this.passed,
+    required this.reasons,
+  });
+
+  factory ReadinessTopic.fromJson(Map<String, dynamic> json) {
+    final reasons = json['reasons'];
+    return ReadinessTopic(
+      name: _stringOf(json['topic_name']) ?? '',
+      accuracyPercent: _intOf(json['accuracy_percent']) ?? 0,
+      bktPosterior: (json['bkt_posterior'] as num?)?.toDouble() ?? 0,
+      ciMargin: (json['confidence_interval_margin'] as num?)?.toDouble() ?? 0,
+      remainingQuestions: _intOf(json['remaining_questions']) ?? 0,
+      passed: json['passed'] == true,
+      reasons: reasons is List
+          ? reasons.whereType<String>().toList(growable: false)
+          : const <String>[],
+    );
+  }
+
+  final String name;
+  final int accuracyPercent;
+  final double bktPosterior;
+  final double ciMargin;
+  final int remainingQuestions;
+  final bool passed;
+  final List<String> reasons;
 }
 
 /// One day of the server's plan. The client never computes question counts or

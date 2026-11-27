@@ -3665,5 +3665,11 @@
   "homeExploreWorldsSub": "अध्याय, स्टार र बड",
   "homeExploreStreakTitle": "स्ट्रिक",
   "homeExploreStreakSub": "मर्मत, बीमा र वागर",
-  "homeExploreCoursesSub": "पूर्ण पाठ्यक्रम ट्र्याक"
+  "homeExploreCoursesSub": "पूर्ण पाठ्यक्रम ट्र्याक",
+  "eiceReadinessTitle": "Readiness check",
+  "eiceReadinessReady": "Ready",
+  "eiceReadinessNotReady": "Not ready",
+  "eiceReadinessInsufficient": "Need more evidence",
+  "eiceReadinessQuestions": "Questions",
+  "eiceReadinessRemaining": "Still needed"
 }

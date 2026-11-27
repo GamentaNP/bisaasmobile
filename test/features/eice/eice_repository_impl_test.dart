@@ -31,6 +31,17 @@ void main() {
     expect(payload?.raw['combined_daily_plan'], isA<List<Map<String, dynamic>>>());
   });
 
+  test('readiness verdict maps to a payload without re-shaping it', () async {
+    when(() => remote.getReadiness(12)).thenAnswer(
+      (_) async => {'verdict': 'ready', 'readiness_percent': 91},
+    );
+
+    final payload = await repository.getReadiness(12);
+
+    expect(payload?.readinessVerdict, 'ready');
+    expect(payload?.readinessPercent, 91);
+  });
+
   test('plan, topic pattern and course patterns map to payloads', () async {
     when(() => remote.getStudyPlan(7)).thenAnswer((_) async => {'mode': 'sprint'});
     when(() => remote.getTopicPattern(12)).thenAnswer((_) async => {'topic_id': 12});
