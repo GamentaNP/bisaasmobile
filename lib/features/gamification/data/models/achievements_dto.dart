@@ -93,14 +93,20 @@ class AchievementsBundleDto {
     for (final bucket in const ['unlocked', 'in_progress', 'locked']) {
       final rows = catalog.buckets[bucket] ?? const <Map<String, dynamic>>[];
       for (final item in rows) {
-        final id = wireIntOrZero(item['id'] ?? item['achievement_id']);
+        // The `unlocked` bucket nests the catalog row under `achievement`
+        // (server userAchievementPayload), other buckets are flat.
+        final nested = item['achievement'];
+        final source = nested is Map<String, dynamic> ? nested : item;
+        final id = wireIntOrZero(
+          source['id'] ?? item['achievement_id'] ?? item['id'],
+        );
         final p = progressMap[id];
         achievements.add(
           AchievementEntry(
             id: id,
-            key: (item['key'] ?? '').toString(),
-            name: (item['name'] ?? 'Achievement').toString(),
-            rarity: (item['rarity'] ?? 'common').toString(),
+            key: (source['key'] ?? item['key'] ?? '').toString(),
+            name: (source['name'] ?? item['name'] ?? 'Achievement').toString(),
+            rarity: (source['rarity'] ?? item['rarity'] ?? 'common').toString(),
             isCompleted: bucket == 'unlocked' || (p?.isCompleted ?? false),
             progressCurrent: p?.progressCurrent ?? 0,
             progressTarget: p?.progressTarget ?? 1,

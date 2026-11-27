@@ -337,10 +337,14 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassmorphicCard(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       // go, not push — shell route navigation requires go() on web
       onTap: () => context.go(onTapRoute),
       child: ListTile(
+        // Compact menu: the default two-line tile height left a large empty
+        // band between rows on tablet/web widths.
+        dense: true,
+        minVerticalPadding: 6,
         contentPadding: EdgeInsets.zero,
         leading: Container(
           padding: const EdgeInsets.all(8),
