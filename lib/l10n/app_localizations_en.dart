@@ -5125,4 +5125,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eiceReadinessRemaining => 'Still needed';
+
+  @override
+  String eiceReadinessMetrics(Object accuracy, Object bkt, Object ci) {
+    return '$accuracy% · BKT $bkt · CI ±$ci';
+  }
 }

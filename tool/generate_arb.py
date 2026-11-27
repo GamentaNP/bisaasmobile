@@ -2928,6 +2928,7 @@ add("eiceReadinessNotReady", "Not ready", "Not ready", "Not ready")
 add("eiceReadinessInsufficient", "Need more evidence", "Need more evidence", "Need more evidence")
 add("eiceReadinessQuestions", "Questions", "Questions", "Questions")
 add("eiceReadinessRemaining", "Still needed", "Still needed", "Still needed")
+add("eiceReadinessMetrics", "{accuracy}% · BKT {bkt} · CI ±{ci}", "{accuracy}% · BKT {bkt} · CI ±{ci}", "{accuracy}% · BKT {bkt} · CI ±{ci}", ["accuracy", "bkt", "ci"])
 validate()
 
 write(0, "en")

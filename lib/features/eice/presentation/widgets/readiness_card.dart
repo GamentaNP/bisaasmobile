@@ -216,8 +216,11 @@ class _ReadinessCardState extends State<ReadinessCard> {
                           ],
                         ),
                         Text(
-                          '${topic.accuracyPercent}% · BKT ${topic.bktPosterior.toStringAsFixed(2)}'
-                          ' · CI ±${topic.ciMargin.toStringAsFixed(2)}',
+                          AppLocalizations.of(context)!.eiceReadinessMetrics(
+                            '${topic.accuracyPercent}',
+                            topic.bktPosterior.toStringAsFixed(2),
+                            topic.ciMargin.toStringAsFixed(2),
+                          ),
                           style: TextStyle(
                             fontSize: 11,
                             color: colorScheme.onSurfaceVariant,

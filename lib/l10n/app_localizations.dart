@@ -8755,6 +8755,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Still needed'**
   String get eiceReadinessRemaining;
+
+  /// No description provided for @eiceReadinessMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'{accuracy}% · BKT {bkt} · CI ±{ci}'**
+  String eiceReadinessMetrics(Object accuracy, Object bkt, Object ci);
 }
 
 class _AppLocalizationsDelegate

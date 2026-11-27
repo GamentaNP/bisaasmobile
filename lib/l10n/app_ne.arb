@@ -3671,5 +3671,19 @@
   "eiceReadinessNotReady": "Not ready",
   "eiceReadinessInsufficient": "Need more evidence",
   "eiceReadinessQuestions": "Questions",
-  "eiceReadinessRemaining": "Still needed"
+  "eiceReadinessRemaining": "Still needed",
+  "eiceReadinessMetrics": "{accuracy}% · BKT {bkt} · CI ±{ci}",
+  "@eiceReadinessMetrics": {
+    "placeholders": {
+      "accuracy": {
+        "type": "Object"
+      },
+      "bkt": {
+        "type": "Object"
+      },
+      "ci": {
+        "type": "Object"
+      }
+    }
+  }
 }
