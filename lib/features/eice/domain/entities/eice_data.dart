@@ -76,8 +76,9 @@ class StudyPlanDay {
       // the single-exam plan publishes `question_count`.
       questionCount:
           _intOf(json['question_count'] ?? json['total_question_count']) ?? 0,
-      isRestDay: json['is_rest_day'] == true ||
-          json['is_rest_day'] == 'true',
+      // The merged plan has no top-level flag: a day is a rest day only when
+      // every enrolled exam marks it as one.
+      isRestDay: _isRestDay(json),
       allocations: rawAllocations is List
           ? rawAllocations
               .whereType<Map<String, dynamic>>()
@@ -121,6 +122,17 @@ class StudyPlanAllocation {
   /// The most specific published name wins; nothing is invented when neither
   /// field is present.
   String? get contextName => categoryName ?? courseName;
+}
+
+bool _isRestDay(Map<String, dynamic> day) {
+  final exams = day['exams'];
+  if (exams is List && exams.isNotEmpty) {
+    final rows = exams.whereType<Map<String, dynamic>>().toList();
+    if (rows.isNotEmpty) {
+      return rows.every((exam) => exam['is_rest_day'] == true);
+    }
+  }
+  return day['is_rest_day'] == true || day['is_rest_day'] == 'true';
 }
 
 int? _intOf(Object? value) {

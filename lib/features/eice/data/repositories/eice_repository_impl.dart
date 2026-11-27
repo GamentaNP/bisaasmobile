@@ -20,6 +20,10 @@ class EiceRepositoryImpl implements EiceRepository {
   Future<EicePayload?> getCoach() async => _payload(await _remote.getCoach());
 
   @override
+  Future<EicePayload?> getCombinedStudyPlan() async =>
+      _payload(await _remote.getCombinedStudyPlan());
+
+  @override
   Future<EicePayload?> getStudyPlan(int examId) async =>
       _payload(await _remote.getStudyPlan(examId));
 

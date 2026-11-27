@@ -1,3 +1,4 @@
+import '../entities/question_report.dart';
 import '../entities/review.dart';
 
 /// Boundary for the learner-review cluster.
@@ -14,6 +15,15 @@ abstract class ReviewRepository {
     String reviewId, {
     required int quality,
     required String type,
+    String? idempotencyKey,
+  });
+
+  /// Throws on failure — a failed report is never a successful one locally.
+  Future<QuestionReportResult> reportQuestion(
+    int questionId, {
+    required String category,
+    required String description,
+    String? suggestedCorrection,
     String? idempotencyKey,
   });
 }

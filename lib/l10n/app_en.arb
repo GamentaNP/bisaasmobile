@@ -328,6 +328,32 @@
     }
   },
   "quizExplanation": "Explanation",
+  "quizReportAction": "Report question",
+  "quizReportTitle": "Report this question",
+  "quizReportCategory": "Reason",
+  "quizReportDescription": "What is wrong?",
+  "quizReportDescriptionHint": "Describe the problem in at least 20 characters.",
+  "quizReportCorrection": "Suggested correction (optional)",
+  "quizReportSubmit": "Submit report",
+  "quizReportInvalid": "Choose a reason and describe the problem in at least 20 characters.",
+  "quizReportSubmitted": "Report submitted for review.",
+  "quizReportUpdated": "Your existing report was updated.",
+  "quizReportSent": "Report sent",
+  "quizReportFailed": "Report failed: {reason}",
+  "@quizReportFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReportIncorrectAnswer": "Incorrect answer",
+  "quizReportUnclearQuestion": "Unclear question",
+  "quizReportTypoGrammar": "Typo / grammar",
+  "quizReportInappropriate": "Inappropriate",
+  "quizReportDuplicate": "Duplicate",
+  "quizReportOutdated": "Outdated",
+  "quizReportOther": "Other",
   "quizFunnelTryItOut": "Try it out",
   "quizFunnelSampleTitle": "Sample questions",
   "quizFunnelShown": "{count} shown",

@@ -952,6 +952,120 @@ abstract class AppLocalizations {
   /// **'Explanation'**
   String get quizExplanation;
 
+  /// No description provided for @quizReportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report question'**
+  String get quizReportAction;
+
+  /// No description provided for @quizReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this question'**
+  String get quizReportTitle;
+
+  /// No description provided for @quizReportCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get quizReportCategory;
+
+  /// No description provided for @quizReportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'What is wrong?'**
+  String get quizReportDescription;
+
+  /// No description provided for @quizReportDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the problem in at least 20 characters.'**
+  String get quizReportDescriptionHint;
+
+  /// No description provided for @quizReportCorrection.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested correction (optional)'**
+  String get quizReportCorrection;
+
+  /// No description provided for @quizReportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit report'**
+  String get quizReportSubmit;
+
+  /// No description provided for @quizReportInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a reason and describe the problem in at least 20 characters.'**
+  String get quizReportInvalid;
+
+  /// No description provided for @quizReportSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted for review.'**
+  String get quizReportSubmitted;
+
+  /// No description provided for @quizReportUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your existing report was updated.'**
+  String get quizReportUpdated;
+
+  /// No description provided for @quizReportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Report sent'**
+  String get quizReportSent;
+
+  /// No description provided for @quizReportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Report failed: {reason}'**
+  String quizReportFailed(Object reason);
+
+  /// No description provided for @quizReportIncorrectAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect answer'**
+  String get quizReportIncorrectAnswer;
+
+  /// No description provided for @quizReportUnclearQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Unclear question'**
+  String get quizReportUnclearQuestion;
+
+  /// No description provided for @quizReportTypoGrammar.
+  ///
+  /// In en, this message translates to:
+  /// **'Typo / grammar'**
+  String get quizReportTypoGrammar;
+
+  /// No description provided for @quizReportInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate'**
+  String get quizReportInappropriate;
+
+  /// No description provided for @quizReportDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get quizReportDuplicate;
+
+  /// No description provided for @quizReportOutdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdated'**
+  String get quizReportOutdated;
+
+  /// No description provided for @quizReportOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get quizReportOther;
+
   /// No description provided for @quizFunnelTryItOut.
   ///
   /// In en, this message translates to:

@@ -502,6 +502,67 @@ class AppLocalizationsNe extends AppLocalizations {
   String get quizExplanation => 'व्याख्या';
 
   @override
+  String get quizReportAction => 'प्रश्न रिपोर्ट गर्नुहोस्';
+
+  @override
+  String get quizReportTitle => 'यो प्रश्न रिपोर्ट गर्नुहोस्';
+
+  @override
+  String get quizReportCategory => 'कारण';
+
+  @override
+  String get quizReportDescription => 'के गलत छ?';
+
+  @override
+  String get quizReportDescriptionHint =>
+      'समस्या कम्तिमा २० अक्षरमा वर्णन गर्नुहोस्।';
+
+  @override
+  String get quizReportCorrection => 'सुझावित सुधार (वैकल्पिक)';
+
+  @override
+  String get quizReportSubmit => 'रिपोर्ट पेश गर्नुहोस्';
+
+  @override
+  String get quizReportInvalid =>
+      'कारण छान्नुहोस् र समस्या कम्तिमा २० अक्षरमा वर्णन गर्नुहोस्।';
+
+  @override
+  String get quizReportSubmitted => 'समीक्षाको लागि रिपोर्ट पेश गरियो।';
+
+  @override
+  String get quizReportUpdated => 'तपाईंको पहिलेको रिपोर्ट अद्यावधिक गरियो।';
+
+  @override
+  String get quizReportSent => 'रिपोर्ट पेश भयो';
+
+  @override
+  String quizReportFailed(Object reason) {
+    return 'रिपोर्ट पेश गर्न सकिएन: $reason';
+  }
+
+  @override
+  String get quizReportIncorrectAnswer => 'गलत उत्तर';
+
+  @override
+  String get quizReportUnclearQuestion => 'अस्पष्ट प्रश्न';
+
+  @override
+  String get quizReportTypoGrammar => 'टाइपो / व्याकरण';
+
+  @override
+  String get quizReportInappropriate => 'अनुपयुक्त';
+
+  @override
+  String get quizReportDuplicate => 'डुप्लिकेट';
+
+  @override
+  String get quizReportOutdated => 'पुरानो';
+
+  @override
+  String get quizReportOther => 'अन्य';
+
+  @override
   String get quizFunnelTryItOut => 'आजमाएर हेर्नुहोस्';
 
   @override

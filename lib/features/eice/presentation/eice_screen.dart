@@ -52,6 +52,7 @@ class EiceScreen extends ConsumerWidget {
             fetcher: repo.getCoach,
           ),
           StudyPlanCard(
+            combinedPlan: repo.getCombinedStudyPlan,
             coach: repo.getCoach,
             studyPlan: repo.getStudyPlan,
           ),
@@ -366,18 +367,21 @@ class _TriageCardState extends State<_TriageCard> {
   }
 }
 
-/// The full study plan is keyed by a numeric exam id, which only the coach
-/// response carries. This card resolves that id first — the same discipline
-/// `_TriageCard` uses — and then reads `GET /quiz/study-planner/{examId}`.
-/// Unlike the other cards it never renders the raw payload: the plan has its
-/// own day-by-day presentation and its own countdown.
+/// This card prefers the server-merged all-courses plan. If that endpoint is
+/// unavailable it falls back to the single-exam plan, resolving the numeric
+/// exam id from the coach response the same way `_TriageCard` does. Unlike the
+/// other cards it never renders the raw payload: the plan has its own
+/// day-by-day presentation and its own countdown.
 class StudyPlanCard extends StatefulWidget {
   const StudyPlanCard({
     super.key,
+    required this.combinedPlan,
     required this.coach,
     required this.studyPlan,
   });
 
+  /// All enrolled courses in one server-merged plan.
+  final Future<EicePayload?> Function() combinedPlan;
   final Future<EicePayload?> Function() coach;
   final Future<EicePayload?> Function(int examId) studyPlan;
 
@@ -398,6 +402,26 @@ class _StudyPlanCardState extends State<StudyPlanCard> {
       err = null;
     });
     try {
+      // Prefer the server's merged plan: a student can be enrolled in several
+      // courses, and one combined timetable is the only view that cannot
+      // double-book a day. A null payload is a real "no plan" answer; a
+      // transport failure falls through to the single-exam endpoint so an
+      // older backend cannot leave the card permanently broken.
+      EicePayload? combined;
+      try {
+        combined = await widget.combinedPlan();
+      } catch (_) {
+        combined = null;
+      }
+      if (combined != null) {
+        if (!mounted) return;
+        setState(() {
+          data = combined;
+          loading = false;
+        });
+        return;
+      }
+
       final coach = await widget.coach();
       final examId = coach?.examId;
       if (examId == null) {

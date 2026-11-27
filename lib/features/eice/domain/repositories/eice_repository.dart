@@ -8,6 +8,9 @@ abstract class EiceRepository {
   /// `GET /quiz/coach` - exam resolved server-side.
   Future<EicePayload?> getCoach();
 
+  /// `GET /quiz/study-planner/combined` - all enrolled courses in one plan.
+  Future<EicePayload?> getCombinedStudyPlan();
+
   /// `GET /quiz/study-planner/{examId}` - full mode-aware plan.
   Future<EicePayload?> getStudyPlan(int examId);
 

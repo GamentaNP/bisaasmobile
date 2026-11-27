@@ -500,6 +500,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizExplanation => 'Explanation';
 
   @override
+  String get quizReportAction => 'Report question';
+
+  @override
+  String get quizReportTitle => 'Report this question';
+
+  @override
+  String get quizReportCategory => 'Reason';
+
+  @override
+  String get quizReportDescription => 'What is wrong?';
+
+  @override
+  String get quizReportDescriptionHint =>
+      'Describe the problem in at least 20 characters.';
+
+  @override
+  String get quizReportCorrection => 'Suggested correction (optional)';
+
+  @override
+  String get quizReportSubmit => 'Submit report';
+
+  @override
+  String get quizReportInvalid =>
+      'Choose a reason and describe the problem in at least 20 characters.';
+
+  @override
+  String get quizReportSubmitted => 'Report submitted for review.';
+
+  @override
+  String get quizReportUpdated => 'Your existing report was updated.';
+
+  @override
+  String get quizReportSent => 'Report sent';
+
+  @override
+  String quizReportFailed(Object reason) {
+    return 'Report failed: $reason';
+  }
+
+  @override
+  String get quizReportIncorrectAnswer => 'Incorrect answer';
+
+  @override
+  String get quizReportUnclearQuestion => 'Unclear question';
+
+  @override
+  String get quizReportTypoGrammar => 'Typo / grammar';
+
+  @override
+  String get quizReportInappropriate => 'Inappropriate';
+
+  @override
+  String get quizReportDuplicate => 'Duplicate';
+
+  @override
+  String get quizReportOutdated => 'Outdated';
+
+  @override
+  String get quizReportOther => 'Other';
+
+  @override
   String get quizFunnelTryItOut => 'Try it out';
 
   @override

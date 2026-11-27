@@ -328,6 +328,32 @@
     }
   },
   "quizExplanation": "व्याख्या",
+  "quizReportAction": "प्रश्न रिपोर्ट करें",
+  "quizReportTitle": "इस प्रश्न की रिपोर्ट करें",
+  "quizReportCategory": "कारण",
+  "quizReportDescription": "क्या गलत है?",
+  "quizReportDescriptionHint": "समस्या कम से कम २० अक्षरों में बताएं।",
+  "quizReportCorrection": "सुझावित सुधार (वैकल्पिक)",
+  "quizReportSubmit": "रिपोर्ट सबमिट करें",
+  "quizReportInvalid": "कारण चुनें और समस्या कम से कम २० अक्षरों में बताएं।",
+  "quizReportSubmitted": "समीक्षा के लिए रिपोर्ट सबमिट हो गई।",
+  "quizReportUpdated": "आपकी पिछली रिपोर्ट अपडेट हो गई।",
+  "quizReportSent": "रिपोर्ट सबमिट हो गई",
+  "quizReportFailed": "रिपोर्ट सबमिट नहीं हो सकी: {reason}",
+  "@quizReportFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "Object"
+      }
+    }
+  },
+  "quizReportIncorrectAnswer": "गलत उत्तर",
+  "quizReportUnclearQuestion": "अस्पष्ट प्रश्न",
+  "quizReportTypoGrammar": "टाइपो / व्याकरण",
+  "quizReportInappropriate": "अनुपयुक्त",
+  "quizReportDuplicate": "डुप्लिकेट",
+  "quizReportOutdated": "पुराना",
+  "quizReportOther": "अन्य",
   "quizFunnelTryItOut": "आजमाकर देखें",
   "quizFunnelSampleTitle": "नमूना प्रश्न",
   "quizFunnelShown": "{count} दिखाए गए",

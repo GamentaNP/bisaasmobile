@@ -64,6 +64,15 @@ class EiceRemoteDataSource {
     return _dataOf(res.data, '/quiz/coach');
   }
 
+  /// Every active target exam, merged into one plan by the server.
+  /// This is the mobile counterpart of the web planner's `plan` prop — the
+  /// client never performs the merge itself.
+  Future<Map<String, dynamic>?> getCombinedStudyPlan() async {
+    const endpoint = '/quiz/study-planner/combined';
+    final res = await _dio.get<Map<String, dynamic>>(endpoint);
+    return _dataOf(res.data, endpoint);
+  }
+
   /// Full mode-aware plan for one target exam (`routes/api/v1/quiz.php:506`).
   /// The server owns the plan shape; the client only unwraps the envelope.
   Future<Map<String, dynamic>?> getStudyPlan(int examId) async {

@@ -21,6 +21,16 @@ void main() {
     repository = EiceRepositoryImpl(remote);
   });
 
+  test('combined plan maps to a payload without re-shaping it', () async {
+    when(() => remote.getCombinedStudyPlan()).thenAnswer(
+      (_) async => {'combined_daily_plan': <dynamic>[]},
+    );
+
+    final payload = await repository.getCombinedStudyPlan();
+
+    expect(payload?.raw['combined_daily_plan'], isA<List>());
+  });
+
   test('plan, topic pattern and course patterns map to payloads', () async {
     when(() => remote.getStudyPlan(7)).thenAnswer((_) async => {'mode': 'sprint'});
     when(() => remote.getTopicPattern(12)).thenAnswer((_) async => {'topic_id': 12});
