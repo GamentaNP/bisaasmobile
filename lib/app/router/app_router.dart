@@ -8,6 +8,20 @@ import 'package:go_router/go_router.dart';
 import '../../core/security/token_manager.dart';
 import '../../features/ai_settings/presentation/screens/ai_keys_screen.dart';
 import '../../features/ai_settings/presentation/screens/ai_usage_screen.dart';
+import '../../features/analytics/presentation/screens/analytics_overview_screen.dart';
+import '../../features/feed/presentation/screens/feed_screen.dart';
+import '../../features/hall_of_fame/presentation/screens/hall_of_fame_screen.dart';
+import '../../features/review/presentation/screens/attempt_review_screen.dart';
+import '../../features/review/presentation/screens/review_due_screen.dart';
+// Batch 2 learner reads (MOBILE_API_INTEGRATION_GUIDE §9.5).
+import '../../features/gamification/presentation/screens/reward_center_screen.dart';
+import '../../features/library/presentation/screens/resource_hub_screen.dart';
+import '../../features/past_papers/presentation/screens/past_paper_detail_screen.dart';
+import '../../features/past_papers/presentation/screens/past_papers_screen.dart';
+import '../../features/profile/presentation/screens/profile_compare_screen.dart';
+import '../../features/profile/presentation/screens/public_profile_screen.dart';
+import '../../features/social/presentation/screens/impact_leaders_screen.dart';
+import '../../features/word_bank/presentation/screens/word_bank_screen.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/reset_password_screen.dart';
@@ -193,6 +207,60 @@ class AppRouter {
                     path: 'reviews',
                     name: 'quiz-reviews',
                     builder: (context, state) => const QuizReviewsDueScreen(),
+                  ),
+                  // Tier A learner reads (MOBILE_API_INTEGRATION_GUIDE §9.4).
+                  // Static segments so they win over `:slug` below. All five
+                  // are authenticated tenant-scoped GETs under /api/v1/quiz.
+                  GoRoute(
+                    path: 'feed',
+                    name: 'quiz-feed',
+                    builder: (context, state) => const FeedScreen(),
+                  ),
+                  GoRoute(
+                    path: 'hall-of-fame',
+                    name: 'quiz-hall-of-fame',
+                    builder: (context, state) => const HallOfFameScreen(),
+                  ),
+                  GoRoute(
+                    path: 'analytics',
+                    name: 'quiz-analytics',
+                    builder: (context, state) => const AnalyticsOverviewScreen(),
+                  ),
+                  GoRoute(
+                    path: 'review/due',
+                    name: 'quiz-review-due',
+                    builder: (context, state) => const ReviewDueScreen(),
+                  ),
+                  GoRoute(
+                    path: 'attempt/:attemptId/review',
+                    name: 'quiz-attempt-review',
+                    builder: (context, state) => AttemptReviewScreen(
+                      attemptId: int.tryParse(state.pathParameters['attemptId'] ?? '') ?? 0,
+                    ),
+                  ),
+                  // Batch 2 learner reads (§9.5). Static segments so they win
+                  // over the `:slug` attempt route below.
+                  GoRoute(
+                    path: 'past-papers',
+                    name: 'quiz-past-papers',
+                    builder: (context, state) => const PastPapersScreen(),
+                  ),
+                  GoRoute(
+                    path: 'past-papers/:paperId',
+                    name: 'quiz-past-paper-detail',
+                    builder: (context, state) => PastPaperDetailScreen(
+                      paperId: int.tryParse(state.pathParameters['paperId'] ?? '') ?? 0,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'word-bank',
+                    name: 'quiz-word-bank',
+                    builder: (context, state) => const WordBankScreen(),
+                  ),
+                  GoRoute(
+                    path: 'resources',
+                    name: 'quiz-resources',
+                    builder: (context, state) => const ResourceHubScreen(),
                   ),
                   GoRoute(
                     path: 'intro/:id',
@@ -565,6 +633,33 @@ class AppRouter {
         path: '/live-events/:id',
         name: RouteNames.liveEventDetail,
         builder: (context, state) => LiveEventDetailScreen(eventId: state.pathParameters['id']!),
+      ),
+      // Batch 2 learner reads (§9.5) — appended only; no existing route altered.
+      // `/profiles/compare` is a static sibling of `:username` and is declared
+      // first so the literal segment wins during matching.
+      GoRoute(
+        path: '/profiles/compare',
+        name: 'profile-compare',
+        builder: (context, state) => ProfileCompareScreen(
+          username: state.uri.queryParameters['username'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/profiles/:username',
+        name: 'public-profile',
+        builder: (context, state) => PublicProfileScreen(
+          username: state.pathParameters['username'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/social/impact-leaders',
+        name: 'social-impact-leaders',
+        builder: (context, state) => const ImpactLeadersScreen(),
+      ),
+      GoRoute(
+        path: '/reward-center',
+        name: 'reward-center',
+        builder: (context, state) => const RewardCenterScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

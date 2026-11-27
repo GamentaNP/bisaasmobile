@@ -48,6 +48,9 @@ ALLOWED_LATIN = {
     # inconsistency this audit exists to catch.
     "CivilCal", "BiSaaS", "Bisaas", "Civil", "Loksewa", "Nepal", "Elite",
     "Quiz", "Google", "Apple", "Arcade", "Games",
+    # Exam names and scheme acronyms are proper nouns in both locales;
+    # translating "GATE"/"SSC JE" would name a different exam.
+    "GATE", "SSC", "JE", "https",
     # API field, endpoint and service names, which are wire values
     "credits", "description", "metadata", "source", "library", "api", "download",
     "MasteryService", "computeReadiness", "Goal", "ID", "Tracks", "Laravel",

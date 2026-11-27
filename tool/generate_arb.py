@@ -216,6 +216,9 @@ add(
 # The quiz queue (/quiz/reviews/*) is a different surface from the learning
 # atom queue; its copy stays separate even where the words coincide.
 add("quizSrsReviewsDueTitle", "Reviews Due", "दोहोराइ बाँकी", "दोहराव बाकी")
+# Compact home entry tile for the learner-read review queue, not the SRS
+# banner above: the tile opens /quiz/review/due (attempt answer review).
+add("quizReviewDue", "Review due", "बाँकी दोहोराइ हेर्नुहोस्", "बाकी दोहराव देखें")
 add(
     "quizSrsHomeSubtitle",
     "Repeat the questions and words you are about to forget",
@@ -2765,6 +2768,41 @@ add("a11yRemoveBookmark", "Remove bookmark", "बुकमार्क हटा
 add("a11yRateStar", "Rate {count} stars", "{count} तारे दिनुहोस्", "{count} सितारे दें", ["count"])
 add("a11yMarkComplete", "Mark as complete", "पूरा भएको जनाउनुहोस्", "पूरे के रूप में चिह्नित करें")
 add("a11ySend", "Send", "पठाउनुहोस्", "भेजें")
+
+# ── learner reads: feed, hall of fame, analytics, review ────────────────────
+# The copy these screens need is more specific than the nearest existing key.
+add("feedActivityFeed", "Activity feed", "गतिविधि फिड", "गतिविधि फ़ीड")
+add("feedPersonalized", "Personalized", "व्यक्तिगत", "व्यक्तिगत")
+add("feedNoActivityYet", "No activity yet", "अहिलेसम्म कुनै गतिविधि छैन", "अभी तक कोई गतिविधि नहीं")
+add("hallOfFameTitle", "Hall of Fame", "प्रसिद्धि कक्ष", "प्रसिद्धि कक्ष")
+add("hallOfFameAllRecords", "All records", "सबै रेकर्ड", "सभी रिकॉर्ड")
+add("hallOfFameNoRecords", "No records yet", "अहिलेसम्म कुनै रेकर्ड छैन", "अभी तक कोई रिकॉर्ड नहीं")
+add("hallOfFameSearchRecords", "Search records", "रेकर्ड खोज्नुहोस्", "रिकॉर्ड खोजें")
+add("analyticsYourProgress", "Your progress", "तपाईंको प्रगति", "आपकी प्रगति")
+add("analyticsTotalAttempts", "Total attempts", "जम्मा प्रयास", "कुल प्रयास")
+add("analyticsQuestionsAnswered", "Questions answered", "उत्तर दिएका प्रश्न", "उत्तर दिए गए प्रश्न")
+add("analyticsCorrectAnswers", "Correct answers", "सही उत्तर", "सही उत्तर")
+add("reviewAnswersLocked", "Answers are locked until results are released.", "नतिजा जारी नभएसम्म उत्तरहरू लक रहन्छन्।", "परिणाम जारी होने तक उत्तर बंद रहते हैं।")
+
+# ── batch 2: past papers, word bank, resource hub, profiles, social, rewards ──
+# The batch-2 screens reuse broad keys today; each of these names its surface.
+add("pastPapersTitle", "Past papers", "पुराना प्रश्नपत्र", "पुराने प्रश्नपत्र")
+add("pastPapersEmpty", "No past papers found", "कुनै पुराना प्रश्नपत्र भेटिएन", "कोई पुराना प्रश्नपत्र नहीं मिला")
+add("pastPaperDetailTitle", "Past paper", "प्रश्नपत्र", "प्रश्नपत्र")
+add("pastPaperScans", "Scanned pages", "स्क्यान गरिएका पृष्ठ", "स्कैन किए गए पृष्ठ")
+add("pastPaperQuestions", "Questions", "प्रश्नहरू", "प्रश्न")
+add("wordBankTitle", "Word bank", "शब्द भण्डार", "शब्द भंडार")
+add("wordBankEmpty", "No words found", "कुनै शब्द भेटिएन", "कोई शब्द नहीं मिला")
+add("resourceHubTitle", "Resource hub", "स्रोत केन्द्र", "संसाधन केंद्र")
+add("resourceSectionTopRated", "Top rated", "उत्कृष्ट मूल्याङ्कन", "सर्वश्रेष्ठ रेटेड")
+add("resourceSectionRecentlyAdded", "Recently added", "हालै थपिएको", "हाल ही में जोड़ा गया")
+add("publicProfileTitle", "Public profile", "सार्वजनिक प्रोफाइल", "सार्वजनिक प्रोफ़ाइल")
+add("compareProfiles", "Compare profiles", "प्रोफाइल तुलना गर्नुहोस्", "प्रोफ़ाइल की तुलना करें")
+add("profileComparisonTitle", "Profile comparison", "प्रोफाइल तुलना", "प्रोफ़ाइल तुलना")
+add("impactLeadersTitle", "Impact leaders", "प्रभाव नेता", "प्रभाव नेता")
+add("impactLeaderQualifiedReferrals", "Qualified referrals", "योग्य रेफरल", "योग्य रेफ़रल")
+add("rewardCenterTitle", "Reward center", "पुरस्कार केन्द्र", "पुरस्कार केंद्र")
+add("rewardCenterPrizes", "Available prizes", "उपलब्ध पुरस्कार", "उपलब्ध पुरस्कार")
 
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.

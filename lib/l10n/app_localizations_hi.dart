@@ -290,6 +290,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get quizSrsReviewsDueTitle => 'दोहराव बाकी';
 
   @override
+  String get quizReviewDue => 'बाकी दोहराव देखें';
+
+  @override
   String get quizSrsHomeSubtitle =>
       'जिन प्रश्नों और शब्दों को आप भूलने वाले हैं उन्हें दोहराएं';
 
@@ -4890,4 +4893,91 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get a11ySend => 'भेजें';
+
+  @override
+  String get feedActivityFeed => 'गतिविधि फ़ीड';
+
+  @override
+  String get feedPersonalized => 'व्यक्तिगत';
+
+  @override
+  String get feedNoActivityYet => 'अभी तक कोई गतिविधि नहीं';
+
+  @override
+  String get hallOfFameTitle => 'प्रसिद्धि कक्ष';
+
+  @override
+  String get hallOfFameAllRecords => 'सभी रिकॉर्ड';
+
+  @override
+  String get hallOfFameNoRecords => 'अभी तक कोई रिकॉर्ड नहीं';
+
+  @override
+  String get hallOfFameSearchRecords => 'रिकॉर्ड खोजें';
+
+  @override
+  String get analyticsYourProgress => 'आपकी प्रगति';
+
+  @override
+  String get analyticsTotalAttempts => 'कुल प्रयास';
+
+  @override
+  String get analyticsQuestionsAnswered => 'उत्तर दिए गए प्रश्न';
+
+  @override
+  String get analyticsCorrectAnswers => 'सही उत्तर';
+
+  @override
+  String get reviewAnswersLocked => 'परिणाम जारी होने तक उत्तर बंद रहते हैं।';
+
+  @override
+  String get pastPapersTitle => 'पुराने प्रश्नपत्र';
+
+  @override
+  String get pastPapersEmpty => 'कोई पुराना प्रश्नपत्र नहीं मिला';
+
+  @override
+  String get pastPaperDetailTitle => 'प्रश्नपत्र';
+
+  @override
+  String get pastPaperScans => 'स्कैन किए गए पृष्ठ';
+
+  @override
+  String get pastPaperQuestions => 'प्रश्न';
+
+  @override
+  String get wordBankTitle => 'शब्द भंडार';
+
+  @override
+  String get wordBankEmpty => 'कोई शब्द नहीं मिला';
+
+  @override
+  String get resourceHubTitle => 'संसाधन केंद्र';
+
+  @override
+  String get resourceSectionTopRated => 'सर्वश्रेष्ठ रेटेड';
+
+  @override
+  String get resourceSectionRecentlyAdded => 'हाल ही में जोड़ा गया';
+
+  @override
+  String get publicProfileTitle => 'सार्वजनिक प्रोफ़ाइल';
+
+  @override
+  String get compareProfiles => 'प्रोफ़ाइल की तुलना करें';
+
+  @override
+  String get profileComparisonTitle => 'प्रोफ़ाइल तुलना';
+
+  @override
+  String get impactLeadersTitle => 'प्रभाव नेता';
+
+  @override
+  String get impactLeaderQualifiedReferrals => 'योग्य रेफ़रल';
+
+  @override
+  String get rewardCenterTitle => 'पुरस्कार केंद्र';
+
+  @override
+  String get rewardCenterPrizes => 'उपलब्ध पुरस्कार';
 }

@@ -291,6 +291,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizSrsReviewsDueTitle => 'Reviews Due';
 
   @override
+  String get quizReviewDue => 'Review due';
+
+  @override
   String get quizSrsHomeSubtitle =>
       'Repeat the questions and words you are about to forget';
 
@@ -4877,4 +4880,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get a11ySend => 'Send';
+
+  @override
+  String get feedActivityFeed => 'Activity feed';
+
+  @override
+  String get feedPersonalized => 'Personalized';
+
+  @override
+  String get feedNoActivityYet => 'No activity yet';
+
+  @override
+  String get hallOfFameTitle => 'Hall of Fame';
+
+  @override
+  String get hallOfFameAllRecords => 'All records';
+
+  @override
+  String get hallOfFameNoRecords => 'No records yet';
+
+  @override
+  String get hallOfFameSearchRecords => 'Search records';
+
+  @override
+  String get analyticsYourProgress => 'Your progress';
+
+  @override
+  String get analyticsTotalAttempts => 'Total attempts';
+
+  @override
+  String get analyticsQuestionsAnswered => 'Questions answered';
+
+  @override
+  String get analyticsCorrectAnswers => 'Correct answers';
+
+  @override
+  String get reviewAnswersLocked =>
+      'Answers are locked until results are released.';
+
+  @override
+  String get pastPapersTitle => 'Past papers';
+
+  @override
+  String get pastPapersEmpty => 'No past papers found';
+
+  @override
+  String get pastPaperDetailTitle => 'Past paper';
+
+  @override
+  String get pastPaperScans => 'Scanned pages';
+
+  @override
+  String get pastPaperQuestions => 'Questions';
+
+  @override
+  String get wordBankTitle => 'Word bank';
+
+  @override
+  String get wordBankEmpty => 'No words found';
+
+  @override
+  String get resourceHubTitle => 'Resource hub';
+
+  @override
+  String get resourceSectionTopRated => 'Top rated';
+
+  @override
+  String get resourceSectionRecentlyAdded => 'Recently added';
+
+  @override
+  String get publicProfileTitle => 'Public profile';
+
+  @override
+  String get compareProfiles => 'Compare profiles';
+
+  @override
+  String get profileComparisonTitle => 'Profile comparison';
+
+  @override
+  String get impactLeadersTitle => 'Impact leaders';
+
+  @override
+  String get impactLeaderQualifiedReferrals => 'Qualified referrals';
+
+  @override
+  String get rewardCenterTitle => 'Reward center';
+
+  @override
+  String get rewardCenterPrizes => 'Available prizes';
 }

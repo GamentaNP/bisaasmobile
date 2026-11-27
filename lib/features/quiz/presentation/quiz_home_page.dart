@@ -229,6 +229,18 @@ class _QuizHomePageState extends ConsumerState<QuizHomePage> {
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: _ArcadeBanner(onTap: () => context.go('/arcade')),
             ),
+            // The learner-read surfaces are reads, not play modes: four
+            // compact tiles in one strip instead of four more full-width
+            // banners that would push the course list off the screen.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: _LearnerReadsStrip(
+                onFeed: () => context.go('/quiz/feed'),
+                onHallOfFame: () => context.go('/quiz/hall-of-fame'),
+                onProgress: () => context.go('/quiz/analytics'),
+                onReviewDue: () => context.go('/quiz/review/due'),
+              ),
+            ),
             Expanded(
               child: FutureBuilder<List<_QuizTopic>>(
                 future: _courses,
@@ -573,6 +585,96 @@ class _ArcadeBanner extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Compact index for the four Tier A learner-read destinations.
+///
+/// Each tile is a plain `context.go` to a registered route, matching the rest
+/// of this screen — raw `Navigator` pushes render nothing inside the shell on
+/// web. The copy comes from the ARB: these are reads, so none of the words are
+/// invented on-device.
+class _LearnerReadsStrip extends StatelessWidget {
+  const _LearnerReadsStrip({
+    required this.onFeed,
+    required this.onHallOfFame,
+    required this.onProgress,
+    required this.onReviewDue,
+  });
+
+  final VoidCallback onFeed;
+  final VoidCallback onHallOfFame;
+  final VoidCallback onProgress;
+  final VoidCallback onReviewDue;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final tiles = <({IconData icon, String label, VoidCallback onTap})>[
+      (
+        icon: Icons.dynamic_feed_rounded,
+        label: l10n.feedActivityFeed,
+        onTap: onFeed,
+      ),
+      (
+        icon: Icons.emoji_events_rounded,
+        label: l10n.hallOfFameTitle,
+        onTap: onHallOfFame,
+      ),
+      (
+        icon: Icons.insights_rounded,
+        label: l10n.analyticsYourProgress,
+        onTap: onProgress,
+      ),
+      (
+        icon: Icons.fact_check_rounded,
+        label: l10n.quizReviewDue,
+        onTap: onReviewDue,
+      ),
+    ];
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          for (final tile in tiles)
+            Expanded(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: tile.onTap,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 2,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(tile.icon, size: 20, color: AppColors.brand),
+                      const SizedBox(height: 4),
+                      Text(
+                        tile.label,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

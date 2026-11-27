@@ -604,6 +604,12 @@ abstract class AppLocalizations {
   /// **'Reviews Due'**
   String get quizSrsReviewsDueTitle;
 
+  /// No description provided for @quizReviewDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Review due'**
+  String get quizReviewDue;
+
   /// No description provided for @quizSrsHomeSubtitle.
   ///
   /// In en, this message translates to:
@@ -8288,6 +8294,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send'**
   String get a11ySend;
+
+  /// No description provided for @feedActivityFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity feed'**
+  String get feedActivityFeed;
+
+  /// No description provided for @feedPersonalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized'**
+  String get feedPersonalized;
+
+  /// No description provided for @feedNoActivityYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity yet'**
+  String get feedNoActivityYet;
+
+  /// No description provided for @hallOfFameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hall of Fame'**
+  String get hallOfFameTitle;
+
+  /// No description provided for @hallOfFameAllRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'All records'**
+  String get hallOfFameAllRecords;
+
+  /// No description provided for @hallOfFameNoRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No records yet'**
+  String get hallOfFameNoRecords;
+
+  /// No description provided for @hallOfFameSearchRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Search records'**
+  String get hallOfFameSearchRecords;
+
+  /// No description provided for @analyticsYourProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress'**
+  String get analyticsYourProgress;
+
+  /// No description provided for @analyticsTotalAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Total attempts'**
+  String get analyticsTotalAttempts;
+
+  /// No description provided for @analyticsQuestionsAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions answered'**
+  String get analyticsQuestionsAnswered;
+
+  /// No description provided for @analyticsCorrectAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct answers'**
+  String get analyticsCorrectAnswers;
+
+  /// No description provided for @reviewAnswersLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers are locked until results are released.'**
+  String get reviewAnswersLocked;
+
+  /// No description provided for @pastPapersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past papers'**
+  String get pastPapersTitle;
+
+  /// No description provided for @pastPapersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No past papers found'**
+  String get pastPapersEmpty;
+
+  /// No description provided for @pastPaperDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past paper'**
+  String get pastPaperDetailTitle;
+
+  /// No description provided for @pastPaperScans.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned pages'**
+  String get pastPaperScans;
+
+  /// No description provided for @pastPaperQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get pastPaperQuestions;
+
+  /// No description provided for @wordBankTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Word bank'**
+  String get wordBankTitle;
+
+  /// No description provided for @wordBankEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No words found'**
+  String get wordBankEmpty;
+
+  /// No description provided for @resourceHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resource hub'**
+  String get resourceHubTitle;
+
+  /// No description provided for @resourceSectionTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get resourceSectionTopRated;
+
+  /// No description provided for @resourceSectionRecentlyAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently added'**
+  String get resourceSectionRecentlyAdded;
+
+  /// No description provided for @publicProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Public profile'**
+  String get publicProfileTitle;
+
+  /// No description provided for @compareProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare profiles'**
+  String get compareProfiles;
+
+  /// No description provided for @profileComparisonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile comparison'**
+  String get profileComparisonTitle;
+
+  /// No description provided for @impactLeadersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Impact leaders'**
+  String get impactLeadersTitle;
+
+  /// No description provided for @impactLeaderQualifiedReferrals.
+  ///
+  /// In en, this message translates to:
+  /// **'Qualified referrals'**
+  String get impactLeaderQualifiedReferrals;
+
+  /// No description provided for @rewardCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward center'**
+  String get rewardCenterTitle;
+
+  /// No description provided for @rewardCenterPrizes.
+  ///
+  /// In en, this message translates to:
+  /// **'Available prizes'**
+  String get rewardCenterPrizes;
 }
 
 class _AppLocalizationsDelegate
