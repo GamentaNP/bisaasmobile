@@ -1,4 +1,4 @@
-# Localisation — CivilCal
+# Localisation — LoveMCQ
 
 The app ships **English, Nepali and Hindi**. This document says exactly
 what is translated, how the copy is kept honest, and where the boundary
@@ -53,7 +53,7 @@ in three separate sets so the reason is visible at the definition:
 | Group | Count | Examples and why |
 |---|---|---|
 | Addresses and non-copy values | 6 | `support@lovemcq.com`, `privacy@lovemcq.com`, the synthetic `offline@bisaas.test`, `OK (cached)` (a synthetic HTTP status, never shown), the `kDebugMode`-only auto-login button, and `C` (the avatar fallback, i.e. the first letter of the display name). |
-| Brand names | 10 | `CivilCal`, `OpenAI`, `Google Gemini`, `Anthropic`, `DeepSeek`, `Groq`, `Mistral`, `OpenRouter`, `Google`, `Apple`. Translating a proper noun makes it wrong, not Nepali. |
+| Brand names | 10 | `LoveMCQ`, `OpenAI`, `Google Gemini`, `Anthropic`, `DeepSeek`, `Groq`, `Mistral`, `OpenRouter`, `Google`, `Apple`. Translating a proper noun makes it wrong, not Nepali. |
 | Developer diagnostics | 10 | Seven sync-queue rejection reasons, `correctness`, `duration` (**protocol values** the battle kernel and server agree on), and `shuffle:{…}`. These reach an `ArgumentError` or a log line, never a screen. |
 
 `test/app/localization_coverage_test.dart` holds the three lists, so an

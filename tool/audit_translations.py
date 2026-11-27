@@ -46,7 +46,7 @@ ALLOWED_LATIN = {
     # name of a course the server publishes; translating it inside one
     # sentence while the course list shows the English title would be the
     # inconsistency this audit exists to catch.
-    "CivilCal", "BiSaaS", "Bisaas", "Civil", "Loksewa", "Nepal", "Elite",
+    "LoveMCQ", "BiSaaS", "Bisaas", "Civil", "Loksewa", "Nepal", "Elite",
     "Quiz", "Google", "Apple", "Arcade", "Games",
     # Exam names and scheme acronyms are proper nouns in both locales;
     # translating "GATE"/"SSC JE" would name a different exam.

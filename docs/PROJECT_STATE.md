@@ -20,7 +20,7 @@ therefore sends nothing.
 
 ## 1. What this repository is
 
-The Flutter client for CivilCal (Nepal-first civil-engineering exam prep),
+The Flutter client for LoveMCQ (Nepal-first civil-engineering exam prep),
 Android and iOS, talking to the Laravel server in `C:\laragon\www\bisaas`
 over `/api/v1` only.
 
@@ -49,7 +49,7 @@ not bought.
 
 Thirteen keys per locale are byte-identical to English on purpose — unit
 symbols, brand names, format tokens and a sample URL (`%`, `XP`, `★`,
-`CivilCal`, `https://api.example.com/v1`). The translation audit treats those
+`LoveMCQ`, `https://api.example.com/v1`). The translation audit treats those
 as correct, not as gaps.
 
 ## 3. What is shipped and where it is proven

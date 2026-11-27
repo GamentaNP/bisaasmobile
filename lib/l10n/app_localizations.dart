@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'CivilCal'**
+  /// **'LoveMCQ'**
   String get appTitle;
 
   /// No description provided for @signIn.
@@ -211,7 +211,7 @@ abstract class AppLocalizations {
   /// No description provided for @appLocked.
   ///
   /// In en, this message translates to:
-  /// **'CivilCal is locked'**
+  /// **'LoveMCQ is locked'**
   String get appLocked;
 
   /// No description provided for @unlock.
@@ -223,7 +223,7 @@ abstract class AppLocalizations {
   /// No description provided for @unlockCivilCal.
   ///
   /// In en, this message translates to:
-  /// **'Unlock CivilCal'**
+  /// **'Unlock LoveMCQ'**
   String get unlockCivilCal;
 
   /// No description provided for @commonCancel.
@@ -391,7 +391,7 @@ abstract class AppLocalizations {
   /// No description provided for @authJoinTitle.
   ///
   /// In en, this message translates to:
-  /// **'Join CivilCal'**
+  /// **'Join LoveMCQ'**
   String get authJoinTitle;
 
   /// No description provided for @authJoinSubtitle.
@@ -1657,7 +1657,7 @@ abstract class AppLocalizations {
   /// No description provided for @maintenanceBody.
   ///
   /// In en, this message translates to:
-  /// **'CivilCal is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.'**
+  /// **'LoveMCQ is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.'**
   String get maintenanceBody;
 
   /// No description provided for @versionUnsupported.
@@ -1933,7 +1933,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileShareCardText.
   ///
   /// In en, this message translates to:
-  /// **'My CivilCal profile — Level {level} Engineer. https://lovemcq.com'**
+  /// **'My LoveMCQ profile — Level {level} Engineer. https://lovemcq.com'**
   String profileShareCardText(Object level);
 
   /// No description provided for @profileShareFailed.
@@ -7017,7 +7017,7 @@ abstract class AppLocalizations {
   /// No description provided for @appLockPromptTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock CivilCal'**
+  /// **'Unlock LoveMCQ'**
   String get appLockPromptTitle;
 
   /// No description provided for @appLockPromptReason.
@@ -7431,13 +7431,13 @@ abstract class AppLocalizations {
   /// No description provided for @socialTryThis.
   ///
   /// In en, this message translates to:
-  /// **'Try this on CivilCal'**
+  /// **'Try this on LoveMCQ'**
   String get socialTryThis;
 
   /// No description provided for @socialShareInvite.
   ///
   /// In en, this message translates to:
-  /// **'Use my code {code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n{url}'**
+  /// **'Use my code {code} on LoveMCQ — civil engineering calculators and Loksewa MCQs.\n{url}'**
   String socialShareInvite(Object code, Object url);
 
   /// No description provided for @tutorRetrievalFailed.
@@ -7473,7 +7473,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizShareResult.
   ///
   /// In en, this message translates to:
-  /// **'I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://lovemcq.com'**
+  /// **'I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via LoveMCQ (BiSaaS). Try: https://lovemcq.com'**
   String quizShareResult(
     Object correct,
     Object total,
@@ -7505,7 +7505,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizDefaultTitle.
   ///
   /// In en, this message translates to:
-  /// **'CivilCal Quiz'**
+  /// **'LoveMCQ Quiz'**
   String get quizDefaultTitle;
 
   /// No description provided for @syllabusTopicsLoaded.
@@ -7571,13 +7571,13 @@ abstract class AppLocalizations {
   /// No description provided for @forceUpdateUnsupportedLatest.
   ///
   /// In en, this message translates to:
-  /// **'This version of CivilCal is no longer supported. Please update to the latest version to continue.'**
+  /// **'This version of LoveMCQ is no longer supported. Please update to the latest version to continue.'**
   String get forceUpdateUnsupportedLatest;
 
   /// No description provided for @forceUpdateUnsupportedVersion.
   ///
   /// In en, this message translates to:
-  /// **'This version of CivilCal is no longer supported. Please update to version {version} or later to continue.'**
+  /// **'This version of LoveMCQ is no longer supported. Please update to version {version} or later to continue.'**
   String forceUpdateUnsupportedVersion(Object version);
 
   /// No description provided for @routeNotFound.
@@ -7625,7 +7625,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizShareTitleFallback.
   ///
   /// In en, this message translates to:
-  /// **'CivilCal Quiz'**
+  /// **'LoveMCQ Quiz'**
   String get quizShareTitleFallback;
 
   /// No description provided for @profileFallbackName.
@@ -7697,7 +7697,7 @@ abstract class AppLocalizations {
   /// No description provided for @socialShareMomentFallback.
   ///
   /// In en, this message translates to:
-  /// **'I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.'**
+  /// **'I just made progress on LoveMCQ — civil engineering calculators and Loksewa MCQs.'**
   String get socialShareMomentFallback;
 
   /// No description provided for @streakInsuranceFailed.
@@ -8381,7 +8381,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizShareSubject.
   ///
   /// In en, this message translates to:
-  /// **'My CivilCal Result — {title}'**
+  /// **'My LoveMCQ Result — {title}'**
   String quizShareSubject(Object title);
 
   /// No description provided for @quizFunnelCategories.

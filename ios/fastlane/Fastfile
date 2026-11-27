@@ -1,4 +1,4 @@
-# Fastlane for BiSaaS CivilCal — iOS (run on a macOS machine with Xcode 16+).
+# Fastlane for BiSaaS LoveMCQ — iOS (run on a macOS machine with Xcode 16+).
 # Usage: `fastlane ios beta` (TestFlight) or `fastlane ios prod` (App Store).
 # Requires: `MATCH_PASSWORD`, `APP_STORE_CONNECT_API_KEY_JSON` (or apple_id env),
 # `ios/Runner/GoogleService-Info.plist` present, `dart_defines/production.json`.

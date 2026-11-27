@@ -1,4 +1,4 @@
-# Store listing — CivilCal
+# Store listing — LoveMCQ
 
 The reviewable listing spec, with the character limits and the facts behind
 each claim. **`android/fastlane/metadata/` and `ios/fastlane/metadata/` are
@@ -17,15 +17,15 @@ uses a floor (`170+`) rather than an exact count.
 
 | Store | Value | Limit |
 |---|---|---|
-| Play | `CivilCal: Engineering Prep` | 30 — **26** |
-| App Store | `CivilCal: Engineering Prep` | 30 — **26** |
-| App Store (Nepali) | `CivilCal: इन्जिनियरिङ तयारी` | 30 — **27** |
+| Play | `LoveMCQ: Engineering Prep` | 30 — **25** |
+| App Store | `LoveMCQ: Engineering Prep` | 30 — **25** |
+| App Store (Nepali) | `LoveMCQ: इन्जिनियरिङ तयारी` | 30 — **26** |
 
 `CFBundleDisplayName` in `ios/Runner/Info.plist` and the `android:label`
-in `android/app/src/main/AndroidManifest.xml` are both `CivilCal`. The
+in `android/app/src/main/AndroidManifest.xml` are both `LoveMCQ`. The
 stores show the store listing name, not the launcher label, so the
-launcher still reads `CivilCal` while the listing reads
-`CivilCal: Engineering Prep`.
+launcher still reads `LoveMCQ` while the listing reads
+`LoveMCQ: Engineering Prep`.
 
 ---
 

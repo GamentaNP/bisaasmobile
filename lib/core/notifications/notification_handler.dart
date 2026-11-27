@@ -57,6 +57,9 @@ abstract final class NotificationHandler {
 
   static const _allowedHosts = <String>{'lovemcq.com', 'www.lovemcq.com'};
 
+  // `civilcal` is the pre-rename scheme, still accepted for old push payloads.
+  static const _allowedSchemes = <String>{'lovemcq', 'civilcal'};
+
   /// Returns a validated router target, or null when [raw] must be ignored.
   static String? safeRoute(String? raw) {
     if (raw == null || raw.isEmpty) return null;
@@ -68,7 +71,7 @@ abstract final class NotificationHandler {
     if (scheme.isEmpty) {
       if (!raw.startsWith('/')) return null;
       path = uri.path;
-    } else if (scheme == 'civilcal') {
+    } else if (_allowedSchemes.contains(scheme)) {
       final host = uri.host.toLowerCase();
       if (host.isEmpty) return null;
       path = '/$host${uri.path}';

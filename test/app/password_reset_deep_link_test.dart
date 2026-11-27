@@ -7,7 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// Regression cover for a user-blocking defect: the password-reset email
 /// carried a one-time token that the app threw away.
 ///
-/// `civilcal://reset-password?token=…&email=…` was routed to
+/// `lovemcq://reset-password?token=…&email=…` (and its deprecated
+/// `civilcal://` alias) was routed to
 /// `/forgot-password`, whose constructor accepts only `initialEmail`. The token
 /// never reached a screen, so the user was asked to request another email —
 /// forever. `POST /auth/reset-password` has always existed and accepts it.
@@ -17,7 +18,7 @@ void main() {
   group('custom scheme reset links', () {
     test('carries the token through to the reset screen', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('civilcal://reset-password?token=abc123&email=a%40b.com'),
+        Uri.parse('lovemcq://reset-password?token=abc123&email=a%40b.com'),
       );
       expect(location, isNotNull);
       expect(location, startsWith('/reset-password?'));
@@ -27,7 +28,7 @@ void main() {
 
     test('no longer routes to forgot-password, which cannot use a token', () {
       final location = DeepLinkHandler.parse(
-        Uri.parse('civilcal://reset-password?token=abc123&email=a%40b.com'),
+        Uri.parse('lovemcq://reset-password?token=abc123&email=a%40b.com'),
       );
       expect(location, isNot('/forgot-password'));
       expect(location, isNot(startsWith('/forgot-password')));
@@ -35,12 +36,27 @@ void main() {
 
     test('an email-only link still reaches the reset screen', () {
       final location =
-          DeepLinkHandler.parse(Uri.parse('civilcal://reset-password?email=a%40b.com'));
+          DeepLinkHandler.parse(Uri.parse('lovemcq://reset-password?email=a%40b.com'));
       expect(location, startsWith('/reset-password'));
     });
 
     test('a bare reset link reaches the screen so it can explain itself', () {
-      expect(DeepLinkHandler.parse(Uri.parse('civilcal://reset-password')), '/reset-password');
+      expect(DeepLinkHandler.parse(Uri.parse('lovemcq://reset-password')), '/reset-password');
+    });
+  });
+
+  group('the deprecated civilcal:// alias normalizes to the same routes', () {
+    test('reset links keep their token and email', () {
+      final location = DeepLinkHandler.parse(
+        Uri.parse('civilcal://reset-password?token=abc123&email=a%40b.com'),
+      );
+      expect(location, contains('token=abc123'));
+      expect(location, contains(Uri.encodeComponent('a@b.com')));
+    });
+
+    test('quiz and battle links are unchanged', () {
+      expect(DeepLinkHandler.parse(Uri.parse('civilcal://quiz/abc')), '/quiz/abc');
+      expect(DeepLinkHandler.parse(Uri.parse('civilcal://battle')), '/battle');
     });
   });
 
@@ -84,12 +100,12 @@ void main() {
   });
 
   group('other links still route as before', () {
-    test('civilcal quiz link', () {
-      expect(DeepLinkHandler.parse(Uri.parse('civilcal://quiz/abc')), '/quiz/abc');
+    test('lovemcq quiz link', () {
+      expect(DeepLinkHandler.parse(Uri.parse('lovemcq://quiz/abc')), '/quiz/abc');
     });
 
-    test('civilcal battle link', () {
-      expect(DeepLinkHandler.parse(Uri.parse('civilcal://battle')), '/battle');
+    test('lovemcq battle link', () {
+      expect(DeepLinkHandler.parse(Uri.parse('lovemcq://battle')), '/battle');
     });
 
     test('https quiz app link', () {

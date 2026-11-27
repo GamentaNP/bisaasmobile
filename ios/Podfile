@@ -1,4 +1,4 @@
-# CocoaPods for the CivilCal iOS app.
+# CocoaPods for the LoveMCQ iOS app.
 #
 # This file is committed on purpose. Without it, every build machine
 # (CI included) resolves the plugin pods from scratch, and two machines

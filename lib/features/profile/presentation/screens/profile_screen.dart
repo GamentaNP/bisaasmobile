@@ -105,7 +105,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final bytes = byteData.buffer.asUint8List();
       await SharePlus.instance.share(ShareParams(
         text: l10n.profileShareCardText(ref.read(authControllerProvider).value?.level ?? 1),
-        files: [XFile.fromData(bytes, name: 'civilcal-profile.png', mimeType: 'image/png')],
+        files: [XFile.fromData(bytes, name: 'lovemcq-profile.png', mimeType: 'image/png')],
       ));
     } catch (e) {
       if (!mounted) return;

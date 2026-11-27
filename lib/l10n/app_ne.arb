@@ -1,6 +1,6 @@
 {
   "@@locale": "ne",
-  "appTitle": "CivilCal",
+  "appTitle": "LoveMCQ",
   "signIn": "साइन इन गर्नुहोस्",
   "register": "दर्ता गर्नुहोस्",
   "quiz": "क्विज",
@@ -32,9 +32,9 @@
       }
     }
   },
-  "appLocked": "CivilCal लक छ",
+  "appLocked": "LoveMCQ लक छ",
   "unlock": "खोल्नुहोस्",
-  "unlockCivilCal": "CivilCal खोल्नुहोस्",
+  "unlockCivilCal": "LoveMCQ खोल्नुहोस्",
   "commonCancel": "रद्द गर्नुहोस्",
   "commonSave": "सुरक्षित गर्नुहोस्",
   "commonClose": "बन्द गर्नुहोस्",
@@ -90,7 +90,7 @@
     }
   },
   "authReturnToLogin": "लगइनमा फर्कनुहोस्",
-  "authJoinTitle": "CivilCal मा सामेल हुनुहोस्",
+  "authJoinTitle": "LoveMCQ मा सामेल हुनुहोस्",
   "authJoinSubtitle": "इन्जिनियरिङ परीक्षा र गणितका लागि तपाईंको साथी",
   "authFullNameLabel": "पूरा नाम",
   "authConfirmPasswordLabel": "पासवर्ड पुष्टि गर्नुहोस्",
@@ -573,7 +573,7 @@
     }
   },
   "maintenanceTitle": "हामी छिट्टै फर्कन्छौं",
-  "maintenanceBody": "CivilCal सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।",
+  "maintenanceBody": "LoveMCQ सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।",
   "versionUnsupported": "यो एप संस्करण अब समर्थित छैन।",
   "authUpdating": "अद्यावधिक हुँदैछ…",
   "authUpdatePassword": "पासवर्ड अद्यावधिक गर्नुहोस्",
@@ -668,7 +668,7 @@
       }
     }
   },
-  "profileShareCardText": "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://lovemcq.com",
+  "profileShareCardText": "मेरो LoveMCQ प्रोफाइल — तह {level} इन्जिनियर। https://lovemcq.com",
   "@profileShareCardText": {
     "placeholders": {
       "level": {
@@ -2991,7 +2991,7 @@
   "difficultyExpert": "विशेषज्ञ",
   "difficultyMixed": "मिश्रित",
   "todayTitle": "आज",
-  "appLockPromptTitle": "CivilCal खोल्नुहोस्",
+  "appLockPromptTitle": "LoveMCQ खोल्नुहोस्",
   "appLockPromptReason": "जारी राख्न प्रमाणीकरण गर्नुहोस्",
   "notificationChannelDaily": "दैनिक क्विज",
   "lifelineWrongRemoved": "{count} गलत विकल्प हटाइयो।",
@@ -3257,8 +3257,8 @@
   },
   "socialReferralApplied": "रेफरल कोड लागू भयो।",
   "socialReferralRejected": "त्यो कोड लागू गर्न सकिएन। पहिले नै प्रयोग भएको हुन सक्छ।",
-  "socialTryThis": "CivilCal मा यो प्रयास गर्नुहोस्",
-  "socialShareInvite": "CivilCal मा मेरो कोड {code} प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n{url}",
+  "socialTryThis": "LoveMCQ मा यो प्रयास गर्नुहोस्",
+  "socialShareInvite": "LoveMCQ मा मेरो कोड {code} प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n{url}",
   "@socialShareInvite": {
     "placeholders": {
       "code": {
@@ -3281,7 +3281,7 @@
   },
   "numericalNotCorrect": "गलत छ। फेरि प्रयास गर्नुहोस् वा चरणबद्ध समाधान हेर्नुहोस्।",
   "quizAnswerSavedNote": "उत्तर सुरक्षित भयो — विवरण नतिजाको स्क्रिनमा खुल्छ।",
-  "quizShareResult": "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://lovemcq.com",
+  "quizShareResult": "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! XP +{xp}, क्विन +{coins} LoveMCQ (BiSaaS) बाट। प्रयास: https://lovemcq.com",
   "@quizShareResult": {
     "placeholders": {
       "correct": {
@@ -3310,7 +3310,7 @@
   "quizGradeExcellent": "उत्कृष्ट",
   "quizGradeGoodJob": "राम्रो काम",
   "quizGradeKeepPracticing": "अभ्यास जारी राख्नुहोस्",
-  "quizDefaultTitle": "CivilCal क्विज",
+  "quizDefaultTitle": "LoveMCQ क्विज",
   "syllabusTopicsLoaded": "विषय लोड भए",
   "syllabusTopicsLabel": "विषय",
   "quizIntroGradesInstantly": "सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।",
@@ -3321,8 +3321,8 @@
   "tutorExamplePlanWeek": "यो हप्ताको योजना बनाउन मद्दत गर्नुहोस्",
   "privacyLinkedToAccount": "खातासँग जोडिएको",
   "authPasswordRequired": "नयाँ पासवर्ड लेख्नुहोस्।",
-  "forceUpdateUnsupportedLatest": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
-  "forceUpdateUnsupportedVersion": "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
+  "forceUpdateUnsupportedLatest": "यो LoveMCQ संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
+  "forceUpdateUnsupportedVersion": "यो LoveMCQ संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
   "@forceUpdateUnsupportedVersion": {
     "placeholders": {
       "version": {
@@ -3344,7 +3344,7 @@
   "errAuthSocialSignInFailed": "सोशल साइन-इन असफल भयो।",
   "errNetworkDuringAuth": "सर्भरसम्म पुग्न सकिएन। फेरि प्रयास गर्नुहोस्।",
   "quizCompleteTitle": "क्विज सम्पन्न",
-  "quizShareTitleFallback": "CivilCal क्विज",
+  "quizShareTitleFallback": "LoveMCQ क्विज",
   "profileFallbackName": "इन्जिनियर",
   "aiKeysHealthUnknown": "अज्ञात",
   "lifelineModeLocked": "यो मोडमा उपलब्ध छैन",
@@ -3380,7 +3380,7 @@
   "homeFeaturedCourse": "चुनिएको कोर्स",
   "battleNoQuestionsFromServer": "सर्भरले कुनै प्रश्न नपठाई खेल खोल्यो, त्यसैले खेल्न केही छैन।",
   "socialShareLinkMissing": "त्यो सेयर लिंक फेला परेन।",
-  "socialShareMomentFallback": "मैले भर्खरै CivilCal मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।",
+  "socialShareMomentFallback": "मैले भर्खरै LoveMCQ मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।",
   "streakInsuranceFailed": "बीमा किन्न सकिएन।",
   "libraryReviewFailed": "समीक्षा असफल भयो",
   "libraryAnonymousAuthor": "बेनाम",
@@ -3595,7 +3595,7 @@
       }
     }
   },
-  "quizShareSubject": "मेरो CivilCal नतिजा — {title}",
+  "quizShareSubject": "मेरो LoveMCQ नतिजा — {title}",
   "@quizShareSubject": {
     "placeholders": {
       "title": {

@@ -1,6 +1,6 @@
 name: bisaas_device_tests
 description: >-
-  On-device integration tests for the CivilCal Flutter client.
+  On-device integration tests for the LoveMCQ Flutter client.
 publish_to: 'none'
 version: 1.0.0+1
 

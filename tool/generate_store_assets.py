@@ -88,7 +88,7 @@ def feature_graphic():
     f_tag = ImageFont.truetype(MEDIUM, 38)
     f_pill = ImageFont.truetype(MEDIUM, 30)
 
-    chunky_text(draw, (64, 96), "CivilCal", f_title, WHITE, GREEN_DARK, depth=8)
+    chunky_text(draw, (64, 96), "LoveMCQ", f_title, WHITE, GREEN_DARK, depth=8)
 
     draw.text((66, 268), "Master civil engineering daily.", font=f_tag, fill=(*GREEN_LIGHT, 255))
 

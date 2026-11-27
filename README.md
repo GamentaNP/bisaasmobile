@@ -1,6 +1,6 @@
-# bisaasmobile — CivilCal Flutter Client (Android • iOS)
+# bisaasmobile — LoveMCQ Flutter Client (Android • iOS)
 
-> **Flutter client for the BiSaaS / CivilCal ecosystem.**
+> **Flutter client for the BiSaaS / LoveMCQ ecosystem.**
 > This repo is the **mobile surface only**. The server of record is `C:\laragon\www\bisaas` (Laravel 13 + Filament 5 + Inertia). See `AGENTS.md` for the boundary rule.
 
 ## Where things live

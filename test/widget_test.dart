@@ -1,4 +1,4 @@
-// CivilCal smoke test — validates bootstrap + routing against bisaas API contract.
+// LoveMCQ smoke test — validates bootstrap + routing against bisaas API contract.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bisaasmobile/app/config/api_config.dart';
 import 'package:bisaasmobile/app/config/env.dart';

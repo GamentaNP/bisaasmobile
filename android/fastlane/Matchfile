@@ -9,7 +9,7 @@ storage_mode("git")
 
 type("appstore") # default; use `develop` for dev/testflight
 
-app_identifier(["com.bisaas.civilcal"])
+app_identifier(["com.beardbishwo.lovemcq"])
 
 # Do not nuke shared certs in CI.
 readonly(true)

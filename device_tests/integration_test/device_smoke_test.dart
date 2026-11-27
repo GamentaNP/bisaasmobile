@@ -1,4 +1,4 @@
-/// On-device smoke tests for the CivilCal client.
+/// On-device smoke tests for the LoveMCQ client.
 ///
 /// These run on a real device or emulator and are the layer the host-side
 /// integration tests cannot reach: the engine, the plugins, the platform
@@ -38,7 +38,7 @@ void main() {
 
   const runLive = bool.fromEnvironment('RUN_LIVE_TESTS');
 
-  // CivilCalApp's providers read DioClient/Preferences, which only bootstrap()
+  // LoveMcqApp's providers read DioClient/Preferences, which only bootstrap()
   // initializes. Without it the first frame throws "DioClient not init" — the
   // app is exercised exactly as main.dart runs it: bootstrap, then pump.
   setUpAll(() async {
@@ -53,6 +53,11 @@ void main() {
         DeepLinkHandler.parse(Uri.parse('https://lovemcq.com/s/tok_123')),
         '/social/share/tok_123',
       );
+      expect(
+        DeepLinkHandler.parse(Uri.parse('lovemcq://s/tok_123')),
+        '/social/share/tok_123',
+      );
+      // Links shared before the rename must still open the same screen.
       expect(
         DeepLinkHandler.parse(Uri.parse('civilcal://s/tok_123')),
         '/social/share/tok_123',
@@ -92,7 +97,7 @@ void main() {
       // The engine, the plugins and the platform channels are all exercised
       // here — this is the part a host-side test cannot reach.
       //
-      // CivilCalApp's own build reads AppLocalizations (for the app title), so
+      // LoveMcqApp's own build reads AppLocalizations (for the app title), so
       // the delegates must be loadable ABOVE it — under `runApp` the real
       // launch provides them through the framework's root; a bare
       // `ProviderScope` in a test does not.
@@ -101,7 +106,7 @@ void main() {
           child: Localizations(
             delegates: AppLocalizations.localizationsDelegates,
             locale: const Locale('en'),
-            child: CivilCalApp(),
+            child: LoveMcqApp(),
           ),
         ),
       );
@@ -125,7 +130,7 @@ void main() {
           child: Localizations(
             delegates: AppLocalizations.localizationsDelegates,
             locale: const Locale('en'),
-            child: CivilCalApp(),
+            child: LoveMcqApp(),
           ),
         ),
       );
@@ -206,7 +211,7 @@ void main() {
           child: Localizations(
             delegates: AppLocalizations.localizationsDelegates,
             locale: const Locale('en'),
-            child: CivilCalApp(),
+            child: LoveMcqApp(),
           ),
         ),
       );

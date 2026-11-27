@@ -3,7 +3,7 @@ library;
 import 'package:flutter/material.dart';
 
 /// Shadows — Material 3 elevation via surfaceTint (no hard shadows).
-/// CivilCal dark-first: shadows are subtle, elevation is tint,
+/// LoveMCQ dark-first: shadows are subtle, elevation is tint,
 /// brand elements carry a cyan glow instead of black drop shadows.
 abstract final class AppShadows {
   static const shadowSm = [

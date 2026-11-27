@@ -186,7 +186,7 @@ class PushNotificationService {
     try {
       await local.show(
         id: message.hashCode & 0x7fffffff,
-        title: notification.title ?? 'CivilCal',
+        title: notification.title ?? 'LoveMCQ',
         body: notification.body ?? '',
         payload: pushNavigationTarget(message.data),
       );

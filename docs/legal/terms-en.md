@@ -1,14 +1,14 @@
-# CivilCal Terms of Service
+# LoveMCQ Terms of Service
 
 **Effective date:** 2026-11-04 (supersedes the 2026-10-25 version)
-**Operator:** Bisaas (the "Service"), product name CivilCal
+**Operator:** Bisaas (the "Service"), product name LoveMCQ
 **Contact:** support@lovemcq.com
 
-By creating an account or using the CivilCal app you agree to these terms.
+By creating an account or using the LoveMCQ app you agree to these terms.
 
 ## 1. The service
 
-CivilCal is an exam-preparation app for civil engineering students: daily
+LoveMCQ is an exam-preparation app for civil engineering students: daily
 quizzes, courses, a question library, an AI tutor, streaks, coins and
 leaderboards. **The app is free.** There is no subscription and no
 real-money purchase anywhere in it. All grading, rewards and rankings are
@@ -34,10 +34,10 @@ rules. We may suspend accounts that abuse the service.
 
 ## 4. Coins and in-app items
 
-Coins are a virtual study currency inside CivilCal. They have **no cash
+Coins are a virtual study currency inside LoveMCQ. They have **no cash
 value**, cannot be bought or sold — inside the app or outside it — and expire
 with the account. Coins are earned by studying and are spent on in-app
-cosmetic items: avatar frames, badges, themes and titles. Nothing in CivilCal
+cosmetic items: avatar frames, badges, themes and titles. Nothing in LoveMCQ
 is sold for real money, no payment is processed by Google Play or the App
 Store on our behalf, and there is therefore nothing to refund; any charge you
 find on a store account did not come from this app. Rewards are granted by the

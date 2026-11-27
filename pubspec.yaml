@@ -1,5 +1,5 @@
 name: bisaasmobile
-description: CivilCal Flutter Client - Market-Dominating Mobile Learning for Engineering Students (Android/iOS) - Bisaas Ecosystem Client
+description: LoveMCQ Flutter Client - Market-Dominating Mobile Learning for Engineering Students (Android/iOS) - Bisaas Ecosystem Client
 publish_to: 'none'
 # 1.0.2+2 — the git tag `v1.0.1` was already released, so a build carrying
 # 1.0.0 is older than what the server's `EnforceAppVersion` gate considers
@@ -83,7 +83,7 @@ dependencies:
   # === BIOMETRICS ===
   local_auth: ^3.0.2
 
-  # === DEEP LINKS (civilcal:// + https app links) ===
+  # === DEEP LINKS (lovemcq:// + deprecated civilcal:// alias + https app links) ===
   app_links: ^6.3.2
 
   # === SOCIAL LOGIN (Google / Apple id_token → POST /auth/social/*) ===

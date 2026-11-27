@@ -14,7 +14,7 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key, this.initialEmail});
 
   /// Prefilled from password-reset deep links
-  /// (civilcal://reset-password?token=...&email=...).
+  /// (lovemcq://reset-password?token=...&email=..., or the legacy civilcal:// alias).
   final String? initialEmail;
 
   @override

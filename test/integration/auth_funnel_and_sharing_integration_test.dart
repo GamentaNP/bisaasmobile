@@ -247,7 +247,7 @@ void main() {
             'kind': 'streak',
             'expires_at': null,
             'copy': <String, dynamic>{
-              'title': 'Try this on CivilCal',
+              'title': 'Try this on LoveMCQ',
               'body': 'A free 2-minute preview — no account needed to try.',
             },
           },
@@ -259,7 +259,7 @@ void main() {
       expect(link, isNotNull);
       expect(link.token, 'tok_123');
       expect(link.url, 'https://bisaas.com/s/tok_123');
-      expect(link.shareText(l10n), contains('CivilCal'));
+      expect(link.shareText(l10n), contains('LoveMCQ'));
 
       final body = api.jsonBodyOf(0);
       expect(body['kind'], 'streak');

@@ -1,11 +1,11 @@
 {
-    "name": "bisaasmobile",
-    "short_name": "bisaasmobile",
+    "name": "LoveMCQ",
+    "short_name": "LoveMCQ",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "CivilCal Flutter Client - Market-Dominating Mobile Learning for Engineering Students (Android/iOS)",
+    "description": "LoveMCQ Flutter Client - Market-Dominating Mobile Learning for Engineering Students (Android/iOS)",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

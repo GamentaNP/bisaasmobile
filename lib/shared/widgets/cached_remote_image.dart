@@ -15,7 +15,7 @@ import '../../core/logging/app_logger.dart';
 /// observe read receipts on a "who is online" style image.
 ///
 /// So a URL is only loaded when its host is one we expect. The default is the
-/// API host itself, which is where CivilCal serves its own assets today — every
+/// API host itself, which is where LoveMCQ serves its own assets today - every
 /// `image_url`, `banner_image` and `avatar_url` column is currently empty, so
 /// there is no CDN to accommodate yet.
 ///

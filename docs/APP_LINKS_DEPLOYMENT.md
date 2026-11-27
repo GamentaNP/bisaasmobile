@@ -79,8 +79,8 @@ adb shell pm verify-app-links --re-verify com.beardbishwo.lovemcq
 ```
 
 `get-app-links` must report `verified` for `lovemcq.com`. Until then, an
-`https://lovemcq.com/...` link opens a browser; the `civilcal://` scheme is
-unaffected and always works.
+`https://lovemcq.com/...` link opens a browser; the `lovemcq://` scheme (and
+its deprecated `civilcal://` alias) is unaffected and always works.
 
 ---
 

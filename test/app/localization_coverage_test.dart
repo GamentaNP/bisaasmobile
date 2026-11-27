@@ -21,7 +21,7 @@ const allowedLiterals = <String>{
 /// Brand names — the same proper noun in every locale. Translating "OpenAI"
 /// into Devanagari would make it *wrong*, not Nepali.
 const brandNames = <String>{
-  'CivilCal',
+  'LoveMCQ',
   'OpenAI',
   'Google Gemini',
   'Anthropic',

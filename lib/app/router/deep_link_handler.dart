@@ -1,15 +1,20 @@
 import 'package:flutter/foundation.dart';
 
-/// Parses `civilcal://` and `https://lovemcq.com/*` deep links.
+/// Parses `lovemcq://` (and the deprecated `civilcal://` alias) and
+/// `https://lovemcq.com/*` deep links.
 /// Returns router location or null if not handled.
 abstract final class DeepLinkHandler {
   static const appHosts = {'lovemcq.com', 'www.lovemcq.com'};
 
+  // The old scheme stays accepted so links shared before the rename still open
+  // the app. Both schemes normalize to exactly the same in-app route.
+  static const _customSchemes = {'lovemcq', 'civilcal'};
+
   static String? parse(Uri uri) {
-    // civilcal://reset-password?token=...&email=...
-    if (uri.scheme == 'civilcal') {
+    // lovemcq://reset-password?token=...&email=... (or the legacy alias)
+    if (_customSchemes.contains(uri.scheme)) {
       if (uri.host == 'reset-password') {
-        // Query-parameter form: civilcal://reset-password?token=…&email=…
+        // Query-parameter form: lovemcq://reset-password?token=…&email=…
         return _resetPasswordLocation(
           token: uri.queryParameters['token'],
           email: uri.queryParameters['email'],
@@ -20,7 +25,7 @@ abstract final class DeepLinkHandler {
       }
       if (uri.host == 'battle') return '/battle';
       if (uri.host == 's' && uri.pathSegments.isNotEmpty) {
-        // civilcal://s/{token} — the share link the server mints.
+        // lovemcq://s/{token} — the share link the server mints.
         return '/social/share/${uri.pathSegments.first}';
       }
     }
@@ -41,7 +46,7 @@ abstract final class DeepLinkHandler {
 
       // The link the password-reset email actually contains is the Fortify web
       // route, `/reset-password/{token}?email=…`, so the token arrives as a PATH
-      // SEGMENT here — not a query parameter like the civilcal:// form. Missing
+      // SEGMENT here — not a query parameter like the custom-scheme form. Missing
       // this shape means a reset link tapped on a phone opens the browser (or,
       // once App Links verify, lands on an unhandled route) and the in-app
       // completion screen is unreachable from the one place users need it.

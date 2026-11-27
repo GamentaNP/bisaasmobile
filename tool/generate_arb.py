@@ -67,7 +67,7 @@ def validate():
 
 
 # ── existing keys ────────────────────────────────────────────────────────────
-add("appTitle", "CivilCal", "CivilCal", "CivilCal")
+add("appTitle", "LoveMCQ", "LoveMCQ", "LoveMCQ")
 add("signIn", "Sign in", "साइन इन गर्नुहोस्", "साइन इन करें")
 add("register", "Register", "दर्ता गर्नुहोस्", "रजिस्टर करें")
 add("quiz", "Quiz", "क्विज़", "क्विज़")
@@ -85,9 +85,9 @@ add("retry", "Retry", "फेरि प्रयास", "फिर से प�
 add("error", "Something went wrong", "केही गडबड भयो", "कुछ गड़बड़ हो गई")
 add("streakDays", "Streak: {days} days", "स्ट्रिक: {days} दिन", "स्ट्रीक: {days} दिन", ["days"])
 add("coinsBalance", "{count} coins", "{count} क्विन", "{count} कॉइन", ["count"])
-add("appLocked", "CivilCal is locked", "CivilCal लक छ", "CivilCal लॉक है")
+add("appLocked", "LoveMCQ is locked", "LoveMCQ लक छ", "LoveMCQ लॉक है")
 add("unlock", "Unlock", "खोल्नुहोस्", "खोलें")
-add("unlockCivilCal", "Unlock CivilCal", "CivilCal खोल्नुहोस्", "CivilCal खोलें")
+add("unlockCivilCal", "Unlock LoveMCQ", "LoveMCQ खोल्नुहोस्", "LoveMCQ खोलें")
 
 # ── shared ───────────────────────────────────────────────────────────────────
 add("commonCancel", "Cancel", "रद्द गर्नुहोस्", "रद्द करें")
@@ -135,7 +135,7 @@ add(
     ["email"],
 )
 add("authReturnToLogin", "Return to Login", "लगइनमा फर्कनुहोस्", "लॉगिन पर लौटें")
-add("authJoinTitle", "Join CivilCal", "CivilCal मा सामेल हुनुहोस्", "CivilCal से जुड़ें")
+add("authJoinTitle", "Join LoveMCQ", "LoveMCQ मा सामेल हुनुहोस्", "LoveMCQ से जुड़ें")
 add(
     "authJoinSubtitle",
     "Your companion for engineering exams and calculations",
@@ -526,9 +526,9 @@ add("forceUpdateStoreFailed", "Could not open the store. Visit {url}", "स्�
 add("maintenanceTitle", "We'll be right back", "हामी छिट्टै फर्कन्छौं", "हम जल्द ही वापस आ रहे हैं")
 add(
     "maintenanceBody",
-    "CivilCal is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.",
-    "CivilCal सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।",
-    "CivilCal संक्षिप्त रखरखाव के लिए बंद है। आपका खाता, कॉइन और प्रगति सुरक्षित है — कुछ नहीं खोया गया है।",
+    "LoveMCQ is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.",
+    "LoveMCQ सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।",
+    "LoveMCQ संक्षिप्त रखरखाव के लिए बंद है। आपका खाता, कॉइन और प्रगति सुरक्षित है — कुछ नहीं खोया गया है।",
 )
 add("versionUnsupported", "This app version is no longer supported.", "यो एप संस्करण अब समर्थित छैन।", "यह ऐप संस्करण अब समर्थित नहीं है।")
 
@@ -606,9 +606,9 @@ add("profileUpdated", "Profile updated", "प्रोफाइल अद्य�
 add("profileUpdateFailed", "Update failed: {reason}", "अद्यावधिक असफल: {reason}", "अपडेट विफल: {reason}", ["reason"])
 add(
     "profileShareCardText",
-    "My CivilCal profile — Level {level} Engineer. https://lovemcq.com",
-    "मेरो CivilCal प्रोफाइल — तह {level} इन्जिनियर। https://lovemcq.com",
-    "मेरा CivilCal प्रोफ़ाइल — स्तर {level} इंजीनियर। https://lovemcq.com",
+    "My LoveMCQ profile — Level {level} Engineer. https://lovemcq.com",
+    "मेरो LoveMCQ प्रोफाइल — तह {level} इन्जिनियर। https://lovemcq.com",
+    "मेरा LoveMCQ प्रोफ़ाइल — स्तर {level} इंजीनियर। https://lovemcq.com",
     ["level"],
 )
 add("profileShareFailed", "Share failed: {reason}", "साझेदारी असफल: {reason}", "साझा करना विफल: {reason}", ["reason"])
@@ -2362,7 +2362,7 @@ add("difficultyMixed", "Mixed", "मिश्रित", "मिश्रित"
 
 # ── shared section header + app lock prompts ────────────────────────────────
 add("todayTitle", "Today", "आज", "आज")
-add("appLockPromptTitle", "Unlock CivilCal", "CivilCal खोल्नुहोस्", "CivilCal अनलॉक करें")
+add("appLockPromptTitle", "Unlock LoveMCQ", "LoveMCQ खोल्नुहोस्", "LoveMCQ अनलॉक करें")
 add("appLockPromptReason", "Authenticate to continue", "जारी राख्न प्रमाणीकरण गर्नुहोस्", "जारी रखने के लिए प्रमाणित करें")
 add("notificationChannelDaily", "Daily Quiz", "दैनिक क्विज", "डेली क्विज़")
 
@@ -2506,11 +2506,11 @@ add(
     "त्यो कोड लागू गर्न सकिएन। पहिले नै प्रयोग भएको हुन सक्छ।",
     "वह कोड लागू नहीं हो सका। यह पहले से उपयोग किया जा चुका है।",
 )
-add("socialTryThis", "Try this on CivilCal", "CivilCal मा यो प्रयास गर्नुहोस्", "CivilCal पर यह आज़माएं")
+add("socialTryThis", "Try this on LoveMCQ", "LoveMCQ मा यो प्रयास गर्नुहोस्", "LoveMCQ पर यह आज़माएं")
 add("socialShareInvite",
-    "Use my code {code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n{url}",
-    "CivilCal मा मेरो कोड {code} प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n{url}",
-    "CivilCal पर मेरा कोड {code} का उपयोग करें — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।\n{url}",
+    "Use my code {code} on LoveMCQ — civil engineering calculators and Loksewa MCQs.\n{url}",
+    "LoveMCQ मा मेरो कोड {code} प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n{url}",
+    "LoveMCQ पर मेरा कोड {code} का उपयोग करें — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।\n{url}",
     ["code", "url"],
 )
 add(
@@ -2541,17 +2541,17 @@ add(
 add(
     "quizShareResult",
     "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! "
-    "XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://lovemcq.com",
+    "XP +{xp}, Coins +{coins} via LoveMCQ (BiSaaS). Try: https://lovemcq.com",
     "मैले \"{title}\" मा {correct}/{total} ({percent}%) अंक गरें — {grade}! "
-    "XP +{xp}, क्विन +{coins} CivilCal (BiSaaS) बाट। प्रयास: https://lovemcq.com",
+    "XP +{xp}, क्विन +{coins} LoveMCQ (BiSaaS) बाट। प्रयास: https://lovemcq.com",
     "मैंने \"{title}\" पर {correct}/{total} ({percent}%) अंक किए — {grade}! "
-    "XP +{xp}, कॉइन +{coins} CivilCal (BiSaaS) से। आज़माएं: https://lovemcq.com",
+    "XP +{xp}, कॉइन +{coins} LoveMCQ (BiSaaS) से। आज़माएं: https://lovemcq.com",
     ["correct", "total", "percent", "title", "grade", "xp", "coins"],
 )
 add("quizGradeExcellent", "Excellent", "उत्कृष्ट", "बहुत बढ़िया")
 add("quizGradeGoodJob", "Good Job", "राम्रो काम", "अच्छा काम")
 add("quizGradeKeepPracticing", "Keep Practicing", "अभ्यास जारी राख्नुहोस्", "अभ्यास जारी रखें")
-add("quizDefaultTitle", "CivilCal Quiz", "CivilCal क्विज़", "CivilCal क्विज़")
+add("quizDefaultTitle", "LoveMCQ Quiz", "LoveMCQ क्विज़", "LoveMCQ क्विज़")
 add("syllabusTopicsLoaded", "topics loaded", "विषय लोड भए", "विषय लोड हुए")
 add("syllabusTopicsLabel", "topics", "विषय", "विषय")
 add("quizIntroGradesInstantly", "Server grades your answer instantly.", "सर्भरले तपाईंको उत्तर तुरुन्तै अंकित गर्छ।", "सर्वर आपके उत्तर को तुरंत अंकित करता है।")
@@ -2581,15 +2581,15 @@ add("privacyLinkedToAccount", "Linked to an account", "खातासँग ज
 add("authPasswordRequired", "Enter a new password.", "नयाँ पासवर्ड लेख्नुहोस्।", "नया पासवर्ड दर्ज करें।")
 add(
     "forceUpdateUnsupportedLatest",
-    "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
-    "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
-    "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।",
+    "This version of LoveMCQ is no longer supported. Please update to the latest version to continue.",
+    "यो LoveMCQ संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।",
+    "यह LoveMCQ संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया नवीनतम संस्करण पर अपडेट करें।",
 )
 add(
     "forceUpdateUnsupportedVersion",
-    "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
-    "यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
-    "यह CivilCal संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया {version} या उससे नए संस्करण पर अपडेट करें।",
+    "This version of LoveMCQ is no longer supported. Please update to version {version} or later to continue.",
+    "यो LoveMCQ संस्करण अब समर्थित छैन। जारी राख्न कृपया {version} वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।",
+    "यह LoveMCQ संस्करण अब समर्थित नहीं है। जारी रखने के लिए कृपया {version} या उससे नए संस्करण पर अपडेट करें।",
     ["version"],
 )
 add("routeNotFound", "Route not found: {path}", "मार्ग फेला परेन: {path}", "रूट नहीं मिला: {path}", ["path"])
@@ -2603,7 +2603,7 @@ add("errAuthRefreshFailed", "Token refresh failed", "टोकन नवीक�
 add("errAuthSocialSignInFailed", "Social sign-in failed", "सोशल साइन-इन असफल भयो।", "सोशल साइन-इन विफल हुआ।")
 add("errNetworkDuringAuth", "Could not reach the server. Try again.", "सर्भरसम्म पुग्न सकिएन। फेरि प्रयास गर्नुहोस्।", "सर्वर तक नहीं पहुँच सके। फिर से कोशिश करें।")
 add("quizCompleteTitle", "Quiz Complete", "क्विज सम्पन्न", "क्विज़ पूर्ण")
-add("quizShareTitleFallback", "CivilCal Quiz", "CivilCal क्विज", "CivilCal क्विज़")
+add("quizShareTitleFallback", "LoveMCQ Quiz", "LoveMCQ क्विज", "LoveMCQ क्विज़")
 add("profileFallbackName", "Engineer", "इन्जिनियर", "इंजीनियर")
 add("aiKeysHealthUnknown", "unknown", "अज्ञात", "अज्ञात")
 add("lifelineModeLocked", "Not available in this mode", "यो मोडमा उपलब्ध छैन", "इस मोड में उपलब्ध नहीं")
@@ -2622,9 +2622,9 @@ add(
 add("socialShareLinkMissing", "That share link could not be found.", "त्यो सेयर लिंक फेला परेन।", "वह शेयर लिंक नहीं मिला।")
 add(
     "socialShareMomentFallback",
-    "I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.",
-    "मैले भर्खरै CivilCal मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।",
-    "मैंने अभी CivilCal पर प्रगति की — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।",
+    "I just made progress on LoveMCQ — civil engineering calculators and Loksewa MCQs.",
+    "मैले भर्खरै LoveMCQ मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।",
+    "मैंने अभी LoveMCQ पर प्रगति की — सिविल इंजीनियरिंग कैलकुलेटर और लोकसेवा प्रश्न।",
 )
 add("streakInsuranceFailed", "Insurance could not be bought.", "बीमा किन्न सकिएन।", "बीमा नहीं खरीदा जा सका।")
 add("libraryReviewFailed", "Review failed", "समीक्षा असफल भयो", "समीक्षा विफल हुई")
@@ -2777,7 +2777,7 @@ add("battleMatchStartingIn", "Match found — starting in {seconds}s", "प्�
 add("authEnterPassword", "Please enter your password", "कृपया आफ्नो पासवर्ड लेख्नुहोस्", "कृपया अपना पासवर्ड दर्ज करें")
 add("authEnterName", "Please enter your name", "कृपया आफ्नो नाम लेख्नुहोस्", "कृपया अपना नाम दर्ज करें")
 add("walletUpdatedAt", "Updated {date}", "{date} अपडेट गरिएको", "{date} अपडेट किया गया", ["date"])
-add("quizShareSubject", "My CivilCal Result — {title}", "मेरो CivilCal नतिजा — {title}", "मेरा CivilCal परिणाम — {title}", ["title"])
+add("quizShareSubject", "My LoveMCQ Result — {title}", "मेरो LoveMCQ नतिजा — {title}", "मेरा LoveMCQ परिणाम — {title}", ["title"])
 add("quizFunnelCategories", "Categories", "श्रेणीहरू", "श्रेणियाँ")
 add("quizFunnelTopics", "Topics", "विषयहरू", "विषय")
 add(

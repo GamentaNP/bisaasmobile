@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "CivilCal",
+  "appTitle": "LoveMCQ",
   "signIn": "Sign in",
   "register": "Register",
   "quiz": "Quiz",
@@ -32,9 +32,9 @@
       }
     }
   },
-  "appLocked": "CivilCal is locked",
+  "appLocked": "LoveMCQ is locked",
   "unlock": "Unlock",
-  "unlockCivilCal": "Unlock CivilCal",
+  "unlockCivilCal": "Unlock LoveMCQ",
   "commonCancel": "Cancel",
   "commonSave": "Save",
   "commonClose": "Close",
@@ -90,7 +90,7 @@
     }
   },
   "authReturnToLogin": "Return to Login",
-  "authJoinTitle": "Join CivilCal",
+  "authJoinTitle": "Join LoveMCQ",
   "authJoinSubtitle": "Your companion for engineering exams and calculations",
   "authFullNameLabel": "Full Name",
   "authConfirmPasswordLabel": "Confirm Password",
@@ -573,7 +573,7 @@
     }
   },
   "maintenanceTitle": "We'll be right back",
-  "maintenanceBody": "CivilCal is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.",
+  "maintenanceBody": "LoveMCQ is down for a short maintenance. Your account, coins and progress are safe — nothing has been lost.",
   "versionUnsupported": "This app version is no longer supported.",
   "authUpdating": "Updating…",
   "authUpdatePassword": "Update password",
@@ -668,7 +668,7 @@
       }
     }
   },
-  "profileShareCardText": "My CivilCal profile — Level {level} Engineer. https://lovemcq.com",
+  "profileShareCardText": "My LoveMCQ profile — Level {level} Engineer. https://lovemcq.com",
   "@profileShareCardText": {
     "placeholders": {
       "level": {
@@ -2991,7 +2991,7 @@
   "difficultyExpert": "Expert",
   "difficultyMixed": "Mixed",
   "todayTitle": "Today",
-  "appLockPromptTitle": "Unlock CivilCal",
+  "appLockPromptTitle": "Unlock LoveMCQ",
   "appLockPromptReason": "Authenticate to continue",
   "notificationChannelDaily": "Daily Quiz",
   "lifelineWrongRemoved": "{count} wrong option(s) removed.",
@@ -3257,8 +3257,8 @@
   },
   "socialReferralApplied": "Referral code applied.",
   "socialReferralRejected": "That code could not be applied. It may already have been used.",
-  "socialTryThis": "Try this on CivilCal",
-  "socialShareInvite": "Use my code {code} on CivilCal — civil engineering calculators and Loksewa MCQs.\n{url}",
+  "socialTryThis": "Try this on LoveMCQ",
+  "socialShareInvite": "Use my code {code} on LoveMCQ — civil engineering calculators and Loksewa MCQs.\n{url}",
   "@socialShareInvite": {
     "placeholders": {
       "code": {
@@ -3281,7 +3281,7 @@
   },
   "numericalNotCorrect": "Not correct. Try again or view the worked solution.",
   "quizAnswerSavedNote": "Answer saved — the breakdown unlocks on the results screen.",
-  "quizShareResult": "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via CivilCal (BiSaaS). Try: https://lovemcq.com",
+  "quizShareResult": "I scored {correct}/{total} ({percent}%) on \"{title}\" — {grade}! XP +{xp}, Coins +{coins} via LoveMCQ (BiSaaS). Try: https://lovemcq.com",
   "@quizShareResult": {
     "placeholders": {
       "correct": {
@@ -3310,7 +3310,7 @@
   "quizGradeExcellent": "Excellent",
   "quizGradeGoodJob": "Good Job",
   "quizGradeKeepPracticing": "Keep Practicing",
-  "quizDefaultTitle": "CivilCal Quiz",
+  "quizDefaultTitle": "LoveMCQ Quiz",
   "syllabusTopicsLoaded": "topics loaded",
   "syllabusTopicsLabel": "topics",
   "quizIntroGradesInstantly": "Server grades your answer instantly.",
@@ -3321,8 +3321,8 @@
   "tutorExamplePlanWeek": "Help me plan this week",
   "privacyLinkedToAccount": "Linked to an account",
   "authPasswordRequired": "Enter a new password.",
-  "forceUpdateUnsupportedLatest": "This version of CivilCal is no longer supported. Please update to the latest version to continue.",
-  "forceUpdateUnsupportedVersion": "This version of CivilCal is no longer supported. Please update to version {version} or later to continue.",
+  "forceUpdateUnsupportedLatest": "This version of LoveMCQ is no longer supported. Please update to the latest version to continue.",
+  "forceUpdateUnsupportedVersion": "This version of LoveMCQ is no longer supported. Please update to version {version} or later to continue.",
   "@forceUpdateUnsupportedVersion": {
     "placeholders": {
       "version": {
@@ -3344,7 +3344,7 @@
   "errAuthSocialSignInFailed": "Social sign-in failed",
   "errNetworkDuringAuth": "Could not reach the server. Try again.",
   "quizCompleteTitle": "Quiz Complete",
-  "quizShareTitleFallback": "CivilCal Quiz",
+  "quizShareTitleFallback": "LoveMCQ Quiz",
   "profileFallbackName": "Engineer",
   "aiKeysHealthUnknown": "unknown",
   "lifelineModeLocked": "Not available in this mode",
@@ -3380,7 +3380,7 @@
   "homeFeaturedCourse": "Featured course",
   "battleNoQuestionsFromServer": "The server opened the match without sending any questions, so there is nothing to play.",
   "socialShareLinkMissing": "That share link could not be found.",
-  "socialShareMomentFallback": "I just made progress on CivilCal — civil engineering calculators and Loksewa MCQs.",
+  "socialShareMomentFallback": "I just made progress on LoveMCQ — civil engineering calculators and Loksewa MCQs.",
   "streakInsuranceFailed": "Insurance could not be bought.",
   "libraryReviewFailed": "Review failed",
   "libraryAnonymousAuthor": "Anonymous",
@@ -3595,7 +3595,7 @@
       }
     }
   },
-  "quizShareSubject": "My CivilCal Result — {title}",
+  "quizShareSubject": "My LoveMCQ Result — {title}",
   "@quizShareSubject": {
     "placeholders": {
       "title": {

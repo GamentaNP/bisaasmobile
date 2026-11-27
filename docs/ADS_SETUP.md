@@ -26,7 +26,7 @@ is on 3.47.2 / 3.13.2).
    - Do both apps even if only one ships first; the four dart-defines are
      platform-specific and the service checks the current platform.
 3. **Ad units → New ad unit → Rewarded** for each app.
-   - Name them after the placement, e.g. `civilcal_daily_quiz_rewarded`.
+   - Name them after the placement, e.g. `lovemcq_daily_quiz_rewarded`.
    - Copy the **Ad unit ID**: `ca-app-pub-xxxxxxxxxxxxxxxx/zzzzzzzzzz`
      (slash, not tilde — that is the app ID).
 4. **Privacy & messaging**: keep GDPR/CCPA settings in the AdMob UI as the

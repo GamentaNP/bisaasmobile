@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>CivilCal</string>
+	<string>LoveMCQ</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>CivilCal</string>
+	<string>LoveMCQ</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -31,6 +31,8 @@
 			<string>com.bisaas.bisaasmobile</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>lovemcq</string>
+				<!-- Deprecated alias: links shared before the rename still open. -->
 				<string>civilcal</string>
 			</array>
 		</dict>
@@ -145,7 +147,7 @@
 	<true/>
 	<!-- The languages the app's interface is available in.
 	     iOS reads this to populate the per-app language list in
-	     Settings → General → Language & Region → CivilCal. Without it
+	     Settings → General → Language & Region → LoveMCQ. Without it
 	     the app is not offered there, so a user who wants Nepali has to
 	     find the picker inside the app.
 
@@ -158,13 +160,13 @@
 		<string>hi</string>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-	<string>CivilCal uses Face ID to securely unlock the app when you have App Lock enabled.</string>
+	<string>LoveMCQ uses Face ID to securely unlock the app when you have App Lock enabled.</string>
 	<!-- The avatar flow reads one image the user picks from their library.
 	     iOS terminates an app that touches the photo library without this
 	     string, so it is required even though no other photo access
 	     happens. The app never opens the camera. -->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>CivilCal lets you choose a profile picture from your photo library.</string>
+	<string>LoveMCQ lets you choose a profile picture from your photo library.</string>
 	<!-- Background delivery for Firebase Cloud Messaging.
 
 	     Without `remote-notification`, iOS never wakes the app for a data

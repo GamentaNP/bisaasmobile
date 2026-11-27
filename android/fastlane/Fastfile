@@ -1,4 +1,4 @@
-# Fastlane for BiSaaS CivilCal — Android
+# Fastlane for BiSaaS LoveMCQ — Android
 # Usage: `fastlane android beta` (internal) or `fastlane android prod` (Play Store)
 # Requires: `ANDROID_KEYSTORE_BASE64`, `PLAY_SERVICE_JSON` in CI secrets; `dart_defines/production.json` for ENV=prod.
 

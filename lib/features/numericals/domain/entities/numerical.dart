@@ -52,7 +52,7 @@ class Numerical {
   /// needs-review result must not be presented as a verified worked answer.
   final bool needsReview;
 
-  /// Deep link into the CivilCal calculator with these parameters prefilled.
+  /// Deep link into the LoveMCQ calculator with these parameters prefilled.
   final String? civilCalLink;
 
   bool get hasSteps => steps.isNotEmpty;

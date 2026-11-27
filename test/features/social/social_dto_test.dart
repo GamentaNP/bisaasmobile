@@ -206,7 +206,7 @@ void main() {
         'headline': 'You solved a Civil MCQ',
         'statLabel': 'Your accuracy',
         'statValue': '92%',
-        'shareText': 'I solved a Civil MCQ on CivilCal',
+        'shareText': 'I solved a Civil MCQ on LoveMCQ',
       })!.proof;
       expect(p.subject, 'question');
       expect(p.hasStat, isTrue);

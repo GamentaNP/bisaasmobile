@@ -72,7 +72,7 @@ blocker because there is no store launch.
    (with `-ne` and `-hi` as linked translations). The older
    `docs/privacy_policy.md` is retired and its unique disclosures have been
    folded into the legal pack.
-2. Replace the `support@civilcal.app` placeholder with a working, monitored
+2. Replace the `support@lovemcq.com` placeholder with a working, monitored
    address on the production domain. (The original reason — "Play rejects a
    privacy policy whose contact bounces" — is historical: there is no Play
    submission. The address still matters for a published policy.)

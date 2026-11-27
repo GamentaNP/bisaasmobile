@@ -1,4 +1,4 @@
-# Release checklist — CivilCal mobile
+# Release checklist — LoveMCQ mobile
 
 Everything that has to be true before the app can be published on Google
 Play or the App Store, split into **what the code already guarantees** and

@@ -154,12 +154,12 @@ class AppRouter {
         path: '/forgot-password',
         name: RouteNames.forgotPassword,
         builder: (context, state) => ForgotPasswordScreen(
-          // Deep links: civilcal://reset-password?email=...
+          // Deep links: lovemcq://reset-password?email=... (civilcal:// alias too)
           initialEmail: state.uri.queryParameters['email'],
         ),
       ),
       GoRoute(
-        // Reached from civilcal://reset-password?token=...&email=... and from
+        // Reached from lovemcq://reset-password?token=...&email=... and from
         // the emailed https://lovemcq.com/reset-password?token=... link.
         //
         // This route did not exist, so the deep-link handler pointed the token

@@ -13,7 +13,7 @@ class LocalNotificationService {
   final StreamController<String?> _taps = StreamController<String?>.broadcast();
 
   /// Payloads of tapped notifications (foreground + backgrounded app).
-  /// Payloads are router locations (`/quiz`) or deep-link URIs (`civilcal://…`).
+  /// Payloads are router locations (`/quiz`) or deep-link URIs (`lovemcq://…`, legacy `civilcal://…`).
   Stream<String?> get taps => _taps.stream;
 
   Future<void> init() async {
@@ -32,6 +32,11 @@ class LocalNotificationService {
   /// `default_notification_channel_id` at `civilcal_default`, and without this
   /// the channel would not exist yet — FCM would invent its own
   /// "Miscellaneous" channel the user cannot silence per-feature.
+  ///
+  /// The channel *ids* keep their pre-rename `civilcal_` prefix on purpose:
+  /// Android never lets an app rename an existing channel, so a new id would
+  /// leave the old (user-configured) channel on the device and duplicate every
+  /// notification setting. Only the visible channel name was renamed.
   Future<void> _ensureAndroidChannels() async {
     final impl = _plugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
@@ -39,7 +44,7 @@ class LocalNotificationService {
     final defaultChannel = AndroidNotificationChannel(
       'civilcal_default',
       // Brand name — the same proper noun in every locale.
-      'CivilCal',
+      'LoveMCQ',
       importance: Importance.high,
     );
     final dailyChannel = AndroidNotificationChannel(
@@ -64,7 +69,7 @@ class LocalNotificationService {
         notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(
             'civilcal_default',
-            'CivilCal',
+            'LoveMCQ',
             importance: Importance.high,
           ),
         ),

@@ -99,7 +99,7 @@ Future<void> bootstrap() async {
   // it, `applyAppConfig` latches the version floor into the update gate, and
   // both `MaintenanceGate` and `ForceUpdateGate` are widgets that already read
   // it reactively. A stale maintenance switch for one launch is survivable; a
-  // blank launch is not. `CivilCalApp.initState` warms the provider so the
+  // blank launch is not. `LoveMcqApp.initState` warms the provider so the
   // request starts on the first frame instead of on first use.
 
   // Honor the saved locale on the wire (Accept-Language) per AGENTS.md.

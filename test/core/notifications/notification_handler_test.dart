@@ -31,6 +31,8 @@ void main() {
       );
       expect(NotificationHandler.safeRoute('/admin/secret'), isNull);
       expect(NotificationHandler.safeRoute('https://lovemcq.com/quiz'), isNotNull);
+      expect(NotificationHandler.safeRoute('lovemcq://quiz'), isNotNull);
+      // Deprecated alias stays accepted for old push payloads.
       expect(NotificationHandler.safeRoute('civilcal://quiz'), isNotNull);
     });
 

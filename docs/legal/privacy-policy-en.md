@@ -1,10 +1,10 @@
-# CivilCal Privacy Policy
+# LoveMCQ Privacy Policy
 
 **Effective date:** 2026-11-04 (supersedes the 2026-10-25 version)
-**Operator:** Bisaas (the "Service"), product name CivilCal
+**Operator:** Bisaas (the "Service"), product name LoveMCQ
 **Contact:** support@lovemcq.com · **Security:** security@lovemcq.com
 
-This policy explains what data the CivilCal mobile app and its backend
+This policy explains what data the LoveMCQ mobile app and its backend
 collect, why, and what control you have. It applies to the Android and iOS
 apps and the API that powers them. The Nepali and Hindi versions are
 translations of this text; if they ever disagree, this English version is the
@@ -126,7 +126,7 @@ contacting support@lovemcq.com. We respond within 30 days.
 
 ## 8. Children
 
-CivilCal is an exam-preparation service for students of civil engineering and
+LoveMCQ is an exam-preparation service for students of civil engineering and
 is not directed at children under 13. We do not knowingly collect data from
 children under 13; if we learn we have, we delete it.
 

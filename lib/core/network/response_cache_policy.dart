@@ -76,7 +76,7 @@ abstract final class ResponseCachePolicy {
   ///
   /// A syllabus tree changes when the exam authority publishes a revision, and
   /// the server already caches that payload for 24h keyed on `structure_hash`.
-  /// A calculator catalog changes when CivilCal ships one. So these are long.
+  /// A calculator catalog changes when LoveMCQ ships one. So these are long.
   ///
   /// Freshness here is a client-side deadline, and the stale copy is what the
   /// user sees while a background refresh runs. The server *does* answer a

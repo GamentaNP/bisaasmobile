@@ -1,4 +1,4 @@
-# Golden Path E2E Runbook — CivilCal
+# Golden Path E2E Runbook — LoveMCQ
 
 > **Why this is still manual.** `patrol` is deliberately not used: its native
 > plugin changes the release artifact, and `integration_test` would put

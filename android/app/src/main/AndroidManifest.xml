@@ -36,7 +36,7 @@
         tools:node="remove" />
 
     <application
-        android:label="CivilCal"
+        android:label="LoveMCQ"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"
@@ -79,12 +79,14 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Custom scheme deep links: civilcal://quiz/<slug>, civilcal://battle,
-                 civilcal://reset-password?email=... -->
+            <!-- Custom scheme deep links: lovemcq://quiz/<slug>, lovemcq://battle,
+                 lovemcq://reset-password?email=... The pre-rename `civilcal`
+                 scheme stays registered as a deprecated alias. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="lovemcq"/>
                 <data android:scheme="civilcal"/>
             </intent-filter>
             <!-- App Links (https) - requires assetlinks.json at

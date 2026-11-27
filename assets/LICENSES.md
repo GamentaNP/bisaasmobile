@@ -1,7 +1,7 @@
 # Asset licenses
 
 The source and licence of every third-party visual asset bundled with
-CivilCal. **Rule:** only OFL / CC0 / "free for commercial use" assets may be
+LoveMCQ. **Rule:** only OFL / CC0 / "free for commercial use" assets may be
 bundled. Update this file whenever an asset is added or replaced.
 
 Verified against the tree on 2026-11-04.

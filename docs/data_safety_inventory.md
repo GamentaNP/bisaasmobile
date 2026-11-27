@@ -1,4 +1,4 @@
-# Data Safety & Privacy Label inventory — CivilCal mobile
+# Data Safety & Privacy Label inventory — LoveMCQ mobile
 
 The exact answers for the **Play Console → App content → Data safety**
 form and the **App Store Connect → App privacy** labels.

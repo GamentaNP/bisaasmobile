@@ -317,7 +317,7 @@ forget in a 5th.
 Nepali and Hindi are both at **100% of the 1,360-message catalogue**, verified
 by the CI gate (`tool/arb_coverage.dart` + `test/l10n/arb_coverage_test.dart`).
 Twelve keys per locale are byte-identical to English on purpose — unit
-symbols (`%`, `XP`) and brand names (`CivilCal`) — and the translation audit
+symbols (`%`, `XP`) and brand names (`LoveMCQ`) — and the translation audit
 treats them as correct rather than as untranslated copy.
 
 Interface strings are **not** machine-written. Generating them without a human or

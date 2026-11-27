@@ -254,7 +254,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
     ));
     try {
       await SharePlus.instance.share(
-        ShareParams(text: text, subject: 'CivilCal'),
+        ShareParams(text: text, subject: 'LoveMCQ'),
       );
     } catch (e) {
       AppLogger.w('share failed: $e');
@@ -288,7 +288,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen> {
       await SharePlus.instance.share(
         ShareParams(
           text: url == null ? text : '$text\n$url',
-          subject: 'CivilCal',
+          subject: 'LoveMCQ',
         ),
       );
       if (link != null) {

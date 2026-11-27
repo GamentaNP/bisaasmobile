@@ -52,7 +52,14 @@ void main() {
       );
     });
 
-    test('the civilcal:// scheme routes into the app', () {
+    test('the lovemcq:// scheme routes into the app', () {
+      expect(
+        DeepLinkHandler.parse(Uri.parse('lovemcq://s/tok_123')),
+        '/social/share/tok_123',
+      );
+    });
+
+    test('the deprecated civilcal:// alias routes the same way', () {
       expect(
         DeepLinkHandler.parse(Uri.parse('civilcal://s/tok_123')),
         '/social/share/tok_123',

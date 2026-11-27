@@ -28,13 +28,13 @@ import 'router/app_router.dart';
 import 'tenant_failure_gate.dart';
 import 'theme/app_theme.dart';
 
-class CivilCalApp extends ConsumerStatefulWidget {
-  const CivilCalApp({super.key});
+class LoveMcqApp extends ConsumerStatefulWidget {
+  const LoveMcqApp({super.key});
   @override
-  ConsumerState<CivilCalApp> createState() => _CivilCalAppState();
+  ConsumerState<LoveMcqApp> createState() => _LoveMcqAppState();
 }
 
-class _CivilCalAppState extends ConsumerState<CivilCalApp>
+class _LoveMcqAppState extends ConsumerState<LoveMcqApp>
     with WidgetsBindingObserver {
   late final AppRouter _appRouter;
 
@@ -163,7 +163,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
   }
 
   /// Push taps (FCM + local-notification mirrors) arrive as a router location
-  /// (`/quiz`) or a deep-link URI (`civilcal://…`) — resolve and go.
+  /// (`/quiz`) or a deep-link URI (`lovemcq://…`, legacy `civilcal://…`) — resolve and go.
   void _listenPushNavigation() {
     final push = ref.read(pushServiceProvider);
     if (push == null) return;
@@ -264,7 +264,7 @@ class _CivilCalAppState extends ConsumerState<CivilCalApp>
     // first frame and the release ErrorWidget (a plain grey screen) is all a
     // real device ever painted. The OS task-switcher title is the brand name
     // in every locale on purpose.
-    const title = 'CivilCal';
+    const title = 'LoveMCQ';
     // The base font family is Latin-only, so the theme is rebuilt for the active
     // script. Switching language therefore re-themes the whole app rather than
     // only changing translated strings — otherwise Nepali/Chinese/Arabic text

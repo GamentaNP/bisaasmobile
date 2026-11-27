@@ -14,7 +14,7 @@ Future<void> main() async {
   runApp(
     const ProviderScope(
       retry: _noProviderRetry,
-      child: CivilCalApp(),
+      child: LoveMcqApp(),
     ),
   );
 }

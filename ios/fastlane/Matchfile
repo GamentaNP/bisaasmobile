@@ -8,6 +8,6 @@ storage_mode("git")
 
 type("appstore")
 
-app_identifier(["com.bisaas.bisaasmobile"])
+app_identifier(["com.beardbishwo.lovemcq"])
 
 readonly(true)

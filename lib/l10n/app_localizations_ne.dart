@@ -10,7 +10,7 @@ class AppLocalizationsNe extends AppLocalizations {
   AppLocalizationsNe([String locale = 'ne']) : super(locale);
 
   @override
-  String get appTitle => 'CivilCal';
+  String get appTitle => 'LoveMCQ';
 
   @override
   String get signIn => 'साइन इन गर्नुहोस्';
@@ -68,13 +68,13 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String get appLocked => 'CivilCal लक छ';
+  String get appLocked => 'LoveMCQ लक छ';
 
   @override
   String get unlock => 'खोल्नुहोस्';
 
   @override
-  String get unlockCivilCal => 'CivilCal खोल्नुहोस्';
+  String get unlockCivilCal => 'LoveMCQ खोल्नुहोस्';
 
   @override
   String get commonCancel => 'रद्द गर्नुहोस्';
@@ -168,7 +168,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get authReturnToLogin => 'लगइनमा फर्कनुहोस्';
 
   @override
-  String get authJoinTitle => 'CivilCal मा सामेल हुनुहोस्';
+  String get authJoinTitle => 'LoveMCQ मा सामेल हुनुहोस्';
 
   @override
   String get authJoinSubtitle =>
@@ -910,7 +910,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get maintenanceBody =>
-      'CivilCal सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।';
+      'LoveMCQ सँक्षिप्त मर्मतका लागि बन्द छ। तपाईंको खाता, क्विन र प्रगति सुरक्षित छ — केही गुमेको छैन।';
 
   @override
   String get versionUnsupported => 'यो एप संस्करण अब समर्थित छैन।';
@@ -1069,7 +1069,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String profileShareCardText(Object level) {
-    return 'मेरो CivilCal प्रोफाइल — तह $level इन्जिनियर। https://lovemcq.com';
+    return 'मेरो LoveMCQ प्रोफाइल — तह $level इन्जिनियर। https://lovemcq.com';
   }
 
   @override
@@ -4117,7 +4117,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get todayTitle => 'आज';
 
   @override
-  String get appLockPromptTitle => 'CivilCal खोल्नुहोस्';
+  String get appLockPromptTitle => 'LoveMCQ खोल्नुहोस्';
 
   @override
   String get appLockPromptReason => 'जारी राख्न प्रमाणीकरण गर्नुहोस्';
@@ -4385,11 +4385,11 @@ class AppLocalizationsNe extends AppLocalizations {
       'त्यो कोड लागू गर्न सकिएन। पहिले नै प्रयोग भएको हुन सक्छ।';
 
   @override
-  String get socialTryThis => 'CivilCal मा यो प्रयास गर्नुहोस्';
+  String get socialTryThis => 'LoveMCQ मा यो प्रयास गर्नुहोस्';
 
   @override
   String socialShareInvite(Object code, Object url) {
-    return 'CivilCal मा मेरो कोड $code प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n$url';
+    return 'LoveMCQ मा मेरो कोड $code प्रयोग गर्नुहोस् — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।\n$url';
   }
 
   @override
@@ -4423,7 +4423,7 @@ class AppLocalizationsNe extends AppLocalizations {
     Object xp,
     Object coins,
   ) {
-    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins CivilCal (BiSaaS) बाट। प्रयास: https://lovemcq.com';
+    return 'मैले \"$title\" मा $correct/$total ($percent%) अंक गरें — $grade! XP +$xp, क्विन +$coins LoveMCQ (BiSaaS) बाट। प्रयास: https://lovemcq.com';
   }
 
   @override
@@ -4436,7 +4436,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get quizGradeKeepPracticing => 'अभ्यास जारी राख्नुहोस्';
 
   @override
-  String get quizDefaultTitle => 'CivilCal क्विज';
+  String get quizDefaultTitle => 'LoveMCQ क्विज';
 
   @override
   String get syllabusTopicsLoaded => 'विषय लोड भए';
@@ -4475,11 +4475,11 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get forceUpdateUnsupportedLatest =>
-      'यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।';
+      'यो LoveMCQ संस्करण अब समर्थित छैन। जारी राख्न कृपया नवीनतम संस्करणमा अद्यावधिक गर्नुहोस्।';
 
   @override
   String forceUpdateUnsupportedVersion(Object version) {
-    return 'यो CivilCal संस्करण अब समर्थित छैन। जारी राख्न कृपया $version वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।';
+    return 'यो LoveMCQ संस्करण अब समर्थित छैन। जारी राख्न कृपया $version वा त्यसभन्दा पछिल्लो संस्करणमा अद्यावधिक गर्नुहोस्।';
   }
 
   @override
@@ -4507,7 +4507,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get quizCompleteTitle => 'क्विज सम्पन्न';
 
   @override
-  String get quizShareTitleFallback => 'CivilCal क्विज';
+  String get quizShareTitleFallback => 'LoveMCQ क्विज';
 
   @override
   String get profileFallbackName => 'इन्जिनियर';
@@ -4551,7 +4551,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get socialShareMomentFallback =>
-      'मैले भर्खरै CivilCal मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।';
+      'मैले भर्खरै LoveMCQ मा प्रगति गरें — सिभिल इन्जिनियरिङ क्यालकुलेटर र लोकसेवा प्रश्नहरू।';
 
   @override
   String get streakInsuranceFailed => 'बीमा किन्न सकिएन।';
@@ -4944,7 +4944,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String quizShareSubject(Object title) {
-    return 'मेरो CivilCal नतिजा — $title';
+    return 'मेरो LoveMCQ नतिजा — $title';
   }
 
   @override

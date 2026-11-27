@@ -1,4 +1,4 @@
-CivilCal is a study and practice app for engineering students and civil service aspirants. Everything you need to revise, practise and track your progress — in one app that works on a slow connection.
+LoveMCQ is a study and practice app for engineering students and civil service aspirants. Everything you need to revise, practise and track your progress — in one app that works on a slow connection.
 
 PRACTISE WITH REAL QUESTIONS
 Answer practice questions for Loksewa, PSC and engineering subjects. Each question is graded on the server, so your score, streak and leaderboard position are always accurate on every device you sign in from. Bookmark the ones you got wrong and drill exactly those later.

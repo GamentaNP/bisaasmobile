@@ -1,6 +1,6 @@
 What is new in 1.0.2
 
-- The launcher icon is now the CivilCal mark, on both Android and iOS.
+- The launcher icon is now the LoveMCQ mark, on both Android and iOS.
 - Push notifications now arrive on iOS while the app is closed. Achievement unlocks, battle invitations and the daily-quiz reminder no longer wait for you to open the app.
 - Choosing a profile picture no longer crashes on iOS.
 - The privacy choices screen now lists exactly what the app sends, and the buttons stay reachable on a small screen.

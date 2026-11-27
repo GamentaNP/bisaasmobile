@@ -220,7 +220,7 @@ Wiring notes (verified 2026-09-27 by an on-device run):
   `EnforceAppVersion` (426) / `EnforceMobileKillSwitches`. The FCM `getToken()`
   no-Play-Services crash is **fixed** — `registerToken()`/`unregisterToken()` swallow the
   throw (`push_notification_service.dart:177-220`), verified on the Redmi 6A.
-- **Deep links:** `civilcal://` + `https://lovemcq.com` are registered on Android
+- **Deep links:** `lovemcq://` (with `civilcal://` kept as a deprecated alias) + `https://lovemcq.com` are registered on Android
   (intent-filters) and iOS (`CFBundleURLTypes`); runtime routing via `app_links` →
   `DeepLinkHandler.parse` in `app.dart`. App-Link fingerprints are served by the
   config-driven Laravel route (see `docs/APP_LINKS_DEPLOYMENT.md`) — never restore a
