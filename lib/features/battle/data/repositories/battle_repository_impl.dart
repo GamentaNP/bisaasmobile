@@ -1,10 +1,9 @@
-// ignore_for_file: strict_raw_type
-
 import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/battle.dart';
 import '../../domain/entities/battle_lobby.dart';
 import '../../domain/repositories/battle_repository.dart';
 import '../datasources/battle_remote_data_source.dart';
+import '../models/battle_payload.dart';
 
 class BattleRepositoryImpl implements BattleRepository {
   const BattleRepositoryImpl(this._remote);
@@ -13,7 +12,7 @@ class BattleRepositoryImpl implements BattleRepository {
   @override
   Future<BattleToken> getFirebaseToken() async {
     final m = await _remote.getFirebaseToken();
-    final token = (m['token'] ?? m['custom_token'] ?? m['firebase_token'] ?? '') as String;
+    final token = BattlePayload.firebaseToken(m);
     final expRaw = m['expires_at'] ?? m['expiresAt'];
     DateTime? exp;
     if (expRaw is String) exp = DateTime.tryParse(expRaw);
@@ -21,55 +20,70 @@ class BattleRepositoryImpl implements BattleRepository {
   }
 
   @override
-  Future<BattleMatch> findMatch({int? categoryId, int totalQuestions = 10}) async {
-    final m = await _remote.findMatch(categoryId: categoryId, totalQuestions: totalQuestions);
-    BattlePlayer player(Map? raw) => BattlePlayer(
-          uid: (raw?['uid'] ?? '').toString(),
-          displayName: (raw?['display_name'] ?? raw?['name'] ?? 'Player').toString(),
-          avatarUrl: (raw?['avatar_url'] ?? '').toString(),
-          score: (raw?['score'] as int?) ?? 0,
-          currentIdx: (raw?['current_idx'] as int?) ?? 0,
-          finished: (raw?['finished'] as bool?) ?? false,
-        );
-    BattleQuestion question(Map raw) => BattleQuestion(
-          id: (raw['id'] ?? '').toString(),
-          text: (raw['text'] ?? raw['body'] ?? '').toString(),
-          options: ((raw['options'] as List?) ?? const [])
-              .cast<Map>()
-              .map((o) => BattleOption(id: (o['id'] ?? '').toString(), text: (o['text'] ?? '').toString()))
-              .toList(),
-          // Never read an answer key from the realtime payload. Battles are
-          // graded by the server (POST /quiz/battles/{id}/answer) and the RTDB
-          // node only carries `is_correct` after the fact. Parsing a key here
-          // would put the answer on-device before the answer is given, in the
-          // one mode that has coin stakes.
-          correctOptionId: '',
-          points: (raw['points'] as int?) ?? 10,
-        );
-    // The battle id is the handle the arena subscribes to on RTDB, so a
-    // placeholder would leave it listening on a lobby that does not exist.
-    // A payload with no id is a drift, and the caller has to hear about it.
-    final id = (m['id'] ?? m['battle_id'] ?? m['lobby_id'])?.toString();
-    if (id == null || id.isEmpty) {
-      throw const ContractViolation(
-        'Battle payload has no id',
-        endpoint: '/quiz/battles',
-      );
-    }
-    return BattleMatch(
-      id: id,
-      status: (m['status'] ?? 'searching') as String,
-      opponentLabel: (m['opponent'] ?? m['opponent_label'] ?? 'Searching…') as String,
-      player1: player(m['player1'] as Map?),
-      player2: player(m['player2'] as Map?),
-      questions: ((m['questions'] as List?) ?? const []).cast<Map>().map(question).toList(),
-      perQuestionSeconds: (m['per_question_seconds'] as int?) ?? 15,
-      category: (m['category'] ?? 'any') as String,
-      startedAtMs: (m['started_at'] as int?) ?? (m['started_at_ms'] as int?),
-      finishedAtMs: (m['finished_at'] as int?) ?? (m['finished_at_ms'] as int?),
-      winnerUid: m['winner'] as String?,
+  Future<BattleMatch> findMatch({
+    int? categoryId,
+    int totalQuestions = 10,
+    String mode = '1v1',
+  }) async {
+    final raw = await _remote.findMatch(
+      categoryId: categoryId,
+      totalQuestions: totalQuestions,
+      mode: mode,
     );
+    BattleMatch match;
+    try {
+      // A match with no questions is contract drift, never an empty arena.
+      match = BattlePayload.parse(raw, endpoint: BattlePayload.createEndpoint);
+    } on ContractViolation catch (e) {
+      // The legacy create response has no questions and often no `id` beyond
+      // the numeric battle id. Join by the RTDB handle to get the canonical
+      // payload before giving up — the create itself is not yet playable.
+      final handle = BattlePayload.stringOf(
+        raw['firebase_battle_id'] ?? raw['battle_id'] ?? raw['id'],
+      );
+      if (handle.isEmpty) rethrow;
+      try {
+        return await joinBattle(handle);
+      } on Object {
+        throw e;
+      }
+    }
+
+    // A fresh token is minted by create; fall back to the token endpoint only
+    // for a legacy server that did not send one. The fallback token is used
+    // once and never written over a token the create response provided.
+    if (match.firebaseToken.isEmpty) {
+      final fallback = await getFirebaseToken();
+      match = _withToken(match, fallback.token);
+    }
+    return match;
   }
+
+  @override
+  Future<BattleMatch> joinBattle(String firebaseBattleId) async {
+    final raw = await _remote.join(firebaseBattleId);
+    final match = BattlePayload.parse(
+      raw,
+      endpoint: BattlePayload.joinEndpoint,
+      base: BattleMatch(
+        id: firebaseBattleId,
+        status: 'waiting',
+        firebaseBattleId: firebaseBattleId,
+      ),
+    );
+    if (match.firebaseToken.isEmpty) {
+      final fallback = await getFirebaseToken();
+      return _withToken(match, fallback.token);
+    }
+    return match;
+  }
+
+  @override
+  Future<Map<String, dynamic>> getBattleResults(String firebaseBattleId) =>
+      _remote.getResults(firebaseBattleId);
+
+  BattleMatch _withToken(BattleMatch match, String token) =>
+      match.copyWith(firebaseToken: token);
 
   @override
   Future<List<Map<String, dynamic>>> getLeaderboard(String boardId) => _remote.getLeaderboard(boardId);

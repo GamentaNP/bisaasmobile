@@ -139,11 +139,26 @@ class BattleRemoteDataSource {
   /// Create or find an open battle. The server requires a `category_id`
   /// (quiz_categories.id); when [categoryId] is null a default is resolved
   /// from the first course's first category.
-  Future<Map<String, dynamic>> findMatch({int? categoryId, int totalQuestions = 10}) async {
+  ///
+  /// `mode` is `1v1|2v2|3v3`. It is sent on the same create endpoint for both
+  /// solo and team queues — the canonical and team payloads are parsed by
+  /// `BattlePayload`, so a published team route only needs its path changed
+  /// here. POST create requires an Idempotency-Key (§7).
+  Future<Map<String, dynamic>> findMatch({
+    int? categoryId,
+    int totalQuestions = 10,
+    String mode = '1v1',
+    String? idempotencyKey,
+  }) async {
     final resolved = categoryId ?? await _defaultCategoryId();
     final res = await _dio.post<Map<String, dynamic>>(
       '/quiz/battles',
-      data: {'category_id': resolved, 'total_questions': totalQuestions},
+      data: {
+        'category_id': resolved,
+        'total_questions': totalQuestions,
+        'mode': mode,
+      },
+      options: Options(headers: idempotencyHeader(idempotencyKey)),
     );
     final envelope = ApiResponse.fromJson(
       res.data!,

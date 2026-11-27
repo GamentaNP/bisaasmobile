@@ -5833,6 +5833,35 @@ abstract class AppLocalizations {
   /// **'Triage — cover or skip'**
   String get eiceTriage;
 
+  /// No description provided for @eiceStudyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Study plan — day by day'**
+  String get eiceStudyPlan;
+
+  /// No description provided for @eiceStudyPlanCombined.
+  ///
+  /// In en, this message translates to:
+  /// **'All courses — study plan'**
+  String get eiceStudyPlanCombined;
+
+  /// No description provided for @eiceExamIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam in {time}'**
+  String eiceExamIn(Object time);
+
+  /// No description provided for @eiceCountdownParts.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d {hours}h {minutes}m {seconds}s'**
+  String eiceCountdownParts(
+    Object days,
+    Object hours,
+    Object minutes,
+    Object seconds,
+  );
+
   /// No description provided for @battleArena.
   ///
   /// In en, this message translates to:
@@ -5928,6 +5957,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Result pending'**
   String get battleResultPending;
+
+  /// No description provided for @battleChooseMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a battle mode'**
+  String get battleChooseMode;
+
+  /// No description provided for @battleMode1v1.
+  ///
+  /// In en, this message translates to:
+  /// **'1 vs 1'**
+  String get battleMode1v1;
+
+  /// No description provided for @battleMode2v2.
+  ///
+  /// In en, this message translates to:
+  /// **'2 vs 2'**
+  String get battleMode2v2;
+
+  /// No description provided for @battleMode3v3.
+  ///
+  /// In en, this message translates to:
+  /// **'3 vs 3'**
+  String get battleMode3v3;
+
+  /// No description provided for @battleTeamLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Team {team}'**
+  String battleTeamLabel(Object team);
+
+  /// No description provided for @battlePlayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Players'**
+  String get battlePlayers;
+
+  /// No description provided for @battleConnectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the live battle. Check your connection and try again.'**
+  String get battleConnectionFailed;
 
   /// No description provided for @liveEventsTitle.
   ///
@@ -8468,6 +8539,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Available prizes'**
   String get rewardCenterPrizes;
+
+  /// No description provided for @homeExplorePracticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice MCQs'**
+  String get homeExplorePracticeTitle;
+
+  /// No description provided for @homeExplorePracticeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Loksewa & Topic Sets'**
+  String get homeExplorePracticeSub;
+
+  /// No description provided for @homeExploreCalcSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Formula Engines'**
+  String get homeExploreCalcSub;
+
+  /// No description provided for @homeExploreBattleSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Realtime 1v1 PvP'**
+  String get homeExploreBattleSub;
+
+  /// No description provided for @homeExploreWorldsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters, Stars & Bosses'**
+  String get homeExploreWorldsSub;
+
+  /// No description provided for @homeExploreStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get homeExploreStreakTitle;
+
+  /// No description provided for @homeExploreStreakSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair, Insurance & Wager'**
+  String get homeExploreStreakSub;
+
+  /// No description provided for @homeExploreCoursesSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Syllabus Tracks'**
+  String get homeExploreCoursesSub;
 }
 
 class _AppLocalizationsDelegate

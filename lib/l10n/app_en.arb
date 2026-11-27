@@ -2478,6 +2478,33 @@
   "eiceSprint": "Sprint — 7-day recall queue",
   "eiceWeeklyReport": "Weekly report",
   "eiceTriage": "Triage — cover or skip",
+  "eiceStudyPlan": "Study plan — day by day",
+  "eiceStudyPlanCombined": "All courses — study plan",
+  "eiceExamIn": "Exam in {time}",
+  "@eiceExamIn": {
+    "placeholders": {
+      "time": {
+        "type": "Object"
+      }
+    }
+  },
+  "eiceCountdownParts": "{days}d {hours}h {minutes}m {seconds}s",
+  "@eiceCountdownParts": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      },
+      "minutes": {
+        "type": "Object"
+      },
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
   "battleArena": "Battle Arena",
   "battleNoActiveMatch": "No active match",
   "battleFindMatch": "Find a Match",
@@ -2504,6 +2531,20 @@
   "battleResultLoss": "Good Fight!",
   "battleResultDraw": "DRAW",
   "battleResultPending": "Result pending",
+  "battleChooseMode": "Choose a battle mode",
+  "battleMode1v1": "1 vs 1",
+  "battleMode2v2": "2 vs 2",
+  "battleMode3v3": "3 vs 3",
+  "battleTeamLabel": "Team {team}",
+  "@battleTeamLabel": {
+    "placeholders": {
+      "team": {
+        "type": "Object"
+      }
+    }
+  },
+  "battlePlayers": "Players",
+  "battleConnectionFailed": "Could not connect to the live battle. Check your connection and try again.",
   "liveEventsTitle": "Live Events",
   "liveEventsNone": "No live events",
   "liveEventsNoneBody": "Scheduled and live events will appear here.",
@@ -3587,5 +3628,13 @@
   "impactLeadersTitle": "Impact leaders",
   "impactLeaderQualifiedReferrals": "Qualified referrals",
   "rewardCenterTitle": "Reward center",
-  "rewardCenterPrizes": "Available prizes"
+  "rewardCenterPrizes": "Available prizes",
+  "homeExplorePracticeTitle": "Practice MCQs",
+  "homeExplorePracticeSub": "Loksewa & Topic Sets",
+  "homeExploreCalcSub": "Civil Formula Engines",
+  "homeExploreBattleSub": "Realtime 1v1 PvP",
+  "homeExploreWorldsSub": "Chapters, Stars & Bosses",
+  "homeExploreStreakTitle": "Streak",
+  "homeExploreStreakSub": "Repair, Insurance & Wager",
+  "homeExploreCoursesSub": "Full Syllabus Tracks"
 }

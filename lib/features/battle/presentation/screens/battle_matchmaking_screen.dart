@@ -11,7 +11,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../controllers/battle_controller.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// Matchmaking screen with 3-2-1 countdown on opponent found.
+/// Matchmaking screen with a mode picker and a 3-2-1 countdown on match found.
 class BattleMatchmakingScreen extends ConsumerStatefulWidget {
   const BattleMatchmakingScreen({super.key});
 
@@ -20,24 +20,26 @@ class BattleMatchmakingScreen extends ConsumerStatefulWidget {
 }
 
 class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScreen> {
+  static const _modes = <String>['1v1', '2v2', '3v3'];
+
   int _countdown = 3;
   Timer? _countdownTimer;
   bool _ticking = false;
+  String _mode = _modes.first;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(battleControllerProvider.notifier).fetchToken().then((_) {
-        if (!mounted) return;
-        ref.read(battleControllerProvider.notifier).findMatch();
-      });
-    });
     ref.listen(battleControllerProvider, (prev, next) {
       if (next.phase == BattlePhase.inProgress && prev?.phase != BattlePhase.inProgress) {
         _startCountdown();
       }
     });
+  }
+
+  void _start() {
+    _countdownTimer?.cancel();
+    ref.read(battleControllerProvider.notifier).findMatch(mode: _mode);
   }
 
   void _startCountdown() {
@@ -128,6 +130,12 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
         ),
       );
     }
+
+    final busy = state.phase == BattlePhase.searching ||
+        state.phase == BattlePhase.fetchingToken ||
+        state.phase == BattlePhase.connectingFirebase;
+    final failed = state.phase == BattlePhase.error;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.battleFindMatch),
@@ -135,36 +143,111 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
           icon: const Icon(Icons.close_rounded),
           tooltip: l10n.commonClose,
           onPressed: () {
+            _countdownTimer?.cancel();
             ref.read(battleControllerProvider.notifier).reset();
-            Navigator.of(context).pop();
+            context.go('/home');
           },
         ),
       ),
       body: Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                width: 160,
-                height: 160,
-                child: Lottie.asset('assets/animations/loading_engineering.json', repeat: true),
+              Text(
+                l10n.battleChooseMode,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                children: [
+                  for (final mode in _modes)
+                    ChoiceChip(
+                      label: Text(_modeLabel(mode, l10n)),
+                      selected: _mode == mode,
+                      // Selecting a different queue while a search is in
+                      // flight would leave the roster inconsistent.
+                      onSelected: busy || failed
+                          ? null
+                          : (selected) {
+                              if (selected) setState(() => _mode = mode);
+                            },
+                    ),
+                ],
               ),
               const SizedBox(height: 24),
-              Text(_phaseText(state.phase), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              if (state.error != null)
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(state.error!, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.wrongRed)),
+              if (busy)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 140,
+                      height: 140,
+                      child: Lottie.asset(
+                        'assets/animations/loading_engineering.json',
+                        repeat: true,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _phaseText(state.phase),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                )
+              else if (failed)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.wrongRed),
+                    const SizedBox(height: 12),
+                    Text(
+                      state.error ?? l10n.errRequestFailed,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.wrongRed),
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      onPressed: _start,
+                      icon: const Icon(Icons.replay_rounded),
+                      label: Text(l10n.retry),
+                    ),
+                  ],
+                )
+              else
+                FilledButton.icon(
+                  onPressed: _start,
+                  icon: const Icon(Icons.search_rounded),
+                  label: Text(l10n.battleFindMatch),
+                  style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
                 ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () {
+                  ref.read(battleControllerProvider.notifier).reset();
+                  context.go('/home');
+                },
+                icon: const Icon(Icons.arrow_back_rounded),
+                label: Text(l10n.commonGoBack),
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  String _modeLabel(String mode, AppLocalizations l10n) => switch (mode) {
+        '2v2' => l10n.battleMode2v2,
+        '3v3' => l10n.battleMode3v3,
+        _ => l10n.battleMode1v1,
+      };
 
   String _phaseText(BattlePhase p) => switch (p) {
         BattlePhase.fetchingToken => appL10n().battlePhaseSecuring,

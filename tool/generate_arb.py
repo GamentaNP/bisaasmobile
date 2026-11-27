@@ -2023,6 +2023,16 @@ add("eiceCoach", "Coach — your plan", "कोच — तपाईंको य
 add("eiceSprint", "Sprint — 7-day recall queue", "स्प्रिन्ट — ७ दिनेको दोहोराइ क्यु", "स्प्रिंट — 7-दिन की समीक्षा कतार")
 add("eiceWeeklyReport", "Weekly report", "साप्ताहिक प्रतिवेदन", "साप्ताहिक रिपोर्ट")
 add("eiceTriage", "Triage — cover or skip", "त्रायज — ओगट्ने वा छाड्ने", "ट्रायेज — कवर करें या छोड़ें")
+add("eiceStudyPlan", "Study plan — day by day", "अध्ययन योजना — दिन अनुसार", "अध्ययन योजना — दिन अनुसार")
+add("eiceStudyPlanCombined", "All courses — study plan", "सबै पाठ्यक्रम — अध्ययन योजना", "सभी पाठ्यक्रम — अध्ययन योजना")
+add("eiceExamIn", "Exam in {time}", "परीक्षा {time} पछि", "परीक्षा {time} बाद", ["time"])
+add(
+    "eiceCountdownParts",
+    "{days}d {hours}h {minutes}m {seconds}s",
+    "{days} दिन {hours} घण्टा {minutes} मिनेट {seconds} सेकेन्ड",
+    "{days} दिन {hours} घंटे {minutes} मिनट {seconds} सेकंड",
+    ["days", "hours", "minutes", "seconds"],
+)
 
 # ── battle ──────────────────────────────────────────────────────────────────
 add("battleArena", "Battle Arena", "ब्याटल रिङ", "बैटल अरेना")
@@ -2044,6 +2054,18 @@ add("battleResultWin", "YOU WIN!", "तपाईं जित्नुभयो!
 add("battleResultLoss", "Good Fight!", "राम्रो खेल!", "शानदार खेल!")
 add("battleResultDraw", "DRAW", "बराबरी", "बराबरी")
 add("battleResultPending", "Result pending", "नतिजा पर्खाइमा", "परिणाम लंबित")
+add("battleChooseMode", "Choose a battle mode", "ब्याटल मोड छान्नुहोस्", "बैटल मोड चुनें")
+add("battleMode1v1", "1 vs 1", "१ विरुद्ध १", "1 बनाम 1")
+add("battleMode2v2", "2 vs 2", "२ विरुद्ध २", "2 बनाम 2")
+add("battleMode3v3", "3 vs 3", "३ विरुद्ध ३", "3 बनाम 3")
+add("battleTeamLabel", "Team {team}", "टोली {team}", "टीम {team}", ["team"])
+add("battlePlayers", "Players", "खेलाडी", "खिलाड़ी")
+add(
+    "battleConnectionFailed",
+    "Could not connect to the live battle. Check your connection and try again.",
+    "प्रत्यक्ष ब्याटलमा जोडिन सकिएन। जडान जाँचेर फेरि प्रयास गर्नुहोस्।",
+    "लाइव बैटल से कनेक्ट नहीं हो सका। कनेक्शन देखें और फिर से प्रयास करें।",
+)
 
 # ── misc ────────────────────────────────────────────────────────────────────
 add("liveEventsTitle", "Live Events", "प्रत्यक्ष कार्यक्रम", "लाइव कार्यक्रम")
@@ -2803,6 +2825,16 @@ add("impactLeadersTitle", "Impact leaders", "प्रभाव नेता", "
 add("impactLeaderQualifiedReferrals", "Qualified referrals", "योग्य रेफरल", "योग्य रेफ़रल")
 add("rewardCenterTitle", "Reward center", "पुरस्कार केन्द्र", "पुरस्कार केंद्र")
 add("rewardCenterPrizes", "Available prizes", "उपलब्ध पुरस्कार", "उपलब्ध पुरस्कार")
+
+# ── home explore grid (compact, localized) ─────────────────────────────────
+add("homeExplorePracticeTitle", "Practice MCQs", "अभ्यास प्रश्न", "अभ्यास प्रश्न")
+add("homeExplorePracticeSub", "Loksewa & Topic Sets", "लोकसेवा र विषय सेट", "लोकसेवा और विषय सेट")
+add("homeExploreCalcSub", "Civil Formula Engines", "सिविल सूत्र इन्जिन", "सिविल सूत्र इंजन")
+add("homeExploreBattleSub", "Realtime 1v1 PvP", "वास्तविक समय 1v1", "रियल टाइम 1v1")
+add("homeExploreWorldsSub", "Chapters, Stars & Bosses", "अध्याय, स्टार र बड", "अध्याय, सितारे और बॉस")
+add("homeExploreStreakTitle", "Streak", "स्ट्रिक", "स्ट्रीक")
+add("homeExploreStreakSub", "Repair, Insurance & Wager", "मर्मत, बीमा र वागर", "मरम्मत, बीमा और वेजर")
+add("homeExploreCoursesSub", "Full Syllabus Tracks", "पूर्ण पाठ्यक्रम ट्र्याक", "पूर्ण पाठ्यक्रम ट्रैक")
 
 # ── write ────────────────────────────────────────────────────────────────────
 # The placeholder types decide the signature gen-l10n generates.

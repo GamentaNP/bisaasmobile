@@ -1,5 +1,24 @@
 import 'package:flutter/foundation.dart';
 
+/// One player's authoritative line in `GET /quiz/battles/{id}/results`.
+@immutable
+class BattleOutcomePlayer {
+  const BattleOutcomePlayer({
+    required this.uid,
+    required this.name,
+    required this.score,
+    this.team,
+    this.isMe = false,
+    this.isWinner = false,
+  });
+  final String uid;
+  final String name;
+  final int score;
+  final String? team;
+  final bool isMe;
+  final bool isWinner;
+}
+
 /// Server-authoritative outcome of a battle, from
 /// `GET /quiz/battles/{firebaseBattleId}/results`.
 ///
@@ -23,6 +42,8 @@ class BattleOutcome {
     this.opponentScore,
     this.categoryName,
     this.endedAt,
+    this.players = const [],
+    this.winnerUid,
   });
 
   /// `win` | `loss` | `draw` | `pending`.
@@ -34,6 +55,11 @@ class BattleOutcome {
   final int? opponentScore;
   final String? categoryName;
   final DateTime? endedAt;
+
+  /// Every participant, not just two — team modes publish up to six.
+  final List<BattleOutcomePlayer> players;
+
+  final String? winnerUid;
 
   bool get isWin => result == 'win';
   bool get isLoss => result == 'loss';
@@ -47,72 +73,144 @@ class BattleOutcome {
   /// Parses the payload from `GET /quiz/battles/{id}/results`. Returns a
   /// `pending` outcome instead of a fabricated one when the payload is missing
   /// or unrecognised, so a shape change cannot silently turn into a win.
-  factory BattleOutcome.fromResults(Map<String, dynamic> data, {required int? currentUserId}) {
-    final battle = data['battle'];
-    if (battle is! Map) {
+  ///
+  /// Both the legacy `{battle: {player1, player2, winner_id}}` shape and the
+  /// canonical `{players, me, winner, status}` shape are accepted.
+  factory BattleOutcome.fromResults(
+    Map<String, dynamic> data, {
+    required int? currentUserId,
+    String? currentUid,
+  }) {
+    final rawSource = data['battle'] is Map ? data['battle'] : data;
+    if (rawSource is! Map) {
       return BattleOutcome(result: 'pending', userId: currentUserId);
     }
-    final b = battle.cast<String, dynamic>();
+    final b = {
+      for (final entry in rawSource.entries)
+        entry.key.toString(): entry.value,
+    };
 
-    int? scoreOf(Object? p) {
-      if (p is! Map<String, dynamic>) return null;
-      final v = p['score'];
-      return v is int ? v : (v is num ? v.toInt() : null);
+    int? intOf(Object? v) {
+      if (v is int) return v;
+      if (v is num) return v.toInt();
+      if (v is String) return int.tryParse(v.trim());
+      return null;
     }
 
-    // The server returns both players; pick ours by id when possible and fall
-    // back to position only when the ids are absent.
-    final p1 =
-        b['player1'] is Map<String, dynamic> ? b['player1'] as Map<String, dynamic> : null;
-    final p2 =
-        b['player2'] is Map<String, dynamic> ? b['player2'] as Map<String, dynamic> : null;
-
-    int? idOf(Map<String, dynamic>? p) {
-      final v = p?['id'];
-      return v is int ? v : (v is num ? v.toInt() : null);
+    String stringOf(Object? v, [String fallback = '']) {
+      final s = v?.toString();
+      return (s == null || s.isEmpty) ? fallback : s;
     }
 
-    Map<String, dynamic>? mine;
-    Map<String, dynamic>? theirs;
-    if (currentUserId != null && idOf(p1) == currentUserId) {
-      mine = p1;
-      theirs = p2;
-    } else if (currentUserId != null && idOf(p2) == currentUserId) {
-      mine = p2;
-      theirs = p1;
-    } else {
-      mine = p1;
-      theirs = p2;
+    Map<String, dynamic> mapOf(Object? v) {
+      if (v is! Map) return const <String, dynamic>{};
+      return {for (final e in v.entries) e.key.toString(): e.value};
     }
 
-    final winnerId = b['winner_id'];
-    final winner = winnerId is int ? winnerId : (winnerId is num ? winnerId.toInt() : null);
+    final list = b['players'] is List
+        ? (b['players'] as List).map(mapOf).toList()
+        : <Map<String, dynamic>>[];
+    if (list.isEmpty) {
+      for (final key in const ['player1', 'player2']) {
+        if (b[key] is Map) list.add(mapOf(b[key]));
+      }
+    }
 
-    // Mirror the server's own rule, and treat "status not completed" as pending
-    // rather than as a win.
-    final status = (b['status'] ?? '').toString();
-    final resolved = status == 'completed' || winner != null;
+    final parsed = <BattleOutcomePlayer>[
+      for (final p in list)
+        BattleOutcomePlayer(
+          uid: stringOf(p['uid'] ?? p['firebase_uid']),
+          name: stringOf(p['name'] ?? p['display_name']),
+          score: intOf(p['score']) ?? 0,
+          team: p['team'] == null ? null : stringOf(p['team']),
+        ),
+    ];
+
+    final me = mapOf(b['me']);
+    final meUid = stringOf(me['uid'] ?? me['id']);
+    int? myIndex;
+    for (var i = 0; i < parsed.length; i++) {
+      final p = list[i];
+      if ((currentUserId != null && intOf(p['id'] ?? p['user_id']) == currentUserId) ||
+          (currentUid != null && currentUid.isNotEmpty && parsed[i].uid == currentUid) ||
+          (meUid.isNotEmpty && parsed[i].uid == meUid)) {
+        myIndex = i;
+        break;
+      }
+    }
+    // Without an id match, the server's player1 slot is the historical
+    // convention. Never invent a win from this fallback.
+    myIndex ??= parsed.isEmpty ? null : 0;
+
+    final winnerRaw = b['winner'] ?? b['winner_id'];
+    final winnerUid = winnerRaw is Map
+        ? stringOf(winnerRaw['uid'] ?? winnerRaw['id'] ?? winnerRaw['user_id'])
+        : (winnerRaw is String ? winnerRaw : '');
+    final winnerId = winnerRaw is Map
+        ? intOf(winnerRaw['id'] ?? winnerRaw['user_id'])
+        : intOf(winnerRaw);
+
+    final status = stringOf(b['status']);
+    final resolved = BattleOutcomeStatus.isTerminal(status) || winnerId != null || winnerUid.isNotEmpty;
+
     final String result;
     if (!resolved) {
       result = 'pending';
-    } else if (winner == null) {
+    } else if (winnerId == null && winnerUid.isEmpty) {
       result = 'draw';
-    } else if (currentUserId != null && winner == currentUserId) {
-      result = 'win';
     } else {
-      result = 'loss';
+      final mine = myIndex == null ? null : parsed[myIndex];
+      final myServerId = myIndex == null
+          ? null
+          : intOf(list[myIndex]['id'] ?? list[myIndex]['user_id']);
+      final won = (currentUserId != null && winnerId == currentUserId) ||
+          (mine != null && winnerUid.isNotEmpty && mine.uid == winnerUid) ||
+          (myServerId != null && winnerId == myServerId);
+      result = won ? 'win' : 'loss';
     }
+
+    final others = <BattleOutcomePlayer>[];
+    for (var i = 0; i < parsed.length; i++) {
+      if (i != myIndex) others.add(parsed[i]);
+    }
+    others.sort((a, b) => b.score.compareTo(a.score));
+
+    final players = <BattleOutcomePlayer>[
+      for (var i = 0; i < parsed.length; i++)
+        BattleOutcomePlayer(
+          uid: parsed[i].uid,
+          name: parsed[i].name,
+          score: parsed[i].score,
+          team: parsed[i].team,
+          isMe: i == myIndex,
+          isWinner: (winnerId != null &&
+                  intOf(list[i]['id'] ?? list[i]['user_id']) == winnerId) ||
+              (winnerUid.isNotEmpty && parsed[i].uid == winnerUid),
+        ),
+    ];
 
     return BattleOutcome(
       result: result,
       userId: currentUserId,
-      opponentName: theirs?['name']?.toString(),
-      userScore: scoreOf(mine),
-      opponentScore: scoreOf(theirs),
+      opponentName: others.isEmpty ? null : others.first.name,
+      userScore: myIndex == null ? null : parsed[myIndex].score,
+      opponentScore: others.isEmpty ? null : others.first.score,
       categoryName: b['category'] is Map
-          ? (b['category'] as Map)['name']?.toString()
-          : b['category']?.toString(),
-      endedAt: DateTime.tryParse((b['ended_at'] ?? '').toString()),
+          ? stringOf((b['category'] as Map)['name'])
+          : stringOf(b['category']),
+      endedAt: DateTime.tryParse(stringOf(b['ended_at'])),
+      players: players,
+      winnerUid: winnerUid.isEmpty ? null : winnerUid,
     );
+  }
+}
+
+/// Kept as a tiny standalone helper so the arena's RTDB listener and the
+/// result parser cannot disagree about which state ends a battle.
+class BattleOutcomeStatus {
+  const BattleOutcomeStatus._();
+  static bool isTerminal(Object? status) {
+    final s = status?.toString().toLowerCase();
+    return s == 'finished' || s == 'completed';
   }
 }

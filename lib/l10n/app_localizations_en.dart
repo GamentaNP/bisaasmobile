@@ -3404,6 +3404,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eiceTriage => 'Triage — cover or skip';
 
   @override
+  String get eiceStudyPlan => 'Study plan — day by day';
+
+  @override
+  String get eiceStudyPlanCombined => 'All courses — study plan';
+
+  @override
+  String eiceExamIn(Object time) {
+    return 'Exam in $time';
+  }
+
+  @override
+  String eiceCountdownParts(
+    Object days,
+    Object hours,
+    Object minutes,
+    Object seconds,
+  ) {
+    return '${days}d ${hours}h ${minutes}m ${seconds}s';
+  }
+
+  @override
   String get battleArena => 'Battle Arena';
 
   @override
@@ -3452,6 +3473,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get battleResultPending => 'Result pending';
+
+  @override
+  String get battleChooseMode => 'Choose a battle mode';
+
+  @override
+  String get battleMode1v1 => '1 vs 1';
+
+  @override
+  String get battleMode2v2 => '2 vs 2';
+
+  @override
+  String get battleMode3v3 => '3 vs 3';
+
+  @override
+  String battleTeamLabel(Object team) {
+    return 'Team $team';
+  }
+
+  @override
+  String get battlePlayers => 'Players';
+
+  @override
+  String get battleConnectionFailed =>
+      'Could not connect to the live battle. Check your connection and try again.';
 
   @override
   String get liveEventsTitle => 'Live Events';
@@ -4968,4 +5013,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardCenterPrizes => 'Available prizes';
+
+  @override
+  String get homeExplorePracticeTitle => 'Practice MCQs';
+
+  @override
+  String get homeExplorePracticeSub => 'Loksewa & Topic Sets';
+
+  @override
+  String get homeExploreCalcSub => 'Civil Formula Engines';
+
+  @override
+  String get homeExploreBattleSub => 'Realtime 1v1 PvP';
+
+  @override
+  String get homeExploreWorldsSub => 'Chapters, Stars & Bosses';
+
+  @override
+  String get homeExploreStreakTitle => 'Streak';
+
+  @override
+  String get homeExploreStreakSub => 'Repair, Insurance & Wager';
+
+  @override
+  String get homeExploreCoursesSub => 'Full Syllabus Tracks';
 }

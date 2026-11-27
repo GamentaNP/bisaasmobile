@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../../domain/entities/battle.dart';
 import '../controllers/battle_controller.dart';
+import '../widgets/battle_score_board.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// Battle Arena — real-time 1v1 quiz.
+/// Live battle arena.
 ///
-/// Server is authoritative (writes scores to RTDB on every answer).
-/// Client renders question + listens to RTDB for opponent progress +
-/// local timer (synced from RTDB `started_at + per_question_seconds`).
+/// Server is authoritative (writes scores to RTDB on every answer). The clock
+/// is derived from the server's `started_at` + `per_question_seconds`, never
+/// re-based on the moment the screen opened, so the question index advances.
 class BattleArenaScreen extends ConsumerWidget {
   const BattleArenaScreen({super.key});
 
@@ -20,6 +20,14 @@ class BattleArenaScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(battleControllerProvider);
     final ctrl = ref.read(battleControllerProvider.notifier);
+
+    if (state.phase == BattlePhase.error) {
+      return _ErrorBody(
+        title: l10n.battlePhaseMatchFailed,
+        message: state.error ?? l10n.errRequestFailed,
+        onRetry: ctrl.retry,
+      );
+    }
 
     if (state.match == null) {
       return Scaffold(
@@ -32,12 +40,21 @@ class BattleArenaScreen extends ConsumerWidget {
               children: [
                 const Icon(Icons.sports_kabaddi_rounded, size: 56, color: AppColors.brand),
                 const SizedBox(height: 12),
-                Text(l10n.battleNoActiveMatch, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(l10n.battleNoActiveMatch, style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 FilledButton.icon(
                   onPressed: () => context.go('/battle/matchmaking'),
                   icon: const Icon(Icons.search_rounded),
                   label: Text(l10n.battleFindMatch),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    ctrl.reset();
+                    context.go('/home');
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  label: Text(l10n.commonGoBack),
                 ),
               ],
             ),
@@ -47,66 +64,54 @@ class BattleArenaScreen extends ConsumerWidget {
     }
 
     final m = state.match!;
+    final myUid = state.myUid ?? m.meUid;
 
-    // A match the server opened but did not fill with questions is a broken
-    // match, not an empty arena. Indexing `questions[0]` on an empty list
-    // used to crash the screen during build.
+    // A match the server opened without questions is drift, not an empty
+    // arena. Retry re-runs matchmaking with the same mode.
     if (m.questions.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: Text(l10n.battleArena)),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline_rounded,
-                    size: 48, color: AppColors.wrongRed),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.battleNoQuestions,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  state.error ?? l10n.battleNoQuestionsFromServer,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                ),
-                const SizedBox(height: 16),
-                FilledButton.icon(
-                  onPressed: () => context.go('/battle/matchmaking'),
-                  icon: const Icon(Icons.search_rounded),
-                  label: Text(l10n.battleFindMatch),
-                ),
-              ],
-            ),
-          ),
-        ),
+      return _ErrorBody(
+        title: l10n.battleNoQuestions,
+        message: l10n.battleNoQuestionsFromServer,
+        onRetry: ctrl.retry,
       );
     }
 
     if (state.phase == BattlePhase.finished) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/battle/result');
+        if (context.mounted) context.go('/battle/result');
       });
     }
 
-    // The index is clamped: the question list can shrink under the user
-    // (a question removed server-side) and an out-of-range index is a crash.
+    // Clamp: the question list can shrink under the user and an out-of-range
+    // index must never crash a build.
     final index = state.currentQuestionIndex.clamp(0, m.questions.length - 1);
     final q = m.questions[index];
-    final me = m.player1;
-    final opp = m.player2;
-    final timerPct = m.perQuestionSeconds == 0 ? 0.0 : state.secondsLeftInQuestion / m.perQuestionSeconds;
+    final timerPct = m.perQuestionSeconds == 0
+        ? 0.0
+        : state.secondsLeftInQuestion / m.perQuestionSeconds;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.battleQuestionCounter(index + 1, m.questions.length)),
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded),
+          tooltip: l10n.commonClose,
+          onPressed: () {
+            ctrl.reset();
+            context.go('/home');
+          },
+        ),
       ),
       body: Column(
         children: [
-          _ScoreHeader(me: me, opponent: opp, timerPct: timerPct.clamp(0.0, 1.0), secondsLeft: state.secondsLeftInQuestion, total: m.perQuestionSeconds),
+          BattleScoreBoard(
+            players: m.allPlayers,
+            meUid: myUid,
+            timerPct: timerPct,
+            secondsLeft: state.secondsLeftInQuestion,
+            total: m.perQuestionSeconds,
+            winnerUid: state.winnerUid,
+          ),
           if (state.opponentAnsweredThisQ)
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -117,9 +122,16 @@ class BattleArenaScreen extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.bolt_rounded, color: AppColors.streakOrange, size: 14),
-                  SizedBox(width: 4),
-                  Text(l10n.battleOpponentAnswered, style: TextStyle(color: AppColors.streakOrange, fontWeight: FontWeight.bold, fontSize: 12)),
+                  const Icon(Icons.bolt_rounded, color: AppColors.streakOrange, size: 14),
+                  const SizedBox(width: 4),
+                  Text(
+                    l10n.battleOpponentAnswered,
+                    style: const TextStyle(
+                      color: AppColors.streakOrange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -144,10 +156,18 @@ class BattleArenaScreen extends ConsumerWidget {
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
                             color: isSelected ? AppColors.brand.withValues(alpha: 0.1) : null,
-                            border: Border.all(color: isSelected ? AppColors.brand : Theme.of(context).colorScheme.outlineVariant, width: isSelected ? 2 : 1),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.brand
+                                  : Theme.of(context).colorScheme.outlineVariant,
+                              width: isSelected ? 2 : 1,
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(o.text, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                          child: Text(
+                            o.text,
+                            style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                          ),
                         ),
                       ),
                     );
@@ -162,68 +182,57 @@ class BattleArenaScreen extends ConsumerWidget {
   }
 }
 
-class _ScoreHeader extends StatelessWidget {
-  const _ScoreHeader({required this.me, required this.opponent, required this.timerPct, required this.secondsLeft, required this.total});
-  final BattlePlayer me;
-  final BattlePlayer opponent;
-  final double timerPct;
-  final int secondsLeft;
-  final int total;
+/// Shared error surface: localized copy, a real retry and a way out.
+class _ErrorBody extends StatelessWidget {
+  const _ErrorBody({
+    required this.title,
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String title;
+  final String message;
+  final Future<void> Function() onRetry;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceDark,
-        border: Border(bottom: BorderSide(color: AppColors.dividerDark)),
-      ),
-      child: Column(
-        children: [
-          Row(
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.battleArena)),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(child: _ScoreColumn(player: me, color: AppColors.brand)),
-              const SizedBox(width: 8),
-              Expanded(child: _ScoreColumn(player: opponent, color: AppColors.comboPurple)),
+              const Icon(Icons.error_outline_rounded, size: 48, color: AppColors.wrongRed),
+              const SizedBox(height: 12),
+              Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.replay_rounded),
+                label: Text(l10n.retry),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => context.go('/home'),
+                icon: const Icon(Icons.arrow_back_rounded),
+                label: Text(l10n.commonGoBack),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: timerPct,
-              minHeight: 6,
-              backgroundColor: AppColors.dividerDark,
-              color: timerPct < 0.2 ? AppColors.wrongRed : AppColors.brand,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(l10n.battleTimer(secondsLeft, total - secondsLeft, total), style: const TextStyle(fontSize: 11, color: AppColors.textTertiaryDark)),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScoreColumn extends StatelessWidget {
-  const _ScoreColumn({required this.player, required this.color});
-  final BattlePlayer player;
-  final Color color;
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: color.withValues(alpha: 0.2),
-          child: Text(player.displayName.isNotEmpty ? player.displayName[0].toUpperCase() : '?', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
         ),
-        const SizedBox(height: 4),
-        Text(player.displayName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-        Text(l10n.commonPoints(player.score), style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13)),
-      ],
+      ),
     );
   }
 }

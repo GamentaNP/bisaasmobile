@@ -2478,6 +2478,33 @@
   "eiceSprint": "स्प्रिंट — 7-दिन की समीक्षा कतार",
   "eiceWeeklyReport": "साप्ताहिक रिपोर्ट",
   "eiceTriage": "ट्रायेज — कवर करें या छोड़ें",
+  "eiceStudyPlan": "अध्ययन योजना — दिन अनुसार",
+  "eiceStudyPlanCombined": "सभी पाठ्यक्रम — अध्ययन योजना",
+  "eiceExamIn": "परीक्षा {time} बाद",
+  "@eiceExamIn": {
+    "placeholders": {
+      "time": {
+        "type": "Object"
+      }
+    }
+  },
+  "eiceCountdownParts": "{days} दिन {hours} घंटे {minutes} मिनट {seconds} सेकंड",
+  "@eiceCountdownParts": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      },
+      "minutes": {
+        "type": "Object"
+      },
+      "seconds": {
+        "type": "Object"
+      }
+    }
+  },
   "battleArena": "बैटल अरेना",
   "battleNoActiveMatch": "कोई सक्रिय मैच नहीं",
   "battleFindMatch": "मैच खोजें",
@@ -2504,6 +2531,20 @@
   "battleResultLoss": "शानदार खेल!",
   "battleResultDraw": "बराबरी",
   "battleResultPending": "परिणाम लंबित",
+  "battleChooseMode": "बैटल मोड चुनें",
+  "battleMode1v1": "1 बनाम 1",
+  "battleMode2v2": "2 बनाम 2",
+  "battleMode3v3": "3 बनाम 3",
+  "battleTeamLabel": "टीम {team}",
+  "@battleTeamLabel": {
+    "placeholders": {
+      "team": {
+        "type": "Object"
+      }
+    }
+  },
+  "battlePlayers": "खिलाड़ी",
+  "battleConnectionFailed": "लाइव बैटल से कनेक्ट नहीं हो सका। कनेक्शन देखें और फिर से प्रयास करें।",
   "liveEventsTitle": "लाइव कार्यक्रम",
   "liveEventsNone": "कोई लाइव कार्यक्रम नहीं",
   "liveEventsNoneBody": "निर्धारित और लाइव कार्यक्रम यहाँ दिखेंगे।",
@@ -3587,5 +3628,13 @@
   "impactLeadersTitle": "प्रभाव नेता",
   "impactLeaderQualifiedReferrals": "योग्य रेफ़रल",
   "rewardCenterTitle": "पुरस्कार केंद्र",
-  "rewardCenterPrizes": "उपलब्ध पुरस्कार"
+  "rewardCenterPrizes": "उपलब्ध पुरस्कार",
+  "homeExplorePracticeTitle": "अभ्यास प्रश्न",
+  "homeExplorePracticeSub": "लोकसेवा और विषय सेट",
+  "homeExploreCalcSub": "सिविल सूत्र इंजन",
+  "homeExploreBattleSub": "रियल टाइम 1v1",
+  "homeExploreWorldsSub": "अध्याय, सितारे और बॉस",
+  "homeExploreStreakTitle": "स्ट्रीक",
+  "homeExploreStreakSub": "मरम्मत, बीमा और वेजर",
+  "homeExploreCoursesSub": "पूर्ण पाठ्यक्रम ट्रैक"
 }

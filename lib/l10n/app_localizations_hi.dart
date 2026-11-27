@@ -3409,6 +3409,27 @@ class AppLocalizationsHi extends AppLocalizations {
   String get eiceTriage => 'ट्रायेज — कवर करें या छोड़ें';
 
   @override
+  String get eiceStudyPlan => 'अध्ययन योजना — दिन अनुसार';
+
+  @override
+  String get eiceStudyPlanCombined => 'सभी पाठ्यक्रम — अध्ययन योजना';
+
+  @override
+  String eiceExamIn(Object time) {
+    return 'परीक्षा $time बाद';
+  }
+
+  @override
+  String eiceCountdownParts(
+    Object days,
+    Object hours,
+    Object minutes,
+    Object seconds,
+  ) {
+    return '$days दिन $hours घंटे $minutes मिनट $seconds सेकंड';
+  }
+
+  @override
   String get battleArena => 'बैटल अरेना';
 
   @override
@@ -3457,6 +3478,30 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get battleResultPending => 'परिणाम लंबित';
+
+  @override
+  String get battleChooseMode => 'बैटल मोड चुनें';
+
+  @override
+  String get battleMode1v1 => '1 बनाम 1';
+
+  @override
+  String get battleMode2v2 => '2 बनाम 2';
+
+  @override
+  String get battleMode3v3 => '3 बनाम 3';
+
+  @override
+  String battleTeamLabel(Object team) {
+    return 'टीम $team';
+  }
+
+  @override
+  String get battlePlayers => 'खिलाड़ी';
+
+  @override
+  String get battleConnectionFailed =>
+      'लाइव बैटल से कनेक्ट नहीं हो सका। कनेक्शन देखें और फिर से प्रयास करें।';
 
   @override
   String get liveEventsTitle => 'लाइव कार्यक्रम';
@@ -4980,4 +5025,28 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get rewardCenterPrizes => 'उपलब्ध पुरस्कार';
+
+  @override
+  String get homeExplorePracticeTitle => 'अभ्यास प्रश्न';
+
+  @override
+  String get homeExplorePracticeSub => 'लोकसेवा और विषय सेट';
+
+  @override
+  String get homeExploreCalcSub => 'सिविल सूत्र इंजन';
+
+  @override
+  String get homeExploreBattleSub => 'रियल टाइम 1v1';
+
+  @override
+  String get homeExploreWorldsSub => 'अध्याय, सितारे और बॉस';
+
+  @override
+  String get homeExploreStreakTitle => 'स्ट्रीक';
+
+  @override
+  String get homeExploreStreakSub => 'मरम्मत, बीमा और वेजर';
+
+  @override
+  String get homeExploreCoursesSub => 'पूर्ण पाठ्यक्रम ट्रैक';
 }

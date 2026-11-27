@@ -3415,6 +3415,27 @@ class AppLocalizationsNe extends AppLocalizations {
   String get eiceTriage => 'त्रायज — ओगट्ने वा छाड्ने';
 
   @override
+  String get eiceStudyPlan => 'अध्ययन योजना — दिन अनुसार';
+
+  @override
+  String get eiceStudyPlanCombined => 'सबै पाठ्यक्रम — अध्ययन योजना';
+
+  @override
+  String eiceExamIn(Object time) {
+    return 'परीक्षा $time पछि';
+  }
+
+  @override
+  String eiceCountdownParts(
+    Object days,
+    Object hours,
+    Object minutes,
+    Object seconds,
+  ) {
+    return '$days दिन $hours घण्टा $minutes मिनेट $seconds सेकेन्ड';
+  }
+
+  @override
   String get battleArena => 'ब्याटल रिङ';
 
   @override
@@ -3463,6 +3484,30 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get battleResultPending => 'नतिजा पर्खाइमा';
+
+  @override
+  String get battleChooseMode => 'ब्याटल मोड छान्नुहोस्';
+
+  @override
+  String get battleMode1v1 => '१ विरुद्ध १';
+
+  @override
+  String get battleMode2v2 => '२ विरुद्ध २';
+
+  @override
+  String get battleMode3v3 => '३ विरुद्ध ३';
+
+  @override
+  String battleTeamLabel(Object team) {
+    return 'टोली $team';
+  }
+
+  @override
+  String get battlePlayers => 'खेलाडी';
+
+  @override
+  String get battleConnectionFailed =>
+      'प्रत्यक्ष ब्याटलमा जोडिन सकिएन। जडान जाँचेर फेरि प्रयास गर्नुहोस्।';
 
   @override
   String get liveEventsTitle => 'प्रत्यक्ष कार्यक्रम';
@@ -4979,4 +5024,28 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get rewardCenterPrizes => 'उपलब्ध पुरस्कार';
+
+  @override
+  String get homeExplorePracticeTitle => 'अभ्यास प्रश्न';
+
+  @override
+  String get homeExplorePracticeSub => 'लोकसेवा र विषय सेट';
+
+  @override
+  String get homeExploreCalcSub => 'सिविल सूत्र इन्जिन';
+
+  @override
+  String get homeExploreBattleSub => 'वास्तविक समय 1v1';
+
+  @override
+  String get homeExploreWorldsSub => 'अध्याय, स्टार र बड';
+
+  @override
+  String get homeExploreStreakTitle => 'स्ट्रिक';
+
+  @override
+  String get homeExploreStreakSub => 'मर्मत, बीमा र वागर';
+
+  @override
+  String get homeExploreCoursesSub => 'पूर्ण पाठ्यक्रम ट्र्याक';
 }

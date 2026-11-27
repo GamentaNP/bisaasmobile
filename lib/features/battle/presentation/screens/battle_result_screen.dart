@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +8,6 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/providers.dart';
 import '../../data/datasources/battle_remote_data_source.dart';
 import '../../domain/battle_outcome.dart';
-import '../../domain/entities/battle.dart';
 import '../controllers/battle_controller.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -21,12 +18,20 @@ import '../../../../l10n/app_localizations.dart';
 /// rendered an **unresolved** battle as a victory and a score tie as a victory
 /// too. `GET /quiz/battles/{id}/results` decides it server-side, so a pending
 /// battle is shown as pending instead of being invented.
-final battleOutcomeProvider = FutureProvider.family<BattleOutcome, String>((
-  ref,
-  battleId,
-) async {
-  final raw = await BattleRemoteDataSource(ref.watch(dioProvider)).getResults(battleId);
-  return BattleOutcome.fromResults(raw, currentUserId: null);
+///
+/// The real current user id travels with the key: passing `null` made every
+/// result render as a loss.
+typedef BattleOutcomeKey = ({String battleId, int? currentUserId, String? currentUid});
+
+final battleOutcomeProvider =
+    FutureProvider.family<BattleOutcome, BattleOutcomeKey>((ref, key) async {
+  final raw = await BattleRemoteDataSource(ref.watch(dioProvider))
+      .getResults(key.battleId);
+  return BattleOutcome.fromResults(
+    raw,
+    currentUserId: key.currentUserId,
+    currentUid: key.currentUid,
+  );
 });
 
 /// Post-battle result. The verdict comes from the server, not from comparing
@@ -43,16 +48,37 @@ class BattleResultScreen extends ConsumerWidget {
     if (m == null) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.battleResultTitle)),
-        body: Center(child: Text(l10n.battleNoMatchToDisplay)),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l10n.battleNoMatchToDisplay),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => context.go('/home'),
+                icon: const Icon(Icons.arrow_back_rounded),
+                label: Text(l10n.commonGoBack),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
-    final outcomeAsync = ref.watch(battleOutcomeProvider(m.id));
+    final myUid = state.myUid ?? m.meUid;
+    final key = (
+      battleId: m.rtdbId,
+      currentUserId: m.currentUserId,
+      currentUid: myUid.isEmpty ? null : myUid,
+    );
+    final outcomeAsync = ref.watch(battleOutcomeProvider(key));
     final outcome = outcomeAsync.value;
 
-    // Fall back to the RTDB-derived winner ONLY when the server call fails, and
-    // treat "unknown" as unknown — never as a win.
-    final rtdbSaysWin = state.winnerUid != null && state.winnerUid == m.player1.uid;
+    // Fall back to the RTDB-derived winner ONLY when the server call fails,
+    // and treat "unknown" as unknown — never as a win.
+    final rtdbWin = state.winnerUid != null &&
+        state.winnerUid!.isNotEmpty &&
+        state.winnerUid == myUid;
     final bool isWin;
     final bool isPending;
     final String headline;
@@ -64,20 +90,52 @@ class BattleResultScreen extends ConsumerWidget {
         'draw' => l10n.battleResultDraw,
         _ => l10n.battleResultPending,
       };
-      isPending = headline == l10n.battleResultPending;
+      isPending = outcome.isPending;
     } else if (outcomeAsync.hasError) {
-      isWin = rtdbSaysWin;
-      isPending = false;
-      headline = rtdbSaysWin ? l10n.battleResultWin : l10n.battleResultLoss;
+      isWin = rtdbWin;
+      // An unreadable result AND an unknown RTDB winner is pending, not a
+      // loss invented from the absence of a winner.
+      isPending = state.winnerUid == null || state.winnerUid!.isEmpty;
+      headline = isPending
+          ? l10n.battleResultPending
+          : (rtdbWin ? l10n.battleResultWin : l10n.battleResultLoss);
     } else {
       isWin = false;
       isPending = true;
       headline = l10n.battleResultPending;
     }
 
-    // Best-effort me/opp split (no uid wired yet — default to player1 as me)
-    final me = m.player1;
-    final opp = m.player2;
+    final winnerUid = outcome?.winnerUid ?? state.winnerUid;
+    final scorePlayers = outcome != null && outcome.players.isNotEmpty
+        ? outcome.players
+            .map(
+              (p) => _ScoreLine(
+                uid: p.uid,
+                name: p.name,
+                team: p.team,
+                score: p.score,
+                isMe: p.isMe,
+                isWinner: p.isWinner,
+              ),
+            )
+            .toList()
+        : m.allPlayers
+            .map(
+              (p) => _ScoreLine(
+                uid: p.uid,
+                name: p.displayName,
+                team: p.team,
+                score: p.score,
+                isMe: p.uid == myUid,
+                isWinner: winnerUid != null && winnerUid == p.uid,
+              ),
+            )
+            .toList();
+    final me = scorePlayers.where((p) => p.isMe).firstOrNull;
+    final myScore = me?.score ?? 0;
+    final rivalScore = scorePlayers
+        .where((p) => !p.isMe)
+        .fold<int>(0, (max, p) => p.score > max ? p.score : max);
 
     return Scaffold(
       body: SafeArea(
@@ -95,17 +153,45 @@ class BattleResultScreen extends ConsumerWidget {
                 SizedBox(
                   width: 200,
                   height: 200,
-                  child: Lottie.asset(isWin ? 'assets/animations/battle_win.json' : 'assets/animations/battle_lose.json', repeat: false),
+                  child: Lottie.asset(
+                    isWin
+                        ? 'assets/animations/battle_win.json'
+                        : 'assets/animations/battle_lose.json',
+                    repeat: false,
+                  ),
                 ),
               const SizedBox(height: 16),
-              Text(headline, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: isWin ? AppColors.xpGold : AppColors.textSecondaryDark)),
+              Text(
+                headline,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: isWin ? AppColors.xpGold : AppColors.textSecondaryDark,
+                ),
+              ),
+              if (outcomeAsync.hasError && outcome == null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  battleErrorMessage(outcomeAsync.error!),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.wrongRed, fontSize: 12),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => ref.invalidate(battleOutcomeProvider(key)),
+                  icon: const Icon(Icons.replay_rounded),
+                  label: Text(l10n.retry),
+                ),
+              ],
               const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // Every participant is listed — 2v2/3v3 rosters used to be
+              // truncated to two hard-coded columns.
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
-                  _ResultColumn(player: me, isWinner: isWin, isMe: true),
-                  Text(l10n.battleVs, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                  _ResultColumn(player: opp, isWinner: !isWin, isMe: false),
+                  for (final p in scorePlayers) _ResultColumn(player: p),
                 ],
               ),
               const SizedBox(height: 24),
@@ -117,7 +203,7 @@ class BattleResultScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () => _share(context, me, opp),
+                onPressed: () => _share(context, scorePlayers, myScore, rivalScore),
                 icon: const Icon(Icons.share_rounded),
                 label: Text(l10n.commonShareResult),
                 style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
@@ -137,62 +223,118 @@ class BattleResultScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _share(BuildContext context, BattlePlayer me, BattlePlayer opp) async {
+  Future<void> _share(
+    BuildContext context,
+    List<_ScoreLine> players,
+    int myScore,
+    int rivalScore,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     // The invitation copy itself is translated; the figures are the server's
     // result and the display name is whatever the server published.
-    final oppName = opp.displayName.isNotEmpty ? opp.displayName : l10n.battleOpponent;
+    final rival = players.where((p) => !p.isMe).firstOrNull;
+    final rivalName = rival != null && rival.name.isNotEmpty
+        ? rival.name
+        : l10n.battleOpponent;
     final msg = '${l10n.socialShareMomentFallback} '
-        '${me.score}-${opp.score} ${l10n.battleVs} $oppName';
+        '$myScore-$rivalScore ${l10n.battleVs} $rivalName';
     try {
       await SharePlus.instance.share(
         ShareParams(text: msg, subject: l10n.battleResultTitle),
       );
     } catch (_) {
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.battleShareUnavailable)));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.battleShareUnavailable)),
+        );
+      }
     }
   }
 }
 
-class _ResultColumn extends StatelessWidget {
-  const _ResultColumn({required this.player, required this.isWinner, required this.isMe});
-  final BattlePlayer player;
-  final bool isWinner;
+@immutable
+class _ScoreLine {
+  const _ScoreLine({
+    required this.uid,
+    required this.name,
+    required this.team,
+    required this.score,
+    required this.isMe,
+    required this.isWinner,
+  });
+  final String uid;
+  final String name;
+  final String? team;
+  final int score;
   final bool isMe;
+  final bool isWinner;
+}
+
+class _ResultColumn extends StatelessWidget {
+  const _ResultColumn({required this.player});
+  final _ScoreLine player;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // The domain entity carries no display copy — its player defaults are
-    // empty. Pick the reader-facing label here, where the locale is known.
-    final displayName = player.displayName.isNotEmpty
-        ? player.displayName
-        : (isMe ? l10n.battleYou : l10n.battleOpponent);
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            CircleAvatar(
-              radius: 36,
-              backgroundColor: (isWinner ? AppColors.xpGold : AppColors.dividerDark).withValues(alpha: 0.3),
-              child: Text(displayName[0].toUpperCase(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            ),
-            if (isWinner)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(color: AppColors.xpGold, shape: BoxShape.circle),
-                  child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 14),
+    final displayName = player.name.isNotEmpty
+        ? player.name
+        : (player.isMe ? l10n.battleYou : l10n.battleOpponent);
+    return SizedBox(
+      width: 100,
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              CircleAvatar(
+                radius: 32,
+                backgroundColor:
+                    (player.isWinner ? AppColors.xpGold : AppColors.dividerDark)
+                        .withValues(alpha: 0.3),
+                child: Text(
+                  displayName[0].toUpperCase(),
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Text(isMe ? l10n.battleYou : displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(l10n.commonPoints(player.score), style: TextStyle(color: isWinner ? AppColors.xpGold : null, fontSize: 16, fontWeight: FontWeight.bold)),
-      ],
+              if (player.isWinner)
+                const Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(color: AppColors.xpGold, shape: BoxShape.circle),
+                    child: Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(Icons.emoji_events_rounded, color: Colors.white, size: 14),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          if (player.team != null && player.team!.isNotEmpty)
+            Text(
+              l10n.battleTeamLabel(player.team!),
+              style: const TextStyle(fontSize: 10, color: AppColors.textTertiaryDark),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          Text(
+            player.isMe ? l10n.battleYou : displayName,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            l10n.commonPoints(player.score),
+            style: TextStyle(
+              color: player.isWinner ? AppColors.xpGold : null,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -138,4 +138,66 @@ void main() {
     expect(o.categoryName, 'Soil Mechanics');
     expect(o.endedAt, isNotNull);
   });
+
+  group('canonical multi-player payload', () {
+    Map<String, dynamic> teamPayload({Object? winner = 'u2'}) => {
+          'status': 'completed',
+          'mode': '3v3',
+          'players': [
+            for (var i = 1; i <= 6; i++)
+              {
+                'uid': 'u$i',
+                'id': i,
+                'name': 'Player $i',
+                'score': i * 3,
+                'team': i <= 3 ? 'A' : 'B',
+              },
+          ],
+          'me': {'uid': 'u1', 'id': 1},
+          'winner': winner,
+        };
+
+    test('a real current user id turns the result into a win', () {
+      final o = BattleOutcome.fromResults(
+        teamPayload(winner: {'uid': 'u1', 'id': 1}),
+        currentUserId: 1,
+        currentUid: 'u1',
+      );
+      expect(o.result, 'win');
+      expect(o.isWin, isTrue);
+      expect(o.userScore, 3);
+      expect(o.players, hasLength(6));
+      expect(o.players.where((p) => p.isMe).single.uid, 'u1');
+      expect(o.players.where((p) => p.isWinner).single.uid, 'u1');
+    });
+
+    test('the same payload is a loss for the other user', () {
+      final o = BattleOutcome.fromResults(
+        teamPayload(),
+        currentUserId: 1,
+        currentUid: 'u1',
+      );
+      expect(o.result, 'loss');
+      expect(o.isLoss, isTrue);
+      expect(o.opponentScore, 18);
+      expect(o.winnerUid, 'u2');
+    });
+
+    test('winner_id from the results API is accepted too', () {
+      final raw = teamPayload();
+      raw.remove('winner');
+      raw['winner_id'] = 2;
+      final o = BattleOutcome.fromResults(raw, currentUserId: 2);
+      expect(o.result, 'win');
+    });
+
+    test('an in-progress team battle is pending, never a win', () {
+      final raw = teamPayload(winner: null);
+      raw['status'] = 'in_progress';
+      final o = BattleOutcome.fromResults(raw, currentUserId: 1);
+      expect(o.result, 'pending');
+      expect(o.isWin, isFalse);
+      expect(o.players, hasLength(6));
+    });
+  });
 }
