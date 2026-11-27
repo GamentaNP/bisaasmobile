@@ -17,7 +17,7 @@ void main() {
           displayName: 'Player $i',
           avatarUrl: '',
           score: i * 4,
-          team: i <= 3 ? 'A' : 'B',
+          team: i <= 3 ? 'alpha' : 'bravo',
         ),
     ];
     final match = BattleMatch(
@@ -47,8 +47,8 @@ void main() {
       expect(find.text('Player $i'), findsOneWidget);
       expect(find.text(l10n.commonPoints(i * 4)), findsOneWidget);
     }
-    expect(find.text(l10n.battleTeamLabel('A')), findsOneWidget);
-    expect(find.text(l10n.battleTeamLabel('B')), findsOneWidget);
+    expect(find.text(l10n.battleTeamAlpha), findsOneWidget);
+    expect(find.text(l10n.battleTeamBravo), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
   });
 

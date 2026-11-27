@@ -16,21 +16,24 @@ Map<String, dynamic> canonicalPayload({
   int questionCount = 6,
 }) {
   return {
+    'action': 'started',
     'id': 'fb-1',
+    'firebase_battle_id': 'fb-1',
+    'battle_id': 91,
+    'lobby_id': 91,
     'status': 'in_progress',
     'mode': mode,
-    'firebase_battle_id': 'fb-1',
     'firebase_token': token,
     'questions': [
       for (var i = 1; i <= 2; i++)
         {
-          'id': '10$i',
+          'id': 10 + i,
           'body': 'Question $i',
           'options': [
-            {'key': '1', 'text': 'First'},
-            {'key': '2', 'text': 'Second'},
-            {'key': '3', 'text': 'Third'},
-            {'key': '4', 'text': 'Fourth'},
+            {'key': 'a', 'text': 'First'},
+            {'key': 'b', 'text': 'Second'},
+            {'key': 'c', 'text': 'Third'},
+            {'key': 'd', 'text': 'Fourth'},
           ],
         },
     ],
@@ -41,13 +44,16 @@ Map<String, dynamic> canonicalPayload({
       for (var i = 1; i <= 6; i++)
         {
           'uid': 'u$i',
-          'id': i,
           'name': 'Player $i',
-          'team': i <= 3 ? 'A' : 'B',
+          'team': i <= 3 ? 'alpha' : 'bravo',
           'score': i,
         },
     ],
     'me': {'uid': 'u1', 'id': 1},
+    'teams': [
+      {'key': 'alpha', 'name': 'Alpha'},
+      {'key': 'bravo', 'name': 'Bravo'},
+    ],
   };
 }
 
@@ -60,29 +66,50 @@ void main() {
 
       expect(m.id, 'fb-1');
       expect(m.rtdbId, 'fb-1');
+      expect(m.action, 'started');
+      expect(m.lobbyId, 91);
       expect(m.status, 'in_progress');
       expect(m.mode, '3v3');
       expect(m.firebaseToken, 'fresh-token');
       expect(m.questions, hasLength(2));
+      expect(m.questions.first.id, '11');
       expect(m.questions.first.text, 'Question 1');
+      expect(m.questions.first.options.first.id, 'a');
       expect(m.questions.first.options.first.order, 0);
       expect(m.questions.first.options.last.order, 3);
       expect(m.questionCount, 6);
       expect(m.perQuestionSeconds, 30);
       expect(m.allPlayers, hasLength(6));
-      expect(m.allPlayers.first.team, 'A');
-      expect(m.allPlayers.last.team, 'B');
+      expect(m.allPlayers.first.team, 'alpha');
+      expect(m.allPlayers.last.team, 'bravo');
+      expect(m.teams.map((t) => t.key), ['alpha', 'bravo']);
       expect(m.meUid, 'u1');
       expect(m.currentUserId, 1);
       expect(m.startedAt, DateTime.parse('2026-11-27T10:00:00Z'));
     });
 
+    test('id is the RTDB key, not the numeric battle_id or lobby_id', () {
+      final m = BattlePayload.parse(canonicalPayload());
+      expect(m.id, isA<String>());
+      expect(m.rtdbId, 'fb-1');
+      expect(m.rtdbId, isNot('91'));
+    });
+
     test('a match with no questions is never valid', () {
       final raw = canonicalPayload()..remove('questions');
+      expect(() => BattlePayload.parse(raw), throwsA(isA<ContractViolation>()));
+    });
+
+    test('a missing fresh token fails closed', () {
+      final raw = canonicalPayload(token: null);
       expect(
         () => BattlePayload.parse(raw),
-        throwsA(isA<ContractViolation>()),
+        returnsNormally,
+        reason: 'the parser reads what the server sent; the repository rejects '
+            'a match with no usable token',
       );
+      final m = BattlePayload.parse(raw);
+      expect(m.firebaseToken, isEmpty);
     });
 
     test('legacy create payload is tolerated through firebase_battle_id', () {
@@ -92,7 +119,11 @@ void main() {
         'firebase_battle_id': 'fb-legacy',
         'firebase_token': 'legacy-token',
         'questions': [
-          {'id': 7, 'text': 'Legacy question', 'options': [{'id': '1', 'text': 'A'}]},
+          {
+            'id': 7,
+            'text': 'Legacy question',
+            'options': [{'id': '1', 'text': 'A'}],
+          },
         ],
       });
 
@@ -105,13 +136,29 @@ void main() {
       expect(m.questions.single.text, 'Legacy question');
     });
 
-    test('RTDB snapshot can merge into a waiting match without questions', () {
+    test('RTDB players/{uid} map merges scores from the REST roster', () {
       final base = BattlePayload.parse(canonicalPayload());
       final merged = BattlePayload.parse(
         {
           'status': 'in_progress',
-          'questions': canonicalPayload()['questions'],
+          'players': {
+            'u1': {'uid': 'u1', 'name': 'Player 1', 'team': 'alpha', 'answered': false},
+            'u2': {'uid': 'u2', 'name': 'Player 2', 'team': 'alpha', 'answered': true},
+          },
         },
+        base: base,
+        requireQuestions: false,
+      );
+      expect(merged.allPlayers, hasLength(2));
+      expect(merged.allPlayers.first.score, 1);
+      expect(merged.allPlayers.last.score, 2);
+      expect(merged.allPlayers.last.team, 'alpha');
+    });
+
+    test('RTDB snapshot can merge without questions into a waiting match', () {
+      final base = BattlePayload.parse(canonicalPayload());
+      final merged = BattlePayload.parse(
+        {'status': 'in_progress', 'questions': canonicalPayload()['questions']},
         base: base,
         requireQuestions: false,
       );
@@ -144,10 +191,11 @@ void main() {
 
     test('millisecond magnitudes stay milliseconds', () {
       const ms = 1764237600000;
-      expect(
-        BattlePayload.startedAt(ms),
-        DateTime.fromMillisecondsSinceEpoch(ms),
-      );
+      expect(BattlePayload.startedAt(ms), DateTime.fromMillisecondsSinceEpoch(ms));
+    });
+
+    test('null before join stays null', () {
+      expect(BattlePayload.startedAt(null), isNull);
     });
   });
 
@@ -155,7 +203,18 @@ void main() {
     test('both terminal spellings end the battle', () {
       expect(BattlePayload.isTerminal('finished'), isTrue);
       expect(BattlePayload.isTerminal('completed'), isTrue);
+      expect(BattlePayload.isTerminal('active'), isFalse);
       expect(BattlePayload.isTerminal('in_progress'), isFalse);
+    });
+
+    test('legacy RTDB aliases also end the battle', () {
+      expect(BattlePayload.isTerminalSnapshot({'status': 'finished'}), isTrue);
+      expect(BattlePayload.isTerminalSnapshot({'completed': true}), isTrue);
+      expect(
+        BattlePayload.isTerminalSnapshot({'legacy_status': 'completed'}),
+        isTrue,
+      );
+      expect(BattlePayload.isTerminalSnapshot({'status': 'active'}), isFalse);
     });
 
     test('winner is read from a uid, an id or a map', () {
@@ -167,7 +226,7 @@ void main() {
   });
 
   group('repository', () {
-    test('mode is forwarded to create and token is refreshed when absent', () async {
+    test('1v1 uses the canonical create route and the fresh token', () async {
       final remote = _MockRemote();
       when(
         () => remote.findMatch(
@@ -175,13 +234,9 @@ void main() {
           totalQuestions: any(named: 'totalQuestions'),
           mode: any(named: 'mode'),
         ),
-      ).thenAnswer((_) async => canonicalPayload(token: null, mode: '2v2'));
-      Future<Map<String, dynamic>> refreshed(Object? _) async =>
-          {'firebase_token': 'refreshed-token'};
-      when(remote.getFirebaseToken).thenAnswer(refreshed);
+      ).thenAnswer((_) async => canonicalPayload(mode: '1v1'));
 
-      final repo = BattleRepositoryImpl(remote);
-      final m = await repo.findMatch(mode: '2v2', totalQuestions: 12);
+      final m = await BattleRepositoryImpl(remote).findMatch(mode: '1v1');
 
       final captured = verify(
         () => remote.findMatch(
@@ -190,15 +245,31 @@ void main() {
           mode: captureAny(named: 'mode'),
         ),
       ).captured.single as String;
-      expect(captured, '2v2');
-      expect(m.mode, '2v2');
-      // The server's published total wins over the requested queue size.
-      expect(m.questionCount, 6);
-      expect(m.firebaseToken, 'refreshed-token');
-      verify(remote.getFirebaseToken).called(1);
+      expect(captured, '1v1');
+      expect(m.firebaseToken, 'fresh-token');
+      verifyNever(remote.getFirebaseToken);
+      verifyNever(() => remote.createTeamMatch(mode: any(named: 'mode')));
     });
 
-    test('a fresh create token is never overwritten by the token endpoint', () async {
+    test('team modes use the dedicated team-match route', () async {
+      final remote = _MockRemote();
+      when(() => remote.createTeamMatch(mode: any(named: 'mode')))
+          .thenAnswer((_) async => canonicalPayload(mode: '3v3'));
+
+      final m = await BattleRepositoryImpl(remote).findMatch(mode: '3v3');
+
+      final captured = verify(
+        () => remote.createTeamMatch(mode: captureAny(named: 'mode')),
+      ).captured.single as String;
+      expect(captured, '3v3');
+      expect(m.mode, '3v3');
+      expect(m.allPlayers, hasLength(6));
+      expect(m.firebaseToken, 'fresh-token');
+      verifyNever(remote.getFirebaseToken);
+    });
+
+    test('a missing fresh token is rejected instead of using /firebase-token',
+        () async {
       final remote = _MockRemote();
       when(
         () => remote.findMatch(
@@ -206,12 +277,12 @@ void main() {
           totalQuestions: any(named: 'totalQuestions'),
           mode: any(named: 'mode'),
         ),
-      ).thenAnswer((_) async => canonicalPayload());
-      final repo = BattleRepositoryImpl(remote);
+      ).thenAnswer((_) async => canonicalPayload(token: null));
 
-      final m = await repo.findMatch(mode: '3v3');
-
-      expect(m.firebaseToken, 'fresh-token');
+      await expectLater(
+        BattleRepositoryImpl(remote).findMatch(mode: '1v1'),
+        throwsA(isA<ContractViolation>()),
+      );
       verifyNever(remote.getFirebaseToken);
     });
 
@@ -225,7 +296,7 @@ void main() {
   });
 
   group('remote data source', () {
-    test('sends the selected mode in the create body', () async {
+    test('sends the selected mode in the 1v1 create body', () async {
       final dio = _MockDio();
       when(
         () => dio.post<Map<String, dynamic>>(
@@ -237,14 +308,14 @@ void main() {
         (_) async => Response<Map<String, dynamic>>(
           requestOptions: RequestOptions(path: '/quiz/battles'),
           statusCode: 200,
-          data: {'success': true, 'data': canonicalPayload()},
+          data: {'success': true, 'data': canonicalPayload(mode: '1v1')},
         ),
       );
 
       await BattleRemoteDataSource(dio).findMatch(
         categoryId: 5,
         totalQuestions: 10,
-        mode: '3v3',
+        mode: '1v1',
       );
 
       final body = verify(
@@ -254,9 +325,38 @@ void main() {
           options: any(named: 'options'),
         ),
       ).captured.first as Map<String, dynamic>;
-      expect(body['mode'], '3v3');
+      expect(body['mode'], '1v1');
       expect(body['category_id'], 5);
       expect(body['total_questions'], 10);
+    });
+
+    test('team-match route posts mode with an Idempotency-Key', () async {
+      final dio = _MockDio();
+      when(
+        () => dio.post<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response<Map<String, dynamic>>(
+          requestOptions: RequestOptions(path: BattlePayload.teamMatchEndpoint),
+          statusCode: 201,
+          data: {'success': true, 'data': canonicalPayload(mode: '5v5')},
+        ),
+      );
+
+      await BattleRemoteDataSource(dio).createTeamMatch(mode: '5v5');
+
+      final captured = verify(
+        () => dio.post<Map<String, dynamic>>(
+          '/quiz/battle-rooms/team-matches',
+          data: captureAny(named: 'data'),
+          options: captureAny(named: 'options'),
+        ),
+      ).captured;
+      expect((captured.first as Map<String, dynamic>)['mode'], '5v5');
+      expect((captured.last as Options).headers?['Idempotency-Key'], isNotNull);
     });
   });
 }

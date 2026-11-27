@@ -199,5 +199,45 @@ void main() {
       expect(o.isWin, isFalse);
       expect(o.players, hasLength(6));
     });
+
+    test('me.uid identifies the user even when numeric ids are absent', () {
+      final o = BattleOutcome.fromResults(
+        teamPayload(winner: 'u2'),
+        currentUserId: null,
+        currentUid: 'u2',
+      );
+      expect(o.result, 'win');
+      expect(o.userScore, 6);
+      expect(o.players.where((p) => p.isMe).single.uid, 'u2');
+    });
+
+    test('legacy completed aliases resolve a battle with no winner node', () {
+      final raw = teamPayload(winner: null);
+      raw.remove('status');
+      raw['completed'] = true;
+      raw['legacy_status'] = 'completed';
+      final o = BattleOutcome.fromResults(raw, currentUserId: 1);
+      expect(o.result, 'draw');
+      expect(o.isPending, isFalse);
+    });
+
+    test('RTDB players/{uid} map is parsed too', () {
+      final o = BattleOutcome.fromResults(
+        const {
+          'status': 'finished',
+          'winner': 'u2',
+          'players': {
+            'u1': {'name': 'A', 'score': 3, 'team': 'alpha'},
+            'u2': {'name': 'B', 'score': 9, 'team': 'bravo'},
+          },
+          'me': {'uid': 'u1', 'id': 1},
+        },
+        currentUserId: 1,
+        currentUid: 'u1',
+      );
+      expect(o.result, 'loss');
+      expect(o.players, hasLength(2));
+      expect(o.players.first.team, 'alpha');
+    });
   });
 }

@@ -136,15 +136,24 @@ class BattleOutcome {
 
     final me = mapOf(b['me']);
     final meUid = stringOf(me['uid'] ?? me['id']);
-    int? myIndex;
-    for (var i = 0; i < parsed.length; i++) {
-      final p = list[i];
-      if ((currentUserId != null && intOf(p['id'] ?? p['user_id']) == currentUserId) ||
-          (currentUid != null && currentUid.isNotEmpty && parsed[i].uid == currentUid) ||
-          (meUid.isNotEmpty && parsed[i].uid == meUid)) {
-        myIndex = i;
-        break;
+    int? findIndex(bool Function(Map<String, dynamic>, BattleOutcomePlayer) match) {
+      for (var i = 0; i < list.length; i++) {
+        if (match(list[i], parsed[i])) return i;
       }
+      return null;
+    }
+
+    // The canonical `me.uid` is authoritative, but an explicitly supplied
+    // currentUid from the match payload outranks it when both are present.
+    int? myIndex;
+    if (currentUid != null && currentUid.isNotEmpty) {
+      myIndex = findIndex((p, o) => o.uid == currentUid);
+    }
+    myIndex ??= currentUserId == null
+        ? null
+        : findIndex((p, _) => intOf(p['id'] ?? p['user_id']) == currentUserId);
+    if (myIndex == null && meUid.isNotEmpty) {
+      myIndex = findIndex((p, o) => o.uid == meUid);
     }
     // Without an id match, the server's player1 slot is the historical
     // convention. Never invent a win from this fallback.
