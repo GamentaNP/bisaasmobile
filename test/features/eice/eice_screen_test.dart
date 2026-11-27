@@ -77,6 +77,8 @@ void main() {
   ) async {
     when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer((call) async {
       final path = call.positionalArguments.first as String;
+      // No combined payload: exercise the single-exam fallback path.
+      if (path == '/quiz/study-planner/combined') return ok(null);
       if (path == '/quiz/study-planner/12') {
         return ok({
           'exam': {

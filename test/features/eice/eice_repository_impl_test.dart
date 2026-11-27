@@ -23,12 +23,12 @@ void main() {
 
   test('combined plan maps to a payload without re-shaping it', () async {
     when(() => remote.getCombinedStudyPlan()).thenAnswer(
-      (_) async => {'combined_daily_plan': <dynamic>[]},
+      (_) async => {'combined_daily_plan': <Map<String, dynamic>>[]},
     );
 
     final payload = await repository.getCombinedStudyPlan();
 
-    expect(payload?.raw['combined_daily_plan'], isA<List>());
+    expect(payload?.raw['combined_daily_plan'], isA<List<Map<String, dynamic>>>());
   });
 
   test('plan, topic pattern and course patterns map to payloads', () async {

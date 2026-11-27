@@ -104,6 +104,12 @@ dependencies:
   uuid: ^4.5.2
   meta: any
   freerasp: ^8.2.2
+
+  # === REWARDED ADS (Android / iOS only) ===
+  # Official Google plugin. IDs are compile-time --dart-define values only
+  # (see docs/ADS_SETUP.md); the service is a no-op on web/desktop.
+  # google_mobile_ads 9.x needs Flutter >=3.38.1 / Dart >=3.10.
+  google_mobile_ads: ^9.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

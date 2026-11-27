@@ -37,14 +37,14 @@ void main() {
 
   test('getCombinedStudyPlan uses the merged all-courses route', () async {
     when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer(
-      (_) async => body({'combined_daily_plan': <dynamic>[]}),
+      (_) async => body({'combined_daily_plan': <Map<String, dynamic>>[]}),
     );
 
     final res = await src.getCombinedStudyPlan();
 
     verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/combined')).called(1);
     expect(res, isNotNull);
-    expect(res?['combined_daily_plan'], isA<List>());
+    expect(res?['combined_daily_plan'], isA<List<Map<String, dynamic>>>());
   });
 
   test('getCoach takes NO exam segment', () async {
