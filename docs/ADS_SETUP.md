@@ -75,10 +75,12 @@ is `false` so the UI can hide the entry point entirely.
 `GADApplicationIdentifier = $(ADMOB_APP_ID_IOS)` rather than a literal. Set
 `ADMOB_APP_ID_IOS` as a build setting on the Runner target (or in an xcconfig
 for that target) when preparing the iOS build; the same value must also be
-passed as a `--dart-define` so the Dart side enables the service. This file's
-ownership is limited to `Info.plist`, so the Xcode project change is left to
-the iOS workstream. With the setting absent, the SDK is never initialised by
-this code path and ads stay off — it cannot crash the app.
+passed as a `--dart-define` so the Dart side enables the service. The Xcode
+project now defines `ADMOB_APP_ID_IOS = ""` in every configuration, so an
+unset value resolves to empty rather than the literal `$(...)` string. Replace
+that build setting (or override it in an xcconfig) with the real AdMob app ID
+before an iOS release. With the setting absent, the SDK is never initialised
+by this code path and ads stay off — it cannot crash the app.
 
 ---
 
