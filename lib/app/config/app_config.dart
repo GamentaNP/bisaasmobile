@@ -127,6 +127,11 @@ class AppConfig {
   bool get externalApiEnabled => flag('external_api_enabled');
   bool get economyEnabled => flag('economy_enabled');
   bool get adsEnabled => flag('ads_enabled');
+
+  /// Mirrors the admin `ads_earn_coins_enabled` toggle. Deliberately not in
+  /// [knownEnabledByDefaultFlags]: an older server that never published this
+  /// flag must not silently enable coin-earning ads.
+  bool get adsRewardsEnabled => flag('ads_rewards_enabled');
   bool get guestCalculatorEnabled => flag('guest_calculator_enabled');
   bool get competitiveEnabled => flag('competitive_enabled');
   bool get premiumDownloadEnabled => flag('premium_download_enabled');

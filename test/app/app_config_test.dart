@@ -18,6 +18,7 @@ void main() {
       'external_api_enabled': true,
       'economy_enabled': false,
       'ads_enabled': false,
+      'ads_rewards_enabled': false,
       'guest_calculator_enabled': false,
       'premium_download_enabled': true,
       'offline_premium_enabled': true,
@@ -56,7 +57,24 @@ void main() {
 
     test('respects ads and guest calculators being off', () {
       expect(config.adsEnabled, isFalse);
+      expect(config.adsRewardsEnabled, isFalse);
       expect(config.guestCalculatorEnabled, isFalse);
+    });
+
+    test('an older server without the ad-reward flag never enables it', () {
+      final features = Map<String, dynamic>.from(live['features'] as Map);
+      features.remove('ads_rewards_enabled');
+      final older = Map<String, dynamic>.from(live)
+        ..['features'] = features;
+      expect(AppConfig.fromJson(older).adsRewardsEnabled, isFalse);
+    });
+
+    test('a published ad-reward flag is honoured', () {
+      final features = Map<String, dynamic>.from(live['features'] as Map);
+      features['ads_rewards_enabled'] = true;
+      final enabled = Map<String, dynamic>.from(live)
+        ..['features'] = features;
+      expect(AppConfig.fromJson(enabled).adsRewardsEnabled, isTrue);
     });
 
     test('reads the flags that are on', () {

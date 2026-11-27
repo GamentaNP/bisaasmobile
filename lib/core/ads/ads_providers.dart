@@ -24,7 +24,20 @@ final adRewardServiceProvider = Provider<AdRewardService>((ref) {
 ///
 /// `false` means "hide the watch-to-earn entry point", never "show an error":
 /// web, desktop and builds without the four dart-defines all land here.
+/// The operator's runtime gates. Both are published by `/api/v1/app/config`
+/// and can be flipped in Filament without shipping a new build.
+///
+/// `ads_enabled` is the general ad switch; `ads_rewards_enabled` mirrors the
+/// EconomySettings toggle that actually credits coins. A screen must require
+/// both, plus SDK availability, before it offers "watch to earn".
+final adEntryEnabledProvider = Provider<bool>((ref) {
+  final app = ref.watch(appConfigValueProvider);
+  if (app == null) return false;
+  return app.adsEnabled && app.adsRewardsEnabled;
+});
+
 final adRewardReadyProvider = FutureProvider<bool>((ref) async {
+  if (!ref.watch(adEntryEnabledProvider)) return false;
   final service = ref.watch(adRewardServiceProvider);
   await service.initialize();
   return service.isAvailable;
