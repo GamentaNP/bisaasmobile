@@ -64,7 +64,8 @@ class BattleArenaScreen extends ConsumerWidget {
     }
 
     final m = state.match!;
-    final myUid = state.myUid ?? m.meUid;
+    // Canonical `me.uid` is the identity used by the server's `players` map.
+    final myUid = m.meUid.isNotEmpty ? m.meUid : (state.myUid ?? '');
 
     // A match the server opened without questions is drift, not an empty
     // arena. Retry re-runs matchmaking with the same mode.

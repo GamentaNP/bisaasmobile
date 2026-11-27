@@ -2535,6 +2535,7 @@
   "battleMode1v1": "1 बनाम 1",
   "battleMode2v2": "2 बनाम 2",
   "battleMode3v3": "3 बनाम 3",
+  "battleMode5v5": "5 बनाम 5",
   "battleTeamLabel": "टीम {team}",
   "@battleTeamLabel": {
     "placeholders": {
@@ -2543,6 +2544,8 @@
       }
     }
   },
+  "battleTeamAlpha": "अल्फा टीम",
+  "battleTeamBravo": "ब्रेवो टीम",
   "battlePlayers": "खिलाड़ी",
   "battleConnectionFailed": "लाइव बैटल से कनेक्ट नहीं हो सका। कनेक्शन देखें और फिर से प्रयास करें।",
   "liveEventsTitle": "लाइव कार्यक्रम",

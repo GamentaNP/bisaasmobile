@@ -9,6 +9,7 @@ import '../../../../app/providers.dart';
 import '../../data/datasources/battle_remote_data_source.dart';
 import '../../domain/battle_outcome.dart';
 import '../controllers/battle_controller.dart';
+import '../widgets/battle_score_board.dart';
 import '../../../../l10n/app_localizations.dart';
 
 /// Fetches the authoritative outcome.
@@ -65,7 +66,9 @@ class BattleResultScreen extends ConsumerWidget {
       );
     }
 
-    final myUid = state.myUid ?? m.meUid;
+    // `me.uid` from the server is authoritative for identity; the Firebase
+    // SDK's local uid is only a fallback for a payload that omitted it.
+    final myUid = m.meUid.isNotEmpty ? m.meUid : (state.myUid ?? '');
     final key = (
       battleId: m.rtdbId,
       currentUserId: m.currentUserId,
@@ -314,7 +317,7 @@ class _ResultColumn extends StatelessWidget {
           const SizedBox(height: 6),
           if (player.team != null && player.team!.isNotEmpty)
             Text(
-              l10n.battleTeamLabel(player.team!),
+              battleTeamLabel(player.team!, l10n) ?? '',
               style: const TextStyle(fontSize: 10, color: AppColors.textTertiaryDark),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

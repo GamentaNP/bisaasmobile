@@ -2058,7 +2058,10 @@ add("battleChooseMode", "Choose a battle mode", "ब्याटल मोड �
 add("battleMode1v1", "1 vs 1", "१ विरुद्ध १", "1 बनाम 1")
 add("battleMode2v2", "2 vs 2", "२ विरुद्ध २", "2 बनाम 2")
 add("battleMode3v3", "3 vs 3", "३ विरुद्ध ३", "3 बनाम 3")
+add("battleMode5v5", "5 vs 5", "५ विरुद्ध ५", "5 बनाम 5")
 add("battleTeamLabel", "Team {team}", "टोली {team}", "टीम {team}", ["team"])
+add("battleTeamAlpha", "Team Alpha", "अल्फा टोली", "अल्फा टीम")
+add("battleTeamBravo", "Team Bravo", "ब्रेभो टोली", "ब्रेवो टीम")
 add("battlePlayers", "Players", "खेलाडी", "खिलाड़ी")
 add(
     "battleConnectionFailed",

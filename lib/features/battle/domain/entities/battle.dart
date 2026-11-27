@@ -26,12 +26,19 @@ class BattlePlayer {
   final int currentIdx;
   final bool finished;
 
-  /// Team label published by the server (`1`, `2`, `A`, `B`, …). Null in 1v1.
+  /// `alpha` / `bravo` for team battles, null in 1v1.
   final String? team;
 
   /// Numeric user id from the server, used to compare against the authoritative
   /// `winner_id` in `GET /quiz/battles/{id}/results`.
   final int? serverId;
+}
+
+@immutable
+class BattleTeam {
+  const BattleTeam({required this.key, this.name = ''});
+  final String key;
+  final String name;
 }
 
 @immutable
@@ -64,9 +71,9 @@ class BattleOption {
   final String id;
   final String text;
 
-  /// Zero-based option position. The answer endpoint takes `selected_option`
-  /// 1..4, so this is sent as `order + 1` even when the published key is a
-  /// letter (`A`..`D`) rather than a number.
+  /// Zero-based option position. The canonical key is a letter (`a`..`d`)
+  /// while the answer endpoint takes `selected_option` 1..4, so the letter is
+  /// translated to its position at submit time — never guessed from the key.
   final int order;
 }
 
@@ -96,14 +103,17 @@ class BattleMatch {
     this.currentUserId,
     this.totalQuestions = 0,
     this.startedAt,
+    this.action = '',
+    this.lobbyId,
+    this.teams = const [],
   });
   final String id;
-  final String status; // waiting, starting, in_progress, finished/completed
+  final String status; // waiting, in_progress, active, finished
   final String opponentLabel;
   final BattlePlayer player1;
   final BattlePlayer player2;
 
-  /// Every participant, including teams of three. Legacy payloads with only
+  /// Every participant, including teams of five. Legacy payloads with only
   /// `player1`/`player2` are exposed through [allPlayers].
   final List<BattlePlayer> players;
 
@@ -114,41 +124,44 @@ class BattleMatch {
   final int? finishedAtMs;
   final String? winnerUid;
 
-  /// `1v1`, `2v2` or `3v3` — sent to the create endpoint so the server can
-  /// place the user in a queue of the right size.
+  /// `1v1`, `2v2`, `3v3` or `5v5`.
   final String mode;
 
-  /// The handle used on RTDB (`battles/{firebaseBattleId}`). It is NOT the
-  /// numeric database `battle_id`, which is what [id] carried historically.
   final String firebaseBattleId;
 
-  /// Fresh custom token minted by create/join. It is single-use for
-  /// `signInWithCustomToken`, never persisted and never reused after a refresh.
+  /// Fresh custom token minted by create/join. Single-use, never persisted.
   final String firebaseToken;
 
-  /// The local user's uid as published by the server (`me.uid`).
+  /// Canonical `me.uid` — the uid that identifies this user in RTDB, in the
+  /// `players` map and in the result payload.
   final String meUid;
 
-  /// Numeric user id (`me.id` / `me.uid` when numeric). The results endpoint
-  /// compares integer ids, so this is what the outcome screen needs.
+  /// Canonical `me.id` (integer). The results endpoint compares integer ids.
   final int? currentUserId;
 
   final int totalQuestions;
 
-  /// Server start time. ISO-8601 and unix seconds are both accepted by the
-  /// parser; the ticker derives the question index from this single value.
+  /// ISO-8601 from the server. On RTDB the legacy node carries unix seconds,
+  /// which the parser converts before it reaches this field.
   final DateTime? startedAt;
+
+  /// `created` | `joined` | `started` from the canonical payload.
+  final String action;
+
+  /// Team-lobby id (team responses only).
+  final int? lobbyId;
+
+  /// Alpha/bravo rosters published by the team endpoints.
+  final List<BattleTeam> teams;
 
   /// The participants a screen should render, regardless of payload vintage.
   List<BattlePlayer> get allPlayers =>
       players.isNotEmpty ? players : [player1, player2];
 
-  /// RTDB handle with a legacy fallback for old payloads that carried only
-  /// `id` / `battle_id`.
-  String get rtdbId => firebaseBattleId.isNotEmpty ? firebaseBattleId : id;
+  /// The server publishes `id` equal to `firebase_battle_id`; it is the RTDB
+  /// subscription key. `battle_id`/`lobby_id` are numeric db ids, not handles.
+  String get rtdbId => id;
 
-  /// Authoritative question count, falling back to the array when the server
-  /// did not publish `total_questions`.
   int get questionCount =>
       totalQuestions > 0 ? totalQuestions : questions.length;
 
@@ -192,6 +205,9 @@ class BattleMatch {
     Object? currentUserId = _unset,
     int? totalQuestions,
     Object? startedAt = _unset,
+    String? action,
+    Object? lobbyId = _unset,
+    List<BattleTeam>? teams,
   }) =>
       BattleMatch(
         id: id ?? this.id,
@@ -219,12 +235,23 @@ class BattleMatch {
         totalQuestions: totalQuestions ?? this.totalQuestions,
         startedAt:
             identical(startedAt, _unset) ? this.startedAt : startedAt as DateTime?,
+        action: action ?? this.action,
+        lobbyId: identical(lobbyId, _unset) ? this.lobbyId : lobbyId as int?,
+        teams: teams ?? this.teams,
       );
 
   /// Terminal states are spelled differently across the REST payload
-  /// (`completed`) and RTDB (`finished`). Both end the battle.
+  /// (`finished`) and the legacy RTDB alias (`completed`).
   static bool isBattleStatusTerminal(Object? status) {
     final s = status?.toString().toLowerCase();
     return s == 'finished' || s == 'completed';
+  }
+
+  /// The RTDB node also publishes additive `completed=true` and
+  /// `legacy_status='completed'` beside `status='finished'`.
+  static bool isTerminalSnapshot(Map<String, dynamic> snapshot) {
+    if (isBattleStatusTerminal(snapshot['status'])) return true;
+    if (snapshot['completed'] == true) return true;
+    return snapshot['legacy_status']?.toString().toLowerCase() == 'completed';
   }
 }

@@ -2535,6 +2535,7 @@
   "battleMode1v1": "१ विरुद्ध १",
   "battleMode2v2": "२ विरुद्ध २",
   "battleMode3v3": "३ विरुद्ध ३",
+  "battleMode5v5": "५ विरुद्ध ५",
   "battleTeamLabel": "टोली {team}",
   "@battleTeamLabel": {
     "placeholders": {
@@ -2543,6 +2544,8 @@
       }
     }
   },
+  "battleTeamAlpha": "अल्फा टोली",
+  "battleTeamBravo": "ब्रेभो टोली",
   "battlePlayers": "खेलाडी",
   "battleConnectionFailed": "प्रत्यक्ष ब्याटलमा जोडिन सकिएन। जडान जाँचेर फेरि प्रयास गर्नुहोस्।",
   "liveEventsTitle": "प्रत्यक्ष कार्यक्रम",

@@ -5982,11 +5982,29 @@ abstract class AppLocalizations {
   /// **'3 vs 3'**
   String get battleMode3v3;
 
+  /// No description provided for @battleMode5v5.
+  ///
+  /// In en, this message translates to:
+  /// **'5 vs 5'**
+  String get battleMode5v5;
+
   /// No description provided for @battleTeamLabel.
   ///
   /// In en, this message translates to:
   /// **'Team {team}'**
   String battleTeamLabel(Object team);
+
+  /// No description provided for @battleTeamAlpha.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Alpha'**
+  String get battleTeamAlpha;
+
+  /// No description provided for @battleTeamBravo.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Bravo'**
+  String get battleTeamBravo;
 
   /// No description provided for @battlePlayers.
   ///

@@ -107,9 +107,17 @@ class BattleOutcome {
       return {for (final e in v.entries) e.key.toString(): e.value};
     }
 
-    final list = b['players'] is List
-        ? (b['players'] as List).map(mapOf).toList()
-        : <Map<String, dynamic>>[];
+    final list = <Map<String, dynamic>>[];
+    if (b['players'] is List) {
+      list.addAll((b['players'] as List).map(mapOf));
+    } else if (b['players'] is Map) {
+      // RTDB publishes `players/{auth.uid}`; the key is the uid.
+      for (final entry in (b['players'] as Map).entries) {
+        final p = mapOf(entry.value);
+        p['uid'] = p['uid'] ?? entry.key.toString();
+        list.add(p);
+      }
+    }
     if (list.isEmpty) {
       for (final key in const ['player1', 'player2']) {
         if (b[key] is Map) list.add(mapOf(b[key]));
@@ -151,7 +159,11 @@ class BattleOutcome {
         : intOf(winnerRaw);
 
     final status = stringOf(b['status']);
-    final resolved = BattleOutcomeStatus.isTerminal(status) || winnerId != null || winnerUid.isNotEmpty;
+    final resolved = BattleOutcomeStatus.isTerminal(status) ||
+        b['completed'] == true ||
+        stringOf(b['legacy_status']).toLowerCase() == 'completed' ||
+        winnerId != null ||
+        winnerUid.isNotEmpty;
 
     final String result;
     if (!resolved) {
@@ -164,6 +176,7 @@ class BattleOutcome {
           ? null
           : intOf(list[myIndex]['id'] ?? list[myIndex]['user_id']);
       final won = (currentUserId != null && winnerId == currentUserId) ||
+          (currentUid != null && winnerUid.isNotEmpty && currentUid == winnerUid) ||
           (mine != null && winnerUid.isNotEmpty && mine.uid == winnerUid) ||
           (myServerId != null && winnerId == myServerId);
       result = won ? 'win' : 'loss';

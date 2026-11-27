@@ -2535,6 +2535,7 @@
   "battleMode1v1": "1 vs 1",
   "battleMode2v2": "2 vs 2",
   "battleMode3v3": "3 vs 3",
+  "battleMode5v5": "5 vs 5",
   "battleTeamLabel": "Team {team}",
   "@battleTeamLabel": {
     "placeholders": {
@@ -2543,6 +2544,8 @@
       }
     }
   },
+  "battleTeamAlpha": "Team Alpha",
+  "battleTeamBravo": "Team Bravo",
   "battlePlayers": "Players",
   "battleConnectionFailed": "Could not connect to the live battle. Check your connection and try again.",
   "liveEventsTitle": "Live Events",

@@ -20,7 +20,7 @@ class BattleMatchmakingScreen extends ConsumerStatefulWidget {
 }
 
 class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScreen> {
-  static const _modes = <String>['1v1', '2v2', '3v3'];
+  static const _modes = <String>['1v1', '2v2', '3v3', '5v5'];
 
   int _countdown = 3;
   Timer? _countdownTimer;
@@ -246,6 +246,7 @@ class _BattleMatchmakingScreenState extends ConsumerState<BattleMatchmakingScree
   String _modeLabel(String mode, AppLocalizations l10n) => switch (mode) {
         '2v2' => l10n.battleMode2v2,
         '3v3' => l10n.battleMode3v3,
+        '5v5' => l10n.battleMode5v5,
         _ => l10n.battleMode1v1,
       };
 

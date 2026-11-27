@@ -3492,9 +3492,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get battleMode3v3 => '3 बनाम 3';
 
   @override
+  String get battleMode5v5 => '5 बनाम 5';
+
+  @override
   String battleTeamLabel(Object team) {
     return 'टीम $team';
   }
+
+  @override
+  String get battleTeamAlpha => 'अल्फा टीम';
+
+  @override
+  String get battleTeamBravo => 'ब्रेवो टीम';
 
   @override
   String get battlePlayers => 'खिलाड़ी';

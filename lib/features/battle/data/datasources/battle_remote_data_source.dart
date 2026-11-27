@@ -5,6 +5,7 @@ import '../../../../app/localization/l10n.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/api_failure.dart';
 import '../../../../core/network/envelope.dart';
+import '../models/battle_payload.dart';
 
 /// Verified server routes (`routes/api/v1/quiz.php:546-558` — Firebase
 /// Multiplayer Battles):
@@ -155,7 +156,7 @@ class BattleRemoteDataSource {
       '/quiz/battles',
       data: {
         'category_id': resolved,
-        'total_questions': totalQuestions,
+        'total_questions': totalQuestions.clamp(5, 20),
         'mode': mode,
       },
       options: Options(headers: idempotencyHeader(idempotencyKey)),
@@ -175,6 +176,36 @@ class BattleRemoteDataSource {
       );
     }
     return Map<String, dynamic>.from(data as Map);
+  }
+
+  /// Dedicated team entry point: `POST /quiz/battle-rooms/team-matches`.
+  /// The server requires `mode` (2v2|3v3|5v5) and an Idempotency-Key; it
+  /// answers with the same canonical `BattleSession` payload as create.
+  Future<Map<String, dynamic>> createTeamMatch({
+    required String mode,
+    String? idempotencyKey,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      BattlePayload.teamMatchEndpoint,
+      data: {'mode': mode},
+      options: Options(headers: idempotencyHeader(idempotencyKey)),
+    );
+    return _requireData(res.data, BattlePayload.teamMatchEndpoint);
+  }
+
+  /// Fallback team entry point: `POST /quiz/battle-rooms/quick-matches`.
+  /// It accepts team modes and merges the canonical fields into its lobby
+  /// response, so it can be parsed by the same [BattlePayload] parser.
+  Future<Map<String, dynamic>> createQuickMatch({
+    required String mode,
+    String? idempotencyKey,
+  }) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      BattlePayload.quickMatchEndpoint,
+      data: {'mode': mode},
+      options: Options(headers: idempotencyHeader(idempotencyKey)),
+    );
+    return _requireData(res.data, BattlePayload.quickMatchEndpoint);
   }
 
   Future<int> _defaultCategoryId() async {

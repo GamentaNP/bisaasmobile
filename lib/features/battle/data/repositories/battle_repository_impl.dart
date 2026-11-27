@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../../../core/network/api_failure.dart';
 import '../../domain/entities/battle.dart';
 import '../../domain/entities/battle_lobby.dart';
@@ -12,7 +14,9 @@ class BattleRepositoryImpl implements BattleRepository {
   @override
   Future<BattleToken> getFirebaseToken() async {
     final m = await _remote.getFirebaseToken();
-    final token = BattlePayload.firebaseToken(m);
+    final token = BattlePayload.stringOf(
+      m['firebase_token'] ?? m['token'] ?? m['custom_token'],
+    );
     final expRaw = m['expires_at'] ?? m['expiresAt'];
     DateTime? exp;
     if (expRaw is String) exp = DateTime.tryParse(expRaw);
@@ -25,38 +29,58 @@ class BattleRepositoryImpl implements BattleRepository {
     int totalQuestions = 10,
     String mode = '1v1',
   }) async {
-    final raw = await _remote.findMatch(
-      categoryId: categoryId,
-      totalQuestions: totalQuestions,
-      mode: mode,
-    );
-    BattleMatch match;
-    try {
-      // A match with no questions is contract drift, never an empty arena.
-      match = BattlePayload.parse(raw, endpoint: BattlePayload.createEndpoint);
-    } on ContractViolation catch (e) {
-      // The legacy create response has no questions and often no `id` beyond
-      // the numeric battle id. Join by the RTDB handle to get the canonical
-      // payload before giving up — the create itself is not yet playable.
-      final handle = BattlePayload.stringOf(
-        raw['firebase_battle_id'] ?? raw['battle_id'] ?? raw['id'],
-      );
-      if (handle.isEmpty) rethrow;
+    final isTeam = BattlePayload.teamModes.contains(mode);
+    final candidates = <Future<Map<String, dynamic>> Function()>[
+      if (isTeam) () => _remote.createTeamMatch(mode: mode),
+      if (isTeam) () => _remote.createQuickMatch(mode: mode),
+      () => _remote.findMatch(
+            categoryId: categoryId,
+            totalQuestions: totalQuestions,
+            mode: mode,
+          ),
+    ];
+
+    Object? lastError;
+    for (var i = 0; i < candidates.length; i++) {
       try {
-        return await joinBattle(handle);
-      } on Object {
-        throw e;
+        final raw = await candidates[i]();
+        final match = BattlePayload.parse(
+          raw,
+          endpoint: isTeam
+              ? BattlePayload.teamMatchEndpoint
+              : BattlePayload.createEndpoint,
+        );
+        // The fresh token from create/join is the ONLY credential used for
+        // signInWithCustomToken. Never substitute /quiz/firebase-token here.
+        if (match.firebaseToken.isEmpty) {
+          throw ContractViolation(
+            'Battle payload has no firebase_token',
+            endpoint: isTeam
+                ? BattlePayload.teamMatchEndpoint
+                : BattlePayload.createEndpoint,
+          );
+        }
+        return match;
+      } on Object catch (e) {
+        lastError = e;
+        final isLast = i == candidates.length - 1;
+        if (isLast || !_canTryNextEndpoint(e)) rethrow;
       }
     }
+    if (lastError is Exception) throw lastError;
+    if (lastError is Error) throw lastError;
+    throw const ContractViolation('Battle match unavailable');
+  }
 
-    // A fresh token is minted by create; fall back to the token endpoint only
-    // for a legacy server that did not send one. The fallback token is used
-    // once and never written over a token the create response provided.
-    if (match.firebaseToken.isEmpty) {
-      final fallback = await getFirebaseToken();
-      match = _withToken(match, fallback.token);
+  /// Only fall back when the endpoint itself is unavailable or drifted — a
+  /// transport failure or an auth refusal must reach the user as-is.
+  static bool _canTryNextEndpoint(Object error) {
+    if (error is ContractViolation) return true;
+    if (error is DioException) {
+      final status = error.response?.statusCode;
+      return status == 404 || status == 405 || status == 422 || status == 501;
     }
-    return match;
+    return false;
   }
 
   @override
@@ -72,8 +96,10 @@ class BattleRepositoryImpl implements BattleRepository {
       ),
     );
     if (match.firebaseToken.isEmpty) {
-      final fallback = await getFirebaseToken();
-      return _withToken(match, fallback.token);
+      throw const ContractViolation(
+        'Battle payload has no firebase_token',
+        endpoint: BattlePayload.joinEndpoint,
+      );
     }
     return match;
   }
@@ -81,9 +107,6 @@ class BattleRepositoryImpl implements BattleRepository {
   @override
   Future<Map<String, dynamic>> getBattleResults(String firebaseBattleId) =>
       _remote.getResults(firebaseBattleId);
-
-  BattleMatch _withToken(BattleMatch match, String token) =>
-      match.copyWith(firebaseToken: token);
 
   @override
   Future<List<Map<String, dynamic>>> getLeaderboard(String boardId) => _remote.getLeaderboard(boardId);

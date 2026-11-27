@@ -4,6 +4,16 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/battle.dart';
 
+/// The server's `alpha`/`bravo` team keys are protocol values, not copy.
+String? battleTeamLabel(String? team, AppLocalizations l10n) {
+  if (team == null || team.isEmpty) return null;
+  return switch (team.toLowerCase()) {
+    'alpha' => l10n.battleTeamAlpha,
+    'bravo' => l10n.battleTeamBravo,
+    _ => l10n.battleTeamLabel(team),
+  };
+}
+
 /// Live score strip for any number of players.
 ///
 /// The old arena hard-coded `player1`/`player2`, so a 2v2 or 3v3 battle could
@@ -50,7 +60,7 @@ class BattleScoreBoard extends StatelessWidget {
                   children: [
                     if (entry.key != null)
                       Text(
-                        l10n.battleTeamLabel(entry.key!),
+                        battleTeamLabel(entry.key!, l10n) ?? '',
                         style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.textTertiaryDark,

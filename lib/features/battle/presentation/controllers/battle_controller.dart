@@ -131,6 +131,11 @@ class BattleController extends Notifier<BattleState> {
   final fb_auth.FirebaseAuth _auth = fb_auth.FirebaseAuth.instance;
   String? _myUid;
 
+  /// One clock anchor per match. A battle created before join has
+  /// `started_at: null`; re-reading `DateTime.now()` in every tick would keep
+  /// resetting the question index to zero.
+  DateTime? _clockAnchor;
+
   /// Last matchmaking parameters, kept so an error state can offer a real
   /// retry instead of dropping the user back to a fresh screen.
   int? _lastCategoryId;
@@ -197,25 +202,21 @@ class BattleController extends Notifier<BattleState> {
       } catch (_) {}
 
       final repo = ref.read(battleRepositoryProvider);
-      var m = await repo.findMatch(
+      final m = await repo.findMatch(
         categoryId: categoryId,
         totalQuestions: totalQuestions,
         mode: mode,
       );
 
-      // The token minted by create is single-use. Use it directly; only fall
-      // back to GET /quiz/firebase-token when a legacy server omitted it.
-      var token = m.firebaseToken;
-      if (token.isEmpty) {
-        final fallback = await repo.getFirebaseToken();
-        token = fallback.token;
-        m = m.copyWith(firebaseToken: token);
-      }
+      // The fresh token from create/join is the only credential accepted by
+      // signInWithCustomToken. The repository fails closed when it is absent.
+      final token = m.firebaseToken;
       await _connectFirebase(token);
+      _clockAnchor = m.startedAt ?? DateTime.now();
       state = state.copyWith(
         token: BattleToken(token: token, expiresAt: null),
         match: m,
-        myUid: _myUid ?? m.meUid,
+        myUid: m.meUid.isNotEmpty ? m.meUid : _myUid,
       );
 
       if (m.questions.isEmpty) {
@@ -259,7 +260,7 @@ class BattleController extends Notifier<BattleState> {
         for (final entry in value.entries)
           entry.key.toString(): entry.value,
       };
-      if (BattlePayload.isTerminal(data['status'])) {
+      if (BattlePayload.isTerminalSnapshot(data)) {
         unawaited(_finish(data));
         return;
       }
@@ -288,6 +289,22 @@ class BattleController extends Notifier<BattleState> {
     if (unchanged) return;
 
     state = state.copyWith(match: parsed);
+
+    // The RTDB `players/{auth.uid}` map is the authoritative presence node.
+    // Use the canonical `me.uid`, not the Firebase SDK's local uid, to decide
+    // who "me" is; every other player is the opposition for progress hints.
+    final meUid = parsed.meUid.isNotEmpty ? parsed.meUid : (state.myUid ?? '');
+    if (meUid.isNotEmpty) {
+      final mine = parsed.allPlayers.where((p) => p.uid == meUid).firstOrNull;
+      final myIdx = mine?.currentIdx ?? state.currentQuestionIndex;
+      final someoneAhead = parsed.allPlayers.any(
+        (p) => p.uid != meUid && p.currentIdx > myIdx,
+      );
+      if (someoneAhead && !state.opponentAnsweredThisQ) {
+        state = state.copyWith(opponentAnsweredThisQ: true);
+      }
+    }
+
     if (state.phase == BattlePhase.searching && parsed.questions.isNotEmpty) {
       state = state.copyWith(
         phase: BattlePhase.inProgress,
@@ -311,7 +328,18 @@ class BattleController extends Notifier<BattleState> {
     if (state.phase == BattlePhase.finished) return;
     final m = state.match;
     if (m == null) return;
-    var winner = BattlePayload.winnerUid(snapshot['winner'] ?? snapshot['winner_id']) ??
+    String? normalize(Object? raw) {
+      final value = BattlePayload.winnerUid(raw);
+      if (value == null) return null;
+      // `winner` is a uid string; `winner_id` is the numeric id. A numeric
+      // winner equal to me.id maps back to the canonical me.uid.
+      if (BattlePayload.intOf(raw) == m.currentUserId && m.meUid.isNotEmpty) {
+        return m.meUid;
+      }
+      return value;
+    }
+
+    var winner = normalize(snapshot['winner'] ?? snapshot['winner_id']) ??
         m.winnerUid;
     if (winner == null) {
       // RTDB has no winner node on some servers: the REST result is the
@@ -320,9 +348,7 @@ class BattleController extends Notifier<BattleState> {
         final results = await ref
             .read(battleRepositoryProvider)
             .getBattleResults(m.rtdbId);
-        winner = BattlePayload.winnerUid(
-          results['winner'] ?? results['winner_id'],
-        );
+        winner = normalize(results['winner'] ?? results['winner_id']);
       } on Object catch (e, st) {
         AppLogger.w('battle result lookup failed: $e', e, st);
       }
@@ -354,10 +380,7 @@ class BattleController extends Notifier<BattleState> {
     final total = m.questionCount;
     if (total <= 0) return;
     final per = m.perQuestionSeconds > 0 ? m.perQuestionSeconds : 30;
-    final started = m.startedAt ??
-        DateTime.fromMillisecondsSinceEpoch(
-          m.startedAtMs ?? DateTime.now().millisecondsSinceEpoch,
-        );
+    final started = m.startedAt ?? _clockAnchor ?? DateTime.now();
     final elapsed = DateTime.now().difference(started).inSeconds;
     if (elapsed < 0) return;
     final idx = (elapsed ~/ per).clamp(0, total - 1);
@@ -443,6 +466,7 @@ class BattleController extends Notifier<BattleState> {
     _rtdbSub = null;
     _ticker = null;
     _myUid = null;
+    _clockAnchor = null;
     state = const BattleState();
   }
 }
