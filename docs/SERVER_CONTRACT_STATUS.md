@@ -1,7 +1,7 @@
 # Server contract status — what the client relies on, and what is still owed
 
 **Server facts verified 2026-11-04 against `C:\laragon\www\bisaas` at its
-current HEAD; client adoptions re-audited 2026-11-25.** This is the client
+current HEAD; client adoptions re-audited 2026-11-27.** This is the client
 repo's record of the `/api/v1` contract. The server repo
 remains the source of truth; if the two disagree, the server wins and this
 file is the thing to correct.
@@ -43,15 +43,16 @@ integration tests plus the on-device run against Laragon):
 | Leaderboard submission | `POST /quiz/leaderboard` is server-authoritative: the client sends `mode` + `attempt_id` only, with an `Idempotency-Key`; score/correct/total/streak are recomputed from the completed attempt server-side (client commit `fafbbad`). The legacy score fields are accepted but never sent. |
 | Error registry | `ApiErrorCode` mirrors the server registry, now including `NO_ACTIVE_EXAM`, `NO_REPORT`, `NO_PREDICTION`, `GENERIC_CHECKOUT_DISABLED`, `EXAM_SECTION_LOCKED` and `WEBHOOK_MISCONFIGURED`; `TENANT_INACTIVE` additionally carries `error.details.tenant_id` (a display diagnostic, never re-asserted). Unknown codes still degrade to generic copy. |
 
-## 2. Client-side adoption gaps (the server is ahead of us)
+## 2. Client-side adoption gaps — both adopted 2026-11-26 (closed)
 
-| # | Gap | Effect | What to do |
-|---|---|---|---|
-| A1 | `GET /quiz/attempts/{attempt}` is **adopted by the arcade only** (`lib/features/arcade/data/datasources/arcade_remote_data_source.dart`); the quiz and practice data sources still never call it | The arcade can start and resume a run because its start route returns only an id. An interrupted *study* attempt still cannot be resumed | Wire it into the practice/quiz data source before claiming "resume" in study copy |
-| A2 | Topic drills match on `GET /quiz/questions?search=` because the client has no `topic_id` filter | A topic drill can miss questions whose text does not contain the topic name | Adopt a server-side `topic_id` filter if one is published; until then the screen stays honest about what it searches |
+These two items were recorded here while the server was ahead of the client.
+Both are now closed by commits `6143f2b` and `334538a`; the rows are kept as a
+record of what changed.
 
-Both are recorded in code comments (`practice_remote_data_source.dart:146,214`)
-so nobody re-discovers them.
+| # | Former gap | Adoption — client evidence |
+|---|---|---|
+| A1 | `GET /quiz/attempts/{attempt}` was adopted by the arcade only; an interrupted *study* attempt could not be resumed | Both study paths now read the server's snapshot: `lib/features/quiz/data/datasources/quiz_remote_data_source.dart:597-636` and `lib/features/practice/data/datasources/practice_remote_data_source.dart:298-329`. Resume is wired in `lib/features/quiz/presentation/controllers/quiz_controller.dart:677-730`, `lib/features/practice/presentation/controllers/practice_controller.dart:344-362`, and the screen accepts a resume id at `lib/features/quiz/presentation/screens/quiz_attempt_screen.dart:36-37`. |
+| A2 | Topic drills matched on `GET /quiz/questions?search=` because the client had no `topic_id` filter | `topic_id` is an allowed server filter and the client sends it: `lib/features/practice/data/datasources/practice_remote_data_source.dart:144-175`; the weak-topic screen passes the id at `lib/features/practice/presentation/screens/practice_browser_screen.dart:118-131`. `search` remains only for analyses that publish a topic name, not an id. |
 
 ## 3. Still owed by the server
 

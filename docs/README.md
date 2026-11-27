@@ -5,7 +5,7 @@ what was retired. If two files disagree, the authoritative one wins; if none
 is authoritative for the question, that is a gap to close here, not a tie to
 break by preference.
 
-**Last full audit: 2026-11-04, at `0cee095`; re-audited 2026-11-25.** The
+**Last full audit: 2026-11-04, at `0cee095`; re-audited 2026-11-27.** The
 re-audit corrected drift in the production host (now `https://lovemcq.com`),
 the published ids (`com.beardbishwo.lovemcq`), the Firebase project
 (`love-mcq`), certificate pins, tenancy UX, the server contract and the
@@ -42,7 +42,7 @@ recorded here so no index entry reads them as pending tasks:
 | 1 | [PROJECT_STATE.md](PROJECT_STATE.md) | What the client is, what is shipped, what is measured, which invariants must not regress, and the six tracked client items (C1–C6) with their current status. |
 | 2 | [LAUNCH_READINESS.md](LAUNCH_READINESS.md) | The historical store plan (voided by the 2026-09-11 directive) and the internal-test posture that still applies. |
 | 3 | [release_checklist.md](release_checklist.md) | Build/test commands and founder-supplied values; its store/platform steps are historical (voided by the 2026-09-11 directive). |
-| 4 | [SERVER_CONTRACT_STATUS.md](SERVER_CONTRACT_STATUS.md) | What `/api/v1` delivers, what is still owed, and which client adoptions are behind. |
+| 4 | [SERVER_CONTRACT_STATUS.md](SERVER_CONTRACT_STATUS.md) | What `/api/v1` delivers, what is still owed by the server, and which client adoptions have closed. |
 | 5 | [../AGENTS.md](../AGENTS.md) | The rules for changing this repo: boundary, API contract, l10n, release posture. |
 | 6 | Cross-repo gap audit (2026-11-26) | `C:\laragon\www\bisaas\docs\CROSS_REPO_QUIZ_API_GAP_AUDIT_2026-11-26.md` — 20-agent review of both repos; authoritative for what is not built and in what order to fix it. |
 
@@ -55,6 +55,7 @@ recorded here so no index entry reads them as pending tasks:
 | What was the historical store plan, and what still applies to the test artifact? | `LAUNCH_READINESS.md` (store sections marked historical). |
 | What exactly must be true before a build/test release? | `release_checklist.md` (store/platform steps voided). |
 | What does the server do, and what does it owe? | `SERVER_CONTRACT_STATUS.md` |
+| Which `/api/v1` route/verb spellings are registered and how does the frozen contract reconcile with the guide? | `C:\laragon\www\bisaas\docs\api\CONTRACT_ALIGNMENT_2026-11-26.md` (server repo) |
 | What are the tenancy rules and the switcher wire shape? | `TENANT_SWITCHER_CONTRACT.md` |
 | How does the translation pipeline work, and how many keys? | `localization.md` |
 | What is the multilingual *model* (scripts, content translation)? | `LANGUAGE_AND_CONTENT_TRANSLATION_SPEC.md` |

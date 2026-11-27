@@ -1,6 +1,6 @@
 # Project state — the client, measured
 
-**Counts re-measured 2026-11-25.** Every number here was read from the tree
+**Counts re-measured 2026-11-27.** Every number here was read from the tree
 or from CI, not carried forward from an earlier note; the server-contract
 facts were last verified 2026-11-04. Anything that is a plan rather than a
 fact lives in [LAUNCH_READINESS.md](LAUNCH_READINESS.md) — its store section is
@@ -35,21 +35,22 @@ not bought.
 
 | Measure | Value | How to re-measure |
 |---|---|---|
-| Dart files under `lib/` | 370 | `Get-ChildItem -Recurse -File lib -Filter *.dart \| Measure-Object` |
-| Dart files under `test/` | 124 | `Get-ChildItem -Recurse -File test -Filter *.dart \| Measure-Object` |
-| Feature modules | 35 | `Get-ChildItem -Directory lib/features \| Measure-Object` |
-| Host test files | 122 | `Get-ChildItem -Recurse -File test -Filter *_test.dart \| Measure-Object` |
-| Host test declarations | 1,199 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
-| Device smoke tests | 8 + 1 live-only | `device_tests/integration_test/device_smoke_test.dart` |
-| Translations | 1,289 messages × en/ne/hi | `python tool/generate_arb.py` (writes all three ARBs from one table; count non-`@` keys) |
+| Dart files under `lib/` | 456 | `Get-ChildItem -Recurse -File lib -Filter *.dart \| Measure-Object` |
+| Dart files under `test/` | 149 | `Get-ChildItem -Recurse -File test -Filter *.dart \| Measure-Object` |
+| Feature modules | 37 | `Get-ChildItem -Directory lib/features \| Measure-Object` |
+| Host test files | 147 | `Get-ChildItem -Recurse -File test -Filter *_test.dart \| Measure-Object` |
+| Host test declarations | 1,328 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
+| Device smoke tests | 10 declarations (9 default + 1 live-only) | `device_tests/integration_test/device_smoke_test.dart` |
+| Translations | 1,360 messages × en/ne/hi | `python tool/generate_arb.py` (writes all three ARBs from one table; count non-`@` keys) |
 | App version | `1.0.2+2` | `pubspec.yaml` |
 | SDK floor / target | minSdk 26 (Android 8.0) / targetSdk 36 / compileSdk 37 | `android/app/build.gradle.kts:134-172` |
 | Release AAB | built by CI on `main`, upload-key signed (size not pinned here); internal test build, not a submission candidate | `flutter build appbundle --release …` |
 | Coverage floor | 55% (CI-enforced), roadmap target 70% | `scripts/coverage_check.dart` |
 
-Twelve keys per locale are byte-identical to English on purpose — unit
-symbols and brand strings (`%`, `XP`, `★`, `CivilCal`). The translation audit
-treats those as correct, not as gaps.
+Thirteen keys per locale are byte-identical to English on purpose — unit
+symbols, brand names, format tokens and a sample URL (`%`, `XP`, `★`,
+`CivilCal`, `https://api.example.com/v1`). The translation audit treats those
+as correct, not as gaps.
 
 ## 3. What is shipped and where it is proven
 
@@ -60,7 +61,7 @@ the others cannot:
 |---|---|---|
 | Unit | `test/**` | DTO parsing, controller state, interceptor behaviour, l10n coverage. |
 | Integration | `test/integration/` | The whole client stack — real Dio → interceptors → adapter → envelope → DTO → repository → controller — against a scripted transport. Every production contract bug found in October lives here as a regression. |
-| Device | `device_tests/` (separate package) | Engine, plugins, real navigation, secure storage. 8 tests on the emulator in CI; 9/9 on the founder's Redmi 6A against the live backend. |
+| Device | `device_tests/` (separate package) | Engine, plugins, real navigation, secure storage. 10 declarations, of which 9 run by default on the emulator in CI (API 28 and 30) and 1 is gated behind `RUN_LIVE_TESTS`. |
 
 Shipped surfaces, all server-backed: auth (email, Google, Apple — the social
 buttons are hidden by the production defines, see C4), guest funnel, daily quiz,
@@ -111,7 +112,7 @@ on-device testing**, C2 is latent behind C1, and C5/C6 are known constraints.
 | # | Item | Status / owner | Fact and current standing |
 |---|---|---|---|
 | C1 | Offline **answering** (write outbox) | **Settled (founder/lead) — not open** | **SETTLED: read-cache only.** `SyncQueueService` is built and tested but nothing enqueues, by decision: grading is server-authoritative, so a replayed answer would be a lie. `test/core/storage/unwired_tables_test.dart` pins the invariant. Do not wire `.enqueue()`. |
-| C2 | Sync queue has no tenant binding | Client (latent) | Rows carry no tenant id, so a queued write replayed after an organization switch would land under the new tenant. With C1 settled as read-cache only this is **latent, not active work**; it would have to be fixed before any future write-outbox wiring. |
+| C2 | Sync queue tenant binding | Client (settled 2026-11-26) | Queued rows carry a tenant id (`lib/core/sync/sync_queue.dart:47,121`) and a mismatched row is dropped at drain rather than replayed cross-tenant (`lib/core/sync/sync_manager.dart:60-63`). With C1 settled as read-cache only this stays **latent, not active work**, but the binding itself is in place. |
 | C3 | iOS `IOS_TEAM_ID` is a placeholder | Founder | `dart_defines/production.json` still holds `__REPLACE_WITH_APPLE_TEAM_ID__`; the App ID also needs the Sign in with Apple capability. **Moot for store submission; may still be needed for on-device testing** (no App Store publication under the 2026-09-11 directive). Not a launch blocker. |
 | C4 | Social sign-in IDs absent | Founder | `GOOGLE_CLIENT_ID`, `GOOGLE_SERVER_CLIENT_ID`, `APPLE_CLIENT_ID`, `APPLE_REDIRECT_URI` are not in the production defines, so those buttons are correctly hidden. Without the *server* client id the SDK issues no id_token. **Moot for store submission; may still be needed for on-device testing.** Not a launch blocker. |
 | C5 | TalkBack on API 26–33 | Upstream engine | Flutter 3.47.2's accessibility bridge references an API-34 type and disables itself on older releases. The app runs; screen-reader support starts at API 34. Documented, not fixable here. |

@@ -28,7 +28,7 @@ half-happen.
 
 ## 2. What is translated today
 
-**Everything.** 1,289 messages per locale (re-measured 2026-11-25 from
+**Everything.** 1,360 messages per locale (re-measured 2026-11-27 from
 `tool/generate_arb.py` / `lib/l10n/app_en.arb`), in English, Nepali and Hindi,
 covering every screen in the app:
 
@@ -63,7 +63,7 @@ exemption is visible rather than hidden.
 
 ## 3. How it is kept honest
 
-Four tools, all checked in:
+Five tools, all checked in:
 
 | Tool | What it does |
 |---|---|
@@ -119,7 +119,7 @@ dart run tool/localization_coverage.dart --verbose  # every string, with a line 
 
 ## 5. Known gaps
 
-- **`hi` has had less review than `ne`.** Both have the same 1,289
+- **`hi` has had less review than `ne`.** Both have the same 1,360
   messages, so the coverage is identical, but the launch market is Nepal
   and the Hindi copy has not been read by a Hindi speaker. The
   mechanical defects a machine translation produces — a term spelled two

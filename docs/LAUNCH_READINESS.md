@@ -9,7 +9,7 @@
 > of a plan that was voided. Build/test facts and QA items are kept because the
 > app remains an internal development and test instrument for `/api/v1`.
 
-**Re-audited 2026-11-25; reconciled with the standing decisions 2026-11-26.**
+**Re-audited 2026-11-27; reconciled with the standing decisions 2026-11-26.**
 This document retains the ordered critical path and founder decision list as
 history, each marked with its current status. Mechanical build/test steps live
 in [release_checklist.md](release_checklist.md); the historical store copy lives
@@ -118,11 +118,11 @@ deletion-URL work is to be done.
 
 ## Verified facts about the internal test build
 
-- Host suite green in CI: 122 test files, 1,199 declarations; coverage floor
+- Host suite green in CI: 147 test files, 1,328 declarations; coverage floor
   55% enforced; `flutter analyze` clean.
-- Device tests: 8 smoke tests on an emulator (API 28 and 30) in CI; 9/9 on
-  the founder's Redmi 6A against the live Laragon backend, including the
-  tenant-selection secure-storage round trip.
+- Device tests: 10 declarations in `device_tests/integration_test/device_smoke_test.dart`
+  — 9 run by default on an emulator (API 28 and 30) in CI, including the
+  tenant-selection secure-storage round trip; 1 is gated behind `RUN_LIVE_TESTS`.
 - Release artifact: AAB built by CI on `main`, signed with the upload key;
   certificate hash matches `SIGNING_CERT_HASH`. It is a **test build, not a
   submission candidate**.
@@ -131,7 +131,7 @@ deletion-URL work is to be done.
   shipping ABIs bundled.
 - Security gate in CI: gitleaks, OSV dependency scan, and an artifact scan
   that unpacks the real APK and fails on forbidden content.
-- Trilingual UI: 1,289 messages × en/ne/hi, coverage + consistency audits in
+- Trilingual UI: 1,360 messages × en/ne/hi, coverage + consistency audits in
   CI.
 - App Links: fingerprints are stored in Admin → Settings → Mobile App Settings
   and served by the Laravel route; no static identity file exists or may be
