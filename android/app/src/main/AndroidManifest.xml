@@ -50,6 +50,14 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="civilcal_default" />
+        <!-- AdMob app ID. The value is a manifest placeholder fed from the
+             ADMOB_APP_ID_ANDROID dart-define in android/app/build.gradle.kts.
+             It is deliberately empty when the define is missing: the Dart
+             ad service then stays disabled, so no SDK init and no ad request.
+             Nothing ad-related is hardcoded in this repository. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobApplicationId}" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

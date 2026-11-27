@@ -115,6 +115,16 @@ fun isUsablePin(value: String?): Boolean {
         !upper.contains("XXXX")
 }
 
+// AdMob app ID, injected into AndroidManifest.xml as a placeholder.
+//
+// The ID is a dart-define, never a checked-in literal. When the define is
+// absent the placeholder is empty: the Dart service is disabled too, so no
+// SDK initialisation and no ad request happen. No build-time failure — ads
+// are optional, unlike certificate pinning.
+val admobApplicationId = dartDefines["ADMOB_APP_ID_ANDROID"]?.takeIf {
+    it.isNotBlank()
+} ?: ""
+
 val productionEnv = dartDefines["ENV"] ?: ""
 val usablePins = listOf("CERT_PIN_1", "CERT_PIN_2", "CERT_PIN_3")
     .mapNotNull { dartDefines[it] }
@@ -176,6 +186,9 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // `${admobApplicationId}` in AndroidManifest.xml resolves here.
+        manifestPlaceholders["admobApplicationId"] = admobApplicationId
 
         // The ABIs a release ships.
         //
