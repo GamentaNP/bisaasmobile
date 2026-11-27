@@ -110,18 +110,21 @@ class _ConsentSheetState extends ConsumerState<ConsentSheet> {
                       enabled: false,
                       onChanged: null,
                     ),
+                    const SizedBox(height: 8),
                     _Row(
                       title: l10n.consentFunctional,
                       subtitle: l10n.consentFunctionalBody,
                       value: _functional,
                       onChanged: (v) => setState(() => _functional = v),
                     ),
+                    const SizedBox(height: 8),
                     _Row(
                       title: l10n.consentAnalytics,
                       subtitle: l10n.consentAnalyticsBody,
                       value: _analytics,
                       onChanged: (v) => setState(() => _analytics = v),
                     ),
+                    const SizedBox(height: 8),
                     _Row(
                       title: l10n.consentMarketing,
                       subtitle: l10n.consentMarketingBody,
@@ -201,7 +204,9 @@ class _Row extends StatelessWidget {
     final theme = Theme.of(context);
     final on = onChanged != null;
     return SwitchListTile(
-      contentPadding: EdgeInsets.zero,
+      // The global ListTileTheme gives this row a border; zero padding made
+      // the copy sit flush against it.
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       value: value,
       onChanged: on ? onChanged : null,
       title: Text(
