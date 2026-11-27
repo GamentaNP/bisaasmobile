@@ -28,9 +28,11 @@ abstract class PracticeRepository {
 
   /// Real server questions for a drill.
   ///
-  /// The server honours `course_id`, `category_id`, `difficulty` and `search`
-  /// on `GET /quiz/questions`; there is no `topic_id` filter, so a topic drill
-  /// is a text `search` over the topic name.
+  /// The server honours `course_id`, `category_id`, `difficulty`, `topic_id`
+  /// and `search` on `GET /quiz/questions`. This interface still exposes only
+  /// the first four plus text search; topic-scoped drills call the feature's
+  /// data source directly until `topicId` is added here (see
+  /// `PracticeController.startDrill`).
   Future<List<PracticeQuestion>> getQuestions({
     int? courseId,
     int? categoryId,

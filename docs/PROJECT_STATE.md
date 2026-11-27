@@ -35,11 +35,11 @@ not bought.
 
 | Measure | Value | How to re-measure |
 |---|---|---|
-| Dart files under `lib/` | 456 | `Get-ChildItem -Recurse -File lib -Filter *.dart \| Measure-Object` |
-| Dart files under `test/` | 149 | `Get-ChildItem -Recurse -File test -Filter *.dart \| Measure-Object` |
-| Feature modules | 37 | `Get-ChildItem -Directory lib/features \| Measure-Object` |
-| Host test files | 147 | `Get-ChildItem -Recurse -File test -Filter *_test.dart \| Measure-Object` |
-| Host test declarations | 1,328 | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
+| Dart files under `lib/` | not pinned — active feature work; re-measure | `Get-ChildItem -Recurse -File lib -Filter *.dart \| Measure-Object` |
+| Dart files under `test/` | not pinned — active feature work; re-measure | `Get-ChildItem -Recurse -File test -Filter *.dart \| Measure-Object` |
+| Feature modules | not pinned — active feature work; re-measure | `Get-ChildItem -Directory lib/features \| Measure-Object` |
+| Host test files | not pinned — active feature work; re-measure | `Get-ChildItem -Recurse -File test -Filter *_test.dart \| Measure-Object` |
+| Host test declarations | not pinned — active feature work; re-measure | `grep -rhoE '^\s*(test\|testWidgets)\(' test \| wc -l` |
 | Device smoke tests | 10 declarations (9 default + 1 live-only) | `device_tests/integration_test/device_smoke_test.dart` |
 | Translations | 1,360 messages × en/ne/hi | `python tool/generate_arb.py` (writes all three ARBs from one table; count non-`@` keys) |
 | App version | `1.0.2+2` | `pubspec.yaml` |
