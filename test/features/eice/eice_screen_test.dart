@@ -112,6 +112,61 @@ void main() {
     expect(find.text('Civil'), findsOneWidget);
   });
 
+  testWidgets('prefers the merged all-courses plan when the server publishes one', (
+    tester,
+  ) async {
+    when(() => dio.get<Map<String, dynamic>>(any())).thenAnswer((call) async {
+      final path = call.positionalArguments.first as String;
+      if (path == '/quiz/study-planner/combined') {
+        return ok({
+          'exams': <dynamic>[],
+          'combined_daily_plan': [
+            {
+              'date': '2026-11-27',
+              'total_question_count': 30,
+              'exams': [
+                {
+                  'id': 5,
+                  'exam_name': 'Engineering',
+                  'course_name': 'Civil Engineering',
+                  'question_count': 20,
+                  'is_rest_day': false,
+                },
+                {
+                  'id': 9,
+                  'exam_name': 'Medical',
+                  'course_name': 'Medical',
+                  'question_count': 10,
+                  'is_rest_day': false,
+                },
+              ],
+              'allocations': [
+                {
+                  'title': 'Statics',
+                  'progress_percent': 42,
+                  'course_name': 'Civil Engineering',
+                },
+                {
+                  'title': 'Anatomy',
+                  'progress_percent': 18,
+                  'course_name': 'Medical',
+                },
+              ],
+            },
+          ],
+        });
+      }
+      return ok({'exam_id': 5, 'mode': 'cover'});
+    });
+
+    await pumpTall(tester, host());
+
+    verify(() => dio.get<Map<String, dynamic>>('/quiz/study-planner/combined')).called(1);
+    expect(find.text('Statics'), findsOneWidget);
+    expect(find.text('Anatomy'), findsOneWidget);
+    expect(find.text('30'), findsWidgets);
+  });
+
   testWidgets("shows the server's own message, not a raw exception", (
     tester,
   ) async {
