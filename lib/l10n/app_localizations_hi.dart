@@ -3250,6 +3250,19 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get adsWatchToEarn => 'कॉइन के लिए विज्ञापन देखें';
+
+  @override
+  String get adsRewardGranted => 'पुरस्कार वॉलेट में जोड़ा गया';
+
+  @override
+  String get adsRewardFailed =>
+      'विज्ञापन सत्यापित नहीं हो सका। फिर प्रयास करें।';
+
+  @override
+  String get adsRewardUnavailable => 'यहाँ विज्ञापन उपलब्ध नहीं है';
+
+  @override
   String gameLevelLabel(Object number) {
     return 'स्तर $number';
   }

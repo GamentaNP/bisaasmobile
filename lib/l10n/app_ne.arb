@@ -2374,6 +2374,10 @@
       }
     }
   },
+  "adsWatchToEarn": "क्विनका लागि विज्ञापन हेर्नुहोस्",
+  "adsRewardGranted": "पुरस्कार वालेटमा थपियो",
+  "adsRewardFailed": "विज्ञापन प्रमाणित भएन। फेरि प्रयास गर्नुहोस्।",
+  "adsRewardUnavailable": "यहाँ विज्ञापन उपलब्ध छैन",
   "gameLevelLabel": "तह {number}",
   "@gameLevelLabel": {
     "placeholders": {

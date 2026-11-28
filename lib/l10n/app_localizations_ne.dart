@@ -3255,6 +3255,18 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
+  String get adsWatchToEarn => 'क्विनका लागि विज्ञापन हेर्नुहोस्';
+
+  @override
+  String get adsRewardGranted => 'पुरस्कार वालेटमा थपियो';
+
+  @override
+  String get adsRewardFailed => 'विज्ञापन प्रमाणित भएन। फेरि प्रयास गर्नुहोस्।';
+
+  @override
+  String get adsRewardUnavailable => 'यहाँ विज्ञापन उपलब्ध छैन';
+
+  @override
   String gameLevelLabel(Object number) {
     return 'तह $number';
   }

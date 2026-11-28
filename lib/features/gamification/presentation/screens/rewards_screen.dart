@@ -8,6 +8,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../shared/widgets/chunky/chunky_button.dart';
 import '../../../../shared/widgets/chunky/chunky_kit.dart';
 import '../../../../shared/widgets/error_view.dart';
+import '../../../../shared/widgets/watch_to_earn_button.dart';
 import '../../data/providers/rewards_providers.dart';
 import '../../domain/entities/rewards.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -142,6 +143,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
               busy: _spinning,
               onSpin: _spin,
             ),
+            const SizedBox(height: 12),
+            const WatchToEarnButton(),
           ],
         ),
       ),

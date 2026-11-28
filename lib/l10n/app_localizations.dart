@@ -5563,6 +5563,30 @@ abstract class AppLocalizations {
   /// **'Next spin {date}'**
   String rewardsNextSpin(Object date);
 
+  /// No description provided for @adsWatchToEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch ad for coins'**
+  String get adsWatchToEarn;
+
+  /// No description provided for @adsRewardGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward added to your wallet'**
+  String get adsRewardGranted;
+
+  /// No description provided for @adsRewardFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad could not be verified. Try again.'**
+  String get adsRewardFailed;
+
+  /// No description provided for @adsRewardUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads are not available here'**
+  String get adsRewardUnavailable;
+
   /// No description provided for @gameLevelLabel.
   ///
   /// In en, this message translates to:

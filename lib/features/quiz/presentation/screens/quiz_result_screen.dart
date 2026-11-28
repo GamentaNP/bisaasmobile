@@ -17,6 +17,7 @@ import '../../../../shared/widgets/glassmorphic_card.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/lottie_overlay.dart';
 import '../../../../shared/widgets/safe_area_scaffold.dart';
+import '../../../../shared/widgets/watch_to_earn_button.dart';
 import '../state/quiz_state.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -242,6 +243,8 @@ class QuizResultScreen extends StatelessWidget {
               icon: Icons.home_rounded,
               onPressed: () => context.go('/home'),
             ),
+            const SizedBox(height: 8),
+            const WatchToEarnButton(),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () {

@@ -2374,6 +2374,10 @@
       }
     }
   },
+  "adsWatchToEarn": "Watch ad for coins",
+  "adsRewardGranted": "Reward added to your wallet",
+  "adsRewardFailed": "Ad could not be verified. Try again.",
+  "adsRewardUnavailable": "Ads are not available here",
   "gameLevelLabel": "Level {number}",
   "@gameLevelLabel": {
     "placeholders": {

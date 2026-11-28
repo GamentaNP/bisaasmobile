@@ -1931,6 +1931,10 @@ add("rewardsSpinUnavailable", "Spin wheel unavailable", "चक्र उपल�
 add("rewardsSpin", "Spin", "घुमाउनुहोस्", "घुमाएं")
 add("rewardsComeBackLater", "Come back later", "पछि आउनुहोस्", "बाद में आएं")
 add("rewardsNextSpin", "Next spin {date}", "अर्को पटक {date}", "अगली बार {date}", ["date"])
+add("adsWatchToEarn", "Watch ad for coins", "क्विनका लागि विज्ञापन हेर्नुहोस्", "कॉइन के लिए विज्ञापन देखें")
+add("adsRewardGranted", "Reward added to your wallet", "पुरस्कार वालेटमा थपियो", "पुरस्कार वॉलेट में जोड़ा गया")
+add("adsRewardFailed", "Ad could not be verified. Try again.", "विज्ञापन प्रमाणित भएन। फेरि प्रयास गर्नुहोस्।", "विज्ञापन सत्यापित नहीं हो सका। फिर प्रयास करें।")
+add("adsRewardUnavailable", "Ads are not available here", "यहाँ विज्ञापन उपलब्ध छैन", "यहाँ विज्ञापन उपलब्ध नहीं है")
 
 # ── game ────────────────────────────────────────────────────────────────────
 add("gameLevelLabel", "Level {number}", "तह {number}", "स्तर {number}", ["number"])

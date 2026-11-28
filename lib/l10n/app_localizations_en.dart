@@ -3245,6 +3245,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get adsWatchToEarn => 'Watch ad for coins';
+
+  @override
+  String get adsRewardGranted => 'Reward added to your wallet';
+
+  @override
+  String get adsRewardFailed => 'Ad could not be verified. Try again.';
+
+  @override
+  String get adsRewardUnavailable => 'Ads are not available here';
+
+  @override
   String gameLevelLabel(Object number) {
     return 'Level $number';
   }

@@ -2374,6 +2374,10 @@
       }
     }
   },
+  "adsWatchToEarn": "कॉइन के लिए विज्ञापन देखें",
+  "adsRewardGranted": "पुरस्कार वॉलेट में जोड़ा गया",
+  "adsRewardFailed": "विज्ञापन सत्यापित नहीं हो सका। फिर प्रयास करें।",
+  "adsRewardUnavailable": "यहाँ विज्ञापन उपलब्ध नहीं है",
   "gameLevelLabel": "स्तर {number}",
   "@gameLevelLabel": {
     "placeholders": {
